@@ -1,0 +1,18 @@
+{% if post.type == "post" %}
+    {% include "posts/items/post.html" %}
+{% elif post.type == "intro" %}
+    {% include "posts/items/intro.html" %}
+{% elif post.type == "question" %}
+    {% include "posts/items/question.html" %}
+{% elif post.type == "link" %}
+    {% include "posts/items/link.html" %}
+{% elif post.type == "pain" %}
+    {% include "posts/items/pain.html" %}
+{% elif post.type == "project" %}
+    {% include "posts/items/project.html" %}
+{% elif post.type == "weekly_digest" %}
+    {% include "posts/items/weekly_digest.html" %}
+{% else %}
+    {# Use "post" by default #}
+    {% include "posts/items/post.html" %}
+{% endif %}

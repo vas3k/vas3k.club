@@ -1,0 +1,19 @@
+{% load static %}
+<div class="menu menu-full">
+    <div class="menu-left">
+        <a href="{% url "index" %}" class="menu-logo">
+            Вастрик<img src="{% static "images/logo/logo-128.png" %}" alt=" ">Клуб
+        </a>
+    </div>
+    <div class="menu-center"></div>
+    <div class="menu-right">
+        {% if me %}
+            {% if me.is_alive %}
+                <a href="{% url "compose" %}" class="button compose-button"><i class="fas fa-plus"></i><span class="hide-on-iphone">&nbsp;&nbsp;Пиши</span></a>
+            {% endif %}
+            <a href="{% url "profile" me.slug %}" class="avatar menu-avatar" style="background-image: url('{{ me.get_avatar }}');"></a>
+        {% else %}
+            <a href="{% url "login" %}" class="avatar menu-avatar" style="background-image: url('{% static "images/test/avatar.png" %}');"></a>
+        {% endif %}
+    </div>
+</div>

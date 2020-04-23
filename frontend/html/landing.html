@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru" theme="dark">
+<head>
+    <title>{% block title %}Вастрик.Клуб ✖️‍{% endblock %}</title>
+    {% block meta %}
+        {% include "common/meta.html" %}
+    {% endblock %}
+    {% block og_tags %}
+        {% include "common/og.html" %}
+    {% endblock %}
+    {% include "common/favicon.html" %}
+    {% include "common/css.html" %}
+</head>
+<body>
+
+{% block body %}
+    <div class="landing">
+        <div class="landing-block landing-block-title">
+            <img src="{% static "images/logo/logo-1024.png" %}" alt="">
+            <div class="landing-title">
+                <h1>Вастрик.Клуб</h1>
+                <p>Всё самое интересное происходит за закрытыми дверями</p>
+                <a href="{% url "patreon_login" %}" class="button button-black" target="_blank">Войти</a>
+            </div>
+        </div>
+
+        <div class="landing-block" id="why">
+            <div>
+                <h2>ЗАЧЕМ?</h2>
+
+                <p>
+                    Интернет стал слишком большим.
+                    Открытость дала ему разнообразие, но сделала всё поверхностным.
+                    Лучшие идеи не рождаются в толпе.
+                </p>
+
+                <p>
+                    Клуб — это наше закрытое и в меру айтишное сообщество, в котором мы обсуждаем важные темы вдали от большого интернета.
+                </p>
+
+                <p>
+                    У нас нет секретной цели изменить мир и другой идейной херни.
+                    Мы наоборот собрались здесь чтобы наконец-то поговорить честно и открыто.
+                </p>
+
+                <p>
+                    Участники Клуба первыми получают доступ ко всем закрытым движухам, новым проектам,
+                    экспериментам и плюшкам от меня и друзей Клуба.
+                    Они общаются в чатах и ходят на сходки в реальном мире.
+                </p>
+            </div>
+        </div>
+
+        <div class="landing-block" id="join">
+            <div>
+                <h2>КАК ВСТУПИТЬ?</h2>
+
+                <p>
+                    Пока клубные карты выдаются за поддержку на <a href="https://patreon.com/vas3k">патреоне</a>.
+                </p>
+
+                <p>
+                    Размер доната зависит от вашего желания поддержать Клуб и его идеи.<br>
+                    От $1 в месяц и до бесконечности.
+                    Отменить подписку можно в любой момент.
+                    Тогда клубная карта аннулируется.
+                </p>
+
+                <p>
+                    В Клубе действует меритократия, жёсткая модерация и запрещена анонимность.
+                </p>
+
+                <p>
+                    Так мы сохраняем здоровое коммьюнити.
+                </p>
+
+                <br>
+
+                <p>
+                    <a href="https://patreon.com/vas3k" class="button button-black" target="_blank">Перейти на патреон</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <div class="footer">
+        <div class="footer-left" style="text-align: center; font-size: 130%;">
+            &copy; <a href="https://vas3k.ru" target="_blank">Вастрик</a> {% now "Y" %}
+            &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
+            <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
+        </div>
+    </div>
+{% endblock %}
+
+{% include "common/js.html" %}
+{% block js %}{% endblock %}
+</body>
+</html>

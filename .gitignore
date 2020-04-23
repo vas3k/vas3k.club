@@ -1,0 +1,39 @@
+*.py[co]
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+sdist
+develop-eggs
+.installed.cfg
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+
+# Translations
+*.mo
+
+# IDEA
+.idea
+
+# Mac OS X
+.DS_Store
+
+.mypy_cache
+private_settings.py
+local_settings.py
+media/images
+media/i
+
+club/.env
+db.sqlite3
+*.session
+venv/

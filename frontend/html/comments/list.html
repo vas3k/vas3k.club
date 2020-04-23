@@ -1,0 +1,21 @@
+{% load comments %}
+{% for subtree in comments|comment_tree:"top" %}
+    {% if subtree.comment.is_pinned %}
+        {% include "comments/types/bold.html" with comment=subtree.comment %}
+    {% else %}
+        {% include "comments/types/normal.html" with comment=subtree.comment %}
+    {% endif %}
+
+    {% if subtree.replies %}
+        <div class="comment-replies">
+            {% for reply in subtree.replies %}
+                {% include "comments/types/reply.html" with comment=reply %}
+            {% endfor %}
+        </div>
+        <div class="clearfix20"></div>
+    {% endif %}
+
+    {% if post.is_commentable and me %}
+        {% include "comments/forms/reply.html" with comment=subtree.comment reply_form=reply_form %}
+    {% endif %}
+{% endfor %}

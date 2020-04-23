@@ -1,0 +1,2 @@
+0 3 * * * cd /home/vas3k/vas3k.club/vas3k_club && pipenv run python renew_subscriptions
+0 4 * * * sudo certbot renew

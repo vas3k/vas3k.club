@@ -1,0 +1,19 @@
+{% extends "message.html" %}
+
+{% block message %}
+    <h2>Вас забанили</h2>
+
+    {% if me.is_banned_until %}
+        <p>
+            Бан истечет {{ me.is_banned_until | date:"d E Y" }}
+        </p>
+    {% endif %}
+
+    <p>
+        <br><img src="https://i.vas3k.ru/lk8.jpg" alt="" style="width: 100%;">
+    </p>
+
+    <p>
+        <br><a href="{% url "logout" %}" class="button">Выйти</a>
+    </p>
+{% endblock %}

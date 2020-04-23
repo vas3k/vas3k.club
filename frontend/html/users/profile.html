@@ -1,0 +1,180 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+{% load paginator %}
+
+{% block title %}
+    {{ user.slug }} — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="{{ user.slug }} — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary_image">
+    <meta name="twitter:title" content="{{ user.slug }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="content profile">
+        {% if me.id == user.id or me.is_moderator %}
+            <div class="profile-user-edit">
+                <a href="{% url "edit_profile" user.slug %}">Редактировать профиль</a>
+                {% if me.is_moderator and not user.is_god %}
+                    | <a href="{% url "admin_profile" user.slug %}">Админка</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% include "users/widgets/card.html" with user=user %}
+
+        {% if me.id == user.id %}
+            <div class="block profile-numbers">
+                <div class="profile-number profile-monies">
+                    <div class="profile-monies-value">{% if user.is_god %}&infin;{% else %}{{ user.balance }}{% endif %}</div>
+                    <div class="profile-monies-currency">кк/сек</div>
+                </div>
+                <div class="profile-number profile-respect">
+                    <div class="profile-respect-value">+{{ user.upvotes }}</div>
+                    <div class="profile-respect-currency">{{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}</div>
+                </div>
+                <div class="profile-number profile-level">
+                    <div class="profile-level-value">[СКОРО]</div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if intro or me.id == user.id %}
+            <div class="block profile-intro">
+                <div class="profile-header"><a href="{% url "show_post" "intro" intro.slug %}">#intro &rarr;</a></div>
+                {% if intro %}
+                    <div class="profile-intro-text">
+                        {% render_post intro %}
+                    </div>
+                {% else %}
+                    <div class="profile-add-button">
+                        <a href="{% url "compose_type" "intro" %}" class="button profile-intro-create">Расскажите Клубу о себе</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if achievements %}
+            <div class="profile-badges">
+                <div class="profile-header">Достижения</div>
+                <div class="user-badges">
+                    {% for achievement in achievements %}
+                        <span class="user-badge" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+                            <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.type }}">
+                            <span class="user-badge-name">{{ achievement.name }}</span>
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if active_tags or me.id == user.id %}
+            {% regroup tags by group_display as tag_groups %}
+            {% for tag_group in tag_groups %}
+                <div class="profile-header">{{ tag_group.grouper }}</div>
+                <div class="block profile-tags">
+                    <div class="profile-tags-group">
+                        <div class="user-tags">
+                            {% for tag in tag_group.list %}
+                                {% if tag.code in active_tags %}
+                                    <a href="{% url "toggle_tag" tag.code %}" class="user-tag user-tag-active" style="background-color: {{ tag.color }};" onclick="ajaxify(event, toggleUserTag)">{{ tag.name }}</a>
+                                {% else %}
+                                    {% if me.id == user.id %}
+                                        <a href="{% url "toggle_tag" tag.code %}" class="user-tag" onclick="ajaxify(event, toggleUserTag)">{{ tag.name }}</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if expertises or me.id == user.id %}
+            <div class="profile-header">Экспертиза</div>
+            <div class="block profile-expertise">
+                {% if expertises %}
+                    <div class="profile-expertise-rows" id="expertises">
+                        {% for expertise in expertises %}
+                            <div class="user-expertise-row" id="expertise-{{ expertise.expertise }}">
+                                <div class="user-expertise-row-name">
+                                    {{ expertise.name }}
+                                    {% if me.id == user.id %}
+                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" onclick="ajaxify(event, toggleUserExpertise)">[x]</a>
+                                    {% endif %}
+                                </div>
+                                <div class="user-expertise-row-bar">
+                                    <div class="user-expertise-row-bar-inner" style="width: {{ expertise.value }}%;"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if me.id == user.id %}
+                    <span class="button button-round profile-expertise-add-button" onclick="document.getElementById('window-expertise').style.display = 'block';"><i class="fas fa-plus"></i></span>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if projects or me.id == user.id %}
+            <div class="profile-header">Проекты</div>
+            {% if projects %}
+                <div class="user-projects">
+                    {% for project in projects %}
+                        <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
+                            {% if project.image %}
+                                <img src="{{ project.image }}" alt="{{ project.title }}">
+                            {% endif %}
+                            <span class="user-project-title">{{ project.title }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="block">
+                    <div class="profile-add-button">
+                        <a href="{% url "compose_type" "project" %}" class="button">Расскажите над чем работаете</a>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if posts %}
+            <div class="profile-posts">
+                <div class="profile-header">Посты</div>
+                {% for post in posts %}
+                    {% include "posts/items/items.html" %}
+                {% endfor %}
+
+                <div class="feed-paginator">
+                    {% paginator posts %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="window window-expertise" id="window-expertise">
+        <div class="window-close-button" onclick="closeWindow(event)"><i class="fas fa-times"></i></div>
+        <div class="window-title">Я могу в...</div>
+        <form action="{% url "add_expertise" %}" method="post">
+            <div class="edit-expertise">
+                <div class="edit-expertise-select">{{ expertise_form.expertise }}</div>
+                <div class="edit-expertise-custom" id="edit-expertise-custom" style="display: none;">{{ expertise_form.expertise_custom }}</div>
+                <div class="edit-expertise-value">Насколько хорошо: {{ expertise_form.value }}</div>
+            </div>
+            <button type="submit" class="button window-button">Добавить</button>
+        </form>
+    </div>
+{% endblock %}

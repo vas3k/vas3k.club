@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load paginator %}
+{% load text_filters %}
+
+{% block title %}
+    {% if topic %}{{ topic.name }} — {% endif %}{{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="{% if topic %}{{ topic.description }}{% endif %}">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary_image">
+    <meta name="twitter:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="{% if topic %}{{ topic.description }}{% endif %}">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="feed">
+        <div class="feed-sidebar hide-on-iphone">
+            <div class="feed-sidebar-block">
+                <ul class="feed-sidebar-list feed-sidebar-menu">
+                    <li>
+                        <a href="{% url "index" %}" class="{% if not post_type and not topic %}feed-sidebar-menu-selected{% endif %}">
+                            Главная
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
+                            Вопросы Клубу
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url "feed_type" "pain" %}" class="{% if post_type == "pain" %}feed-sidebar-menu-selected{% endif %}">
+                            Расскажи где болит
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
+                            Проекты
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="feed-sidebar-block">
+                <div class="feed-sidebar-header">Комнаты</div>
+                <div class="feed-sidebar-topics">
+                    {% for topic in topics %}
+                        {% include "posts/widgets/topic.html" with topic=topic %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="feed-main">
+            {% if topic %}
+                <div class="feed-topic-header" style="background-color: {{ topic.color }};">
+                    <span class="topic-icon feed-topic-header-icon" style="background-image: url('{{ topic.icon }}');"></span>
+                    <h1 class="feed-topic-header-name">{{ topic.name }}</h1>
+                    <span class="feed-topic-header-desctiption">
+                        {{ topic.description | markdown }}
+                    </span>
+                </div>
+            {% endif %}
+
+            {% for post in pinned_posts %}
+                {% include "posts/items/items.html" %}
+            {% endfor %}
+
+            {% for post in posts %}
+                {% include "posts/items/items.html" %}
+            {% endfor %}
+
+            <div class="feed-paginator">
+                {% paginator posts %}
+            </div>
+
+            <div class="feed-sidebar-block show-on-iphone">
+                <div class="feed-sidebar-header">Комнаты</div>
+                <ul class="feed-sidebar-list feed-sidebar-topics">
+                    {% for topic in topics %}
+                        <li>
+                            {% include "posts/widgets/topic.html" with topic=topic %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

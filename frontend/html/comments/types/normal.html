@@ -1,0 +1,52 @@
+{% load comments %}
+<div class="comment comment-type-normal {% if comment.is_pinned %}comment-pinned{% endif %}" id="comment-{{ comment.id }}">
+    <div class="comment-header">
+        <div class="user user-small">
+            <span class="user-avatar">
+                <a href="{% url "profile" comment.author.slug %}">
+                    <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+                </a>
+            </span>
+            <span class="user-info">
+                <a href="{% url "profile" comment.author.slug %}">
+                    <span class="user-name">{{ comment.author.full_name }}</span>{% if me %}<span class="user-position">, {{ comment.author.position }}</span>{% endif %}
+                    {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+                </a>
+            </span>
+            <span class="user-footer">
+                <a href="#comment-{{ comment.id }}">{{ comment.created_at | date:"d E Y" }}</a>
+            </span>
+        </div>
+    </div>
+    <div class="comment-rating">
+        {% if me %}
+            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-small" onclick="ajaxify(event, commentUpvoted)">{{ comment.upvotes }}</a>
+        {% else %}
+            <span class="upvote upvote-voted upvote-type-small">{{ comment.upvotes }}</span>
+        {% endif %}
+
+        {% if comment.is_pinned %}
+            <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
+        {% endif %}
+    </div>
+    <div class="comment-body">
+        <div class="text-body text-body-type-comment">
+            {% render_comment comment %}
+        </div>
+    </div>
+    <div class="comment-footer">
+        {% if me == comment.post.author or me.is_moderator %}
+            <a href="{% url "pin_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-thumbtack"></i></a>
+        {% endif %}
+
+        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
+            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-trash"></i></a>
+        {% endif %}
+
+        {% if me == comment.author or me.is_moderator %}
+            <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
+        {% endif %}
+
+        <span class="comment-reply-button" onclick="showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+    </div>
+</div>

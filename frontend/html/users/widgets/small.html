@@ -1,0 +1,5 @@
+<a href="{% url "profile" user.slug %}" class="user user-small">
+    <span class="avatar user-avatar" style="background-image: url('{{ user.get_avatar }}');"></span>
+    <span class="user-info">{{ user.full_name }}{% if user.hat %}{% include "users/widgets/hat.html" with hat=user.hat %}{% endif %}</span>
+    <span class="user-footer">{{ user.position }}{% if user.company %} — {{ user.company }}{% endif %}</span>
+</a>

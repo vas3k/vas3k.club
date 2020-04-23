@@ -1,0 +1,68 @@
+version: '3.7'
+
+services:
+  club_app: &app
+    build:
+      context: .
+    command: make docker-run-dev
+    container_name: club_app
+    environment:
+      - DEBUG=true
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    restart: always
+    volumes:
+      - .:/app:delegated  # enable hot code reload in debug mode
+    depends_on:
+      - postgres
+      - redis
+      - queue
+    ports:
+      - "8000:8000"
+
+  queue:
+    build:
+      context: .
+    command: make run-queue
+    environment:
+      - DEBUG=true
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    restart: always
+    volumes:
+      - .:/app:delegated
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:11
+    container_name: club_postgres
+    environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=vas3k_club
+    ports:
+        - 5432
+
+  redis:
+    image: "redis:alpine"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  migrate_and_init:
+    <<: *app
+    container_name: club_migrate_and_init
+    restart: "no"
+    ports: []
+    command: make migrate

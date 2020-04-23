@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="message">
+        {% block message %}
+            {% if title %}
+                <h2>{{ title }}</h2>
+            {% endif %}
+
+            <p>{{ message | safe }}</p>
+
+            {% if data %}
+                <p>
+                    <pre>{{ data | escape }}</pre>
+                </p>
+            {% endif %}
+        {% endblock %}
+    </div>
+{% endblock %}

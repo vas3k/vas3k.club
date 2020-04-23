@@ -1,0 +1,8 @@
+🔥 <b>NEW: {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %} [{{ post.topic.name }}]{% endif %}</b>
+
+<b>Автор:</b>  {{ post.author.slug }} {% if post.author.telegram_data %}(tg: @{{ post.author.telegram_data.username  }}){% endif %}
+{% if post.url %}<b>Ссылка:</b> {{ post.url }}{% endif %}
+
+{% load posts %}{% render_plain post 350 %}
+
+{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}

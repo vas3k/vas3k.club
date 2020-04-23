@@ -1,0 +1,14 @@
+<form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
+    <div class="comment-form">
+        <div class="comment-form-avatar">
+            <div class="avatar" style="background-image: url('{{ me.get_avatar }}');"></div>
+        </div>
+        <div class="comment-form-body">
+            {{ form.text }}
+            {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
+        </div>
+        <div class="comment-form-button">
+            <button type="submit" class="button">Отправить</button>
+        </div>
+    </div>
+</form>

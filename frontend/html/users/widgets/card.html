@@ -1,0 +1,36 @@
+{% load text_filters %}
+<div class="block profile-card">
+    <div class="profile-card-photo">
+        <div class="avatar profile-user-avatar" style="background-image: url('{{ user.get_avatar }}');"></div>
+    </div>
+    <div class="profile-card-info">
+        <a href="{% url "profile" user.slug %}" class="profile-user-name">
+            {{ user.full_name }} <span class="profile-user-nickname">@{{ user.slug }}</span>
+        </a>
+
+        {% if user.position or user.company %}
+            <div class="profile-user-job">
+                <span class="profile-user-job-position">{{ user.position }}</span>
+                {% if user.company %}— <span class="profile-user-job-company">{{ user.company }}</span>{% endif %}
+            </div>
+        {% endif %}
+
+        {% if user.city or user.country %}
+            <div class="profile-user-location">
+                📍{% if user.city %}{{ user.city }}, {% endif %}{{ user.country }}
+            </div>
+        {% endif %}
+
+        {% if user.hat %}
+            <div class="profile-user-hat">
+                {% include "users/widgets/hat.html" with hat=user.hat %}
+            </div>
+        {% endif %}
+
+        {% if user.bio %}
+            <div class="profile-user-bio">
+                {{ user.bio | markdown }}
+            </div>
+        {% endif %}
+    </div>
+</div>

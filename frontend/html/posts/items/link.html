@@ -1,0 +1,38 @@
+{% load posts %}
+{% load text_filters %}
+<div class="block feed-post {% css_classes post %}" onclick="redirect('{% url "show_post" post.type post.slug %}')">
+    <div class="feed-post-author">
+        <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
+    </div>
+
+    <div class="feed-post-votes">
+        <a href="{% url "upvote_post" post.slug %}" class="upvote {% if post.is_voted %}upvote-voted{% endif %}" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
+    </div>
+
+    <div class="feed-post-header">
+        <div class="feed-post-title">
+            {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
+
+            {% link_icon post %}
+
+            &rarr; <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
+
+            {% if post.label %}
+                {% include "posts/common/label.html" with label=post.label %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="feed-post-footer">
+        {% if post.topic %}
+            <span class="feed-post-topic">
+                {% include "posts/widgets/topic.html" with topic=post.topic size="small" %}
+            </span>
+        {% endif %}
+        <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">
+            {{ post.comment_count }} {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
+            {% if post.unread_comments %}
+                <span class="feed-post-unread">+{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}</span>
+            {% endif %}
+        </a>
+    </div>
+</div>

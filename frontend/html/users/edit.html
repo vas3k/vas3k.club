@@ -1,0 +1,175 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Редактирование профиля — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <form action="." method="post" class="intro-form" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-title">😎<br>Редактирование профиля</div>
+
+            {% if form.non_field_errors %}
+                <div class="form-row form-row-center">
+                    {% for error in form.non_field_errors %}
+                        <span class="form-row-errors">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="block">
+                <div class="form-row">
+                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                        Имя
+                    </label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
+                    <span class="form-row-help">Рекомендуется указывать имя + фамилию, либо псевдоним, если вас лучше знают по нему.</span>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">
+                        Страна и город
+                    </label>
+                    {{ form.country }} {{ form.city }}
+                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
+                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
+                    <span class="form-row-help">Вдруг мы решим собраться на митап или типа того.</span>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.bio.id_for_label }}" class="form-label">
+                        Ссылочки на себя и всякое такое
+                    </label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}<span class="form-row-errors">{{ form.bio.errors }}</span>{% endif %}
+                    <span class="form-row-help">Можно Markdown</span>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.avatar.id_for_label }}" class="form-label">
+                        Обновить аватар
+                    </label>
+                    {{ form.avatar }}
+                    {% if form.avatar.errors %}<span class="form-row-errors">{{ form.avatar.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.company.id_for_label }}" class="form-label">
+                        Компания
+                    </label>
+                    {{ form.company }}
+                    {% if form.company.errors %}<span class="form-row-errors">{{ form.company.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.position.id_for_label }}" class="form-label">
+                        Должность
+                    </label>
+                    {{ form.position }}
+                    {% if form.position.errors %}<span class="form-row-errors">{{ form.position.errors }}</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="clearfix20"></div>
+
+            <div class="block">
+                <div class="block-header">📫<br>Как хотите следить за новыми постами?</div>
+
+                <div class="clearfix20"></div>
+
+                <div class="form-row">
+                    <div class="user-edit-digest">
+
+                        <div class="user-edit-digest">
+                            <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
+                                <i class="fas fa-envelope-open"></i>
+                                <span class="user-edit-digest-name">Ежедневные<br> обновления + журнал</span>
+                                {{  form.email_digest_type.1.tag }}
+                            </label>
+                            <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
+                                <i class="fas fa-calendar-week"></i>
+                                <span class="user-edit-digest-name">Журнал раз в неделю</span>
+                                {{  form.email_digest_type.2.tag }}
+                            </label>
+                            <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
+                                <i class="fas fa-skull-crossbones"></i>
+                                <span class="user-edit-digest-name">Никак не хочу вообще</span>
+                                {{  form.email_digest_type.0.tag }}
+                            </label>
+                        </div>
+                    </div>
+                    {% if form.email_digest_type.errors %}<span class="form-row-errors">{{ form.email_digest_type.errors }}</span>{% endif %}
+
+                    <div class="clearfix20"></div>
+
+                    <div class="block-description">
+                        Можно еще подписаться <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank">на канал Клуба</a> или заходить к нам в <a href="https://vas3k.ru/notes/club_chat/" target="_blank">чаты</a>.
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix50"></div>
+
+            <div class="block">
+                <div class="block-header">🤖<br>Телеграм-бот</div>
+
+                <div class="clearfix20"></div>
+
+                <div class="block-description">
+                    <p>
+                        Бот умеет оповещать об ответах на ваши комментарии, через него можно отвечать и даже писать посты, форвардя ему сообщения.
+                        Еще он следит за активностью в групповых чатах и выдает ачивки.
+                    </p>
+
+                    <p id="telegram-auth-data" style="font-weight: bold">
+                        {% if form.instance.telegram_id %}
+                           Сейчас привязан аккаунт: {{ form.instance.telegram_data.username }}
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <script async src="https://telegram.org/js/telegram-widget.js?8" data-telegram-login="vas3k_club_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+                        <script type="text/javascript">
+                            function onTelegramAuth(user) {
+                                fetch('{% url "link_telegram" %}?is_ajax=true', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Accept': 'application/json, text/plain, */*',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    credentials: "include",
+                                    body: JSON.stringify(user)
+                                })
+                                .then((response) => {
+                                    return response.json();
+                                })
+                                .then((data) => {
+                                  if (data.status === "success") {
+                                      document.getElementById("telegram-auth-data").innerHTML = "😎 Вы авторизованы как: " + data.telegram.username;
+                                      document.getElementById("telegram-auth-button").style.display = "none";
+                                  } else {
+                                      document.getElementById("telegram-auth-data").innerHTML = "Что-то пошло не так. Попробуйте снова.";
+                                  }
+                                  document.getElementById("telegram-auth-data").style.display = "block";
+                                });
+                            }
+                        </script>
+                    </p>
+
+                    <p>
+                        Если бот начнет надоедать — просто отключите его.
+                    </p>
+
+                </div>
+            </div>
+
+            <div class="clearfix50"></div>
+
+            <button type="submit" class="button button-red">Сохранить изменения</button>
+        </form>
+    </div>
+{% endblock %}

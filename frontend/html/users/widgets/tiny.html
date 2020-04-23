@@ -1,0 +1,4 @@
+<a href="{% url "profile" user.slug %}" class="user user-tiny">
+    <span class="avatar user-avatar" style="background-image: url('{{ user.get_avatar }}');"></span>
+    <span class="user-name">{{ user.slug }}</span>
+</a>

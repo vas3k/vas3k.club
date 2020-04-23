@@ -1,0 +1,18 @@
+<form action="{% url "create_comment" post.slug %}" method="post" class="form">
+    <div class="reply-form" style="display: none;" id="reply-form-{{ comment.id }}">
+        <div class="reply-form-avatar">
+            <div class="avatar" style="background-image: url('{{ me.get_avatar }}');"></div>
+        </div>
+
+        <div class="reply-form-body">
+            {{ reply_form.text }}
+            {% if reply_form.text.errors %}<span class="form-errors">{{ reply_form.full_name.errors }}</span>{% endif %}
+        </div>
+
+        <input type="hidden" name="reply_to_id" value="{{ comment.id }}">
+
+        <div class="reply-form-button">
+            <button type="submit" class="button button-small">Отправить</button>
+        </div>
+    </div>
+</form>

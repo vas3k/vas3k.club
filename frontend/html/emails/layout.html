@@ -1,0 +1,200 @@
+{% load static %}{% load emails %}<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <!-- The title is useful for screenreaders reading a document. Use your sender name or subject line. -->
+    <title>Вастрик.Клуб</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- Never disable zoom behavior! Fine to set the initial width and scale, but allow users to set their own zoom preferences. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700&display=swap&subset=cyrillic-ext" rel="stylesheet">
+    <style type="text/css">
+        /* CLIENT-SPECIFIC STYLES */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; }
+
+        /* RESET STYLES */
+        img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        table { border-collapse: collapse !important; }
+        body {
+            font-family: Ubuntu, serif;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            font-size: 17px;
+            background-color: #FFF;
+        }
+
+        a {
+            color: #000000; font-weight: 600; text-decoration: underline;
+        }
+
+        a:hover {
+            color: #B92B27 !important; text-decoration: none !important;
+        }
+
+        p {
+            font-weight: 400; line-height: 1.5em; margin-bottom: 24px;
+        }
+
+        img {
+            border-radius: 4px; display: block; max-width: 100%; min-width: 100px; width: 100%;
+        }
+
+        h1 {
+            color: #000000; font-size: 32px; font-weight: 700; line-height: 1.3em; margin: 48px 0; text-align: center;
+        }
+
+        h2 {
+            color: #000000; font-size: 30px; font-weight: 500; line-height: 1.3em; margin: 48px 0 24px 0; text-align: center;
+        }
+
+        h3 {
+            color: #000000; font-size: 24px; font-weight: 500; line-height: 1.3em; margin: 24px 0 24px 0; text-align: left;
+        }
+
+        small {
+            color: #999; font-size: 14px; font-weight: 300;
+        }
+
+        /* iOS BLUE LINKS */
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        /* GMAIL BLUE LINKS */
+        u + #body a {
+            color: inherit;
+            text-decoration: none;
+            font-size: inherit;
+            font-family: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+        }
+
+        /* SAMSUNG MAIL BLUE LINKS */
+        #MessageViewBody a {
+            color: inherit;
+            text-decoration: none;
+            font-size: inherit;
+            font-family: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+        }
+
+        article {
+            margin: 0 0 48px 0;
+        }
+
+        figure {
+            margin: 20px 0 30px 0;
+        }
+
+        .block {
+            padding: 30px;
+            margin-bottom: 30px;
+            box-sizing: border-box;
+            box-shadow: 10px 15px 40px rgba(83, 91, 110, 0.11);
+            background-color: #FFF;
+            border-radius: 15px;
+        }
+
+        .ratio-16-9 {
+            display: block;
+            width: 100%;
+            padding-top: 56.25%;
+            position: relative;
+        }
+
+            .ratio-16-9 > * {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+        .video-preview {
+            background-size: cover;
+            background-position: 50% 50%;
+            position: relative;
+            background-color: #000;
+        }
+
+            .video-preview::before {
+                content: "▶︎";
+                font-size: 100px;
+                color: #FFF;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                line-height: 100px;
+                height: 100px;
+                width: 100px;
+                margin-left: -50px;
+                margin-top: -40px;
+            }
+
+        /* These rules adjust styles for desktop devices, keeping the email responsive for users. */
+        /* Some email clients don't properly apply media query-based styles, which is why we go mobile-first. */
+        @media screen and (min-width:600px) {
+            h1 { font-size: 48px !important; line-height: 48px !important; }
+        }
+    </style>
+    {% block css %}{% endblock %}
+  </head>
+  <body style="margin: 0 !important; padding: 0 !important;">
+    <!-- This ghost table is used to constrain the width in Outlook. The role attribute is set to presentation to prevent it from being read by screenreaders. -->
+    <!--[if (gte mso 9)|(IE)]>
+    <table cellspacing="0" cellpadding="0" border="0" width="720" align="center" role="presentation"><tr><td>
+    <![endif]-->
+    <!-- The role and aria-label attributes are added to wrap the email content as an article for screen readers. Some of them will read out the aria-label as the title of the document, so use something like "An email from Your Brand Name" to make it recognizable. -->
+    <!-- Default styling of text is applied to the wrapper div. Be sure to use text that is large enough and has a high contrast with the background color for people with visual impairments. -->
+    <div role="article" lang="en" style="background-color: white; color: #2b2b2b; font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; font-size: 18px; font-weight: 400; line-height: 28px; margin: 0 auto; max-width: 720px; padding: 40px 20px 40px 20px;">
+
+        <!-- Logo section and header. Headers are useful landmark elements. -->
+        <header>
+            <!-- Since this is a purely decorative image, we can leave the alternative text blank. -->
+            <!-- Linking images also helps with Gmail displaying download links next to them. -->
+            {% block logo %}
+            <a href="https://vas3k.club">
+                <center><img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;"></center>
+            </a>
+            {% endblock %}
+            <!-- The h1 is the main heading of the document and should come first. -->
+            <!-- We can override the default styles inline. -->
+            <h1>
+                {% block title %}{% endblock %}
+            </h1>
+        </header>
+
+        <!-- Main content section. Main is a useful landmark element. -->
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+
+        <!-- Footer information. Footer is a useful landmark element. -->
+        <footer>
+            {% block footer %}{% endblock %}
+            <!-- This link uses descriptive text to inform the user what will happen with the link is tapped. -->
+            <!-- It also uses inline styles since some email clients won't render embedded styles from the head. -->
+            <p style="font-size: 16px; font-weight: 400; line-height: 24px; margin-top: 48px;">
+                Частоту получение дайджеста вы всегда можете изменить в настройках профиля.
+                Если же вам больше не хочется получать писем от Клуба, вы можете <a href="{{ settings.APP_HOST }}/notifications/unsubscribe/%user_id%/%secret_code%/" style="color: #B92B27; text-decoration: underline;">отписаться вообще от всего</a>.
+            </p>
+        </footer>
+
+    </div>
+    <!--[if (gte mso 9)|(IE)]>
+    </td></tr></table>
+    <![endif]-->
+  </body>
+</html>

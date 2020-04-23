@@ -1,0 +1,25 @@
+{% load text_filters %}
+<div class="block post-metadata post-metadata-type-link">
+    <div class="post-metadata-title">
+        🤖 Саммари от Глупой Бездушной Машины
+    </div>
+
+    {% if embed %}
+        {{ embed | safe }}
+    {% else %}
+
+        {% if post.metadata.image %}
+            <a href="{{ post.url }}" target="_blank">
+                <img src="{{ post.metadata.image }}" alt="{{ post.title }}">
+            </a>
+        {% endif %}
+
+        <h3>
+            <a href="{{ post.url }}" target="_blank">{{ post.metadata.title }}</a>
+        </h3>
+
+        <p>
+            {{ post.metadata.summary | nl_to_p }}
+        </p>
+    {% endif %}
+</div>

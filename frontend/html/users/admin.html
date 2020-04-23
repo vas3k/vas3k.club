@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Админка юзера — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+
+        <div class="profile-header">Дать шапку</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.add_hat.label_tag }}
+                    {{ form.add_hat }}
+                    {% if form.new_hat.errors %}<span class="form-row-errors">{{ form.new_hat.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.new_hat.label_tag }}
+                    {{ form.new_hat }}
+                    {% if form.new_hat.errors %}<span class="form-row-errors">{{ form.new_hat.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.new_hat_name.label_tag }}
+                    {{ form.new_hat_name }}
+                    {% if form.new_hat_name.errors %}<span class="form-row-errors">{{ form.new_hat_name.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.new_hat_icon.label_tag }}
+                    {{ form.new_hat_icon }}
+                    {% if form.new_hat_icon.errors %}<span class="form-row-errors">{{ form.new_hat_icon.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.new_hat_color.label_tag }}
+                    {{ form.new_hat_color }}
+                    {% if form.new_hat_color.errors %}<span class="form-row-errors">{{ form.new_hat_color.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.remove_hat.label_tag }}
+                    {{ form.remove_hat }}
+                    {% if form.remove_hat.errors %}<span class="form-row-errors">{{ form.remove_hat.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Сохранить</button>
+            </form>
+        </div>
+
+        <div class="profile-header">Ачивки</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.add_achievement.label_tag }}
+                    {{ form.add_achievement }}
+                    {% if form.add_achievement.errors %}<span class="form-row-errors">{{ form.add_achievement.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.new_achievement.label_tag }}
+                    {{ form.new_achievement }}
+                    {% if form.new_achievement.errors %}<span class="form-row-errors">{{ form.new_achievement.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Сохранить</button>
+            </form>
+        </div>
+
+        <div class="profile-header">Наказать</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.is_banned.label_tag }}
+                    {{ form.is_banned }}
+                    {% if form.is_banned.errors %}<span class="form-row-errors">{{ form.is_banned.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.ban_reason.label_tag }}
+                    {{ form.ban_reason }}
+                    {% if form.ban_reason.errors %}<span class="form-row-errors">{{ form.ban_reason.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.ban_days.label_tag }}
+                    {{ form.ban_days }}
+                    {% if form.ban_days.errors %}<span class="form-row-errors">{{ form.ban_days.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Забанить</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
