@@ -12,7 +12,7 @@ run-queue:  ## Runs task broker
 	@pipenv run python manage.py qcluster
 
 run-uvicorn:  ## Runs production server using uvicorn (ASGI)
-	@pipenv run uvicorn --fd 0 club.asgi:application
+	@pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
 
 docker-run-dev:  ## Run dev server in docker
 	@pipenv run python ./utils/wait_for_postgres.py
