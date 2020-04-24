@@ -911,12 +911,12 @@
         }
 
         .form-row #id_company {
-            width: 400px;
+            max-width: 400px;
             font-weight: 500;
         }
 
         .form-row #id_position {
-            width: 500px;
+            max-width: 500px;
             font-weight: 500;
         }
 
