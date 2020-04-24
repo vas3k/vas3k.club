@@ -1,7 +1,9 @@
 💬 <b>Новый {% if not comment.reply_to_id %}коммент{% else %}реплай{% endif %} к посту «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}">{{ comment.post.title }}</a>»</b>
 
 <b>Автор:</b> {{ comment.author.slug }}
-
+{% if comment.title %}
+<b>{{ comment.title }}</b>
+{% endif %}
 {% load posts %}{% render_plain comment 350 %}
 
 <a href="{{ settings.APP_HOST }}{% url "show_comment" comment.post.slug comment.id %}">Посмотреть ➜</a>
