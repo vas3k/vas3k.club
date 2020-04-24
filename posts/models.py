@@ -72,7 +72,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_PAIN: "😭",
         TYPE_PROJECT: "🏗",
         TYPE_REFERRAL: "🏢",
-        TYPE_BATTLE: "🌗"
+        TYPE_BATTLE: "🤜🤛"
     }
 
     TYPE_TO_PREFIX = {

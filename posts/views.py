@@ -169,7 +169,7 @@ def compose_type(request, post_type):
         form = FormClass(request.POST, request.FILES)
         if form.is_valid():
 
-            if not request.me.is_god:
+            if not request.me.is_moderator:
                 if Post.check_duplicate(user=request.me, title=form.cleaned_data["title"]):
                     raise ContentDuplicated()
 

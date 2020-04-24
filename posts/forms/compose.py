@@ -296,6 +296,7 @@ class PostBattleForm(PostForm):
             }
         }
         self.instance.title = f"{cleaned_data['side_a']} или {cleaned_data['side_b']}"
+        cleaned_data["title"] = self.instance.title
         return cleaned_data
 
 
