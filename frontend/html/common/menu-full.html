@@ -8,7 +8,7 @@
     <div class="menu-center"></div>
     <div class="menu-right">
         {% if me %}
-            {% if me.is_alive %}
+            {% if me.is_club_member %}
                 <a href="{% url "compose" %}" class="button compose-button"><i class="fas fa-plus"></i><span class="hide-on-iphone">&nbsp;&nbsp;Пиши</span></a>
             {% endif %}
             <a href="{% url "profile" me.slug %}" class="avatar menu-avatar" style="background-image: url('{{ me.get_avatar }}');"></a>

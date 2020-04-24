@@ -7,7 +7,7 @@
     <span class="user-info">
         <a href="{% url "profile" user.slug %}">
             <span class="user-name">{{ user.full_name }}</span>{% if me %}<span class="user-position">, {{ user.position }}</span>{% endif %}
-            {% if user.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+            {% if user.hat %}{% include "users/widgets/hat.html" with hat=user.hat %}{% endif %}
         </a>
     </span>
     {% if created_at %}
