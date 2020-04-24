@@ -18,10 +18,6 @@
         position: relative;
     }
 
-    .post-info .topic {
-        margin-right: 5px;
-    }
-
     .post-date {
         opacity: 0.6;
     }

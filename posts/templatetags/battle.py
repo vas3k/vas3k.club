@@ -11,11 +11,11 @@ battle_stats_template = loader.get_template("posts/widgets/battle_stats.html")
 def battle_stats(post, comments):
     total_arguments_a = len([
         c.id for c in comments
-        if not c.reply_to_id and c.metadata and c.metadata.get("battle", {}).get("side") == "a"
+        if not c.is_deleted and not c.reply_to_id and c.metadata and c.metadata.get("battle", {}).get("side") == "a"
     ])
     total_arguments_b = len([
         c.id for c in comments
-        if not c.reply_to_id and c.metadata and c.metadata.get("battle", {}).get("side") == "b"
+        if not c.is_deleted and not c.reply_to_id and c.metadata and c.metadata.get("battle", {}).get("side") == "b"
     ])
 
     return battle_stats_template.render({

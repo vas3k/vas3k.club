@@ -270,11 +270,12 @@
     display: inline-block;
     position: relative;
     vertical-align: middle;
-    padding: 7px 15px 6px 7px;
+    padding: 5px 13px 5px 5px;
     text-decoration: none;
     background-color: var(--opposite-bg-color);
     color: #FFF;
-    font-size: 90%;
+    font-size: 110%;
+    line-height: 1.3em;
     border-radius: 20px;
     overflow: hidden;
     transition: none;
@@ -306,6 +307,7 @@
 
     .topic-name {
         padding-left: 5px;
+        vertical-align: middle;
     }
 
         .topic:hover .topic-name {
@@ -313,13 +315,14 @@
         }
 
     .topic-size-small {
-        padding: 4px 11px 3px 4px;
-        font-size: 85%;
+        padding: 2px 9px 2px 3px;
+        font-size: 90%;
+        font-weight: 500;
     }
 
         .topic-size-small .topic-icon {
-            width: 17px;
-            height: 17px;
+            width: 15px;
+            height: 15px;
         }
 
         .topic-size-small .topic-name {

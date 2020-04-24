@@ -3,7 +3,7 @@
 {% load text_filters %}
 
 {% block title %}
-    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %}[{{ post.topic.name }}]{% endif %} — {{ block.super }}
+    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %} [{{ post.topic.name }}]{% endif %} — {{ block.super }}
 {% endblock %}
 
 {% block og_tags %}
