@@ -5,6 +5,7 @@ from datetime import timedelta, datetime
 import sentry_sdk
 from dotenv import load_dotenv
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 load_dotenv()
 
@@ -173,7 +174,10 @@ CSS_HASH = str(random.random())
 
 if SENTRY_DSN and not DEBUG:
     # activate sentry on production
-    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[DjangoIntegration()])
+    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[
+        DjangoIntegration(),
+        RedisIntegration(),
+    ])
     Q_CLUSTER["error_reporter"] = {
         "sentry": {
             "dsn": SENTRY_DSN
