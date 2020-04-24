@@ -77,7 +77,7 @@ class BattleCommentForm(forms.ModelForm):
         widget=forms.Textarea(
             attrs={
                 "maxlength": 10000,
-                "placeholder": "Развернутый ответ",
+                "placeholder": "Развернутый ответ...",
                 "class": "markdown-editor-invisible",
             }
         ),

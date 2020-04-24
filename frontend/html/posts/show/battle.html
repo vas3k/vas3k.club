@@ -50,13 +50,11 @@
 
 {% block comments %}
     <div class="post-comments" id="comments">
-        <div class="post-comments-title">
-            {% if post.comment_count > 0 %}
-                {% battle_stats post comments %}
-            {% elif post.is_commentable and post.is_visible %}
-                Аргументируйте первым 👇
-            {% endif %}
-        </div>
+        {% battle_stats post comments %}
+
+        {% if not post.comment_count and post.is_commentable and post.is_visible %}
+            <div class="post-comments-title">Аргументируйте первым 👇</div>
+        {% endif %}
 
         {% if comments %}
             <div class="post-comments-list">
