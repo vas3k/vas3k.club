@@ -13,7 +13,8 @@ from common.pagination import paginate
 from common.request import ajax_request
 from notifications.telegram.posts import announce_in_club_channel
 from posts.admin import do_post_admin_actions
-from posts.forms import PostTextForm, POST_TYPE_MAP, PostAdminForm, PostAnnounceForm
+from posts.forms.admin import PostAdminForm, PostAnnounceForm
+from posts.forms.compose import PostTextForm, POST_TYPE_MAP
 from posts.helpers import extract_some_image
 from posts.models import Post, Topic, PostVote, PostView
 

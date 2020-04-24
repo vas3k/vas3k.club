@@ -7,7 +7,7 @@ from django.urls import reverse
 from telegram import Update
 
 from bot.common import send_telegram_message, Chat
-from posts.forms import POST_TYPE_MAP, PostTextForm
+from posts.forms.compose import PostTextForm, POST_TYPE_MAP
 from posts.models import Post
 from users.models import User
 
