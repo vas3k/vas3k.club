@@ -139,7 +139,7 @@ class User(models.Model, ModelDiffMixin):
         return (self.roles and self.ROLE_MODERATOR in self.roles) or self.is_god
 
     @property
-    def is_alive(self):
+    def is_club_member(self):
         return self.is_profile_complete \
                and not self.is_banned \
                and self.is_profile_reviewed \

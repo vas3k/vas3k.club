@@ -80,8 +80,9 @@ def show_post(request, post_type, post_slug):
     post = get_object_or_404(Post, type=post_type, slug=post_slug)
 
     # don't show private posts into public
-    if not post.is_public and not request.me:
-        return render(request, "auth/access_denied.html")
+    if not post.is_public:
+        if not request.me or not request.me.is_club_member:
+            return render(request, "auth/access_denied.html")
 
     # drafts are visible only to authors and moderators
     if not post.is_visible and request.me != post.author and not request.me.is_moderator:
