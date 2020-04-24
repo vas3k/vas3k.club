@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block title %}
+    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %}[{{ post.topic.name }}]{% endif %} — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="{{ post.description | truncatechars:100 }}">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary_image">
+    <meta name="twitter:title" content="{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
+    <meta name="twitter:image" content="{% static "images/logo/logo-256.png" %}">
+{% endblock %}
+
+{% block content %}
+    {% block post %}
+        <div class="content">
+            {{ post }}
+        </div>
+    {% endblock %}
+
+    <div class="content">
+        {% block comments %}
+            <div class="post-comments" id="comments">
+                <div class="post-comments-title">
+                    {% if post.comment_count > 0 %}
+                        {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                    {% elif post.is_commentable and post.is_visible %}
+                        Откомментируйте первым 👇
+                    {% endif %}
+                </div>
+
+                {% if comments %}
+                    <div class="post-comments-list">
+                        {% include "comments/list.html" with comments=comments reply_form=reply_form type="normal" %}
+                    </div>
+                {% endif %}
+
+                {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
+                    <div class="post-comments-form">
+                        {% include "comments/forms/comment.html" with post=post form=comment_form %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endblock %}
+
+        {% if not me %}
+            {% include "posts/common/join_the_club.html" %}
+        {% endif %}
+    </div>
+{% endblock %}

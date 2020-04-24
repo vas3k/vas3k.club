@@ -10,6 +10,8 @@
     {% include "posts/items/pain.html" %}
 {% elif post.type == "project" %}
     {% include "posts/items/project.html" %}
+{% elif post.type == "battle" %}
+    {% include "posts/items/battle.html" %}
 {% elif post.type == "weekly_digest" %}
     {% include "posts/items/weekly_digest.html" %}
 {% else %}

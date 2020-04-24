@@ -1,22 +1,8 @@
 {% load comments %}
-<div class="block comment comment-layout-block" id="comment-{{ comment.id }}">
+<div class="block comment comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}" id="comment-{{ comment.id }}">
     <div class="comment-header">
-        <div class="user user-small">
-            <span class="user-avatar">
-                <a href="{% url "profile" comment.author.slug %}">
-                    <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
-                </a>
-            </span>
-            <span class="user-info">
-                <a href="{% url "profile" comment.author.slug %}">
-                    <span class="user-name">{{ comment.author.full_name }}</span>{% if me %}<span class="user-position">, {{ comment.author.position }}</span>{% endif %}
-                    {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
-                </a>
-            </span>
-            <span class="user-footer">
-                <a href="#comment-{{ comment.id }}">{{ comment.created_at | date:"d E Y" }}</a>
-            </span>
-        </div>
+        <div class="comment-title">{{ comment.title }}</div>
+        {% include "users/widgets/tiny.html" with user=comment.author %}
     </div>
     <div class="comment-rating">
         {% if me %}
@@ -35,10 +21,6 @@
         </div>
     </div>
     <div class="comment-footer">
-        {% if me == comment.post.author or me.is_moderator %}
-            <a href="{% url "pin_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-thumbtack"></i></a>
-        {% endif %}
-
         {% if me == comment.author or me == comment.post.author or me.is_moderator %}
             <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-trash"></i></a>
         {% endif %}
@@ -50,3 +32,4 @@
         <span class="comment-reply-button" onclick="showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
     </div>
 </div>
+<div class="clearfix"></div>

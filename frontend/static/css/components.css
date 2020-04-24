@@ -1003,6 +1003,10 @@
         text-overflow: ellipsis;
     }
 
+        .feed-post-title a {
+            text-decoration: none;
+        }
+
     .feed-post-author .avatar {
         position: absolute;
         top: 40px;
@@ -1237,6 +1241,13 @@
             font-family: var(--sans-font);
         }
 
+    .compose-vs {
+        display: inline-block;
+        padding: 5px 10px;
+        font-size: 130%;
+        font-weight: 600;
+    }
+
 .post-join {
     font-size: 120%;
 }
@@ -1407,20 +1418,26 @@
         max-width: 100%;
     }
 
+    .comment-title {
+        font-size: 160%;
+        font-weight: 500;
+        padding: 5px 0 3px;
+    }
+
     .comment-footer {
         padding-top: 5px;
     }
 
-    .comment-type-bold {
+    .comment-layout-block {
         padding: 30px;
         margin: 0 auto 30px;
     }
 
-        .comment-type-bold .upvote {
+        .comment-layout-block .upvote {
             top: -10px;
         }
 
-        .comment-type-bold .comment-body {
+        .comment-layout-block .comment-body {
             padding-top: 20px;
         }
 
@@ -1429,7 +1446,7 @@
             padding: 10px;
         }
 
-            .comment-type-bold {
+            .comment-layout-block {
                 padding: 20px;
             }
 
@@ -1438,6 +1455,41 @@
             padding-left: 0;
         }
     }
+
+    .comment-type-battle {}
+
+        .comment-type-battle .comment-body {
+            padding-left: 0;
+            padding-top: 20px;
+        }
+
+        .comment-type-battle-side-a {
+            background: rgba(76, 152, 213, 0.3);
+        }
+
+            .comment-type-battle-side-a:target {
+                background: rgba(76, 152, 213, 0.6);
+            }
+
+            .comment-type-battle-side-a .comment-title {
+                color: #4C98D5;
+            }
+
+        .comment-type-battle-side-b {
+            background: rgba(83, 170, 104, 0.3);
+        }
+
+            .comment-type-battle-side-b:target {
+                background: rgba(83, 170, 104, 0.6);
+            }
+
+            .comment-type-battle-side-b .comment-header {
+                text-align: right;
+            }
+
+            .comment-type-battle-side-b .comment-title {
+                color: #53AA68;
+            }
 
 .reply {
     margin: 0 30px 20px 85px;

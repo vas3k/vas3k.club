@@ -110,30 +110,36 @@
             margin-top: 70px;
         }
 
-    .post-type-question {
+    .post-layout-block {
         width: 100%;
         max-width: 100%;
     }
 
-        .post-type-question .post-title {
+        .post-layout-block .post-title {
             font-size: 170%;
             font-weight: 500;
             line-height: 1.2em;
         }
 
-        .post-type-question .post-info {
+        .post-layout-block .post-info {
             padding-top: 5px;
         }
 
-        .post-type-question .post-footer {
-            text-align: right;
+        .post-layout-block .post-footer {
+            text-align: left;
             padding-top: 30px;
         }
 
-            .post-type-question .post-footer .post-user {
+            .post-layout-block .post-footer .post-user {
                 display: block;
                 padding-top: 10px;
             }
+
+    .post-type-battle {
+        margin-top: 30px;
+        width: 100%;
+        max-width: 100%;
+    }
 
 
 .text-body {
@@ -151,6 +157,10 @@
         line-height: 1.67;
         letter-spacing: 0.01rem;
     }
+
+        .text-body-layout-notitle {
+            padding-top: 0;
+        }
 
     @media only screen and (max-width : 570px) {
         .text-body {
@@ -408,6 +418,8 @@
         .text-body-type-comment blockquote {
             margin-top: 2em;
             margin-bottom: 0.5em;
+            opacity: 0.5;
+            border-width: 2px;
         }
 
     .text-body *:first-child {
@@ -424,3 +436,62 @@
         font-size: 120%;
         padding: 10px 0 30px;
     }
+
+.battle-header {
+    padding: 0;
+    overflow: hidden;
+    font-size: 250%;
+    min-height: 140px;
+    color: #FFF;
+    margin-top: 50px;
+}
+
+    .battle-header-side-a,
+    .battle-header-side-b {
+        padding: 30px 25px;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .battle-header {
+            font-size: 150%;
+            min-height: 100px;
+            margin-top: 20px;
+        }
+
+        .battle-header-side-a,
+        .battle-header-side-b {
+            padding: 10px;
+        }
+    }
+
+    .battle-header-side-a {
+        background-color: #4C98D5;
+    }
+
+        .battle-header-side-a div,
+        .battle-header-side-b div {
+            width: 100%;
+            text-align: center;
+        }
+
+    .battle-header-side-b {
+        background-color: #53AA68;
+    }
+
+    .battle-header-vs {
+        position: relative;
+        background: rgb(76,152,213);
+        background: linear-gradient(108deg, rgba(76,152,213,1) 0%, rgba(76,152,213,1) 49%, rgba(83,170,104,1) 50%, rgba(83,170,104,1) 100%);
+    }
+
+        .battle-header-vs-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            font-size: 70%;
+            opacity: 0.7;
+        }

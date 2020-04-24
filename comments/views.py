@@ -1,13 +1,17 @@
+import logging
+
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from auth.helpers import auth_required
 from club.exceptions import AccessDenied, RateLimitException
-from comments.forms import CommentForm
+from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
 from posts.models import Post, PostView
+
+log = logging.getLogger(__name__)
 
 
 @auth_required
@@ -16,8 +20,15 @@ def create_comment(request, post_slug):
     if not post.is_commentable and not request.me.is_moderator:
         raise AccessDenied(title="Комментарии к этому посту закрыты")
 
+    if request.POST.get("reply_to_id"):
+        ProperCommentForm = ReplyForm
+    elif post.type == Post.TYPE_BATTLE:
+        ProperCommentForm = BattleCommentForm
+    else:
+        ProperCommentForm = CommentForm
+
     if request.method == "POST":
-        form = CommentForm(request.POST)
+        form = ProperCommentForm(request.POST)
         if form.is_valid():
             is_ok = Comment.check_rate_limits(request.me)
             if not is_ok:
@@ -34,11 +45,6 @@ def create_comment(request, post_slug):
 
             comment.ipaddress = parse_ip_address(request)
             comment.useragent = parse_useragent(request)
-
-            if form.cleaned_data["reply_to_id"]:
-                # stupid django can't do that from forms
-                comment.reply_to_id = form.cleaned_data["reply_to_id"]
-
             comment.save()
 
             # update the shitload of counters :)
@@ -53,10 +59,11 @@ def create_comment(request, post_slug):
 
             return redirect("show_comment", post.slug, comment.id)
         else:
+            log.error(f"Comment form error: {form.errors}")
             return render(request, "error.html", {
                 "title": "Какая-то ошибка при публикации комментария 🤷‍♂️",
-                "message": f"Не знаем что происходит, но мы уже фиксим. "
-                           f"Мы сохранили ваш коммент чтобы вы не потеряли его:",
+                "message": f"Мы уже получили оповещение и скоро пофиксим. "
+                           f"Ваш коммент мы сохранили чтобы вы могли скопировать его и запостить еще раз:",
                 "data": form.cleaned_data.get("text")
             })
 

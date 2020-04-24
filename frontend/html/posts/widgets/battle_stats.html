@@ -1,0 +1,5 @@
+{% load text_filters %}
+
+<span class="battle-side-a-color">{{ total_arguments.a }} {{ total_arguments.a | rupluralize:"аргумент,аргумента,аргументов" }} за первое</span>
+и
+<span class="battle-side-b-color">{{ total_arguments.b }} за второе</span> 👇

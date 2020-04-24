@@ -457,6 +457,24 @@ input[type=range]:focus::-ms-fill-upper {
     display: none;
 }
 
+.no-underline {
+    text-decoration: none;
+}
+
+.with-underline {
+    text-decoration: underline;
+}
+
+.battle-side-a-color {
+    color: #4C98D5;
+    text-decoration-color: #4C98D5;
+}
+
+.battle-side-b-color {
+    color: #53AA68;
+    text-decoration-color: #53AA68;
+}
+
 @media only screen and (max-width : 570px) {
     .hide-on-iphone {
         display: none;

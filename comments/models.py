@@ -20,6 +20,7 @@ class Comment(models.Model):
 
     reply_to = models.ForeignKey("self", related_name="replies", null=True, on_delete=models.CASCADE)
 
+    title = models.CharField(max_length=128, null=True)
     text = models.TextField(null=False)
     html = models.TextField(null=True)
     url = models.URLField(null=True)

@@ -3,7 +3,15 @@
         <div class="comment-form-avatar">
             <div class="avatar" style="background-image: url('{{ me.get_avatar }}');"></div>
         </div>
-        <div class="comment-form-body">
+        <div class="comment-form-body comment-form-battle">
+            <div class="comment-form-body-battle-side">Я за
+                <select name="{{ form.battle_side.name }}" id="{{ form.battle_side.id_for_label }}">
+                    {% for code, side in post.metadata.battle.sides.items %}
+                        <option value="{{ code }}">{{ side.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="comment-form-body-title">{{ form.title }}</div>
             <div class="comment-form-body-text">{{ form.text }}</div>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>

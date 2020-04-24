@@ -17,6 +17,7 @@ from posts.forms.admin import PostAdminForm, PostAnnounceForm
 from posts.forms.compose import PostTextForm, POST_TYPE_MAP
 from posts.helpers import extract_some_image
 from posts.models import Post, Topic, PostVote, PostView
+from posts.renderers import render_post
 
 
 @auth_required
@@ -95,24 +96,7 @@ def show_post(request, post_type, post_slug):
             post=post,
         )
 
-    # select votes and comments
-    is_voted = False
-    if request.me:
-        comments = Comment.objects_for_user(request.me).filter(post=post).all()
-        is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
-    else:
-        comments = Comment.visible_objects().filter(post=post).all()
-
-    # special "raw" posts renderers
-    if post.type == Post.TYPE_WEEKLY_DIGEST:
-        return HttpResponse(post.html)
-
-    return render(request, "posts/show/show.html", {
-        "post": post,
-        "comments": comments,
-        "comment_form": CommentForm(),
-        "is_voted": is_voted,
-    })
+    return render_post(request, post)
 
 
 @auth_required

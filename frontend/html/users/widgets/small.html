@@ -1,5 +1,18 @@
-<a href="{% url "profile" user.slug %}" class="user user-small">
-    <span class="avatar user-avatar" style="background-image: url('{{ user.get_avatar }}');"></span>
-    <span class="user-info">{{ user.full_name }}{% if user.hat %}{% include "users/widgets/hat.html" with hat=user.hat %}{% endif %}</span>
-    <span class="user-footer">{{ user.position }}{% if user.company %} — {{ user.company }}{% endif %}</span>
-</a>
+<div class="user user-small">
+    <span class="user-avatar">
+        <a href="{% url "profile" user.slug %}">
+            <span class="avatar" style="background-image: url('{{ user.get_avatar }}');"></span>
+        </a>
+    </span>
+    <span class="user-info">
+        <a href="{% url "profile" user.slug %}">
+            <span class="user-name">{{ user.full_name }}</span>{% if me %}<span class="user-position">, {{ user.position }}</span>{% endif %}
+            {% if user.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+        </a>
+    </span>
+    {% if created_at %}
+        <span class="user-footer">
+            {{ created_at | date:"d E Y" }}
+        </span>
+    {% endif %}
+</div>

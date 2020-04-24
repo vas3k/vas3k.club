@@ -248,10 +248,62 @@ class PostProjectForm(PostForm):
         ]
 
 
+class PostBattleForm(PostForm):
+    side_a = forms.CharField(
+        label="Одна сторона",
+        required=True,
+        max_length=64,
+    )
+    side_b = forms.CharField(
+        label="Вторая сторона",
+        required=True,
+        max_length=64,
+    )
+    text = forms.CharField(
+        label="Суть",
+        required=True,
+        max_length=500000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 5000,
+                "class": "markdown-editor-full",
+                "placeholder": "Не все логические дилеммы очевидны с первого взгляда. "
+                               "Дайте нам немного контекста.\n\n"
+                               "Старайтесь не давать субъективных оценок. "
+                               "Ваше мнение может повлиять на участников и исказить результаты. "
+                               "Лучше напишите его первым комментарием после публикации батла.",
+            }
+        ),
+    )
+
+    class Meta:
+        model = Post
+        fields = [
+            "text",
+            "topic",
+            "is_visible",
+            "is_public"
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.instance.metadata = {
+            "battle": {
+                "sides": {
+                    "a": {"name": cleaned_data["side_a"]},
+                    "b": {"name": cleaned_data["side_b"]},
+                }
+            }
+        }
+        self.instance.title = f"{cleaned_data['side_a']} или {cleaned_data['side_b']}"
+        return cleaned_data
+
+
 POST_TYPE_MAP = {
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
     Post.TYPE_QUESTION: PostQuestionForm,
     Post.TYPE_PAIN: PostPainForm,
     Post.TYPE_PROJECT: PostProjectForm,
+    Post.TYPE_BATTLE: PostBattleForm,
 }

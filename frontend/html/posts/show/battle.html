@@ -1,0 +1,73 @@
+{% extends "posts/show/layout.html" %}
+{% load static %}
+{% load posts %}
+{% load battle %}
+{% load text_filters %}
+
+{% block post %}
+    <div class="block battle-header">
+        <div class="battle-header-side-a">
+            <div>{{ post.metadata.battle.sides.a.name }}</div>
+        </div>
+        <div class="battle-header-vs">
+            <div class="battle-header-vs-text">или</div>
+        </div>
+        <div class="battle-header-side-b">
+            <div>{{ post.metadata.battle.sides.b.name }}</div>
+        </div>
+    </div>
+
+    <div class="content">
+        {% if not post.is_visible %}
+            <div class="post-label">
+                <span class="label label-type-draft">
+                    <span class="label-title">Черновик</span>
+                </span>
+            </div>
+        {% endif %}
+
+        <div class="block post post-layout-block post-type-battle">
+            <div class="post-upvote">
+                {% if me %}
+                    <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %} post-body-rating" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
+                {% else %}
+                    <span class="upvote upvote-voted post-body-rating">{{ post.upvotes }}</span>
+                {% endif %}
+                <div class="clearfix20"></div>
+                {% if post.author == me or me.is_moderator %}
+                    <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
+                {% endif %}
+            </div>
+            <div class="text-body text-body-layout-notitle text-body-type-post">
+                {% render_post post %}
+            </div>
+            <div class="post-footer">
+                {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block comments %}
+    <div class="post-comments" id="comments">
+        <div class="post-comments-title">
+            {% if post.comment_count > 0 %}
+                {% battle_stats post comments %}
+            {% elif post.is_commentable and post.is_visible %}
+                Аргументируйте первым 👇
+            {% endif %}
+        </div>
+
+        {% if comments %}
+            <div class="post-comments-list">
+                {% include "comments/list.html" with comments=comments reply_form=reply_form type="battle" %}
+            </div>
+        {% endif %}
+
+        {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
+            <div class="post-comments-form">
+                {% include "comments/forms/battle.html" with post=post form=comment_form %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

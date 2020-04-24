@@ -2,6 +2,8 @@
 {% for subtree in comments|comment_tree:"top" %}
     {% if subtree.comment.is_pinned %}
         {% include "comments/types/bold.html" with comment=subtree.comment %}
+    {% elif type == "battle" %}
+        {% include "comments/types/battle.html" with comment=subtree.comment %}
     {% else %}
         {% include "comments/types/normal.html" with comment=subtree.comment %}
     {% endif %}
