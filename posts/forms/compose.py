@@ -287,6 +287,7 @@ class PostBattleForm(PostForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        self.instance.is_public = True  # FIXME: dirty hardcode
         self.instance.metadata = {
             "battle": {
                 "sides": {
