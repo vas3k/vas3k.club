@@ -418,7 +418,7 @@
             border-width: 2px;
         }
 
-    .text-body *:first-child {
+    .text-body > *:first-child {
         margin-top: 0;
         padding-top: 0;
     }
