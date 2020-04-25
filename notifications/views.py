@@ -41,7 +41,7 @@ def email_unsubscribe(request, user_id, secret):
 def weekly_digest(request):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=8)  # make 8, not 7, to include marginal users
-    dates_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
+    dates_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
     # New users
     intros = Post.visible_objects().filter(type=Post.TYPE_INTRO, **dates_condition).order_by("-upvotes")

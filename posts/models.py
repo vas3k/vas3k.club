@@ -105,6 +105,7 @@ class Post(models.Model, ModelDiffMixin):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_activity_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    published_at = models.DateTimeField(null=True, db_index=True)
 
     comment_count = models.IntegerField(default=0)
     view_count = models.IntegerField(default=0)

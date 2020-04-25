@@ -55,10 +55,10 @@ def feed(request, post_type=None, topic_slug=None, ordering="activity"):
         if ordering == "activity":
             posts = posts.order_by("-last_activity_at")
         elif ordering == "new":
-            posts = posts.order_by("-created_at")
+            posts = posts.order_by("-published_at")
         elif ordering == "top":
             posts = posts.filter(
-                created_at__gte=datetime.utcnow() - timedelta(days=60)
+                published_at__gte=datetime.utcnow() - timedelta(days=60)
             ).order_by("upvotes")
         else:
             raise Http404()
