@@ -249,6 +249,15 @@ class PostProjectForm(PostForm):
 
 
 class PostBattleForm(PostForm):
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get("instance")
+        if instance and instance.metadata:
+            kwargs.update(initial={
+                "side_a": instance.metadata.get("battle", {}).get("sides", {}).get("a", {}).get("name") or "",
+                "side_b": instance.metadata.get("battle", {}).get("sides", {}).get("b", {}).get("name") or "",
+            })
+        super().__init__(*args, **kwargs)
+
     side_a = forms.CharField(
         label="Одна сторона",
         required=True,
