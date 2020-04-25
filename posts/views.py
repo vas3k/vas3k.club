@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-from auth.helpers import auth_required, moderator_role_required
+from auth.helpers import auth_required, moderator_role_required, check_user_permissions
 from bot.common import render_html_message
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
 from comments.forms import CommentForm
@@ -81,8 +81,9 @@ def show_post(request, post_type, post_slug):
 
     # don't show private posts into public
     if not post.is_public:
-        if not request.me or not request.me.is_club_member:
-            return render(request, "auth/access_denied.html")
+        access_denied = check_user_permissions(request)
+        if access_denied:
+            return access_denied
 
     # drafts are visible only to authors and moderators
     if not post.is_visible and request.me != post.author and not request.me.is_moderator:
