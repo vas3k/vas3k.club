@@ -68,11 +68,11 @@ def check_user_permissions(request):
             log.info("User profile is not completed. Redirecting")
             return redirect("intro")
 
-        if not request.me.is_profile_reviewed:
-            if request.me.is_profile_rejected:
-                log.info("User rejected. Redirecting")
-                return redirect("rejected")
+        if request.me.is_profile_rejected:
+            log.info("User rejected. Redirecting")
+            return redirect("rejected")
 
+        if not request.me.is_profile_reviewed:
             log.info("User on review. Redirecting")
             return redirect("on_review")
 
