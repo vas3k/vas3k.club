@@ -19,6 +19,13 @@ def landing(request):
     return render(request, "landing.html")
 
 
+def docs(request, doc_slug):
+    if doc_slug not in EXISTING_DOCS:
+        raise Http404()
+
+    return render(request, f"docs/{doc_slug}.html")
+
+
 def god_settings(request):
     if not request.me.is_god:
         raise AccessDenied()
@@ -33,10 +40,3 @@ def god_settings(request):
         form = GodSettingsEditForm(instance=god_settings)
 
     return render(request, "admin/godmode.html", {"form": form})
-
-
-def docs(request, doc_slug):
-    if doc_slug not in EXISTING_DOCS:
-        raise Http404()
-
-    return render(request, f"docs/{doc_slug}.html")

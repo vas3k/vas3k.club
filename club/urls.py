@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import path, include
 
 from auth.helpers import auth_switch
-from auth.views.auth import login, logout
+from auth.views.auth import login, logout, debug_dev_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, pin_comment
@@ -58,8 +58,10 @@ urlpatterns = [
     path("notifications/unsubscribe/<str:user_id>/<str:secret>/", email_unsubscribe, name="email_unsubscribe"),
     path("notifications/renderer/digest/weekly/", weekly_digest, name="render_weekly_digest"),
 
-    path("godmode/", god_settings, name="god_settings"),
     path("docs/<slug:doc_slug>/", docs, name="docs"),
+
+    path("godmode/", god_settings, name="god_settings"),
+    path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
 
     # keep this guy at the bottom
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
