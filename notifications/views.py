@@ -41,11 +41,13 @@ def email_unsubscribe(request, user_id, secret):
 def weekly_digest(request):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=8)  # make 8, not 7, to include marginal users
-    dates_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
+
+    created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
+    published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
     # New users
-    intros = Post.visible_objects().filter(type=Post.TYPE_INTRO, **dates_condition).order_by("-upvotes")
-    newbie_count = User.objects.filter(is_profile_reviewed=True, **dates_condition).count()
+    intros = Post.visible_objects().filter(type=Post.TYPE_INTRO, **published_at_condition).order_by("-upvotes")
+    newbie_count = User.objects.filter(is_profile_reviewed=True, **created_at_condition).count()
 
     # Best posts
     featured_post = Post.visible_objects()\
@@ -53,20 +55,20 @@ def weekly_digest(request):
         .filter(
             label__isnull=False,
             label__code="top_week",
-            **dates_condition
+            **published_at_condition
          )\
         .order_by("-upvotes")\
         .first()
 
     posts = Post.visible_objects()\
-        .filter(is_approved_by_moderator=True, **dates_condition)\
+        .filter(is_approved_by_moderator=True, **published_at_condition)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
         .order_by("-upvotes")[:12]
 
     # Video of the week
     top_video_comment = Comment.visible_objects() \
-        .filter(**dates_condition) \
+        .filter(**created_at_condition) \
         .filter(is_deleted=False)\
         .filter(upvotes__gte=3)\
         .filter(Q(text__contains="https://youtu.be/") | Q(text__contains="youtube.com/watch"))\
@@ -77,14 +79,14 @@ def weekly_digest(request):
     if not top_video_comment:
         top_video_post = Post.visible_objects() \
             .filter(type=Post.TYPE_LINK, upvotes__gte=3) \
-            .filter(**dates_condition) \
+            .filter(**published_at_condition) \
             .filter(Q(url__contains="https://youtu.be/") | Q(url__contains="youtube.com/watch")) \
             .order_by("-upvotes") \
             .first()
 
     # Best comments
     comments = Comment.visible_objects() \
-        .filter(**dates_condition) \
+        .filter(**created_at_condition) \
         .filter(is_deleted=False)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
