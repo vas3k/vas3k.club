@@ -18,7 +18,7 @@ def process_moderator_actions(update):
     action = ACTIONS.get(action_name)
 
     moderator = User.objects.filter(telegram_id=update.effective_user.id).first()
-    if not moderator or not moderator.is_moderator():
+    if not moderator or not moderator.is_moderator:
         send_telegram_message(
             chat=ADMIN_CHAT,
             text=f"⚠️ '{update.effective_user.full_name}' не модератор или не привязал бота к аккаунту"
