@@ -27,11 +27,11 @@ class Command(BaseCommand):
             .exclude(is_email_unsubscribed=True)
 
         for user in subscribed_users:
-            # if settings.DEBUG and user.email != "me@vas3k.ru":
+            # if user.email != "me@vas3k.ru":
             #     continue
 
             # render user digest using a special html endpoint
-            digest_url = "https://vas3k.club" + reverse("render_daily_digest", user.slug)
+            digest_url = "https://vas3k.club" + reverse("render_daily_digest", kwargs={"user_slug": user.slug})
             self.stdout.write(f"Generating digest for user: {user.slug}")
 
             digest_html_response = requests.get(digest_url)
@@ -50,7 +50,7 @@ class Command(BaseCommand):
             try:
                 send_club_email(
                     recipient=user.email,
-                    subject=f"Ежедневный дайджест: {date(datetime.utcnow(), 'd E Y')}",
+                    subject=f"Ежедневный дайджест за {date(datetime.utcnow(), 'd E')}",
                     html=user_digest_html,
                     tags=["daily_digest"]
                 )

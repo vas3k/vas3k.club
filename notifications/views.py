@@ -42,26 +42,26 @@ def email_unsubscribe(request, user_id, secret):
 def email_digest_switch(request, digest_type, user_id, secret):
     user = get_object_or_404(User, id=user_id, secret_hash=secret)
 
-    new_digest_type = dict(User.EMAIL_DIGEST_TYPES).get(digest_type)
-    if not new_digest_type:
+    if not dict(User.EMAIL_DIGEST_TYPES).get(digest_type):
         return Http404()
 
-    user.email_digest_type = new_digest_type
+    user.email_digest_type = digest_type
+    user.is_email_unsubscribed = False
     user.save()
 
-    if new_digest_type == User.EMAIL_DIGEST_TYPE_DAILY:
+    if digest_type == User.EMAIL_DIGEST_TYPE_DAILY:
         return render(request, "message.html", {
             "title": "🔥 Теперь вы будете получать дейли-дайджест",
             "message": "Офигенно. "
                        "Теперь каждое утро вам будет приходить ваша персональная подборка всего нового в Клубе."
         })
-    elif new_digest_type == User.EMAIL_DIGEST_TYPE_WEEKLY:
+    elif digest_type == User.EMAIL_DIGEST_TYPE_WEEKLY:
         return render(request, "message.html", {
             "title": "📅 Теперь вы получаете только еженедельный журнал",
             "message": "Раз в неделю вам будет приходить подбрка лучшего контента в Клубе за эту неделю. "
                        "Это удобно, качественно и не отнимает ваше время."
         })
-    elif new_digest_type == User.EMAIL_DIGEST_TYPE_NOPE:
+    elif digest_type == User.EMAIL_DIGEST_TYPE_NOPE:
         return render(request, "message.html", {
             "title": "🙅‍♀️ Вы отписались от рассылок Клуба",
             "message": "Мы ценим ваше время, потому отписали вас от наших рассылок контента. "
@@ -69,7 +69,7 @@ def email_digest_switch(request, digest_type, user_id, secret):
         })
     else:
         return render(request, "message.html", {
-            "title": "Данные подписки изменены",
+            "title": "👍 Данные подписки изменены",
             "message": ""
         })
 
