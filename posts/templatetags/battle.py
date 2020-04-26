@@ -25,3 +25,11 @@ def battle_stats(post, comments):
         },
         "post": post,
     })
+
+
+@register.filter()
+def side_name(battle, side_code):
+    if battle and battle.metadata and battle.metadata.get("battle"):
+        return battle.metadata["battle"]["sides"][side_code]["name"]
+    return ""
+

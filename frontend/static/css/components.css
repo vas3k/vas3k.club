@@ -1494,6 +1494,22 @@
                 color: #53AA68;
             }
 
+    .battle-comment-prefix {
+        position: relative;
+        top: 0.7em;
+        opacity: 0.5;
+        font-weight: 500;
+    }
+
+        .battle-comment-prefix-side-a {
+            color: #4C98D5;;
+        }
+
+        .battle-comment-prefix-side-b {
+            color: #53AA68;
+            text-align: right;
+        }
+
 .reply {
     margin: 0 30px 20px 85px;
 }

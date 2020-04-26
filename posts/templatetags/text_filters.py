@@ -53,6 +53,13 @@ def rupluralize(value, arg="дурак,дурака,дураков"):
 
 
 @register.filter
+def uncapitalize(value):
+    if value and isinstance(value, str) and value[0].isupper():
+        return value[0].lower() + value[1:]
+    return value
+
+
+@register.filter
 def is_video(value):
     extension = value[value.rfind(".") + 1:].lower()
     return extension in settings.VIDEO_EXTENSIONS
