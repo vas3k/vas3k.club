@@ -33,8 +33,8 @@ def parse_horoscope():
     }
 
 
-def _get_by_index(moon_phase_raw, key, index):
+def _get_by_index(moon_phase, key, index):
     try:
-        return [mp[key] for mp in moon_phase_raw["data"] if mp[index] == 1][0]
+        return [mp[key] for mp in moon_phase["data"] if mp["index"] == index][0]
     except (KeyError, IndexError):
         return ""
