@@ -1,4 +1,5 @@
 {% extends "emails/layout.html" %}
+{% load static %}
 {% load text_filters %}
 {% load comments %}
 {% load users %}
@@ -6,6 +7,10 @@
 
 {% block css %}
 <style>
+    h1, h2, header {
+        text-align: center;
+    }
+
     .issue {
         font-size: 24px;
         font-weight: 600;
@@ -127,6 +132,12 @@
             }
     }
 </style>
+{% endblock %}
+
+{% block logo %}
+    <a href="https://vas3k.club">
+        <center><img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;"></center>
+    </a>
 {% endblock %}
 
 {% block title %}
@@ -310,9 +321,7 @@
             </article>
         {% endif %}
     {% endif %}
-{% endblock %}
 
-{% block footer %}
     <br><br><br>
 
     <h2>На этом всё 👋</h2>
@@ -323,4 +332,10 @@
     </p>
 
     <br><br><br>
+{% endblock %}
+
+{% block footer %}
+    <p>
+        Напоминаем, что вы всегда можете перейти на ежедневные дайджесты или вообще отписаться от журнала <a href="{{ settings.APP_HOST }}/users/%username%/edit/#digest-settings">в настройках профиля</a>.
+    </p>
 {% endblock %}

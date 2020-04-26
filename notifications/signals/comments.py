@@ -25,7 +25,7 @@ def async_create_or_update_comment(comment, is_created):
 
     # notify post author
     post_author = comment.post.author
-    if not comment.reply_to_id and post_author.telegram_id and comment.author != post_author:
+    if post_author.telegram_id and comment.author != post_author:
         send_telegram_message(
             chat=Chat(id=comment.post.author.telegram_id),
             text=render_html_message("comment_to_post.html", comment=comment),

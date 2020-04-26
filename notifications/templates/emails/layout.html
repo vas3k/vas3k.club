@@ -38,20 +38,24 @@
             font-weight: 400; line-height: 1.5em; margin-bottom: 24px;
         }
 
+            footer p {
+                font-size: 16px; font-weight: 400; line-height: 1.5em; margin-top: 48px;
+            }
+
         img {
             border-radius: 4px; display: block; max-width: 100%; min-width: 100px; width: 100%;
         }
 
         h1 {
-            color: #000000; font-size: 32px; font-weight: 700; line-height: 1.4em; margin: 48px 0; text-align: center;
+            color: #000000; font-size: 32px; font-weight: 700; line-height: 1.4em; margin: 48px 0;
         }
 
         h2 {
-            color: #000000; font-size: 30px; font-weight: 500; line-height: 1.4em; margin: 48px 0 24px 0; text-align: center;
+            color: #000000; font-size: 30px; font-weight: 500; line-height: 1.4em; margin: 48px 0 24px 0;
         }
 
         h3 {
-            color: #000000; font-size: 24px; font-weight: 500; line-height: 1.3em; margin: 24px 0 24px 0; text-align: left;
+            color: #000000; font-size: 24px; font-weight: 500; line-height: 1.3em; margin: 24px 0 24px 0;
         }
 
         small {
@@ -160,35 +164,25 @@
     <!-- Default styling of text is applied to the wrapper div. Be sure to use text that is large enough and has a high contrast with the background color for people with visual impairments. -->
     <div role="article" lang="en" style="background-color: white; color: #2b2b2b; font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; font-size: 18px; font-weight: 400; line-height: 28px; margin: 0 auto; max-width: 720px; padding: 40px 20px 40px 20px;">
 
-        <!-- Logo section and header. Headers are useful landmark elements. -->
         <header>
-            <!-- Since this is a purely decorative image, we can leave the alternative text blank. -->
-            <!-- Linking images also helps with Gmail displaying download links next to them. -->
             {% block logo %}
-            <a href="https://vas3k.club">
-                <center><img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;"></center>
-            </a>
+                <a href="https://vas3k.club">
+                    <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
+                </a>
             {% endblock %}
-            <!-- The h1 is the main heading of the document and should come first. -->
-            <!-- We can override the default styles inline. -->
             <h1>
                 {% block title %}{% endblock %}
             </h1>
         </header>
 
-        <!-- Main content section. Main is a useful landmark element. -->
         <main>
             {% block body %}{% endblock %}
         </main>
 
-        <!-- Footer information. Footer is a useful landmark element. -->
         <footer>
             {% block footer %}{% endblock %}
-            <!-- This link uses descriptive text to inform the user what will happen with the link is tapped. -->
-            <!-- It also uses inline styles since some email clients won't render embedded styles from the head. -->
-            <p style="font-size: 16px; font-weight: 400; line-height: 24px; margin-top: 48px;">
-                Частоту получение дайджеста вы всегда можете изменить в настройках профиля.
-                Если же вам больше не хочется получать писем от Клуба, вы можете <a href="{{ settings.APP_HOST }}/notifications/unsubscribe/%user_id%/%secret_code%/" style="color: #B92B27; text-decoration: underline;">отписаться вообще от всего</a>.
+            <p style="text-align: right;">
+                Если вам больше не хочется никогда получать никаких писем от Клуба,<br> нажмите <a href="{{ settings.APP_HOST }}/notifications/unsubscribe/%user_id%/%secret_code%/">отписаться вообще от всего</a>.
             </p>
         </footer>
 
