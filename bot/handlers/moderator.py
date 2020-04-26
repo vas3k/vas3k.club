@@ -17,11 +17,20 @@ def process_moderator_actions(update):
     action_name, entity_id = update.callback_query.data.split(":", 1)
     action = ACTIONS.get(action_name)
 
+    moderator = User.objects.filter(telegram_id=update.effective_user.id).first()
+    if not moderator or not moderator.is_moderator():
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=f"⚠️ '{update.effective_user.full_name}' не модератор или не привязал бота к аккаунту"
+        )
+        return
+
     if not action:
         send_telegram_message(
             chat=ADMIN_CHAT,
             text=f"😱 Неизвестная команда '{update.callback_query.data}'"
         )
+        return
 
     # run run run
     try:
