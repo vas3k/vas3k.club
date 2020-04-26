@@ -32,6 +32,7 @@ class ReplyForm(forms.ModelForm):
             attrs={
                 "maxlength": 10000,
                 "placeholder": "Напишите ответ...",
+                "class": "markdown-editor-invisible",
             }
         ),
     )
