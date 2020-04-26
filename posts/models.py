@@ -166,6 +166,10 @@ class Post(models.Model, ModelDiffMixin):
     def description(self):
         return truncatechars(strip_tags(self.html or ""), 400)
 
+    @property
+    def effective_published_at(self):
+        return self.published_at or self.created_at
+
     @classmethod
     def check_duplicate(cls, user, title):
         latest_user_post = Post.objects.filter(author=user).order_by("-created_at").first()
