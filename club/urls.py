@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.urls import path, include
+from django.contrib.sitemaps.views import sitemap
 
 from auth.helpers import auth_switch
 from auth.views.auth import login, logout, debug_dev_login
@@ -10,11 +11,17 @@ from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm
 from payments.views import membership_expired
 from posts.views import compose, compose_type, show_post, feed, upvote_post, edit_post, admin_post, announce_post
+from posts.sitemaps import PublicPostsSitemap
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
     add_expertise, admin_profile, delete_expertise
 
+sitemaps = {
+    "public_posts": PublicPostsSitemap,
+}
+
 urlpatterns = [
     path("", auth_switch(landing, feed), name="index"),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("auth/login/", login, name="login"),
     path("auth/logout/", logout, name="logout"),
     path("auth/patreon/", patreon_login, name="patreon_login"),

@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import F
 from django.template.defaultfilters import truncatechars
 from django.utils.html import strip_tags
+from django.shortcuts import reverse
 from simple_history.models import HistoricalRecords
 
 from common.request import parse_ip_address, parse_useragent
@@ -143,6 +144,9 @@ class Post(models.Model, ModelDiffMixin):
 
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
+    
+    def get_absolute_url(self):
+        return reverse("show_post", kwargs={"post_type": self.type, "post_slug": self.slug})
 
     def increment_view_count(self):
         return Post.objects.filter(id=self.id).update(view_count=F("view_count") + 1)
