@@ -60,6 +60,9 @@ def process_moderator_actions(update):
 
 def approve_post(post_id: str, update: Update) -> (str, bool):
     post = Post.objects.get(id=post_id)
+    if post.is_approved_by_moderator:
+        return f"Пост «{post.title}» уже одобрен", True
+
     post.is_approved_by_moderator = True
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
@@ -86,6 +89,9 @@ def forgive_post(post_id: str, update: Update) -> (str, bool):
 
 def unpublish_post(post_id: str, update: Update) -> (str, bool):
     post = Post.objects.get(id=post_id)
+    if not post.is_visible:
+        return f"Пост «{post.title}» уже перенесен в черновики", True
+
     post.is_visible = False
     post.save()
 

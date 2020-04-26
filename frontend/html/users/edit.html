@@ -83,7 +83,6 @@
 
                 <div class="form-row">
                     <div class="user-edit-digest">
-
                         <div class="user-edit-digest">
                             <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
                                 <i class="fas fa-envelope-open"></i>
@@ -92,7 +91,7 @@
                             </label>
                             <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
                                 <i class="fas fa-calendar-week"></i>
-                                <span class="user-edit-digest-name">Журнал раз в неделю</span>
+                                <span class="user-edit-digest-name">Только журнал раз в неделю</span>
                                 {{  form.email_digest_type.2.tag }}
                             </label>
                             <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
@@ -103,12 +102,12 @@
                         </div>
                     </div>
                     {% if form.email_digest_type.errors %}<span class="form-row-errors">{{ form.email_digest_type.errors }}</span>{% endif %}
+                </div>
 
-                    <div class="clearfix20"></div>
+                <div class="clearfix20"></div>
 
-                    <div class="block-description">
-                        Можно еще подписаться <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank">на канал Клуба</a> или заходить к нам в <a href="https://vas3k.ru/notes/club_chat/" target="_blank">чаты</a>.
-                    </div>
+                <div class="block-description">
+                    Можно еще подписаться <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank">на канал Клуба</a> или заходить к нам в <a href="https://vas3k.ru/notes/club_chat/" target="_blank">чаты</a>.
                 </div>
             </div>
 
@@ -121,13 +120,17 @@
 
                 <div class="block-description">
                     <p>
-                        Бот умеет оповещать об ответах на ваши комментарии, через него можно отвечать и даже писать посты, форвардя ему сообщения.
-                        Еще он следит за активностью в групповых чатах и выдает ачивки.
+                        <strong>Бот — важное дополнение к Клубу.</strong>
+                        Он оповещает о новых комментариях, через него можно отвечать на них и даже писать посты, форвардя ему сообщения.
                     </p>
 
-                    <p id="telegram-auth-data" style="font-weight: bold">
+                    <p>
+                        На него завязано много фич и мы очень рекомендуем его подключить.
+                    </p>
+
+                    <p id="telegram-auth-data" style="font-weight: bold;">
                         {% if form.instance.telegram_id %}
-                           Сейчас привязан аккаунт: {{ form.instance.telegram_data.username }}
+                           Сейчас привязан аккаунт: {{ form.instance.telegram_data.username }} ✅
                         {% endif %}
                     </p>
 
@@ -161,7 +164,7 @@
                     </p>
 
                     <p>
-                        ☝️ Если кнопки сверху не видно, значит у вас очень злой AdBlock. Отключите его, у нас тут всё равно нет рекламы.
+                        ☝️ Если кнопки сверху не видно, значит это либо ваш AdBlock, либо Роскомнадзор опять ломает вам интернет.
                     </p>
                 </div>
             </div>

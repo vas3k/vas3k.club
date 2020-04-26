@@ -35,6 +35,8 @@ Here's our public [Trello Board](https://trello.com/b/SAbS5JiI/) with all TODO's
 
 If you want to report a bug, propose an idea or feature — [open an issue](https://github.com/vas3k/vas3k.club/issues) with a specific label.
 
+The official development language at the moment is Russian, because 100% of our users speak it. But we are used to writing commits and comments in English and we won't mind communicating in it.
+
 ## License 
 
 MIT

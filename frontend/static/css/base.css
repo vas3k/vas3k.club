@@ -13,14 +13,19 @@
         margin: 0 auto;
         max-width: 80%;
         padding: 20px 0;
+        font-size: 120%;
     }
+
+        .block-description > p:first-child {
+            margin-top: 0;
+        }
 
     .block-header {
         display: block;
         font-size: 180%;
         font-weight: 600;
         text-align: center;
-        padding-top: 80px;
+        padding-top: 30px;
     }
 
     @media only screen and (max-width : 570px) {
@@ -418,6 +423,18 @@ input[type=range]:focus::-ms-fill-upper {
 
         }
 
+.simple-grid-2-auto {
+    display: grid;
+    grid-template-columns: minmax(auto, min-content) minmax(auto, max-content);
+    grid-column-gap: 20px;
+}
+
+    @media only screen and (max-width : 570px) {
+        .simple-grid-2-auto {
+            grid-template-columns: auto;
+        }
+    }
+
 .ratio-16-9 {
     display: block;
     width: 100%;
@@ -463,16 +480,6 @@ input[type=range]:focus::-ms-fill-upper {
 
 .with-underline {
     text-decoration: underline;
-}
-
-.battle-side-a-color {
-    color: #4C98D5;
-    text-decoration-color: #4C98D5;
-}
-
-.battle-side-b-color {
-    color: #53AA68;
-    text-decoration-color: #53AA68;
 }
 
 @media only screen and (max-width : 570px) {
