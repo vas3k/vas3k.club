@@ -108,6 +108,9 @@ def approve_user_profile(user_id: str, update: Update) -> (str, bool):
 
 def reject_user_profile(user_id: str, update: Update) -> (str, bool):
     user = User.objects.get(id=user_id)
+    if user.is_profile_rejected and user.is_profile_complete:
+        return f"Пользователь «{user.full_name}» уже был отклонен и пошел все переделывать", True
+
     user.is_profile_complete = True
     user.is_profile_reviewed = True
     user.is_profile_rejected = True
