@@ -1,14 +1,16 @@
+import random
 from datetime import timedelta, datetime
 
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 
-from comments.models import Comment
+from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
-from posts.models import Post
+from posts.models import Post, PostVote
 from users.models import User
 
 
@@ -79,12 +81,56 @@ def daily_digest(request, user_slug):
 
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=1)
+    if end_date.weekday() == 1:
+        # we don't have daily on mondays and weekends, we need to include all these posts
+        start_date = end_date - timedelta(days=4)
 
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
     # Moon
     moon_phase = parse_horoscope()
+
+    # New actions
+    post_comment_actions = Comment.visible_objects()\
+        .filter(
+            post__author=user,
+            **created_at_condition
+        )\
+        .values("post__type", "post__slug", "post__title")\
+        .annotate(count=Count("id"))\
+        .order_by()
+    reply_actions = Comment.visible_objects()\
+        .filter(
+            reply_to__author=user,
+            **created_at_condition
+        )\
+        .values("post__type", "post__slug", "post__title")\
+        .annotate(count=Count("reply_to_id"))\
+        .order_by()
+    upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
+        + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
+
+    new_events = [
+        {
+            "type": "post_comment",
+            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
+            "post_title": e["post__title"],
+            "count": e["count"],
+        } for e in post_comment_actions
+    ] + [
+        {
+            "type": "reply",
+            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
+            "post_title": e["post__title"],
+            "count": e["count"],
+        } for e in reply_actions
+    ] + [
+        {
+            "type": "upvotes",
+            "count": upvotes,
+        }
+    ]
 
     # Best posts
     posts = Post.visible_objects()\
@@ -108,6 +154,7 @@ def daily_digest(request, user_slug):
 
     return render(request, "emails/daily.html", {
         "user": user,
+        "events": new_events,
         "intros": intros,
         "posts": posts,
         "comments": comments,

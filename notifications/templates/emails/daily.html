@@ -54,16 +54,16 @@
         font-weight: 400;
         margin: 70px 0 100px;
     }
+
         .user-avatar {
-            width: 80px;
-            height: 80px;
-            min-width: 80px;
-            min-height: 80px;
+            width: 75px;
+            height: 75px;
+            min-width: 75px;
+            min-height: 75px;
             vertical-align: middle;
             display: inline-block;
             margin: 0;
             border-radius: 50%;
-            margin-bottom: 10px;
         }
 
     .avatar-small {
@@ -100,6 +100,17 @@
         line-height: 1.4em;
         margin: 0 auto 100px;
     }
+
+    .events-list {
+        list-style-type: none;
+        padding-left: 10px;
+    }
+
+        .events-item {
+            padding-top: 10px;
+            padding-bottom: 15px;
+            display: block;
+        }
 
     @media only screen and (max-width : 570px) {
         h2 {
@@ -143,8 +154,22 @@
         {% endif %}
 
         <p>
-            Вот вам подборка самых лучших и важных событий за вчера.
+            Вот подборка самых важных событий в Клубе за день, специально для вас.
         </p>
+
+        {% if events %}
+        <ul class="events-list">
+            {% for event in events|slice:":10" %}
+                {% if event.type == "post_comment" %}
+                    <li class="events-item">💭 <strong>{{ event.count }} {{ event.count | rupluralize:"новый комментарий,новых комментария,новых комментариев" }}</strong> к вашему посту <a href="{{ event.post_url }}">{{ event.post_title }}</a></li>
+                {% elif event.type == "reply" %}
+                    <li class="events-item">👉 <strong>{{ event.count }} {{ event.count | rupluralize:"ответ,ответа,ответов" }}</strong> на ваш комментарий к посту <a href="{{ event.post_url }}">{{ event.post_title }}</a></li>
+                {% elif event.type == "upvotes" %}
+                    <li class="events-item">💎 Вы получили <strong>{{ event.count }} {{ event.count | rupluralize:"новый плюсик,новых плюсика,новых плюсиков" }}</strong> за посты и комменты</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% endif %}
     </article>
 
     {% if posts %}
