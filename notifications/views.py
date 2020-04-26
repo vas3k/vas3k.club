@@ -39,6 +39,41 @@ def email_unsubscribe(request, user_id, secret):
     })
 
 
+def email_digest_switch(request, digest_type, user_id, secret):
+    user = get_object_or_404(User, id=user_id, secret_hash=secret)
+
+    new_digest_type = dict(User.EMAIL_DIGEST_TYPES).get(digest_type)
+    if not new_digest_type:
+        return Http404()
+
+    user.email_digest_type = new_digest_type
+    user.save()
+
+    if new_digest_type == User.EMAIL_DIGEST_TYPE_DAILY:
+        return render(request, "message.html", {
+            "title": "🔥 Теперь вы будете получать дейли-дайджест",
+            "message": "Офигенно. "
+                       "Теперь каждое утро вам будет приходить ваша персональная подборка всего нового в Клубе."
+        })
+    elif new_digest_type == User.EMAIL_DIGEST_TYPE_WEEKLY:
+        return render(request, "message.html", {
+            "title": "📅 Теперь вы получаете только еженедельный журнал",
+            "message": "Раз в неделю вам будет приходить подбрка лучшего контента в Клубе за эту неделю. "
+                       "Это удобно, качественно и не отнимает ваше время."
+        })
+    elif new_digest_type == User.EMAIL_DIGEST_TYPE_NOPE:
+        return render(request, "message.html", {
+            "title": "🙅‍♀️ Вы отписались от рассылок Клуба",
+            "message": "Мы ценим ваше время, потому отписали вас от наших рассылок контента. "
+                       "Можете следить за новыми постами в телеграме или через бота."
+        })
+    else:
+        return render(request, "message.html", {
+            "title": "Данные подписки изменены",
+            "message": ""
+        })
+
+
 def daily_digest(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
@@ -54,7 +89,7 @@ def daily_digest(request, user_slug):
     # Best posts
     posts = Post.visible_objects()\
         .filter(is_approved_by_moderator=True, **published_at_condition)\
-        .exclude(type__in=[Post.TYPE_WEEKLY_DIGEST])\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:100]
 
     # Best comments
@@ -67,6 +102,9 @@ def daily_digest(request, user_slug):
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")
+
+    if not posts and not comments and not intros:
+        raise Http404()
 
     return render(request, "emails/daily.html", {
         "user": user,

@@ -247,7 +247,7 @@
             </article>
         {% endfor %}
 
-        {% if intros|slice:"3:" %}
+        {% if intros|slice:"1:" %}
             <p style="font-size: 19px; line-height: 1.4em;">
                 и другие:
                 {% for intro in intros|slice:"1:" %}
@@ -266,6 +266,6 @@
 
 {% block footer %}
     <p>
-        Напоминаем, что вы всегда можете перейти на еженедельный дайджест или отписаться от них <a href="{{ settings.APP_HOST }}/users/%username%/edit/#digest-settings">в настройках профиля</a>.
+        Напоминаем, что вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">отписаться от всех дайджестов</a> или <a href="{{ settings.APP_HOST }}/notifications/switch/weekly/%user_id%/%secret_code%/">перейти на еженедельный журнал</a> чтобы получать только лучший контент за неделю.
     </p>
 {% endblock %}

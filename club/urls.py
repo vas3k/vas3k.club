@@ -8,7 +8,7 @@ from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, pin_comment
 from landing.views import landing, docs, god_settings
-from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest
+from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired
 from posts.views import compose, compose_type, show_post, feed, upvote_post, edit_post, admin_post, announce_post
 from posts.sitemaps import PublicPostsSitemap
@@ -63,6 +63,8 @@ urlpatterns = [
 
     path("notifications/confirm/<str:user_id>/<str:secret>/", email_confirm, name="email_confirm"),
     path("notifications/unsubscribe/<str:user_id>/<str:secret>/", email_unsubscribe, name="email_unsubscribe"),
+    path("notifications/switch/<str:digest_type>/<str:user_id>/<str:secret>/", email_digest_switch,
+         name="email_digest_switch"),
     path("notifications/renderer/digest/weekly/", weekly_digest, name="render_weekly_digest"),
     path("notifications/renderer/digest/daily/<slug:user_slug>/", daily_digest, name="render_daily_digest"),
 
