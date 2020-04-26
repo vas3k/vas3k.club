@@ -105,6 +105,7 @@ class Post(models.Model, ModelDiffMixin):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_activity_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    published_at = models.DateTimeField(null=True, db_index=True)
 
     comment_count = models.IntegerField(default=0)
     view_count = models.IntegerField(default=0)
@@ -164,6 +165,10 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def description(self):
         return truncatechars(strip_tags(self.html or ""), 400)
+
+    @property
+    def effective_published_at(self):
+        return self.published_at or self.created_at
 
     @classmethod
     def check_duplicate(cls, user, title):

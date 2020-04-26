@@ -53,6 +53,7 @@ def approve_post(post_id: str, update: Update) -> (str, bool):
     post = Post.objects.get(id=post_id)
     post.is_approved_by_moderator = True
     post.last_activity_at = datetime.utcnow()
+    post.published_at = datetime.utcnow()
     post.save()
 
     notify_post_author_approved(post)
@@ -68,6 +69,7 @@ def approve_post(post_id: str, update: Update) -> (str, bool):
 def forgive_post(post_id: str, update: Update) -> (str, bool):
     post = Post.objects.get(id=post_id)
     post.is_approved_by_moderator = False
+    post.published_at = datetime.utcnow()
     post.save()
 
     return f"😕 Пост «{post.title}» не одобрен, но оставлен на сайте ({update.effective_user.full_name})", True
