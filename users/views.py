@@ -9,8 +9,8 @@ from notifications.telegram.users import notify_profile_needs_review
 from posts.models import Post
 from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
-from users.forms.profile import UserEditForm, ExpertiseForm
 from users.forms.intro import UserIntroForm
+from users.forms.profile import UserEditForm, ExpertiseForm
 from users.models import User, UserBadge, UserExpertise, UserTag, Tag
 
 

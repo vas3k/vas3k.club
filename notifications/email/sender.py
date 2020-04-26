@@ -13,7 +13,7 @@ def send_club_email(recipient, subject, html, tags):
             "subject": subject,
             "html": prepare_letter(html, base_url=settings.APP_HOST),
             "tags": tags,
-            "text": "Похоже, ваш почтовый клиент не умеет HTML",
+            "text": "Похоже, ваш почтовый клиент не умеет в HTML. Откройте письмо в другом",
         }
     )
 

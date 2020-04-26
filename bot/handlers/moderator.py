@@ -5,7 +5,7 @@ from django.urls import reverse
 from telegram import Update
 
 from bot.common import send_telegram_message, ADMIN_CHAT, remove_action_buttons
-from notifications.email.users import send_welcome_drink
+from notifications.email.users import send_welcome_drink, send_rejected_email
 from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models import Post
@@ -112,6 +112,7 @@ def reject_user_profile(user_id: str, update: Update) -> (str, bool):
     user.save()
 
     notify_user_profile_rejected(user)
+    send_rejected_email(user)
 
     return f"❌ Пользователь «{user.full_name}» отклонен ({update.effective_user.full_name})", True
 

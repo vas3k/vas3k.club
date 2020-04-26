@@ -1,0 +1,91 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    h1, h2, h3, header {
+        text-align: left;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 17px 30px;
+        box-sizing: border-box;
+        text-decoration: none;
+        border-radius: 20px;
+        background-color: #000;
+        border: solid 2px #000;
+        color: #FFF;
+        text-align: center;
+        cursor: pointer;
+        line-height: 1em;
+        font-size: 25px;
+        margin: 20px 0 30px;
+    }
+
+        .button:hover {
+            color: #000 !important;
+            background-color: #FFF !important;
+            border-color: #000 !important;
+        }
+
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block logo %}
+<a href="https://vas3k.club">
+    <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
+</a>
+{% endblock %}
+
+{% block title %}
+    😐 Мы не можем пустить вас в таком виде
+{% endblock %}
+
+{% block body %}
+    <p>
+        К сожалению, ваш профиль не прошел ревью наших модераторов. Вот популярные причины почему так бывает:
+    </p>
+
+    <ul>
+        <li>📝 Плохо написано #intro. Одного-двух предложений обычно мало</li>
+        <li>🤪 Вымышленное имя или профессия (например, Олег)</li>
+        <li>🤔 Много незаполненных полей</li>
+    </ul>
+
+    <br><br>
+
+    <p>
+        Клуб — не место для анонимусов. Когда вы приглашаете гостей к себе в дом, вы и другие гости хотят узнать кто они.
+        Мы уважаем приватность участников, потому не спрашиваем резюме или СНИЛС.
+        Мы лишь хотим услышать вашу честную историю. У каждого она есть.
+    </p>
+
+    <p>
+        Вот ссылка чтобы исправить анкету и податься на ревью еще раз 👇
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "intro" %}" class="button">Податься на ревью еще раз</a>
+    </p>
+
+    <br><br><br>
+{% endblock %}
