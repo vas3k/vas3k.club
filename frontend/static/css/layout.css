@@ -142,36 +142,11 @@
     }
 
 .user-small {
-    display: grid;
-    grid-template-columns: 55px auto;
-    grid-template-rows: auto auto;
-    justify-content: left;
+    display: flex;
 }
 
     .user-small .user-avatar {
-        display: inline-block;
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 1;
-        grid-row-end: 3;
-        justify-self: start;
-    }
-
-    .user-small .user-info {
-        display: inline-block;
-        grid-column-start: 2;
-        grid-column-end: 3;
-        grid-row-start: 1;
-        grid-row-end: 2;
-        justify-self: start;
-    }
-
-    .user-small .user-footer {
-        grid-column-start: 2;
-        grid-column-end: 3;
-        grid-row-start: 2;
-        grid-row-end: 3;
-        justify-self: start;
+        min-width: 55px;
     }
 
 .post-layout-block {
@@ -218,7 +193,7 @@
         grid-column-start: 1;
         grid-column-end: 3;
         grid-row-start: 3;
-        grid-row-end: 4;
+        grid-row-end: 5;
         justify-self: start;
     }
 
