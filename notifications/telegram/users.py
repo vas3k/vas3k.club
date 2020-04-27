@@ -10,6 +10,7 @@ def notify_profile_needs_review(user, intro):
     send_telegram_message(
         chat=ADMIN_CHAT,
         text=render_html_message("moderator_need_review.html", user=user, intro=intro),
+        parse_mode=telegram.ParseMode.HTML,
         reply_markup=telegram.InlineKeyboardMarkup([
             [
                 telegram.InlineKeyboardButton("👍 Впустить", callback_data=f"approve_user:{user.id}"),
