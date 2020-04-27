@@ -17,7 +17,7 @@ CLUB_CHANNEL = Chat(id=settings.TELEGRAM_ONLINE_CHANNEL_ID)
 def send_telegram_message(
     chat: Chat,
     text: str,
-    parse_mode: ParseMode = telegram.ParseMode.MARKDOWN,
+    parse_mode: ParseMode = telegram.ParseMode.HTML,
     disable_preview: bool = True,
     **kwargs
 ):

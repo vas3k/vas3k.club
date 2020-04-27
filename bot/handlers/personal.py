@@ -171,10 +171,10 @@ def continue_posting(update: Update, started_post: dict, user: User):
         send_telegram_message(
             chat=Chat(id=update.effective_chat.id),
             text=f"Заголовок принят. Теперь пост выглядит как-то так:\n\n"
-                 f"{emoji} *{started_post['title']}*\n\n"
+                 f"{emoji} <b>{started_post['title']}</b>\n\n"
                  f"{started_post['text'] or ''}\n\n"
                  f"{started_post['url'] or ''}\n\n"
-                 f"*Будем постить?* (после публикации его можно будет подредактировать на сайте)",
+                 f"<b>Будем постить?</b> (после публикации его можно будет подредактировать на сайте)",
             reply_markup=telegram.InlineKeyboardMarkup([
                 [
                     telegram.InlineKeyboardButton("✅ Поехали", callback_data=f"go"),

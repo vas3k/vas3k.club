@@ -26,7 +26,6 @@ def async_create_or_update_post(post, is_created):
         send_telegram_message(
             chat=ADMIN_CHAT,
             text=render_html_message("moderator_post.html", post=post),
-            parse_mode=telegram.ParseMode.HTML,
             reply_markup=telegram.InlineKeyboardMarkup([
                 [
                     telegram.InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),

@@ -32,7 +32,7 @@ def async_create_or_update_user(user, created):
         # new user registered
         send_telegram_message(
             chat=ADMIN_CHAT,
-            text=f"👶 *Зарегался новенький:* [{user.full_name}]({user_profile_url}) ({user.slug})\n"
+            text=f"👶 <b>Зарегался новенький:</b> <a href=\"{user_profile_url}\">{user.slug}</a>"
         )
 
     # Temporarily turned off
