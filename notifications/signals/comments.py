@@ -1,3 +1,5 @@
+import re
+
 import telegram
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -5,6 +7,9 @@ from django_q.tasks import async_task
 
 from bot.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_CHAT
 from comments.models import Comment
+from users.models import User
+
+USERNAME_RE = re.compile(r"@([A-Za-z0-9_]+)")
 
 
 @receiver(post_save, sender=Comment)
@@ -33,6 +38,7 @@ def async_create_or_update_comment(comment, is_created):
         )
 
     # on reply — notify thread author (do not notify yourself)
+    thread_author = None
     if comment.reply_to:
         thread_author = comment.reply_to.author
         if comment.reply_to_id and thread_author.telegram_id and comment.author != thread_author:
@@ -50,4 +56,12 @@ def async_create_or_update_comment(comment, is_created):
     #         parse_mode=telegram.ParseMode.HTML,
     #     )
 
-    # TODO: parse if comment starts with @nickname and notify users
+    # parse @nicknames and notify their users
+    for username in USERNAME_RE.findall(comment.text):
+        user = User.objects.filter(slug=username).first()
+        if user and user.telegram_id and user != post_author and user != thread_author:
+            send_telegram_message(
+                chat=Chat(id=user.telegram_id),
+                text=render_html_message("comment_mention.html", comment=comment),
+                parse_mode=telegram.ParseMode.HTML,
+            )

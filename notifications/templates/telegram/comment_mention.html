@@ -1,0 +1,5 @@
+💬 <b>Кто-то упомянул вас в комментарии под постом «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}">{{ comment.post.title }}</a>»</b>
+
+{% load posts %}<b>{{ comment.author.slug }}:</b> {% render_plain comment %}
+
+<a href="{{ settings.APP_HOST }}{% url "show_comment" comment.post.slug comment.id %}">Посмотреть ➜</a>
