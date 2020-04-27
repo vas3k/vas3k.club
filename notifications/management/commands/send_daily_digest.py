@@ -15,6 +15,9 @@ log = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = "Send daily digest to subscribers"
 
+    def add_arguments(self, parser):
+        parser.add_argument("--production", nargs=1, type=bool, required=False, default=False)
+
     def handle(self, *args, **options):
         # select daily subscribers
         subscribed_users = User.objects\
@@ -27,8 +30,9 @@ class Command(BaseCommand):
             .exclude(is_email_unsubscribed=True)
 
         for user in subscribed_users:
-            # if user.email != "me@vas3k.ru":
-            #     continue
+            if not options.get("production") and user.email != "me@vas3k.ru":
+                self.stdout.write("Test mode. Use --production to send the digest to all users")
+                continue
 
             # render user digest using a special html endpoint
             digest_url = "https://vas3k.club" + reverse("render_daily_digest", kwargs={"user_slug": user.slug})

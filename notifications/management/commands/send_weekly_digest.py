@@ -17,6 +17,9 @@ log = logging.getLogger(__name__)
 class Command(BaseCommand):
     help = "Send weekly digest to subscribers"
 
+    def add_arguments(self, parser):
+        parser.add_argument("--production", nargs=1, type=bool, required=False, default=False)
+
     def handle(self, *args, **options):
         # render digest using a special html endpoint
         digest_url = "https://vas3k.club" + reverse("render_weekly_digest")
@@ -59,8 +62,9 @@ class Command(BaseCommand):
         for user in subscribed_users:
             self.stdout.write(f"Sending to {user.email}...")
 
-            # if settings.DEBUG and user.email != "me@vas3k.ru":
-            #     continue
+            if not options.get("production") and user.email != "me@vas3k.ru":
+                self.stdout.write("Test mode. Use --production to send the digest to all users")
+                continue
 
             try:
                 user_digest_html = str(digest_html)
@@ -80,7 +84,8 @@ class Command(BaseCommand):
                 log.exception(f"Error while sending an email to {user.email}")
                 continue
 
-        # flush digest intro for next time
-        GodSettings.objects.update(digest_intro=None)
+        if options.get("production"):
+            # flush digest intro for next time
+            GodSettings.objects.update(digest_intro=None)
 
         self.stdout.write("Done 🥙")
