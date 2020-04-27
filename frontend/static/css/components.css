@@ -977,6 +977,18 @@
     cursor: pointer;
 }
 
+    .feed-post a {
+        z-index: 1;
+    }
+
+    .feed-post .block-link {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0;
+    }
+
     .feed-post:hover {
         box-shadow: 0 0 40px rgba(94, 104, 125, 0.3);
     }
