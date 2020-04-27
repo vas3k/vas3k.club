@@ -6,7 +6,7 @@
 
     <div class="feed-post-header">
         <div class="feed-post-title">
-            <span>{{ post.title }}</span>
+            <a href="{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
             {% if post.label %}
                 {% include "posts/common/label.html" with label=post.label %}
             {% endif %}

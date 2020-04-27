@@ -992,6 +992,7 @@
 
     .feed-post-votes {
         padding-left: 10px;
+        z-index: 1;
     }
 
     .feed-post-header {
@@ -1022,6 +1023,7 @@
         height: 52px;
         border: solid 3px var(--block-bg-color);
         text-align: left;
+        z-index: 1;
     }
 
     .feed-post-image {
@@ -1104,10 +1106,6 @@
     padding: 0 0 20px 0;
     margin-left: 40px;
 }
-
-    .feed-post-type-intro a {
-        z-index: 1;
-    }
 
     .feed-post-type-intro .feed-post-header,
     .feed-post-type-weekly_digest .feed-post-header {
