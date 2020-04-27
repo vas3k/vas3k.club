@@ -1113,8 +1113,7 @@
     margin-left: 40px;
 }
 
-    .feed-post-type-intro a,
-    .feed-post-type-intro .feed-post-author {
+    .feed-post-type-intro a {
         z-index: 1;
     }
 
