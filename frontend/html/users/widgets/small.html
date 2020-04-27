@@ -9,10 +9,10 @@
             <span class="user-name">{{ user.full_name }}</span>{% if me %}<span class="user-position">, {{ user.position }}</span>{% endif %}
             {% if user.hat %}{% include "users/widgets/hat.html" with hat=user.hat %}{% endif %}
         </a>
+        {% if created_at %}
+            <div class="user-footer">
+                {{ created_at | date:"d E Y" }}
+            </div>
+        {% endif %}
     </span>
-    {% if created_at %}
-        <span class="user-footer">
-            {{ created_at | date:"d E Y" }}
-        </span>
-    {% endif %}
 </div>
