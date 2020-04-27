@@ -190,8 +190,6 @@
                 {% endfor %}
             </p>
         {% endif %}
-
-        <br><br>
     {% endif %}
 
     {% if featured_post %}
@@ -216,8 +214,6 @@
                 | {{ featured_post.comment_count }}&nbsp;{{ featured_post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
             </span>
         </article>
-
-        <br><br>
     {% endif %}
 
     {% if posts %}
@@ -259,8 +255,6 @@
                 </span>
             </article>
         {% endfor %}
-
-        <br><br><br>
     {% endif %}
 
     {% if comments %}
@@ -322,7 +316,7 @@
         {% endif %}
     {% endif %}
 
-    <br><br><br>
+    <br>
 
     <h2>На этом всё 👋</h2>
 

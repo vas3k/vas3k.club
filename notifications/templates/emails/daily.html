@@ -215,8 +215,6 @@
         {% if posts|slice:"5:" %}
             <p style="font-size: 19px; line-height: 1.4em;">и еще <a href="">{{ posts|slice:"5:"|length }} {{ posts|slice:"5:"|length|rupluralize:"новый пост,новых поста,новых постов" }}</a>, которые можно посмотреть на главной</p>
         {% endif %}
-
-        <br><br><br>
     {% endif %}
 
     {% if comments %}
@@ -240,8 +238,6 @@
                 </div>
             </article>
         {% endfor %}
-
-        <br><br><br>
     {% endif %}
 
     {% if intros %}
@@ -282,7 +278,7 @@
         {% endif %}
     {% endif %}
 
-    <br><br><br>
+    <br>
 
     <h2>Хорошего дня 😘</h2>
 
