@@ -127,6 +127,7 @@
         grid-row-end: 3;
         justify-self: start;
         align-self: start;
+        z-index: 1;
     }
 
 .profile-card {

@@ -977,6 +977,10 @@
     cursor: pointer;
 }
 
+    .feed-post a {
+        z-index: 1;
+    }
+
     .feed-post:hover {
         box-shadow: 0 0 40px rgba(94, 104, 125, 0.3);
     }
@@ -988,6 +992,7 @@
 
     .feed-post-votes {
         padding-left: 10px;
+        z-index: 1;
     }
 
     .feed-post-header {
@@ -1018,6 +1023,7 @@
         height: 52px;
         border: solid 3px var(--block-bg-color);
         text-align: left;
+        z-index: 1;
     }
 
     .feed-post-image {

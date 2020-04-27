@@ -1,6 +1,6 @@
 {% load posts %}
 {% load text_filters %}
-<div class="block feed-post {% css_classes post %}" onclick="redirect('{% url "show_post" post.type post.slug %}')">
+<div class="block feed-post {% css_classes post %}">
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
@@ -35,4 +35,5 @@
             {% endif %}
         </a>
     </div>
+    <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
 </div>
