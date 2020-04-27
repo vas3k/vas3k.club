@@ -6,7 +6,7 @@
 
     <div class="feed-post-header">
         <div class="feed-post-title">
-            <a href="{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
+            <span>{{ post.title }}</span>
             {% if post.label %}
                 {% include "posts/common/label.html" with label=post.label %}
             {% endif %}
@@ -19,5 +19,6 @@
                 </a>
             {% endif %}
         </div>
+        <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
     </div>
 </div>

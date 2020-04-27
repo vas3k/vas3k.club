@@ -1101,6 +1101,19 @@
     margin-left: 40px;
 }
 
+    .feed-post-type-intro a,
+    .feed-post-type-intro .feed-post-author {
+        z-index: 1;
+    }
+
+    .feed-post-type-intro .block-link {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0;
+    }
+
     .feed-post-type-intro .feed-post-header,
     .feed-post-type-weekly_digest .feed-post-header {
         padding: 0;
