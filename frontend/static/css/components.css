@@ -112,7 +112,7 @@
         height: 30px;
         text-align: center;
         line-height: 30px;
-        color: #000;
+        color: var(--text-color);
         text-decoration: none;
         margin-right: 10px;
         padding: 10px;
@@ -120,7 +120,7 @@
 
         .paginator-page-active {
             background-color: var(--opposite-bg-color);
-            color: var(--text-color);
+            color: var(--opposite-text-color);
         }
 
 .doc {
