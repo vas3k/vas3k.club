@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Fix broken telegram admin"
+    help = "Fix broken or stuck review messages"
 
     def handle(self, *args, **options):
         users = User.objects.filter(is_profile_complete=True, is_profile_reviewed=False, is_profile_rejected=False)
