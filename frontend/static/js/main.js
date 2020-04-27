@@ -1,7 +1,3 @@
-function redirect(url) {
-    location.href = url;
-}
-
 function ajaxify(e, callback) {
     e.preventDefault();
     e.stopPropagation();
