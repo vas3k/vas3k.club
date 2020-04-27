@@ -235,5 +235,5 @@ def weekly_digest(request):
         "top_video_post": top_video_post,
         "featured_post": featured_post,
         "author_intro": author_intro,
-        "issue_number": (start_date - settings.LAUNCH_DATE).days // 7 + 1
+        "issue_number": (end_date - settings.LAUNCH_DATE).days // 7
     })
