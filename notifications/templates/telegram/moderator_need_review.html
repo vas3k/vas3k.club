@@ -1,8 +1,9 @@
-{% load posts %}👮‍♂️ <b>Нужно ревью для профиля:</b> <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{user.slug}</a>
+{% load posts %}👮‍♂️ <b>Нужно ревью для профиля:</b> <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{{ user.slug }}</a>
 
 <b>Имя:</b> {{ user.full_name }}
 <b>Работа:</b> {{ user.position }} {{ user.company }}
 <b>Город:</b> {{ user.city }} {{ user.country }}
 <b>Био:</b> {{ user.bio }}
+
 <b>Интро:</b>
 <pre>{% render_plain intro 1000 %}</pre>
