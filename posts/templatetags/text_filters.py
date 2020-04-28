@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
-from common.markdown.club_renderer import YOUTUBE_RE
+from common.regexp import YOUTUBE_RE
 from common.markdown.markdown import markdown_text
 
 register = template.Library()

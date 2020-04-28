@@ -1,10 +1,6 @@
-import re
-
 from django.template import loader
 
-from common.markdown.club_renderer import YOUTUBE_RE
-
-IMAGE_RE = re.compile(r"(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|ico)")
+from common.regexp import YOUTUBE_RE
 
 CUSTOM_ICONS = {
     "www.youtube.com": """<i class="fab fa-youtube"></i>""",

@@ -1,14 +1,11 @@
-import re
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from bot.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_CHAT
+from bot.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message
 from comments.models import Comment
+from common.regexp import USERNAME_RE
 from users.models import User
-
-USERNAME_RE = re.compile(r"@([A-Za-z0-9_]+)")
 
 
 @receiver(post_save, sender=Comment)

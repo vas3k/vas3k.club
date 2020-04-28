@@ -1,17 +1,15 @@
-import re
-
 import mistune
 from mistune import escape_html
 
-IMAGE_RE = re.compile(r"(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)")
-VIDEO_RE = re.compile(r"(http(s?):)([/|.|\w|\s|-])*\.(?:mov|mp4)")
-YOUTUBE_RE = re.compile(
-    r"http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"
-)
-TWITTER_RE = re.compile(r"(https?:\/\/twitter.com\/[a-zA-Z0-9_]+\/status\/[\d]+)")
+from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
 
 class ClubRenderer(mistune.HTMLRenderer):
+    def text(self, text):
+        text = escape_html(text)
+        text = USERNAME_RE.sub(r'<a href="/user/\1/">@\1</a>', text)
+        return text
+
     def link(self, link, text=None, title=None):
         if IMAGE_RE.match(link):
             return self.image(link, text or "", title or "")

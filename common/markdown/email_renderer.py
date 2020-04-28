@@ -1,6 +1,7 @@
 from mistune import escape_html
 
-from common.markdown.club_renderer import ClubRenderer, YOUTUBE_RE
+from common.markdown.club_renderer import ClubRenderer
+from common.regexp import YOUTUBE_RE
 
 
 class EmailRenderer(ClubRenderer):
