@@ -82,8 +82,8 @@ def daily_digest(request, user_slug):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=1)
     if end_date.weekday() == 1:
-        # we don't have daily on mondays and weekends, we need to include all these posts
-        start_date = end_date - timedelta(days=4)
+        # we don't have daily on mondays and weekends, we need to include all these posts at tuesday
+        start_date = end_date - timedelta(days=3)
 
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
