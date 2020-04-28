@@ -834,10 +834,7 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                }
-
-                .feed-sidebar-topics .topic-wrapper {
-                    height: 50%;
+                    height: 80%;
                 }
 
                 .feed-sidebar-topics .topic-name {
