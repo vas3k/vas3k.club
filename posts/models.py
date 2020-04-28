@@ -142,6 +142,9 @@ class Post(models.Model, ModelDiffMixin):
         if not self.slug:
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
 
+        if not self.published_at and self.is_visible:
+            self.published_at = datetime.utcnow()
+
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
     
