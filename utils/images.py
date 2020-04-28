@@ -4,7 +4,7 @@ import os
 from urllib.parse import urlparse
 
 import requests
-from PIL import Image
+from PIL import Image, ExifTags
 from django.conf import settings
 
 log = logging.getLogger(__name__)
@@ -30,6 +30,11 @@ def upload_image_bytes(
                 convert_extension = ".jpg"
         else:
             _, convert_extension = os.path.splitext(filename)
+
+        try:
+            image = auto_rotate_by_exif(image)
+        except (IOError, KeyError, AttributeError) as ex:
+            log.warn(f"Auto-rotation error: {ex}")
 
         image.thumbnail(resize)
         saved_image = io.BytesIO()
@@ -78,3 +83,31 @@ def upload_image_from_url(url, resize=(192, 192), convert_format="JPEG", quality
         return None
 
     return upload_image_bytes(image_name, image_data, resize, convert_format)
+
+
+ORIENTATION_NORM = 1
+ORIENTATION_UPSIDE_DOWN = 3
+ORIENTATION_RIGHT = 6
+ORIENTATION_LEFT = 8
+
+
+def auto_rotate_by_exif(image):
+    orientation = None
+    for orientation in ExifTags.TAGS.keys():
+        if ExifTags.TAGS[orientation] == 'Orientation':
+            break
+
+    if hasattr(image, '_getexif'):  # only present in JPEGs
+        exif = image._getexif()        # returns None if no EXIF data
+        if exif is not None:
+            exif = dict(exif.items())
+            orientation = exif[orientation]
+
+            if orientation == ORIENTATION_UPSIDE_DOWN:
+                return image.transpose(Image.ROTATE_180)
+            elif orientation == ORIENTATION_RIGHT:
+                return image.transpose(Image.ROTATE_270)
+            elif orientation == ORIENTATION_LEFT:
+                return image.transpose(Image.ROTATE_90)
+
+    return image
