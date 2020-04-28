@@ -54,7 +54,7 @@ class Command(BaseCommand):
             try:
                 send_club_email(
                     recipient=user.email,
-                    subject=f"Ежедневный дайджест за {date(datetime.utcnow(), 'd E')}",
+                    subject=f"Дайджест за {date(datetime.utcnow(), 'd E')}",
                     html=user_digest_html,
                     tags=["daily_digest"]
                 )

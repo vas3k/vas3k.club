@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta
 
 from django.db.models import Q
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 
 from auth.helpers import auth_required, moderator_role_required, check_user_permissions
 from bot.common import render_html_message
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from comments.forms import CommentForm
-from comments.models import Comment
 from common.pagination import paginate
 from common.request import ajax_request
 from notifications.telegram.posts import announce_in_club_channel
@@ -86,8 +84,9 @@ def show_post(request, post_type, post_slug):
             return access_denied
 
     # drafts are visible only to authors and moderators
-    if not post.is_visible and request.me != post.author and not request.me.is_moderator:
-        raise Http404()
+    if not post.is_visible:
+        if not request.me or (request.me != post.author and not request.me.is_moderator):
+            raise Http404()
 
     # record a new view
     if request.me:
