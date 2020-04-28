@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Новый пост — {{ block.super }}
+    {% if mode == "edit" %}
+        Редактируем пост — {{ block.super }}
+    {% else %}
+        Новый пост — {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}

@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Новый батл — {{ block.super }}
+    {% if mode == "edit" %}
+        Редактируем батл — {{ block.super }}
+    {% else %}
+        Новый батл — {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}

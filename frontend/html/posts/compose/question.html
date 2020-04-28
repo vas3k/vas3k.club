@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Новый вопрос — {{ block.super }}
+    {% if mode == "edit" %}
+        Редактируем вопрос — {{ block.super }}
+    {% else %}
+        Новый вопрос — {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
