@@ -255,8 +255,10 @@
     .label-type-draft {
         font-size: 120%;
         background-color: var(--opposite-block-bg-color);
-        color: var(--opposite-text-color);
     }
+        .label-type-draft .label-title {
+            color: var(--opposite-text-color);
+        }
 
     .label-title {
         display: inline-block;
