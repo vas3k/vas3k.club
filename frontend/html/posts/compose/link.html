@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Новая ссылка — {{ block.super }}
+    {% if mode == "edit" %}
+        Редактируем ссылку — {{ block.super }}
+    {% else %}
+        Новая ссылка — {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}

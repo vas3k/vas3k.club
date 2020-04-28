@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Новая боль — {{ block.super }}
+    {% if mode == "edit" %}
+        Расскажи где болит&trade; — {{ block.super }}
+    {% else %}
+        Новая боль — {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}

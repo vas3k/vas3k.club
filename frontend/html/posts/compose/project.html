@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Новый проект — {{ block.super }}
+    {% if mode == "edit" %}
+        Редактируем проект — {{ block.super }}
+    {% else %}
+        Новый проект — {{ block.super }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
