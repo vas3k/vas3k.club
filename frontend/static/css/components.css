@@ -809,7 +809,6 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            align-items: flex-start;
         }
 
             .feed-sidebar-topics .topic {
@@ -820,6 +819,26 @@
                 padding: 7px;
                 font-size: 95%;
             }
+
+                @media only screen and (min-width : 570px) {
+                    .feed-sidebar-topics .topic {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        max-width: calc(50% - 24px);
+                        min-height: 130px;
+                    }
+                }
+
+                .feed-sidebar-topics .topic-name-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+
+                .feed-sidebar-topics .topic-wrapper {
+                    height: 50%;
+                }
 
                 .feed-sidebar-topics .topic-name {
                     display: inline-block;
