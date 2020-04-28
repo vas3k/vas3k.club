@@ -135,6 +135,8 @@ function initializeThemeSwitcher() {
     const theme = localStorage.getItem('theme');
     if (theme !== null) {
         themeSwitch.checked = (theme === 'dark');
+    } else if (window.matchMedia) {
+        themeSwitch.checked = window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
 }
 
