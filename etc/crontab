@@ -1,2 +1,4 @@
-0 3 * * * cd /home/vas3k/vas3k.club/vas3k_club && pipenv run python renew_subscriptions
+0 3 * * * cd /home/vas3k/vas3k.club/vas3k_club && pipenv run python renew_subscriptions >/dev/null 2>&1
+0 8 * * 2-5 cd /home/vas3k/vas3k.club/vas3k_club && pipenv run python manage.py send_daily_digest --production true >/dev/null 2>&1
+0 10 * * 1 cd /home/vas3k/vas3k.club/vas3k_club && pipenv run python manage.py send_weekly_digest --production true >/dev/null 2>&1
 0 4 * * * sudo certbot renew
