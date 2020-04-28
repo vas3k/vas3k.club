@@ -125,12 +125,15 @@ def daily_digest(request, user_slug):
             "post_title": e["post__title"],
             "count": e["count"],
         } for e in reply_actions
-    ] + [
-        {
-            "type": "upvotes",
-            "count": upvotes,
-        }
     ]
+
+    if upvotes:
+        new_events = [
+            {
+                "type": "upvotes",
+                "count": upvotes,
+            }
+        ] + new_events
 
     # Best posts
     posts = Post.visible_objects()\
