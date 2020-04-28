@@ -458,13 +458,16 @@
             font-weight: 600;
             padding-bottom: 10px;
             text-decoration: none;
+            word-break: break-word;
         }
 
+            .profile-user-fullname {
+                margin-right: 15px;
+            }
             .profile-user-nickname {
                 font-weight: 300;
-                padding-left: 15px;
                 opacity: 0.4;
-                font-size: 90%;
+                font-size: 88%;
             }
 
         .profile-user-job {
