@@ -813,22 +813,21 @@
 
             .feed-sidebar-topics .topic {
                 flex: 1 0 calc(40% - 10px);
-                margin-right: 10px;
                 margin-top: 10px;
                 text-align: center;
                 padding: 7px;
                 font-size: 95%;
             }
 
-                @media only screen and (min-width : 570px) {
-                    .feed-sidebar-topics .topic {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        max-width: calc(50% - 24px);
-                        min-height: 130px;
-                    }
+                .feed-sidebar-topics .topic {
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    max-width: calc(50% - 5px);
+                    min-height: 130px;
                 }
+
 
                 .feed-sidebar-topics .topic-name-wrapper {
                     display: flex;
