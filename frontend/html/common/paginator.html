@@ -12,7 +12,7 @@
         {% endif %}
 
         {% for page in page_numbers %}
-            <a href="?page={{ page }}" class="paginator-page {% if page == items.number %}paginator__page_active_yes{% endif %}">
+            <a href="?page={{ page }}" class="paginator-page {% if page == items.number %}paginator-page-active{% endif %}">
                 {{ page }}
             </a>
         {% endfor %}
