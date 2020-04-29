@@ -62,7 +62,6 @@ class Comment(models.Model):
         if self.reply_to:
             self.reply_to = self.find_top_comment(self.reply_to)
 
-        self.html = None  # flush cache
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
 

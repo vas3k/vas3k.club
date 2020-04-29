@@ -114,6 +114,7 @@ def edit_post(request, post_slug):
             post = form.save(commit=False)
             if not post.author:
                 post.author = request.me
+            post.html = None  # flush cache
             post.save()
 
             if post.is_visible:
