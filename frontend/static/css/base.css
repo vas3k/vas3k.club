@@ -505,3 +505,7 @@ input[type=range]:focus::-ms-fill-upper {
     z-index: 0 !important;
     opacity: 0;
 }
+
+.CodeMirror-line {
+    word-break: break-word !important;
+}
