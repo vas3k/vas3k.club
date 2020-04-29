@@ -809,32 +809,17 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
+            align-items: flex-start;
         }
 
             .feed-sidebar-topics .topic {
                 flex: 1 0 calc(40% - 10px);
+                margin-right: 10px;
                 margin-top: 10px;
                 text-align: center;
                 padding: 7px;
                 font-size: 95%;
             }
-
-                .feed-sidebar-topics .topic {
-                    box-sizing: border-box;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    max-width: calc(50% - 5px);
-                    min-height: 130px;
-                }
-
-
-                .feed-sidebar-topics .topic-name-wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    height: 80%;
-                }
 
                 .feed-sidebar-topics .topic-name {
                     display: inline-block;
