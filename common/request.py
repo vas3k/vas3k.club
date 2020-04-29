@@ -9,7 +9,6 @@ def parse_ip_address(request):
 
     if "," in ipaddress:  # multiple ips in the header
         ipaddress = ipaddress.split(",", 1)[0]
-
     return ipaddress
 
 

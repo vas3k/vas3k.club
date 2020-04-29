@@ -78,6 +78,15 @@
     max-width: var(--max-content-width);
 }
 
+    @media only screen and (min-device-width : 768px)
+    and (max-device-width : 1024px)
+    and (orientation : portrait) {
+        .feed {
+            grid-template-columns: 190px auto;
+            font-size: 90%;
+        }
+    }
+
     @media only screen and (max-width : 570px) {
         .feed {
             grid-template-columns: auto;
