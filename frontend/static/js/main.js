@@ -1,3 +1,5 @@
+const INITIAL_SYNC_DELAY = 50;
+
 function ajaxify(e, callback) {
     e.preventDefault();
     e.stopPropagation();
@@ -123,26 +125,30 @@ function appendMarkdownTextareaValue(textarea, value) {
 function initializeThemeSwitcher() {
     const themeSwitch = document.querySelector('.theme-switcher input[type="checkbox"]');
 
-    themeSwitch.addEventListener("change", function (e) {
-        let theme = 'light';
-        if (e.target.checked) {
-            theme = 'dark';
-        }
-        document.documentElement.setAttribute('theme', theme);
-        localStorage.setItem('theme', theme);
-    }, false);
+    themeSwitch.addEventListener(
+        "change",
+        function (e) {
+            let theme = "light";
+            if (e.target.checked) {
+                theme = "dark";
+            }
+            document.documentElement.setAttribute("theme", theme);
+            localStorage.setItem("theme", theme);
+        },
+        false
+    );
 
-    const theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem("theme");
     if (theme !== null) {
-        themeSwitch.checked = (theme === 'dark');
+        themeSwitch.checked = theme === "dark";
     } else if (window.matchMedia) {
-        themeSwitch.checked = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        themeSwitch.checked = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
 }
 
 function initializeMarkdownEditor() {
     if (isMobile()) return; // we don't need fancy features on mobiles
-
+    let allEditors = [];
     const imageUploadOptions = {
         uploadUrl: document.currentScript.getAttribute("imageUploadUrl"),
         uploadMethod: "POST",
@@ -152,8 +158,8 @@ function initializeMarkdownEditor() {
         urlText: "![]({filename})",
         errorText: "Ошибка при загрузке файла :(",
         extraParams: {
-            "code": document.currentScript.getAttribute("imageUploadCode")
-        }
+            code: document.currentScript.getAttribute("imageUploadCode"),
+        },
     };
 
     const fullMarkdownEditors = document.querySelectorAll(".markdown-editor-full");
@@ -164,7 +170,7 @@ function initializeMarkdownEditor() {
             autosave: {
                 enabled: true,
                 delay: 10000, // 10 sec
-                uniqueId: location.pathname
+                uniqueId: location.pathname,
             },
             hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
             showIcons: ["heading-2", "code"],
@@ -221,8 +227,9 @@ function initializeMarkdownEditor() {
             ],
             spellChecker: false,
             forceSync: true,
-            tabSize: 4
+            tabSize: 4,
         });
+        allEditors.push(editor);
         inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
     }
 
@@ -235,21 +242,23 @@ function initializeMarkdownEditor() {
             status: false,
             spellChecker: false,
             forceSync: true,
-            tabSize: 4
+            tabSize: 4,
         });
+        allEditors.push(editor);
         inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
     }
+    return allEditors;
 }
 
 function addTargetBlankToExternalLinks() {
     let internal = location.host.replace("www.", "");
     internal = new RegExp(internal, "i");
 
-    let a = document.getElementsByTagName('a');
+    let a = document.getElementsByTagName("a");
     for (let i = 0; i < a.length; i++) {
         let href = a[i].host;
         if (!internal.test(href)) {
-            a[i].setAttribute('target', '_blank');
+            a[i].setAttribute("target", "_blank");
         }
     }
 }
@@ -260,13 +269,24 @@ function initializeImageZoom() {
         padding: 40,
         offset: 40,
         keyboard: true,
-        cubicBezier: 'cubic-bezier(.2, 0, .1, 1)',
-        background: 'rgba(0, 0, 0, .4)',
-        zIndex: 2147483647
+        cubicBezier: "cubic-bezier(.2, 0, .1, 1)",
+        background: "rgba(0, 0, 0, .4)",
+        zIndex: 2147483647,
     });
+}
+
+function resyncEditor(editor) {
+    // textarea value after navigation might be restored after codemirror inited
+    if (editor.element.value && !editor.codemirror.getValue()) {
+        editor.codemirror.setValue(editor.element.value);
+    }
 }
 
 addTargetBlankToExternalLinks();
 initializeThemeSwitcher();
-initializeMarkdownEditor();
+const registeredEditors = initializeMarkdownEditor();
 initializeImageZoom();
+
+setTimeout(function () {
+    registeredEditors.forEach(resyncEditor);
+}, INITIAL_SYNC_DELAY);
