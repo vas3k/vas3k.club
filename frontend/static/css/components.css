@@ -869,12 +869,13 @@
         }
 
         .feed-topic-header-desctiption {
-            padding-top: 20px;
+            display: block;
         }
 
         .feed-topic-header-footer {
+            display: block;
             padding-top: 20px;
-            font-size: 110%;
+            font-size: 115%;
         }
 
 .intro {
