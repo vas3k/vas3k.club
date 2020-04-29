@@ -1069,7 +1069,17 @@
 
     .feed-post-topic {
         padding-right: 15px;
+        display: inline-block;
     }
+
+        .feed-post-topic .topic {
+            display: flex;
+            align-items: center;
+        }
+
+            .feed-post-topic .topic-icon-wrapper {
+                margin-right: 4px;
+            }
 
     .feed-post-comments {
         text-decoration: none;

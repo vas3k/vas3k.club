@@ -32,7 +32,18 @@
 
         .post-type-post .post-info {
             padding-bottom: 20px;
+            display: inline-flex;
+            flex-wrap: wrap;
         }
+
+            .post-type-post .post-info .topic {
+                display: flex;
+                align-items: center;
+            }
+
+            .post-type-post .post-info .topic:not(:only-child) {
+                margin-right: 10px;
+            }
 
         .post-type-post .post-title {
             font-size: 300%;
