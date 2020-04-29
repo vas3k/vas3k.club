@@ -15,6 +15,11 @@
     <div class="post-comments-title">
         <span class="battle-side-a-color">{{ total_arguments.a }} {{ total_arguments.a | rupluralize:"аргумент,аргумента,аргументов" }} за первое</span>
         и
-        <span class="battle-side-b-color">{{ total_arguments.b }} за второе</span> 👇
+        <span class="battle-side-b-color">{{ total_arguments.b }} за второе</span>
+    </div>
+    <div class="post-comments-title">
+        <span class="battle-side-a-color">{{ total_votes.a }} {{ total_votes.a | rupluralize:"голос,голоса,голосов" }} за первое</span>
+        и
+        <span class="battle-side-b-color">{{ total_votes.b }} за второе</span> 👇
     </div>
 {% endif %}
