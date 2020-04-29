@@ -148,7 +148,7 @@ class CommentVote(models.Model):
 
     @classmethod
     def upvote(cls, request, user, comment):
-        if user.id == comment.author_id:
+        if not user.is_god and user.id == comment.author_id:
             return None, False
 
         post_vote, is_vote_created = CommentVote.objects.get_or_create(
