@@ -27,7 +27,7 @@
             </span>
         {% endif %}
         <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">
-            {{ post.comment_count }} {{ post.comment_count | rupluralize:"аргумент,аргумента,аргументов" }}
+            {{ post.comment_count }} {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
             {% if post.unread_comments %}
                 <span class="feed-post-unread">+{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}</span>
             {% endif %}
