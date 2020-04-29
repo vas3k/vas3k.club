@@ -1297,6 +1297,7 @@
     }
 
 .comment-replies {
+    padding-top: 10px;
     padding-bottom: 0;
 }
 
@@ -1381,7 +1382,7 @@
     }
 
 .comment {
-    padding: 30px;
+    padding: 20px;
     margin-top: 20px;
     border-radius: var(--block-border-radius)
 }
