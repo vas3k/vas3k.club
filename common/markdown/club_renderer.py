@@ -7,7 +7,7 @@ from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_R
 class ClubRenderer(mistune.HTMLRenderer):
     def text(self, text):
         text = escape_html(text)
-        text = USERNAME_RE.sub(r'<a href="/user/\1/">@\1</a>', text)
+        text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
         return text
 
     def link(self, link, text=None, title=None):

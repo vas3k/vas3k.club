@@ -70,6 +70,11 @@
                     <span class="feed-topic-header-desctiption">
                         {{ topic.description | markdown }}
                     </span>
+                    {% if topic.chat_url and topic.chat_name %}
+                        <span class="feed-topic-header-footer">
+                            <i class="fab fa-telegram-plane"></i>&nbsp;Официальный чат: <a href="{{ topic.chat_url }}" target="_blank">{{ topic.chat_name }}</a>
+                        </span>
+                    {% endif %}
                 </div>
             {% endif %}
 

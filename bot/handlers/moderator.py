@@ -6,7 +6,7 @@ from telegram import Update
 
 from bot.common import send_telegram_message, ADMIN_CHAT, remove_action_buttons
 from notifications.email.users import send_welcome_drink, send_rejected_email
-from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected, announce_in_club_chat
+from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected, announce_in_club_chats
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models import Post
 from users.models import User
@@ -69,7 +69,7 @@ def approve_post(post_id: str, update: Update) -> (str, bool):
     post.save()
 
     notify_post_author_approved(post)
-    announce_in_club_chat(post)
+    announce_in_club_chats(post)
 
     announce_post_url = settings.APP_HOST + reverse("announce_post", kwargs={
         "post_slug": post.slug,

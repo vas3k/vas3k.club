@@ -25,6 +25,10 @@ class Topic(models.Model):
     color = models.CharField(max_length=16, null=False)
     style = models.CharField(max_length=256, default="", null=True)
 
+    chat_name = models.CharField(max_length=128, null=True)
+    chat_url = models.URLField(null=True)
+    chat_id = models.CharField(max_length=64, null=True)
+
     last_activity_at = models.DateTimeField(auto_now_add=True, null=False)
 
     is_visible = models.BooleanField(default=True)
