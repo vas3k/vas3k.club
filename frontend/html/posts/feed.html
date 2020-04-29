@@ -92,13 +92,11 @@
 
             <div class="feed-sidebar-block show-on-iphone">
                 <div class="feed-sidebar-header">Комнаты</div>
-                <ul class="feed-sidebar-list feed-sidebar-topics">
+                <div class="feed-sidebar-topics">
                     {% for topic in topics %}
-                        <li>
-                            {% include "posts/widgets/topic.html" with topic=topic %}
-                        </li>
+                        {% include "posts/widgets/topic.html" with topic=topic %}
                     {% endfor %}
-                </ul>
+                </div>
             </div>
         </div>
     </div>
