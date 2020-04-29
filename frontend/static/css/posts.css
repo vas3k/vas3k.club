@@ -132,6 +132,14 @@
             padding-top: 5px;
         }
 
+            .post-layout-block .post-info .topic {
+                display: inline-flex;
+            }
+
+                .post-layout-block .post-info .topic .topic-icon-wrapper {
+                    margin-right: 4px;
+                }
+
         .post-layout-block .post-footer {
             text-align: left;
             padding-top: 30px;
