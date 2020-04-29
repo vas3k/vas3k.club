@@ -149,6 +149,7 @@ class Post(models.Model, ModelDiffMixin):
         if not self.published_at and self.is_visible:
             self.published_at = datetime.utcnow()
 
+        self.html = None
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
     
@@ -230,6 +231,10 @@ class Post(models.Model, ModelDiffMixin):
                 is_public=False,
             ),
         )
+        if not is_created:
+            intro.html = None
+            intro.save()
+
         return intro
 
 
