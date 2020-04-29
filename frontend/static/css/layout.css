@@ -93,7 +93,6 @@
         }
     }
 
-
 .feed-post {
     display: grid;
     grid-template-columns: min-content minmax(auto, 1fr) min-content;
