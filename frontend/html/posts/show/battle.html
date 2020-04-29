@@ -42,7 +42,15 @@
                 {% render_post post %}
             </div>
             <div class="post-footer">
-                {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+                <div>
+                    {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+                </div>
+                <div>
+                    {% if me.is_moderator %}
+                        <a href="{% url "announce_post" post.slug %}">Анонс</a>
+                        | <a href="{% url "admin_post" post.slug %}">Админить</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

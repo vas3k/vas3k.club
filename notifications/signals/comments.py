@@ -41,7 +41,7 @@ def async_create_or_update_comment(comment, is_created):
                 text=render_html_message("comment_to_thread.html", comment=comment),
             )
 
-    # post first level comments to club chat
+    # post top level comments to club chat
     # if not comment.reply_to:
     #     send_telegram_message(
     #         chat=CLUB_CHAT,

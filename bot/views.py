@@ -39,22 +39,20 @@ def webhook_telegram(request, token):
         log.info(f"Update: {update.to_dict()}")
 
         if update.effective_chat:
-            # reply to a comment
-            if update.message and update.message.reply_to_message \
+            # admin chat
+            if str(update.effective_chat.id) == settings.TELEGRAM_ADMIN_CHAT_ID:
+                if update.callback_query:
+                    process_moderator_actions(update)
+
+            # reply to a comment (in any chat excluding admin)
+            elif update.message and update.message.reply_to_message \
                     and update.message.reply_to_message.text \
                     and update.message.reply_to_message.text.startswith("💬"):
                 if is_club_user(update.effective_user.id):
                     process_comment_reply(update)
 
-            # admin chat
-            elif update.effective_chat and \
-                    str(update.effective_chat.id) == settings.TELEGRAM_ADMIN_CHAT_ID:
-                if update.callback_query:
-                    process_moderator_actions(update)
-
-            # user personal chats
-            elif update.effective_chat and update.effective_user \
-                    and update.effective_chat.id == update.effective_user.id:
+            # personal chats with users
+            elif update.effective_user and update.effective_chat.id == update.effective_user.id:
                 if is_club_user(update.effective_user.id):
                     process_personal_chat_updates(update)
 

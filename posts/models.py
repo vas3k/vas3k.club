@@ -25,6 +25,10 @@ class Topic(models.Model):
     color = models.CharField(max_length=16, null=False)
     style = models.CharField(max_length=256, default="", null=True)
 
+    chat_name = models.CharField(max_length=128, null=True)
+    chat_url = models.URLField(null=True)
+    chat_id = models.CharField(max_length=64, null=True)
+
     last_activity_at = models.DateTimeField(auto_now_add=True, null=False)
 
     is_visible = models.BooleanField(default=True)
@@ -142,6 +146,9 @@ class Post(models.Model, ModelDiffMixin):
         if not self.slug:
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
 
+        if not self.published_at and self.is_visible:
+            self.published_at = datetime.utcnow()
+
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
     
@@ -223,6 +230,10 @@ class Post(models.Model, ModelDiffMixin):
                 is_public=False,
             ),
         )
+        if not is_created:
+            intro.html = None
+            intro.save()
+
         return intro
 
 

@@ -884,7 +884,13 @@
         }
 
         .feed-topic-header-desctiption {
+            display: block;
+        }
+
+        .feed-topic-header-footer {
+            display: block;
             padding-top: 20px;
+            font-size: 115%;
         }
 
 .intro {
@@ -1316,6 +1322,7 @@
     }
 
 .comment-replies {
+    padding-top: 10px;
     padding-bottom: 0;
 }
 
@@ -1400,7 +1407,7 @@
     }
 
 .comment {
-    padding: 30px;
+    padding: 20px;
     margin-top: 20px;
     border-radius: var(--block-border-radius)
 }
