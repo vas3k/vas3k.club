@@ -219,7 +219,9 @@
         grid-column-end: 3;
         grid-row-start: 3;
         grid-row-end: 4;
-        justify-self: start;
+        justify-self: stretch;
+        display: flex;
+        justify-content: space-between;
     }
 
 .battle-header {
