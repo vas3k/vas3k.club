@@ -149,7 +149,7 @@ class Post(models.Model, ModelDiffMixin):
         if not self.published_at and self.is_visible:
             self.published_at = datetime.utcnow()
 
-        self.html = None
+        self.html = None  # flush cache
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
     
