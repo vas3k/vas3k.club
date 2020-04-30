@@ -56,7 +56,11 @@
             <div class="block profile-intro">
                 <div class="profile-header">
                     <a href="{% url "show_post" "intro" intro.slug %}">#intro &rarr;</a>
-                    <a href="{% url "edit_post" intro.slug  %}" class="button post-edit-button profile-intro-edit"><i class="fas fa-edit"></i></a>
+                    {% ifequal user intro.author %}
+                        <a href="{% url "edit_post" intro.slug  %}" class="button post-edit-button profile-intro-edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    {% endifequal %}
                 </div>
                 {% if intro %}
                     <div class="profile-intro-text">
