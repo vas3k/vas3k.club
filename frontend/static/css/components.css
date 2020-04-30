@@ -268,70 +268,6 @@
         font-size: 90%;
     }
 
-.topic {
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-    padding: 5px 13px 5px 5px;
-    text-decoration: none;
-    background-color: var(--opposite-bg-color);
-    color: #FFF;
-    font-size: 110%;
-    line-height: 1.3em;
-    border-radius: 20px;
-    overflow: hidden;
-    transition: none;
-}
-
-    .topic-gradient {
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background: -moz-linear-gradient(top,  rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top,  rgba(255,255,255,0.25) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to top,  rgba(255,255,255,0.25) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    }
-
-    .topic-icon {
-        display: inline-block;
-        background-position: 50% 50%;
-        background-size: cover;
-        vertical-align: middle;
-        width: 22px;
-        height: 22px;
-        border-radius: 50%;
-        background-color: #FFF;
-        border: solid 2px #FFF;
-    }
-
-    .topic-name {
-        padding-left: 5px;
-        vertical-align: middle;
-    }
-
-        .topic:hover .topic-name {
-            color: #FFF;
-        }
-
-    .topic-size-small {
-        padding: 2px 9px 2px 3px;
-        font-size: 90%;
-        font-weight: 500;
-    }
-
-        .topic-size-small .topic-icon {
-            width: 15px;
-            height: 15px;
-        }
-
-        .topic-size-small .topic-name {
-            padding-left: 1px;
-        }
-
-
 .upvote {
     position: relative;
     display: inline-block;
@@ -811,48 +747,6 @@
             justify-content: space-between;
         }
 
-            .feed-sidebar-topics .topic {
-                flex: 1 0 calc(40% - 10px);
-                margin-top: 10px;
-                text-align: center;
-                padding: 7px;
-                font-size: 95%;
-            }
-
-                .feed-sidebar-topics .topic {
-                    box-sizing: border-box;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    max-width: calc(50% - 5px);
-                    min-height: 130px;
-                }
-
-
-                .feed-sidebar-topics .topic-name-wrapper {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    height: 80%;
-                }
-
-                .feed-sidebar-topics .topic-name {
-                    display: inline-block;
-                    max-width: 100%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    padding: 0;
-                    vertical-align: middle;
-                    margin-bottom: 5px;
-                }
-
-                .feed-sidebar-topics .topic-icon {
-                    display: inline-block;
-                    width: 46px;
-                    height: 46px;
-                    margin: 10px 0;
-                }
-
     .feed-main {
     }
 
@@ -1077,15 +971,6 @@
         padding-right: 15px;
         display: inline-block;
     }
-
-        .feed-post-topic .topic {
-            display: flex;
-            align-items: center;
-        }
-
-            .feed-post-topic .topic-icon-wrapper {
-                margin-right: 4px;
-            }
 
     .feed-post-comments {
         text-decoration: none;

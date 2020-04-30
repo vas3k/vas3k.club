@@ -19,7 +19,7 @@
     <div class="feed-post-footer">
         {% if post.topic %}
             <span class="feed-post-topic">
-                {% include "posts/widgets/topic.html" with topic=post.topic size="small" %}
+                {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
             </span>
         {% endif %}
         <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">

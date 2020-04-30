@@ -36,15 +36,6 @@
             flex-wrap: wrap;
         }
 
-            .post-type-post .post-info .topic {
-                display: flex;
-                align-items: center;
-            }
-
-            .post-type-post .post-info .topic:not(:only-child) {
-                margin-right: 10px;
-            }
-
         .post-type-post .post-title {
             font-size: 300%;
             max-width: 100%;
@@ -131,14 +122,6 @@
         .post-layout-block .post-info {
             padding-top: 5px;
         }
-
-            .post-layout-block .post-info .topic {
-                display: inline-flex;
-            }
-
-                .post-layout-block .post-info .topic .topic-icon-wrapper {
-                    margin-right: 4px;
-                }
 
         .post-layout-block .post-footer {
             text-align: left;
@@ -452,6 +435,17 @@
     }
 
 .battle-header {
+    text-align: center;
+    margin: 0 auto;
+}
+
+    .battle-header-topic {
+        display: inline-flex;
+        flex-wrap: wrap;
+        padding-top: 20px;
+    }
+
+.battle-title {
     padding: 0;
     overflow: hidden;
     font-size: 250%;
@@ -460,8 +454,8 @@
     margin: 50px auto 65px;
 }
 
-    .battle-header-side-a,
-    .battle-header-side-b {
+    .battle-title-side-a,
+    .battle-title-side-b {
         padding: 30px 25px;
         display: flex;
         align-items: center;
@@ -469,39 +463,39 @@
     }
 
     @media only screen and (max-width : 570px) {
-        .battle-header {
+        .battle-title {
             font-size: 150%;
             min-height: 100px;
             margin-top: 20px;
         }
 
-        .battle-header-side-a,
-        .battle-header-side-b {
+        .battle-title-side-a,
+        .battle-title-side-b {
             padding: 10px;
         }
     }
 
-    .battle-header-side-a {
+    .battle-title-side-a {
         background-color: #4C98D5;
     }
 
-        .battle-header-side-a div,
-        .battle-header-side-b div {
+        .battle-title-side-a div,
+        .battle-title-side-b div {
             width: 100%;
             text-align: center;
         }
 
-    .battle-header-side-b {
+    .battle-title-side-b {
         background-color: #53AA68;
     }
 
-    .battle-header-vs {
+    .battle-title-vs {
         position: relative;
         background: rgb(76,152,213);
         background: linear-gradient(108deg, rgba(76,152,213,1) 0%, rgba(76,152,213,1) 49%, rgba(83,170,104,1) 50%, rgba(83,170,104,1) 100%);
     }
 
-        .battle-header-vs-text {
+        .battle-title-vs-text {
             position: absolute;
             top: 50%;
             left: 50%;

@@ -9,7 +9,7 @@
         <div class="post-header">
             <div class="post-info">
                 {% if post.topic %}
-                    {% include "posts/widgets/topic.html" with topic=post.topic %}
+                    {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
                 {% endif %}
             </div>
             <div class="post-title">

@@ -5,14 +5,22 @@
 {% load text_filters %}
 
 {% block post %}
-    <div class="block battle-header">
-        <div class="battle-header-side-a">
+    <div class="battle-header">
+        {% if post.topic %}
+            <div class="battle-header-topic">
+                {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="block battle-title">
+        <div class="battle-title-side-a">
             <div>{{ post.metadata.battle.sides.a.name }}</div>
         </div>
-        <div class="battle-header-vs">
-            <div class="battle-header-vs-text">или</div>
+        <div class="battle-title-vs">
+            <div class="battle-title-vs-text">или</div>
         </div>
-        <div class="battle-header-side-b">
+        <div class="battle-title-side-b">
             <div>{{ post.metadata.battle.sides.b.name }}</div>
         </div>
     </div>

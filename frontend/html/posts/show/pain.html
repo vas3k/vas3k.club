@@ -35,7 +35,7 @@
             </div>
             <div class="post-info">
                 {% if post.topic %}
-                    {% include "posts/widgets/topic.html" with topic=post.topic size="small" %}
+                    {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
                 {% endif %}
                 <span class="post-date">
                     {{ post.effective_published_at|date:"d E Y" }}

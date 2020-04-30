@@ -232,14 +232,14 @@
         justify-content: space-between;
     }
 
-.battle-header {
+.battle-title {
     margin: 0 auto;
     max-width: var(--max-content-width);
     display: grid;
     grid-template-columns: minmax(auto, 1fr) 50px minmax(auto, 1fr);
 }
 
-    .battle-header-side-a {
+    .battle-title-side-a {
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 1;
@@ -247,7 +247,7 @@
         justify-self: stretch;
     }
 
-    .battle-header-vs {
+    .battle-title-vs {
         grid-column-start: 2;
         grid-column-end: 3;
         grid-row-start: 1;
@@ -255,7 +255,7 @@
         justify-self: stretch;
     }
 
-    .battle-header-side-b {
+    .battle-title-side-b {
         grid-column-start: 3;
         grid-column-end: 4;
         grid-row-start: 1;

@@ -1,9 +1,9 @@
-<a href="{% url "feed_topic" topic.slug %}" class="topic {% if size %}topic-size-{{size}}{% endif %}" style="{% if topic.style %}{{ topic.style }}{% else %}background-color: {{ topic.color }};{% endif %}">
+<a href="{% url "feed_topic" topic.slug %}" class="topic {% if type %}topic-type-{{type}}{% endif %}" style="{% if topic.style %}{{ topic.style }}{% else %}background-color: {{ topic.color }};{% endif %}">
     <span class="topic-gradient"></span>
-    <div class="topic-wrapper topic-icon-wrapper">
+    <span class="topic-icon-wrapper">
         <span class="topic-icon" style="background-image: url('{{ topic.icon }}');"></span>
-    </div>
-    <div class="topic-wrapper topic-name-wrapper">
+    </span>
+    <span class="topic-name-wrapper">
         <span class="topic-name">{{ topic.name }}</span>
-    </div>
+    </span>
 </a>
