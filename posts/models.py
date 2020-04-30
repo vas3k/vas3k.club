@@ -254,7 +254,7 @@ class PostVote(models.Model):
 
     @classmethod
     def upvote(cls, request, user, post):
-        if user.id == post.author_id:
+        if not user.is_god and user.id == post.author_id:
             return None, False
 
         post_vote, is_vote_created = PostVote.objects.get_or_create(
