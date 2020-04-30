@@ -46,14 +46,14 @@ class Command(BaseCommand):
                         "refresh_token": auth_data["refresh_token"],
                     }
                 except PatreonException as ex:
-                    log.warning(f"Can't refresh user data: {user.slug}: {ex}")
+                    log.warning(f"Can't refresh user data {user.slug}: {ex}")
                     pass
 
                 # fetch user pledge status
                 try:
                     user_data = fetch_user_data(user.membership_platform_data["access_token"])
                 except PatreonException as ex:
-                    log.exception(f"Something went wrong for user {user.slug}")
+                    log.warning(f"Invalid patreon credentials for user {user.slug}: {ex}")
                     continue
 
                 # check the new expiration date
