@@ -475,18 +475,24 @@
     }
 
         .profile-intro .profile-header {
+            position: relative;
             padding-top: 0;
         }
 
-            .profile-intro .profile-header a {
-                text-decoration: none;
-            }
+        .profile-intro .profile-header a {
+            text-decoration: none;
+        }
 
         .profile-intro-text {
             font-size: 110%;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
+    .profile-intro-edit {
+        position: absolute;
+        right: 0;
+    }
 
     .profile-badges {
         padding-bottom: 20px;
