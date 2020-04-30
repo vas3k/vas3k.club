@@ -504,16 +504,24 @@
             opacity: 0.7;
         }
 
-    .battle-info {
+    .battle-stats {}
+
+        .battle-stats-arguments {
+            font-size: 180%;
+            padding-top: 10px;
+            padding-bottom: 20px;
+        }
+
+    .battle-etiquette {
         font-size: 120%;
-        margin-bottom: 50px;
+        margin-top: 50px;
     }
 
-        .battle-info strong {
+        .battle-etiquette strong {
             font-size: 110%;
         }
 
-        .battle-info li {
+        .battle-etiquette li {
             margin-top: 5px;
             margin-bottom: 10px;
         }

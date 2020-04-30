@@ -29,7 +29,7 @@ def battle_stats(post, comments):
             "a": total_votes_a,
             "b": total_votes_b,
         },
-        "post": post,
+        "battle": post,
     })
 
 

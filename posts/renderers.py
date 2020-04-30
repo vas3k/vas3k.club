@@ -20,6 +20,10 @@ def render_post(request, post):
     else:
         comments = Comment.visible_objects().filter(post=post).all()
 
+    # hide deleted comments for battle (visual junk)
+    if post.type == Post.TYPE_BATTLE:
+        comments = comments.filter(is_deleted=False)
+
     context = {
         "post": post,
         "comments": comments,
