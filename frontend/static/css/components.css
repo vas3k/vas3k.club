@@ -133,6 +133,12 @@
         margin-top: 60px;
     }
 
+    .doc h1 a,
+    .doc h2 a,
+    .doc h3 a {
+        text-decoration: none;
+    }
+
     .doc li {
         margin-bottom: 10px;
     }
