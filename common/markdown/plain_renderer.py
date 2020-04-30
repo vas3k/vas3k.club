@@ -37,3 +37,6 @@ class PlainRenderer(mistune.HTMLRenderer):
 
     def list_item(self, text, level):
         return "- " + text
+
+    def thematic_break(self):
+        return '---\n'
