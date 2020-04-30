@@ -7,21 +7,27 @@ register = template.Library()
 battle_stats_template = loader.get_template("posts/widgets/battle_stats.html")
 
 
+def _is_argument_for_side(comment, side):
+    for_side = comment.metadata and comment.metadata.get("battle", {}).get("side") == side
+
+    return not comment.is_deleted and not comment.reply_to_id and for_side
+
+
 @register.simple_tag()
 def battle_stats(post, comments):
-    total_arguments_a = len([
-        c.id for c in comments
-        if not c.is_deleted and not c.reply_to_id and c.metadata and c.metadata.get("battle", {}).get("side") == "a"
-    ])
-    total_arguments_b = len([
-        c.id for c in comments
-        if not c.is_deleted and not c.reply_to_id and c.metadata and c.metadata.get("battle", {}).get("side") == "b"
-    ])
+    arguments_for_a = [c for c in comments if _is_argument_for_side(c, "a")]
+    arguments_for_b = [c for c in comments if _is_argument_for_side(c, "b")]
 
+    total_votes_a = sum(c.upvotes for c in arguments_for_a)
+    total_votes_b = sum(c.upvotes for c in arguments_for_b)
     return battle_stats_template.render({
         "total_arguments": {
-            "a": total_arguments_a,
-            "b": total_arguments_b,
+            "a": len(arguments_for_a),
+            "b": len(arguments_for_b),
+        },
+        "total_votes": {
+            "a": total_votes_a,
+            "b": total_votes_b,
         },
         "post": post,
     })
