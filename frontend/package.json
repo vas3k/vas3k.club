@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./node_modules/.bin/webpack --config webpack.config.js",
+    "watch": "npm run start -- --watch"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +18,7 @@
     "postcss-loader": "^3.0.0",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
-    "webpack-bundle-tracker": "^1.0.0-alpha.1",
+    "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.11"
   }
 }

@@ -5,17 +5,30 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
     mode: "development",
     context: __dirname,
-    entry: path.join(__dirname, "assets/js/index.js"),
+    entry: {
+        scripts: [
+            path.join(__dirname, "static/js/main.js"),
+        ],
+        styles: [
+            path.join(__dirname, "static/css/normalize.css"),
+            path.join(__dirname, "static/css/fontawesome.min.css"),
+            path.join(__dirname, "static/css/theme.css"),
+            path.join(__dirname, "static/css/base.css"),
+            path.join(__dirname, "static/css/layout.css"),
+            path.join(__dirname, "static/css/components.css"),
+            path.join(__dirname, "static/css/posts.css"),
+        ]
+    },
     output: {
-        path: path.join(__dirname, "assets/dist"),
+        path: path.join(__dirname, "static/dist"),
         filename: "[name]-[hash].js"
     },
     resolve: {
-        extensions: [".js", ".jsx", ".json", ".css", ".less"]
+        extensions: [".js", ".jsx", ".json", ".css"]
     },
     plugins: [
         require('autoprefixer'),
-        new BundleTracker({filename: "./webpack-stats.json"}),
+        new BundleTracker({filename: "webpack-stats.json"}),
         new MiniCssExtractPlugin({
             filename: "[name]-[hash].css",
             chunkFilename: "[id].css",

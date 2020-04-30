@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "bot.apps.BotConfig",
     "simple_history",
     "django_q",
+    "webpack_loader",
 ]
 
 MIDDLEWARE = [
@@ -173,7 +174,17 @@ RATE_LIMIT_COMMENTS_PER_DAY = 200
 
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
 
-CSS_HASH = str(random.random())
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "BUNDLE_DIR_NAME": "/dist/",  # must end with slash
+        "STATS_FILE": os.path.join(BASE_DIR, "frontend/webpack-stats.json"),
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [r'.+\.hot-update.js', r'.+\.map'],
+        "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
+    }
+}
 
 if SENTRY_DSN and not DEBUG:
     # activate sentry on production

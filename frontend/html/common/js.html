@@ -1,8 +1,11 @@
 {% load static %}
+{% load render_bundle from webpack_loader %}
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script src="{% static "js/inline-attachment.js" %}?v={{ settings.CSS_HASH }}"></script>
 <script src="{% static "js/codemirror-4.inline-attachment.js" %}?v={{ settings.CSS_HASH }}"></script>
 <script src="{% static "js/lightense.min.js" %}?v={{ settings.CSS_HASH }}"></script>
+
+{% render_bundle "scripts" %}
 <script src="{% static "js/main.js" %}?v={{ settings.CSS_HASH }}" imageUploadUrl="{{ settings.MEDIA_UPLOAD_URL }}" imageUploadCode="{{ settings.MEDIA_UPLOAD_CODE }}"></script>
 
 <!-- Emojis for poor people -->
