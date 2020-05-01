@@ -116,11 +116,13 @@ function showReplyForm(commentId, username, withSelection) {
 }
 
 function appendMarkdownTextareaValue(textarea, value) {
+    textarea.focus();  // on mobile
     const codeMirrorEditor = textarea.nextElementSibling.CodeMirror;
     codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
     codeMirrorEditor.focus();
     codeMirrorEditor.setCursor(codeMirrorEditor.lineCount(), 0);
 }
+
 
 function initializeThemeSwitcher() {
     const themeSwitch = document.querySelector('.theme-switcher input[type="checkbox"]');
