@@ -12,13 +12,13 @@
     </div>
     <div class="reply-rating">
         {% if me %}
-            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-inline" onclick="ajaxify(event, commentUpvoted)">{{ comment.upvotes }}</a>
+            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-inline" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
         {% else %}
             <span class="upvote upvote-voted upvote-type-inline">{{ comment.upvotes }}</span>
         {% endif %}
     </div>
     <div class="reply-footer">
-        <span class="comment-reply-button" onclick="showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
+        <span class="comment-reply-button" onclick="Club.showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
             —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
         </span>
         {% if comment.author == me and comment.is_editable or me.is_moderator %}

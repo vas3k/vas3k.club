@@ -1,3 +1,6 @@
+import SimpleMDE from "simplemde";
+import Lightense from "lightense-images";
+
 const INITIAL_SYNC_DELAY = 50;
 
 function ajaxify(e, callback) {
@@ -150,16 +153,14 @@ function initializeMarkdownEditor() {
     if (isMobile()) return; // we don't need fancy features on mobiles
     let allEditors = [];
     const imageUploadOptions = {
-        uploadUrl: document.currentScript.getAttribute("imageUploadUrl"),
+        uploadUrl: imageUploadUrl,
         uploadMethod: "POST",
         uploadFieldName: "media",
         jsonFieldName: "uploaded",
         progressText: "![Загружаю файл...]()",
         urlText: "![]({filename})",
         errorText: "Ошибка при загрузке файла :(",
-        extraParams: {
-            code: document.currentScript.getAttribute("imageUploadCode"),
-        },
+        extraParams: {code: imageUploadCode},
     };
 
     const fullMarkdownEditors = document.querySelectorAll(".markdown-editor-full");
@@ -264,7 +265,7 @@ function addTargetBlankToExternalLinks() {
 }
 
 function initializeImageZoom() {
-    Lightense(document.querySelectorAll(".post figure img"), {
+    Lightense(document.querySelectorAll(".text-body figure img"), {
         time: 100,
         padding: 40,
         offset: 40,
@@ -290,3 +291,8 @@ initializeImageZoom();
 setTimeout(function () {
     registeredEditors.forEach(resyncEditor);
 }, INITIAL_SYNC_DELAY);
+
+export {
+    ajaxify, postUpvoted, commentUpvoted, toggleUserTag,
+    toggleUserExpertise, closeWindow, showReplyForm
+};

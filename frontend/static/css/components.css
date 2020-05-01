@@ -1357,7 +1357,6 @@
 
     .comment-body {
         padding-top: 15px;
-        overflow: hidden;
         text-overflow: ellipsis;
         box-sizing: border-box;
         padding-left: 55px;

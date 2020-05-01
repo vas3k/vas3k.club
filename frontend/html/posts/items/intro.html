@@ -11,7 +11,7 @@
                 {% include "posts/common/label.html" with label=post.label %}
             {% endif %}
 
-            <a href="{% url "upvote_post" post.slug %}" class="upvote {% if post.is_voted %}upvote-voted{% endif %} upvote-type-inline" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
+            <a href="{% url "upvote_post" post.slug %}" class="upvote {% if post.is_voted %}upvote-voted{% endif %} upvote-type-inline" onclick="Club.ajaxify(event, Club.postUpvoted)">{{ post.upvotes }}</a>
 
             {% if post.comment_count > 0 %}
                 <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">

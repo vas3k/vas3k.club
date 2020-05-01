@@ -20,7 +20,7 @@
     </div>
     <div class="comment-rating">
         {% if me %}
-            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-small" onclick="ajaxify(event, commentUpvoted)">{{ comment.upvotes }}</a>
+            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-small" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
         {% else %}
             <span class="upvote upvote-voted upvote-type-small">{{ comment.upvotes }}</span>
         {% endif %}
@@ -47,6 +47,6 @@
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
-        <span class="comment-reply-button" onclick="showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+        <span class="comment-reply-button" onclick="Club.showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
     </div>
 </div>

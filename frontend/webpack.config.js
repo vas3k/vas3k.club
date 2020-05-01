@@ -21,13 +21,15 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, "static/dist"),
-        filename: "[name]-[hash].js"
+        filename: "[name]-[hash].js",
+        libraryTarget: "var",
+        library: "Club",
     },
     resolve: {
         extensions: [".js", ".jsx", ".json", ".css"]
     },
     plugins: [
-        require('autoprefixer'),
+        require("autoprefixer"),
         new BundleTracker({filename: "webpack-stats.json"}),
         new MiniCssExtractPlugin({
             filename: "[name]-[hash].css",
@@ -44,12 +46,14 @@ module.exports = {
                     MiniCssExtractPlugin.loader,
                     "css-loader",
                     {
-                        loader: 'postcss-loader',
+                        loader: "postcss-loader",
                         options: {
-                            ident: 'postcss',
+                            ident: "postcss",
                             plugins: [
-                                require('autoprefixer')(),
-                            ]
+                                require("autoprefixer")(),
+                                require("cssnano")()
+                            ],
+                            minimize: true,
                         }
                     },
                 ],
@@ -61,7 +65,7 @@ module.exports = {
                     options: {
                         name: "[name].[ext]",
                         outputPath: "fonts/",    // where the fonts will go
-                        publicPath: "fonts/"       // override the default path
+                        publicPath: "fonts/"     // override the default path
                     }
                 }]
             }
