@@ -116,6 +116,7 @@ function showReplyForm(commentId, username, withSelection) {
 }
 
 function appendMarkdownTextareaValue(textarea, value) {
+    textarea.value = value;
     textarea.focus();  // on mobile
     const codeMirrorEditor = textarea.nextElementSibling.CodeMirror;
     codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
