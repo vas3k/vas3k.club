@@ -67,7 +67,7 @@ class UserIntroForm(ModelForm):
             attrs={
                 "maxlength": 10000,
                 "minlength": 400,
-                "class": "markdown-editor-invisible",
+                "class": "markdown-editor-full",
                 "placeholder": "Расскажите Клубу о себе...",
             }
         ),

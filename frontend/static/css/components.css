@@ -846,6 +846,8 @@
         .intro-form textarea,
         .intro-form .CodeMirror {
             text-align: left;
+            min-height: 700px;
+            transform: scale(1);
         }
 
         .form-row #id_company {
