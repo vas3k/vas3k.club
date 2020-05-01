@@ -250,6 +250,8 @@
 .label {
     display: inline-block;
     vertical-align: middle;
+    position: relative;
+    top: -1px;
     background-color: #000000;
     height: 1.6em;
     line-height: 1.5em;
@@ -262,6 +264,7 @@
         font-size: 120%;
         background-color: var(--opposite-block-bg-color);
     }
+
         .label-type-draft .label-title {
             color: var(--opposite-text-color);
         }
