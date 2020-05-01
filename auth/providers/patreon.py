@@ -118,6 +118,8 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
             currently_entitled_amount_cents=0
         )
 
+    log.info(f"Patreon active membership: {user_data}")
+
     for membership in user_data["included"]:
         if membership["attributes"]["patron_status"] == "active_patron" \
                 and membership["attributes"]["last_charge_status"] == "Paid":
@@ -134,6 +136,11 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
                     str(membership["attributes"]["last_charge_date"])[:10], "%Y-%m-%d"
                 )
 
+            if last_charged_at:
+                membership_expires_at = last_charged_at + timedelta(days=45)
+            else:
+                membership_expires_at = first_day_of_next_month(now) + timedelta(days=15)
+
             return Membership(
                 platform=Platform.patreon,
                 user_id=user_data["data"]["id"],
@@ -142,7 +149,7 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
                 image=None,  # user_data["data"]["attributes"]["image_url"],
                 started_at=membership_started_at,
                 charged_at=last_charged_at,
-                expires_at=last_charged_at + timedelta(days=30) if last_charged_at else first_day_of_next_month(now),
+                expires_at=membership_expires_at,
                 lifetime_support_cents=int(membership["attributes"]["lifetime_support_cents"] or 0),
                 currently_entitled_amount_cents=int(membership["attributes"]["currently_entitled_amount_cents"] or 0),
             )

@@ -103,7 +103,7 @@ def patreon_oauth_callback(request):
         user=user,
         token=random_string(length=32),
         created_at=now,
-        expires_at=first_day_of_next_month(now),
+        expires_at=user.membership_expires_at,
     )
 
     redirect_to = reverse("profile", args=[user.slug])
