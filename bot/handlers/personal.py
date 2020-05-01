@@ -7,6 +7,7 @@ from django.urls import reverse
 from telegram import Update
 
 from bot.common import send_telegram_message, Chat
+from bot.handlers.common import get_bot_user
 from posts.forms.compose import PostTextForm, POST_TYPE_MAP
 from posts.models import Post
 from users.models import User
@@ -18,12 +19,8 @@ log = logging.getLogger(__name__)
 
 
 def process_personal_chat_updates(update: Update):
-    user = User.objects.filter(telegram_id=update.effective_user.id).first()
+    user = get_bot_user(update)
     if not user:
-        send_telegram_message(
-            chat=Chat(id=update.effective_chat.id),
-            text=f"😐 Извините, мы не знакомы. Привяжите свой аккаунт в профиле на https://vas3k.club"
-        )
         return
 
     # check for unfinished posts
