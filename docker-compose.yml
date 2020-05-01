@@ -56,9 +56,17 @@ services:
         - 5432
 
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+  webpack:
+    image: node:14-slim
+    command: npm run watch
+    restart: always
+    volumes:
+      - .:/app:delegated
+    working_dir: /app/frontend
 
   migrate_and_init:
     <<: *app

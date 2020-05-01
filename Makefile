@@ -6,13 +6,13 @@
 PROJECT_NAME=vas3k_club
 
 run-dev:  ## Runs dev server
-	@pipenv run python manage.py runserver 0.0.0.0:8000
+	pipenv run python manage.py runserver 0.0.0.0:8000
 
 run-queue:  ## Runs task broker
-	@pipenv run python manage.py qcluster
+	pipenv run python manage.py qcluster
 
 run-uvicorn:  ## Runs production server using uvicorn (ASGI)
-	@pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
+	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
 
 docker-run-dev:  ## Run dev server in docker
 	@pipenv run python ./utils/wait_for_postgres.py
@@ -33,6 +33,9 @@ migrate:  ## Migrate database to the latest version
 mypy:  ## Check types with mypy
 	@pipenv run mypy .
 
+build-frontend:  ## Runs webpack
+	npm run --prefix frontend build
+
 test-ci: lint mypy  ## Run tests (intended for CI usage)
 
 .PHONY: \
@@ -46,4 +49,5 @@ test-ci: lint mypy  ## Run tests (intended for CI usage)
   migrate \
   mypy \
   run \
+  build-frontend \
   test-ci

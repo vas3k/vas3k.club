@@ -5,7 +5,7 @@
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
     <div class="feed-post-votes">
-        <a href="{% url "upvote_post" post.slug %}" class="upvote {% if post.is_voted %}upvote-voted{% endif %}" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
+        <a href="{% url "upvote_post" post.slug %}" class="upvote {% if post.is_voted %}upvote-voted{% endif %}" onclick="Club.ajaxify(event, Club.postUpvoted)">{{ post.upvotes }}</a>
     </div>
     <div class="feed-post-header">
         <div class="feed-post-title">
