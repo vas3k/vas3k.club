@@ -114,7 +114,7 @@ def approve_user_profile(user_id: str, update: Update) -> (str, bool):
     # make intro visible
     Post.objects\
         .filter(author=user, type=Post.TYPE_INTRO)\
-        .update(is_visible=True, is_approved_by_moderator=True)
+        .update(is_visible=True, published_at=datetime.utcnow(), is_approved_by_moderator=True)
 
     notify_user_profile_approved(user)
     send_welcome_drink(user)
