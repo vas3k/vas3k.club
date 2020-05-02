@@ -1388,7 +1388,7 @@
 }
 
     .comment:target {
-        background-color: rgba(255, 48, 48, 0.4);
+        background-color: rgba(125, 232, 125, 0.3);
     }
 
     .comment-text-deleted {
