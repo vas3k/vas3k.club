@@ -537,6 +537,10 @@
             padding-bottom: 20px;
         }
 
+            .battle-stats-arguments strong {
+                font-weight: 700;
+            }
+
     .battle-etiquette {
         font-size: 120%;
         margin-top: 50px;
