@@ -443,9 +443,13 @@
         }
 
         .text-body-type-comment h1,
-        .text-body-type-comment h2,
-        .text-body-type-comment h3 {
+        .text-body-type-comment h2 {
             margin-top: 50px;
+        }
+
+        .text-body-type-comment h3,
+        .text-body-type-comment h3 {
+            margin-top: 1.5em;
         }
 
     .text-body > *:first-child {
