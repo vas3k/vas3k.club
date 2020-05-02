@@ -1,15 +1,11 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.config.js",
     "prewatch": "npm install",
     "watch": "npm run build -- --watch"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^9.7.6",
@@ -17,7 +13,9 @@
     "cssnano": "^4.1.10",
     "file-loader": "^6.0.0",
     "mini-css-extract-plugin": "^0.9.0",
+    "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.7.0",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-bundle-tracker": "^0.4.3",
@@ -26,6 +24,24 @@
   "dependencies": {
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
-    "simplemde": "^1.11.2"
+    "simplemde": "^1.11.2",
+    "twemoji": "^12.1.6"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not ie 11",
+    "not ie_mob 11",
+    "not op_mini all",
+    "not op_mob > 0",
+    "not and_qq > 0",
+    "not android > 0"
+  ],
+  "postcss": {
+    "plugins": {
+      "postcss-import": {},
+      "postcss-preset-env": {},
+      "cssnano": {}
+    }
   }
 }

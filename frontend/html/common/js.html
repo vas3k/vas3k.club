@@ -1,22 +1,11 @@
 {% load static %}
 {% load render_bundle from webpack_loader %}
-<script src="{% static "js/inline-attachment.js" %}"></script>
-<script src="{% static "js/codemirror-4.inline-attachment.js" %}"></script>
-<script>
-    const imageUploadUrl = "{{ settings.MEDIA_UPLOAD_URL }}";
-    const imageUploadCode = "{{ settings.MEDIA_UPLOAD_CODE }}";
-</script>
-{% render_bundle "scripts" %}
 
-<!-- Emojis for poor people -->
-<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
-    const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
-    if (!isApple) {
-        document.body = twemoji.parse(document.body);
-    }
+    window.imageUploadUrl = "{{ settings.MEDIA_UPLOAD_URL }}";
+    window.imageUploadCode = "{{ settings.MEDIA_UPLOAD_CODE }}";
 </script>
-<!-- /Emojis for poor people -->
+{% render_bundle "main" %}
 
 <!-- For twitter embeds -->
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
