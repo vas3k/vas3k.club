@@ -553,6 +553,7 @@ input[type=range]:focus::-ms-fill-upper {
     .topic-name {
         padding-left: 5px;
         vertical-align: middle;
+        font-weight: 500;
     }
 
         .topic:hover .topic-name {
@@ -562,7 +563,6 @@ input[type=range]:focus::-ms-fill-upper {
     .topic-type-inline {
         padding: 2px 9px 2px 3px;
         font-size: 90%;
-        font-weight: 500;
         top: -1px;
     }
 

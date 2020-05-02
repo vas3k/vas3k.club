@@ -91,7 +91,7 @@
 
         .post-type-post .upvote {
             position: absolute;
-            top: 0;
+            top: 30px;
             left: -100px;
             padding-left: 20px;
             padding-right: 20px;
@@ -102,7 +102,7 @@
                 .post-type-post .upvote {
                     position: relative;
                     float: right;
-                    top: 50px;
+                    top: 65px;
                     left: 0;
                     right: 0;
                 }
@@ -156,6 +156,7 @@
     font-family: var(--serif-font);
     font-weight: 400;
     max-width: 100%;
+    letter-spacing: 0.01rem;
 }
 
     .text-body-type-post {

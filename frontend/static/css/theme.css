@@ -95,7 +95,6 @@ body {
     background-color: var(--bg-color);
     transition: all linear .1s;
     -webkit-font-smoothing: antialiased;
-    letter-spacing: 0.01rem;
 }
 
     @media only screen and (min-device-width : 768px)

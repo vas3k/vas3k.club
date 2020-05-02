@@ -78,11 +78,9 @@
     max-width: var(--max-content-width);
 }
 
-    @media only screen and (min-device-width : 768px)
-    and (max-device-width : 1024px)
-    and (orientation : portrait) {
+    @media only screen and (max-width : 1024px) {
         .feed {
-            grid-template-columns: 190px auto;
+            grid-template-columns: 200px auto;
             font-size: 90%;
         }
     }
@@ -486,7 +484,7 @@
 
 .comment-type-battle {
     display: grid;
-    grid-template-columns: 70px minmax(auto, 1fr);
+    grid-template-columns: min-content minmax(auto, 1fr);
     grid-template-rows: min-content auto 35px;
     justify-content: stretch;
 }
@@ -505,6 +503,7 @@
         grid-row-start: 1;
         grid-row-end: 2;
         justify-self: end;
+        padding-right: 10px;
     }
 
     .comment-type-battle .comment-body {
@@ -524,7 +523,7 @@
         display: flex;
     }
     .comment-type-battle-side-a {
-        grid-template-columns: 70px minmax(auto, 1fr);
+        grid-template-columns: min-content minmax(auto, 1fr);
         max-width: 90%;
         min-width: 50%;
         float: left;
@@ -536,6 +535,8 @@
             grid-row-start: 1;
             grid-row-end: 2;
             justify-self: start;
+            padding-left: 0;
+            padding-right: 10px;
         }
 
         .comment-type-battle-side-a .comment-header {
@@ -547,7 +548,7 @@
         }
 
     .comment-type-battle-side-b {
-        grid-template-columns: minmax(auto, 1fr) 70px;
+        grid-template-columns: minmax(auto, 1fr) min-content;
         max-width: 90%;
         min-width: 50%;
         float: right;
@@ -559,6 +560,8 @@
             grid-row-start: 1;
             grid-row-end: 2;
             justify-self: end;
+            padding-left: 10px;
+            padding-right: 0;
         }
 
         .comment-type-battle-side-b .comment-header {
