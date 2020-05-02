@@ -442,6 +442,12 @@
             border-width: 2px;
         }
 
+        .text-body-type-comment h1,
+        .text-body-type-comment h2,
+        .text-body-type-comment h3 {
+            margin-top: 50px;
+        }
+
     .text-body > *:first-child {
         margin-top: 0;
         padding-top: 0;
