@@ -172,6 +172,10 @@
             padding-top: 30px;
         }
 
+            .post-type-battle .text-body {
+                padding-top: 0;
+            }
+
     @media only screen and (max-width : 570px) {
         .text-body {
             font-size: 15px;
