@@ -184,23 +184,24 @@
 
 .post-layout-block {
     display: grid;
-    grid-template-columns: 70px minmax(auto, 1fr);
+    grid-template-columns: minmax(auto, 1fr) min-content;
     grid-template-rows: auto auto 70px;
     justify-content: stretch;
     align-items: start;
 }
 
     .post-layout-block .post-upvote {
-        grid-column-start: 1;
-        grid-column-end: 2;
+        grid-column-start: 2;
+        grid-column-end: 3;
         grid-row-start: 1;
         grid-row-end: 2;
-        justify-self: start;
+        justify-self: end;
+        padding-left: 10px;
     }
 
     .post-layout-block .post-header {
-        grid-column-start: 2;
-        grid-column-end: 3;
+        grid-column-start: 1;
+        grid-column-end: 2;
         grid-row-start: 1;
         grid-row-end: 2;
         justify-self: start;
@@ -215,8 +216,8 @@
     }
 
         .post-layout-block .text-body-layout-notitle {
-            grid-column-start: 2;
-            grid-column-end: 3;
+            grid-column-start: 1;
+            grid-column-end: 2;
             grid-row-start: 1;
             grid-row-end: 3;
             justify-self: start;

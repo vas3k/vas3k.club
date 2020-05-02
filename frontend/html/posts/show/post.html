@@ -27,12 +27,6 @@
                     </div>
                 {% endif %}
 
-                {% if post.label %}
-                    <div class="post-label">
-                        {% include "posts/common/label.html" with label=post.label %}
-                    </div>
-                {% endif %}
-
                 <div class="post-date">
                     {{ post.effective_published_at|date:"d E Y" }}
                     | {{ post.view_count }} {{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
@@ -49,20 +43,28 @@
                     </div>
                 {% endif %}
 
+                {% if post.label %}
+                    <div class="post-label">
+                        {% include "posts/common/label.html" with label=post.label %}
+                    </div>
+                {% endif %}
+
                 {% if post.image %}
                     <div class="post-image">
                         <img src="{{ post.image }}" alt="{{ post.title }}">
                     </div>
                 {% endif %}
             </div>
+        </div>
+        <div class="post-text">
             {% if me %}
                 <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %} post-body-rating" onclick="Club.ajaxify(event, Club.postUpvoted)">{{ post.upvotes }}</a>
             {% else %}
                 <span class="upvote upvote-voted post-body-rating">{{ post.upvotes }}</span>
             {% endif %}
-        </div>
-        <div class="text-body text-body-type-post">
-            {% render_post post %}
+            <div class="text-body text-body-type-post">
+                {% render_post post %}
+            </div>
         </div>
         <div class="post-footer">
             {% include "users/widgets/card.html" with user=post.author %}

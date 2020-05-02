@@ -22,6 +22,10 @@
         opacity: 0.6;
     }
 
+    .post-text {
+        position: relative;
+    }
+
     .post-type-post {
 
     }
@@ -87,19 +91,24 @@
 
         .post-type-post .upvote {
             position: absolute;
-            bottom: -100px;
-            left: -90px;
+            top: 0;
+            left: -100px;
             padding-left: 20px;
             padding-right: 20px;
             padding-top: 30px !important;
         }
 
-            @media only screen and (max-width : 800px) {
+            @media only screen and (max-width : 1024px) {
                 .post-type-post .upvote {
                     position: relative;
-                    top: 0;
-                    bottom: 0;
+                    float: right;
+                    top: 50px;
                     left: 0;
+                    right: 0;
+                }
+
+                .post-type-post .text-body > *:first-child {
+                    padding-right: 80px;
                 }
             }
 
@@ -120,12 +129,12 @@
         }
 
         .post-layout-block .post-info {
-            padding-top: 5px;
+            padding-top: 10px;
         }
 
         .post-layout-block .post-footer {
             text-align: left;
-            padding-top: 30px;
+            padding-top: 20px;
         }
 
             .post-layout-block .post-footer .post-user {
@@ -160,6 +169,10 @@
             padding-top: 0;
         }
 
+    .text-body-type-comment {
+        font-weight: 400;
+    }
+
     @media only screen and (max-width : 570px) {
         .text-body {
             font-size: 15px;
@@ -176,7 +189,6 @@
     .text-body ul,
     .text-body dl {
         width: 100%;
-        font-weight: 400;
         font-style: normal;
         padding: 0;
         overflow: hidden;
@@ -188,6 +200,11 @@
         margin-block-start: 1.5em;
         margin-block-end: 1.5em;
         box-sizing: border-box;
+    }
+
+    .text-body strong,
+    .text-body b {
+        font-weight: 600;
     }
 
     .text-body a {
@@ -217,7 +234,7 @@
     .text-body h2 {
         font-size: 190%;
         margin-top: 130px;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         text-align: left;
     }
 
@@ -251,7 +268,7 @@
         display: block;
         height: 1px;
         border: 0;
-        border-top: dashed 4px #BDC3C7;
+        border-top: dashed 3px #BDC3C7;
         margin: 2em 0;
         padding: 0;
     }
