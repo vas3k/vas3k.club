@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "71f3a44d0fa2e5420774bbebf6e3e682e662797356e6c8894ba0f10c13dedc55"
+            "sha256": "2fe96de2d7fd826fe7199dc7e0ece66edb66248a856c47077d78d0969e263607"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -319,11 +319,11 @@
         },
         "mistune": {
             "hashes": [
-                "sha256:1ee1415cab4f8722c4d1e36c060c00b09e3e5c0abcd3bb4a4e424eb9950fa0ed",
-                "sha256:dffb6b7a92a341b95e5432fab8532f2731f903165c25fe2fbef8f4218374acaa"
+                "sha256:1309e30a1846f3c1dd384e17e2dd957b024d0305b507a1546d13152a2b5dcc44",
+                "sha256:ebbed6e25e342705ec30f3184bdc148229dfbae0da6136c2a6892333c9f8bc6b"
             ],
             "index": "pypi",
-            "version": "==2.0.0a2"
+            "version": "==2.0.0a4"
         },
         "newspaper3k": {
             "hashes": [
