@@ -1267,7 +1267,9 @@
     }
 
 .post-join {
+    margin-top: 30px;
     font-size: 120%;
+    text-align: center;
 }
 
 .post-comments {

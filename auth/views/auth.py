@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 
 from auth.helpers import auth_required
 from auth.models import Session
@@ -15,7 +15,8 @@ from utils.strings import random_string
 def login(request):
     if request.me:
         return redirect("profile", request.me.slug)
-    return render(request, "auth/login.html")
+    return redirect("patreon_login")  # TODO: for now we have only patreon
+    # return render(request, "auth/login.html")
 
 
 @auth_required
