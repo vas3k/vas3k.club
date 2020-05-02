@@ -154,7 +154,7 @@
     font-style: normal;
     color: var(--text-color);
     font-family: var(--serif-font);
-    font-weight: 300;
+    font-weight: 400;
     max-width: 100%;
 }
 
@@ -169,15 +169,14 @@
             padding-top: 0;
         }
 
-    .text-body-type-comment {
-        font-weight: 400;
-    }
-
     @media only screen and (max-width : 570px) {
         .text-body {
             font-size: 15px;
             line-height: 1.6em;
         }
+    }
+
+    .text-body-type-comment {
     }
 
     .text-body p,
