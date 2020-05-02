@@ -223,6 +223,10 @@
             margin-left: 5px;
         }
 
+    .user-name-is-banned {
+        text-decoration: line-through;
+    }
+
 .hat {
     display: inline-block;
     vertical-align: middle;
@@ -415,6 +419,7 @@
             .profile-user-fullname {
                 margin-right: 15px;
             }
+
             .profile-user-nickname {
                 font-weight: 300;
                 opacity: 0.4;
@@ -423,7 +428,7 @@
 
         .profile-user-job {
             display: block;
-            font-weight: 400;
+            font-weight: 500;
             padding-bottom: 10px;
         }
 

@@ -125,6 +125,7 @@
     text-align: center;
     cursor: pointer;
     line-height: 1em;
+    font-weight: 500;
 }
 
     .button-round {

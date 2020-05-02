@@ -138,12 +138,15 @@
 
 .profile-card {
     display: grid;
-    grid-template-columns: 250px auto;
+    grid-template-columns: 200px auto;
+    column-gap: 20px;
+    align-items: start;
 }
 
     @media only screen and (max-width : 570px) {
         .profile-card {
             grid-template-columns: auto;
+            align-items: center;
         }
     }
 
