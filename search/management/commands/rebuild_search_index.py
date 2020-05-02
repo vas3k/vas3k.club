@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         SearchIndex.objects.all().delete()
 
-        for comment in Comment.visible_objects().filter(post__is_visible=True):
+        for comment in Comment.visible_objects().filter(is_deleted=False, post__is_visible=True):
             self.stdout.write(f"Indexing comment: {comment.id}")
             SearchIndex.update_comment_index(comment)
 

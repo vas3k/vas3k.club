@@ -755,14 +755,24 @@
                 text-overflow: ellipsis;
             }
 
+.search {
+    padding: 50px 20px 0;
+}
+
 .search-results {
-    padding-top: 50px;
 }
 
     .search-results .profile-card {
         max-width: 90%;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .search-results-title {
+        font-size: 200%;
+        font-weight: 600;
+        text-align: center;
+        padding-bottom: 40px;
     }
 
     .search-results-placeholder {

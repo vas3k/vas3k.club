@@ -25,6 +25,9 @@
     <div class="search">
         <div class="search-results">
             {% if results %}
+                <div class="search-results-title show-on-iphone">
+                    Поиск: «{{ query }}»
+                </div>
                 {% for result in results %}
                     {% if result.post %}
                         {% include "posts/items/items.html" with post=result.post %}
