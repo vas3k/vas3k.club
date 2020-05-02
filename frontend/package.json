@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.config.js",
+    "prewatch": "npm install",
     "watch": "npm run build -- --watch"
   },
   "keywords": [],
