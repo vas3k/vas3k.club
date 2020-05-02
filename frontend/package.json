@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "build": "NODE_ENV=production webpack",
+    "build": "webpack",
     "prewatch": "npm ci",
     "watch": "NODE_ENV=development npm run build -- --watch"
   },
@@ -36,12 +36,5 @@
     "not op_mob > 0",
     "not and_qq > 0",
     "not android > 0"
-  ],
-  "postcss": {
-    "plugins": {
-      "postcss-import": {},
-      "postcss-preset-env": {},
-      "cssnano": {}
-    }
-  }
+  ]
 }
