@@ -292,6 +292,17 @@ function resyncEditor(editor) {
     }
 }
 
+function bindCommentsHotkey() {
+    const commentForm  = document.querySelector('.comment-form-form');
+    if (isMobile() || !commentForm) { return; }
+
+    commentForm.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.keyCode === 13) {
+            commentForm.submit();
+        }
+    })
+}
+
 window.addEventListener("load", () => {
     // Emojis for poor people
     const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
@@ -301,6 +312,7 @@ window.addEventListener("load", () => {
 
     addTargetBlankToExternalLinks();
     initializeThemeSwitcher();
+    bindCommentsHotkey();
 
     const registeredEditors = initializeMarkdownEditor();
     setTimeout(function () {
