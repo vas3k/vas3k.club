@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack",
     "prewatch": "npm ci",
     "watch": "NODE_ENV=development npm run build -- --watch"
   },
