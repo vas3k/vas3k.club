@@ -52,10 +52,6 @@ class UserEditForm(ModelForm):
         initial=User.EMAIL_DIGEST_TYPE_WEEKLY,
         widget=forms.RadioSelect(),
     )
-    is_email_verified = forms.BooleanField(
-        required=False,
-        disabled=True
-    )
 
     class Meta:
         model = User
@@ -68,7 +64,6 @@ class UserEditForm(ModelForm):
             "country",
             "bio",
             "email_digest_type",
-            "is_email_verified",
         ]
 
 
