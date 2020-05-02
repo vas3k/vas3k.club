@@ -34,6 +34,12 @@
                 filter: invert();
             }
 
+            @media (prefers-color-scheme: dark) {
+                html:not([theme]) .menu-logo img {
+                    filter: invert();
+                }
+            }
+
     .menu-avatar {
         width: 40px;
         height: 40px;
