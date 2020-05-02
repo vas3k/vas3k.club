@@ -36,12 +36,5 @@
     "not op_mob > 0",
     "not and_qq > 0",
     "not android > 0"
-  ],
-  "postcss": {
-    "plugins": {
-      "postcss-import": {},
-      "postcss-preset-env": {},
-      "cssnano": {}
-    }
-  }
+  ]
 }
