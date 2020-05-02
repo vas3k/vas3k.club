@@ -10,8 +10,11 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
 from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired
-from posts.views import compose, compose_type, show_post, feed, upvote_post, edit_post, admin_post, announce_post
+from posts.views.admin import admin_post, announce_post
+from posts.views.posts import show_post, edit_post, upvote_post, compose, compose_type
+from posts.views.feed import feed
 from posts.sitemaps import PublicPostsSitemap
+from search.views import search
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
     add_expertise, admin_profile, delete_expertise
 
@@ -43,6 +46,8 @@ urlpatterns = [
 
     path("feed/type/<slug:post_type>/", feed, name="feed_type"),
     path("feed/topic/<slug:topic_slug>/", feed, name="feed_topic"),
+
+    path("search/", search, name="search"),
 
     path("create/", compose, name="compose"),
     path("create/<slug:post_type>/", compose_type, name="compose_type"),

@@ -9,6 +9,7 @@ from notifications.email.users import send_welcome_drink, send_rejected_email
 from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected, announce_in_club_chats
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models import Post
+from search.models import SearchIndex
 from users.models import User
 
 
@@ -115,6 +116,8 @@ def approve_user_profile(user_id: str, update: Update) -> (str, bool):
     Post.objects\
         .filter(author=user, type=Post.TYPE_INTRO)\
         .update(is_visible=True, published_at=datetime.utcnow(), is_approved_by_moderator=True)
+
+    SearchIndex.update_user_index(user)
 
     notify_user_profile_approved(user)
     send_welcome_drink(user)

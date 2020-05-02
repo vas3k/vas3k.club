@@ -71,6 +71,13 @@
             transform: translateX(-50%) translateY(-50%);
         }
 
+.search {
+    display: grid;
+    grid-template-columns: auto;
+    margin: 0 auto;
+    max-width: var(--normal-content-width);
+}
+
 .feed {
     display: grid;
     grid-template-columns: 250px auto;

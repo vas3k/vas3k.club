@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load paginator %}
+{% load text_filters %}
+
+{% block title %}
+    «{{ query }}» — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="«{{ query }}» — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Результаты поиска">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary_image">
+    <meta name="twitter:title" content="«{{ query }}» — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="Результаты поиска">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="search">
+        <div class="search-results">
+            {% if results %}
+                {% for result in results %}
+                    {% if result.post %}
+                        {% include "posts/items/items.html" with post=result.post %}
+                    {% endif %}
+                    {% if result.comment %}
+                        {% include "comments/types/normal.html" with comment=result.comment %}
+                    {% endif %}
+                    {% if result.profile %}
+                        {% include "users/widgets/card.html" with user=result.profile %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="search-results-placeholder">
+                    По запросу «{{ query }}» не найдено...<br>
+                    <small>но и мы не Яндекс :(</small>
+                </div>
+            {% endif %}
+
+            <div class="feed-paginator">
+                {% paginator results %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

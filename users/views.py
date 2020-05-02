@@ -7,6 +7,7 @@ from common.pagination import paginate
 from common.request import ajax_request
 from notifications.telegram.users import notify_profile_needs_review
 from posts.models import Post
+from search.models import SearchIndex
 from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
 from users.forms.intro import UserIntroForm
@@ -93,6 +94,9 @@ def edit_profile(request, user_slug):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
+
+            SearchIndex.update_user_index(user)
+
             return redirect("profile", user.slug)
     else:
         form = UserEditForm(instance=user)

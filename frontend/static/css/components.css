@@ -9,6 +9,7 @@
         font-size: 26px;
         font-weight: 700;
         text-decoration: none;
+        white-space: nowrap;
     }
 
         @media only screen and (max-width : 570px) {
@@ -44,6 +45,37 @@
         width: 40px;
         height: 40px;
     }
+
+    .menu-search {
+        white-space: nowrap;
+    }
+
+        .menu-search-label {
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 20px;
+            position: relative;
+            top: -1px;
+            opacity: 0.4;
+            padding-right: 15px;
+        }
+
+            .menu-search-label:hover,
+            .menu-search-label-is-active {
+                opacity: 1;
+            }
+
+        .menu-search-input {
+            width: 80%;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            outline: none !important;
+            border: none !important;
+            padding: 0 !important;
+            font-weight: 500;
+            font-size: 26px;
+            transform: none !important;
+        }
 
 .content {
     padding-left: 20px;
@@ -722,6 +754,23 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
+.search-results {
+    padding-top: 50px;
+}
+
+    .search-results .profile-card {
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .search-results-placeholder {
+        text-align: center;
+        padding: 100px 0;
+        font-size: 160%;
+        opacity: 0.6;
+    }
 
 .feed {
     padding: 20px 20px 50px;

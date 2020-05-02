@@ -10,6 +10,7 @@ from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
 from posts.models import Post, PostView
+from search.models import SearchIndex
 
 log = logging.getLogger(__name__)
 
@@ -56,6 +57,7 @@ def create_comment(request, post_slug):
                 user=request.me,
                 post=post,
             )
+            SearchIndex.update_comment_index(comment)
 
             return redirect("show_comment", post.slug, comment.id)
         else:
@@ -102,6 +104,9 @@ def edit_comment(request, comment_id):
             comment.ipaddress = parse_ip_address(request)
             comment.useragent = parse_useragent(request)
             comment.save()
+
+            SearchIndex.update_comment_index(comment)
+
             return redirect("show_comment", post.slug, comment.id)
     else:
         form = CommentForm(instance=comment)
