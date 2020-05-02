@@ -2,13 +2,14 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "build": "./node_modules/.bin/webpack --config webpack.config.js",
-    "prewatch": "npm install",
-    "watch": "npm run build -- --watch"
+    "build": "webpack",
+    "prewatch": "npm ci",
+    "watch": "NODE_ENV=development npm run build -- --watch"
   },
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^9.7.6",
+    "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.5.3",
     "cssnano": "^4.1.10",
     "file-loader": "^6.0.0",
@@ -16,7 +17,6 @@
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
-    "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.11"

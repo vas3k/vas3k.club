@@ -1,23 +1,28 @@
 const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const { NODE_ENV: mode = 'production' } = process.env;
 
 module.exports = {
+    mode,
     context: __dirname,
     entry: path.join(__dirname, "static/js/main.js"),
     output: {
         path: path.join(__dirname, "static/dist"),
-        filename: "[name]-[hash].js",
+        filename: mode === "production" ? "[name]-[hash].js": "[name].js",
         libraryTarget: "var",
         library: "Club",
     },
     plugins: [
         new BundleTracker(),
         new MiniCssExtractPlugin({
-            filename: "[name]-[hash].css",
+            filename: mode === "production" ? "[name]-[hash].css": "[name].css",
             chunkFilename: "[id].css",
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
+        new CleanWebpackPlugin(),
     ],
     module: {
         rules: [
@@ -27,7 +32,7 @@ module.exports = {
                 use: [
                     MiniCssExtractPlugin.loader,
                     { loader: 'css-loader', options: { importLoaders: 1 } },
-                    "postcss-loader",
+                    { loader: "postcss-loader", options: { minimize: mode === "production" } },
                 ],
             },
             {
