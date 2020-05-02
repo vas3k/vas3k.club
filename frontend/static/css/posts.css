@@ -4,7 +4,7 @@
 
 .post {
     max-width: var(--post-width);
-    margin: 100px auto 0;
+    margin: 70px auto 0;
 }
 
     .post-edit-button {
@@ -122,13 +122,13 @@
     }
 
         .post-layout-block .post-title {
-            font-size: 180%;
+            font-size: 200%;
             font-weight: 500;
             line-height: 1.2em;
         }
 
         .post-layout-block .post-info {
-            padding-top: 10px;
+            padding-top: 7px;
         }
 
         .post-layout-block .post-footer {
