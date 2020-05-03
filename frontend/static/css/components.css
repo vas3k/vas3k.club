@@ -334,6 +334,16 @@
             color: var(--opposite-text-color);
         }
 
+    .upvote-disabled {
+        padding-top: 18px;
+        padding-bottom: 18px;
+        pointer-events: none;
+    }
+
+    .upvote-disabled::before {
+        display: none;
+    }
+
     .upvote-type-small {
         padding: 7px 10px 6px 25px;
         font-size: 120%;
@@ -347,6 +357,11 @@
             top: 2px;
             left: 17px;
             font-size: 130%;
+        }
+
+        .upvote-type-small.upvote-disabled {
+            padding-left: 17px;
+            padding-right: 17px;
         }
 
     .upvote-type-inline {
@@ -364,6 +379,11 @@
             top: 2px;
             left: 13px;
             font-size: 110%;
+        }
+
+        .upvote-type-inline.upvote-disabled {
+            padding-left: 14px;
+            padding-right: 14px;
         }
 
 .profile {

@@ -11,10 +11,10 @@
         </div>
     </div>
     <div class="reply-rating">
-        {% if me %}
+        {% if me != comment.author %}
             <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-inline" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
         {% else %}
-            <span class="upvote upvote-voted upvote-type-inline">{{ comment.upvotes }}</span>
+            <span class="upvote upvote-disabled upvote-type-inline">{{ comment.upvotes }}</span>
         {% endif %}
     </div>
     <div class="reply-footer">

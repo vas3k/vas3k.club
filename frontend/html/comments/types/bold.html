@@ -19,10 +19,10 @@
         </div>
     </div>
     <div class="comment-rating">
-        {% if me %}
+        {% if me != comment.author %}
             <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} post-body-rating" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
         {% else %}
-            <span class="upvote upvote-voted post-body-rating">{{ comment.upvotes }}</span>
+            <span class="upvote upvote-disabled post-body-rating">{{ comment.upvotes }}</span>
         {% endif %}
 
         {% if comment.is_pinned %}
