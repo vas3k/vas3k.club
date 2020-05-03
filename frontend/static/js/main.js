@@ -98,13 +98,15 @@ function closeWindow(e) {
 
 function showReplyForm(commentId, username, withSelection) {
     // First, hide all other reply forms
-    const replyForms = document.querySelectorAll(".reply-form");
+    const replyForms = document.querySelectorAll(".reply-form-form");
     for (let i = 0; i < replyForms.length; i++) {
+        replyForms[i].removeEventListener('keydown', handleCommentHotkey);
         replyForms[i].style.display = "none";
     }
 
     // Then show one for commentId
     const commentReplyForm = document.getElementById("reply-form-" + commentId);
+    commentReplyForm.addEventListener('keydown', (event) => handleCommentHotkey(event, commentReplyForm))
     commentReplyForm.style.display = null;
 
     // Add username to reply
@@ -292,6 +294,19 @@ function resyncEditor(editor) {
     }
 }
 
+function bindCommentsHotkey() {
+    const commentForm  = document.querySelector('.comment-form-form');
+    if (isMobile() || !commentForm) { return; }
+
+    commentForm.addEventListener('keydown', (event) => handleCommentHotkey(event, commentForm))
+}
+
+function handleCommentHotkey(event, controlElement) {
+    if ((event.ctrlKey || event.metaKey) && event.keyCode === 13) {
+        controlElement.submit();
+    }
+}
+
 window.addEventListener("load", () => {
     // Emojis for poor people
     const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
@@ -301,6 +316,7 @@ window.addEventListener("load", () => {
 
     addTargetBlankToExternalLinks();
     initializeThemeSwitcher();
+    bindCommentsHotkey();
 
     const registeredEditors = initializeMarkdownEditor();
     setTimeout(function () {
