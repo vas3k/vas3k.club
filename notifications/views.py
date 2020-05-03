@@ -177,8 +177,14 @@ def weekly_digest(request):
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")
+
     newbie_count = User.objects\
-        .filter(is_profile_reviewed=True, **created_at_condition)\
+        .filter(
+            is_profile_complete=True,
+            is_profile_reviewed=True,
+            is_profile_rejected=False,
+            **created_at_condition
+        )\
         .count()
 
     # Best posts
@@ -220,6 +226,7 @@ def weekly_digest(request):
     comments = Comment.visible_objects() \
         .filter(**created_at_condition) \
         .filter(is_deleted=False)\
+        .exclude(post__type=Post.TYPE_BATTLE)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
