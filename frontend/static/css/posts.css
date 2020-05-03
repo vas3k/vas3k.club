@@ -96,6 +96,9 @@
             left: -110px;
             padding-left: 20px;
             padding-right: 20px;
+        }
+
+        .post-type-post .upvote:not(.upvote-disabled) {
             padding-top: 30px !important;
         }
 
