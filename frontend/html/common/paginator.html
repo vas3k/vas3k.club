@@ -1,29 +1,31 @@
+{% load query_params %}
+
 <div class="clearfix50"></div>
 
 {% if items and num_pages > 1 %}
     <div class="paginator">
         {% if items.has_previous %}
-            <a href="?page={{ items.previous_page_number }}" class="paginator-page">&larr;</a>
+            <a href="{% append_query_param page=items.previous_page_number %}" class="paginator-page">&larr;</a>
         {% endif %}
 
         {% if show_first %}
-            <a href="?page=1" class="paginator-page">1</a>
+            <a href="{% append_query_param page=1 %}" class="paginator-page">1</a>
             <span class="paginator__dots">...</span>
         {% endif %}
 
         {% for page in page_numbers %}
-            <a href="?page={{ page }}" class="paginator-page {% if page == items.number %}paginator-page-active{% endif %}">
+            <a href="{% append_query_param page=page %}" class="paginator-page {% if page == items.number %}paginator-page-active{% endif %}">
                 {{ page }}
             </a>
         {% endfor %}
 
         {% if show_last %}
             <span class="paginator__dots">...</span>
-            <a href="?page={{ num_pages }}" class="paginator-page">{{ num_pages }}</a>
+            <a href="{% append_query_param page=num_pages %}" class="paginator-page">{{ num_pages }}</a>
         {% endif %}
 
         {% if items.has_next %}
-            <a href="?page={{ items.next_page_number }}" class="paginator-page">&rarr;</a>
+            <a href="{% append_query_param page=items.next_page_number %}" class="paginator-page">&rarr;</a>
         {% endif %}
     </div>
 {% endif %}
