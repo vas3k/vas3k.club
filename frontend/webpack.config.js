@@ -1,41 +1,28 @@
 const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+const { NODE_ENV: mode = 'production' } = process.env;
 
 module.exports = {
-    mode: "development",
+    mode,
     context: __dirname,
-    entry: {
-        scripts: [
-            path.join(__dirname, "static/js/main.js"),
-        ],
-        styles: [
-            path.join(__dirname, "static/css/normalize.css"),
-            path.join(__dirname, "static/css/fontawesome.min.css"),
-            path.join(__dirname, "static/css/theme.css"),
-            path.join(__dirname, "static/css/base.css"),
-            path.join(__dirname, "static/css/layout.css"),
-            path.join(__dirname, "static/css/components.css"),
-            path.join(__dirname, "static/css/posts.css"),
-        ]
-    },
+    entry: path.join(__dirname, "static/js/main.js"),
     output: {
         path: path.join(__dirname, "static/dist"),
-        filename: "[name]-[hash].js",
+        filename: mode === "production" ? "[name]-[hash].js": "[name].js",
         libraryTarget: "var",
         library: "Club",
     },
-    resolve: {
-        extensions: [".js", ".jsx", ".json", ".css"]
-    },
     plugins: [
-        require("autoprefixer"),
-        new BundleTracker({filename: "webpack-stats.json"}),
+        new BundleTracker(),
         new MiniCssExtractPlugin({
-            filename: "[name]-[hash].css",
+            filename: mode === "production" ? "[name]-[hash].css": "[name].css",
             chunkFilename: "[id].css",
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
+        new CleanWebpackPlugin(),
     ],
     module: {
         rules: [
@@ -44,18 +31,8 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    "css-loader",
-                    {
-                        loader: "postcss-loader",
-                        options: {
-                            ident: "postcss",
-                            plugins: [
-                                require("autoprefixer")(),
-                                require("cssnano")()
-                            ],
-                            minimize: true,
-                        }
-                    },
+                    { loader: 'css-loader', options: { importLoaders: 1 } },
+                    "postcss-loader",
                 ],
             },
             {

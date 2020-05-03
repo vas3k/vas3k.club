@@ -4,7 +4,7 @@
 
 .post {
     max-width: var(--post-width);
-    margin: 100px auto 0;
+    margin: 70px auto 0;
 }
 
     .post-edit-button {
@@ -125,13 +125,13 @@
     }
 
         .post-layout-block .post-title {
-            font-size: 180%;
+            font-size: 200%;
             font-weight: 500;
             line-height: 1.2em;
         }
 
         .post-layout-block .post-info {
-            padding-top: 10px;
+            padding-top: 7px;
         }
 
         .post-layout-block .post-footer {
@@ -174,6 +174,10 @@
         .post-layout-block .text-body {
             padding-top: 30px;
         }
+
+            .post-type-battle .text-body {
+                padding-top: 0;
+            }
 
     @media only screen and (max-width : 570px) {
         .text-body {
@@ -441,6 +445,16 @@
             border-width: 2px;
         }
 
+        .text-body-type-comment h1,
+        .text-body-type-comment h2 {
+            margin-top: 50px;
+        }
+
+        .text-body-type-comment h3,
+        .text-body-type-comment h3 {
+            margin-top: 1.5em;
+        }
+
     .text-body > *:first-child {
         margin-top: 0;
         padding-top: 0;
@@ -535,6 +549,10 @@
             padding-top: 10px;
             padding-bottom: 20px;
         }
+
+            .battle-stats-arguments strong {
+                font-weight: 700;
+            }
 
     .battle-etiquette {
         font-size: 120%;

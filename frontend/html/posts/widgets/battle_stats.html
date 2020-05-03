@@ -3,11 +3,13 @@
 <div class="battle-stats">
     {% if battle.comment_count %}
         <div class="battle-stats-arguments battle-side-a-color">
-            {{ total_arguments.a }} {{ total_arguments.a | rupluralize:"аргумент,аргумента,аргументов" }} и {{ total_votes.a }} {{ total_votes.a | rupluralize:"плюсик,плюсика,плюсиков" }}<br> <small>за «{{ battle.metadata.battle.sides.a.name }}»</small>
+            <strong>{{ total_arguments.a }} {{ total_arguments.a | rupluralize:"аргумент,аргумента,аргументов" }} и {{ total_votes.a }} {{ total_votes.a | rupluralize:"плюсик,плюсика,плюсиков" }}</strong><br>
+            <small>за «{{ battle.metadata.battle.sides.a.name }}»</small>
         </div>
 
         <div class="battle-stats-arguments battle-side-b-color" style="text-align: right;">
-            {{ total_arguments.b }} {{ total_arguments.b | rupluralize:"аргумент,аргумента,аргументов" }} и {{ total_votes.b }} {{ total_votes.b | rupluralize:"плюсик,плюсика,плюсиков" }}<br> <small>за «{{ battle.metadata.battle.sides.b.name }}»</small>
+            <strong>{{ total_arguments.b }} {{ total_arguments.b | rupluralize:"аргумент,аргумента,аргументов" }} и {{ total_votes.b }} {{ total_votes.b | rupluralize:"плюсик,плюсика,плюсиков" }}</strong><br>
+            <small>за «{{ battle.metadata.battle.sides.b.name }}»</small>
         </div>
     {% endif %}
 </div>

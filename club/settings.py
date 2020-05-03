@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "notifications.apps.NotificationsConfig",
     "bot.apps.BotConfig",
+    "search.apps.SearchConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -133,6 +134,7 @@ APP_DESCRIPTION = "Всё интересное происходит за зак�
 LAUNCH_DATE = datetime(2020, 4, 13)
 
 DEFAULT_PAGE_SIZE = 100
+SEARCH_PAGE_SIZE = 25
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 

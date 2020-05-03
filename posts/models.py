@@ -151,7 +151,7 @@ class Post(models.Model, ModelDiffMixin):
 
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse("show_post", kwargs={"post_type": self.type, "post_slug": self.slug})
 

@@ -1,0 +1,97 @@
+from datetime import datetime
+from uuid import uuid4
+
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVectorField, SearchVector, SearchRank, SearchQuery
+from django.db import models
+from django.db.models import F
+
+from comments.models import Comment
+from posts.models import Post
+from users.models import User
+
+
+class SearchIndex(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+
+    post = models.ForeignKey(Post, related_name="index", null=True, db_index=True, on_delete=models.SET_NULL)
+    comment = models.ForeignKey(Comment, related_name="index", null=True, db_index=True, on_delete=models.SET_NULL)
+    profile = models.ForeignKey(User, related_name="index", null=True, db_index=True, on_delete=models.SET_NULL)
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    index = SearchVectorField(null=False, editable=False)
+
+    class Meta:
+        db_table = "search_index"
+        ordering = ["-created_at"]
+        indexes = [
+            GinIndex(fields=["index"], fastupdate=False),
+        ]
+
+    @classmethod
+    def search(cls, query):
+        query = SearchQuery(query, config="russian")
+
+        return SearchIndex.objects\
+            .annotate(rank=SearchRank(F("index"), query))\
+            .filter(index=query, rank__gte=0.1)\
+            .order_by("-rank", "-created_at")
+
+    @classmethod
+    def update_comment_index(cls, comment):
+        vector = SearchVector("text", weight="B", config="russian") \
+                 + SearchVector("author__slug", weight="C", config="russian")
+
+        SearchIndex.objects.update_or_create(
+            comment=comment,
+            defaults=dict(
+                index=Comment.objects
+                .annotate(vector=vector)
+                .filter(id=comment.id)
+                .values_list("vector", flat=True)
+                .first(),
+                updated_at=datetime.utcnow(),
+            )
+        )
+
+    @classmethod
+    def update_post_index(cls, post):
+        vector = SearchVector("title", weight="A", config="russian") \
+                 + SearchVector("text", weight="B", config="russian") \
+                 + SearchVector("author__slug", weight="C", config="russian") \
+                 + SearchVector("topic__name", weight="C", config="russian")
+
+        SearchIndex.objects.update_or_create(
+            post=post,
+            defaults=dict(
+                index=Post.objects
+                .annotate(vector=vector)
+                .filter(id=post.id)
+                .values_list("vector", flat=True)
+                .first(),
+                updated_at=datetime.utcnow(),
+            )
+        )
+
+    @classmethod
+    def update_user_index(cls, user):
+        vector = SearchVector("slug", weight="A", config="russian") \
+                 + SearchVector("full_name", weight="A", config="russian") \
+                 + SearchVector("bio", weight="B", config="russian") \
+                 + SearchVector("company", weight="B", config="russian") \
+                 + SearchVector("country", weight="C", config="russian") \
+                 + SearchVector("city", weight="C", config="russian")
+
+        SearchIndex.objects.update_or_create(
+            profile=user,
+            defaults=dict(
+                index=User.objects
+                .annotate(vector=vector)
+                .filter(id=user.id)
+                .values_list("vector", flat=True)
+                .first(),
+                updated_at=datetime.utcnow(),
+            )
+        )

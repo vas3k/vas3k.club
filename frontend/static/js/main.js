@@ -1,5 +1,11 @@
+import twemoji from "twemoji";
 import SimpleMDE from "simplemde";
 import Lightense from "lightense-images";
+
+import "../css/index.css";
+
+import "./inline-attachment"
+import "./codemirror-4.inline-attachment"
 
 const INITIAL_SYNC_DELAY = 50;
 
@@ -286,14 +292,23 @@ function resyncEditor(editor) {
     }
 }
 
-addTargetBlankToExternalLinks();
-initializeThemeSwitcher();
-const registeredEditors = initializeMarkdownEditor();
-initializeImageZoom();
+window.addEventListener("load", () => {
+    // Emojis for poor people
+    const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
+    if (!isApple) {
+        document.body = twemoji.parse(document.body);
+    }
 
-setTimeout(function () {
-    registeredEditors.forEach(resyncEditor);
-}, INITIAL_SYNC_DELAY);
+    addTargetBlankToExternalLinks();
+    initializeThemeSwitcher();
+
+    const registeredEditors = initializeMarkdownEditor();
+    setTimeout(function () {
+        registeredEditors.forEach(resyncEditor);
+    }, INITIAL_SYNC_DELAY);
+
+    initializeImageZoom();
+});
 
 export {
     ajaxify, postUpvoted, commentUpvoted, toggleUserTag,

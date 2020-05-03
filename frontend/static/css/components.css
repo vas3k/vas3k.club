@@ -9,6 +9,7 @@
         font-size: 26px;
         font-weight: 700;
         text-decoration: none;
+        white-space: nowrap;
     }
 
         @media only screen and (max-width : 570px) {
@@ -44,6 +45,38 @@
         width: 40px;
         height: 40px;
     }
+
+    .menu-search {
+        white-space: nowrap;
+    }
+
+        .menu-search-label {
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 20px;
+            position: relative;
+            top: -1px;
+            opacity: 0.4;
+            padding-right: 15px;
+        }
+
+            .menu-search-label:hover,
+            .menu-search-label-is-active {
+                opacity: 1;
+            }
+
+        .menu-search-input {
+            width: 80%;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            outline: none !important;
+            border: none !important;
+            padding: 0 !important;
+            font-weight: 500;
+            font-size: 26px;
+            transform: none !important;
+            color: var(--text-color) !important;
+        }
 
 .content {
     padding-left: 20px;
@@ -743,6 +776,33 @@
                 text-overflow: ellipsis;
             }
 
+.search {
+    padding: 50px 20px 0;
+}
+
+.search-results {
+}
+
+    .search-results .profile-card {
+        max-width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .search-results-title {
+        font-size: 200%;
+        font-weight: 600;
+        text-align: center;
+        padding-bottom: 40px;
+    }
+
+    .search-results-placeholder {
+        text-align: center;
+        padding: 100px 0;
+        font-size: 160%;
+        opacity: 0.6;
+    }
+
 .feed {
     padding: 20px 20px 50px;
 }
@@ -1227,7 +1287,9 @@
     }
 
 .post-join {
+    margin-top: 30px;
     font-size: 120%;
+    text-align: center;
 }
 
 .post-comments {
@@ -1346,7 +1408,7 @@
 }
 
     .comment:target {
-        background-color: rgba(255, 48, 48, 0.4);
+        background-color: rgba(125, 232, 125, 0.3);
     }
 
     .comment-text-deleted {

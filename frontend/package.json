@@ -1,23 +1,22 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack --config webpack.config.js",
-    "watch": "npm run build -- --watch"
+    "build": "webpack",
+    "prewatch": "npm ci",
+    "watch": "NODE_ENV=development npm run build -- --watch"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^9.7.6",
+    "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.5.3",
     "cssnano": "^4.1.10",
     "file-loader": "^6.0.0",
     "mini-css-extract-plugin": "^0.9.0",
+    "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
-    "style-loader": "^1.2.1",
+    "postcss-preset-env": "^6.7.0",
     "webpack": "^4.43.0",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.11"
@@ -25,6 +24,17 @@
   "dependencies": {
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
-    "simplemde": "^1.11.2"
-  }
+    "simplemde": "^1.11.2",
+    "twemoji": "^12.1.6"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not ie 11",
+    "not ie_mob 11",
+    "not op_mini all",
+    "not op_mob > 0",
+    "not and_qq > 0",
+    "not android > 0"
+  ]
 }

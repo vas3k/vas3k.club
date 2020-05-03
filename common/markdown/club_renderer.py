@@ -10,6 +10,10 @@ class ClubRenderer(mistune.HTMLRenderer):
         text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
         return text
 
+    def paragraph(self, text):
+        text = text.replace("\n", "<br>\n")  # Mistune 2.0 broke newlines, let's hack it =/
+        return f"<p>{text}</p>\n"
+
     def link(self, link, text=None, title=None):
         if IMAGE_RE.match(link):
             return self.image(link, text or "", title or "")
