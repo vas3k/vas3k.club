@@ -98,7 +98,7 @@ function closeWindow(e) {
 
 function showReplyForm(commentId, username, withSelection) {
     // First, hide all other reply forms
-    const replyForms = document.querySelectorAll(".reply-form");
+    const replyForms = document.querySelectorAll(".reply-form-form");
     for (let i = 0; i < replyForms.length; i++) {
         replyForms[i].removeEventListener('keydown', handleCommentHotkey);
         replyForms[i].style.display = "none";
@@ -106,7 +106,7 @@ function showReplyForm(commentId, username, withSelection) {
 
     // Then show one for commentId
     const commentReplyForm = document.getElementById("reply-form-" + commentId);
-    commentReplyForm.addEventListener('keydown', (event) => handleCommentHotkey(event, commentReplyForm.parentElement))
+    commentReplyForm.addEventListener('keydown', (event) => handleCommentHotkey(event, commentReplyForm))
     commentReplyForm.style.display = null;
 
     // Add username to reply
@@ -301,7 +301,7 @@ function bindCommentsHotkey() {
     commentForm.addEventListener('keydown', (event) => handleCommentHotkey(event, commentForm))
 }
 
-function handleCommentHotkey(event, controlElement ) {
+function handleCommentHotkey(event, controlElement) {
     if ((event.ctrlKey || event.metaKey) && event.keyCode === 13) {
         controlElement.submit();
     }
