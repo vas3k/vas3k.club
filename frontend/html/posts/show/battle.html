@@ -36,11 +36,7 @@
 
         <div class="block post post-layout-block post-type-battle">
             <div class="post-upvote">
-                {% if me != post.author %}
-                    <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %} post-body-rating" onclick="Club.ajaxify(event, Club.postUpvoted)">{{ post.upvotes }}</a>
-                {% else %}
-                    <span class="upvote upvote-disabled post-body-rating">{{ post.upvotes }}</span>
-                {% endif %}
+                {% include "posts/common/upvote.html" with post=post %}
                 <div class="clearfix20"></div>
                 {% if post.author == me or me.is_moderator %}
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>

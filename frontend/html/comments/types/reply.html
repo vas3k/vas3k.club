@@ -11,11 +11,7 @@
         </div>
     </div>
     <div class="reply-rating">
-        {% if me != comment.author %}
-            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-inline" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
-        {% else %}
-            <span class="upvote upvote-disabled upvote-type-inline">{{ comment.upvotes }}</span>
-        {% endif %}
+        {% include "comments/common/upvote.html" with comment=comment is_inline=True %}
     </div>
     <div class="reply-footer">
         <span class="comment-reply-button" onclick="Club.showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">

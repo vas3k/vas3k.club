@@ -19,11 +19,7 @@
         </div>
     </div>
     <div class="comment-rating">
-        {% if me != comment.author %}
-            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-small" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
-        {% else %}
-            <span class="upvote upvote-disabled upvote-type-small">{{ comment.upvotes }}</span>
-        {% endif %}
+        {% include "comments/common/upvote.html" with comment=comment is_small=True %}
 
         {% if comment.is_pinned %}
             <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>

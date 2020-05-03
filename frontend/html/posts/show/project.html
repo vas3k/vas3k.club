@@ -50,11 +50,7 @@
                     </div>
                 {% endif %}
             </div>
-            {% if me != post.author %}
-                <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %} post-body-rating" onclick="Club.ajaxify(event, Club.postUpvoted)">{{ post.upvotes }}</a>
-            {% else %}
-                <span class="upvote upvote-disabled post-body-rating">{{ post.upvotes }}</span>
-            {% endif %}
+            {% include "posts/common/upvote.html" with post=post %}
         </div>
 
         <div class="text-body text-body-type-post">

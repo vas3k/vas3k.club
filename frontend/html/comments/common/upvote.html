@@ -1,0 +1,5 @@
+{% if me != comment.author %}
+    <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} {% if is_small %}upvote-type-small{% endif %} {% if is_inline %}upvote-type-inline{% endif %}" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
+{% else %}
+    <span class="upvote upvote-disabled {% if is_small %}upvote-type-small{% endif %} {% if is_inline %}upvote-type-inline{% endif %}">{{ comment.upvotes }}</span>
+{% endif %}
