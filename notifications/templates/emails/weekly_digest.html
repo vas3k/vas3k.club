@@ -148,7 +148,7 @@
 {% block body %}
     {% if author_intro %}
         <article class="editorial-text">
-            {{ author_intro | markdown }}
+            {{ author_intro | email_markdown }}
         </article>
     {% endif %}
 
