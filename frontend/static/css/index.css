@@ -2,7 +2,6 @@
 @import "https://fonts.googleapis.com/css?family=Ubuntu:400,400i,500,500i,700|Merriweather:300,400,400i,700,900&display=swap&subset=cyrillic,cyrillic-ext";
 
 @import "./normalize.css";
-@import "./fontawesome.min.css";
 @import "./theme.css";
 @import "./base.css";
 @import "./layout.css";

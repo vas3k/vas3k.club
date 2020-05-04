@@ -22,6 +22,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
     "simplemde": "^1.11.2",
