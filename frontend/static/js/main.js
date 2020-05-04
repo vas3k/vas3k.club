@@ -176,7 +176,7 @@ function initializeMarkdownEditor() {
         extraParams: {
             code: imageUploadCode,
             convert_to: "jpg",
-            quality: 87,
+            quality: 90,
         },
     };
 

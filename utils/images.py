@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 def upload_image_bytes(
-    filename, data, resize=(192, 192), convert_to=None, quality=None, **kwargs
+    filename, data, resize=(192, 192), convert_to=None, quality=None
 ):
     if not data:
         return None
@@ -26,7 +26,7 @@ def upload_image_bytes(
         image.thumbnail(resize)
         saved_image = io.BytesIO()
         saved_image.name = filename
-        image.save(saved_image, format=convert_to, **kwargs)
+        image.save(saved_image)
         data = saved_image.getvalue()
 
     upload_params = {
