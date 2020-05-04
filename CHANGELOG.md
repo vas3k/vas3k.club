@@ -4,6 +4,11 @@
 
 [Full Changelog](https://github.com/vas3k/vas3k.club/compare/c3f7a94bc5e34f4a175bb95202f7b6a8278752db...HEAD)
 
+**Implemented enhancements:**
+
+- Вернуть выбор топика в батлы [\#69](https://github.com/vas3k/vas3k.club/issues/69)
+- Поиск по сайту [\#61](https://github.com/vas3k/vas3k.club/issues/61)
+
 **Fixed bugs:**
 
 - Search pagination has broken links [\#92](https://github.com/vas3k/vas3k.club/issues/92)
@@ -18,10 +23,8 @@
 **Closed issues:**
 
 - В мобильной версии при открытии вопроса нет кнопки "войти"  [\#87](https://github.com/vas3k/vas3k.club/issues/87)
-- Вернуть выбор топика в батлы [\#69](https://github.com/vas3k/vas3k.club/issues/69)
 - Добавить поддержку InstantView для постов клуба [\#66](https://github.com/vas3k/vas3k.club/issues/66)
 - Добавить кнопку редактирования интро прям в профиль пользователя [\#62](https://github.com/vas3k/vas3k.club/issues/62)
-- Поиск по сайту [\#61](https://github.com/vas3k/vas3k.club/issues/61)
 - Не получается удалить свой ответ к баттл-посту [\#58](https://github.com/vas3k/vas3k.club/issues/58)
 - Постить тематические посты по соответствующим чатам [\#52](https://github.com/vas3k/vas3k.club/issues/52)
 - Использовать системную тему [\#47](https://github.com/vas3k/vas3k.club/issues/47)
