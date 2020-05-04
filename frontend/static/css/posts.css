@@ -265,6 +265,7 @@
     .text-body h2 strong,
     .text-body h3 strong {
         font-size: 200%;
+        line-height: 1.2em;
     }
 
     .text-body h1 a,

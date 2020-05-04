@@ -96,12 +96,8 @@
                     <div class="profile-tags-group">
                         <div class="user-tags">
                             {% for tag in tag_group.list %}
-                                {% if tag.code in active_tags %}
-                                    <a href="{% url "toggle_tag" tag.code %}" class="user-tag user-tag-active" style="background-color: {{ tag.color }};" onclick="Club.ajaxify(event, Club.toggleUserTag)">{{ tag.name }}</a>
-                                {% else %}
-                                    {% if me.id == user.id %}
-                                        <a href="{% url "toggle_tag" tag.code %}" class="user-tag" onclick="Club.ajaxify(event, Club.toggleUserTag)">{{ tag.name }}</a>
-                                    {% endif %}
+                                {% if me.id == user.id or tag.code in active_tags %}
+                                    <user-tag :tag="JSON.parse('{{ tag.to_dict | jsonify }}')" url="{% url "toggle_tag" tag.code %}" {% if tag.code in active_tags %}is-active-by-default{% endif %}></user-tag>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -173,7 +169,7 @@
     </div>
 
     <div class="window window-expertise" id="window-expertise">
-        <div class="window-close-button" onclick="Club.closeWindow(event)"><i class="fas fa-times"></i></div>
+        <div class="window-close-button" v-on:click="closeWindow"><i class="fas fa-times"></i></div>
         <div class="window-title">Я могу в...</div>
         <form action="{% url "add_expertise" %}" method="post">
             <div class="edit-expertise">

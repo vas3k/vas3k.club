@@ -14,7 +14,7 @@
         {% include "comments/common/upvote.html" with comment=comment is_inline=True %}
     </div>
     <div class="reply-footer">
-        <span class="comment-reply-button" onclick="Club.showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
+        <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
             —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
         </span>
         {% if comment.author == me and comment.is_editable or me.is_moderator %}
