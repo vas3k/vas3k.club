@@ -173,7 +173,11 @@ function initializeMarkdownEditor() {
         progressText: "![Загружаю файл...]()",
         urlText: "![]({filename})",
         errorText: "Ошибка при загрузке файла :(",
-        extraParams: {code: imageUploadCode},
+        extraParams: {
+            code: imageUploadCode,
+            convert_to: "jpg",
+            quality: 87,
+        },
     };
 
     const fullMarkdownEditors = document.querySelectorAll(".markdown-editor-full");

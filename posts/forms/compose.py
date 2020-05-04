@@ -200,7 +200,6 @@ class PostProjectForm(PostForm):
         label="Скриншот или иконка",
         required=True,
         resize=(1024, 1024),
-        convert_format=None
     )
     text = forms.CharField(
         label="Описание",

@@ -32,7 +32,8 @@ class UserIntroForm(ModelForm):
     avatar = ImageUploadField(
         label="Аватар",
         required=False,
-        resize=(512, 512)
+        resize=(512, 512),
+        convert_to="jpg",
     )
     city = forms.CharField(
         label="Город",

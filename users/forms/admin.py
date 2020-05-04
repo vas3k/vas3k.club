@@ -20,7 +20,7 @@ class UserAdminForm(forms.Form):
     new_hat_icon = ImageUploadField(
         label="Иконка",
         required=False,
-        resize=(256, 256)
+        resize=(256, 256),
     )
     new_hat_color = forms.CharField(
         label="Цвет",
