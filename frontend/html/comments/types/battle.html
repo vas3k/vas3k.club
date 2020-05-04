@@ -10,11 +10,7 @@
         {% include "users/widgets/tiny.html" with user=comment.author %}
     </div>
     <div class="comment-rating">
-        {% if me %}
-            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} post-body-rating" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
-        {% else %}
-            <span class="upvote upvote-voted post-body-rating">{{ comment.upvotes }}</span>
-        {% endif %}
+        {% include "comments/common/upvote.html" with comment=comment %}
 
         {% if comment.is_pinned %}
             <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
