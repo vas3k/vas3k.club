@@ -904,7 +904,8 @@
 
         .form-row #id_bio {
             width: 80%;
-            height: 90px;
+            height: 180px;
+            min-height: auto;
         }
 
         .form-row #id_country,
