@@ -2,8 +2,6 @@ import twemoji from "twemoji";
 import SimpleMDE from "simplemde";
 import Lightense from "lightense-images";
 
-import "@fortawesome/fontawesome-free/css/all.min.css";
-
 import "../css/index.css";
 
 import "./inline-attachment"
