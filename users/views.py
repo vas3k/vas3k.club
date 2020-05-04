@@ -7,6 +7,7 @@ from common.pagination import paginate
 from common.request import ajax_request
 from notifications.telegram.users import notify_profile_needs_review
 from posts.models import Post
+from comments.models import Comment
 from search.models import SearchIndex
 from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
@@ -17,9 +18,11 @@ from users.models import User, UserBadge, UserExpertise, UserTag, Tag
 
 @auth_required
 def intro(request):
-    if request.me.is_profile_complete \
-            and request.me.is_profile_reviewed \
-            and not request.me.is_profile_rejected:
+    if (
+        request.me.is_profile_complete
+        and request.me.is_profile_reviewed
+        and not request.me.is_profile_rejected
+    ):
         return redirect("profile", request.me.slug)
 
     if request.method == "POST":
@@ -34,7 +37,9 @@ def intro(request):
             user.save()
 
             # create intro post
-            intro_post = Post.upsert_user_intro(user, form.cleaned_data["intro"], is_visible=False)
+            intro_post = Post.upsert_user_intro(
+                user, form.cleaned_data["intro"], is_visible=False
+            )
 
             # notify moderators to review profile
             async_task(notify_profile_needs_review, user, intro_post)
@@ -66,21 +71,29 @@ def profile(request, user_slug):
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
     achievements = UserBadge.objects.filter(user=user)[:8]
     expertises = UserExpertise.objects.filter(user=user).all()
-    posts = Post.objects_for_user(request.me)\
-        .filter(author=user, is_visible=True)\
+    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")
+    posts = (
+        Post.objects_for_user(request.me)
+        .filter(author=user, is_visible=True)
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT])
+    )
 
-    return render(request, "users/profile.html", {
-        "user": user,
-        "intro": intro,
-        "projects": projects,
-        "tags": tags,
-        "active_tags": active_tags,
-        "achievements": achievements,
-        "expertise_form": ExpertiseForm(),
-        "expertises": expertises,
-        "posts": paginate(request, posts),
-    })
+    return render(
+        request,
+        "users/profile.html",
+        {
+            "user": user,
+            "intro": intro,
+            "projects": projects,
+            "tags": tags,
+            "active_tags": active_tags,
+            "achievements": achievements,
+            "expertise_form": ExpertiseForm(),
+            "expertises": expertises,
+            "comments": comments[:5],
+            "posts": paginate(request, posts),
+        },
+    )
 
 
 @auth_required
@@ -128,11 +141,7 @@ def toggle_tag(request, tag_code):
     tag = get_object_or_404(Tag, code=tag_code)
 
     user_tag, is_created = UserTag.objects.get_or_create(
-        user=request.me,
-        tag=tag,
-        defaults=dict(
-            name=tag.name
-        )
+        user=request.me, tag=tag, defaults=dict(name=tag.name)
     )
 
     if not is_created:
@@ -152,7 +161,9 @@ def add_expertise(request):
         if form.is_valid():
             user_expertise = form.save(commit=False)
             user_expertise.user = request.me
-            UserExpertise.objects.filter(user=request.me, expertise=user_expertise.expertise).delete()
+            UserExpertise.objects.filter(
+                user=request.me, expertise=user_expertise.expertise
+            ).delete()
             user_expertise.save()
             return {
                 "status": "created",
@@ -173,9 +184,7 @@ def delete_expertise(request, expertise):
         UserExpertise.objects.filter(user=request.me, expertise=expertise).delete()
         return {
             "status": "deleted",
-            "expertise": {
-                "expertise": expertise,
-            },
+            "expertise": {"expertise": expertise,},
         }
 
     return {"status": "tipidor"}

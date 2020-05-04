@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load static %}
+{% load comments %}
 {% load posts %}
 {% load text_filters %}
 {% load paginator %}
@@ -156,6 +157,39 @@
                     </div>
                 </div>
             {% endif %}
+        {% endif %}
+
+        {% if comments %}
+            <div class="profile-comments">
+                <div class="profile-header">Комментарии</div>
+                {% for comment in comments %}
+                    <div class="block comment comment-layout-normal" id="comment-{{ comment.id }}">
+                        <div class="comment-header">
+                            <div class="user user-small">
+                                <span class="user-avatar">
+                                    <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+                                </span>
+                                <span class="user-info">
+                                    {{ comment.post.title }}
+                                </span>
+                                <span class="user-footer">
+                                    {{ comment.created_at | date:"d E Y" }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="comment-body">
+                            <div class="text-body text-body-type-comment">
+                                {% render_comment comment %}
+                            </div>
+                        </div>
+                        <div class="comment-rating">
+                            <span class="upvote upvote-type-small">{{ comment.upvotes }}</span>
+                        </div>
+                        <a class="block-link" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}"></a>
+                    </div>
+                    </a>
+                {% endfor %}
+            </div>
         {% endif %}
 
         {% if posts %}
