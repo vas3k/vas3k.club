@@ -1,4 +1,4 @@
-{% if me != post.author %}
+{% if me and me != post.author %}
     <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %}" onclick="Club.ajaxify(event, Club.postUpvoted)">{{ post.upvotes }}</a>
 {% else %}
     <span class="upvote upvote-disabled">{{ post.upvotes }}</span>
