@@ -6,8 +6,18 @@
 
 **Implemented enhancements:**
 
+- В мобильной версии при открытии вопроса нет кнопки "войти"  [\#87](https://github.com/vas3k/vas3k.club/issues/87)
 - Вернуть выбор топика в батлы [\#69](https://github.com/vas3k/vas3k.club/issues/69)
+- Добавить кнопку редактирования интро прям в профиль пользователя [\#62](https://github.com/vas3k/vas3k.club/issues/62)
 - Поиск по сайту [\#61](https://github.com/vas3k/vas3k.club/issues/61)
+- Не получается удалить свой ответ к баттл-посту [\#58](https://github.com/vas3k/vas3k.club/issues/58)
+- Постить тематические посты по соответствующим чатам [\#52](https://github.com/vas3k/vas3k.club/issues/52)
+- Реплай к новому комменту налезает на его фон [\#46](https://github.com/vas3k/vas3k.club/issues/46)
+- Выделять меншены в комментах [\#40](https://github.com/vas3k/vas3k.club/issues/40)
+- Сменить стиль выделения комментария по ссылке? [\#31](https://github.com/vas3k/vas3k.club/issues/31)
+- Markdown-парсер должен поддерживать одинарный перевод строки как \<br\> [\#18](https://github.com/vas3k/vas3k.club/issues/18)
+- Профиль - ссылки [\#13](https://github.com/vas3k/vas3k.club/issues/13)
+- Придумать как должны кликаться посты в фиде [\#7](https://github.com/vas3k/vas3k.club/issues/7)
 
 **Fixed bugs:**
 
@@ -22,20 +32,10 @@
 
 **Closed issues:**
 
-- В мобильной версии при открытии вопроса нет кнопки "войти"  [\#87](https://github.com/vas3k/vas3k.club/issues/87)
 - Добавить поддержку InstantView для постов клуба [\#66](https://github.com/vas3k/vas3k.club/issues/66)
-- Добавить кнопку редактирования интро прям в профиль пользователя [\#62](https://github.com/vas3k/vas3k.club/issues/62)
-- Не получается удалить свой ответ к баттл-посту [\#58](https://github.com/vas3k/vas3k.club/issues/58)
-- Постить тематические посты по соответствующим чатам [\#52](https://github.com/vas3k/vas3k.club/issues/52)
 - Использовать системную тему [\#47](https://github.com/vas3k/vas3k.club/issues/47)
-- Реплай к новому комменту налезает на его фон [\#46](https://github.com/vas3k/vas3k.club/issues/46)
 - Нельзя редактировать заголовки у комментариев [\#42](https://github.com/vas3k/vas3k.club/issues/42)
-- Выделять меншены в комментах [\#40](https://github.com/vas3k/vas3k.club/issues/40)
 - Оптимизировать размер фронтенда [\#33](https://github.com/vas3k/vas3k.club/issues/33)
-- Сменить стиль выделения комментария по ссылке? [\#31](https://github.com/vas3k/vas3k.club/issues/31)
-- Markdown-парсер должен поддерживать одинарный перевод строки как \<br\> [\#18](https://github.com/vas3k/vas3k.club/issues/18)
-- Профиль - ссылки [\#13](https://github.com/vas3k/vas3k.club/issues/13)
-- Придумать как должны кликаться посты в фиде [\#7](https://github.com/vas3k/vas3k.club/issues/7)
 
 
 
