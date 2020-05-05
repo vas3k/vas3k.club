@@ -107,6 +107,7 @@
                     top: 0;
                     left: auto;
                     right: 0;
+                    z-index: 1;
                 }
 
                 .post-type-post .text-body > *:first-child {
