@@ -164,13 +164,12 @@ const App = {
         let internal = location.host.replace("www.", "");
         internal = new RegExp(internal, "i");
 
-        let a = document.getElementsByTagName("a");
-        for (let i = 0; i < a.length; i++) {
-            let href = a[i].host;
-            if (!internal.test(href)) {
-                a[i].setAttribute("target", "_blank");
-            }
-        }
+        const links = [...document.getElementsByTagName("a")];
+        links.forEach(link => {
+          if (internal.test(link.host)) return;
+        
+          link.setAttribute("target", "_blank");
+        });
     },
     initializeImageZoom() {
         Lightense(document.querySelectorAll(".text-body figure img"), {
@@ -190,7 +189,7 @@ const App = {
         commentForm.addEventListener('keydown', (event) => this.handleCommentHotkey(event, commentForm));
     },
     handleCommentHotkey(event, controlElement) {
-        if ((event.ctrlKey || event.metaKey) && event.keyCode === 13) {
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
             controlElement.submit();
         }
     },
