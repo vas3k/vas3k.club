@@ -44,11 +44,19 @@ def process_comment_reply(update: Update):
         )
         return
 
+    text = update.message.text or update.message.caption
+    if not text:
+        send_telegram_message(
+            chat=Chat(id=update.effective_chat.id),
+            text=f"😣 Сорян, я пока умею только в текстовые ответы"
+        )
+        return
+
     comment = Comment.objects.create(
         author=user,
         post=reply.post,
         reply_to=Comment.find_top_comment(reply),
-        text=update.message.text,
+        text=text,
         useragent="TelegramBot (like TwitterBot)",
         metadata={
             "telegram": update.to_dict()
