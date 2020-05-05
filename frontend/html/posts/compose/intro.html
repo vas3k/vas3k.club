@@ -1,1 +1,62 @@
-{% include "posts/compose/post.html" %}
+{% extends "layout.html" %}
+
+{% block title %}
+        Редактируем интро — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content compose">
+            <div class="content-header">Редактируем интро</div>
+
+        <div class="block compose-text">
+            <form action="." method="post" class="compose-form" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-row form-row-center">
+                        {% for error in form.non_field_errors %}
+                            <span class="form-row-errors">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-row compose-form-title">
+                    {{ form.title }}
+                    {% if form.title.errors %}<span class="form-row-errors">{{ form.title.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row compose-form-text">
+                    <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
+                    {{ form.text }}
+                    {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
+                    <span class="form-row-help form-row-help-wide">
+                        Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a>.
+                        Для загрузки картинок просто перетащите их в редактор.
+                        Еще он пока иногда глючит, поэтому перед публикацией длинного интро скопируйте его в блокнот чтобы не потерять :D
+                    </span>
+                </div>
+
+                <div class="form-row form-row-checkbox">
+                    {{ form.is_public }}
+                    <label for="{{ form.is_public.id_for_label }}">Интро видно в Большой Интернет?</label>
+                    <span class="form-row-help form-row-help-wide">
+                        ☝️ Голосовать за интро и комментировать его могут только члены Клуба, но с этой галочкой вы сможете кинуть ссылку на себя друзьям.
+                    </span>
+                </div>
+
+                {% if me.is_moderator %}
+                    <div class="form-row form-row-checkbox">
+                        {{ form.is_visible_on_main_page }}
+                        <label for="{{ form.is_visible_on_main_page.id_for_label }}">Интро видно на главной?</label>
+                    </div>
+                {% endif %}
+
+                <div class="form-row form-row-space-between">
+                    <button type="submit" name="is_visible" value="true" class="button">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
