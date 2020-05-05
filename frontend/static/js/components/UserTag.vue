@@ -1,9 +1,9 @@
 <template>
-    <a v-bind::href="url"
+    <a :href="url"
        class="user-tag"
-       v-bind:class="{'user-tag-active': isActive}"
-       v-bind:style="{'background-color': isActive ? tag.color : null}"
-       v-on:click.prevent="toggle">
+       :class="{'user-tag-active': isActive}"
+       :style="{'background-color': isActive ? tag.color : null}"
+       @click.prevent="toggle">
         {{ tag.name }}
     </a>
 </template>

@@ -1,3 +1,5 @@
+{% load text_filters %}
+{% load posts %}
 {% load comments %}
 <div class="block comment comment-layout-block" id="comment-{{ comment.id }}">
     <div class="comment-header">
@@ -19,7 +21,11 @@
         </div>
     </div>
     <div class="comment-rating">
-        {% include "comments/common/upvote.html" with comment=comment %}
+        <comment-upvote :comment="JSON.parse('{{ comment.to_dict | jsonify }}')"
+                         url="{% url "upvote_comment" comment.id %}"
+                         {% if comment.is_voted %}is-voted-by-default{% endif %}
+                         {% if not me|can_upvote:comment %}is-disabled{% endif %}>
+        </comment-upvote>
 
         {% if comment.is_pinned %}
             <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>

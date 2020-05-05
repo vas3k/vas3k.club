@@ -77,7 +77,6 @@ def profile(request, user_slug):
         "tags": tags,
         "active_tags": active_tags,
         "achievements": achievements,
-        "expertise_form": ExpertiseForm(),
         "expertises": expertises,
         "posts": paginate(request, posts),
     })

@@ -191,7 +191,7 @@
                     <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank">{{ post.title }}</a>
 
                     {% if post.label %}
-                        &nbsp;{% include "posts/common/label.html" with label=post.label %}
+                        &nbsp;{% include "posts/common/../../../frontend/html/posts/widgets/label.html" with label=post.label %}
                     {% endif %}
                 </h3>
 
