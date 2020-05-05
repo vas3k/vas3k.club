@@ -45,7 +45,7 @@
 
                 {% if post.label %}
                     <div class="post-label">
-                        {% include "posts/common/label.html" with label=post.label %}
+                        {% include "posts/widgets/label.html" with label=post.label %}
                     </div>
                 {% endif %}
 
@@ -57,7 +57,11 @@
             </div>
         </div>
         <div class="post-text">
-            {% include "posts/common/upvote.html" with post=post %}
+            <post-upvote :post="JSON.parse('{{ post.to_dict | jsonify }}')"
+                         url="{% url "upvote_post" post.slug %}"
+                         {% if is_voted %}is-voted-by-default{% endif %}
+                         {% if not me|can_upvote:post %}is-disabled{% endif %}>
+            </post-upvote>
             <div class="text-body text-body-type-post">
                 {% render_post post %}
             </div>

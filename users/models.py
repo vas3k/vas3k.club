@@ -169,6 +169,14 @@ class Tag(models.Model):
         db_table = "tags"
         ordering = ["-group", "index"]
 
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "group": self.group,
+            "name": self.name,
+            "color": self.color,
+        }
+
     @property
     def color(self):
         return COOL_COLORS[sum(map(ord, self.code)) % len(COOL_COLORS)]

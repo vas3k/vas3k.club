@@ -71,11 +71,8 @@ class UserEditForm(ModelForm):
 class ExpertiseForm(ModelForm):
     expertise = forms.ChoiceField(
         label="Область",
-        required=False,
+        required=True,
         choices=EXPERTISE + [("custom", "[добавить своё]")],
-        widget=forms.Select(
-            attrs={"onchange": "onExpertiseSelectionChanged(event)"}  # wow, so bad
-        ),
     )
     expertise_custom = forms.CharField(
         label="Свой вариант",

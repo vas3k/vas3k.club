@@ -1,3 +1,5 @@
+{% load text_filters %}
+{% load posts %}
 {% load comments %}
 <div class="reply" id="comment-{{ comment.id }}">
     <div class="reply-author">
@@ -11,10 +13,15 @@
         </div>
     </div>
     <div class="reply-rating">
-        {% include "comments/common/upvote.html" with comment=comment is_inline=True %}
+        <comment-upvote :comment="JSON.parse('{{ comment.to_dict | jsonify }}')"
+                         url="{% url "upvote_comment" comment.id %}"
+                         {% if comment.is_voted %}is-voted-by-default{% endif %}
+                         {% if not me|can_upvote:comment %}is-disabled{% endif %}
+                         is-inline>
+        </comment-upvote>
     </div>
     <div class="reply-footer">
-        <span class="comment-reply-button" onclick="Club.showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
+        <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
             —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
         </span>
         {% if comment.author == me and comment.is_editable or me.is_moderator %}

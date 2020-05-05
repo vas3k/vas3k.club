@@ -17,6 +17,9 @@
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
+    "vue-hot-reload-api": "^2.3.4",
+    "vue-loader": "^15.9.2",
+    "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.11"
@@ -25,7 +28,8 @@
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
     "simplemde": "^1.11.2",
-    "twemoji": "^12.1.6"
+    "twemoji": "^12.1.6",
+    "vue": "^2.6.11"
   },
   "browserslist": [
     "last 2 versions",

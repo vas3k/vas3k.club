@@ -142,6 +142,14 @@ class Post(models.Model, ModelDiffMixin):
         db_table = "posts"
         ordering = ["-created_at"]
 
+    def to_dict(self):
+        return {
+            "slug": self.slug,
+            "type": self.type,
+            "title": self.title,
+            "upvotes": self.upvotes,
+        }
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
