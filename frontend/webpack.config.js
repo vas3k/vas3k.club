@@ -57,7 +57,7 @@ module.exports = {
     devtool: "source-map",
     resolve: {
         alias: {
-            vue: "vue/dist/vue.js"
+            vue: mode === "production" ? "vue/dist/vue.min.js" : "vue/dist/vue.js"
         }
     }
 };
