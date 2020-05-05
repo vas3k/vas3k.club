@@ -146,7 +146,6 @@ class Post(models.Model, ModelDiffMixin):
         return {
             "slug": self.slug,
             "type": self.type,
-            "title": self.title,
             "upvotes": self.upvotes,
         }
 
