@@ -54,6 +54,11 @@ def intro(request):
 def profile(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
+    if not request.me.is_moderator:
+        # hide unverified users
+        if not user.is_profile_complete or not user.is_profile_complete or user.is_profile_rejected:
+            raise Http404()
+
     if user.id == request.me.id:
         goto = request.GET.get("goto")
         if goto:
