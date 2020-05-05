@@ -560,6 +560,7 @@
             font-size: 110%;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-family: var(--serif-font);
         }
 
     .profile-intro-edit {
