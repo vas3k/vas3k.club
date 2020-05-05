@@ -10,8 +10,7 @@
         {% include "common/og.html" %}
     {% endblock %}
     {% include "common/favicon.html" %}
-    {% include "common/js.html" %}
-    {% block js %}{% endblock %}
+    {% render_bundle "main" "css" %}
 </head>
 <body>
 
@@ -95,5 +94,8 @@
         </div>
     </div>
 {% endblock %}
+
+    {% include "common/js.html" %}
+    {% block js %}{% endblock %}
 </body>
 </html>
