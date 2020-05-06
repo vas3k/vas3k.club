@@ -19,18 +19,11 @@ log = logging.getLogger(__name__)
 
 
 def process_auth(update: Update):
-    if not update.message.text:
-        send_telegram_message(
-            chat=Chat(id=update.effective_chat.id),
-            text="Привет. Мы пока не знакомы. Привяжи меня на сайте или пришли мне секретный код 👇"
-        )
-        return
-
     user = User.objects.filter(secret_hash=str(update.message.text).strip()).first()
     if not user:
         send_telegram_message(
             chat=Chat(id=update.effective_chat.id),
-            text="Неправильный код. Пришли другой"
+            text="Привет. Мы пока не знакомы. Привяжи меня на сайте или пришли мне секретный код 👇"
         )
         return
 
@@ -48,6 +41,7 @@ def process_auth(update: Update):
         chat=Chat(id=update.effective_chat.id),
         text=f"Отлично! Приятно познакомиться, {user.slug}"
     )
+    cache.delete("bot:telegram_user_ids")
 
 
 def process_personal_chat_updates(update: Update):

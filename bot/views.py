@@ -92,6 +92,8 @@ def link_telegram(request):
         request.me.telegram_data = data
         request.me.save()
 
+        cache.delete("bot:telegram_user_ids")
+
         full_name = str(request.me.telegram_data.get("first_name") or "") \
             + str(request.me.telegram_data.get("last_name") or "")
 
