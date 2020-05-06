@@ -76,7 +76,7 @@ def profile(request, user_slug):
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
     achievements = UserBadge.objects.filter(user=user)[:8]
     expertises = UserExpertise.objects.filter(user=user).all()
-    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")[:5]
+    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")[:3]
     posts = Post.objects_for_user(request.me)\
         .filter(author=user, is_visible=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT])

@@ -159,7 +159,7 @@
 
         {% if comments %}
             <div class="profile-comments">
-                <div class="profile-header">Комментарии</div>
+                <div class="profile-header">Последние комментарии</div>
                 {% for comment in comments %}
                     <div class="block comment comment-layout-normal" id="comment-{{ comment.id }}">
                         <div class="comment-header">
@@ -185,7 +185,6 @@
                         </div>
                         <a class="block-link" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}"></a>
                     </div>
-                    </a>
                 {% endfor %}
             </div>
         {% endif %}
