@@ -46,7 +46,8 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f'<a href="{src}">{src}</a>'
 
     def just_img(self, src, alt="", title=None):
-        image_tag = f'<img src="{src}" alt="{alt}">'
+        title = title or alt
+        image_tag = f'<img src="{src}" alt="{title}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f"<figure>{image_tag}{caption}</figure>"
 

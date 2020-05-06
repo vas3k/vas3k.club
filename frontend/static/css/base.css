@@ -35,7 +35,7 @@
     }
 
 .window {
-    display: none;
+    display: block;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -589,6 +589,11 @@ input[type=range]:focus::-ms-fill-upper {
         max-width: calc(50% - 5px);
         min-height: 130px;
     }
+
+        .topic-type-card:hover {
+            transform: translateY(-2px);
+            transition: .2s;
+        }
 
         .topic-type-card .topic-name-wrapper {
             display: flex;

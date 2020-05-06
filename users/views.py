@@ -59,6 +59,11 @@ def intro(request):
 def profile(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
+    if not request.me.is_moderator:
+        # hide unverified users
+        if not user.is_profile_complete or not user.is_profile_complete or user.is_profile_rejected:
+            raise Http404()
+
     if user.id == request.me.id:
         goto = request.GET.get("goto")
         if goto:
@@ -71,29 +76,22 @@ def profile(request, user_slug):
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
     achievements = UserBadge.objects.filter(user=user)[:8]
     expertises = UserExpertise.objects.filter(user=user).all()
-    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")
-    posts = (
-        Post.objects_for_user(request.me)
-        .filter(author=user, is_visible=True)
+    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")[:5]
+    posts = Post.objects_for_user(request.me)\
+        .filter(author=user, is_visible=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT])
-    )
 
-    return render(
-        request,
-        "users/profile.html",
-        {
-            "user": user,
-            "intro": intro,
-            "projects": projects,
-            "tags": tags,
-            "active_tags": active_tags,
-            "achievements": achievements,
-            "expertise_form": ExpertiseForm(),
-            "expertises": expertises,
-            "comments": comments[:5],
-            "posts": paginate(request, posts),
-        },
-    )
+    return render(request, "users/profile.html", {
+        "user": user,
+        "intro": intro,
+        "projects": projects,
+        "tags": tags,
+        "active_tags": active_tags,
+        "achievements": achievements,
+        "expertises": expertises,
+        "comments": comments,
+        "posts": paginate(request, posts),
+    })
 
 
 @auth_required

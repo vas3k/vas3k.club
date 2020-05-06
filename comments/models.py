@@ -58,6 +58,12 @@ class Comment(models.Model):
         db_table = "comments"
         ordering = ["created_at"]
 
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "upvotes": self.upvotes,
+        }
+
     def save(self, *args, **kwargs):
         if self.reply_to:
             self.reply_to = self.find_top_comment(self.reply_to)

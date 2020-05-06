@@ -12,7 +12,7 @@ from telegram import Update
 from auth.helpers import auth_required
 from bot.bot import bot
 from bot.handlers.moderator import process_moderator_actions
-from bot.handlers.personal import process_personal_chat_updates
+from bot.handlers.personal import process_personal_chat_updates, process_auth
 from bot.handlers.replies import process_comment_reply
 from club.exceptions import AccessDenied
 from common.request import ajax_request
@@ -55,6 +55,8 @@ def webhook_telegram(request, token):
             elif update.effective_user and update.effective_chat.id == update.effective_user.id:
                 if is_club_user(update.effective_user.id):
                     process_personal_chat_updates(update)
+                else:
+                    process_auth(update)  # new user?
 
     return HttpResponse("OK")
 
@@ -62,7 +64,9 @@ def webhook_telegram(request, token):
 def is_club_user(telegram_user_id):
     club_users = cache.get("bot:telegram_user_ids")
     if not club_users:
-        club_users = User.objects.filter(telegram_id__isnull=False).values_list("telegram_id", flat=True)
+        club_users = User.objects\
+            .filter(telegram_id__isnull=False, is_profile_reviewed=True, is_profile_rejected=False)\
+            .values_list("telegram_id", flat=True)
         cache.set("bot:telegram_user_ids", list(club_users), 5 * 60)
     return str(telegram_user_id) in set(club_users)
 
@@ -87,6 +91,8 @@ def link_telegram(request):
         request.me.telegram_id = data["id"]
         request.me.telegram_data = data
         request.me.save()
+
+        cache.delete("bot:telegram_user_ids")
 
         full_name = str(request.me.telegram_data.get("first_name") or "") \
             + str(request.me.telegram_data.get("last_name") or "")

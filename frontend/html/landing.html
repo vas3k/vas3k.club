@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load render_bundle from webpack_loader %}
 <html lang="ru" theme="dark">
 <head>
     <title>{% block title %}Вастрик.Клуб ✖️‍{% endblock %}</title>
@@ -10,8 +11,7 @@
         {% include "common/og.html" %}
     {% endblock %}
     {% include "common/favicon.html" %}
-    {% include "common/js.html" %}
-    {% block js %}{% endblock %}
+    {% render_bundle "main" "css" %}
 </head>
 <body>
 
@@ -95,5 +95,8 @@
         </div>
     </div>
 {% endblock %}
+
+    {% include "common/js.html" %}
+    {% block js %}{% endblock %}
 </body>
 </html>

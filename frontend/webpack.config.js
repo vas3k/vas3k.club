@@ -1,7 +1,8 @@
 const path = require("path");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { VueLoaderPlugin } = require("vue-loader");
 
 const { NODE_ENV: mode = 'production' } = process.env;
 
@@ -23,6 +24,7 @@ module.exports = {
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
         new CleanWebpackPlugin(),
+        new VueLoaderPlugin(),
     ],
     module: {
         rules: [
@@ -45,8 +47,17 @@ module.exports = {
                         publicPath: "fonts/"     // override the default path
                     }
                 }]
+            },
+            {
+                test: /\.vue$/,
+                loader: "vue-loader"
             }
         ]
     },
     devtool: "source-map",
+    resolve: {
+        alias: {
+            vue: mode === "production" ? "vue/dist/vue.min.js" : "vue/dist/vue.js"
+        }
+    }
 };

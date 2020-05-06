@@ -96,6 +96,9 @@
             left: -110px;
             padding-left: 20px;
             padding-right: 20px;
+        }
+
+        .post-type-post .upvote:not(.upvote-disabled) {
             padding-top: 30px !important;
         }
 
@@ -104,6 +107,7 @@
                     top: 0;
                     left: auto;
                     right: 0;
+                    z-index: 1;
                 }
 
                 .post-type-post .text-body > *:first-child {
@@ -156,6 +160,8 @@
     font-weight: 400;
     max-width: 100%;
     letter-spacing: 0.01rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
     .text-body-type-post {
@@ -262,6 +268,7 @@
     .text-body h2 strong,
     .text-body h3 strong {
         font-size: 200%;
+        line-height: 1.2em;
     }
 
     .text-body h1 a,

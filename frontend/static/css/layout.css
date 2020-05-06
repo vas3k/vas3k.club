@@ -87,7 +87,7 @@
 
     @media only screen and (max-width : 1024px) {
         .feed {
-            grid-template-columns: 200px auto;
+            grid-template-columns: 210px auto;
             font-size: 90%;
         }
     }

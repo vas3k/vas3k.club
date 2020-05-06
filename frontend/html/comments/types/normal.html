@@ -1,3 +1,5 @@
+{% load text_filters %}
+{% load posts %}
 {% load comments %}
 <div class="comment comment-layout-normal {% if comment.is_pinned %}comment-pinned{% endif %}" id="comment-{{ comment.id }}">
     <div class="comment-header">
@@ -19,11 +21,12 @@
         </div>
     </div>
     <div class="comment-rating">
-        {% if me %}
-            <a href="{% url "upvote_comment" comment.id %}" class="upvote {% if comment.is_voted %}upvote-voted{% endif %} upvote-type-small" onclick="Club.ajaxify(event, Club.commentUpvoted)">{{ comment.upvotes }}</a>
-        {% else %}
-            <span class="upvote upvote-voted upvote-type-small">{{ comment.upvotes }}</span>
-        {% endif %}
+        <comment-upvote :comment="JSON.parse('{{ comment.to_dict | jsonify }}')"
+                         url="{% url "upvote_comment" comment.id %}"
+                         {% if comment.is_voted %}is-voted-by-default{% endif %}
+                         {% if not me|can_upvote:comment %}is-disabled{% endif %}
+                         is-small>
+        </comment-upvote>
 
         {% if comment.is_pinned %}
             <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
@@ -47,6 +50,6 @@
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
-        <span class="comment-reply-button" onclick="Club.showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+        <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
     </div>
 </div>

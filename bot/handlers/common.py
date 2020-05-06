@@ -18,4 +18,11 @@ def get_bot_user(update):
         )
         return None
 
+    if not user.is_club_member:
+        send_telegram_message(
+            chat=Chat(id=update.effective_user.id),
+            text=f"😣 Ваш профиль не активен"
+        )
+        return None
+
     return user

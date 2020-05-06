@@ -28,27 +28,27 @@
                 <ul class="feed-sidebar-list feed-sidebar-menu">
                     <li>
                         <a href="{% url "index" %}" class="{% if not post_type and not topic %}feed-sidebar-menu-selected{% endif %}">
-                            Главная
+                            🏠 Главная
                         </a>
                     </li>
                     <li>
                         <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
-                            Вопросы Клубу
+                            🤔 Вопросы Клубу
                         </a>
                     </li>
                     <li>
                         <a href="{% url "feed_type" "pain" %}" class="{% if post_type == "pain" %}feed-sidebar-menu-selected{% endif %}">
-                            Расскажи где болит
+                            😭 Расскажи где болит
                         </a>
                     </li>
                     <li>
                         <a href="{% url "feed_type" "battle" %}" class="{% if post_type == "battle" %}feed-sidebar-menu-selected{% endif %}">
-                            Батлы
+                            🤜 Батлы
                         </a>
                     </li>
                     <li>
                         <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
-                            Проекты
+                            🏗 Проекты
                         </a>
                     </li>
                 </ul>
@@ -77,6 +77,18 @@
                     {% endif %}
                 </div>
             {% endif %}
+
+            <div class="feed-ordering">
+                <a href="{% url "feed_ordering" post_type "activity" %}" class="feed-ordering-item {% if ordering == "activity" %}feed-ordering-item-is-active{% endif %}">
+                    Обсуждаемое
+                </a>
+                <a href="{% url "feed_ordering" post_type "new" %}" class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}">
+                    Новое
+                </a>
+                <a href="{% url "feed_ordering" post_type "top" %}" class="feed-ordering-item {% if ordering == "top" %}feed-ordering-item-is-active{% endif %}">
+                    Лучшее
+                </a>
+            </div>
 
             {% for post in pinned_posts %}
                 {% include "posts/items/items.html" %}

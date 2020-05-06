@@ -64,7 +64,7 @@
                     {% endif %}
                 </div>
                 {% if intro %}
-                    <div class="profile-intro-text">
+                    <div class="text-body profile-intro-text">
                         {% render_post intro %}
                     </div>
                 {% else %}
@@ -97,12 +97,8 @@
                     <div class="profile-tags-group">
                         <div class="user-tags">
                             {% for tag in tag_group.list %}
-                                {% if tag.code in active_tags %}
-                                    <a href="{% url "toggle_tag" tag.code %}" class="user-tag user-tag-active" style="background-color: {{ tag.color }};" onclick="Club.ajaxify(event, Club.toggleUserTag)">{{ tag.name }}</a>
-                                {% else %}
-                                    {% if me.id == user.id %}
-                                        <a href="{% url "toggle_tag" tag.code %}" class="user-tag" onclick="Club.ajaxify(event, Club.toggleUserTag)">{{ tag.name }}</a>
-                                    {% endif %}
+                                {% if me.id == user.id or tag.code in active_tags %}
+                                    <user-tag :tag="JSON.parse('{{ tag.to_dict | jsonify }}')" url="{% url "toggle_tag" tag.code %}" {% if tag.code in active_tags %}is-active-by-default{% endif %}></user-tag>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -121,7 +117,7 @@
                                 <div class="user-expertise-row-name">
                                     {{ expertise.name }}
                                     {% if me.id == user.id %}
-                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" onclick="Club.ajaxify(event, Club.toggleUserExpertise)">[x]</a>
+                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" @click.prevent="deleteExpertise">[x]</a>
                                     {% endif %}
                                 </div>
                                 <div class="user-expertise-row-bar">
@@ -132,7 +128,9 @@
                     </div>
                 {% endif %}
                 {% if me.id == user.id %}
-                    <span class="button button-round profile-expertise-add-button" onclick="document.getElementById('window-expertise').style.display = 'block';"><i class="fas fa-plus"></i></span>
+                    <span class="button profile-expertise-add-button" @click="shownWindow = 'add-expertise'">
+                        Укажи, во что можешь
+                    </span>
                 {% endif %}
             </div>
         {% endif %}
@@ -206,16 +204,9 @@
         {% endif %}
     </div>
 
-    <div class="window window-expertise" id="window-expertise">
-        <div class="window-close-button" onclick="Club.closeWindow(event)"><i class="fas fa-times"></i></div>
-        <div class="window-title">Я могу в...</div>
-        <form action="{% url "add_expertise" %}" method="post">
-            <div class="edit-expertise">
-                <div class="edit-expertise-select">{{ expertise_form.expertise }}</div>
-                <div class="edit-expertise-custom" id="edit-expertise-custom" style="display: none;">{{ expertise_form.expertise_custom }}</div>
-                <div class="edit-expertise-value">Насколько хорошо: {{ expertise_form.value }}</div>
-            </div>
-            <button type="submit" class="button window-button">Добавить</button>
-        </form>
-    </div>
+    <user-expertise-window submit-form-action="{% url "add_expertise" %}"
+                           :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
+                           v-show="shownWindow === 'add-expertise'"
+                           @close-window="shownWindow = null">
+    </user-expertise-window>
 {% endblock %}

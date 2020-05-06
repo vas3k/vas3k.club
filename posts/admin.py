@@ -36,4 +36,9 @@ def do_post_admin_actions(request, post, data):
         post.is_shadow_banned = True
         post.save()
 
+    # Hide from main page
+    if data["hide_on_main"]:
+        post.is_visible_on_main_page = False
+        post.save()
+
     return redirect("show_post", post.type, post.slug)

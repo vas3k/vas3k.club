@@ -182,6 +182,13 @@
         margin-bottom: 10px;
     }
 
+    .doc .rules {
+    }
+
+        .doc .rules li {
+            padding-top: 20px;
+        }
+
 .landing {
     font-size: 130%;
     line-height: 1.5em;
@@ -367,6 +374,16 @@
             color: var(--opposite-text-color);
         }
 
+    .upvote-disabled {
+        padding-top: 18px;
+        padding-bottom: 18px;
+        pointer-events: none;
+    }
+
+    .upvote-disabled::before {
+        display: none;
+    }
+
     .upvote-type-small {
         padding: 7px 10px 6px 25px;
         font-size: 120%;
@@ -380,6 +397,11 @@
             top: 2px;
             left: 17px;
             font-size: 130%;
+        }
+
+        .upvote-type-small.upvote-disabled {
+            padding-left: 17px;
+            padding-right: 17px;
         }
 
     .upvote-type-inline {
@@ -397,6 +419,11 @@
             top: 2px;
             left: 13px;
             font-size: 110%;
+        }
+
+        .upvote-type-inline.upvote-disabled {
+            padding-left: 14px;
+            padding-right: 14px;
         }
 
 .profile {
@@ -537,7 +564,9 @@
         }
 
         .profile-intro-text {
+            padding-top: 10px;
             font-size: 110%;
+            line-height: 1.5em;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -591,6 +620,7 @@
 
         .profile-expertise-add-button {
             margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         .profile-expertise-rows {
@@ -784,10 +814,11 @@
     }
 
 .feed {
-    padding: 20px 20px 50px;
+    padding: 10px 20px 50px;
 }
 
     .feed-sidebar {
+        padding-top: 30px;
         padding-right: 30px;
         font-size: 110%;
     }
@@ -872,6 +903,31 @@
             padding-top: 20px;
             font-size: 115%;
         }
+
+        .feed-ordering {
+            display: flex;
+            align-content: flex-start;
+            justify-content: flex-end;
+            font-size: 100%;
+            padding: 0 10px 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+            .feed-ordering-item {
+                padding: 10px;
+                text-decoration: none;
+                opacity: 0.5;
+            }
+
+                .feed-ordering-item:hover {
+                    opacity: 0.8;
+                }
+
+                .feed-ordering-item-is-active {
+                    font-weight: 700;
+                    opacity: 1.0;
+                }
 
 .intro {
     padding-top: 50px;

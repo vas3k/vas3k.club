@@ -83,3 +83,8 @@ def link_summary(post):
         "post": post,
         "embed": mark_safe(embed)
     })
+
+
+@register.filter
+def can_upvote(user, post_or_comment):
+    return bool(user and user != post_or_comment.author)

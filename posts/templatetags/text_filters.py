@@ -1,3 +1,5 @@
+import json
+
 from django import template
 from django.conf import settings
 from django.utils.html import escape
@@ -87,3 +89,8 @@ def youtube_id(value):
     if youtube_match:
         return youtube_match.group(1)
     return ""
+
+
+@register.filter()
+def jsonify(value):
+    return json.dumps(value)
