@@ -27,10 +27,10 @@ const App = {
         this.initializeThemeSwitcher();
         this.addTargetBlankToExternalLinks();
         this.bindCommentsHotkey();
-        this.initializeEmojiForPoorPeople();
-        this.initializeImageZoom();
     },
     onMount() {
+        this.initializeImageZoom();
+        this.initializeEmojiForPoorPeople();
         const registeredEditors = this.initializeMarkdownEditor();
         setTimeout(function () {
             registeredEditors.forEach((editor) => {
@@ -167,7 +167,7 @@ const App = {
         const links = [...document.getElementsByTagName("a")];
         links.forEach(link => {
           if (internal.test(link.host)) return;
-        
+
           link.setAttribute("target", "_blank");
         });
     },
