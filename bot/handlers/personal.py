@@ -18,6 +18,38 @@ BOT_USER_POST_TTL = 60 * 60 * 48  # 48 hour
 log = logging.getLogger(__name__)
 
 
+def process_auth(update: Update):
+    if not update.message.text:
+        send_telegram_message(
+            chat=Chat(id=update.effective_chat.id),
+            text="Привет. Мы пока не знакомы. Привяжи меня на сайте или пришли мне секретный код 👇"
+        )
+        return
+
+    user = User.objects.filter(secret_hash=str(update.message.text).strip()).first()
+    if not user:
+        send_telegram_message(
+            chat=Chat(id=update.effective_chat.id),
+            text="Неправильный код. Пришли другой"
+        )
+        return
+
+    user.telegram_id = update.effective_user.id
+    user.telegram_data = {
+        "id": update.effective_user.id,
+        "username": update.effective_user.username,
+        "first_name": update.effective_user.first_name,
+        "last_name": update.effective_user.last_name,
+        "language_code": update.effective_user.language_code,
+    }
+    user.save()
+
+    send_telegram_message(
+        chat=Chat(id=update.effective_chat.id),
+        text=f"Отлично! Приятно познакомиться, {user.slug}"
+    )
+
+
 def process_personal_chat_updates(update: Update):
     user = get_bot_user(update)
     if not user:
