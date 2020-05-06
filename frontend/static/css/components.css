@@ -182,6 +182,13 @@
         margin-bottom: 10px;
     }
 
+    .doc .rules {
+    }
+
+        .doc .rules li {
+            padding-top: 20px;
+        }
+
 .landing {
     font-size: 130%;
     line-height: 1.5em;
