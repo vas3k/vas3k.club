@@ -38,10 +38,12 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
     if not request.me:
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
 
-    # exclude shadow banned posts
-    if request.me:
-        # FIXME: shadow bans are not a popular, so we can exclude them from list without complex sql
-        posts = posts.exclude(Q(is_shadow_banned=True) & ~Q(author_id=request.me.id))
+    # exclude shadow banned posts, but show them in "new" tab
+    if ordering != ORDERING_NEW:
+        if request.me:
+            posts = posts.exclude(Q(is_shadow_banned=True) & ~Q(author_id=request.me.id))
+        else:
+            posts = posts.exclude(is_shadow_banned=True)
 
     # no type and topic? probably it's the main page, let's apply some more filters
     if not topic and not post_type:
