@@ -9,7 +9,7 @@ def settings_processor(request):
 
 def data_processor(request):
     return {
-        "data": {
+        "global_data": {
             "expertise": EXPERTISE,
         }
     }

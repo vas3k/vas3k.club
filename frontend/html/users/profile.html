@@ -171,7 +171,7 @@
     </div>
 
     <user-expertise-window submit-form-action="{% url "add_expertise" %}"
-                           :expertise-list="JSON.parse('{{ data.expertise | jsonify }}')"
+                           :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
                            v-show="shownWindow === 'add-expertise'"
                            @close-window="shownWindow = null">
     </user-expertise-window>
