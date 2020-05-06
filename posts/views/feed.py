@@ -18,6 +18,8 @@ ORDERING_TOP_WEEK = "top_week"
 
 @auth_required
 def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_ACTIVITY):
+    post_type = post_type or Post
+
     if request.me:
         request.me.update_last_activity()
         posts = Post.objects_for_user(request.me)
@@ -25,7 +27,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         posts = Post.visible_objects()
 
     # filter posts by type
-    if post_type and post_type != POST_TYPE_ALL:
+    if post_type != POST_TYPE_ALL:
         posts = posts.filter(type=post_type)
 
     # filter by topic
@@ -46,7 +48,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
             posts = posts.exclude(is_shadow_banned=True)
 
     # no type and topic? probably it's the main page, let's apply some more filters
-    if not topic and not post_type:
+    if not topic and post_type == POST_TYPE_ALL:
         posts = posts.filter(is_visible_on_main_page=True)
 
     # order posts by some metric
