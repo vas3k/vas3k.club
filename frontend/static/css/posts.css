@@ -123,6 +123,8 @@
     .post-layout-block {
         width: 100%;
         max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
         .post-layout-block .post-title {
