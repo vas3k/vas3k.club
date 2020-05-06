@@ -38,6 +38,11 @@ class PostAdminForm(forms.Form):
         required=False,
     )
 
+    hide_on_main = forms.BooleanField(
+        label="Скрыть с главной",
+        required=False,
+    )
+
 
 class PostAnnounceForm(forms.Form):
     text = forms.CharField(
