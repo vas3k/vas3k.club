@@ -1439,6 +1439,7 @@
     }
 
 .comment {
+    position: relative;
     padding: 20px;
     margin-top: 20px;
     border-radius: var(--block-border-radius)
