@@ -54,11 +54,11 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         elif ordering == ORDERING_NEW:
             posts = posts.order_by("-created_at")
         elif ordering == ORDERING_TOP:
-            posts = posts.order_by("upvotes")
+            posts = posts.order_by("-upvotes")
         elif ordering == ORDERING_TOP_WEEK:
             posts = posts.filter(
                 published_at__gte=datetime.utcnow() - timedelta(days=7)
-            ).order_by("upvotes")
+            ).order_by("-upvotes")
         else:
             raise Http404()
 
