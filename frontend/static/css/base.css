@@ -590,6 +590,11 @@ input[type=range]:focus::-ms-fill-upper {
         min-height: 130px;
     }
 
+        .topic-type-card:hover {
+            transform: translateY(-2px);
+            transition: .2s;
+        }
+
         .topic-type-card .topic-name-wrapper {
             display: flex;
             flex-direction: column;

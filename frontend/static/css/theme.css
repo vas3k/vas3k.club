@@ -94,7 +94,9 @@ body {
     color: var(--text-color);
     background-color: var(--bg-color);
     transition: all linear .1s;
+    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
     @media only screen and (min-device-width : 768px)

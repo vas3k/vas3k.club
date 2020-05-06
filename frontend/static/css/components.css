@@ -557,10 +557,11 @@
         }
 
         .profile-intro-text {
+            padding-top: 10px;
             font-size: 110%;
+            line-height: 1.5em;
             overflow: hidden;
             text-overflow: ellipsis;
-            font-family: var(--serif-font);
         }
 
     .profile-intro-edit {
@@ -806,10 +807,11 @@
     }
 
 .feed {
-    padding: 20px 20px 50px;
+    padding: 10px 20px 50px;
 }
 
     .feed-sidebar {
+        padding-top: 40px;
         padding-right: 30px;
         font-size: 110%;
     }
@@ -894,6 +896,31 @@
             padding-top: 20px;
             font-size: 115%;
         }
+
+        .feed-ordering {
+            display: flex;
+            align-content: flex-start;
+            justify-content: flex-end;
+            font-size: 100%;
+            padding: 0 10px 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+            .feed-ordering-item {
+                padding: 10px;
+                text-decoration: none;
+                opacity: 0.5;
+            }
+
+                .feed-ordering-item:hover {
+                    opacity: 0.8;
+                }
+
+                .feed-ordering-item-is-active {
+                    font-weight: 700;
+                    opacity: 1.0;
+                }
 
 .intro {
     padding-top: 50px;
