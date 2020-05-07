@@ -172,6 +172,29 @@
         {% endif %}
     </article>
 
+    {% if mentions %}
+        <h2>💭 Вас упомянули</h2>
+
+        {% for comment in mentions|slice:":10" %}
+            <article class="block comment">
+                <span class="comment-upvotes">
+                    👍{{ comment.upvotes }}
+                </span>
+                <div>
+                    <a href="{{ settings.APP_HOST }}{% url "profile" comment.author.slug %}" style="text-decoration: none;">
+                        <img src="{{ comment.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
+                        &nbsp;{{ comment.author.slug }}
+                    </a>
+                    на {{ comment.post.prefix|default:"пост"|lower }}
+                    <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>
+                </div>
+                <div>
+                    {% render_email comment %}
+                </div>
+            </article>
+        {% endfor %}
+    {% endif %}
+
     {% if posts %}
         <h2>📝 Свежие посты</h2>
 
@@ -215,29 +238,6 @@
         {% if posts|slice:"5:" %}
             <p style="font-size: 19px; line-height: 1.4em;">и еще <a href="">{{ posts|slice:"5:"|length }} {{ posts|slice:"5:"|length|rupluralize:"новый пост,новых поста,новых постов" }}</a>, которые можно посмотреть на главной</p>
         {% endif %}
-    {% endif %}
-
-    {% if comments %}
-        <h2>💭 Комментарий дня</h2>
-
-        {% for comment in comments|slice:":1" %}
-            <article class="block comment">
-                <span class="comment-upvotes">
-                    👍{{ comment.upvotes }}
-                </span>
-                <div>
-                    <a href="{{ settings.APP_HOST }}{% url "profile" comment.author.slug %}" style="text-decoration: none;">
-                        <img src="{{ comment.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
-                        &nbsp;{{ comment.author.slug }}
-                    </a>
-                    на {{ comment.post.prefix|default:"пост"|lower }}
-                    <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>
-                </div>
-                <div>
-                    {% render_email comment %}
-                </div>
-            </article>
-        {% endfor %}
     {% endif %}
 
     {% if intros %}

@@ -1,4 +1,3 @@
-import random
 from datetime import timedelta, datetime
 
 from django.conf import settings
@@ -100,6 +99,7 @@ def daily_digest(request, user_slug):
         .values("post__type", "post__slug", "post__title")\
         .annotate(count=Count("id"))\
         .order_by()
+
     reply_actions = Comment.visible_objects()\
         .filter(
             reply_to__author=user,
@@ -108,8 +108,6 @@ def daily_digest(request, user_slug):
         .values("post__type", "post__slug", "post__title")\
         .annotate(count=Count("reply_to_id"))\
         .order_by()
-    upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
-        + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
 
     new_events = [
         {
@@ -127,6 +125,9 @@ def daily_digest(request, user_slug):
         } for e in reply_actions
     ]
 
+    upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
+        + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
+
     if upvotes:
         new_events = [
             {
@@ -135,24 +136,25 @@ def daily_digest(request, user_slug):
             }
         ] + new_events
 
+    # Mentions
+    mentions = Comment.visible_objects() \
+        .filter(**created_at_condition) \
+        .filter(text__contains=f"@{user.slug}", is_deleted=False)\
+        .exclude(reply_to__author=user)\
+        .order_by("-upvotes")[:5]
+
     # Best posts
     posts = Post.visible_objects()\
         .filter(is_approved_by_moderator=True, **published_at_condition)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:100]
 
-    # Best comments
-    comments = Comment.visible_objects() \
-        .filter(**created_at_condition) \
-        .filter(is_deleted=False)\
-        .order_by("-upvotes")[:1]
-
     # New joiners
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")
 
-    if not posts and not comments and not intros:
+    if not posts and not mentions and not intros:
         raise Http404()
 
     return render(request, "emails/daily.html", {
@@ -160,7 +162,7 @@ def daily_digest(request, user_slug):
         "events": new_events,
         "intros": intros,
         "posts": posts,
-        "comments": comments,
+        "mentions": mentions,
         "date": end_date,
         "moon_phase": moon_phase,
     })
