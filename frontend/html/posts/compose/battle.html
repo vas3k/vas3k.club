@@ -64,6 +64,14 @@
                     <span class="form-row-help form-row-help-wide">☝️ Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
                 </div>
 
+                <div class="form-row form-row-checkbox">
+                    {{ form.is_public }}
+                    <label for="{{ form.is_public.id_for_label }}">Батл виден в Большой Интернет?</label>
+                    <span class="form-row-help form-row-help-wide">
+                        ☝️ Голосовать и комментировать пост могут только члены Клуба, но с этой галочкой вы сможете кинуть ссылку друзьям
+                    </span>
+                </div>
+
                 {% if me.is_moderator %}
                     <div class="form-row form-row-checkbox">
                         {{ form.is_visible_on_main_page }}
