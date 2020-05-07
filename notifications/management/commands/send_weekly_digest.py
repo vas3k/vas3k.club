@@ -11,6 +11,7 @@ from bot.common import send_telegram_message, CLUB_CHANNEL, render_html_message
 from landing.models import GodSettings
 from notifications.email.sender import send_club_email
 from posts.models import Post
+from search.models import SearchIndex
 from users.models import User
 
 log = logging.getLogger(__name__)
@@ -50,6 +51,8 @@ class Command(BaseCommand):
                 is_public=False,
             )
         )
+
+        SearchIndex.update_post_index(post)
 
         # sending emails
         subscribed_users = User.objects\
