@@ -4,7 +4,7 @@ from notifications.email.sender import send_club_email
 
 
 def send_welcome_drink(user):
-    welcome_drink_template = loader.get_template("emails/welcome_drink.html")
+    welcome_drink_template = loader.get_template("emails/welcome.html")
     send_club_email(
         recipient=user.email,
         subject=f"Велком дринк 🍸",

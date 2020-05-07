@@ -10,127 +10,6 @@
     h1, h2, header {
         text-align: center;
     }
-
-    .issue {
-        font-size: 24px;
-        font-weight: 600;
-    }
-
-    .post {
-    }
-
-        .post-upvotes {
-            display: block;
-            float: right;
-            background-color: #1B1B1C;
-            color: #FFF;
-            border-radius: 10px;
-            padding: 15px 20px 14px;
-            font-size: 24px;
-            font-weight: bold;
-            line-height: 1em;
-            margin-left: 10px;
-            margin-top: 13px;
-        }
-
-    .label {
-        display: inline-block;
-        vertical-align: middle;
-        background-color: #000000;
-        height: 1.6em;
-        line-height: 1.5em;
-        overflow: hidden;
-        font-size: 75%;
-        border-radius: 5px;
-    }
-
-        .label-title {
-            display: inline-block;
-            color: #FFFFFF;
-            font-weight: normal;
-            padding: 0 0.6em 0;
-            font-size: 90%;
-        }
-
-    .user {
-        display: block;
-        width: 100%;
-        line-height: 1.4em;
-        text-decoration: none;
-        font-weight: 400;
-        margin: 70px 0 100px;
-    }
-
-        .user-avatar {
-            width: 75px;
-            height: 75px;
-            min-width: 75px;
-            min-height: 75px;
-            vertical-align: middle;
-            display: inline-block;
-            margin: 0;
-            border-radius: 50%;
-        }
-
-    .avatar-small {
-        width: 24px;
-        height: 24px;
-        min-width: 24px;
-        border-radius: 50%;
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0;
-        position: relative;
-        top: -2px;
-    }
-
-    .comment {
-    }
-
-        .comment-upvotes {
-            display: block;
-            float: right;
-            background-color: #1B1B1C;
-            color: #FFF;
-            border-radius: 10px;
-            padding: 10px 15px 8px;
-            font-size: 20px;
-            font-weight: bold;
-            line-height: 1em;
-            margin-left: 10px;
-            margin-top: 0;
-        }
-
-    .editorial-text {
-        font-size: 20px;
-        line-height: 1.4em;
-        margin: 0 auto 100px;
-        max-width: 700px;
-    }
-
-    @media only screen and (max-width : 570px) {
-        .issue {
-            display: block;
-            font-size: 20px;
-            padding-top: 15px;
-        }
-
-        h2 {
-            font-size: 24px;
-        }
-
-        h3 {
-            font-size: 22px;
-        }
-
-        p {
-            font-size: 14px;
-        }
-
-            .editorial-text p {
-                font-size: 17px;
-            }
-    }
 </style>
 {% endblock %}
 
@@ -147,15 +26,15 @@
 
 {% block body %}
     {% if author_intro %}
-        <article class="editorial-text">
+        <p class="editorial">
             {{ author_intro | email_markdown }}
-        </article>
+        </p>
     {% endif %}
 
     {% if intros %}
         <h2>🤘 Новенькие</h2>
 
-        <p style="font-size: 19px; line-height: 1.4em; text-align: center; margin-top: 35px; margin-bottom: 90px;">
+        <p class="center editorial">
             На этой неделе у нас <strong>+{{ newbie_count }} {{ newbie_count|rupluralize:"новый член,новых члена,новых членов" }} Клуба</strong>.
             Вот самые интересные из них, набравшие больше всего плюсиков за своё #intro.
             Не стесняйтесь писать им комменты и расспрашивать за жизнь. Для того мы здесь и собрались!
@@ -163,27 +42,27 @@
 
         {% for intro in intros|slice:":3" %}
             <article class="block user">
-                <div style="display: block;float: left;margin-right: 30px;">
-                    <img src="{{ intro.author.get_avatar }}" alt="" width="80" height="80" class="user-avatar">
+                <div class="user-avatar">
+                    <img src="{{ intro.author.get_avatar }}" alt="" width="50" height="50">
                 </div>
 
                 <div>
-                    <span style="display: block; font-size: 21px; line-height: 1.5em;">
-                        <a href="{{ settings.APP_HOST }}{% url "profile" intro.author.slug %}" style="text-decoration: underline; font-size: 25px;">{{ intro.author.full_name }}</a> &nbsp;&nbsp;{% user_tag_images intro.author %}<br>
-                        {{ intro.author.position }}{% if intro.author.company %} — {{ intro.author.company }}{% endif %}
-                    </span>
+                    <h3>
+                        <a href="{{ settings.APP_HOST }}{% url "profile" intro.author.slug %}" style="text-decoration: underline;">{{ intro.author.full_name }}</a> &nbsp;&nbsp;{% user_tag_images intro.author %}<br>
+                        <span class="user-title-small">{{ intro.author.position }}{% if intro.author.company %} — {{ intro.author.company }}{% endif %}</span>
+                    </h3>
 
-                    <p>{{ intro.description | truncatechars:350 | nl_to_p }}</p>
+                    <p>{{ intro.description | truncatechars:450 | nl_to_p }}</p>
 
                     <span>
-                        <a href="{{ settings.APP_HOST }}{% url "show_post" "intro" intro.slug %}">Читать всё #intro или задать вопрос &rarr;</a>
+                        <a href="{{ settings.APP_HOST }}{% url "show_post" "intro" intro.slug %}">Читать всё #intro &rarr;</a>
                     </span>
                 </div>
             </article>
         {% endfor %}
 
         {% if intros|slice:"3:" %}
-            <p style="font-size: 19px; line-height: 1.4em;">
+            <p style="editorial">
                 Ну и не забываем про других тоже:
                 {% for intro in intros|slice:"3:" %}
                     <a href="{% url "profile" intro.author.slug %}">{{ intro.author.slug }}</a>{% if not forloop.last %}, {% endif %}
@@ -205,7 +84,7 @@
                 {{ featured_post.description | nl_to_p }}
             </p>
 
-            <span style="font-size: 16px; color: #999;">
+            <span class="post-footer">
                 <a href="{{ settings.APP_HOST }}{% url "profile" featured_post.author.slug %}" style="text-decoration: none; color: #999;">
                     <img src="{{ featured_post.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
                     &nbsp;{{ featured_post.author.slug }}
@@ -219,10 +98,15 @@
     {% if posts %}
         <h2>😎 Лучшие посты недели</h2>
 
+        <p class="center editorial">
+            Всего за неделю написали <strong><a href="{% url "feed_ordering" "all" "top_week" %}">{{ post_count }} {{ post_count | rupluralize:"пост,поста,постов" }}</a></strong>.
+            Вот самые популярные из них.
+        </p>
+
         {% for post in posts %}
             <article class="block post">
-                <span class="post-upvotes">
-                    👍 {{ post.upvotes }}
+                <span class="upvotes">
+                    👍{{ post.upvotes }}
                 </span>
 
                 <h3>
@@ -245,7 +129,7 @@
                     </p>
                 {% endif %}
 
-                <span style="font-size: 16px; color: #999;">
+                <span class="post-footer">
                     <a href="{{ settings.APP_HOST }}{% url "profile" post.author.slug %}" style="text-decoration: none; color: #999;">
                         <img src="{{ post.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
                         &nbsp;{{ post.author.slug }}
@@ -262,7 +146,7 @@
 
         {% for comment in comments %}
             <article class="block comment">
-                <span class="comment-upvotes">
+                <span class="upvotes">
                     👍{{ comment.upvotes }}
                 </span>
                 <div>
@@ -320,9 +204,9 @@
 
     <h2>На этом всё 👋</h2>
 
-    <p style="font-size: 19px; line-height: 1.4em;">
-        Услышимся в следующем выпуске через неделю. Приносите годные ссылочки, пишите посты и палите инсайды.
-        Вместе мы сделаем Клуб таким полезным и охуенным!
+    <p class="center editorial">
+        Услышимся в журнале через неделю. Приносите годные ссылочки, пишите посты и палите инсайды.
+        Только вместе мы делаем Клуб таким полезным и охуенным!
     </p>
 
     <br><br><br>
@@ -330,6 +214,6 @@
 
 {% block footer %}
     <p>
-        Напоминаем, что вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">отписаться от журнала</a> или наоборот <a href="{{ settings.APP_HOST }}/notifications/switch/daily/%user_id%/%secret_code%/">подписаться на ежедневные дайджесты</a> чтобы получать самый свежий контент.
+        Вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">отписаться от этого журнала</a> или, наоборот, <a href="{{ settings.APP_HOST }}/notifications/switch/daily/%user_id%/%secret_code%/">подписаться на ежедневные дайджесты</a> чтобы получать самый свежий контент.
     </p>
 {% endblock %}

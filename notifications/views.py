@@ -84,6 +84,9 @@ def daily_digest(request, user_slug):
         # we don't have daily on mondays and weekends, we need to include all these posts at tuesday
         start_date = end_date - timedelta(days=3)
 
+    if settings.DEBUG:
+        start_date = end_date - timedelta(days=1000)
+
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
@@ -172,6 +175,9 @@ def weekly_digest(request):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=8)  # make 8, not 7, to include marginal users
 
+    if settings.DEBUG:
+        start_date = end_date - timedelta(days=1000)
+
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
@@ -204,7 +210,10 @@ def weekly_digest(request):
         .filter(is_approved_by_moderator=True, **published_at_condition)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
-        .order_by("-upvotes")[:12]
+        .order_by("-upvotes")
+
+    post_count = posts.count()
+    posts = posts[:12]
 
     # Video of the week
     top_video_comment = Comment.visible_objects() \
@@ -238,11 +247,12 @@ def weekly_digest(request):
     if not author_intro and not posts and not comments:
         raise Http404()
 
-    return render(request, "emails/weekly_digest.html", {
+    return render(request, "emails/weekly.html", {
         "posts": posts,
         "comments": comments,
         "intros": intros,
         "newbie_count": newbie_count,
+        "post_count": post_count,
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
         "featured_post": featured_post,

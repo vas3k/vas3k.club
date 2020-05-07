@@ -160,7 +160,7 @@
     font-weight: 400;
     max-width: 100%;
     letter-spacing: 0.01rem;
-    overflow: hidden;
+    word-break: break-word;
     text-overflow: ellipsis;
 }
 

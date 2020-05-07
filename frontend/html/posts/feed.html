@@ -85,9 +85,15 @@
                 <a href="{% url "feed_ordering" post_type "new" %}" class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}">
                     Новое
                 </a>
-                <a href="{% url "feed_ordering" post_type "top" %}" class="feed-ordering-item {% if ordering == "top" %}feed-ordering-item-is-active{% endif %}">
+                <a href="{% url "feed_ordering" post_type "top" %}" class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" %}feed-ordering-item-is-active{% endif %}">
                     Лучшее
                 </a>
+                {% if ordering == "top" or ordering == "top_week" %}
+                    <select class="feed-ordering-item" onchange="location.href += '../' + event.target.value">
+                        <option value="top">вообще</option>
+                        <option value="top_week" {% if ordering == "top_week" %}selected{% endif %}>за неделю</option>
+                    </select>
+                {% endif %}
             </div>
 
             {% for post in pinned_posts %}

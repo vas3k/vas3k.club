@@ -18,6 +18,7 @@
         img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
         table { border-collapse: collapse !important; }
         body {
+            color: #000000;
             font-family: Ubuntu, serif;
             margin: 0 !important;
             padding: 0 !important;
@@ -28,35 +29,66 @@
         }
 
         a {
-            color: #000000; font-weight: 600; text-decoration: underline;
+            color: #000000;
+            font-weight: 600;
+            text-decoration: underline;
         }
 
         a:hover {
-            color: #B92B27 !important; text-decoration: none !important;
+            color: #B92B27 !important;
+            text-decoration: none !important;
         }
 
         p {
-            font-weight: 400; line-height: 1.5em; margin-bottom: 24px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5em;
+            margin-bottom: 24px;
         }
 
+            p.center {
+                text-align: center;
+            }
+
+            p.editorial {
+                font-size: 18px;
+            }
+
             footer p {
-                font-size: 16px; font-weight: 400; line-height: 1.5em; margin-top: 48px;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 1.5em;
+                margin-top: 48px;
             }
 
         img {
-            border-radius: 4px; display: block; max-width: 100%; min-width: 100px; width: 100%;
+            border-radius: 4px;
+            display: block;
+            max-width: 100%;
+            min-width: 100px;
+            width: 100%;
         }
 
         h1 {
-            color: #000000; font-size: 32px; font-weight: 700; line-height: 1.4em; margin: 48px 0;
+
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.4em;
+            margin: 48px 0;
         }
 
         h2 {
-            color: #000000; font-size: 30px; font-weight: 500; line-height: 1.4em; margin: 150px 0 35px 0;
+            font-size: 30px;
+            font-weight: 500;
+            line-height: 1.4em;
+            margin: 100px 0 35px 0;
         }
 
         h3 {
-            color: #000000; font-size: 24px; font-weight: 500; line-height: 1.3em; margin: 24px 0 24px 0;
+            font-size: 22px;
+            font-weight: 500;
+            line-height: 1.3em;
+            margin: 24px 0 24px 0;
         }
 
         small {
@@ -102,7 +134,7 @@
         }
 
         .block {
-            padding: 30px;
+            padding: 20px;
             margin-bottom: 30px;
             box-sizing: border-box;
             box-shadow: 10px 15px 40px rgba(83, 91, 110, 0.11);
@@ -148,10 +180,127 @@
                 margin-top: -40px;
             }
 
-        /* These rules adjust styles for desktop devices, keeping the email responsive for users. */
-        /* Some email clients don't properly apply media query-based styles, which is why we go mobile-first. */
-        @media screen and (min-width:600px) {
-            h1 { font-size: 48px !important; line-height: 48px !important; }
+        .issue {
+            display: block;
+            font-size: 20px;
+            line-height: 24px;
+            padding-top: 15px;
+        }
+
+        .post {
+            font-size: 16px;
+        }
+
+            .post-footer {
+                font-size: 14px;
+                color: #999999;
+            }
+
+        .label {
+            display: inline-block;
+            vertical-align: middle;
+            background-color: #000000;
+            height: 1.6em;
+            line-height: 1.5em;
+            overflow: hidden;
+            font-size: 75%;
+            border-radius: 5px;
+        }
+
+            .label-title {
+                display: inline-block;
+                color: #FFFFFF;
+                font-weight: normal;
+                padding: 0 0.6em 0;
+                font-size: 90%;
+            }
+
+        .user {
+            display: block;
+            width: 100%;
+            font-size: 16px;
+            line-height: 1.4em;
+            text-decoration: none;
+            font-weight: 400;
+            margin: 70px 0 100px;
+        }
+
+            .user-avatar {
+                display: block;
+                float: left;
+            }
+
+                .user-avatar img {
+                    width: 50px;
+                    height: 50px;
+                    min-width: 50px;
+                    min-height: 50px;
+                    vertical-align: middle;
+                    display: inline-block;
+                    margin: 0;
+                    border-radius: 50%;
+                    margin-right: 10px;
+                }
+
+                .user-title-small {
+                    font-size: 17px;
+                }
+
+        .avatar-small {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0;
+            position: relative;
+            top: -2px;
+        }
+
+        .comment {
+            font-size: 16px;
+        }
+
+        .upvotes {
+            display: block;
+            float: right;
+            background-color: #1B1B1C;
+            color: #FFF;
+            border-radius: 10px;
+            padding: 6px 10px 6px;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1em;
+            margin-left: 10px;
+            margin-top: 0;
+        }
+
+        .comment h3,
+        .user h3,
+        .post h3 {
+            margin-top: 0;
+        }
+
+        /* Desktop styles */
+        @media screen and (min-width: 600px) {
+            h1 { font-size: 52px !important; }
+            h2 { font-size: 34px !important; }
+            h3 { font-size: 25px !important; }
+            .user-avatar img {
+                width: 70px;
+                height: 70px;
+                min-width: 70px;
+                min-height: 70px;
+                margin-right: 20px;
+            }
+            p, .comment, .user, .post {
+                font-size: 17px;
+            }
+            .upvotes {
+                font-size: 22px;
+                padding: 8px 18px 8px;
+            }
         }
     </style>
     {% block css %}{% endblock %}
@@ -163,7 +312,7 @@
     <![endif]-->
     <!-- The role and aria-label attributes are added to wrap the email content as an article for screen readers. Some of them will read out the aria-label as the title of the document, so use something like "An email from Your Brand Name" to make it recognizable. -->
     <!-- Default styling of text is applied to the wrapper div. Be sure to use text that is large enough and has a high contrast with the background color for people with visual impairments. -->
-    <div role="article" lang="en" style="background-color: white; color: #2b2b2b; font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; font-size: 18px; font-weight: 400; line-height: 28px; margin: 0 auto; max-width: 720px; padding: 40px 20px 40px 20px;">
+    <div role="article" lang="en" style="background-color: white; color: #2b2b2b; font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; font-size: 18px; font-weight: 400; line-height: 28px; margin: 0 auto; max-width: 720px; padding: 20px 10px 20px 10px;">
 
         <header>
             {% block logo %}

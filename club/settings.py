@@ -134,7 +134,7 @@ APP_NAME = "Вастрик.Клуб"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
-DEFAULT_PAGE_SIZE = 100
+DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")

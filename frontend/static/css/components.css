@@ -355,16 +355,6 @@
         transform: translateX(-50%);
     }
 
-    @media only screen and (max-width : 570px) {
-        .upvote {
-            padding: 22px 13px 4px;
-        }
-
-            .upvote::before {
-                font-size: 13px;
-            }
-    }
-
     .upvote-voted {
         background-color: var(--opposite-bg-color);
         color: var(--opposite-text-color);
@@ -425,6 +415,22 @@
             padding-left: 14px;
             padding-right: 14px;
         }
+
+    @media only screen and (max-width : 570px) {
+        .upvote {
+            padding: 15px 10px 4px;
+            font-size: 16px;
+        }
+
+            .upvote::before {
+                font-size: 10px;
+            }
+
+            .upvote-disabled {
+                padding-top: 7px;
+                padding-bottom: 7px;
+            }
+    }
 
 .profile {
     padding-top: 50px;
@@ -817,6 +823,13 @@
     padding: 10px 20px 50px;
 }
 
+    @media only screen and (max-width : 1024px) {
+        .feed {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+
     .feed-sidebar {
         padding-top: 30px;
         padding-right: 30px;
@@ -914,11 +927,23 @@
             box-sizing: border-box;
         }
 
+            @media only screen and (max-width : 570px) {
+                .feed-ordering {
+                    justify-content: space-around;
+                }
+            }
+
             .feed-ordering-item {
                 padding: 10px;
                 text-decoration: none;
                 opacity: 0.5;
             }
+
+                select.feed-ordering-item {
+                    padding: 5px;
+                    margin: 5px 0 5px 0;
+                    opacity: 1;
+                }
 
                 .feed-ordering-item:hover {
                     opacity: 0.8;
@@ -1152,9 +1177,9 @@
 
     @media only screen and (max-width : 570px) {
         .feed-post {
-            font-size: 80%;
             padding: 15px 15px 15px 30px;
             margin-left: 10px;
+            margin-bottom: 25px;
         }
 
             .feed-post-author .avatar {
@@ -1208,8 +1233,7 @@
     @media only screen and (max-width : 570px) {
         .feed-post-type-intro,
         .feed-post-type-weekly_digest {
-            margin-left: 0;
-            font-size: 90%;
+            margin-left: 10px;
         }
     }
 
