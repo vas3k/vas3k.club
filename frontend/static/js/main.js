@@ -5,6 +5,7 @@ import "../css/index.css";
 import App from "./App.js";
 import PostUpvote from "./components/PostUpvote.vue";
 import CommentUpvote from "./components/CommentUpvote.vue";
+import ScrollElevator from "./components/ScrollElevator.vue";
 import UserTag from "./components/UserTag.vue";
 import UserExpertiseWindow from "./components/UserExpertiseWindow.vue";
 import ClubApi from "./common/api.service";
@@ -13,6 +14,7 @@ Vue.component("post-upvote", PostUpvote);
 Vue.component("comment-upvote", CommentUpvote);
 Vue.component("user-expertise-window", UserExpertiseWindow);
 Vue.component("user-tag", UserTag);
+Vue.component("elevator", ScrollElevator);
 
 new Vue({
     el: "#app",
