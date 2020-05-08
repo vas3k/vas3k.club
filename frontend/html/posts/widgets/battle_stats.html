@@ -7,8 +7,8 @@
             <small>за «{{ battle.metadata.battle.sides.a.name }}»</small>
         </div>
         <div class="battle-stats-graph">
-            <div class="battle-side-a-background" style="width: {{ graph.progress_a }}%"></div>
-            <div class="battle-side-b-background" style="width: {{ graph.progress_b }}%"></div>
+            <div class="battle-side-a-background" style="width: {{ graph.percent_a }}%"></div>
+            <div class="battle-side-b-background" style="width: {{ graph.percent_b }}%"></div>
         </div>
         <div class="battle-stats-arguments battle-side-b-color" style="text-align: right;">
             <strong>{{ total_arguments.b }} {{ total_arguments.b | rupluralize:"аргумент,аргумента,аргументов" }} и {{ total_votes.b }} {{ total_votes.b | rupluralize:"плюсик,плюсика,плюсиков" }}</strong><br>

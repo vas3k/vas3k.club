@@ -22,14 +22,16 @@ def battle_stats(post, comments):
     total_votes_b = sum(c.upvotes for c in arguments_for_b)
     upvotes_count = total_votes_a + total_votes_b
 
-    progress_a = 0
-    progress_b = 0
+    percent_a = 0
+    percent_b = 0
     if arguments_count > 0:
-        progress_a = round(len(arguments_for_a) / arguments_count * 100)
-        progress_b = round(len(arguments_for_b) / arguments_count * 100)
+        argument_percent = 100 / arguments_count
+        percent_a = len(arguments_for_a) * argument_percent
+        percent_b = len(arguments_for_b) * argument_percent
         if upvotes_count > 0:
-            progress_a = round((progress_a + (total_votes_a / upvotes_count) * 100) / 2)
-            progress_b = round((progress_b + (total_votes_b / upvotes_count) * 100) / 2)
+            upvote_percent = 100 / upvotes_count
+            percent_a = (percent_a + total_votes_a * upvote_percent) / 2
+            percent_b = (percent_b + total_votes_b * upvote_percent) / 2
     return battle_stats_template.render({
         "total_arguments": {
             "a": len(arguments_for_a),
@@ -40,8 +42,8 @@ def battle_stats(post, comments):
             "b": total_votes_b,
         },
         "graph": {
-            "progress_a": progress_a,
-            "progress_b": progress_b,
+            "percent_a": round(percent_a),
+            "percent_b": round(percent_b),
         },
         "battle": post,
     })
