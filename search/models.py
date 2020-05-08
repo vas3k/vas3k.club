@@ -62,6 +62,7 @@ class SearchIndex(models.Model):
                  + SearchVector("text", weight="B", config="russian") \
                  + SearchVector("author__slug", weight="C", config="russian") \
                  + SearchVector("topic__name", weight="C", config="russian")
+
         if post.is_searchable:
             SearchIndex.objects.update_or_create(
                 post=post,
@@ -76,7 +77,6 @@ class SearchIndex(models.Model):
             )
         else:
             SearchIndex.objects.get(post=post).delete()
-
 
     @classmethod
     def update_user_index(cls, user):

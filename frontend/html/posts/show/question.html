@@ -15,7 +15,7 @@
         </div>
         <div class="post-header">
             <div class="post-title">
-                {{ post.title }}
+                {{ post.title | rutypography }}
 
                 {% if post.author == me or me.is_moderator %}
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>

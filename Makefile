@@ -44,7 +44,6 @@ test-ci: lint  ## Run tests (intended for CI usage)
   help \
   lint \
   migrate \
-  mypy \
   run \
   build-frontend \
   test-ci

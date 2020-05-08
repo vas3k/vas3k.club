@@ -15,9 +15,9 @@
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
             Батл: <a href="{% url "show_post" post.type post.slug %}">
-                <span class="battle-side-a-color">{{ post.metadata.battle.sides.a.name }}</span>
+                <span class="battle-side-a-color">{{ post.metadata.battle.sides.a.name | rutypography }}</span>
                 или
-                <span class="battle-side-b-color">{{ post.metadata.battle.sides.b.name }}?</span>
+                <span class="battle-side-b-color">{{ post.metadata.battle.sides.b.name | rutypography }}?</span>
             </a>
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}

@@ -19,7 +19,7 @@
 
             {% link_icon post %}
 
-            &rarr; <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
+            &rarr; <a href="{{ post.url }}" target="_blank">{{ post.title | rutypography }}</a>
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}

@@ -16,7 +16,7 @@
     <div class="feed-post-header">
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
-            Проект: <a href="{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
+            Проект: <a href="{% url "show_post" post.type post.slug %}">{{ post.title | rutypography }}</a>
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
             {% endif %}
