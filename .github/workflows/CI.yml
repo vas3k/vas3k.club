@@ -14,6 +14,7 @@ jobs:
         architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
     - name: "execute mypy"
       run: |
+        pip install wheel
         pip install --no-cache-dir pipenv
         pipenv install --dev
         pipenv install mypy
