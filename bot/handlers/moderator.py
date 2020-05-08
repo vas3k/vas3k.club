@@ -97,6 +97,8 @@ def unpublish_post(post_id: str, update: Update) -> (str, bool):
     post.is_visible = False
     post.save()
 
+    SearchIndex.update_post_index(post)
+
     notify_post_author_rejected(post)
 
     return f"👎 Пост «{post.title}» перенесен в черновики ({update.effective_user.full_name})", True

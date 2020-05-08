@@ -62,18 +62,21 @@ class SearchIndex(models.Model):
                  + SearchVector("text", weight="B", config="russian") \
                  + SearchVector("author__slug", weight="C", config="russian") \
                  + SearchVector("topic__name", weight="C", config="russian")
-
-        SearchIndex.objects.update_or_create(
-            post=post,
-            defaults=dict(
-                index=Post.objects
-                .annotate(vector=vector)
-                .filter(id=post.id)
-                .values_list("vector", flat=True)
-                .first(),
-                updated_at=datetime.utcnow(),
+        if post.is_searchable:
+            SearchIndex.objects.update_or_create(
+                post=post,
+                defaults=dict(
+                    index=Post.objects
+                        .annotate(vector=vector)
+                        .filter(id=post.id)
+                        .values_list("vector", flat=True)
+                        .first(),
+                    updated_at=datetime.utcnow(),
+                )
             )
-        )
+        else:
+            SearchIndex.objects.get(post=post).delete()
+
 
     @classmethod
     def update_user_index(cls, user):
