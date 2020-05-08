@@ -39,9 +39,6 @@
                 <div class="form-row form-row-checkbox">
                     {{ form.is_public }}
                     <label for="{{ form.is_public.id_for_label }}">Интро видно в Большой Интернет?</label>
-                    <span class="form-row-help form-row-help-wide">
-                        ☝️ Голосовать за интро и комментировать его могут только члены Клуба, но с этой галочкой вы сможете кинуть ссылку на себя друзьям.
-                    </span>
                 </div>
 
                 {% if me.is_moderator %}
