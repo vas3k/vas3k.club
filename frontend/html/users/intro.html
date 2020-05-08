@@ -193,11 +193,14 @@
                 {% if form.email_digest_type.errors %}<span class="form-row-errors">{{ form.email_digest_type.errors }}</span>{% endif %}
             </div>
 
-            <div class="clearfix20"></div>
+            <div class="block-header">Другие способы быть в курсе 👇</div>
 
-            <div class="block-description">
-                Не забудьте подписаться на <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank">клубный канал</a>.<br>
-                А еще у нас есть секретный чатик для своих — <a href="https://vas3k.ru/notes/club_chat/" target="_blank">Вастрик.Бар</a> 🥃
+            <div class="block-description" style="text-align: left;">
+                <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a> — туда модераторы отбирают лучший контент. Он же главный источник всех анонсов.<br><br>
+                <a href="{{ settings.TELEGRAM_CLUB_CHAT_URL }}" target="_blank" style="font-weight: bold;">Вастрик.Бар</a> — главный чат в телеграме, где собираются члены Клуба. Там бывает громко.<br><br>
+                <a href="https://vas3k.ru/notes/club_chat/" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
+
+                Авторизуйте нашего бота ниже и он будет приносить вам уведомления, касающиеся лично вас.
             </div>
 
             <div class="clearfix50"></div>
