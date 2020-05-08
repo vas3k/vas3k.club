@@ -554,6 +554,13 @@
             padding-bottom: 20px;
         }
 
+        .battle-stats-graph {
+            display: flex;
+            height: 10px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
             .battle-stats-arguments strong {
                 font-weight: 700;
             }
