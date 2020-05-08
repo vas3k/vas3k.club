@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
-    - continue-on-error: true
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
@@ -18,12 +17,12 @@ jobs:
         pipenv install --dev
         pipenv install mypy
         pipenv run mypy .
+      continue-on-error: true
 
   next-job:
     runs-on: ubuntu-latest
 
     steps:
-    - continue-on-error: true
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
@@ -33,3 +32,4 @@ jobs:
         pip install --no-cache-dir wheel pipenv
         pipenv install --dev
         pipenv run flake8 .
+      continue-on-error: true
