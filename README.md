@@ -33,7 +33,9 @@ It will start the development server with all the necessary services. Wait till 
 
 At the very beginning, you probably need a dev account to log in. Open [http://127.0.0.1:8000/godmode/dev_login/](http://127.0.0.1:8000/godmode/dev_login/) in your browser and it will create one for you and log you in.
 
-Backend and frontend auto-reloading on code changes are done automatically. Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
+Auto-reloading for backend and frontend is performed automatically on every code change. If everything is broken and not working (it happens), you can always rebuild the world from scratch using `docker-compose up --build`.
+
+Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
 
 ## 🛠 Tech stack
 
@@ -43,6 +45,10 @@ We try to keep our stack as simple and stupid as possible. Because we're not ver
 
 > This section is in progress...
 
+## 🚢 Deployment
+
+We desperately need someone to set us up with an automatic deploy via Ansible and Github Actions (or Travis CI) on merging to master. Right now I have to push the button myself every time. ⚠️ 
+
 ## 😍 Contributions
 
 Contributions are welcome.  
@@ -51,16 +57,17 @@ The main point of interaction is the [Issues](https://github.com/vas3k/vas3k.clu
 
 We also run the public [Trello Board](https://trello.com/b/SAbS5JiI/) to track progress and develop roadmaps.
 
-The official development language at the moment is Russian, because 100% of our users speak it. We don't want to introduce unnecessary barriers for them. But we are used to writing commits and comments in English and we won't mind communicating with you in it.
+> The official development language at the moment is Russian, because 100% of our users speak it. We don't want to introduce unnecessary barriers for them. But we are used to writing commits and comments in English and we won't mind communicating with you in it.
 
-### 🐛 How to report bug or propose a feature
+### 🐛 How to report a bug or propose a feature?
 
 Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new). Explain your idea or proposal in all the details. Attach a screenshot or wireframe.
 
 If it's a bug, make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers.
 
+When ticket receives a label it is automatically added to our board in Trello to track further progress.
 
-### 😎 What if want to help?
+### 😎 I want to write some code!
 
 Open our [Trello](https://trello.com/b/SAbS5JiI/) to see the most important tickets at top. Then go to [Issues](https://github.com/vas3k/vas3k.club/issues) and pick one you like. Don't forget to leave a comment inside that you're getting it. Our maintainers track them and update the board. 
 
@@ -75,9 +82,9 @@ Pay attention to issue labels placed on tickets by our maintainers.
 - **improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, be sure to provide a sketch before you start.
 - **new feature** —  completely new features. Usually they're too hard for newbies, leave them for experienced contributors. 
  
-### 👍 Our top contributors
+## 👍 Our top contributors
 
-Special respect to our [contributors](https://github.com/vas3k/vas3k.club/graphs/contributors).
+I would like to press F to give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
 
 - [@vas3k](https://github.com/vas3k)
 - [@nikolay-govorov](https://github.com/nikolay-govorov)
