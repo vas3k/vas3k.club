@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
+    - continue-on-error: true
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
@@ -22,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - continue-on-error: true
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
