@@ -181,6 +181,10 @@ class Post(models.Model, ModelDiffMixin):
         return self.is_pinned_until and self.is_pinned_until > datetime.utcnow()
 
     @property
+    def is_searchable(self):
+        return self.is_visible and not self.is_shadow_banned
+
+    @property
     def description(self):
         return truncatechars(strip_tags(self.html or ""), 400)
 
