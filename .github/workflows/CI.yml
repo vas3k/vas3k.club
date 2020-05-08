@@ -3,7 +3,7 @@ name: testaa
 on: [push]
 
 jobs:
-  build:
+  first-job:
     runs-on: ubuntu-latest
   
     steps:
@@ -11,15 +11,23 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
     - name: "execute mypy"
       run: |
-        pip install wheel
-        pip install --no-cache-dir pipenv
+        pip install --no-cache-dir wheel pipenv
         pipenv install --dev
         pipenv install mypy
         pipenv run mypy .
 
+  next-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
     - name: "execute flake8"
       run: |
+        pip install --no-cache-dir wheel pipenv
+        pipenv install --dev
         pipenv run flake8 .
