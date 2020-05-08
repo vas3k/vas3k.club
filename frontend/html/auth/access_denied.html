@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load urlargs %}
 
 {% block content %}
     <div class="block access-denied">
@@ -11,7 +12,9 @@
 
         <p>
             <br>
-            <a href="{% url "index" %}#join" class="button">Вступить в Клуб</a>&nbsp;&nbsp;или&nbsp;&nbsp;<a href="{% url "login" %}">войти</a>
+            <a href="{% url "index" %}#join" class="button">Вступить в Клуб</a>
+            &nbsp;&nbsp;или&nbsp;&nbsp;
+            <a href="{% urlargs "login" goto=request.get_full_path %}">войти</a>
         </p>
     </div>
 {% endblock %}

@@ -1,3 +1,5 @@
+{% load urlargs %}
+
 <div class="block post-join">
     <p style="font-size: 130%; font-weight: 500;">
         😎 Комментирование доступно только участникам Клуба
@@ -8,6 +10,6 @@
     </p>
 
     <p>
-        <br><a href="{% url "login" %}" class="button">Войти</a>
+        <br><a href="{% urlargs "login" goto=request.get_full_path %}" class="button">Войти</a>
     </p>
 </div>

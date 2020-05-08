@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
+from django.utils.encoding import escape_uri_path
 
 from auth.helpers import auth_required
 from auth.models import Session
@@ -15,8 +16,11 @@ from utils.strings import random_string
 def login(request):
     if request.me:
         return redirect("profile", request.me.slug)
-    return redirect("patreon_login")  # TODO: for now we have only patreon
-    # return render(request, "auth/login.html")
+    if "goto" in request.GET:
+        redir = redirect("patreon_login")
+        redir['Location'] += '?goto=%s' % (escape_uri_path(request.GET['goto']))
+        return redir
+    return redirect("patreon_login")
 
 
 @auth_required
