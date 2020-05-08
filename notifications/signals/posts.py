@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from bot.common import ADMIN_CHAT, send_telegram_message, render_html_message
+from bot.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE
 from posts.models import Post
 
 
@@ -36,3 +36,11 @@ def async_create_or_update_post(post, is_created):
                 ]
             ])
         )
+
+    # post to online channel
+    send_telegram_message(
+        chat=CLUB_ONLINE,
+        text=render_html_message("channel_post_announce.html", post=post),
+        parse_mode=telegram.ParseMode.HTML,
+        disable_preview=True,
+    )
