@@ -30,13 +30,10 @@ lint:  ## Lint code with flake8
 migrate:  ## Migrate database to the latest version
 	@pipenv run python3 manage.py migrate
 
-mypy:  ## Check types with mypy
-	@pipenv run mypy .
-
 build-frontend:  ## Runs webpack
 	npm run --prefix frontend build
 
-test-ci: lint mypy  ## Run tests (intended for CI usage)
+test-ci: lint  ## Run tests (intended for CI usage)
 
 .PHONY: \
   dev-requirements \
