@@ -35,3 +35,6 @@ django-webpack-loader = "*"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+nltk_download = "python -m nltk.downloader all"

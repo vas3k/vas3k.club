@@ -38,6 +38,9 @@ build-frontend:  ## Runs webpack
 
 test-ci: lint mypy  ## Run tests (intended for CI usage)
 
+dev-requirements:
+	pipenv run nltk_download
+
 .PHONY: \
   dev-requirements \
   docker-run-dev \
