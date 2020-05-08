@@ -4,11 +4,11 @@
   <h1>vas3k.club</h1>
 </div>
 
-Welcome to the [vas3k.club](https://vas3k.club) codebase. Here we are building our small and supportive IT community. If you want to help us with that, welcome.
+Welcome to the [vas3k.club](https://vas3k.club) codebase. Here we are building our small lifestyle IT community. If you want to help us with that, welcome.
 
 [vas3k.club](https://vas3k.club) is a platform with private and paid memberships that has emerged around the [vas3k.ru](https://vas3k.ru) blog and satellite chat rooms. It's not a typical IT community with tutorials and framework reviews, but rather more of a lifestyle one. We are trying to build a peaceful and useful ecosystem, which the Internet has lost a long ago. Therefore, we carefully select and filter new members and do not seek wild growth.
 
-Our values: honesty, no bullshit, fair share, respect for other members, rationality, friendliness and usefulness. We have a zero-tolerance policy on anonymity, insults and toxicity. But we always try to stay in touch with reality, so we're also not tolerant of witch hunting and call-out culture.
+Our values: honesty, fair share, respect for other members, rationality, friendliness and usefulness. We have a zero-tolerance policy on anonymity, insults and toxicity. But we always try to stay in touch with reality, so we're also not tolerant of witch hunting and call-out culture.
 
 We're bullshitless community!
 
@@ -53,31 +53,31 @@ We also run the public [Trello Board](https://trello.com/b/SAbS5JiI/) to track p
 
 The official development language at the moment is Russian, because 100% of our users speak it. We don't want to introduce unnecessary barriers for them. But we are used to writing commits and comments in English and we won't mind communicating with you in it.
 
-### How to report bug or propose a feature
+### 🐛 How to report bug or propose a feature
 
 Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new). Explain your idea or proposal in all the details. Attach a screenshot or wireframe.
 
 If it's a bug, make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers.
 
 
-### What if want to help?
+### 😎 What if want to help?
 
 Open our [Trello](https://trello.com/b/SAbS5JiI/) to see the most important tickets at top. Then go to [Issues](https://github.com/vas3k/vas3k.club/issues) and pick one you like. Don't forget to leave a comment inside that you're getting it. Our maintainers track them and update the board. 
 
-For small fixes just open a PR. For big changes open an issues first or (if it's already opened) leave a comment with brief explanation what and why you're going to change. Many tickets hang open not because they cannot be done, but because they cause many logical contradictions that you may not know. It's better to clarify them before sending a PR.
+For small fixes just open a PR. For big changes open an issues first or (if it's already opened) leave a comment with brief explanation what and why you're going to change. Many tickets hang open not because they cannot be done, but because they cause many logical contradictions that you may not know. It's better to clarify them in comments before sending a PR.
 
 Pay attention to issue labels placed on tickets by our maintainers.
 
-**no label** — ticket is new or controversial. Feel free to discuss it but wait for our maintainers' decision before starting to implement it.
-**idea** — discussion is needed. Those tickets look adequate, but waiting for real proposals how they will be done. Don't implement them right away.
-**good first issue** — good tickets for first-timers. Usually these are simple and not critical things that allow you to quickly feel the code and start contributing to it.
-**bug** — the first priority, obviously.
-**improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, be sure to provide a sketch before you start.
-**new feature** —  completely new features. Usually they're too hard for newbies, leave them for experienced contributors. 
+- **no label** — ticket is new or controversial. Feel free to discuss it but wait for our maintainers' decision before starting to implement it.
+- **idea** — discussion is needed. Those tickets look adequate, but waiting for real proposals how they will be done. Don't implement them right away.
+- **good first issue** — good tickets for first-timers. Usually these are simple and not critical things that allow you to quickly feel the code and start contributing to it.
+- **bug** — the first priority, obviously.
+- **improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, be sure to provide a sketch before you start.
+- **new feature** —  completely new features. Usually they're too hard for newbies, leave them for experienced contributors. 
  
-### Our top contributors
+### 👍 Our top contributors
 
-Special thanks to our [contributors](https://github.com/vas3k/vas3k.club/graphs/contributors).
+Special respect to our [contributors](https://github.com/vas3k/vas3k.club/graphs/contributors).
 
 - [@vas3k](https://github.com/vas3k)
 - [@nikolay-govorov](https://github.com/nikolay-govorov)
@@ -88,6 +88,8 @@ Special thanks to our [contributors](https://github.com/vas3k/vas3k.club/graphs/
 
 [MIT](LICENSE)
 
-You can use the code for private and commercial purposes with a required attribution of **vas3k.club**.
+In other words, you can use the code for private and commercial purposes with an attribution of **vas3k.club**.
 
 Feel free to contact us via email [club@vas3k.club](mailto:club@vas3k.club).
+
+❤️
