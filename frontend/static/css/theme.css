@@ -173,3 +173,10 @@ select,
     color: #53AA68;
     text-decoration-color: #53AA68;
 }
+
+.battle-side-a-background {
+    background: #4C98D5;
+}
+.battle-side-b-background {
+    background: #53AA68;
+}

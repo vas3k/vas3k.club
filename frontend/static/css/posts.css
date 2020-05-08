@@ -556,18 +556,9 @@
 
         .battle-stats-graph {
             display: flex;
-            flex-direction: row;
-            width: 100%;
-        }
-        .side-a {
-            background: #4C98D5;
-            border-radius: 15px 0 0 15px;
-            padding: 5px;
-        }
-        .side-b {
-            background: #53AA68;
-            border-radius: 0 15px 15px 0;
-            padding: 5px;
+            height: 10px;
+            border-radius: 15px;
+            overflow: hidden;
         }
 
             .battle-stats-arguments strong {
