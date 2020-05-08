@@ -1,3 +1,5 @@
+import logging
+
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django_q.tasks import async_task
@@ -13,6 +15,7 @@ from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
 from users.forms.intro import UserIntroForm
 from users.forms.profile import UserEditForm, ExpertiseForm
+from users.helpers import geocode_find_city_id_by_name
 from users.models import User, UserBadge, UserExpertise, UserTag, Tag
 
 
@@ -54,6 +57,18 @@ def intro(request):
 
     return render(request, "users/intro.html", {"form": form})
 
+
+@ajax_request
+def find_city_id_by_name(request):
+    if request.method != "POST":
+        raise Http404()
+
+    (city_name, city_id) = geocode_find_city_id_by_name(request.GET.get("country"), request.GET.get("city"))
+    return {
+        "status": "success",
+        "city_name": city_name,
+        "city_id": city_id,
+    }
 
 @auth_required
 def profile(request, user_slug):

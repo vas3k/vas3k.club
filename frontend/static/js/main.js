@@ -24,8 +24,25 @@ new Vue({
     },
     data: {
         shownWindow: null,
+        introCityId: null,
+        introCityName: null
     },
     methods: {
+        findCityIdFromCityName(event) {
+            var city = document.querySelector("input[id=id_city]").value;
+            var country = document.querySelector("select[id=id_country]").value;
+            var url = '/find_city_id_by_name/?city=' + encodeURIComponent(city) + "&country=" + encodeURIComponent(country);
+
+            ClubApi.ajaxify(url, (data) => {
+                if (data.status === "success") {
+                    this.introCityName = data.city_name != null ? data.city_name : "";
+                    this.introCityId = data.city_id;
+                } else {
+                    this.introCityName = "";
+                    this.introCityId = null;
+                }
+            });
+        },
         deleteExpertise(event) {
             // FIXME: please refactor this code to a proper list component with ajax CRUD actions
             const href = event.target.getAttribute("href");

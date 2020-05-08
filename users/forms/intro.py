@@ -38,8 +38,10 @@ class UserIntroForm(ModelForm):
     city = forms.CharField(
         label="Город",
         required=True,
-        max_length=120
+        max_length=120,
+        widget=forms.TextInput(attrs={'@blur': 'findCityIdFromCityName'})
     )
+    city_id = forms.CharField(required=False, max_length=20, widget=forms.HiddenInput(attrs={'v-model': 'introCityId'}))
     country = forms.ChoiceField(
         label="Страна",
         choices=COUNTRIES,
@@ -93,6 +95,7 @@ class UserIntroForm(ModelForm):
             "company",
             "position",
             "city",
+            "city_id",
             "country",
             "bio",
             "email_digest_type",

@@ -77,10 +77,16 @@
                 <label for="{{ form.country.id_for_label }}" class="form-label">
                     Страна и город
                 </label>
-                {{ form.country }} {{ form.city }}
+                {{ form.country }}
+                {{ form.city }}
+                {{ form.city_id }}
                 {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
                 {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
                 <span class="form-row-help">Вдруг мы решим собраться на митап или типа того.</span>
+
+                <span class="form-row-help" v-if="introCityName===''">Мы не знаем такого города. Вы уверены что тут нет ошибки?</span>
+                <span class="form-row-help" v-if="introCityName">Ок, мы знаем о городе <span v-text="introCityName"/></span>
+
             </div>
 
             <div class="form-row">

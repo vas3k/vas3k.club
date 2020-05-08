@@ -57,6 +57,7 @@ class User(models.Model, ModelDiffMixin):
 
     company = models.TextField(null=True)
     position = models.TextField(null=True)
+    city_id = models.CharField(max_length=20, null=True)
     city = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
     bio = models.TextField(null=True)

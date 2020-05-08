@@ -17,7 +17,7 @@ from posts.views.feed import feed
 from posts.sitemaps import PublicPostsSitemap
 from search.views import search
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
-    add_expertise, admin_profile, delete_expertise
+    add_expertise, admin_profile, delete_expertise, find_city_id_by_name
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week))"
@@ -61,6 +61,8 @@ urlpatterns = [
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
     path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete/", delete_comment, name="delete_comment"),
+
+    path("find_city_id_by_name/", find_city_id_by_name, name="find_city_id_by_name"),
 
     path("telegram/link/", link_telegram, name="link_telegram"),
     path("telegram/webhook/<str:token>/", webhook_telegram, name="webhook_telegram"),
