@@ -5,89 +5,85 @@
  *
  * Call inlineAttachment.attach(editor) to attach to a codemirror instance
  */
-(function () {
-    "use strict";
+(function() {
+  'use strict';
 
-    var codeMirrorEditor = function (instance) {
-        if (!instance.getWrapperElement) {
-            throw "Invalid CodeMirror object given";
-        }
+  var codeMirrorEditor = function(instance) {
 
-        this.codeMirror = instance;
-    };
+    if (!instance.getWrapperElement) {
+      throw "Invalid CodeMirror object given";
+    }
 
-    codeMirrorEditor.prototype.getValue = function () {
-        return this.codeMirror.getValue();
-    };
+    this.codeMirror = instance;
+  };
 
-    codeMirrorEditor.prototype.insertValue = function (val) {
-        this.codeMirror.replaceSelection(val);
-    };
+  codeMirrorEditor.prototype.getValue = function() {
+    return this.codeMirror.getValue();
+  };
 
-    codeMirrorEditor.prototype.setValue = function (val) {
-        var cursor = this.codeMirror.getCursor();
-        this.codeMirror.setValue(val);
-        this.codeMirror.setCursor(cursor);
-    };
+  codeMirrorEditor.prototype.insertValue = function(val) {
+    this.codeMirror.replaceSelection(val);
+  };
 
-    /**
-     * Attach InlineAttachment to CodeMirror
-     *
-     * @param {CodeMirror} codeMirror
-     */
-    codeMirrorEditor.attach = function (codeMirror, options) {
-        options = options || {};
+  codeMirrorEditor.prototype.setValue = function(val) {
+    var cursor = this.codeMirror.getCursor();
+    this.codeMirror.setValue(val);
+    this.codeMirror.setCursor(cursor);
+  };
 
-        var editor = new codeMirrorEditor(codeMirror),
-            inlineattach = new inlineAttachment(options, editor),
-            el = codeMirror.getWrapperElement();
+  /**
+   * Attach InlineAttachment to CodeMirror
+   *
+   * @param {CodeMirror} codeMirror
+   */
+  codeMirrorEditor.attach = function(codeMirror, options) {
 
-        el.addEventListener(
-            "paste",
-            function (e) {
-                inlineattach.onPaste(e);
-            },
-            false
-        );
+    options = options || {};
 
-        codeMirror.setOption("onDragEvent", function (data, e) {
-            if (e.type === "drop") {
-                e.stopPropagation();
-                e.preventDefault();
-                return inlineattach.onDrop(e);
-            }
-        });
-    };
+    var editor = new codeMirrorEditor(codeMirror),
+      inlineattach = new inlineAttachment(options, editor),
+      el = codeMirror.getWrapperElement();
 
-    var codeMirrorEditor4 = function (instance) {
-        codeMirrorEditor.call(this, instance);
-    };
+    el.addEventListener('paste', function(e) {
+      inlineattach.onPaste(e);
+    }, false);
 
-    codeMirrorEditor4.attach = function (codeMirror, options) {
-        options = options || {};
+    codeMirror.setOption('onDragEvent', function(data, e) {
+      if (e.type === "drop") {
+        e.stopPropagation();
+        e.preventDefault();
+        return inlineattach.onDrop(e);
+      }
+    });
+  };
 
-        var editor = new codeMirrorEditor(codeMirror),
-            inlineattach = new inlineAttachment(options, editor),
-            el = codeMirror.getWrapperElement();
+  var codeMirrorEditor4 = function(instance) {
+    codeMirrorEditor.call(this, instance);
+  };
 
-        el.addEventListener(
-            "paste",
-            function (e) {
-                inlineattach.onPaste(e);
-            },
-            false
-        );
+  codeMirrorEditor4.attach = function(codeMirror, options) {
 
-        codeMirror.on("drop", function (data, e) {
-            if (inlineattach.onDrop(e)) {
-                e.stopPropagation();
-                e.preventDefault();
-                return true;
-            } else {
-                return false;
-            }
-        });
-    };
+    options = options || {};
 
-    inlineAttachment.editors.codemirror4 = codeMirrorEditor4;
+    var editor = new codeMirrorEditor(codeMirror),
+      inlineattach = new inlineAttachment(options, editor),
+      el = codeMirror.getWrapperElement();
+
+    el.addEventListener('paste', function(e) {
+      inlineattach.onPaste(e);
+    }, false);
+
+    codeMirror.on('drop', function(data, e) {
+      if (inlineattach.onDrop(e)) {
+        e.stopPropagation();
+        e.preventDefault();
+        return true;
+      } else {
+        return false;
+      }
+    });
+  };
+
+  inlineAttachment.editors.codemirror4 = codeMirrorEditor4;
+
 })();

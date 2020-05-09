@@ -13,13 +13,10 @@
     "css-loader": "^3.5.3",
     "cssnano": "^4.1.10",
     "file-loader": "^6.0.0",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "^0.9.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
-    "prettier": "^2.0.5",
     "vue-hot-reload-api": "^2.3.4",
     "vue-loader": "^15.9.2",
     "vue-template-compiler": "^2.6.11",
@@ -33,19 +30,6 @@
     "simplemde": "^1.11.2",
     "twemoji": "^12.1.6",
     "vue": "^2.6.11"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "{*.js,*.vue}": [
-      "prettier --write"
-    ]
-  },
-  "prettier": {
-    "printWidth": 120
   },
   "browserslist": [
     "last 2 versions",
