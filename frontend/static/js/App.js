@@ -5,6 +5,8 @@ import Lightense from "lightense-images";
 import "./inline-attachment"
 import "./codemirror-4.inline-attachment"
 
+import { findParentForm, isCommunicationForm } from "./common/domUtils";
+
 const INITIAL_SYNC_DELAY = 50;
 const SECOND = 1000;
 
@@ -31,6 +33,7 @@ const App = {
     onMount() {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
+        this.blockCommunicationFormsResubmit();
 
         const registeredEditors = this.initializeMarkdownEditor();
 
@@ -191,30 +194,38 @@ const App = {
             zIndex: 2147483647,
         });
     },
+    blockCommunicationFormsResubmit() {
+        [...document.querySelectorAll("form")]
+            .filter(isCommunicationForm)
+            .forEach((form) => {
+                form.addEventListener("submit", () => {
+                    const submitButton = form.querySelector('button[type="submit"]');
+
+                    if (!submitButton) {
+                        return;
+                    }
+
+                    submitButton.setAttribute("disabled", true);
+                });
+            })
+    },
     attachFormSubmitOnHotKey(editor) {
         editor.codemirror.setOption("extraKeys", {
-            "Ctrl-Enter": this.handleCommentHotkey,
-            "Cmd-Enter": this.handleCommentHotkey,
+            "Ctrl-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
+            "Cmd-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
         });
     },
     handleCommentHotkey(codemirror) {
         const textArea = codemirror.getTextArea();
-        let form = textArea.parentElement;
+        const form = findParentForm(textArea);
 
-        while (form.nodeName !== 'FORM' && form !== document.body) {
-            form = form.parentElement
-        }
 
         if (!form) {
             return;
         }
 
-        const canSubmit = ['comment-form-form', 'reply-form-form'].reduce(
-            (_canSubmit, formClass) => form.classList.contains(formClass) || _canSubmit,
-            false);
-
-        if (canSubmit) {
-            form.submit();
+        if (isCommunicationForm(form)) {
+            form.querySelector('button[type="submit"]').click();
         }
     },
     isMobile() {
