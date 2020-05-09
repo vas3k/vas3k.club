@@ -1299,6 +1299,9 @@
         padding-bottom: 100px;
     }
 
+html[theme="light"] .CodeMirror-code {
+     color: #333;
+}
 .compose-form {
 
 }
@@ -1331,7 +1334,7 @@
         font-style: normal;
         font-size: 19px;
         line-height: 1.67;
-        color: #333;
+        /* color: #333; too specific here, it overrides dark theme */
         font-family: var(--serif-font);
         font-weight: 400;
     }

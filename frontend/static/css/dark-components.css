@@ -1,0 +1,212 @@
+/* https://codemirror.net/theme/ */
+/*
+
+    Name:       Base16 Default Dark
+    Author:     Chris Kempson (http://chriskempson.com)
+
+    CodeMirror template by Jan T. Sott (https://github.com/idleberg/base16-codemirror)
+    Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16)
+
+*/
+
+/* ambiance theme for codemirror */
+
+/* Color scheme */
+
+/**
+    Name: IntelliJ IDEA darcula theme
+    From IntelliJ IDEA by JetBrains
+ */
+
+html[theme="dark"] {
+    font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif;
+}
+
+html[theme="dark"] .CodeMirror {
+    background: #2B2B2B;
+    color: #A9B7C6;
+}
+
+html[theme="dark"] span.cm-meta {
+    color: #BBB529;
+}
+
+html[theme="dark"] span.cm-number {
+    color: #6897BB;
+}
+
+html[theme="dark"] span.cm-keyword {
+    color: #CC7832;
+    line-height: 1em;
+    font-weight: bold;
+}
+
+html[theme="dark"] span.cm-def {
+    color: #A9B7C6;
+    font-style: italic;
+}
+
+html[theme="dark"] span.cm-variable {
+    color: #A9B7C6;
+}
+
+html[theme="dark"] span.cm-variable-2 {
+    color: #A9B7C6;
+}
+
+html[theme="dark"] span.cm-variable-3 {
+    color: #9876AA;
+}
+
+html[theme="dark"] span.cm-type {
+    color: #AABBCC;
+    font-weight: bold;
+}
+
+html[theme="dark"] span.cm-property {
+    color: #FFC66D;
+}
+
+html[theme="dark"] span.cm-operator {
+    color: #A9B7C6;
+}
+
+html[theme="dark"] span.cm-string {
+    color: #6A8759;
+}
+
+html[theme="dark"] span.cm-string-2 {
+    color: #6A8759;
+}
+
+html[theme="dark"] span.cm-comment {
+    color: #61A151;
+    font-style: italic;
+}
+
+html[theme="dark"] span.cm-link {
+    color: #CC7832;
+}
+
+html[theme="dark"] span.cm-atom {
+    color: #CC7832;
+}
+
+html[theme="dark"] span.cm-error {
+    color: #BC3F3C;
+}
+
+html[theme="dark"] span.cm-tag {
+    color: #629755;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+html[theme="dark"] span.cm-attribute {
+    color: #6897bb;
+}
+
+html[theme="dark"] span.cm-qualifier {
+    color: #6A8759;
+}
+
+html[theme="dark"] span.cm-bracket {
+    color: #A9B7C6;
+}
+
+html[theme="dark"] span.cm-builtin {
+    color: #FF9E59;
+}
+
+html[theme="dark"] span.cm-special {
+    color: #FF9E59;
+}
+
+html[theme="dark"] span.cm-matchhighlight {
+    color: #FFFFFF;
+    background-color: rgba(50, 89, 48, .7);
+    font-weight: normal;
+}
+
+html[theme="dark"] span.cm-searching {
+    color: #FFFFFF;
+    background-color: rgba(61, 115, 59, .7);
+    font-weight: normal;
+}
+
+html[theme="dark"] .CodeMirror-cursor {
+    border-left: 1px solid #A9B7C6;
+}
+
+html[theme="dark"] .CodeMirror-activeline-background {
+    background: #323232;
+}
+
+html[theme="dark"] .CodeMirror-gutters {
+    background: #313335;
+    border-right: 1px solid #313335;
+}
+
+html[theme="dark"] .CodeMirror-guttermarker {
+    color: #FFEE80;
+}
+
+html[theme="dark"] .CodeMirror-guttermarker-subtle {
+    color: #D0D0D0;
+}
+
+html[theme="dark"] .CodeMirrir-linenumber {
+    color: #606366;
+}
+
+html[theme="dark"] .CodeMirror-matchingbracket {
+    background-color: #3B514D;
+    color: #FFEF28 !important;
+    font-weight: bold;
+}
+
+html[theme="dark"] div.CodeMirror-selected {
+    background: #214283;
+}
+
+.CodeMirror-hints.darcula {
+    font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+    color: #9C9E9E;
+    background-color: #3B3E3F !important;
+}
+
+.CodeMirror-hints.darcula .CodeMirror-hint-active {
+    background-color: #494D4E !important;
+    color: #9C9E9E !important;
+}
+
+
+html[theme="dark"] .CodeMirror::-webkit-scrollbar {
+    width: 1em;
+}
+
+html[theme="dark"] .CodeMirror::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+html[theme="dark"] .CodeMirror::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+
+html[theme="dark"] .CodeMirror-scroll {
+    margin-right: -35px !important; /* hide annoying 2px of white scrollbar */
+}
+
+
+html[theme="dark"] input[type=text],
+html[theme="dark"] input[type=number],
+html[theme="dark"] input[type=file],
+html[theme="dark"] input[type=email],
+html[theme="dark"] textarea,
+html[theme="dark"] select {
+    background: #151515;
+    color: #e0e0e0;
+}
