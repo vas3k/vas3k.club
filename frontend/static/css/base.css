@@ -138,6 +138,17 @@
         border: var(--button-hover-border);
     }
 
+    .button:disabled {
+        background-color: var(--button-disabled-bg-color);
+        border-color: var(--button-disabled-bg-color);
+    }
+
+    .button:disabled:hover {
+        color: var(--button-color);
+        background-color: var(--button-disabled-bg-color);
+        border-color: var(--button-disabled-bg-color);
+    }
+
     .button-inverted {
         background-color: var(--button-color);
         color: var(--button-bg-color);

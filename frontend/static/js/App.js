@@ -5,6 +5,8 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
+import { findParentForm } from "./common/domUtils";
+
 const INITIAL_SYNC_DELAY = 50;
 const SECOND = 1000;
 
@@ -31,6 +33,7 @@ const App = {
     onMount() {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
+        this.blockFormsSubmitWhenSubmitted();
 
         const registeredEditors = this.initializeMarkdownEditor();
 
@@ -197,19 +200,30 @@ const App = {
             zIndex: 2147483647,
         });
     },
+    blockFormsSubmitWhenSubmitted() {
+        const forms = [...document.querySelectorAll("form")];
+
+        forms.forEach((form) => {
+            form.addEventListener("submit", (event) => {
+                const submitButton = form.querySelector('button[type="submit"]');
+
+                if (!submitButton) {
+                    return;
+                }
+
+                submitButton.setAttribute("disabled", true);
+            });
+        });
+    },
     attachFormSubmitOnHotKey(editor) {
         editor.codemirror.setOption("extraKeys", {
-            "Ctrl-Enter": this.handleCommentHotkey,
-            "Cmd-Enter": this.handleCommentHotkey,
+            "Ctrl-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
+            "Cmd-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
         });
     },
     handleCommentHotkey(codemirror) {
         const textArea = codemirror.getTextArea();
-        let form = textArea.parentElement;
-
-        while (form.nodeName !== "FORM" && form !== document.body) {
-            form = form.parentElement;
-        }
+        const form = findParentForm(textArea);
 
         if (!form) {
             return;
@@ -221,7 +235,7 @@ const App = {
         );
 
         if (canSubmit) {
-            form.submit();
+            form.querySelector('button[type="submit"]').click();
         }
     },
     isMobile() {
