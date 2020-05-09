@@ -6,7 +6,7 @@ on: [pull_request]
 
 jobs:
  
-  flake8:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,13 +19,13 @@ jobs:
       run: |
         pip install --no-cache-dir pipenv
         pipenv install --dev
-    - name: "lint"
+    - name: run lint
       run: make test-ci
       # continue-on-error: true
 
   dockerize:
     runs-on: ubuntu-latest
-    needs: flake8
+    needs: lint
 
     steps:
       - uses: actions/checkout@master
