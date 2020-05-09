@@ -61,14 +61,15 @@
             </article>
         {% endfor %}
 
-        {% if intros|slice:"3:" %}
-            <p style="editorial">
-                Ну и не забываем про других тоже:
-                {% for intro in intros|slice:"3:" %}
-                    <a href="{% url "profile" intro.author.slug %}">{{ intro.author.slug }}</a>{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-            </p>
-        {% endif %}
+{#   TODO: temporarily disabled due to large number of new users     #}
+{#        {% if intros|slice:"3:" %}#}
+{#            <p style="editorial">#}
+{#                Ну и не забываем про других тоже:#}
+{#                {% for intro in intros|slice:"3:" %}#}
+{#                    <a href="{% url "profile" intro.author.slug %}">{{ intro.author.slug }}</a>{% if not forloop.last %}, {% endif %}#}
+{#                {% endfor %}#}
+{#            </p>#}
+{#        {% endif %}#}
     {% endif %}
 
     {% if featured_post %}
