@@ -81,6 +81,6 @@ new Vue({
             }
 
             appendMarkdownTextareaValue(commentReplyTextarea, "");
-        }
-    }
+        },
+    },
 });

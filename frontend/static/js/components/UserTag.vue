@@ -1,9 +1,11 @@
 <template>
-    <a :href="url"
-       class="user-tag"
-       :class="{'user-tag-active': isActive}"
-       :style="{'background-color': isActive ? tag.color : null}"
-       @click.prevent="toggle">
+    <a
+        :href="url"
+        class="user-tag"
+        :class="{ 'user-tag-active': isActive }"
+        :style="{ 'background-color': isActive ? tag.color : null }"
+        @click.prevent="toggle"
+    >
         {{ tag.name }}
     </a>
 </template>
@@ -21,18 +23,18 @@ export default {
         isActiveByDefault: {
             type: Boolean,
             default() {
-                return false
-            }
+                return false;
+            },
         },
         url: {
             type: String,
             required: true,
-        }
+        },
     },
     data() {
         return {
             isActive: this.isActiveByDefault,
-        }
+        };
     },
     methods: {
         toggle() {
@@ -46,6 +48,6 @@ export default {
                 }
             });
         },
-    }
+    },
 };
 </script>
