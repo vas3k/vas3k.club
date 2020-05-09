@@ -4,13 +4,10 @@ const ClubApi = {
             method: "POST",
             credentials: "include",
         };
+        
         fetch(href + "?is_ajax=true", params)
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                callback(data);
-            });
+            .then((response) => response.json())
+            .then((data) => callback(data));
     },
 };
 

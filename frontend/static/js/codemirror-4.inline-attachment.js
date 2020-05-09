@@ -85,5 +85,4 @@
   };
 
   inlineAttachment.editors.codemirror4 = codeMirrorEditor4;
-
 })();

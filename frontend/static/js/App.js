@@ -6,6 +6,7 @@ import "./inline-attachment"
 import "./codemirror-4.inline-attachment"
 
 const INITIAL_SYNC_DELAY = 50;
+const SECOND = 1000;
 
 const imageUploadOptions = {
     uploadUrl: imageUploadUrl,
@@ -26,12 +27,13 @@ const App = {
     onCreate() {
         this.initializeThemeSwitcher();
         this.addTargetBlankToExternalLinks();
-        this.bindCommentsHotkey();
     },
     onMount() {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
+
         const registeredEditors = this.initializeMarkdownEditor();
+
         setTimeout(function () {
             registeredEditors.forEach((editor) => {
                 // textarea value after navigation might be restored after codemirror inited
@@ -72,15 +74,14 @@ const App = {
     },
     initializeMarkdownEditor() {
         if (this.isMobile()) return; // we don't need fancy features on mobiles
-        let allEditors = [];
-        const fullMarkdownEditors = document.querySelectorAll(".markdown-editor-full");
-        for (let i = 0; i < fullMarkdownEditors.length; i++) {
+
+        const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce((editors, element) => {
             let editor = new SimpleMDE({
-                element: fullMarkdownEditors[i],
+                element,
                 autoDownloadFontAwesome: false,
                 autosave: {
                     enabled: true,
-                    delay: 10000, // 10 sec
+                    delay: 10 * SECOND,
                     uniqueId: location.pathname,
                 },
                 hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
@@ -140,14 +141,13 @@ const App = {
                 forceSync: true,
                 tabSize: 4,
             });
-            allEditors.push(editor);
-            inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
-        }
 
-        const invisibleMarkdownEditors = document.querySelectorAll(".markdown-editor-invisible");
-        for (let i = 0; i < invisibleMarkdownEditors.length; i++) {
-            let editor = new SimpleMDE({
-                element: invisibleMarkdownEditors[i],
+            return [...editors, editor];
+        }, []);
+
+        const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce((editors, element) => {
+            const editor = new SimpleMDE({
+                element,
                 autoDownloadFontAwesome: false,
                 toolbar: false,
                 status: false,
@@ -155,9 +155,18 @@ const App = {
                 forceSync: true,
                 tabSize: 4,
             });
-            allEditors.push(editor);
+
+            return [...editors, editor];
+        }, []);
+
+        const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
+
+        allEditors.forEach((editor) => {
+            this.attachFormSubmitOnHotKey(editor);
+
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
-        }
+        })
+
         return allEditors;
     },
     addTargetBlankToExternalLinks() {
@@ -166,9 +175,9 @@ const App = {
 
         const links = [...document.getElementsByTagName("a")];
         links.forEach(link => {
-          if (internal.test(link.host)) return;
+            if (internal.test(link.host)) return;
 
-          link.setAttribute("target", "_blank");
+            link.setAttribute("target", "_blank");
         });
     },
     initializeImageZoom() {
@@ -182,15 +191,30 @@ const App = {
             zIndex: 2147483647,
         });
     },
-    bindCommentsHotkey() {
-        const commentForm  = document.querySelector('.comment-form-form');
-        if (this.isMobile() || !commentForm) { return; }
-
-        commentForm.addEventListener('keydown', (event) => this.handleCommentHotkey(event, commentForm));
+    attachFormSubmitOnHotKey(editor) {
+        editor.codemirror.setOption("extraKeys", {
+            "Ctrl-Enter": this.handleCommentHotkey,
+            "Cmd-Enter": this.handleCommentHotkey,
+        });
     },
-    handleCommentHotkey(event, controlElement) {
-        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-            controlElement.submit();
+    handleCommentHotkey(codemirror) {
+        const textArea = codemirror.getTextArea();
+        let form = textArea.parentElement;
+
+        while (form.nodeName !== 'FORM' && form !== document.body) {
+            form = form.parentElement
+        }
+
+        if (!form) {
+            return;
+        }
+
+        const canSubmit = ['comment-form-form', 'reply-form-form'].reduce(
+            (_canSubmit, formClass) => form.classList.contains(formClass) || _canSubmit,
+            false);
+
+        if (canSubmit) {
+            form.submit();
         }
     },
     isMobile() {
