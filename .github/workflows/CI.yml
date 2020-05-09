@@ -1,7 +1,8 @@
 name: check_PR
 
-# We can us push, pull_request or push to custom branch
-on: [push]
+# We can use push, pull_request or push to custom branch
+# see https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#on
+on: [pull_request]
 
 jobs:
  
