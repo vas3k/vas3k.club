@@ -83,18 +83,8 @@ def load_page_safe(url: str) -> str:
     except RequestException as ex:
         log.warning(f"Error parsing the page: {url} {ex}")
         return ""
-
-    html = io.StringIO()
-    total_bytes = 0
-
-    for chunk in response.iter_content(chunk_size=100 * 1024, decode_unicode=True):
-        total_bytes += len(chunk)
-        if total_bytes >= MAX_PARSABLE_CONTENT_LENGTH:
-            return ""  # reject too big pages
-        html.write(chunk)
-
-    return html.getvalue()
-
+    # https://stackoverflow.com/a/23514616
+    return response.raw.read(MAX_PARSABLE_CONTENT_LENGTH, decode_content=True)
 
 def load_and_parse_full_article_text_and_image(url: str) -> Article:
     config = Config()
