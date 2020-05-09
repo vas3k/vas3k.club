@@ -1,13 +1,15 @@
 <template>
-    <a :href="url"
-       class="upvote"
-       :class="{
+    <a
+        :href="url"
+        class="upvote"
+        :class="{
             'upvote-voted': isVoted && !isDisabled,
             'upvote-disabled': isDisabled,
             'upvote-type-inline': isInline,
             'upvote-type-small': isSmall,
-       }"
-       @click.prevent="toggle">
+        }"
+        @click.prevent="toggle"
+    >
         {{ upvotes }}
     </a>
 </template>
@@ -26,25 +28,25 @@ export default {
             type: Boolean,
             default() {
                 return false;
-            }
+            },
         },
         isInline: {
             type: Boolean,
             default() {
                 return false;
-            }
+            },
         },
         isSmall: {
             type: Boolean,
             default() {
                 return false;
-            }
+            },
         },
         isDisabled: {
             type: Boolean,
             default() {
                 return false;
-            }
+            },
         },
         url: {
             type: String,
@@ -55,7 +57,7 @@ export default {
         return {
             upvotes: this.comment.upvotes,
             isVoted: this.isVotedByDefault,
-        }
+        };
     },
     methods: {
         toggle() {
@@ -64,10 +66,8 @@ export default {
                 this.isVoted = true;
             });
         },
-    }
+    },
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

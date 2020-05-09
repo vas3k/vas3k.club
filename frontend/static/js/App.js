@@ -2,10 +2,13 @@ import twemoji from "twemoji";
 import SimpleMDE from "simplemde";
 import Lightense from "lightense-images";
 
-import "./inline-attachment"
-import "./codemirror-4.inline-attachment"
+import "./inline-attachment";
+import "./codemirror-4.inline-attachment";
+
+import { findParentForm } from "./common/domUtils";
 
 const INITIAL_SYNC_DELAY = 50;
+const SECOND = 1000;
 
 const imageUploadOptions = {
     uploadUrl: imageUploadUrl,
@@ -26,12 +29,14 @@ const App = {
     onCreate() {
         this.initializeThemeSwitcher();
         this.addTargetBlankToExternalLinks();
-        this.bindCommentsHotkey();
     },
     onMount() {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
+        this.blockFormsSubmitWhenSubmitted();
+
         const registeredEditors = this.initializeMarkdownEditor();
+
         setTimeout(function () {
             registeredEditors.forEach((editor) => {
                 // textarea value after navigation might be restored after codemirror inited
@@ -72,92 +77,105 @@ const App = {
     },
     initializeMarkdownEditor() {
         if (this.isMobile()) return; // we don't need fancy features on mobiles
-        let allEditors = [];
-        const fullMarkdownEditors = document.querySelectorAll(".markdown-editor-full");
-        for (let i = 0; i < fullMarkdownEditors.length; i++) {
-            let editor = new SimpleMDE({
-                element: fullMarkdownEditors[i],
-                autoDownloadFontAwesome: false,
-                autosave: {
-                    enabled: true,
-                    delay: 10000, // 10 sec
-                    uniqueId: location.pathname,
-                },
-                hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
-                showIcons: ["heading-2", "code"],
-                toolbar: [
-                    {
-                        name: "bold",
-                        action: SimpleMDE.toggleBold,
-                        className: "fa fa-bold",
-                        title: "Bold",
-                    },
-                    {
-                        name: "italic",
-                        action: SimpleMDE.toggleItalic,
-                        className: "fa fa-italic",
-                        title: "Italic",
-                    },
-                    {
-                        name: "header",
-                        action: SimpleMDE.toggleHeadingSmaller,
-                        className: "fas fa-heading",
-                        title: "Heading",
-                    },
-                    {
-                        name: "quote",
-                        action: SimpleMDE.toggleBlockquote,
-                        className: "fas fa-quote-right",
-                        title: "Quote",
-                    },
-                    "|",
-                    {
-                        name: "list",
-                        action: SimpleMDE.toggleUnorderedList,
-                        className: "fas fa-list",
-                        title: "List",
-                    },
-                    {
-                        name: "url",
-                        action: SimpleMDE.drawLink,
-                        className: "fas fa-link",
-                        title: "Insert URL",
-                    },
-                    {
-                        name: "image",
-                        action: SimpleMDE.drawImage,
-                        className: "fas fa-image",
-                        title: "Insert an image",
-                    },
-                    {
-                        name: "code",
-                        action: SimpleMDE.toggleCodeBlock,
-                        className: "fas fa-code",
-                        title: "Insert code",
-                    },
-                ],
-                spellChecker: false,
-                forceSync: true,
-                tabSize: 4,
-            });
-            allEditors.push(editor);
-            inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
-        }
 
-        const invisibleMarkdownEditors = document.querySelectorAll(".markdown-editor-invisible");
-        for (let i = 0; i < invisibleMarkdownEditors.length; i++) {
-            let editor = new SimpleMDE({
-                element: invisibleMarkdownEditors[i],
-                autoDownloadFontAwesome: false,
-                toolbar: false,
-                status: false,
-                spellChecker: false,
-                forceSync: true,
-                tabSize: 4,
-            });
-            allEditors.push(editor);
+        const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
+            (editors, element) => {
+                let editor = new SimpleMDE({
+                    element,
+                    autoDownloadFontAwesome: false,
+                    autosave: {
+                        enabled: true,
+                        delay: 10 * SECOND,
+                        uniqueId: location.pathname,
+                    },
+                    hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
+                    showIcons: ["heading-2", "code"],
+                    toolbar: [
+                        {
+                            name: "bold",
+                            action: SimpleMDE.toggleBold,
+                            className: "fa fa-bold",
+                            title: "Bold",
+                        },
+                        {
+                            name: "italic",
+                            action: SimpleMDE.toggleItalic,
+                            className: "fa fa-italic",
+                            title: "Italic",
+                        },
+                        {
+                            name: "header",
+                            action: SimpleMDE.toggleHeadingSmaller,
+                            className: "fas fa-heading",
+                            title: "Heading",
+                        },
+                        {
+                            name: "quote",
+                            action: SimpleMDE.toggleBlockquote,
+                            className: "fas fa-quote-right",
+                            title: "Quote",
+                        },
+                        "|",
+                        {
+                            name: "list",
+                            action: SimpleMDE.toggleUnorderedList,
+                            className: "fas fa-list",
+                            title: "List",
+                        },
+                        {
+                            name: "url",
+                            action: SimpleMDE.drawLink,
+                            className: "fas fa-link",
+                            title: "Insert URL",
+                        },
+                        {
+                            name: "image",
+                            action: SimpleMDE.drawImage,
+                            className: "fas fa-image",
+                            title: "Insert an image",
+                        },
+                        {
+                            name: "code",
+                            action: SimpleMDE.toggleCodeBlock,
+                            className: "fas fa-code",
+                            title: "Insert code",
+                        },
+                    ],
+                    spellChecker: false,
+                    forceSync: true,
+                    tabSize: 4,
+                });
+
+                return [...editors, editor];
+            },
+            []
+        );
+
+        const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
+            (editors, element) => {
+                const editor = new SimpleMDE({
+                    element,
+                    autoDownloadFontAwesome: false,
+                    toolbar: false,
+                    status: false,
+                    spellChecker: false,
+                    forceSync: true,
+                    tabSize: 4,
+                });
+
+                return [...editors, editor];
+            },
+            []
+        );
+
+        const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
+
+        allEditors.forEach((editor) => {
+            this.attachFormSubmitOnHotKey(editor);
+
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
-        }
+        });
+
         return allEditors;
     },
     addTargetBlankToExternalLinks() {
@@ -165,10 +183,10 @@ const App = {
         internal = new RegExp(internal, "i");
 
         const links = [...document.getElementsByTagName("a")];
-        links.forEach(link => {
-          if (internal.test(link.host)) return;
+        links.forEach((link) => {
+            if (internal.test(link.host)) return;
 
-          link.setAttribute("target", "_blank");
+            link.setAttribute("target", "_blank");
         });
     },
     initializeImageZoom() {
@@ -182,15 +200,42 @@ const App = {
             zIndex: 2147483647,
         });
     },
-    bindCommentsHotkey() {
-        const commentForm  = document.querySelector('.comment-form-form');
-        if (this.isMobile() || !commentForm) { return; }
+    blockFormsSubmitWhenSubmitted() {
+        const forms = [...document.querySelectorAll("form")];
 
-        commentForm.addEventListener('keydown', (event) => this.handleCommentHotkey(event, commentForm));
+        forms.forEach((form) => {
+            form.addEventListener("submit", (event) => {
+                const submitButton = form.querySelector('button[type="submit"]');
+
+                if (!submitButton) {
+                    return;
+                }
+
+                submitButton.setAttribute("disabled", true);
+            });
+        });
     },
-    handleCommentHotkey(event, controlElement) {
-        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
-            controlElement.submit();
+    attachFormSubmitOnHotKey(editor) {
+        editor.codemirror.setOption("extraKeys", {
+            "Ctrl-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
+            "Cmd-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
+        });
+    },
+    handleCommentHotkey(codemirror) {
+        const textArea = codemirror.getTextArea();
+        const form = findParentForm(textArea);
+
+        if (!form) {
+            return;
+        }
+
+        const canSubmit = ["comment-form-form", "reply-form-form"].reduce(
+            (_canSubmit, formClass) => form.classList.contains(formClass) || _canSubmit,
+            false
+        );
+
+        if (canSubmit) {
+            form.querySelector('button[type="submit"]').click();
         }
     },
     isMobile() {
@@ -211,7 +256,7 @@ const App = {
         }
 
         return false;
-    }
+    },
 };
 
 export default App;
