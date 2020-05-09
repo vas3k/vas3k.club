@@ -14,8 +14,13 @@ Vue.component("comment-upvote", CommentUpvote);
 Vue.component("user-expertise-window", UserExpertiseWindow);
 Vue.component("user-tag", UserTag);
 
+// Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
+// We have no other choice but to completely turn off template matching and leave it on only for components.
+const noDelimiter = {replace: function(){}};
+
 new Vue({
     el: "#app",
+    delimiters: [noDelimiter, noDelimiter], // disable templates
     created() {
         App.onCreate();
     },
