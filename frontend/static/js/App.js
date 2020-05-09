@@ -2,8 +2,8 @@ import twemoji from "twemoji";
 import SimpleMDE from "simplemde";
 import Lightense from "lightense-images";
 
-import "./inline-attachment"
-import "./codemirror-4.inline-attachment"
+import "./inline-attachment";
+import "./codemirror-4.inline-attachment";
 
 const INITIAL_SYNC_DELAY = 50;
 const SECOND = 1000;
@@ -75,89 +75,95 @@ const App = {
     initializeMarkdownEditor() {
         if (this.isMobile()) return; // we don't need fancy features on mobiles
 
-        const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce((editors, element) => {
-            let editor = new SimpleMDE({
-                element,
-                autoDownloadFontAwesome: false,
-                autosave: {
-                    enabled: true,
-                    delay: 10 * SECOND,
-                    uniqueId: location.pathname,
-                },
-                hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
-                showIcons: ["heading-2", "code"],
-                toolbar: [
-                    {
-                        name: "bold",
-                        action: SimpleMDE.toggleBold,
-                        className: "fa fa-bold",
-                        title: "Bold",
+        const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
+            (editors, element) => {
+                let editor = new SimpleMDE({
+                    element,
+                    autoDownloadFontAwesome: false,
+                    autosave: {
+                        enabled: true,
+                        delay: 10 * SECOND,
+                        uniqueId: location.pathname,
                     },
-                    {
-                        name: "italic",
-                        action: SimpleMDE.toggleItalic,
-                        className: "fa fa-italic",
-                        title: "Italic",
-                    },
-                    {
-                        name: "header",
-                        action: SimpleMDE.toggleHeadingSmaller,
-                        className: "fas fa-heading",
-                        title: "Heading",
-                    },
-                    {
-                        name: "quote",
-                        action: SimpleMDE.toggleBlockquote,
-                        className: "fas fa-quote-right",
-                        title: "Quote",
-                    },
-                    "|",
-                    {
-                        name: "list",
-                        action: SimpleMDE.toggleUnorderedList,
-                        className: "fas fa-list",
-                        title: "List",
-                    },
-                    {
-                        name: "url",
-                        action: SimpleMDE.drawLink,
-                        className: "fas fa-link",
-                        title: "Insert URL",
-                    },
-                    {
-                        name: "image",
-                        action: SimpleMDE.drawImage,
-                        className: "fas fa-image",
-                        title: "Insert an image",
-                    },
-                    {
-                        name: "code",
-                        action: SimpleMDE.toggleCodeBlock,
-                        className: "fas fa-code",
-                        title: "Insert code",
-                    },
-                ],
-                spellChecker: false,
-                forceSync: true,
-                tabSize: 4,
-            });
+                    hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
+                    showIcons: ["heading-2", "code"],
+                    toolbar: [
+                        {
+                            name: "bold",
+                            action: SimpleMDE.toggleBold,
+                            className: "fa fa-bold",
+                            title: "Bold",
+                        },
+                        {
+                            name: "italic",
+                            action: SimpleMDE.toggleItalic,
+                            className: "fa fa-italic",
+                            title: "Italic",
+                        },
+                        {
+                            name: "header",
+                            action: SimpleMDE.toggleHeadingSmaller,
+                            className: "fas fa-heading",
+                            title: "Heading",
+                        },
+                        {
+                            name: "quote",
+                            action: SimpleMDE.toggleBlockquote,
+                            className: "fas fa-quote-right",
+                            title: "Quote",
+                        },
+                        "|",
+                        {
+                            name: "list",
+                            action: SimpleMDE.toggleUnorderedList,
+                            className: "fas fa-list",
+                            title: "List",
+                        },
+                        {
+                            name: "url",
+                            action: SimpleMDE.drawLink,
+                            className: "fas fa-link",
+                            title: "Insert URL",
+                        },
+                        {
+                            name: "image",
+                            action: SimpleMDE.drawImage,
+                            className: "fas fa-image",
+                            title: "Insert an image",
+                        },
+                        {
+                            name: "code",
+                            action: SimpleMDE.toggleCodeBlock,
+                            className: "fas fa-code",
+                            title: "Insert code",
+                        },
+                    ],
+                    spellChecker: false,
+                    forceSync: true,
+                    tabSize: 4,
+                });
 
-            return [...editors, editor];
-        }, []);
+                return [...editors, editor];
+            },
+            []
+        );
 
-        const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce((editors, element) => {
-            const editor = new SimpleMDE({
-                element,
-                autoDownloadFontAwesome: false,
-                toolbar: false,
-                status: false,
-                spellChecker: false,
-                forceSync: true,
-                tabSize: 4,
-            });
+        const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
+            (editors, element) => {
+                const editor = new SimpleMDE({
+                    element,
+                    autoDownloadFontAwesome: false,
+                    toolbar: false,
+                    status: false,
+                    spellChecker: false,
+                    forceSync: true,
+                    tabSize: 4,
+                });
 
-            return [...editors, editor];
-        }, []);
+                return [...editors, editor];
+            },
+            []
+        );
 
         const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
 
@@ -165,7 +171,7 @@ const App = {
             this.attachFormSubmitOnHotKey(editor);
 
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
-        })
+        });
 
         return allEditors;
     },
@@ -174,7 +180,7 @@ const App = {
         internal = new RegExp(internal, "i");
 
         const links = [...document.getElementsByTagName("a")];
-        links.forEach(link => {
+        links.forEach((link) => {
             if (internal.test(link.host)) return;
 
             link.setAttribute("target", "_blank");
@@ -201,17 +207,18 @@ const App = {
         const textArea = codemirror.getTextArea();
         let form = textArea.parentElement;
 
-        while (form.nodeName !== 'FORM' && form !== document.body) {
-            form = form.parentElement
+        while (form.nodeName !== "FORM" && form !== document.body) {
+            form = form.parentElement;
         }
 
         if (!form) {
             return;
         }
 
-        const canSubmit = ['comment-form-form', 'reply-form-form'].reduce(
+        const canSubmit = ["comment-form-form", "reply-form-form"].reduce(
             (_canSubmit, formClass) => form.classList.contains(formClass) || _canSubmit,
-            false);
+            false
+        );
 
         if (canSubmit) {
             form.submit();
@@ -235,7 +242,7 @@ const App = {
         }
 
         return false;
-    }
+    },
 };
 
 export default App;

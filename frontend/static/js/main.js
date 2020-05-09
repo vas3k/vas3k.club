@@ -52,7 +52,7 @@ new Vue({
             // Define helper function
             function appendMarkdownTextareaValue(textarea, value) {
                 textarea.value = value;
-                textarea.focus();  // on mobile
+                textarea.focus(); // on mobile
                 const codeMirrorEditor = textarea.nextElementSibling.CodeMirror;
                 codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
                 codeMirrorEditor.focus();
@@ -74,6 +74,6 @@ new Vue({
             }
 
             appendMarkdownTextareaValue(commentReplyTextarea, "");
-        }
-    }
+        },
+    },
 });
