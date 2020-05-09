@@ -76,7 +76,7 @@ class SearchIndex(models.Model):
                 )
             )
         else:
-            SearchIndex.objects.get(post=post).delete()
+            SearchIndex.objects.filter(post=post).delete()
 
     @classmethod
     def update_user_index(cls, user):
@@ -87,14 +87,17 @@ class SearchIndex(models.Model):
                  + SearchVector("country", weight="C", config="russian") \
                  + SearchVector("city", weight="C", config="russian")
 
-        SearchIndex.objects.update_or_create(
-            profile=user,
-            defaults=dict(
-                index=User.objects
-                .annotate(vector=vector)
-                .filter(id=user.id)
-                .values_list("vector", flat=True)
-                .first(),
-                updated_at=datetime.utcnow(),
+        if user.is_profile_complete:
+            SearchIndex.objects.update_or_create(
+                profile=user,
+                defaults=dict(
+                    index=User.objects
+                    .annotate(vector=vector)
+                    .filter(id=user.id)
+                    .values_list("vector", flat=True)
+                    .first(),
+                    updated_at=datetime.utcnow(),
+                )
             )
-        )
+        else:
+            SearchIndex.objects.filter(profile=user).delete()
