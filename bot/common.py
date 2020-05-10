@@ -22,11 +22,11 @@ def send_telegram_message(
     disable_preview: bool = True,
     **kwargs
 ):
-    log.warning(f"The telegram message for {chat.id}: {text}")
-
     if not bot:
-        log.warning("No telegram token. Message is not sent.")
+        log.warning("No telegram token. Skipping")
         return
+
+    log.info(f"Telegram: sending the message: {text}")
 
     return bot.send_message(
         chat_id=chat.id,

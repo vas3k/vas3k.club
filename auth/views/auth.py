@@ -49,7 +49,6 @@ def debug_dev_login(request):
             is_profile_complete=True,
             is_profile_reviewed=True,
             is_profile_rejected=False,
-            telegram_id="FAKE_TELEGRAM_ID",
             roles=["god"],
         ),
     )
