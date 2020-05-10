@@ -6,6 +6,11 @@ from common.data.labels import LABELS
 
 
 def do_post_admin_actions(request, post, data):
+    # Change type
+    if data["change_type"]:
+        post.type = data["change_type"]
+        post.save()
+
     # Labels
     if data["new_label"]:
         label = LABELS.get(data["new_label"])
