@@ -15,7 +15,7 @@ def show_post(request, post_type, post_slug):
 
     # post_type can be changed by moderator
     if post.type != post_type:
-        return redirect("show_post", kwargs={"post_type": post.type, "post_slug": post.slug})
+        return redirect("show_post", post.type, post.slug)
 
     # don't show private posts into public
     if not post.is_public:
