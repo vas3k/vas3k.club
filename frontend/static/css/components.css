@@ -418,7 +418,7 @@
 
     @media only screen and (max-width : 570px) {
         .upvote {
-            padding: 15px 10px 4px;
+            padding: 18px 11px 5px;
             font-size: 16px;
         }
 
@@ -427,9 +427,22 @@
             }
 
             .upvote-disabled {
-                padding-top: 7px;
-                padding-bottom: 7px;
+                padding-top: 11px;
+                padding-bottom: 10px;
             }
+
+            .upvote-type-inline {
+                padding: 4px 10px;
+            }
+
+                .upvote-type-inline::before {
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    content: "+";
+                    font-size: 110%;
+                }
     }
 
 .profile {
@@ -1234,6 +1247,7 @@
         .feed-post-type-intro,
         .feed-post-type-weekly_digest {
             margin-left: 10px;
+            margin-bottom: 0;
         }
     }
 
