@@ -1,20 +1,16 @@
 {% load static %}{% load emails %}<!DOCTYPE html>
 <html lang="ru">
   <head>
-    <!-- The title is useful for screenreaders reading a document. Use your sender name or subject line. -->
     <title>Вастрик.Клуб</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <!-- Never disable zoom behavior! Fine to set the initial width and scale, but allow users to set their own zoom preferences. -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700&display=swap&subset=cyrillic-ext" rel="stylesheet">
     <style type="text/css">
-        /* CLIENT-SPECIFIC STYLES */
         body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
         table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
         img { -ms-interpolation-mode: bicubic; }
 
-        /* RESET STYLES */
         img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
         table { border-collapse: collapse !important; }
         body {
@@ -26,6 +22,18 @@
             font-size: 17px;
             background-color: #FFF;
             -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            background-color: white;
+            color: #2b2b2b;
+            font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 28px;
+            margin: 0 auto;
+            max-width: 720px;
+            padding: 20px 10px 20px 10px;
         }
 
         a {
@@ -287,6 +295,12 @@
             h1 { font-size: 52px !important; }
             h2 { font-size: 34px !important; }
             h3 { font-size: 25px !important; }
+
+            .container {
+                padding-left: 25px;
+                padding-right: 25px;
+            }
+
             .user-avatar img {
                 width: 70px;
                 height: 70px;
@@ -312,7 +326,7 @@
     <![endif]-->
     <!-- The role and aria-label attributes are added to wrap the email content as an article for screen readers. Some of them will read out the aria-label as the title of the document, so use something like "An email from Your Brand Name" to make it recognizable. -->
     <!-- Default styling of text is applied to the wrapper div. Be sure to use text that is large enough and has a high contrast with the background color for people with visual impairments. -->
-    <div role="article" lang="en" style="background-color: white; color: #2b2b2b; font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; font-size: 18px; font-weight: 400; line-height: 28px; margin: 0 auto; max-width: 720px; padding: 20px 10px 20px 10px;">
+    <div role="article" lang="en" class="container">
 
         <header>
             {% block logo %}

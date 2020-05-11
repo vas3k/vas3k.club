@@ -12,8 +12,8 @@ def create_or_update_post(sender, instance, created, **kwargs):
     if not created and "is_visible" not in instance.changed_fields:
         return None  # we're not interested in updates, only if it's changing visibility
 
-    if instance.type in {Post.TYPE_INTRO}:
-        return None  # skip intros
+    if instance.type in {Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST}:
+        return None  # skip intros and emails
 
     if not instance.is_visible:
         return None  # skip drafts too
