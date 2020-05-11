@@ -1183,9 +1183,10 @@
                 color: var(--opposite-text-color);
             }
 
-    .feed-post-unread {
+    .feed-post-comments-unread {
         font-weight: 600;
         color: var(--link-color);
+        text-decoration: none;
     }
 
     @media only screen and (max-width : 570px) {
@@ -1390,6 +1391,19 @@
     .post-comments-form {
         padding-top: 30px;
     }
+
+    .post-comments-order {
+        display: inline-block;
+        margin-left: 10px;
+        opacity: 0.7;
+    }
+
+        .post-comments-order select {
+            position: relative;
+            font-size: 50%;
+            padding: 4px 7px;
+            top: -4px;
+        }
 
 .comment-replies {
     padding-top: 10px;

@@ -30,12 +30,16 @@
                 {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
             </span>
         {% endif %}
+
         <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">
             {{ post.comment_count }} {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
-            {% if post.unread_comments %}
-                <span class="feed-post-unread">+{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}</span>
-            {% endif %}
         </a>
+
+        {% if post.unread_comments %}
+            <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments-unread">
+                +{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}
+            </a>
+        {% endif %}
     </div>
     <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
 </div>

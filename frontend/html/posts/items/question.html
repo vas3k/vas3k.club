@@ -28,16 +28,20 @@
                 {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
             </span>
         {% endif %}
-        <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">
+
+        <a href="{% url "show_post" post.type post.slug %}?comment_order=created_at#comments" class="feed-post-comments">
             {% if post.comment_count > 0 %}
                 {{ post.comment_count }} {{ post.comment_count | rupluralize:"ответ,ответа,ответов" }}
-                {% if post.unread_comments %}
-                    <span class="feed-post-unread">+{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}</span>
-                {% endif %}
             {% else %}
                 Нет ответов
             {% endif %}
         </a>
+
+        {% if post.unread_comments %}
+            <a href="{% url "show_post" post.type post.slug %}?comment_order=-created_at#comments" class="feed-post-comments-unread">
+                +{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}
+            </a>
+        {% endif %}
     </div>
     <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
 </div>

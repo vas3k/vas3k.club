@@ -12,7 +12,7 @@ TreeComment = namedtuple("TreeComment", ["comment", "replies"])
 
 
 @register.filter()
-def comment_tree(comments, ordering="top"):
+def comment_tree(comments):
     comments = list(comments)  # in case if it's a queryset
     tree = []
 
@@ -21,13 +21,12 @@ def comment_tree(comments, ordering="top"):
             # take the high level comment and find all replies for it
             tree_comment = TreeComment(
                 comment=comment,
-                replies=[c for c in comments if c.reply_to_id == comment.id],
+                replies=sorted(
+                    [c for c in comments if c.reply_to_id == comment.id],
+                    key=lambda c: c.created_at
+                ),
             )
             tree.append(tree_comment)
-
-    if ordering == "top":
-        # sort by number of upvotes
-        tree = sorted(tree, key=lambda c: c.comment.upvotes, reverse=True)
 
     # move pinned comments to the top
     tree = sorted(tree, key=lambda c: c.comment.is_pinned, reverse=True)
