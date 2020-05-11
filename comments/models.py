@@ -85,6 +85,13 @@ class Comment(models.Model):
         return Comment.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
     @property
+    def battle_side(self):
+        if self.post is None or self.post.type != "battle" or "battle" not in self.post.metadata:
+            return None
+        side_code = self.metadata.get("battle", {}).get("side")
+        return self.post.metadata["battle"]["sides"][side_code]["name"]
+
+    @property
     def is_editable(self):
         return self.created_at >= datetime.utcnow() - settings.COMMENT_EDIT_TIMEDELTA
 
