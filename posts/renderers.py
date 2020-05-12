@@ -4,7 +4,7 @@ from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment
-from posts.models import PostVote, Post
+from posts.models import PostVote, Post, PostSubscription
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
@@ -15,12 +15,14 @@ def render_post(request, post):
         return HttpResponse(post.html)
 
     # select votes and comments
-    is_voted = False
     if request.me:
         comments = Comment.objects_for_user(request.me).filter(post=post).all()
         is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
+        subscription = PostSubscription.get(request.me, post)
     else:
         comments = Comment.visible_objects().filter(post=post).all()
+        is_voted = False
+        subscription = None
 
     # order comments
     comment_order = request.GET.get("comment_order") or "-upvotes"
@@ -38,9 +40,10 @@ def render_post(request, post):
         "comment_order": comment_order,
         "reply_form": ReplyForm(),
         "is_voted": is_voted,
+        "subscription": subscription,
     }
 
-    # TODO: make pretty mapping here in future
+    # TODO: make a proper mapping here in future
     if post.type == Post.TYPE_BATTLE:
         context["comment_form"] = BattleCommentForm()
 

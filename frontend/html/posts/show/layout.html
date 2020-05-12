@@ -32,7 +32,10 @@
             <div class="post-comments" id="comments">
                 <div class="post-comments-title">
                     {% if post.comment_count > 0 %}
-                        {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                        <span class="post-comments-count">
+                            {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                        </span>
+
                         <form action="." method="get" class="post-comments-order">
                             <select name="comment_order" onchange="this.form.submit()">
                                 <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
@@ -41,8 +44,17 @@
                             </select>
                         </form>
                     {% elif post.is_commentable and post.is_visible %}
-                        Откомментируйте первым 👇
+                        <span class="post-comments-count">
+                            Откомментируйте первым 👇
+                        </span>
                     {% endif %}
+
+                    <post-subscription
+                        url="{% url "toggle_post_subscription" post.slug %}"
+                        {% if subscription %}is-active-by-default{% endif %}
+                        class="post-comments-subscription"
+                    >
+                    </post-subscription>
                 </div>
 
                 {% if comments %}

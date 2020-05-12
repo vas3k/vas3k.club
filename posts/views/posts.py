@@ -5,7 +5,7 @@ from auth.helpers import check_user_permissions, auth_required
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
 from common.request import ajax_request
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
-from posts.models import Post, PostView, PostVote
+from posts.models import Post, PostView, PostVote, PostSubscription
 from posts.renderers import render_post
 from search.models import SearchIndex
 
@@ -94,6 +94,27 @@ def upvote_post(request, post_slug):
 
 
 @auth_required
+@ajax_request
+def toggle_post_subscription(request, post_slug):
+    if request.method != "POST":
+        raise Http404()
+
+    post = get_object_or_404(Post, slug=post_slug)
+
+    subscription, is_created = PostSubscription.objects.get_or_create(
+        user=request.me,
+        post=post,
+    )
+
+    if not is_created:
+        subscription.delete()
+
+    return {
+        "status": "created" if is_created else "deleted"
+    }
+
+
+@auth_required
 def compose(request):
     drafts = Post.objects.filter(author=request.me, is_visible=False)[:100]
     return render(request, "posts/compose/compose.html", {
@@ -127,6 +148,8 @@ def compose_type(request, post_type):
             post.author = request.me
             post.type = post_type
             post.save()
+
+            PostSubscription.subscribe(request.me, post)
 
             if post.is_visible:
                 if post.topic:

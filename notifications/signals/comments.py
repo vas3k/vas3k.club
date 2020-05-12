@@ -5,6 +5,7 @@ from django_q.tasks import async_task
 from bot.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE
 from comments.models import Comment
 from common.regexp import USERNAME_RE
+from posts.models import PostSubscription
 from users.models import User
 
 
@@ -13,27 +14,31 @@ def create_or_update_comment(sender, instance, created, **kwargs):
     if not created:
         return None  # we're not interested in updates
 
-    async_task(async_create_or_update_comment, instance, created)
+    async_task(async_create_or_update_comment, instance)
 
 
-def async_create_or_update_comment(comment, is_created):
-    # notify post author
-    post_author = comment.post.author
-    if post_author.telegram_id and comment.author != post_author:
-        send_telegram_message(
-            chat=Chat(id=comment.post.author.telegram_id),
-            text=render_html_message("comment_to_post.html", comment=comment),
-        )
+def async_create_or_update_comment(comment):
+    notified_user_ids = set()
+
+    # notify post subscribers
+    post_subscribers = PostSubscription.post_subscribers(comment.post)
+    for post_subscriber in post_subscribers:
+        if post_subscriber.user.telegram_id and comment.author != post_subscriber.user:
+            send_telegram_message(
+                chat=Chat(id=post_subscriber.user.telegram_id),
+                text=render_html_message("comment_to_post.html", comment=comment),
+            )
+            notified_user_ids.add(post_subscriber.user.id)
 
     # on reply — notify thread author (do not notify yourself)
-    thread_author = None
     if comment.reply_to:
         thread_author = comment.reply_to.author
-        if comment.reply_to_id and thread_author.telegram_id and comment.author != thread_author:
+        if thread_author.telegram_id and comment.author != thread_author and thread_author.id not in notified_user_ids:
             send_telegram_message(
-                chat=Chat(id=comment.reply_to.author.telegram_id),
+                chat=Chat(id=thread_author.telegram_id),
                 text=render_html_message("comment_to_thread.html", comment=comment),
             )
+            notified_user_ids.add(thread_author.id)
 
     # post top level comments to online channel
     if not comment.reply_to:
@@ -45,8 +50,9 @@ def async_create_or_update_comment(comment, is_created):
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):
         user = User.objects.filter(slug=username).first()
-        if user and user.telegram_id and user != post_author and user != thread_author:
+        if user and user.telegram_id and user.id not in notified_user_ids:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message("comment_mention.html", comment=comment),
             )
+            notified_user_ids.add(user.id)

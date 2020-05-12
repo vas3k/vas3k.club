@@ -1373,6 +1373,9 @@
 }
 
     .post-comments-title {
+    }
+
+    .post-comments-count {
         font-size: 180%;
     }
 
@@ -1400,10 +1403,17 @@
 
         .post-comments-order select {
             position: relative;
-            font-size: 50%;
             padding: 4px 7px;
             top: -4px;
         }
+
+    .post-comments-subscription {
+        display: inline-block;
+        position: relative;
+        top: -4px;
+        margin-left: 15px;
+        opacity: 0.7;
+    }
 
 .comment-replies {
     padding-top: 10px;
