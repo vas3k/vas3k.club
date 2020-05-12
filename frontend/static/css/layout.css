@@ -371,7 +371,7 @@
 .reply {
     display: grid;
     grid-template-columns: 40px minmax(auto, 1fr) 50px;
-    grid-template-rows: auto 30px;
+    grid-template-rows: auto min-content;
     justify-content: start;
 }
 

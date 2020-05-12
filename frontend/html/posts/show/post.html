@@ -28,7 +28,7 @@
                 {% endif %}
 
                 <div class="post-date">
-                    {{ post.effective_published_at|date:"d E Y" }}
+                    {{ post.effective_published_at|date:"j E Y" }}
                     | {{ post.view_count }} {{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
                     {% if not post.is_public %}| <i class="fas fa-lock"></i>&nbsp;Только для своих{% endif %}
                     {% if me.is_moderator %}

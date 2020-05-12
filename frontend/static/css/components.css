@@ -1377,6 +1377,7 @@
 
     .post-comments-count {
         font-size: 180%;
+        text-decoration: none;
     }
 
     .post-comments-list,
@@ -1507,7 +1508,8 @@
     border-radius: var(--block-border-radius)
 }
 
-    .comment:target {
+    .comment:target,
+    .reply:target {
         background-color: rgba(125, 232, 125, 0.3);
     }
 
@@ -1648,13 +1650,15 @@
         }
 
 .reply {
-    margin: 0 30px 20px 85px;
+    margin: 0 20px 15px 75px;
+    padding: 10px;
 }
 
     @media only screen and (max-width : 570px) {
         .reply {
             margin-left: 20px;
             margin-right: 0;
+            padding: 5px;
         }
     }
 
@@ -1671,8 +1675,8 @@
     .reply-body {
         font-size: 90%;
         padding-bottom: 5px;
-        overflow: hidden;
         text-overflow: ellipsis;
+        word-break: break-word;
     }
 
         .reply-body .comment-text {
@@ -1681,6 +1685,11 @@
 
     .reply-footer {
         font-size: 90%;
+    }
+
+    .comment-reply-date {
+        text-decoration: none;
+        opacity: 0.6;
     }
 
     .reply-button-hidden {

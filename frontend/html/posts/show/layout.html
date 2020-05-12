@@ -32,9 +32,9 @@
             <div class="post-comments" id="comments">
                 <div class="post-comments-title">
                     {% if post.comment_count > 0 %}
-                        <span class="post-comments-count">
+                        <a href="#comments" class="post-comments-count">
                             {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
-                        </span>
+                        </a>
 
                         <form action="." method="get" class="post-comments-order">
                             <select name="comment_order" onchange="this.form.submit()">
@@ -44,9 +44,9 @@
                             </select>
                         </form>
                     {% elif post.is_commentable and post.is_visible %}
-                        <span class="post-comments-count">
+                        <a href="#comments" class="post-comments-count">
                             Откомментируйте первым 👇
-                        </span>
+                        </a>
                     {% endif %}
 
                     <post-subscription

@@ -15,23 +15,26 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<p>{text}</p>\n"
 
     def link(self, link, text=None, title=None):
-        if IMAGE_RE.match(link):
-            return self.image(link, text or "", title or "")
-
-        if YOUTUBE_RE.match(link):
-            return self.youtube(link, text, title)
-
-        if VIDEO_RE.match(link):
-            return self.video(link, text, title)
-
-        if TWITTER_RE.match(link):
-            return self.tweet(link, text, title)
+        if not text and not title:
+            # it's a pure link (without link tag) and we can try to parse it
+            embed = self.embed(link, text or "", title or "")
+            if embed:
+                return embed
 
         return super().link(link, text, title)
 
     def image(self, src, alt="", title=None):
+        embed = self.embed(src, alt, title)
+        if embed:
+            return embed
+
+        # users can try to "hack" our parser by using non-image urls
+        # so, if its not an image or video, display it as a link to avoid auto-loading
+        return f'<a href="{src}">{src}</a>'
+
+    def embed(self, src, alt="", title=None):
         if IMAGE_RE.match(src):
-            return self.just_img(src, alt, title)
+            return self.simple_image(src, alt, title)
 
         if YOUTUBE_RE.match(src):
             return self.youtube(src, alt, title)
@@ -42,10 +45,9 @@ class ClubRenderer(mistune.HTMLRenderer):
         if TWITTER_RE.match(src):
             return self.tweet(src, alt, title)
 
-        # if its not an image or video, display as a link
-        return f'<a href="{src}">{src}</a>'
+        return None
 
-    def just_img(self, src, alt="", title=None):
+    def simple_image(self, src, alt="", title=None):
         title = title or alt
         image_tag = f'<img src="{src}" alt="{title}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""

@@ -24,6 +24,11 @@
         <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
             —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
         </span>
+
+        <a href="#comment-{{ comment.id }}" class="comment-reply-date">
+            {{ comment.created_at | cool_date }}
+        </a>
+
         {% if comment.author == me and comment.is_editable or me.is_moderator %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
             {% if not comment.is_deleted %}

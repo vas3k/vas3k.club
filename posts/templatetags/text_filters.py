@@ -1,7 +1,10 @@
 import json
+from datetime import datetime, timedelta
 
 from django import template
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.template.defaultfilters import date
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from typus import ru_typus
@@ -38,6 +41,23 @@ def cool_number(value, num_decimals=1):
         return formatted_number.format(int_value / 1000.0).rstrip("0.") + "K"
     else:
         return formatted_number.format(int_value / 1000000.0).rstrip("0.") + "M"
+
+
+@register.filter
+def cool_date(dt):
+    """
+    datetime -> "two days ago"
+    """
+    now = datetime.utcnow()
+    if dt > now - timedelta(days=2):
+        # recent
+        return naturaltime(dt)
+    elif dt.year != now.year:
+        # different year
+        return date(dt, "j E Y")
+    else:
+        # standard format
+        return date(dt, "j E в H:i")
 
 
 @register.filter

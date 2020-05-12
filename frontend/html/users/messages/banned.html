@@ -5,7 +5,7 @@
 
     {% if me.is_banned_until %}
         <p>
-            Бан истечет {{ me.is_banned_until | date:"d E Y" }}
+            Бан истечет {{ me.is_banned_until | date:"j E Y" }}
         </p>
     {% endif %}
 
