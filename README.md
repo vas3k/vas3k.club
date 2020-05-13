@@ -84,7 +84,7 @@ Pay attention to issue labels placed on tickets by our maintainers.
  
 ## 👍 Our top contributors
 
-I would like to press F to give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
+I would like to press F and give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
 
 - [@vas3k](https://github.com/vas3k)
 - [@nikolay-govorov](https://github.com/nikolay-govorov)
@@ -95,7 +95,7 @@ I would like to press F to give some respects to our [best contributors](https:/
 
 [MIT](LICENSE)
 
-In other words, you can use the code for private and commercial purposes with an attribution of **vas3k.club**.
+In other words, you can use the code for private and commercial purposes with an author attribution (by including the original license file).
 
 Feel free to contact us via email [club@vas3k.club](mailto:club@vas3k.club).
 
