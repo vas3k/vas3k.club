@@ -31,6 +31,7 @@ html, html[theme="light"] {
 
     --button-color: #FFF;
     --button-bg-color: #333;
+    --button-disabled-bg-color: #DDD;
     --button-border: solid 2px #333;
     --button-hover-color: #333;
     --button-hover-bg-color: #FFF;
@@ -55,6 +56,7 @@ html[theme="dark"] {
 
     --button-color: #333;
     --button-bg-color: #FFF;
+    --button-disabled-bg-color: #8A8A8A;
     --button-border: solid 2px #FFF;
     --button-hover-color: #FFF;
     --button-hover-bg-color: #333;
