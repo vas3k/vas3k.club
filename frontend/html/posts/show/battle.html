@@ -73,10 +73,15 @@
             style="margin-left: 0;"
         >
         </post-subscription>
+    
         {% battle_stats post comments %}
 
         {% if not post.comment_count and post.is_commentable and post.is_visible %}
-            <div class="post-comments-title">Аргументируйте первым 👇</div>
+            <div class="post-comments-title">
+                <a href="#comments" class="post-comments-count">
+                    Аргументируйте первым 👇
+                </a>
+            </div>
         {% endif %}
 
         {% if comments %}
