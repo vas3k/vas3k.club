@@ -435,6 +435,12 @@ input[type=range]:focus::-ms-fill-upper {
 
         }
 
+        .form-warning {
+            font-size: 110%;
+            text-align: center;
+            background-color: rgba(243, 255, 81, 0.3);
+        }
+
 .simple-grid-2-auto {
     display: grid;
     grid-template-columns: minmax(auto, min-content) minmax(auto, max-content);

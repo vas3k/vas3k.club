@@ -9,7 +9,7 @@ def notify_profile_needs_review(user, intro):
     user_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user.slug})
     send_telegram_message(
         chat=ADMIN_CHAT,
-        text=render_html_message("moderator_need_review.html", user=user, intro=intro),
+        text=render_html_message("moderator_new_member_review.html", user=user, intro=intro),
         reply_markup=telegram.InlineKeyboardMarkup([
             [
                 telegram.InlineKeyboardButton("👍 Впустить", callback_data=f"approve_user:{user.id}"),

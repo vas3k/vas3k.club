@@ -68,5 +68,5 @@ def process_comment_reply(update: Update):
     })
     send_telegram_message(
         chat=Chat(id=update.effective_chat.id),
-        text=f"➜ [Отвечено]({new_comment_url}) 👍"
+        text=f"➜ <a href=\"{new_comment_url}\">Отвечено</a> 👍"
     )

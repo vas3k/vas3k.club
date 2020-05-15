@@ -9,11 +9,20 @@ from posts.models import Post
 
 @receiver(post_save, sender=Post)
 def create_or_update_post(sender, instance, created, **kwargs):
-    if not created and "is_visible" not in instance.changed_fields:
-        return None  # we're not interested in updates, only if it's changing visibility
+    if instance.type == Post.TYPE_INTRO and "text" in instance.changed_fields:
+        # send intro updates to moderators
+        async_task(
+            send_telegram_message,
+            chat=ADMIN_CHAT,
+            text=render_html_message("moderator_updated_intro.html", user=instance.author, intro=instance),
+        )
+        return None
 
-    if instance.type in {Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST}:
-        return None  # skip intros and emails
+    if not created and "is_visible" not in instance.changed_fields:
+        return None  # we're not interested in updates, only if they change visibility
+
+    if instance.type in {Post.TYPE_WEEKLY_DIGEST}:
+        return None  # skip emails
 
     if not instance.is_visible:
         return None  # skip drafts too
@@ -25,7 +34,7 @@ def async_create_or_update_post(post, is_created):
     if not post.is_approved_by_moderator:
         send_telegram_message(
             chat=ADMIN_CHAT,
-            text=render_html_message("moderator_post.html", post=post),
+            text=render_html_message("moderator_new_post_review.html", post=post),
             reply_markup=telegram.InlineKeyboardMarkup([
                 [
                     telegram.InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),
