@@ -9,7 +9,7 @@ from posts.models import Post
 
 @receiver(post_save, sender=Post)
 def create_or_update_post(sender, instance, created, **kwargs):
-    if instance.type == Post.TYPE_INTRO and "text" in instance.changed_fields:
+    if instance.type == Post.TYPE_INTRO and instance.is_visible and "text" in instance.changed_fields:
         # send intro updates to moderators
         async_task(
             send_telegram_message,
