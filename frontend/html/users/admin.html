@@ -100,5 +100,20 @@
                 <button type="submit" class="button">Забанить</button>
             </form>
         </div>
+
+        <div class="profile-header">Размодерировать</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.is_rejected.label_tag }}
+                    {{ form.is_rejected }}
+                    {% if form.is_rejected.errors %}<span class="form-row-errors">{{ form.is_rejected.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Размодерировать</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

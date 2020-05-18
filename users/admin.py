@@ -59,4 +59,9 @@ def do_user_admin_actions(request, user, data):
         user.save()
         # TODO: send email/bot with data["ban_reason"]
 
+    # Unmoderate
+    if data["is_rejected"]:
+        user.is_profile_rejected = True
+        user.save()
+
     return redirect("profile", user.slug)

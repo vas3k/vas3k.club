@@ -57,3 +57,8 @@ class UserAdminForm(forms.Form):
         max_length=128,
         required=False
     )
+
+    is_rejected = forms.BooleanField(
+        label="Размодерирвать",
+        required=False
+    )
