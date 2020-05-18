@@ -7,7 +7,7 @@ from posts.models import Post
 class PostAdminForm(forms.Form):
     change_type = forms.ChoiceField(
         label="Сменить тип поста",
-        choices=Post.TYPES,
+        choices=[(None, "---")] + Post.TYPES,
         required=False,
     )
 
