@@ -265,6 +265,6 @@ class Geo(models.Model):
     def update_for_user(cls, user):
         user.geo_id = Geo.objects.filter(
             Q(country=user.country) &
-            (Q(city=user.city) | Q(city_en=user.city))
+            (Q(city__iexact=user.city) | Q(city_en__iexact=user.city))
         )
         user.save()
