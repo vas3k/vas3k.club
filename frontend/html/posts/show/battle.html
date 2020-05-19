@@ -66,14 +66,16 @@
 
 {% block comments %}
     <div class="post-comments" id="comments">
-        <post-subscription
-            url="{% url "toggle_post_subscription" post.slug %}"
-            {% if subscription %}is-active-by-default{% endif %}
-            class="post-comments-subscription"
-            style="margin-left: 0;"
-        >
-        </post-subscription>
-    
+        {% if me %}
+            <post-subscription
+                url="{% url "toggle_post_subscription" post.slug %}"
+                {% if subscription %}is-active-by-default{% endif %}
+                class="post-comments-subscription"
+                style="margin-left: 0;"
+            >
+            </post-subscription>
+        {% endif %}
+
         {% battle_stats post comments %}
 
         {% if not post.comment_count and post.is_commentable and post.is_visible %}

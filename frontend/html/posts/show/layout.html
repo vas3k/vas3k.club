@@ -49,12 +49,14 @@
                         </a>
                     {% endif %}
 
-                    <post-subscription
-                        url="{% url "toggle_post_subscription" post.slug %}"
-                        {% if subscription %}is-active-by-default{% endif %}
-                        class="post-comments-subscription"
-                    >
-                    </post-subscription>
+                    {% if me %}
+                        <post-subscription
+                            url="{% url "toggle_post_subscription" post.slug %}"
+                            {% if subscription %}is-active-by-default{% endif %}
+                            class="post-comments-subscription"
+                        >
+                        </post-subscription>
+                    {% endif %}
                 </div>
 
                 {% if comments %}
