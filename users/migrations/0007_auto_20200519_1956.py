@@ -8486,6 +8486,6 @@ INSERT INTO "geo" ("id", "country_en", "region_en", "city_en", "country", "regio
 (8449, 'Zimbabwe', 'Harare', 'Chitungwiza', 'Зимбабве', 'Восточный Машоналенд', 'Читунгвиза', '-18.0197815', '31.067907', 340360);
         """),
         migrations.RunSQL("""
-update users set geo_id = (select id from geo where geo.country = users.country and (geo.city_en = users.city or geo.city = users.city));
+update users set geo_id = (select id from geo where geo.country = users.country and (geo.city_en = users.city or geo.city = users.city) limit 1);
         """)
     ]
