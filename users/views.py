@@ -13,7 +13,7 @@ from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
 from users.forms.intro import UserIntroForm
 from users.forms.profile import UserEditForm, ExpertiseForm
-from users.models import User, UserBadge, UserExpertise, UserTag, Tag
+from users.models import User, UserBadge, UserExpertise, UserTag, Tag, Geo
 
 
 @auth_required
@@ -40,6 +40,8 @@ def intro(request):
             intro_post = Post.upsert_user_intro(
                 user, form.cleaned_data["intro"], is_visible=False
             )
+
+            Geo.update_for_user(user)
 
             # notify moderators to review profile
             async_task(notify_profile_needs_review, user, intro_post)
@@ -107,6 +109,7 @@ def edit_profile(request, user_slug):
             user.save()
 
             SearchIndex.update_user_index(user)
+            Geo.update_for_user(user)
 
             return redirect("profile", user.slug)
     else:

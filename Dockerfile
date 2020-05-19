@@ -8,6 +8,9 @@ RUN apt-get update \
       gcc \
       libc-dev \
       libpq-dev \
+      gdal-bin \
+      python3-gdal \
+      libgdal-dev
       make \
     && rm -rf /var/lib/apt/lists/*
 

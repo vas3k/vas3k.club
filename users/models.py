@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Q
 from slugify import slugify
 
 from common.data.colors import COOL_COLORS
@@ -59,6 +59,7 @@ class User(models.Model, ModelDiffMixin):
     position = models.TextField(null=True)
     city = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
+    geo_id = models.IntegerField(null=True)
     bio = models.TextField(null=True)
     hat = JSONField(null=True)
 
@@ -243,3 +244,27 @@ class UserExpertise(models.Model):
     @property
     def color(self):
         return COOL_COLORS[hash(self.name) % len(COOL_COLORS)]
+
+
+class Geo(models.Model):
+    id = models.AutoField(primary_key=True)
+    country_en = models.CharField(max_length=256)
+    region_en = models.CharField(max_length=256)
+    city_en = models.CharField(max_length=256, db_index=True)
+    country = models.CharField(max_length=256)
+    region = models.CharField(max_length=256)
+    city = models.CharField(max_length=256, db_index=True)
+    latitude = models.FloatField(default=0.0)
+    longitude = models.FloatField(default=0.0)
+    population = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = "geo"
+
+    @classmethod
+    def update_for_user(cls, user):
+        user.geo_id = Geo.objects.filter(
+            Q(country=user.country) &
+            (Q(city=user.city) | Q(city_en=user.city))
+        )
+        user.save()
