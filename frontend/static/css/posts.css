@@ -352,6 +352,8 @@
         border-radius: 20px;
         margin-top: 2em;
         margin-bottom: 2em;
+        overflow-x: scroll;
+        overflow-y: hidden;
     }
 
     .text-body figure {
