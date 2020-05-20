@@ -338,7 +338,7 @@ class PostSubscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     user = models.ForeignKey(User, related_name="subscriptions", db_index=True, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, related_name="subscriptions",db_index=True, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="subscriptions", db_index=True, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

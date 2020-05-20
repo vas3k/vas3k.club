@@ -81,7 +81,7 @@ def daily_digest(request, user_slug):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=1)
     if end_date.weekday() == 1:
-        # we don't have daily on mondays and weekends, we need to include all these posts at tuesday
+        # we don't have daily on sundays and mondays, we need to include all these posts at tuesday
         start_date = end_date - timedelta(days=3)
 
     if settings.DEBUG:
@@ -94,16 +94,16 @@ def daily_digest(request, user_slug):
     moon_phase = parse_horoscope()
 
     # New actions
-    post_comment_actions = Comment.visible_objects()\
+    subscription_comments = Comment.visible_objects()\
         .filter(
-            post__author=user,
+            post__subscriptions__user=user,
             **created_at_condition
         )\
-        .values("post__type", "post__slug", "post__title")\
+        .values("post__type", "post__slug", "post__title", "post__author_id")\
         .annotate(count=Count("id"))\
         .order_by()
 
-    reply_actions = Comment.visible_objects()\
+    replies = Comment.visible_objects()\
         .filter(
             reply_to__author=user,
             **created_at_condition
@@ -114,18 +114,25 @@ def daily_digest(request, user_slug):
 
     new_events = [
         {
-            "type": "post_comment",
+            "type": "my_post_comment",
             "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
             "post_title": e["post__title"],
             "count": e["count"],
-        } for e in post_comment_actions
+        } for e in subscription_comments if e["post__author_id"] == user.id
+    ] + [
+        {
+            "type": "subscribed_post_comment",
+            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
+            "post_title": e["post__title"],
+            "count": e["count"],
+        } for e in subscription_comments if e["post__author_id"] != user.id
     ] + [
         {
             "type": "reply",
             "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
             "post_title": e["post__title"],
             "count": e["count"],
-        } for e in reply_actions
+        } for e in replies
     ]
 
     upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \

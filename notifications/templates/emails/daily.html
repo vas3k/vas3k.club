@@ -58,12 +58,14 @@
         {% if events %}
         <ul class="events-list">
             {% for event in events|slice:":10" %}
-                {% if event.type == "post_comment" %}
-                    <li class="events-item">💭 <strong>{{ event.count }} {{ event.count | rupluralize:"новый комментарий,новых комментария,новых комментариев" }}</strong> к вашему посту <a href="{{ event.post_url }}">{{ event.post_title }}</a></li>
+                {% if event.type == "my_post_comment" %}
+                    <li class="events-item">💭 <strong>{{ event.count }} {{ event.count | rupluralize:"новый комментарий,новых комментария,новых комментариев" }}</strong> к вашему посту «<a href="{{ event.post_url }}?comment_order=-created_at#comments">{{ event.post_title }}</a>»</li>
+                {% elif event.type == "subscribed_post_comment" %}
+                    <li class="events-item">☝️ <strong>{{ event.count }} {{ event.count | rupluralize:"новый комментарий,новых комментария,новых комментариев" }}</strong> к посту «<a href="{{ event.post_url }}?comment_order=-created_at#comments">{{ event.post_title }}</a>»</li>
                 {% elif event.type == "reply" %}
-                    <li class="events-item">👉 <strong>{{ event.count }} {{ event.count | rupluralize:"ответ,ответа,ответов" }}</strong> на ваш комментарий к посту <a href="{{ event.post_url }}">{{ event.post_title }}</a></li>
+                    <li class="events-item">🤚 <strong>{{ event.count }} {{ event.count | rupluralize:"ответ,ответа,ответов" }}</strong> на ваш комментарий к посту «<a href="{{ event.post_url }}">{{ event.post_title }}</a>»</li>
                 {% elif event.type == "upvotes" %}
-                    <li class="events-item">💎💎💎 Вы получили <strong>{{ event.count }} {{ event.count | rupluralize:"новый плюсик,новых плюсика,новых плюсиков" }}</strong> за посты и комменты</li>
+                    <li class="events-item">💎 Вы получили <strong>{{ event.count }} {{ event.count | rupluralize:"новый плюсик,новых плюсика,новых плюсиков" }}</strong> за посты и комменты</li>
                 {% endif %}
             {% endfor %}
         </ul>
