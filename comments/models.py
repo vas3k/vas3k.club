@@ -86,10 +86,12 @@ class Comment(models.Model):
 
     @property
     def battle_side(self):
-        if self.post is None or self.post.type != "battle" or "battle" not in self.post.metadata:
-            return None
-        side_code = self.metadata.get("battle", {}).get("side")
-        return self.post.metadata["battle"]["sides"][side_code]["name"]
+        if self.metadata:
+            side_code = self.metadata.get("battle", {}).get("side")
+            if side_code:
+                return self.post.metadata["battle"]["sides"][side_code]["name"]
+
+        return None
 
     @property
     def is_editable(self):
