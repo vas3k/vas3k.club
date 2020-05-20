@@ -260,11 +260,12 @@ class Geo(models.Model):
 
     class Meta:
         db_table = "geo"
+        ordering = ["id"]
 
     @classmethod
     def update_for_user(cls, user):
         user.geo_id = Geo.objects.filter(
             Q(country=user.country) &
             (Q(city__iexact=user.city) | Q(city_en__iexact=user.city))
-        )
+        ).order_by("id").first()
         user.save()
