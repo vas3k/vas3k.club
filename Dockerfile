@@ -10,7 +10,7 @@ RUN apt-get update \
       libpq-dev \
       gdal-bin \
       python3-gdal \
-      libgdal-dev
+      libgdal-dev \
       make \
     && rm -rf /var/lib/apt/lists/*
 
