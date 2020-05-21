@@ -24,9 +24,10 @@ def async_create_or_update_comment(comment):
     post_subscribers = PostSubscription.post_subscribers(comment.post)
     for post_subscriber in post_subscribers:
         if post_subscriber.user.telegram_id and comment.author != post_subscriber.user:
+            template = "comment_to_post.html" if post_subscriber.user == post.author else "comment_to_post_announce.html"
             send_telegram_message(
                 chat=Chat(id=post_subscriber.user.telegram_id),
-                text=render_html_message("comment_to_post.html", comment=comment),
+                text=render_html_message(template, comment=comment),
             )
             notified_user_ids.add(post_subscriber.user.id)
 
