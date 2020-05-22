@@ -52,7 +52,7 @@
                 </label>
                 {{ form.slug }}
                 {% if form.slug.errors %}<span class="form-row-errors">{{ form.slug.errors }}</span>{% endif %}
-                <span class="form-row-help">Будет использован как URL вашей странички и&nbsp;для реплаев.<br>Потому только латиница, циферки и&nbsp;чёрточки.<br>Без пробелов. От&nbsp;{{ form.slug.min_length }} до&nbsp;{{ form.slug.max_length }} символов.</span>
+                <span class="form-row-help">Будет использован как URL вашей странички и&nbsp;для реплаев.<br>Потому только латиница, циферки и&nbsp;чёрточки.<br>Без пробелов.</span>
             </div>
 
             <div class="form-row">
@@ -61,7 +61,7 @@
                 </label>
                 {{ form.full_name }}
                 {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
-                <span class="form-row-help">Рекомендуется указывать имя + фамилию, либо псевдоним, если вас лучше знают по&nbsp;нему. До&nbsp;{{ form.full_name.max_length }} символов.</span>
+                <span class="form-row-help">Рекомендуется указывать имя + фамилию, либо псевдоним, если вас лучше знают по&nbsp;нему.</span>
             </div>
 
             <div class="form-row">
@@ -89,7 +89,7 @@
                 </label>
                 {{ form.bio }}
                 {% if form.bio.errors %}<span class="form-row-errors">{{ form.bio.errors }}</span>{% endif %}
-                <span class="form-row-help">Всё, что вы&nbsp;бы хотели видеть в&nbsp;профиле под своим именем. Ссылки на&nbsp;ваш блог, твиттер, канал, подкаст, приветы маме, и&nbsp;т.д. Используйте Эмодзи и&nbsp;<a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a> чтобы сделать красиво. Не&nbsp;обязательно. До&nbsp;{{ form.bio.max_length }} символов.</span>
+                <span class="form-row-help">Всё, что вы&nbsp;бы хотели видеть в&nbsp;профиле под своим именем. Ссылки на&nbsp;ваш блог, твиттер, канал, подкаст, приветы маме, и&nbsp;т.д. Используйте Эмодзи и&nbsp;<a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a> чтобы сделать красиво. Не&nbsp;обязательно.</span>
             </div>
 
             <div class="form-row">
