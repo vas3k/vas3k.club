@@ -23,35 +23,35 @@
             <div class="block">
                 <div class="form-row">
                     <label for="{{ form.full_name.id_for_label }}" class="form-label">
-                        Имя
+                        {{ form.full_name.label }}
                     </label>
                     {{ form.full_name }}
                     {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
-                    <span class="form-row-help">Рекомендуется указывать имя + фамилию, либо псевдоним, если вас лучше знают по нему.</span>
+                    <span class="form-row-help">Рекомендуется указывать имя + фамилию, либо псевдоним, если вас лучше знают по&nbsp;нему. До&nbsp;{{ form.full_name.max_length }} символов.</span>
                 </div>
 
                 <div class="form-row">
                     <label for="{{ form.country.id_for_label }}" class="form-label">
-                        Страна и город
+                        {{ form.country.label }} и&nbsp;{{ form.city.label }}
                     </label>
                     {{ form.country }} {{ form.city }}
                     {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
                     {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
-                    <span class="form-row-help">Вдруг мы решим собраться на митап или типа того.</span>
+                    <span class="form-row-help">Вдруг мы&nbsp;решим собраться на&nbsp;митап или типа того.</span>
                 </div>
 
                 <div class="form-row">
                     <label for="{{ form.bio.id_for_label }}" class="form-label">
-                        Ссылочки на себя и всякое такое
+                        {{ form.bio.label }}
                     </label>
                     {{ form.bio }}
                     {% if form.bio.errors %}<span class="form-row-errors">{{ form.bio.errors }}</span>{% endif %}
-                    <span class="form-row-help">Можно Markdown</span>
+                    <span class="form-row-help">Можно <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
                 </div>
 
                 <div class="form-row">
                     <label for="{{ form.avatar.id_for_label }}" class="form-label">
-                        Обновить аватар
+                        {{ form.avatar.label }}
                     </label>
                     {{ form.avatar }}
                     {% if form.avatar.errors %}<span class="form-row-errors">{{ form.avatar.errors }}</span>{% endif %}
@@ -59,7 +59,7 @@
 
                 <div class="form-row">
                     <label for="{{ form.company.id_for_label }}" class="form-label">
-                        Компания
+                        {{ form.company.label }}
                     </label>
                     {{ form.company }}
                     {% if form.company.errors %}<span class="form-row-errors">{{ form.company.errors }}</span>{% endif %}
@@ -67,7 +67,7 @@
 
                 <div class="form-row">
                     <label for="{{ form.position.id_for_label }}" class="form-label">
-                        Должность
+                        {{ form.position.label }}
                     </label>
                     {{ form.position }}
                     {% if form.position.errors %}<span class="form-row-errors">{{ form.position.errors }}</span>{% endif %}
@@ -77,10 +77,10 @@
             <div class="clearfix20"></div>
 
             <div class="block" id="digest-settings">
-                <div class="block-header">📫<br>Как хотите следить за постами и комментами?</div>
+                <div class="block-header">📫<br>Как хотите следить за&nbsp;постами и&nbsp;комментами?</div>
 
                 {% if not form.instance.is_email_verified %}
-                    <div class="block form-warning">⚠️ Вы не подтвердили свой адрес электронной почты, так что мы пока не будем слать на него рассылки</div>
+                    <div class="block form-warning">⚠️ Вы&nbsp;не&nbsp;подтвердили свой адрес электронной почты, так что мы&nbsp;пока не&nbsp;будем слать на&nbsp;него рассылки</div>
                 {% endif %}
 
                 <div class="clearfix20"></div>
@@ -90,17 +90,17 @@
                         <div class="user-edit-digest">
                             <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
                                 <i class="fas fa-envelope-open"></i>
-                                <span class="user-edit-digest-name">Шлите мне всё!<br><small style="display: inline-block; margin-top: 20px; line-height: 1.3em;">+ гороскоп в подарок</small></span>
+                                <span class="user-edit-digest-name">Шлите мне всё!<br><small style="display: inline-block; margin-top: 20px; line-height: 1.3em;">+ гороскоп в&nbsp;подарок</small></span>
                                 {{  form.email_digest_type.1.tag }}
                             </label>
                             <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
                                 <i class="fas fa-calendar-week"></i>
-                                <span class="user-edit-digest-name">Только журнал раз в неделю</span>
+                                <span class="user-edit-digest-name">Только журнал раз в&nbsp;неделю</span>
                                 {{  form.email_digest_type.2.tag }}
                             </label>
                             <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
                                 <i class="fas fa-skull-crossbones"></i>
-                                <span class="user-edit-digest-name">Никак не хочу</span>
+                                <span class="user-edit-digest-name">Никак не&nbsp;хочу</span>
                                 {{  form.email_digest_type.0.tag }}
                             </label>
                         </div>
@@ -108,14 +108,14 @@
                     {% if form.email_digest_type.errors %}<span class="form-row-errors">{{ form.email_digest_type.errors }}</span>{% endif %}
                 </div>
 
-                <div class="block-header">Другие способы быть в курсе 👇</div>
+                <div class="block-header">Другие способы быть в&nbsp;курсе 👇</div>
 
                 <div class="block-description" style="text-align: left;">
-                    <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a> — туда модераторы отбирают лучший контент. Он же главный источник всех анонсов.<br><br>
-                    <a href="https://vas3k.ru/notes/club_chat/" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
-                    <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Онлайн</a> — прямой эфир. Только для самых хардкорных.<br><br>
+                    <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a>&nbsp;&mdash; туда модераторы отбирают лучший контент. Он&nbsp;же главный источник всех анонсов.<br><br>
+                    <a href="https://vas3k.ru/notes/club_chat/" target="_blank" style="font-weight: bold;">Секретные Чаты</a>&nbsp;&mdash; наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
+                    <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Онлайн</a>&nbsp;&mdash; прямой эфир. Только для самых хардкорных.<br><br>
 
-                    Не забудьте <strong>подключить нашего бота</strong>, тогда он будет приносить вам уведомления, касающиеся лично вас.
+                    Не&nbsp;забудьте <strong>подключить нашего бота</strong>, тогда он&nbsp;будет приносить вам уведомления, касающиеся лично вас.
                 </div>
             </div>
 
@@ -128,12 +128,12 @@
 
                 <div class="block-description">
                     <p>
-                        <strong>Бот — важное дополнение к Клубу.</strong>
-                        Он оповещает о новых комментариях, через него можно отвечать на них и даже писать посты, форвардя ему сообщения.
+                        <strong>Бот&nbsp;&mdash; важное дополнение к&nbsp;Клубу.</strong>
+                        Он&nbsp;оповещает о&nbsp;новых комментариях, через него можно отвечать на&nbsp;них и&nbsp;даже писать посты, форвардя ему сообщения.
                     </p>
 
                     <p>
-                        На него завязано много фич и мы очень рекомендуем его подключить.
+                        На&nbsp;него завязано много фич, и&nbsp;мы&nbsp;очень рекомендуем его подключить.
                     </p>
 
                     <p id="telegram-auth-data" style="font-weight: bold;">
@@ -172,8 +172,8 @@
                     </p>
 
                     <p style="font-size: 90%;">
-                        ☝️ Если кнопки сверху не видно, значит у вас Роскомнадзор или AdBlock. Придётся их обмануть.
-                        Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ form.instance.secret_hash }}</strong>
+                        ☝️ Если кнопки сверху не&nbsp;видно, значит у&nbsp;вас Роскомнадзор или AdBlock. Придётся их&nbsp;обмануть.
+                        Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" target="_blank">бота</a> и&nbsp;скажите ему вот этот секретный код: <strong>{{ form.instance.secret_hash }}</strong>
                     </p>
                 </div>
             </div>
