@@ -26,7 +26,7 @@
 
 <script>
 export default {
-    name: "UserExpertiseWindow",
+    name: "AddUserExpertiseWindow",
     props: {
         submitFormAction: {
             type: String,

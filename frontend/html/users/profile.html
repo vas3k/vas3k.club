@@ -117,12 +117,17 @@
                                 <div class="user-expertise-row-name">
                                     {{ expertise.name }}
                                     {% if me.id == user.id %}
-                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" @click.prevent="deleteExpertise">[x]</a>
+                                        <user-delete-expertise 
+                                            :expertise="JSON.parse('{{ expertise.expertise | jsonify }}')"
+                                            url="{% url "delete_expertise" expertise.expertise %}" ></user-delete-expertise>
                                     {% endif %}
                                 </div>
-                                <div class="user-expertise-row-bar">
-                                    <div class="user-expertise-row-bar-inner" style="width: {{ expertise.value }}%;"></div>
-                                </div>
+                                <user-edit-expertise-window 
+                                    :expertise="JSON.parse('{{ expertise.expertise | jsonify }}')"
+                                    :name="JSON.parse('{{ expertise.name | jsonify }}')"
+                                    :value="JSON.parse('{{ expertise.value | jsonify }}')"
+                                    submit-form-action="{% url "add_expertise" %}">
+                                </user-edit-expertise-window>
                             </div>
                         {% endfor %}
                     </div>
@@ -203,9 +208,9 @@
         {% endif %}
     </div>
 
-    <user-expertise-window submit-form-action="{% url "add_expertise" %}"
+    <user-add-expertise-window submit-form-action="{% url "add_expertise" %}"
                            :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
                            v-show="shownWindow === 'add-expertise'"
                            @close-window="shownWindow = null">
-    </user-expertise-window>
+    </user-add-expertise-window>
 {% endblock %}

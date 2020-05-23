@@ -7,13 +7,16 @@ import PostUpvote from "./components/PostUpvote.vue";
 import PostSubscription from "./components/PostSubscription.vue";
 import CommentUpvote from "./components/CommentUpvote.vue";
 import UserTag from "./components/UserTag.vue";
-import UserExpertiseWindow from "./components/UserExpertiseWindow.vue";
-import ClubApi from "./common/api.service";
+import AddUserExpertiseWindow from "./components/user/AddExpertiseWindow.vue";
+import EditUserExpertiseWindow from "./components/user/EditExpertiseWindow.vue";
+import DeleteUserExpertise from "./components/user/DeleteExpertise.vue";
 
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-subscription", PostSubscription);
 Vue.component("comment-upvote", CommentUpvote);
-Vue.component("user-expertise-window", UserExpertiseWindow);
+Vue.component("user-add-expertise-window", AddUserExpertiseWindow);
+Vue.component("user-edit-expertise-window", EditUserExpertiseWindow);
+Vue.component("user-delete-expertise", DeleteUserExpertise);
 Vue.component("user-tag", UserTag);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
@@ -33,16 +36,6 @@ new Vue({
         shownWindow: null,
     },
     methods: {
-        deleteExpertise(event) {
-            // FIXME: please refactor this code to a proper list component with ajax CRUD actions
-            const href = event.target.getAttribute("href");
-            if (href == null) return;
-            return ClubApi.ajaxify(href, (data) => {
-                if (data.status === "deleted") {
-                    document.getElementById("expertise-" + data.expertise.expertise).outerHTML = "";
-                }
-            });
-        },
         showReplyForm(commentId, username, withSelection) {
             // First, hide all other reply forms
             const replyForms = document.querySelectorAll(".reply-form-form");
