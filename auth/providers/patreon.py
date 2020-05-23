@@ -27,12 +27,10 @@ def fetch_auth_data(code: str) -> dict:
             },
         )
     except requests.exceptions.RequestException as ex:
-        if "invalid_grant" not in str(ex):
-            log.exception(f"Patreon error on login: {ex}")
         raise PatreonException(ex)
 
     if response.status_code >= 400:
-        log.error(f"Patreon error on login {response.status_code}: {response.text}")
+        log.warning(f"Patreon error on login {response.status_code}: {response.text}")
         raise PatreonException(response.text)
 
     try:

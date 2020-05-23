@@ -12,7 +12,7 @@ from search.models import SearchIndex
 from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
 from users.forms.intro import UserIntroForm
-from users.forms.profile import UserEditForm, ExpertiseForm
+from users.forms.profile import UserEditForm, ExpertiseForm, NotificationsEditForm
 from users.models import User, UserBadge, UserExpertise, UserTag, Tag, Geo
 
 
@@ -59,6 +59,9 @@ def intro(request):
 
 @auth_required
 def profile(request, user_slug):
+    if user_slug == "me":
+        return redirect("profile", request.me.slug, permanent=False)
+
     user = get_object_or_404(User, slug=user_slug)
 
     if not request.me.is_moderator:
@@ -98,6 +101,9 @@ def profile(request, user_slug):
 
 @auth_required
 def edit_profile(request, user_slug):
+    if user_slug == "me":
+        return redirect("edit_profile", request.me.slug, permanent=False)
+
     user = get_object_or_404(User, slug=user_slug)
     if user.id != request.me.id and not request.me.is_moderator:
         raise Http404()
@@ -115,7 +121,40 @@ def edit_profile(request, user_slug):
     else:
         form = UserEditForm(instance=user)
 
-    return render(request, "users/edit.html", {"form": form})
+    return render(request, "users/edit/profile.html", {"form": form, "user": user})
+
+
+@auth_required
+def edit_notifications(request, user_slug):
+    if user_slug == "me":
+        return redirect("edit_notifications", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    if request.method == "POST":
+        form = NotificationsEditForm(request.POST, instance=user)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.save()
+            return redirect("profile", user.slug)
+    else:
+        form = NotificationsEditForm(instance=user)
+
+    return render(request, "users/edit/notifications.html", {"form": form, "user": user})
+
+
+@auth_required
+def edit_bot(request, user_slug):
+    if user_slug == "me":
+        return redirect("edit_bot", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    return render(request, "users/edit/bot.html", {"user": user})
 
 
 @auth_required

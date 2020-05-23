@@ -51,6 +51,11 @@ class UserIntroForm(ModelForm):
         max_length=512,
         widget=forms.Textarea(attrs={"maxlength": 512}),
     )
+    contact = forms.CharField(
+        label="Контакт для связи",
+        required=False,
+        max_length=256,
+    )
     company = forms.CharField(
         label="Компания",
         required=False,
@@ -95,6 +100,7 @@ class UserIntroForm(ModelForm):
             "city",
             "country",
             "bio",
+            "contact",
             "email_digest_type",
         ]
 

@@ -46,12 +46,10 @@ class UserEditForm(ModelForm):
         required=True,
         max_length=128
     )
-    email_digest_type = forms.ChoiceField(
-        label="Подписка на дайджест",
-        required=True,
-        choices=User.EMAIL_DIGEST_TYPES,
-        initial=User.EMAIL_DIGEST_TYPE_WEEKLY,
-        widget=forms.RadioSelect(),
+    contact = forms.CharField(
+        label="Контакт для связи",
+        required=False,
+        max_length=256,
     )
 
     class Meta:
@@ -64,6 +62,22 @@ class UserEditForm(ModelForm):
             "city",
             "country",
             "bio",
+            "contact",
+        ]
+
+
+class NotificationsEditForm(ModelForm):
+    email_digest_type = forms.ChoiceField(
+        label="Тип email-дайджеста",
+        required=True,
+        choices=User.EMAIL_DIGEST_TYPES,
+        initial=User.EMAIL_DIGEST_TYPE_WEEKLY,
+        widget=forms.RadioSelect(),
+    )
+
+    class Meta:
+        model = User
+        fields = [
             "email_digest_type",
         ]
 
