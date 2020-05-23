@@ -15,13 +15,13 @@ class UserEditForm(ModelForm):
         max_length=128
     )
     avatar = ImageUploadField(
-        label="Аватар",
+        label="Обновить аватар",
         required=False,
         resize=(512, 512),
         convert_to="jpg",
     )
     city = forms.CharField(
-        label="Город",
+        label="город",
         required=True,
         max_length=120
     )
@@ -31,7 +31,7 @@ class UserEditForm(ModelForm):
         required=True
     )
     bio = forms.CharField(
-        label="Краткая строчка о себе",
+        label="Ссылочки на себя и всякое такое",
         required=False,
         max_length=256,
         widget=forms.Textarea(attrs={"maxlength": 256}),
@@ -42,7 +42,7 @@ class UserEditForm(ModelForm):
         max_length=128
     )
     position = forms.CharField(
-        label="Должность",
+        label="Должность или что вы делаете",
         required=True,
         max_length=128
     )

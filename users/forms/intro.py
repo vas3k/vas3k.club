@@ -21,7 +21,7 @@ class UserIntroForm(ModelForm):
         }),
     )
     full_name = forms.CharField(
-        label="Имя",
+        label="Ваше реальное имя",
         required=True,
         max_length=128
     )
@@ -30,13 +30,13 @@ class UserIntroForm(ModelForm):
         required=True
     )
     avatar = ImageUploadField(
-        label="Аватар",
+        label="Аватар или фото",
         required=False,
         resize=(512, 512),
         convert_to="jpg",
     )
     city = forms.CharField(
-        label="Город",
+        label="город",
         required=True,
         max_length=120
     )
@@ -46,7 +46,7 @@ class UserIntroForm(ModelForm):
         required=True
     )
     bio = forms.CharField(
-        label="Краткая строчка о себе",
+        label="Ссылочки на себя и всякое такое",
         required=False,
         max_length=512,
         widget=forms.Textarea(attrs={"maxlength": 512}),
@@ -57,7 +57,7 @@ class UserIntroForm(ModelForm):
         max_length=128
     )
     position = forms.CharField(
-        label="Должность",
+        label="Должность или что вы делаете",
         required=True,
         max_length=128
     )

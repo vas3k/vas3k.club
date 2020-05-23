@@ -53,6 +53,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_LINK = "link"
     TYPE_QUESTION = "question"
     TYPE_PAIN = "pain"
+    TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
     TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
@@ -62,7 +63,8 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_INTRO, "#intro"),
         (TYPE_LINK, "Ссылка"),
         (TYPE_QUESTION, "Вопрос"),
-        (TYPE_PAIN, "Расскажи где болит"),
+        (TYPE_PAIN, "Боль"),
+        (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
         (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
@@ -75,6 +77,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_LINK: "🔗",
         TYPE_QUESTION: "❓",
         TYPE_PAIN: "😭",
+        TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
         TYPE_REFERRAL: "🏢",
         TYPE_BATTLE: "🤜🤛"
@@ -85,6 +88,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_INTRO: "Интро️:",
         TYPE_LINK: "➜",
         TYPE_PAIN: "Боль:",
+        TYPE_IDEA: "Идея:",
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
         TYPE_REFERRAL: "Рефералка:",
