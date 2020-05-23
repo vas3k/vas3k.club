@@ -49,7 +49,7 @@ class ClubRenderer(mistune.HTMLRenderer):
 
     def simple_image(self, src, alt="", title=None):
         title = title or alt
-        image_tag = f'<img src="{src}" alt="{title}">'
+        image_tag = f'<img loading="lazy" src="{src}" alt="{title}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f"<figure>{image_tag}{caption}</figure>"
 
@@ -57,7 +57,7 @@ class ClubRenderer(mistune.HTMLRenderer):
         youtube_match = YOUTUBE_RE.match(src)
         video_tag = (
             f'<span class="ratio-16-9">'
-            f'<iframe src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1))}'
+            f'<iframe loading="lazy" src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1))}'
             f'?autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080" frameborder="0"></iframe>'
             f"</span>"
         )
