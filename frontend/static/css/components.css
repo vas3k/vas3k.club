@@ -1158,6 +1158,7 @@
     .feed-post-comments {
         text-decoration: none;
         color: #999;
+        white-space: nowrap;
     }
 
     .feed-post-is-pinned {
@@ -1187,6 +1188,7 @@
         font-weight: 600;
         color: var(--link-color);
         text-decoration: none;
+        white-space: nowrap;
     }
 
     @media only screen and (max-width : 570px) {
