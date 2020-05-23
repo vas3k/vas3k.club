@@ -108,10 +108,11 @@
                     left: auto;
                     right: 0;
                     z-index: 1;
-                }
-
-                .post-type-post .text-body > *:first-child {
-                    padding-right: 80px;
+                    float: right;
+                    display: block;
+                    margin-bottom: 1.5em;
+                    margin-left: 1.5em;
+                    position: relative;
                 }
             }
 
@@ -203,8 +204,6 @@
         width: 100%;
         font-style: normal;
         padding: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
         box-sizing: border-box;
     }
 
