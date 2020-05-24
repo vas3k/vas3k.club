@@ -31,6 +31,11 @@
                             🏠 Главная
                         </a>
                     </li>
+{#                    <li>#}
+{#                        <a href="{% url "people" %}">#}
+{#                            🌍 Коммьюнити#}
+{#                        </a>#}
+{#                    </li>#}
                     <li>
                         <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
                             🤔 Вопросы Клубу
@@ -53,6 +58,7 @@
                     </li>
                 </ul>
             </div>
+
             <div class="feed-sidebar-block">
                 <div class="feed-sidebar-header">Комнаты</div>
                 <div class="feed-sidebar-topics">

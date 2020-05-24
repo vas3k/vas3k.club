@@ -8,12 +8,14 @@ import PostSubscription from "./components/PostSubscription.vue";
 import CommentUpvote from "./components/CommentUpvote.vue";
 import UserTag from "./components/UserTag.vue";
 import UserExpertise from "./components/user/Expertise.vue";
+import PeopleMap from "./components/PeopleMap.vue";
 
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-subscription", PostSubscription);
 Vue.component("comment-upvote", CommentUpvote);
 Vue.component("user-expertise", UserExpertise)
 Vue.component("user-tag", UserTag);
+Vue.component("people-map", PeopleMap);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

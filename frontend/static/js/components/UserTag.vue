@@ -1,7 +1,6 @@
 <template>
     <a
         :href="url"
-        class="user-tag"
         :class="{ 'user-tag-active': isActive }"
         :style="{ 'background-color': isActive ? tag.color : null }"
         @click.prevent="toggle"

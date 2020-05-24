@@ -1,3 +1,5 @@
+import json
+import random
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -59,8 +61,9 @@ class User(models.Model, ModelDiffMixin):
     position = models.TextField(null=True)
     city = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
-    geo_id = models.IntegerField(null=True)
+    geo = models.ForeignKey("users.Geo", on_delete=models.SET_NULL, null=True)
     bio = models.TextField(null=True)
+    contact = models.CharField(max_length=256, null=True)
     hat = JSONField(null=True)
 
     balance = models.IntegerField(default=0)
@@ -146,15 +149,25 @@ class User(models.Model, ModelDiffMixin):
                and self.is_profile_reviewed \
                and not self.is_profile_rejected
 
+    @classmethod
+    def active_members(cls):
+        return cls.objects.filter(
+            is_profile_complete=True,
+            is_profile_reviewed=True,
+            is_profile_rejected=False,
+        )
+
 
 class Tag(models.Model):
     GROUP_HOBBIES = "hobbies"
     GROUP_PERSONAL = "personal"
     GROUP_TECH = "tech"
+    GROUP_CLUB = "club"
     GROUP_OTHER = "other"
     GROUPS = [
         (GROUP_PERSONAL, "О себе"),
         (GROUP_TECH, "Технологии"),
+        (GROUP_CLUB, "Для других членов Клуба я..."),
         (GROUP_HOBBIES, "Хобби"),
         (GROUP_OTHER, "Остальное"),
     ]
@@ -184,6 +197,12 @@ class Tag(models.Model):
 
     def group_display(self):
         return dict(Tag.GROUPS).get(self.group) or Tag.GROUP_OTHER
+
+    @classmethod
+    def tags_with_stats(cls):
+        return Tag.objects.filter(is_visible=True).extra({
+            "user_count": "select count(*) from user_tags where user_tags.tag_id = tags.code"
+        })
 
 
 class UserTag(models.Model):
@@ -237,7 +256,7 @@ class UserExpertise(models.Model):
             self.name = pre_defined_expertise.get(self.expertise) or self.expertise
 
         if self.expertise not in pre_defined_expertise:
-            self.expertise = slugify(self.expertise.lower())
+            self.expertise = slugify(self.expertise.lower())[:32]
 
         return super().save(*args, **kwargs)
 
@@ -262,6 +281,11 @@ class Geo(models.Model):
         db_table = "geo"
         ordering = ["id"]
 
+    def to_json_coordinates(self, randomize=True):
+        latitude = self.latitude + (random.uniform(-0.5, 0.5) if randomize else 0)
+        longitude = self.longitude + (random.uniform(-0.5, 0.5) if randomize else 0)
+        return [longitude, latitude]
+
     @classmethod
     def update_for_user(cls, user):
         geo = Geo.objects.filter(
@@ -269,5 +293,5 @@ class Geo(models.Model):
             (Q(city__iexact=user.city) | Q(city_en__iexact=user.city))
         ).order_by("id").first()
         if geo:
-            user.geo_id = geo.id
+            user.geo = geo
             user.save()

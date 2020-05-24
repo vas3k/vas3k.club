@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load comments %}
+{% load posts %}
+{% load text_filters %}
+{% load query_params %}
+{% load paginator %}
+{% load users %}
+
+{% block title %}
+    Люди — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Люди — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary_image">
+    <meta name="twitter:title" content="Люди — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="people">
+        <div class="people-map">
+            <people-map :geojson="JSON.parse('{% users_geo_json users %}')" class="people-map-container"></people-map>
+        </div>
+
+        <form action="." method="get">
+            <div class="people-wrapper">
+                <div class="people-title">
+                    {% if users %}
+                        <strong>{{ users | length }}</strong> {{ users|length|rupluralize:"человек,человека,человек" }}
+                    {% else %}
+                        Никого 😢
+                    {% endif %}
+                </div>
+                <div class="people-search">
+                    <div class="people-search-text">
+                        <input name="query" type="text" value="{{ people_query.query | default:"" }}" placeholder="Компания, город, ключевые слова...">
+                    </div>
+
+                    <div class="people-search-country">
+                        <select name="country" @change="$event.target.form.submit()">
+                            <option value="">Весь мир</option>
+                            {% for country in active_countries %}
+                                <option value="{{ country.country }}" {% if country.country == people_query.country %}selected{% endif %}>{{ country.country }} ({{ country.country_count }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="block people-filters">
+                    <a href="{% url "people" %}" class="people-filters-title hide-on-iphone">Коммьюнити</a>
+
+                    <div class="people-filters-title show-on-iphone">
+                        {% if users %}
+                            <strong>{{ users | length }}</strong> {{ users|length|rupluralize:"человек,человека,человек" }}
+                        {% else %}
+                            Никого 😢
+                        {% endif %}
+                    </div>
+
+                    <div class="people-filters-tag">
+                        <input type="checkbox" name="filters" value="same_city" id="filter_same_city" {% if "same_city" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
+                        <label for="filter_same_city">📍 В том же городе</label>
+                    </div>
+
+                    <div class="people-filters-tag">
+                        <input type="checkbox" name="tags" value="can_meet" id="tag_can_meet" {% if "can_meet" in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                        <label for="tag_can_meet">🎉 Открыты к общению</label>
+                    </div>
+
+                    <div class="people-filters-tag">
+                        <input type="checkbox" name="tags" value="search_friend" id="tag_search_friend" {% if "search_friend" in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                        <label for="tag_search_friend">🤟 Ищут друзей</label>
+                    </div>
+
+                    <div class="people-filters-tag">
+                        <input type="checkbox" name="tags" value="search_events" id="tag_search_events" {% if "search_events" in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                        <label for="tag_search_events">🤪️ Любят движуху</label>
+                    </div>
+
+                    <div class="people-filters-header">Путешествия</div>
+
+                    {% for tag in tag_stat_groups.travel %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                            <label for="tag_{{ tag.code }}">{{ tag.name }}</label>
+                        </div>
+                    {% endfor %}
+
+                    <div class="people-filters-header">Профессиональное</div>
+
+                    {% for tag in tag_stat_groups.work %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                            <label for="tag_{{ tag.code }}">{{ tag.name }}</label>
+                        </div>
+                    {% endfor %}
+
+                    <div class="people-filters-tag">
+                        <input type="checkbox" name="filters" value="faang" id="filter_faang" {% if "faang" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
+                        <label for="filter_faang">📱 FAANG</label>
+                    </div>
+
+                    <div class="people-filters-header">Взаимопомощь</div>
+
+                    {% for tag in tag_stat_groups.grow %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                            <label for="tag_{{ tag.code }}">{{ tag.name }}</label>
+                        </div>
+                    {% endfor %}
+
+                    <div class="people-filters-header">Личные качества</div>
+
+                    {% for tag in tag_stat_groups.personal %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %}>
+                            <label for="tag_{{ tag.code }}">
+                                {{ tag.name }}
+                                <div class="people-filters-tag-bar" style="width: {{ tag.user_count | percentage_of:max_tag_user_count }}%;"></div>
+                            </label>
+                        </div>
+                    {% endfor %}
+
+                    <div class="people-filters-header">Увлечения</div>
+                    {% for tag in tag_stat_groups.hobbies %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %}>
+                            <label for="tag_{{ tag.code }}">
+                                {{ tag.name }}
+                                <div class="people-filters-tag-bar" style="width: {{ tag.user_count | percentage_of:max_tag_user_count }}%;"></div>
+                            </label>
+
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="button people-filters-button">Отфильтровать</button>
+                </div>
+
+                <div class="people-results">
+                    {% if users %}
+                        <div class="block people-stats">
+                            {% for header, stat in map_stat_groups.items %}
+                                <div class="people-stat">
+                                    <span class="people-stat-header">{{ header }}</span>
+                                    <ol class="people-stat-list">
+                                        {% for item in stat %}
+                                            <li><a href="{% append_query_param query=item.0 %}">{{ item.0 }}</a></li>
+                                        {% endfor %}
+                                    </ol>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if users_paginated %}
+                        {% for user in users_paginated %}
+                            {% include "users/widgets/card.html" with user=user %}
+                        {% endfor %}
+
+                        {% paginator users_paginated %}
+                    {% else %}
+                        <div class="people-results-placeholder">😖 Никого не найдено...</div>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

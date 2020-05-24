@@ -544,28 +544,52 @@
         padding-bottom: 20px;
     }
 
-    .profile-numbers {
+    .profile-statuses {
         display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
+        align-content: center;
         text-align: center;
         font-size: 120%;
-        padding-left: 50px;
-        padding-right: 50px;
+        padding: 10px 30px 10px;
     }
 
-        .profile-monies-value,
-        .profile-respect-value {
+        .profile-status {
+            text-decoration: none;
+            display: block;
+            min-width: 120px;
+            max-width: 25%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+            a.profile-status:hover {
+                background-color: var(--opposite-bg-color);
+                color: var(--opposite-text-color);
+            }
+
+        .profile-status-number,
+        .profile-status-icon {
+            display: block;
             font-size: 180%;
             font-weight: 500;
-            display: block;
             padding: 10px 0 0;
         }
 
-        .profile-monies-currency,
-        .profile-respect-currency {
+        .profile-status-icon {
+            display: block;
+            font-size: 230%;
+        }
+
+        .profile-status-text {
+            display: block;
             font-size: 100%;
+        }
+
+        .profile-status-status {
+            display: block;
+            font-size: 90%;
         }
 
     .profile-intro {
@@ -767,6 +791,15 @@
                     font-weight: 500;
                 }
 
+    .profile-tags-footer {
+        text-align: center;
+        font-size: 120%;
+    }
+
+        .profile-tags-footer small {
+            opacity: 0.7;
+        }
+
     .profile-add-button {
         text-align: center;
         padding: 50px 0;
@@ -885,9 +918,7 @@
             }
 
         .feed-sidebar-topics {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            max-width: 100%;
         }
 
     .feed-main {
@@ -1000,6 +1031,10 @@
             width: 80%;
             height: 180px;
             min-height: auto;
+        }
+
+        .form-row #id_contact {
+            width: 80%;
         }
 
         .form-row #id_country,

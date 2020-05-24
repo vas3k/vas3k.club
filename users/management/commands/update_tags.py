@@ -2,7 +2,7 @@ import logging
 
 from django.core.management import BaseCommand
 
-from common.data.tags import HOBBIES, PERSONAL, TECH
+from common.data.tags import HOBBIES, PERSONAL, TECH, CLUB
 from users.models import Tag
 
 log = logging.getLogger(__name__)
@@ -21,7 +21,13 @@ class Command(BaseCommand):
         update_tag_group(Tag.GROUP_TECH, TECH)
         self.stdout.write(f"{len(TECH)} tech")
 
-        all_tag_keys = list(dict(HOBBIES).keys()) + list(dict(PERSONAL).keys()) + list(dict(TECH).keys())
+        update_tag_group(Tag.GROUP_CLUB, CLUB)
+        self.stdout.write(f"{len(CLUB)} club")
+
+        all_tag_keys = list(dict(HOBBIES).keys()) \
+            + list(dict(PERSONAL).keys()) \
+            + list(dict(TECH).keys()) \
+            + list(dict(CLUB).keys())
         Tag.objects.exclude(code__in=all_tag_keys).delete()
 
         self.stdout.write("Done 🥙")

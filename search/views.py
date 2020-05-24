@@ -14,7 +14,7 @@ def search(request):
 
     results = SearchIndex.search(query).select_related("post", "profile", "comment")
 
-    return render(request, "posts/search.html", {
+    return render(request, "search.html", {
         "query": query,
         "results": paginate(request, results, page_size=settings.SEARCH_PAGE_SIZE),
     })
