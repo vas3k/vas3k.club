@@ -546,7 +546,7 @@
 
     .profile-statuses {
         display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
         align-content: center;
@@ -558,8 +558,10 @@
         .profile-status {
             text-decoration: none;
             display: block;
+            min-width: 120px;
             max-width: 25%;
             padding: 20px;
+            box-sizing: border-box;
         }
 
             a.profile-status:hover {
