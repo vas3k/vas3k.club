@@ -544,28 +544,57 @@
         padding-bottom: 20px;
     }
 
-    .profile-statuses {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: center;
-        align-content: center;
-        text-align: center;
-        font-size: 120%;
-        padding: 10px 30px 10px;
+
+    @media only screen and (min-width : 571px) {
+        .profile-statuses {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
+            align-content: center;
+            padding: 10px 30px 10px;
+        }
+    }
+
+    @media only screen and (max-width : 570px) {
+        .profile-statuses {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-row-gap: 10px;
+            grid-column-gap: 10px;
+            padding: 20px 15px;
+        }
     }
 
         .profile-status {
             text-decoration: none;
             display: block;
-            max-width: 25%;
-            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 120%;
         }
 
-            a.profile-status:hover {
-                background-color: var(--opposite-bg-color);
-                color: var(--opposite-text-color);
+        @media only screen and (min-width : 571px) {
+            .profile-status {
+                max-width: 25%;
+                padding: 20px;
             }
+        }
+
+        @media only screen and (max-width : 570px) {
+            .profile-status {
+                
+            }
+        }
+
+        .profile-status a{
+            display: block;
+        }
+
+        .profile-status a:hover {
+            background-color: var(--opposite-bg-color);
+            color: var(--opposite-text-color);
+        }
 
         .profile-status-number,
         .profile-status-icon {
