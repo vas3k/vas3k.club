@@ -174,14 +174,18 @@ const App = {
             editor.element.form.addEventListener("keydown", (e) => {
                 const isEnter = event.key === "Enter";
                 const isCtrlOrCmd = event.ctrlKey || event.metaKey;
-                const command = isEnter && isCtrlOrCmd;
-                if (!command) {
+                const isEnterAndCmd = isEnter && isCtrlOrCmd;
+                if (!isEnterAndCmd) {
                     return;
                 }
 
                 const element = e.target;
                 const form = findParentForm(element);
                 if (!form) {
+                    return;
+                }
+
+                if (!isCommunicationForm(form)) {
                     return;
                 }
 
