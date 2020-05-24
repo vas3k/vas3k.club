@@ -489,7 +489,7 @@ input[type=range]:focus::-ms-fill-upper {
     }
 
 .show-on-iphone {
-    display: none;
+    display: none !important;
 }
 
 .no-underline {
@@ -502,11 +502,11 @@ input[type=range]:focus::-ms-fill-upper {
 
 @media only screen and (max-width : 570px) {
     .hide-on-iphone {
-        display: none;
+        display: none !important;
     }
 
     .show-on-iphone {
-        display: block;
+        display: block !important;
     }
 }
 
@@ -594,29 +594,19 @@ input[type=range]:focus::-ms-fill-upper {
         }
 
     .topic-type-card {
-        flex: 1 0 calc(40% - 10px);
+        display: inline-block;
         margin-top: 10px;
-        text-align: center;
-        padding: 7px;
-        font-size: 95%;
+        padding: 10px 20px 10px 10px;
         box-sizing: border-box;
-        display: flex;
         flex-direction: column;
         align-items: center;
-        max-width: calc(50% - 5px);
-        min-height: 130px;
+        font-size: 100%;
+        border-radius: 30px;
     }
 
         .topic-type-card:hover {
             transform: translateY(-2px);
             transition: .2s;
-        }
-
-        .topic-type-card .topic-name-wrapper {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 80%;
         }
 
         .topic-type-card .topic-name {
@@ -631,9 +621,9 @@ input[type=range]:focus::-ms-fill-upper {
 
         .topic-type-card .topic-icon {
             display: inline-block;
-            width: 46px;
-            height: 46px;
-            margin: 10px 0;
+            width: 35px;
+            height: 35px;
+            margin: 0 5px 0 0;
         }
 
     .topic-type-post {

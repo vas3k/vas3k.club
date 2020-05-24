@@ -29,10 +29,14 @@
   },
   "dependencies": {
     "inline-attachment": "^2.0.3",
+    "leaflet": "^1.6.0",
     "lightense-images": "^1.0.9",
+    "mapbox-gl": "^1.10.1",
     "simplemde": "^1.11.2",
     "twemoji": "^12.1.6",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-mapbox": "^0.4.1",
+    "vue2-leaflet": "^2.5.2"
   },
   "husky": {
     "hooks": {

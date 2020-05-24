@@ -916,9 +916,7 @@
             }
 
         .feed-sidebar-topics {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            max-width: 100%;
         }
 
     .feed-main {

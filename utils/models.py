@@ -1,3 +1,6 @@
+from collections import Counter
+from itertools import groupby
+
 from django.forms.models import model_to_dict
 
 
@@ -42,3 +45,12 @@ class ModelDiffMixin:
     @property
     def _dict(self):
         return model_to_dict(self, fields=[field.name for field in self._meta.fields])
+
+
+def top(values, key):
+    return Counter([getattr(v, key) for v in values if getattr(v, key)]).most_common()
+
+
+def group_by(values, key, todict=True):
+    results = groupby(values, lambda value: getattr(value, key))
+    return {k: list(v) for k, v in results} if todict else results
