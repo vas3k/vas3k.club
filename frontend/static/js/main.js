@@ -7,16 +7,12 @@ import PostUpvote from "./components/PostUpvote.vue";
 import PostSubscription from "./components/PostSubscription.vue";
 import CommentUpvote from "./components/CommentUpvote.vue";
 import UserTag from "./components/UserTag.vue";
-import AddUserExpertiseWindow from "./components/user/AddExpertiseWindow.vue";
-import EditUserExpertiseWindow from "./components/user/EditExpertiseWindow.vue";
-import DeleteUserExpertise from "./components/user/DeleteExpertise.vue";
+import UserExpertise from "./components/user/Expertise.vue";
 
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-subscription", PostSubscription);
 Vue.component("comment-upvote", CommentUpvote);
-Vue.component("user-add-expertise-window", AddUserExpertiseWindow);
-Vue.component("user-edit-expertise-window", EditUserExpertiseWindow);
-Vue.component("user-delete-expertise", DeleteUserExpertise);
+Vue.component("user-expertise", UserExpertise)
 Vue.component("user-tag", UserTag);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.

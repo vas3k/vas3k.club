@@ -3,6 +3,7 @@
 {% load comments %}
 {% load posts %}
 {% load text_filters %}
+{% load user_filters %}
 {% load paginator %}
 
 {% block title %}
@@ -108,36 +109,13 @@
         {% endif %}
 
         {% if expertises or me.id == user.id %}
-            <div class="profile-header">Экспертиза</div>
-            <div class="block profile-expertise">
-                {% if expertises %}
-                    <div class="profile-expertise-rows" id="expertises">
-                        {% for expertise in expertises %}
-                            <div class="user-expertise-row" id="expertise-{{ expertise.expertise }}">
-                                <div class="user-expertise-row-name">
-                                    {{ expertise.name }}
-                                    {% if me.id == user.id %}
-                                        <user-delete-expertise 
-                                            :expertise="JSON.parse('{{ expertise.expertise | jsonify }}')"
-                                            url="{% url "delete_expertise" expertise.expertise %}" ></user-delete-expertise>
-                                    {% endif %}
-                                </div>
-                                <user-edit-expertise-window 
-                                    :expertise="JSON.parse('{{ expertise.expertise | jsonify }}')"
-                                    :name="JSON.parse('{{ expertise.name | jsonify }}')"
-                                    :value="JSON.parse('{{ expertise.value | jsonify }}')"
-                                    submit-form-action="{% url "add_expertise" %}">
-                                </user-edit-expertise-window>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% if me.id == user.id %}
-                    <span class="button profile-expertise-add-button" @click="shownWindow = 'add-expertise'">
-                        Укажи, во что можешь
-                    </span>
-                {% endif %}
-            </div>
+            <user-expertise
+                :user-expertises="JSON.parse('{{ expertises | querySetToJson }}')"
+                :global-expertises="JSON.parse('{{ global_data.expertise | jsonify }}')"
+                submit-form-action="{% url "add_expertise" %}"
+                {% if me.id == user.id %}is-user{% endif %}
+                >
+            </user-expertise>
         {% endif %}
 
         {% if projects or me.id == user.id %}
@@ -207,10 +185,4 @@
             </div>
         {% endif %}
     </div>
-
-    <user-add-expertise-window submit-form-action="{% url "add_expertise" %}"
-                           :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
-                           v-show="shownWindow === 'add-expertise'"
-                           @close-window="shownWindow = null">
-    </user-add-expertise-window>
 {% endblock %}
