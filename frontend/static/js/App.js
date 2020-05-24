@@ -179,13 +179,8 @@ const App = {
                     return;
                 }
 
-                const element = e.target;
-                const form = findParentForm(element);
-                if (!form) {
-                    return;
-                }
-
-                if (!isCommunicationForm(form)) {
+                const form = findParentForm(e.target);
+                if (!form || !isCommunicationForm(form)) {
                     return;
                 }
 
