@@ -61,6 +61,17 @@ def cool_date(dt):
 
 
 @register.filter
+def percentage_of(value, arg):
+    if not value:
+        return 0
+
+    if not arg:
+        return 100
+
+    return int(float(value) / float(arg) * 100)
+
+
+@register.filter
 def rupluralize(value, arg="дурак,дурака,дураков"):
     args = arg.split(",")
     number = abs(int(value))

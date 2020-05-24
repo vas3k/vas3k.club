@@ -95,7 +95,6 @@ body {
     line-height: 1.42;
     color: var(--text-color);
     background-color: var(--bg-color);
-    transition: all linear .1s;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -117,7 +116,7 @@ body {
 
 a {
     color: var(--link-color);
-    transition: all linear .1s;
+    transition: color linear .1s;
 }
 
     a:hover {

@@ -129,7 +129,7 @@
                         <div class="user-tags">
                             {% for tag in tag_group.list %}
                                 {% if me.id == user.id or tag.code in active_tags %}
-                                    <user-tag :tag="JSON.parse('{{ tag.to_dict | jsonify }}')" url="{% url "toggle_tag" tag.code %}" {% if tag.code in active_tags %}is-active-by-default{% endif %}></user-tag>
+                                    <user-tag :tag="JSON.parse('{{ tag.to_dict | jsonify }}')" class="user-tag" url="{% url "toggle_tag" tag.code %}" {% if tag.code in active_tags %}is-active-by-default{% endif %}></user-tag>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -178,7 +178,7 @@
                 {% endif %}
                 {% if me.id == user.id %}
                     <span class="button profile-expertise-add-button" @click="shownWindow = 'add-expertise'">
-                        Укажи, во что можешь
+                        Расскажи что умеешь
                     </span>
                 {% endif %}
             </div>
