@@ -584,7 +584,7 @@
 .people-wrapper {
     display: grid;
     grid-template-columns: 320px minmax(auto, 1fr);
-    grid-template-rows: 90px 100px 500px auto;
+    grid-template-rows: 90px 100px 400px auto;
     justify-content: stretch;
     align-items: start;
     column-gap: 20px;
