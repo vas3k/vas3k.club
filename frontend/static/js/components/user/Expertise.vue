@@ -24,7 +24,7 @@
                 </div>
             </div>
             <span v-if="isUser" class="button profile-expertise-add-button" @click="openModal()"
-                >Укажи, во что можешь</span
+                >Расскажи что умеешь</span
             >
         </div>
 
