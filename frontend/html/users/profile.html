@@ -53,38 +53,34 @@
                     <span class="profile-status-number">{% if user.is_god %}&infin;{% else %}💰{{ user.balance | cool_number }}{% endif %}</span>
                     <span class="profile-status-text">кк/сек</span>
                 </div>
-                <div class="profile-status">
-                    <a href="{% url "edit_notifications" user.slug %}" >
-                        <span class="profile-status-icon">💌</span>
-                        <span class="profile-status-status">
-                            {% if user.is_email_unsubscribed %}
-                                Вы отписаны от всех писем 🙅‍♂️
-                            {% elif not user.is_email_verified %}
-                                Вы не подтвердили e-mail 🚨
+                <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
+                    <span class="profile-status-icon">💌</span>
+                    <span class="profile-status-status">
+                        {% if user.is_email_unsubscribed %}
+                            Вы отписаны от всех писем 🙅‍♂️
+                        {% elif not user.is_email_verified %}
+                            Вы не подтвердили e-mail 🚨
+                        {% else %}
+                            {% if user.email_digest_type == "daily" %}
+                                Ежедневный дайджест 🔥
+                            {% elif user.email_digest_type == "weekly" %}
+                                Еженедельный журнал 💎
                             {% else %}
-                                {% if user.email_digest_type == "daily" %}
-                                    Ежедневный дайджест 🔥
-                                {% elif user.email_digest_type == "weekly" %}
-                                    Еженедельный журнал 💎
-                                {% else %}
-                                    Дайджест отключён ❌
-                                {% endif %}
+                                Дайджест отключён ❌
                             {% endif %}
-                        </span>
-                    </a>
-                </div>
-                <div class="profile-status">
-                    <a href="{% url "edit_bot" user.slug %}">
-                        <span class="profile-status-icon">🤖</span>
-                        <span class="profile-status-status">
-                            {% if user.telegram_id %}
-                                ✅ Бот активен
-                            {% else %}
-                                ❌ Бот не подключен
-                            {% endif %}
-                        </span>
-                    </a>
-                </div>
+                        {% endif %}
+                    </span>
+                </a>
+                <a href="{% url "edit_bot" user.slug %}" class="profile-status">
+                    <span class="profile-status-icon">🤖</span>
+                    <span class="profile-status-status">
+                        {% if user.telegram_id %}
+                            ✅ Бот активен
+                        {% else %}
+                            ❌ Бот не подключен
+                        {% endif %}
+                    </span>
+                </a>
             </div>
         {% endif %}
 
