@@ -97,6 +97,10 @@ class Comment(models.Model):
     def is_editable(self):
         return self.created_at >= datetime.utcnow() - settings.COMMENT_EDIT_TIMEDELTA
 
+    @property
+    def is_deletable(self):
+        return self.created_at >= datetime.utcnow() - settings.COMMENT_DELETE_TIMEDELTA
+
     @classmethod
     def visible_objects(cls):
         return cls.objects\
