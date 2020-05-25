@@ -171,7 +171,21 @@ const App = {
         const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
 
         allEditors.forEach((editor) => {
-            this.attachFormSubmitOnHotKey(editor);
+            editor.element.form.addEventListener("keydown", (e) => {
+                const isEnter = event.key === "Enter";
+                const isCtrlOrCmd = event.ctrlKey || event.metaKey;
+                const isEnterAndCmd = isEnter && isCtrlOrCmd;
+                if (!isEnterAndCmd) {
+                    return;
+                }
+
+                const form = findParentForm(e.target);
+                if (!form || !isCommunicationForm(form)) {
+                    return;
+                }
+
+                form.submit();
+            });
 
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
         });
@@ -201,37 +215,17 @@ const App = {
         });
     },
     blockCommunicationFormsResubmit() {
-        [...document.querySelectorAll("form")]
-            .filter(isCommunicationForm)
-            .forEach((form) => {
-                form.addEventListener("submit", () => {
-                    const submitButton = form.querySelector('button[type="submit"]');
+        [...document.querySelectorAll("form")].filter(isCommunicationForm).forEach((form) => {
+            form.addEventListener("submit", () => {
+                const submitButton = form.querySelector('button[type="submit"]');
 
-                    if (!submitButton) {
-                        return;
-                    }
+                if (!submitButton) {
+                    return;
+                }
 
-                    submitButton.setAttribute("disabled", true);
-                });
-            })
-    },
-    attachFormSubmitOnHotKey(editor) {
-        editor.codemirror.setOption("extraKeys", {
-            "Ctrl-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
-            "Cmd-Enter": (codemirror) => this.handleCommentHotkey(codemirror),
+                submitButton.setAttribute("disabled", true);
+            });
         });
-    },
-    handleCommentHotkey(codemirror) {
-        const textArea = codemirror.getTextArea();
-        const form = findParentForm(textArea);
-
-        if (!form) {
-            return;
-        }
-
-        if (isCommunicationForm(form)) {
-            form.querySelector('button[type="submit"]').click();
-        }
     },
     isMobile() {
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
