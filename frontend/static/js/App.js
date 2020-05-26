@@ -1,5 +1,5 @@
 import twemoji from "twemoji";
-import SimpleMDE from "simplemde";
+import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
 import "./inline-attachment";
@@ -80,7 +80,7 @@ const App = {
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
-                let editor = new SimpleMDE({
+                let editor = new EasyMDE({
                     element,
                     autoDownloadFontAwesome: false,
                     autosave: {
@@ -93,50 +93,50 @@ const App = {
                     toolbar: [
                         {
                             name: "bold",
-                            action: SimpleMDE.toggleBold,
+                            action: EasyMDE.toggleBold,
                             className: "fa fa-bold",
                             title: "Bold",
                         },
                         {
                             name: "italic",
-                            action: SimpleMDE.toggleItalic,
+                            action: EasyMDE.toggleItalic,
                             className: "fa fa-italic",
                             title: "Italic",
                         },
                         {
                             name: "header",
-                            action: SimpleMDE.toggleHeadingSmaller,
+                            action: EasyMDE.toggleHeadingSmaller,
                             className: "fas fa-heading",
                             title: "Heading",
                         },
                         {
                             name: "quote",
-                            action: SimpleMDE.toggleBlockquote,
+                            action: EasyMDE.toggleBlockquote,
                             className: "fas fa-quote-right",
                             title: "Quote",
                         },
                         "|",
                         {
                             name: "list",
-                            action: SimpleMDE.toggleUnorderedList,
+                            action: EasyMDE.toggleUnorderedList,
                             className: "fas fa-list",
                             title: "List",
                         },
                         {
                             name: "url",
-                            action: SimpleMDE.drawLink,
+                            action: EasyMDE.drawLink,
                             className: "fas fa-link",
                             title: "Insert URL",
                         },
                         {
                             name: "image",
-                            action: SimpleMDE.drawImage,
+                            action: EasyMDE.drawImage,
                             className: "fas fa-image",
                             title: "Insert an image",
                         },
                         {
                             name: "code",
-                            action: SimpleMDE.toggleCodeBlock,
+                            action: EasyMDE.toggleCodeBlock,
                             className: "fas fa-code",
                             title: "Insert code",
                         },
@@ -153,7 +153,7 @@ const App = {
 
         const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
             (editors, element) => {
-                const editor = new SimpleMDE({
+                const editor = new EasyMDE({
                     element,
                     autoDownloadFontAwesome: false,
                     toolbar: false,

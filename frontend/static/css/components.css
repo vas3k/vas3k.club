@@ -1373,7 +1373,7 @@
         .compose-form-text .CodeMirror,
         .compose-form-text .CodeMirror-focused,
         .compose-form-text .CodeMirror-scroll {
-            min-height: 400px;
+            min-height: 400px !important;
             transform: scale(1);
         }
 
@@ -1490,9 +1490,10 @@
 
         .comment-form .CodeMirror,
         .comment-form .CodeMirror-scroll {
-            min-height: 150px;
+            min-height: 150px !important;
             font-size: 110%;
             font-family: var(--serif-font);
+            border-radius: 5px;
         }
 
 .reply-form {
@@ -1530,8 +1531,9 @@
         .reply-form .CodeMirror,
         .reply-form .CodeMirror-scroll {
             font-size: 100%;
-            min-height: 50px;
+            min-height: 50px !important;
             font-family: var(--serif-font);
+            border-radius: var(--block-border-radius);
         }
 
     .reply-form .button {
