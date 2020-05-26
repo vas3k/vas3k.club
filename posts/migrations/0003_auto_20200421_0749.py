@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('first_viewed_at', models.DateTimeField(auto_now_add=True)),
                 ('last_viewed_at', models.DateTimeField(auto_now=True)),
                 ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='viewers', to='posts.Post')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='post_views', to='users.models.user.User')),
+                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='post_views', to='users.User')),
             ],
             options={
                 'db_table': 'post_views',

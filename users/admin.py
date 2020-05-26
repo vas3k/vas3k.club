@@ -4,9 +4,8 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 from club.exceptions import AccessDenied
-from common.data.achievements import ACHIEVEMENTS
 from common.data.hats import HATS
-from users.models.badges import UserBadge
+from users.models.badges import UserAchievement, Achievement
 
 
 def do_user_admin_actions(request, user, data):
@@ -37,18 +36,12 @@ def do_user_admin_actions(request, user, data):
             user.save()
 
     # Achievements
-    if data["add_achievement"]:
-        achievement = ACHIEVEMENTS.get(data["new_achievement"])
+    if data["new_achievement"]:
+        achievement = Achievement.objects.filter(code=data["new_achievement"]).first()
         if achievement:
-            UserBadge.objects.get_or_create(
+            UserAchievement.objects.get_or_create(
                 user=user,
-                type=data["new_achievement"],
-                defaults=dict(
-                    name=achievement["title"],
-                    image=achievement["icon"],
-                    description=achievement.get("description"),
-                    style=achievement.get("style"),
-                ),
+                achievement=achievement,
             )
 
     # Ban

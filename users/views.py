@@ -20,7 +20,7 @@ from users.forms.intro import UserIntroForm
 from users.forms.profile import UserEditForm, ExpertiseForm, NotificationsEditForm
 from users.models.user import User
 from users.models.expertise import UserExpertise
-from users.models.badges import UserBadge
+from users.models.badges import UserAchievement
 from users.models.tags import Tag, UserTag
 from users.models.geo import Geo
 from utils.models import top, group_by
@@ -89,7 +89,7 @@ def profile(request, user_slug):
     intro = Post.get_user_intro(user)
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT).all()
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
-    achievements = UserBadge.objects.filter(user=user)[:8]
+    achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
     comments = Comment.visible_objects().filter(author=user).order_by("-created_at")[:3]
     posts = Post.objects_for_user(request.me)\
@@ -102,7 +102,7 @@ def profile(request, user_slug):
         "projects": projects,
         "tags": tags,
         "active_tags": active_tags,
-        "achievements": achievements,
+        "achievements": [ua.achievement for ua in achievements],
         "expertises": expertises,
         "comments": comments,
         "posts": paginate(request, posts),

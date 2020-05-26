@@ -75,8 +75,8 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('name', models.CharField(max_length=64)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_tags', to='users.models.tags.Tag')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tags', to='users.models.user.User')),
+                ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_tags', to='users.Tag')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tags', to='users.User')),
             ],
             options={
                 'db_table': 'user_tags',
@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=64)),
                 ('value', models.IntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='expertises', to='users.models.user.User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='expertises', to='users.User')),
             ],
             options={
                 'db_table': 'user_expertise',
@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='UserBadge',
+            name='UserAchievement',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('type', models.CharField(max_length=32)),
@@ -109,7 +109,7 @@ class Migration(migrations.Migration):
                 ('image', models.URLField()),
                 ('style', models.CharField(default='', max_length=256, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='achievements', to='users.models.user.User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='achievements', to='users.User')),
             ],
             options={
                 'db_table': 'user_achievements',

@@ -33,13 +33,9 @@ class UserAdminForm(forms.Form):
         required=False
     )
 
-    add_achievement = forms.BooleanField(
-        label="Выдать новую ачивку",
-        required=False
-    )
     new_achievement = forms.ChoiceField(
-        label="Выбрать",
-        choices=[(None, "---")] + [(key, value.get("title")) for key, value in ACHIEVEMENTS.items()],
+        label="Выдать новую ачивку",
+        choices=[(None, "---")] + [(key, value.get("name")) for key, value in ACHIEVEMENTS],
         required=False,
     )
 
