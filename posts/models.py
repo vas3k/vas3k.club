@@ -337,13 +337,19 @@ class PostView(models.Model):
 
     @classmethod
     def register_anonymous_view(cls, request, post):
-        post_view, is_view_created = PostView.objects.update_or_create(
+        is_view_created = False
+        post_view = PostView.objects.filter(
             post=post,
             ipaddress=parse_ip_address(request),
-            defaults=dict(
+        ).first()
+
+        if not post_view:
+            PostView.objects.create(
+                post=post,
+                ipaddress=parse_ip_address(request),
                 useragent=parse_useragent(request),
             )
-        )
+            is_view_created = True
 
         # increment view counter for new views or for re-opens after cooldown period
         if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
