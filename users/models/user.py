@@ -146,7 +146,7 @@ class User(models.Model, ModelDiffMixin):
                and not self.is_profile_rejected
 
     @classmethod
-    def active_members(cls):
+    def registered_members(cls):
         return cls.objects.filter(
             is_profile_complete=True,
             is_profile_reviewed=True,

@@ -263,7 +263,7 @@ def banned(request):
 
 @auth_required
 def people(request):
-    users = User.active_members().order_by("-created_at").select_related("geo")
+    users = User.registered_members().order_by("-created_at").select_related("geo")
 
     query = request.GET.get("query")
     if query:
@@ -306,7 +306,7 @@ def people(request):
         }],
     })
 
-    active_countries = User.active_members().filter(country__isnull=False)\
+    active_countries = User.registered_members().filter(country__isnull=False)\
         .values("country")\
         .annotate(country_count=Count("country"))\
         .order_by("-country_count")
