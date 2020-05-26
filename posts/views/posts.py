@@ -37,6 +37,11 @@ def show_post(request, post_type, post_slug):
             user=request.me,
             post=post,
         )
+    else:
+        PostView.register_anonymous_view(
+            request=request,
+            post=post,
+        )
 
     return render_post(request, post, {
         "post_last_view_at": last_view_at

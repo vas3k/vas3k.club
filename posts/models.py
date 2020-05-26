@@ -336,8 +336,26 @@ class PostView(models.Model):
         return post_view, last_view_at
 
     @classmethod
+    def register_anonymous_view(cls, request, post):
+        post_view, is_view_created = PostView.objects.get_or_create(
+            post=post,
+            ipaddress=parse_ip_address(request),
+            defaults=dict(
+                useragent=parse_useragent(request),
+            )
+        )
+
+        # increment view counter for new views or for re-opens after cooldown period
+        if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
+            post_view.registered_view_at = datetime.utcnow()
+            post.increment_view_count()
+            post_view.save()
+
+        return post_view
+
+    @classmethod
     def increment_unread_comments(cls, post):
-        PostView.objects.filter(post=post)\
+        PostView.objects.filter(post=post, user__isnull=False)\
             .update(unread_comments=F("unread_comments") + 1)
 
 
