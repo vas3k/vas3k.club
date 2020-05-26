@@ -47,18 +47,18 @@ class UserIntroForm(ModelForm):
     )
     bio = forms.CharField(
         label="Ссылочки на себя и всякое такое",
-        required=False,
+        required=True,
         max_length=512,
         widget=forms.Textarea(attrs={"maxlength": 512}),
     )
     contact = forms.CharField(
         label="Контакт для связи",
-        required=False,
+        required=True,
         max_length=256,
     )
     company = forms.CharField(
         label="Компания",
-        required=False,
+        required=True,
         max_length=128
     )
     position = forms.CharField(

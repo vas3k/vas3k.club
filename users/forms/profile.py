@@ -33,13 +33,13 @@ class UserEditForm(ModelForm):
     )
     bio = forms.CharField(
         label="Ссылочки на себя и всякое такое",
-        required=False,
+        required=True,
         max_length=256,
         widget=forms.Textarea(attrs={"maxlength": 256}),
     )
     company = forms.CharField(
         label="Компания",
-        required=False,
+        required=True,
         max_length=128
     )
     position = forms.CharField(
@@ -49,7 +49,7 @@ class UserEditForm(ModelForm):
     )
     contact = forms.CharField(
         label="Контакт для связи",
-        required=False,
+        required=True,
         max_length=256,
     )
 
