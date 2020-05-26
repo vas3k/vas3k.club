@@ -52,7 +52,7 @@ def create_comment(request, post_slug):
             request.me.update_last_activity()
             Comment.update_post_counters(post)
             PostView.increment_unread_comments(post)
-            PostView.create_or_update(
+            PostView.register_view(
                 request=request,
                 user=request.me,
                 post=post,

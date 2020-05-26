@@ -1737,7 +1737,7 @@
             visibility: visible;
         }
 
-.comment-pinned {
+.comment-is-pinned {
     padding: 30px;
     margin-bottom: 30px;
     box-sizing: border-box;
@@ -1753,6 +1753,10 @@
         text-align: center;
         font-size: 140%;
     }
+
+.comment-is-new {
+    background-color: rgba(104, 118, 128, 0.2);
+}
 
 .user-telegram-auth-data {
     padding: 20px 40px;

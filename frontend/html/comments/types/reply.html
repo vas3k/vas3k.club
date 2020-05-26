@@ -1,7 +1,7 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div class="reply" id="comment-{{ comment.id }}">
+<div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
     <div class="reply-author">
         <a href="{% url "profile" comment.author.slug %}">
             <span class="avatar user-avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>

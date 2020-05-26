@@ -9,7 +9,7 @@ from posts.models import PostVote, Post, PostSubscription
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
 
-def render_post(request, post):
+def render_post(request, post, context=None):
     # render "raw" newsletters
     if post.type == Post.TYPE_WEEKLY_DIGEST:
         return HttpResponse(post.html)
@@ -34,6 +34,7 @@ def render_post(request, post):
         comments = comments.filter(is_deleted=False)
 
     context = {
+        **(context or {}),
         "post": post,
         "comments": comments,
         "comment_form": CommentForm(),
