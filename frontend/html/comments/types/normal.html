@@ -17,7 +17,6 @@
             </span>
             <span class="user-footer">
                 <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.created_at | cool_date }}</a>
-                {{ comment.created_at }} > {{ post_last_view_at }}?
             </span>
         </div>
     </div>
