@@ -69,7 +69,7 @@ def create_comment(request, post_slug):
                 "data": form.cleaned_data.get("text")
             })
 
-    return Http404()
+    raise Http404()
 
 
 def show_comment(request, post_slug, comment_id):

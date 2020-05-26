@@ -44,7 +44,7 @@ def email_digest_switch(request, digest_type, user_id, secret):
     user = get_object_or_404(User, id=user_id, secret_hash=secret)
 
     if not dict(User.EMAIL_DIGEST_TYPES).get(digest_type):
-        return Http404()
+        raise Http404()
 
     user.email_digest_type = digest_type
     user.is_email_unsubscribed = False
