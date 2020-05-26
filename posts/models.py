@@ -337,7 +337,7 @@ class PostView(models.Model):
 
     @classmethod
     def register_anonymous_view(cls, request, post):
-        post_view, is_view_created = PostView.objects.get_or_create(
+        post_view, is_view_created = PostView.objects.update_or_create(
             post=post,
             ipaddress=parse_ip_address(request),
             defaults=dict(
