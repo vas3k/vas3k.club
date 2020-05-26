@@ -99,6 +99,8 @@ def fetch_user_data(access_token: str) -> dict:
 
 
 def parse_active_membership(user_data: dict) -> Optional[Membership]:
+    log.info(f"Parse membership: {user_data}")
+
     if not user_data or not user_data.get("data") or not user_data.get("included"):
         return None
 
@@ -115,8 +117,6 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
             lifetime_support_cents=-1,
             currently_entitled_amount_cents=0
         )
-
-    log.info(f"Patreon active membership: {user_data}")
 
     for membership in user_data["included"]:
         if membership["attributes"]["patron_status"] == "active_patron" \
