@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block og_tags %}
-    <meta property="og:title" content="{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}">
     <meta property="og:type" content="website" />
@@ -15,7 +15,7 @@
     <meta property="og:image" content="{% static "images/share.png" %}">
 
     <meta name="twitter:card" content="summary_image">
-    <meta name="twitter:title" content="{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
     <meta name="twitter:image" content="{% static "images/logo/logo-256.png" %}">
 {% endblock %}

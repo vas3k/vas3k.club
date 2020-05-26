@@ -3,7 +3,7 @@ import logging
 from django.core.management import BaseCommand
 
 from common.data.tags import HOBBIES, PERSONAL, TECH, CLUB
-from users.models import Tag
+from users.models.tags import Tag
 
 log = logging.getLogger(__name__)
 

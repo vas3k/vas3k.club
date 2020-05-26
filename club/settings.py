@@ -134,6 +134,8 @@ APP_NAME = "Вастрик.Клуб"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
+
 DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
 PEOPLE_PAGE_SIZE = 18

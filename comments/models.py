@@ -10,7 +10,7 @@ from simple_history.models import HistoricalRecords
 from club.exceptions import NotFound
 from common.request import parse_ip_address, parse_useragent
 from posts.models import Post
-from users.models import User
+from users.models.user import User
 
 
 class Comment(models.Model):

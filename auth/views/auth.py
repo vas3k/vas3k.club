@@ -8,7 +8,7 @@ from auth.helpers import auth_required
 from auth.models import Session
 from club.exceptions import AccessDenied
 from posts.models import Post
-from users.models import User
+from users.models.user import User
 from utils.strings import random_string
 
 

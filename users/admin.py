@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from club.exceptions import AccessDenied
 from common.data.achievements import ACHIEVEMENTS
 from common.data.hats import HATS
-from users.models import UserBadge
+from users.models.badges import UserBadge
 
 
 def do_user_admin_actions(request, user, data):

@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('index', django.contrib.postgres.search.SearchVectorField(editable=False)),
                 ('comment', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='index', to='comments.Comment')),
                 ('post', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='index', to='posts.Post')),
-                ('profile', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='index', to='users.User')),
+                ('profile', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='index', to='users.models.user.User')),
             ],
             options={
                 'db_table': 'search_index',

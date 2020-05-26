@@ -9,7 +9,7 @@ from auth.exceptions import PatreonException
 from auth.helpers import authorized_user
 from auth.models import Session
 from auth.providers import patreon
-from users.models import User
+from users.models.user import User
 from utils.date import first_day_of_next_month
 from utils.images import upload_image_from_url
 from utils.strings import random_string

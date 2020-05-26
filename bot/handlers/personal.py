@@ -10,7 +10,7 @@ from bot.common import send_telegram_message, Chat
 from bot.handlers.common import get_bot_user
 from posts.forms.compose import PostTextForm, POST_TYPE_MAP
 from posts.models import Post
-from users.models import User
+from users.models.user import User
 
 BOT_USER_POST_KEY = "bot:user:{}:post"
 BOT_USER_POST_TTL = 60 * 60 * 48  # 48 hour

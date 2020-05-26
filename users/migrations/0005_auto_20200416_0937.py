@@ -37,6 +37,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userexpertise',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='expertise', to='users.User'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='expertise', to='users.models.user.User'),
         ),
     ]

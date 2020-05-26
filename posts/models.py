@@ -11,7 +11,7 @@ from django.shortcuts import reverse
 from simple_history.models import HistoricalRecords
 
 from common.request import parse_ip_address, parse_useragent
-from users.models import User
+from users.models.user import User
 from utils.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 
@@ -85,7 +85,7 @@ class Post(models.Model, ModelDiffMixin):
 
     TYPE_TO_PREFIX = {
         TYPE_POST: "",
-        TYPE_INTRO: "Интро️:",
+        TYPE_INTRO: "",
         TYPE_LINK: "➜",
         TYPE_PAIN: "Боль:",
         TYPE_IDEA: "Идея:",

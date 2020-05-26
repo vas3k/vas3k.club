@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
-from users.models import User
+from users.models.user import User
 from utils.forms import ImageUploadField
 
 

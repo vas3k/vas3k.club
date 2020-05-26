@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from django.db import models
 
-from users.models import User
+from users.models.user import User
 
 
 class Apps(models.Model):

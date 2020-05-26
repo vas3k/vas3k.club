@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='geo',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='users.Geo'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='users.models.geo.Geo'),
         ),
         migrations.AlterField(
             model_name='tag',

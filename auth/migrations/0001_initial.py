@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('expires_at', models.DateTimeField(null=True)),
                 ('app', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='sessions', to='auth.Apps')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sessions', to='users.User')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sessions', to='users.models.user.User')),
             ],
             options={
                 'db_table': 'sessions',

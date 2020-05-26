@@ -10,7 +10,7 @@ from notifications.telegram.posts import notify_post_author_approved, notify_pos
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models import Post
 from search.models import SearchIndex
-from users.models import User
+from users.models.user import User
 
 
 def process_moderator_actions(update):

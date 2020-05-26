@@ -7,7 +7,7 @@ from auth.exceptions import PatreonException
 from auth.models import Session
 from auth.providers import patreon
 from auth.providers.patreon import fetch_user_data
-from users.models import User
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 

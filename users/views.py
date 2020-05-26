@@ -18,7 +18,11 @@ from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
 from users.forms.intro import UserIntroForm
 from users.forms.profile import UserEditForm, ExpertiseForm, NotificationsEditForm
-from users.models import User, UserBadge, UserExpertise, UserTag, Tag, Geo
+from users.models.user import User
+from users.models.expertise import UserExpertise
+from users.models.badges import UserBadge
+from users.models.tags import Tag, UserTag
+from users.models.geo import Geo
 from utils.models import top, group_by
 
 
