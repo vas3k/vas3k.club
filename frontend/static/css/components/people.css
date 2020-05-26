@@ -25,7 +25,7 @@
         .people-map-container,
         .people-map-container .mapboxgl-map,
         .people-map-container .mgl_map_wrapper {
-            height: 600px;
+            height: 500px;
         }
     }
 
@@ -116,6 +116,8 @@
 
         .people-search-country > select {
             width: 200px;
+            background-color: var(--block-bg-color);
+            color: var(--text-color);
         }
 
 .people-filters {

@@ -5,7 +5,7 @@ from django.core.management import BaseCommand
 from comments.models import Comment
 from posts.models import Post
 from search.models import SearchIndex
-from users.models import User
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 

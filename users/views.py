@@ -18,7 +18,11 @@ from users.admin import do_user_admin_actions
 from users.forms.admin import UserAdminForm
 from users.forms.intro import UserIntroForm
 from users.forms.profile import UserEditForm, ExpertiseForm, NotificationsEditForm
-from users.models import User, UserBadge, UserExpertise, UserTag, Tag, Geo
+from users.models.user import User
+from users.models.expertise import UserExpertise
+from users.models.badges import UserAchievement
+from users.models.tags import Tag, UserTag
+from users.models.geo import Geo
 from utils.models import top, group_by
 
 
@@ -85,8 +89,8 @@ def profile(request, user_slug):
     intro = Post.get_user_intro(user)
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT).all()
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
-    achievements = UserBadge.objects.filter(user=user)[:8]
-    expertises = UserExpertise.objects.filter(user=user).all().order_by("-expertise")
+    achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
+    expertises = UserExpertise.objects.filter(user=user).all("-expertise")
     comments = Comment.visible_objects().filter(author=user).order_by("-created_at")[:3]
     posts = Post.objects_for_user(request.me)\
         .filter(author=user, is_visible=True)\
@@ -98,7 +102,7 @@ def profile(request, user_slug):
         "projects": projects,
         "tags": tags,
         "active_tags": active_tags,
-        "achievements": achievements,
+        "achievements": [ua.achievement for ua in achievements],
         "expertises": expertises,
         "comments": comments,
         "posts": paginate(request, posts),
@@ -259,7 +263,7 @@ def banned(request):
 
 @auth_required
 def people(request):
-    users = User.active_members().order_by("-created_at").select_related("geo")
+    users = User.registered_members().order_by("-created_at").select_related("geo")
 
     query = request.GET.get("query")
     if query:
@@ -302,7 +306,7 @@ def people(request):
         }],
     })
 
-    active_countries = User.active_members().filter(country__isnull=False)\
+    active_countries = User.registered_members().filter(country__isnull=False)\
         .values("country")\
         .annotate(country_count=Count("country"))\
         .order_by("-country_count")

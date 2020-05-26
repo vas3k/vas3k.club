@@ -310,6 +310,10 @@
             list-style-type: decimal;
         }
 
+        .text-body li ul {
+            padding-top: 10px;
+        }
+
     .text-body dl {
         padding-left: 0;
     }

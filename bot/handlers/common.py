@@ -1,5 +1,5 @@
 from bot.common import send_telegram_message, Chat
-from users.models import User
+from users.models.user import User
 
 
 def get_bot_user(update):

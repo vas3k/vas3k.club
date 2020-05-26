@@ -6,7 +6,7 @@ from bot.common import Chat, send_telegram_message, render_html_message, CLUB_ON
 from comments.models import Comment
 from common.regexp import USERNAME_RE
 from posts.models import PostSubscription
-from users.models import User
+from users.models.user import User
 
 
 @receiver(post_save, sender=Comment)

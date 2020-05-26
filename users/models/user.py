@@ -1,15 +1,11 @@
-import json
-import random
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 from django.db import models
-from django.db.models import F, Q
-from slugify import slugify
+from django.db.models import F
 
-from common.data.colors import COOL_COLORS
-from common.data.expertise import EXPERTISE
+from users.models.geo import Geo
 from utils.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 from utils.strings import random_string
@@ -61,7 +57,7 @@ class User(models.Model, ModelDiffMixin):
     position = models.TextField(null=True)
     city = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
-    geo = models.ForeignKey("users.Geo", on_delete=models.SET_NULL, null=True)
+    geo = models.ForeignKey(Geo, on_delete=models.SET_NULL, null=True)
     bio = models.TextField(null=True)
     contact = models.CharField(max_length=256, null=True)
     hat = JSONField(null=True)
@@ -150,148 +146,9 @@ class User(models.Model, ModelDiffMixin):
                and not self.is_profile_rejected
 
     @classmethod
-    def active_members(cls):
+    def registered_members(cls):
         return cls.objects.filter(
             is_profile_complete=True,
             is_profile_reviewed=True,
             is_profile_rejected=False,
         )
-
-
-class Tag(models.Model):
-    GROUP_HOBBIES = "hobbies"
-    GROUP_PERSONAL = "personal"
-    GROUP_TECH = "tech"
-    GROUP_CLUB = "club"
-    GROUP_OTHER = "other"
-    GROUPS = [
-        (GROUP_PERSONAL, "О себе"),
-        (GROUP_TECH, "Технологии"),
-        (GROUP_CLUB, "Для других членов Клуба я..."),
-        (GROUP_HOBBIES, "Хобби"),
-        (GROUP_OTHER, "Остальное"),
-    ]
-
-    code = models.CharField(primary_key=True, max_length=32, null=False, unique=True)
-    group = models.CharField(max_length=32, choices=GROUPS, default=GROUP_OTHER, null=False)
-    name = models.CharField(max_length=64, null=False)
-
-    index = models.IntegerField(default=0)
-    is_visible = models.BooleanField(default=True)
-
-    class Meta:
-        db_table = "tags"
-        ordering = ["-group", "index"]
-
-    def to_dict(self):
-        return {
-            "code": self.code,
-            "group": self.group,
-            "name": self.name,
-            "color": self.color,
-        }
-
-    @property
-    def color(self):
-        return COOL_COLORS[sum(map(ord, self.code)) % len(COOL_COLORS)]
-
-    def group_display(self):
-        return dict(Tag.GROUPS).get(self.group) or Tag.GROUP_OTHER
-
-    @classmethod
-    def tags_with_stats(cls):
-        return Tag.objects.filter(is_visible=True).extra({
-            "user_count": "select count(*) from user_tags where user_tags.tag_id = tags.code"
-        })
-
-
-class UserTag(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(User, related_name="tags", on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, related_name="user_tags", on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "user_tags"
-        unique_together = [["tag", "user"]]
-
-
-class UserBadge(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(
-        User, related_name="achievements", db_index=True, on_delete=models.CASCADE
-    )
-
-    type = models.CharField(max_length=32, null=False)
-    name = models.CharField(max_length=64, null=False)
-    description = models.CharField(max_length=256, null=True)
-    image = models.URLField(null=False)
-    style = models.CharField(max_length=256, default="", null=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "user_achievements"
-        unique_together = [["type", "user"]]
-
-
-class UserExpertise(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(User, related_name="expertise", on_delete=models.CASCADE)
-    expertise = models.CharField(max_length=32, null=False, db_index=True)
-    name = models.CharField(max_length=64, null=False)
-    value = models.IntegerField(default=0, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "user_expertise"
-        unique_together = [["expertise", "user"]]
-        ordering = ["created_at"]
-
-    def save(self, *args, **kwargs):
-        pre_defined_expertise = dict(sum([e[1] for e in EXPERTISE], []))  # flatten nested items
-
-        if not self.name:
-            self.name = pre_defined_expertise.get(self.expertise) or self.expertise
-
-        if self.expertise not in pre_defined_expertise:
-            self.expertise = slugify(self.expertise.lower())[:32]
-
-        return super().save(*args, **kwargs)
-
-    @property
-    def color(self):
-        return COOL_COLORS[hash(self.name) % len(COOL_COLORS)]
-
-
-class Geo(models.Model):
-    id = models.AutoField(primary_key=True)
-    country_en = models.CharField(max_length=256)
-    region_en = models.CharField(max_length=256)
-    city_en = models.CharField(max_length=256, db_index=True)
-    country = models.CharField(max_length=256)
-    region = models.CharField(max_length=256)
-    city = models.CharField(max_length=256, db_index=True)
-    latitude = models.FloatField(default=0.0)
-    longitude = models.FloatField(default=0.0)
-    population = models.IntegerField(default=0)
-
-    class Meta:
-        db_table = "geo"
-        ordering = ["id"]
-
-    def to_json_coordinates(self, randomize=True):
-        latitude = self.latitude + (random.uniform(-0.5, 0.5) if randomize else 0)
-        longitude = self.longitude + (random.uniform(-0.5, 0.5) if randomize else 0)
-        return [longitude, latitude]
-
-    @classmethod
-    def update_for_user(cls, user):
-        geo = Geo.objects.filter(
-            Q(country=user.country) &
-            (Q(city__iexact=user.city) | Q(city_en__iexact=user.city))
-        ).order_by("id").first()
-        if geo:
-            user.geo = geo
-            user.save()

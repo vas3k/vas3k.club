@@ -11,7 +11,7 @@ from django.shortcuts import reverse
 from simple_history.models import HistoricalRecords
 
 from common.request import parse_ip_address, parse_useragent
-from users.models import User
+from users.models.user import User
 from utils.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 
@@ -85,7 +85,7 @@ class Post(models.Model, ModelDiffMixin):
 
     TYPE_TO_PREFIX = {
         TYPE_POST: "",
-        TYPE_INTRO: "Интро️:",
+        TYPE_INTRO: "",
         TYPE_LINK: "➜",
         TYPE_PAIN: "Боль:",
         TYPE_IDEA: "Идея:",
@@ -308,7 +308,7 @@ class PostView(models.Model):
         unique_together = [["user", "post"]]
 
     @classmethod
-    def create_or_update(cls, request, user, post):
+    def register_view(cls, request, user, post):
         post_view, is_view_created = PostView.objects.get_or_create(
             user=user,
             post=post,
@@ -318,7 +318,10 @@ class PostView(models.Model):
             )
         )
 
-        # increment view counter for ne`w views or for re-opens after cooldown period
+        # save last view timestamp to highlight comments
+        last_view_at = post_view.last_view_at
+
+        # increment view counter for new views or for re-opens after cooldown period
         if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
             post_view.registered_view_at = datetime.utcnow()
             post.increment_view_count()
@@ -330,7 +333,7 @@ class PostView(models.Model):
 
         post_view.save()
 
-        return post_view, is_view_created
+        return post_view, last_view_at
 
     @classmethod
     def increment_unread_comments(cls, post):

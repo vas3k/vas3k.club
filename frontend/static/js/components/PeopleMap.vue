@@ -5,7 +5,6 @@
         :maxZoom="12"
         :attributionControl="false"
         :scrollZoom="false"
-        :touchZoomRotate="false"
         @load="onMapLoaded"
     >
         <MglNavigationControl position="top-right"/>

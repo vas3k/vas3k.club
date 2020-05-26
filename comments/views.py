@@ -52,7 +52,7 @@ def create_comment(request, post_slug):
             request.me.update_last_activity()
             Comment.update_post_counters(post)
             PostView.increment_unread_comments(post)
-            PostView.create_or_update(
+            PostView.register_view(
                 request=request,
                 user=request.me,
                 post=post,
@@ -88,10 +88,13 @@ def edit_comment(request, comment_id):
             raise AccessDenied()
 
         if not comment.is_editable:
-            raise AccessDenied(title="Этот комментарий больше нельзя редактировать")
+            raise AccessDenied(
+                title="Время вышло",
+                message="Комментарий можно редактировать только в первые 3 часа после создания"
+            )
 
         if not comment.post.is_visible or not comment.post.is_commentable:
-            raise AccessDenied(title="Комментарии к этому посту были закрыты")
+            raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post
 
@@ -130,10 +133,10 @@ def delete_comment(request, comment_id):
                 message="Только автор комментария, поста или модератор может удалить комментарий"
             )
 
-        if not comment.is_editable:
+        if not comment.is_deletable:
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно отредактировать или удалить только в первые несколько часов их жизни"
+                message="Комментарий можно удалить только в первые 3 дня после создания"
             )
 
         if not comment.post.is_visible:

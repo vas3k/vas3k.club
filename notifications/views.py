@@ -10,7 +10,7 @@ from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
 from posts.models import Post, PostVote
-from users.models import User
+from users.models.user import User
 
 
 def email_confirm(request, user_id, secret):

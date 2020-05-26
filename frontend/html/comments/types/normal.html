@@ -1,7 +1,7 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div class="comment comment-layout-normal {% if comment.is_pinned %}comment-pinned{% endif %}" id="comment-{{ comment.id }}">
+<div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %} {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
     <div class="comment-header">
         <div class="user user-small">
             <span class="user-avatar">

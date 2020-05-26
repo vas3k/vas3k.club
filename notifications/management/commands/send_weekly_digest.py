@@ -12,7 +12,7 @@ from landing.models import GodSettings
 from notifications.email.sender import send_club_email
 from posts.models import Post
 from search.models import SearchIndex
-from users.models import User
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 

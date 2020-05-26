@@ -29,15 +29,18 @@ def show_post(request, post_type, post_slug):
             raise Http404()
 
     # record a new view
+    last_view_at = None
     if request.me:
         request.me.update_last_activity()
-        PostView.create_or_update(
+        post_view, last_view_at = PostView.register_view(
             request=request,
             user=request.me,
             post=post,
         )
 
-    return render_post(request, post)
+    return render_post(request, post, {
+        "post_last_view_at": last_view_at
+    })
 
 
 @auth_required

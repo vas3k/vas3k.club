@@ -619,18 +619,21 @@
         right: 0;
     }
 
-    .profile-badges {
+    .profile-achievements {
         padding-bottom: 20px;
     }
 
-        .user-badges {
+        .user-achievements {
             display: flex;
             flex-wrap: wrap;
-            justify-content: flex-start;
+            justify-content: center;
+            margin-left: -20px;
+            margin-right: -20px;
         }
 
-        .user-badge {
-            display: block;
+        .user-achievement {
+            display: flex;
+            align-items: center;
             width: 110px;
             margin: 20px;
             min-height: 170px;
@@ -644,15 +647,29 @@
             border-radius: var(--block-border-radius);
         }
 
+            .user-achievement:hover {
+                transform: scale(1.1);
+                transition: all linear 0.1s;
+            }
+
+            .user-achievement-wrapper {
+                display: block;
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
             .user-badge-image {
                 width: 90px;
                 height: 90px;
+                margin: 0 auto;
             }
 
-            .user-badge-name {
+            .user-achievement-name {
                 display: block;
                 padding-top: 15px;
                 padding-bottom: 10px;
+                text-align: center;
             }
 
     .profile-expertise {
@@ -1373,7 +1390,7 @@
         .compose-form-text .CodeMirror,
         .compose-form-text .CodeMirror-focused,
         .compose-form-text .CodeMirror-scroll {
-            min-height: 400px;
+            min-height: 400px !important;
             transform: scale(1);
         }
 
@@ -1490,9 +1507,10 @@
 
         .comment-form .CodeMirror,
         .comment-form .CodeMirror-scroll {
-            min-height: 150px;
+            min-height: 150px !important;
             font-size: 110%;
             font-family: var(--serif-font);
+            border-radius: 5px;
         }
 
 .reply-form {
@@ -1530,8 +1548,9 @@
         .reply-form .CodeMirror,
         .reply-form .CodeMirror-scroll {
             font-size: 100%;
-            min-height: 50px;
+            min-height: 50px !important;
             font-family: var(--serif-font);
+            border-radius: var(--block-border-radius);
         }
 
     .reply-form .button {
@@ -1737,7 +1756,7 @@
             visibility: visible;
         }
 
-.comment-pinned {
+.comment-is-pinned {
     padding: 30px;
     margin-bottom: 30px;
     box-sizing: border-box;
@@ -1753,6 +1772,10 @@
         text-align: center;
         font-size: 140%;
     }
+
+.comment-is-new {
+    background-color: rgba(104, 118, 128, 0.15);
+}
 
 .user-telegram-auth-data {
     padding: 20px 40px;

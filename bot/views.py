@@ -16,7 +16,7 @@ from bot.handlers.personal import process_personal_chat_updates, process_auth
 from bot.handlers.replies import process_comment_reply
 from club.exceptions import AccessDenied
 from common.request import ajax_request
-from users.models import User
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 
