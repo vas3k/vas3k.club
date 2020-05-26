@@ -344,7 +344,7 @@ class PostView(models.Model):
         ).first()
 
         if not post_view:
-            PostView.objects.create(
+            post_view = PostView.objects.create(
                 post=post,
                 ipaddress=parse_ip_address(request),
                 useragent=parse_useragent(request),
