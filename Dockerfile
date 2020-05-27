@@ -14,9 +14,10 @@ RUN apt-get update \
       gdal-bin \
       python3-gdal \
       libgdal-dev \
+      nodejs \
       npm \
       make \
-    && npm install npm@latest -g
+    && npm install npm@latest -g \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -25,5 +26,5 @@ ADD . /app
 
 RUN pip install --no-cache-dir pipenv \
     && pipenv install --dev \
-    && pip install --no-cache-dir nltk
+    && pip install --no-cache-dir nltk \
     && python -c "import nltk; nltk.download('punkt')"
