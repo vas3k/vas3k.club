@@ -1306,6 +1306,10 @@
         }
     }
 
+    .feed-post-type-intro .user-position {
+        opacity: 0.7;
+    }
+
 .feed-post-type-weekly_digest .feed-post-author {
     font-size: 30px;
     padding-right: 10px;
