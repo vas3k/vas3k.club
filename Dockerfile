@@ -19,7 +19,7 @@ WORKDIR /app
 ADD . /app
 
 RUN pip install --no-cache-dir pipenv \
-    && pipenv install --dev \ 
-    && pip install --no-cache-dir nltk 
-  
+    && pipenv install --dev \
+    && pip install --no-cache-dir nltk
+
 RUN [ "python", "-c", "import nltk; nltk.download('punkt')" ]

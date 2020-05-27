@@ -19,6 +19,11 @@ docker-run-dev:  ## Run dev server in docker
 	@pipenv run python manage.py migrate
 	@pipenv run python manage.py runserver 0.0.0.0:8000
 
+docker-run-prod:  ## Run production docker
+	npm run --prefix frontend build
+	pipenv run python manage.py migrate
+	pipenv run python manage.py runserver 0.0.0.0:8000
+
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 	  | sort \
@@ -41,6 +46,7 @@ dev-requirements:
 .PHONY: \
   dev-requirements \
   docker-run-dev \
+  docker-run-prod \
   run-dev \
   run-queue \
   run-uvicorn \
