@@ -33,9 +33,9 @@ class UserEditForm(ModelForm):
     )
     bio = forms.CharField(
         label="Ссылочки на себя и всякое такое",
-        required=True,
-        max_length=256,
-        widget=forms.Textarea(attrs={"maxlength": 256}),
+        required=False,
+        max_length=1024,
+        widget=forms.Textarea(attrs={"maxlength": 1024}),
     )
     company = forms.CharField(
         label="Компания",
