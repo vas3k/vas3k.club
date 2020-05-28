@@ -27,7 +27,7 @@ services:
   queue:
     <<: *app
     command: make run-queue
-    container_name: club_queue
+    container_name: queue
     depends_on:
       - postgres
       - redis
