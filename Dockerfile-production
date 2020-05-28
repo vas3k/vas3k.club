@@ -25,5 +25,3 @@ ADD . /app
 RUN pip install -r requirements.txt
 
 RUN python -c "import nltk; nltk.download('punkt')"
-
-RUN make build-frontend

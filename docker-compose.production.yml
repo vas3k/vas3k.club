@@ -17,6 +17,8 @@ services:
       - REDIS_DB=0
       - REDIS_HOST=redis
     restart: always
+    volumes:
+      - ./frontend/static:/app/frontend/static
     depends_on:
       - postgres
       - redis
@@ -55,5 +57,5 @@ services:
     command: npm run build
     restart: "no"
     volumes:
-      - .:/app
+      - .:/app:rw
     working_dir: /app/frontend
