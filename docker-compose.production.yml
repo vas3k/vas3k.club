@@ -17,6 +17,8 @@ services:
       - REDIS_DB=0
       - REDIS_HOST=redis
     restart: always
+    volumes:
+      - ./frontend/static:/app/frontend/static  # generate frontend static for the host nginx
     depends_on:
       - postgres
       - redis
