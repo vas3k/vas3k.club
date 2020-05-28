@@ -22,6 +22,8 @@ WORKDIR /app
 
 ADD . /app
 
+COPY ../vas3k_club.env /app/club/.env
+
 RUN pip install -r requirements.txt
 
 RUN python -c "import nltk; nltk.download('punkt')"

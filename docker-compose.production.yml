@@ -8,11 +8,13 @@ services:
     command: make docker-run-production
     container_name: club_app
     environment:
-      - DEBUG=false
       - PYTHONUNBUFFERED=1
+      - DEBUG=false
+      - APP_HOST="https://dev.vas3k.club"
+      - MEDIA_UPLOAD_URL="https://i.vas3k.club/upload/"
       - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=vas3k
+      - POSTGRES_PASSWORD=vas3k
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
@@ -40,8 +42,8 @@ services:
     restart: always
     container_name: club_postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: vas3k
+      POSTGRES_PASSWORD: vas3k
       POSTGRES_DB: vas3k_club
     volumes:
       - ../postgresql:/var/lib/postgresql

@@ -43,7 +43,7 @@ build-frontend:  ## Runs webpack
 test-ci: lint  ## Run tests (intended for CI usage)
 
 psql:
-	psql -h localhost -p 5433 -d vas3k_club
+	psql -h localhost -p 5433 -d vas3k_club -U vas3k
 
 redeploy:
 	npm run --prefix frontend build
