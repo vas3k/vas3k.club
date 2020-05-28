@@ -43,6 +43,8 @@ build-frontend:  ## Runs webpack
 test-ci: lint  ## Run tests (intended for CI usage)
 
 redeploy:
+	docker-compose -f docker-compose.production.yml build frontend
+	docker-compose -f docker-compose.production.yml up --no-deps -d frontend
 	docker-compose -f docker-compose.production.yml build club_app
 	docker-compose -f docker-compose.production.yml up --no-deps -d club_app
 	docker-compose -f docker-compose.production.yml build queue

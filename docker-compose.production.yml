@@ -17,8 +17,6 @@ services:
       - REDIS_DB=0
       - REDIS_HOST=redis
     restart: always
-    volumes:
-      - ./frontend/static:/app/frontend/static  # generate frontend static for the host nginx
     depends_on:
       - postgres
       - redis
@@ -51,3 +49,11 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+  frontend:
+    image: node:14-slim
+    command: npm run build
+    restart: "no"
+    volumes:
+      - .:/app
+    working_dir: /app/frontend

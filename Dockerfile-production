@@ -14,12 +14,8 @@ RUN apt-get update \
       libc-dev \
       libpq-dev \
       gdal-bin \
-      python3-gdal \
       libgdal-dev \
-      nodejs \
-      npm \
       make \
-    && npm install npm@latest -g \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
