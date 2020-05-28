@@ -26,7 +26,6 @@ docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate
 	uvicorn --lifespan off --host 0.0.0.0 --port 8814 club.asgi:application
 
-
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 	  | sort \

@@ -31,7 +31,7 @@ services:
   queue:
     <<: *app
     command: make run-queue-production
-    container_name: queue
+    container_name: club_queue
     depends_on:
       - postgres
       - redis
@@ -39,19 +39,20 @@ services:
 
   postgres:
     image: postgres:12
-    restart: always
     container_name: club_postgres
+    restart: always
     environment:
       POSTGRES_USER: vas3k
       POSTGRES_PASSWORD: vas3k
       POSTGRES_DB: vas3k_club
     volumes:
-      - /home/vas3k/postgresql:/var/lib/postgresql:rw
+      - ./pgdata:/var/lib/postgresql/data:rw
     ports:
       - "5433:5432"
 
   redis:
     image: redis:alpine
+    container_name: club_redis
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
