@@ -51,11 +51,3 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-
-  frontend:
-    image: node:14-slim
-    command: npm run build
-    restart: "no"
-    volumes:
-      - .:/app:rw
-    working_dir: /app/frontend
