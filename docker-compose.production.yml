@@ -45,6 +45,8 @@ services:
       POSTGRES_DB: vas3k_club
     volumes:
       - ../postgresql:/var/lib/postgresql
+    ports:
+      - "5433:5432"
 
   redis:
     image: redis:alpine

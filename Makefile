@@ -42,12 +42,16 @@ build-frontend:  ## Runs webpack
 
 test-ci: lint  ## Run tests (intended for CI usage)
 
+psql:
+	psql -h localhost -p 5433 -d vas3k_club
+
 redeploy:
 	npm run --prefix frontend build
 	docker-compose -f docker-compose.production.yml build club_app
 	docker-compose -f docker-compose.production.yml up --no-deps -d club_app
 	docker-compose -f docker-compose.production.yml build queue
 	docker-compose -f docker-compose.production.yml up --no-deps -d queue
+	docker image prune --force
 
 .PHONY: \
   docker-run-dev \
