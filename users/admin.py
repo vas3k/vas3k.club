@@ -46,11 +46,14 @@ def do_user_admin_actions(request, user, data):
 
     # Ban
     if data["is_banned"]:
-        user.is_banned_until = datetime.utcnow() + timedelta(
-            days=data["ban_days"] or 9999999
-        )
+        user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
         user.save()
         # TODO: send email/bot with data["ban_reason"]
+
+    # Unban
+    if data["is_unbanned"]:
+        user.is_banned_until = None
+        user.save()
 
     # Unmoderate
     if data["is_rejected"]:

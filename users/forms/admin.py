@@ -54,6 +54,11 @@ class UserAdminForm(forms.Form):
         required=False
     )
 
+    is_unbanned = forms.BooleanField(
+        label="Разбанить",
+        required=False
+    )
+
     is_rejected = forms.BooleanField(
         label="Размодерирвать",
         required=False
