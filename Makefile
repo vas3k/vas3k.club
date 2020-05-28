@@ -24,7 +24,7 @@ docker-run-dev:  ## Runs dev server in docker
 
 docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate
-	uvicorn --lifespan off --host 0.0.0.0 --port 8814 club.asgi:application
+	gunicorn club.asgi:application -w 5 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8080
 
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \

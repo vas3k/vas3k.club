@@ -1,5 +1,7 @@
 FROM python:3.8-slim-buster
 
+USER vas3k
+
 ENV DEBIAN_FRONTEND noninteractive
 
 # required to build gdal (geo library)
