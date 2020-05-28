@@ -11,6 +11,9 @@ run-dev:  ## Runs dev server
 run-queue:  ## Runs task broker
 	pipenv run python manage.py qcluster
 
+run-queue-production:
+	python manage.py qcluster
+
 run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
 
@@ -22,6 +25,7 @@ docker-run-dev:  ## Runs dev server in docker
 docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate
 	uvicorn --lifespan off --host 0.0.0.0 --port 8814 club.asgi:application
+
 
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \

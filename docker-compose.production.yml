@@ -10,8 +10,8 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - DEBUG=false
-      - APP_HOST="https://dev.vas3k.club"
-      - MEDIA_UPLOAD_URL="https://i.vas3k.club/upload/"
+      - APP_HOST=https://dev.vas3k.club
+      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
       - POSTGRES_PASSWORD=vas3k
@@ -30,7 +30,7 @@ services:
 
   queue:
     <<: *app
-    command: make run-queue
+    command: make run-queue-production
     container_name: queue
     depends_on:
       - postgres
@@ -46,7 +46,7 @@ services:
       POSTGRES_PASSWORD: vas3k
       POSTGRES_DB: vas3k_club
     volumes:
-      - ../postgresql:/var/lib/postgresql
+      - /home/vas3k/postgresql:/var/lib/postgresql:rw
     ports:
       - "5433:5432"
 
