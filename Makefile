@@ -11,18 +11,16 @@ run-dev:  ## Runs dev server
 run-queue:  ## Runs task broker
 	pipenv run python manage.py qcluster
 
-run-uvicorn:  ## Runs production server using uvicorn (ASGI)
+run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
+
+run-uvicorn-tcp:  ## Runs uvicorn on :8080 port
+	pipenv run uvicorn --lifespan off --port 8080 club.asgi:application
 
 docker-run-dev:  ## Run dev server in docker
 	@pipenv run python ./utils/wait_for_postgres.py
 	@pipenv run python manage.py migrate
 	@pipenv run python manage.py runserver 0.0.0.0:8000
-
-docker-run-prod:  ## Run production docker
-	npm run --prefix frontend build
-	pipenv run python manage.py migrate
-	pipenv run python manage.py runserver 0.0.0.0:8000
 
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -43,13 +41,16 @@ test-ci: lint  ## Run tests (intended for CI usage)
 dev-requirements:
 	pipenv run nltk_download
 
+run-production-app: migrate build-frontend run-uvicorn-tcp
+
 .PHONY: \
   dev-requirements \
   docker-run-dev \
-  docker-run-prod \
   run-dev \
   run-queue \
   run-uvicorn \
+  run-uvicorn-tcp \
+  run-production-app \
   help \
   lint \
   migrate \

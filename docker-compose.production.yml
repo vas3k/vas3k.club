@@ -4,7 +4,7 @@ services:
   club_app: &app
     build:
       context: .
-    command: make docker-run-prod
+    command: make run-production-app
     container_name: club_app
     environment:
       - DEBUG=false
@@ -21,7 +21,7 @@ services:
       - redis
       - queue
     ports:
-      - "8088:8088"
+      - "8080:8080"
 
   queue:
     <<: *app
@@ -33,7 +33,7 @@ services:
     ports: []
 
   postgres:
-    image: postgres:10
+    image: postgres:12
     restart: always
     container_name: club_postgres
     environment:
@@ -41,7 +41,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: vas3k_club
     volumes:
-      - ./postgres-data:/var/lib/postgresql
+      - ../postgresql:/var/lib/postgresql
 
   redis:
     image: redis:alpine

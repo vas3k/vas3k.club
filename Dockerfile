@@ -1,6 +1,8 @@
 FROM python:3.8-slim-buster
 
 ENV DEBIAN_FRONTEND noninteractive
+
+# required to build gdal (geo library)
 ENV CPLUS_INCLUDE_PATH /usr/include/gdal
 ENV C_INCLUDE_PATH /usr/include/gdal
 
