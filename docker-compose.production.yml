@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: Dockerfile-production
       context: .
-    command: make run-production-app
+    command: make docker-run-production
     container_name: club_app
     environment:
       - DEBUG=false
@@ -22,7 +22,7 @@ services:
       - redis
       - queue
     ports:
-      - "8080:8080"
+      - "8814:8814"
 
   queue:
     <<: *app

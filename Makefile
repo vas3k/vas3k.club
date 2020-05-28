@@ -21,7 +21,7 @@ docker-run-dev:  ## Runs dev server in docker
 
 docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate
-	uvicorn --lifespan off --host 0.0.0.0 --port 8080 club.asgi:application
+	uvicorn --lifespan off --host 0.0.0.0 --port 8814 club.asgi:application
 
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -42,6 +42,12 @@ build-frontend:  ## Runs webpack
 
 test-ci: lint  ## Run tests (intended for CI usage)
 
+redeploy-production:
+	docker-compose -f docker-compose.production.yml build club_app
+	docker-compose -f docker-compose.production.yml up --no-deps -d club_app
+	docker-compose -f docker-compose.production.yml build club_queue
+	docker-compose -f docker-compose.production.yml up --no-deps -d club_queue
+
 .PHONY: \
   docker-run-dev \
   docker-run-production \
@@ -53,4 +59,5 @@ test-ci: lint  ## Run tests (intended for CI usage)
   lint \
   migrate \
   build-frontend \
-  test-ci
+  test-ci \
+  redeploy-production
