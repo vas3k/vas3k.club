@@ -84,9 +84,7 @@ const App = {
                     element,
                     autoDownloadFontAwesome: false,
                     autosave: {
-                        enabled: true,
-                        delay: 10 * SECOND,
-                        uniqueId: location.pathname,
+                        enabled: false,
                     },
                     hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
                     showIcons: ["heading-2", "code"],

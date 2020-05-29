@@ -42,7 +42,7 @@
         {% endif %}
 
         {% if me == comment.author or me == comment.post.author or me.is_moderator %}
-            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-trash"></i></a>
+            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
         {% endif %}
 
         {% if me == comment.author or me.is_moderator %}
