@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
-from users.models import User
+from users.models.user import User
 from utils.forms import ImageUploadField
 
 
@@ -21,7 +21,7 @@ class UserIntroForm(ModelForm):
         }),
     )
     full_name = forms.CharField(
-        label="Имя",
+        label="Ваше реальное имя",
         required=True,
         max_length=128
     )
@@ -30,12 +30,13 @@ class UserIntroForm(ModelForm):
         required=True
     )
     avatar = ImageUploadField(
-        label="Аватар",
+        label="Аватар или фото",
         required=False,
-        resize=(512, 512)
+        resize=(512, 512),
+        convert_to="jpg",
     )
     city = forms.CharField(
-        label="Город",
+        label="город",
         required=True,
         max_length=120
     )
@@ -45,18 +46,23 @@ class UserIntroForm(ModelForm):
         required=True
     )
     bio = forms.CharField(
-        label="Краткая строчка о себе",
+        label="Ссылочки на себя и всякое такое",
         required=False,
-        max_length=512,
-        widget=forms.Textarea(attrs={"maxlength": 512}),
+        max_length=1024,
+        widget=forms.Textarea(attrs={"maxlength": 1024}),
+    )
+    contact = forms.CharField(
+        label="Контакт для связи",
+        required=True,
+        max_length=256,
     )
     company = forms.CharField(
         label="Компания",
-        required=False,
+        required=True,
         max_length=128
     )
     position = forms.CharField(
-        label="Должность",
+        label="Должность или что вы делаете",
         required=True,
         max_length=128
     )
@@ -65,15 +71,9 @@ class UserIntroForm(ModelForm):
         required=True,
         widget=forms.Textarea(
             attrs={
-                "maxlength": 5000,
-                "class": "markdown-editor-invisible",
-                "placeholder": "Писать о себе всегда сложно, так что вот какой план:"
-                               "\n\n- Расскажите чем вы занимаетесь и где сейчас работаете?"
-                               "\n- Из какого вы города и как там оказались?"
-                               "\n- Что делаете в свободное от работы время?"
-                               "\n- Может у вас есть странная привычка или хобби?"
-                               "\n- О чем вы мечтаете?"
-                               "\n- Какой из последних постов Вастрика вам понравился больше всего?",
+                "maxlength": 10000,
+                "minlength": 400,
+                "placeholder": "Расскажите Клубу о себе...",
             }
         ),
     )
@@ -100,6 +100,7 @@ class UserIntroForm(ModelForm):
             "city",
             "country",
             "bio",
+            "contact",
             "email_digest_type",
         ]
 

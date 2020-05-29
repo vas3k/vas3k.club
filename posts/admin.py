@@ -6,6 +6,11 @@ from common.data.labels import LABELS
 
 
 def do_post_admin_actions(request, post, data):
+    # Change type
+    if data["change_type"]:
+        post.type = data["change_type"]
+        post.save()
+
     # Labels
     if data["new_label"]:
         label = LABELS.get(data["new_label"])
@@ -34,6 +39,11 @@ def do_post_admin_actions(request, post, data):
     # Shadow banning
     if data["shadow_ban"]:
         post.is_shadow_banned = True
+        post.save()
+
+    # Hide from main page
+    if data["hide_on_main"]:
+        post.is_visible_on_main_page = False
         post.save()
 
     return redirect("show_post", post.type, post.slug)

@@ -31,6 +31,7 @@ html, html[theme="light"] {
 
     --button-color: #FFF;
     --button-bg-color: #333;
+    --button-disabled-bg-color: #DDD;
     --button-border: solid 2px #333;
     --button-hover-color: #333;
     --button-hover-bg-color: #FFF;
@@ -55,6 +56,7 @@ html[theme="dark"] {
 
     --button-color: #333;
     --button-bg-color: #FFF;
+    --button-disabled-bg-color: #8A8A8A;
     --button-border: solid 2px #FFF;
     --button-hover-color: #FFF;
     --button-hover-bg-color: #333;
@@ -93,8 +95,18 @@ body {
     line-height: 1.42;
     color: var(--text-color);
     background-color: var(--bg-color);
-    transition: all linear .1s;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+    @media only screen and (min-device-width : 768px)
+    and (max-device-width : 1024px)
+    and (orientation : portrait) {
+        body {
+            font-size: 14px;
+        }
+    }
 
     @media only screen and (max-width : 800px) {
         body {
@@ -104,7 +116,7 @@ body {
 
 a {
     color: var(--link-color);
-    transition: all linear .1s;
+    transition: color linear .1s;
 }
 
     a:hover {
@@ -161,4 +173,11 @@ select,
 .battle-side-b-color {
     color: #53AA68;
     text-decoration-color: #53AA68;
+}
+
+.battle-side-a-background {
+    background: #4C98D5;
+}
+.battle-side-b-background {
+    background: #53AA68;
 }

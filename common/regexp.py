@@ -1,6 +1,6 @@
 import re
 
-USERNAME_RE = re.compile(r"@([A-Za-z0-9_]{3,})")
+USERNAME_RE = re.compile(r"(?:\s|\n|^)@([A-Za-z0-9_-]{3,})")
 IMAGE_RE = re.compile(r"(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)")
 VIDEO_RE = re.compile(r"(http(s?):)([/|.|\w|\s|-])*\.(?:mov|mp4)")
 YOUTUBE_RE = re.compile(

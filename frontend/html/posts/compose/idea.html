@@ -2,30 +2,26 @@
 
 {% block title %}
     {% if mode == "edit" %}
-        Расскажи где болит&trade; — {{ block.super }}
+        Идея — {{ block.super }}
     {% else %}
-        Новая боль — {{ block.super }}
+        Новая идея — {{ block.super }}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="content compose">
-        <div class="content-header">Расскажи где болит&trade;</div>
+        <div class="content-header">Идея</div>
 
         {% if mode == "create" %}
             <div class="content-description">
                 <p>
-                    В мире полно вещей, которые бесят, работают не так или просто не существуют, хотя хотелось бы.
+                    Идеи без реализации ничего не стоят. Потому умные люди придумали ими делиться.
+                    Ведь тогда в хаосе мыслей могут появиться единомышленники и получиться что-то новое и крутое.
                 </p>
 
                 <p>
-                    С другой стороны, вокруг много ребят, ищущих вдохновение для нового проекта.
-                    Они хотят решать проблемы, но не знают какие, ведь ваши миры не пересекаются.
-                </p>
-
-                <p>
-                    Каждый раз, когда у вас появляется мысль <strong>«вот бы была такая штука, чтобы...»</strong> — пишите ее сюда.
-                    Возможно именно ваша идея вдохновит кого-то на новый проект.
+                    Зачастую идея — это лишь наша интерпретация событий.
+                    Потому мы рекомендуем рассказывать не только саму суть, а начать с реальных историй, людей и проблем, которые натолкнули вас на эту идею.
                 </p>
             </div>
         {% endif %}
@@ -54,17 +50,17 @@
                     <span class="form-row-help form-row-help-wide">☝️ Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
                 </div>
 
+                <div class="form-row form-row-checkbox">
+                    {{ form.is_public }}
+                    <label for="{{ form.is_public.id_for_label }}">Идея видна в Большой Интернет?</label>
+                </div>
+
                 {% if me.is_moderator %}
                     <div class="form-row form-row-checkbox">
                         {{ form.is_visible_on_main_page }}
-                        <label for="{{ form.is_visible_on_main_page.id_for_label }}">Пост виден на главной?</label>
+                        <label for="{{ form.is_visible_on_main_page.id_for_label }}">Идея видна на главной?</label>
                     </div>
                 {% endif %}
-
-                <div class="form-row form-row-checkbox">
-                    {{ form.is_public }}
-                    <label for="{{ form.is_public.id_for_label }}">Пост виден в Большой Интернет?</label>
-                </div>
 
                 <div class="form-row form-row-space-between">
                     <button name="is_visible" value="false" class="button button-inverted">В черновики</button>

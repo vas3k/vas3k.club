@@ -2,6 +2,7 @@ from django import template
 from django.conf import settings
 from django.template import loader
 from django.template.defaultfilters import truncatechars
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
 from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
@@ -44,7 +45,7 @@ def render_post(context, post):
 
 @register.simple_tag(takes_context=True)
 def render_plain(context, post, truncate=None):
-    result = mark_safe(markdown_plain(post.text))
+    result = mark_safe(strip_tags(markdown_plain(post.text)))
     if truncate:
         result = truncatechars(result, truncate)
     return result
@@ -82,3 +83,8 @@ def link_summary(post):
         "post": post,
         "embed": mark_safe(embed)
     })
+
+
+@register.filter
+def can_upvote(user, post_or_comment):
+    return bool(user and user != post_or_comment.author)

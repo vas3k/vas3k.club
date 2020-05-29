@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+  club_app: &app
+    build:
+      dockerfile: Dockerfile-production
+      context: .
+    command: make docker-run-production
+    container_name: club_app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=false
+      - APP_HOST=https://dev.vas3k.club
+      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=vas3k
+      - POSTGRES_PASSWORD=vas3k
+      - POSTGRES_HOST=postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    restart: always
+    volumes:
+      - ./frontend/static:/app/frontend/static
+    depends_on:
+      - postgres
+      - redis
+      - queue
+    ports:
+      - "8814:8814"
+
+  queue:
+    <<: *app
+    command: make run-queue-production
+    container_name: club_queue
+    depends_on:
+      - postgres
+      - redis
+    ports: []
+
+  postgres:
+    image: postgres:12
+    container_name: club_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: vas3k
+      POSTGRES_PASSWORD: vas3k
+      POSTGRES_DB: vas3k_club
+    volumes:
+      - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:alpine
+    container_name: club_redis
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes

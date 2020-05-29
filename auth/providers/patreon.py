@@ -27,12 +27,10 @@ def fetch_auth_data(code: str) -> dict:
             },
         )
     except requests.exceptions.RequestException as ex:
-        if "invalid_grant" not in str(ex):
-            log.exception(f"Patreon error on login: {ex}")
         raise PatreonException(ex)
 
     if response.status_code >= 400:
-        log.error(f"Patreon error on login {response.status_code}: {response.text}")
+        log.warning(f"Patreon error on login {response.status_code}: {response.text}")
         raise PatreonException(response.text)
 
     try:
@@ -101,6 +99,8 @@ def fetch_user_data(access_token: str) -> dict:
 
 
 def parse_active_membership(user_data: dict) -> Optional[Membership]:
+    log.info(f"Parse membership: {user_data}")
+
     if not user_data or not user_data.get("data") or not user_data.get("included"):
         return None
 
@@ -134,6 +134,11 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
                     str(membership["attributes"]["last_charge_date"])[:10], "%Y-%m-%d"
                 )
 
+            if last_charged_at:
+                membership_expires_at = last_charged_at + timedelta(days=45)
+            else:
+                membership_expires_at = first_day_of_next_month(now) + timedelta(days=15)
+
             return Membership(
                 platform=Platform.patreon,
                 user_id=user_data["data"]["id"],
@@ -142,7 +147,7 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
                 image=None,  # user_data["data"]["attributes"]["image_url"],
                 started_at=membership_started_at,
                 charged_at=last_charged_at,
-                expires_at=last_charged_at + timedelta(days=30) if last_charged_at else first_day_of_next_month(now),
+                expires_at=membership_expires_at,
                 lifetime_support_cents=int(membership["attributes"]["lifetime_support_cents"] or 0),
                 currently_entitled_amount_cents=int(membership["attributes"]["currently_entitled_amount_cents"] or 0),
             )

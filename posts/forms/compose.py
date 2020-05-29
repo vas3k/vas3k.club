@@ -149,12 +149,12 @@ class PostQuestionForm(PostForm):
         ]
 
 
-class PostPainForm(PostForm):
+class PostIdeaForm(PostForm):
     title = forms.CharField(
-        label="Заголовок",
+        label="Суть идеи",
         required=True,
         max_length=128,
-        widget=forms.TextInput(attrs={"placeholder": "Кратко суть боли 😭"}),
+        widget=forms.TextInput(attrs={"placeholder": "Кратко суть идеи 🤔"}),
     )
     text = forms.CharField(
         label="Развернутое описание",
@@ -164,11 +164,8 @@ class PostPainForm(PostForm):
             attrs={
                 "maxlength": 500000,
                 "class": "markdown-editor-full",
-                "placeholder": "Поделитесь своей болью в подробностях. "
-                               "\n\nРасскажите примеры ситуаций, когда проблема возникает. "
-                               "Приведите пример того, как вы решаете проблему сейчас."
-                               "\n\nВ конце укажите сколько вы были бы готовы платить за продукт, "
-                               "который смог бы решить эту проблему. Единоразово, подпиской или процент?",
+                "placeholder": "Поделитесь подробностями, предысторией и проблемами, которые легли в основу идеи. "
+                               "Приведите примеры похожих продуктов...",
             }
         ),
     )
@@ -200,7 +197,6 @@ class PostProjectForm(PostForm):
         label="Скриншот или иконка",
         required=True,
         resize=(1024, 1024),
-        convert_format=None
     )
     text = forms.CharField(
         label="Описание",
@@ -314,7 +310,7 @@ POST_TYPE_MAP = {
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
     Post.TYPE_QUESTION: PostQuestionForm,
-    Post.TYPE_PAIN: PostPainForm,
+    Post.TYPE_IDEA: PostIdeaForm,
     Post.TYPE_PROJECT: PostProjectForm,
     Post.TYPE_BATTLE: PostBattleForm,
 }

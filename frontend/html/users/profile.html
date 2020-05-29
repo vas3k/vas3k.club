@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load static %}
+{% load comments %}
 {% load posts %}
 {% load text_filters %}
 {% load paginator %}
@@ -37,26 +38,64 @@
         {% include "users/widgets/card.html" with user=user %}
 
         {% if me.id == user.id %}
-            <div class="block profile-numbers">
-                <div class="profile-number profile-monies">
-                    <div class="profile-monies-value">{% if user.is_god %}&infin;{% else %}💰{{ user.balance }}{% endif %}</div>
-                    <div class="profile-monies-currency">кк/сек</div>
+            <div class="block profile-statuses">
+                <div class="profile-status profile-respect">
+                    <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
+                    <span class="profile-status-text">
+                        {% if user.upvotes > 1000 %}
+                            плюсиков
+                        {% else %}
+                            {{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}
+                        {% endif %}
+                    </span>
                 </div>
-                <div class="profile-number profile-respect">
-                    <div class="profile-respect-value">+{{ user.upvotes }}</div>
-                    <div class="profile-respect-currency">{{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}</div>
+                <div class="profile-status">
+                    <span class="profile-status-number">{% if user.is_god %}&infin;{% else %}💰{{ user.balance | cool_number }}{% endif %}</span>
+                    <span class="profile-status-text">кк/сек</span>
                 </div>
-                <div class="profile-number profile-level">
-                    <div class="profile-level-value">[СКОРО]</div>
-                </div>
+                <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
+                    <span class="profile-status-icon">💌</span>
+                    <span class="profile-status-status">
+                        {% if user.is_email_unsubscribed %}
+                            Вы отписаны от всех писем 🙅‍♂️
+                        {% elif not user.is_email_verified %}
+                            Вы не подтвердили e-mail 🚨
+                        {% else %}
+                            {% if user.email_digest_type == "daily" %}
+                                Ежедневный дайджест 🔥
+                            {% elif user.email_digest_type == "weekly" %}
+                                Еженедельный журнал 💎
+                            {% else %}
+                                Дайджест отключён ❌
+                            {% endif %}
+                        {% endif %}
+                    </span>
+                </a>
+                <a href="{% url "edit_bot" user.slug %}" class="profile-status">
+                    <span class="profile-status-icon">🤖</span>
+                    <span class="profile-status-status">
+                        {% if user.telegram_id %}
+                            ✅ Бот активен
+                        {% else %}
+                            ❌ Бот не подключен
+                        {% endif %}
+                    </span>
+                </a>
             </div>
         {% endif %}
 
         {% if intro or me.id == user.id %}
             <div class="block profile-intro">
-                <div class="profile-header"><a href="{% url "show_post" "intro" intro.slug %}">#intro &rarr;</a></div>
+                <div class="profile-header">
+                    <a href="{% url "show_post" "intro" intro.slug %}">#intro &rarr;</a>
+                    {% if me.id == user.id %}
+                        <a href="{% url "edit_post" intro.slug  %}" class="button post-edit-button profile-intro-edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    {% endif %}
+                </div>
                 {% if intro %}
-                    <div class="profile-intro-text">
+                    <div class="text-body profile-intro-text">
                         {% render_post intro %}
                     </div>
                 {% else %}
@@ -68,13 +107,14 @@
         {% endif %}
 
         {% if achievements %}
-            <div class="profile-badges">
-                <div class="profile-header">Достижения</div>
-                <div class="user-badges">
+            <div class="profile-achievements">
+                <div class="user-achievements">
                     {% for achievement in achievements %}
-                        <span class="user-badge" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
-                            <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.type }}">
-                            <span class="user-badge-name">{{ achievement.name }}</span>
+                        <span class="user-achievement" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+                            <span class="user-achievement-wrapper">
+                                <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
+                                <span class="user-achievement-name">{{ achievement.name }}</span>
+                            </span>
                         </span>
                     {% endfor %}
                 </div>
@@ -84,21 +124,39 @@
         {% if active_tags or me.id == user.id %}
             {% regroup tags by group_display as tag_groups %}
             {% for tag_group in tag_groups %}
-                <div class="profile-header">{{ tag_group.grouper }}</div>
+                <div class="profile-header" id="tags_{{ tag_group.list.0.group }}">{{ tag_group.grouper }}</div>
                 <div class="block profile-tags">
                     <div class="profile-tags-group">
                         <div class="user-tags">
                             {% for tag in tag_group.list %}
-                                {% if tag.code in active_tags %}
-                                    <a href="{% url "toggle_tag" tag.code %}" class="user-tag user-tag-active" style="background-color: {{ tag.color }};" onclick="ajaxify(event, toggleUserTag)">{{ tag.name }}</a>
+                                {% if me.id == user.id  %}
+                                    <user-tag :tag="JSON.parse('{{ tag.to_dict | jsonify }}')" class="user-tag" url="{% url "toggle_tag" tag.code %}" {% if tag.code in active_tags %}is-active-by-default{% endif %}></user-tag>
                                 {% else %}
-                                    {% if me.id == user.id %}
-                                        <a href="{% url "toggle_tag" tag.code %}" class="user-tag" onclick="ajaxify(event, toggleUserTag)">{{ tag.name }}</a>
+                                    {% if tag.code in active_tags %}
+                                        <span class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">{{ tag.name }}</span>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
                         </div>
                     </div>
+                    {% if tag_group.list.0.group == "club" %}
+                        <div class="profile-tags-footer">
+                            {% if user.contact %}
+                                <strong>Для связи:</strong> {{ user.contact | urlize }}<br>
+                                {% if user.id != me.id %}
+                                    <small>Не забудьте сказать, что вы из Вастрик.Клуба</small>
+                                {% endif %}
+                            {% else %}
+                                {% if user.id == me.id %}
+                                    <strong>⚠️ Вы не указали контакт для обратной связи.<br><a href="{% url "edit_profile" user.slug %}#id_contact">Сделайте это здесь</a></strong>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if user.id == me.id %}
+                                <small><br>Для абстрактных тегов типа «ищу работу» или «могу научить» не забудьте рассказать подробности в интро и указать свою экспертизу ниже. Это поможет другим вас найти!</small>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         {% endif %}
@@ -113,7 +171,7 @@
                                 <div class="user-expertise-row-name">
                                     {{ expertise.name }}
                                     {% if me.id == user.id %}
-                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" onclick="ajaxify(event, toggleUserExpertise)">[x]</a>
+                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" @click.prevent="deleteExpertise">[x]</a>
                                     {% endif %}
                                 </div>
                                 <div class="user-expertise-row-bar">
@@ -124,7 +182,9 @@
                     </div>
                 {% endif %}
                 {% if me.id == user.id %}
-                    <span class="button button-round profile-expertise-add-button" onclick="document.getElementById('window-expertise').style.display = 'block';"><i class="fas fa-plus"></i></span>
+                    <span class="button profile-expertise-add-button" @click="shownWindow = 'add-expertise'">
+                        Расскажи что умеешь
+                    </span>
                 {% endif %}
             </div>
         {% endif %}
@@ -151,6 +211,38 @@
             {% endif %}
         {% endif %}
 
+        {% if comments %}
+            <div class="profile-comments">
+                <div class="profile-header">Последние комментарии</div>
+                {% for comment in comments %}
+                    <div class="block comment comment-layout-normal" id="comment-{{ comment.id }}">
+                        <div class="comment-header">
+                            <div class="user user-small">
+                                <span class="user-avatar">
+                                    <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+                                </span>
+                                <span class="user-info">
+                                    {{ comment.post.title }}
+                                </span>
+                                <span class="user-footer">
+                                    {{ comment.created_at | date:"j E Y" }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="comment-body">
+                            <div class="text-body text-body-type-comment">
+                                {% render_comment comment %}
+                            </div>
+                        </div>
+                        <div class="comment-rating">
+                            <span class="upvote upvote-type-small">{{ comment.upvotes }}</span>
+                        </div>
+                        <a class="block-link" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}"></a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if posts %}
             <div class="profile-posts">
                 <div class="profile-header">Посты</div>
@@ -165,16 +257,9 @@
         {% endif %}
     </div>
 
-    <div class="window window-expertise" id="window-expertise">
-        <div class="window-close-button" onclick="closeWindow(event)"><i class="fas fa-times"></i></div>
-        <div class="window-title">Я могу в...</div>
-        <form action="{% url "add_expertise" %}" method="post">
-            <div class="edit-expertise">
-                <div class="edit-expertise-select">{{ expertise_form.expertise }}</div>
-                <div class="edit-expertise-custom" id="edit-expertise-custom" style="display: none;">{{ expertise_form.expertise_custom }}</div>
-                <div class="edit-expertise-value">Насколько хорошо: {{ expertise_form.value }}</div>
-            </div>
-            <button type="submit" class="button window-button">Добавить</button>
-        </form>
-    </div>
+    <user-expertise-window submit-form-action="{% url "add_expertise" %}"
+                           :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
+                           v-show="shownWindow === 'add-expertise'"
+                           @close-window="shownWindow = null">
+    </user-expertise-window>
 {% endblock %}

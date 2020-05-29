@@ -3,9 +3,13 @@ from django.shortcuts import redirect
 
 
 def parse_ip_address(request):
-    return request.META.get("HTTP_X_REAL_IP") \
+    ipaddress = request.META.get("HTTP_X_REAL_IP") \
         or request.META.get("HTTP_X_FORWARDED_FOR") \
-        or request.environ["REMOTE_ADDR"]
+        or request.environ.get("REMOTE_ADDR") or ""
+
+    if "," in ipaddress:  # multiple ips in the header
+        ipaddress = ipaddress.split(",", 1)[0]
+    return ipaddress
 
 
 def parse_useragent(request):

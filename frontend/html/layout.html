@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load render_bundle from webpack_loader %}
 <html lang="ru">
 <head>
     <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
@@ -16,20 +17,22 @@
         {% include "common/og.html" %}
     {% endblock %}
     {% include "common/favicon.html" %}
-    {% include "common/css.html" %}
+    {% render_bundle "main" "css" %}
 </head>
 <body>
 
 {% block body %}
-    {% block menu %}
-        {% if me %}
-            {% include "common/menu-full.html" %}
-        {% else %}
-            {% include "common/menu-simplified.html" %}
-        {% endif %}
-    {% endblock %}
-    {% block content %}
-    {% endblock %}
+    <div id="app">
+        {% block menu %}
+            {% if me %}
+                {% include "common/menu-full.html" %}
+            {% else %}
+                {% include "common/menu-simplified.html" %}
+            {% endif %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+    </div>
 {% endblock %}
 
 {% block footer %}

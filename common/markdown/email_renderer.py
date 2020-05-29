@@ -5,7 +5,7 @@ from common.regexp import YOUTUBE_RE
 
 
 class EmailRenderer(ClubRenderer):
-    def just_img(self, src, alt="", title=None):
+    def simple_image(self, src, alt="", title=None):
         return f"""<img src="{src}" alt="{alt}" width="600" border="0"><br>{title or ""}"""
 
     def youtube(self, src, alt="", title=None):

@@ -9,11 +9,11 @@
         <div class="post-header">
             <div class="post-info">
                 {% if post.topic %}
-                    {% include "posts/widgets/topic.html" with topic=post.topic %}
+                    {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
                 {% endif %}
             </div>
             <div class="post-title">
-                {{ post.title }}
+                {{ post.title | rutypography }}
                 {% if post.author == me or me.is_moderator %}
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
                 {% endif %}
@@ -27,22 +27,29 @@
                     </div>
                 {% endif %}
 
-                {% if post.label %}
-                    <div class="post-label">
-                        {% include "posts/common/label.html" with label=post.label %}
-                    </div>
-                {% endif %}
-
                 <div class="post-date">
-                    {{ post.effective_published_at|date:"d E Y" }}
+                    {{ post.effective_published_at|date:"j E Y" }}
                     | {{ post.view_count }} {{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
-                    {% if not post.is_public %}| <i class="fas fa-lock"></i>&nbsp;Только для своих{% endif %}
-                    {% if me.is_moderator %}| <a href="{% url "admin_post" post.slug %}">Админить</a>{% endif %}
+                    {% if post.is_public %}
+                        | <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
+                    {% else %}
+                        | <i class="fas fa-lock"></i>&nbsp;Только для своих
+                    {% endif %}
+                    {% if me.is_moderator %}
+                        | <a href="{% url "announce_post" post.slug %}">Анонс</a>
+                        | <a href="{% url "admin_post" post.slug %}">Админить</a>
+                    {% endif %}
                 </div>
 
                 {% if post.type != "intro" %}
                     <div class="post-author">
                         {% include "users/widgets/tiny.html" with user=post.author %}
+                    </div>
+                {% endif %}
+
+                {% if post.label %}
+                    <div class="post-label">
+                        {% include "posts/widgets/label.html" with label=post.label %}
                     </div>
                 {% endif %}
 
@@ -52,14 +59,16 @@
                     </div>
                 {% endif %}
             </div>
-            {% if me %}
-                <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %} post-body-rating" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
-            {% else %}
-                <span class="upvote upvote-voted post-body-rating">{{ post.upvotes }}</span>
-            {% endif %}
         </div>
-        <div class="text-body text-body-type-post">
-            {% render_post post %}
+        <div class="post-text">
+            <post-upvote :post="JSON.parse('{{ post.to_dict | jsonify }}')"
+                         url="{% url "upvote_post" post.slug %}"
+                         {% if is_voted %}is-voted-by-default{% endif %}
+                         {% if not me|can_upvote:post %}is-disabled{% endif %}>
+            </post-upvote>
+            <div class="text-body text-body-type-post">
+                {% render_post post %}
+            </div>
         </div>
         <div class="post-footer">
             {% include "users/widgets/card.html" with user=post.author %}

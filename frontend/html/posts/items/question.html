@@ -4,34 +4,44 @@
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
+
     <div class="feed-post-votes">
-        <a href="{% url "upvote_post" post.slug %}" class="upvote {% if post.is_voted %}upvote-voted{% endif %}" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
+        <post-upvote :post="JSON.parse('{{ post.to_dict | jsonify }}')"
+                     url="{% url "upvote_post" post.slug %}"
+                     {% if post.is_voted %}is-voted-by-default{% endif %}
+                     {% if not me|can_upvote:post %}is-disabled{% endif %}>
+        </post-upvote>
     </div>
+
     <div class="feed-post-header">
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
-            Вопрос: <a href="{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
+            Вопрос: <a href="{% url "show_post" post.type post.slug %}">{{ post.title | rutypography }}</a>
             {% if post.label %}
-                {% include "posts/common/label.html" with label=post.label %}
+                {% include "posts/widgets/label.html" with label=post.label %}
             {% endif %}
         </div>
     </div>
     <div class="feed-post-footer">
         {% if post.topic %}
             <span class="feed-post-topic">
-                {% include "posts/widgets/topic.html" with topic=post.topic size="small" %}
+                {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
             </span>
         {% endif %}
-        <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">
+
+        <a href="{% url "show_post" post.type post.slug %}?comment_order=created_at#comments" class="feed-post-comments">
             {% if post.comment_count > 0 %}
                 {{ post.comment_count }} {{ post.comment_count | rupluralize:"ответ,ответа,ответов" }}
-                {% if post.unread_comments %}
-                    <span class="feed-post-unread">+{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}</span>
-                {% endif %}
             {% else %}
                 Нет ответов
             {% endif %}
         </a>
+
+        {% if post.unread_comments %}
+            <a href="{% url "show_post" post.type post.slug %}?comment_order=-created_at#comments" class="feed-post-comments-unread">
+                +{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}
+            </a>
+        {% endif %}
     </div>
     <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
 </div>

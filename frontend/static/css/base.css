@@ -11,7 +11,7 @@
     .block-description {
         display: block;
         margin: 0 auto;
-        max-width: 80%;
+        max-width: 90%;
         padding: 20px 0;
         font-size: 120%;
     }
@@ -35,7 +35,7 @@
     }
 
 .window {
-    display: none;
+    display: block;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -125,6 +125,7 @@
     text-align: center;
     cursor: pointer;
     line-height: 1em;
+    font-weight: 500;
 }
 
     .button-round {
@@ -135,6 +136,17 @@
         color: var(--button-hover-color);
         background-color: var(--button-hover-bg-color);
         border: var(--button-hover-border);
+    }
+
+    .button:disabled {
+        background-color: var(--button-disabled-bg-color);
+        border-color: var(--button-disabled-bg-color);
+    }
+
+    .button:disabled:hover {
+        color: var(--button-color);
+        background-color: var(--button-disabled-bg-color);
+        border-color: var(--button-disabled-bg-color);
     }
 
     .button-inverted {
@@ -423,6 +435,12 @@ input[type=range]:focus::-ms-fill-upper {
 
         }
 
+        .form-warning {
+            font-size: 110%;
+            text-align: center;
+            background-color: rgba(243, 255, 81, 0.3);
+        }
+
 .simple-grid-2-auto {
     display: grid;
     grid-template-columns: minmax(auto, min-content) minmax(auto, max-content);
@@ -471,7 +489,7 @@ input[type=range]:focus::-ms-fill-upper {
     }
 
 .show-on-iphone {
-    display: none;
+    display: none !important;
 }
 
 .no-underline {
@@ -484,11 +502,11 @@ input[type=range]:focus::-ms-fill-upper {
 
 @media only screen and (max-width : 570px) {
     .hide-on-iphone {
-        display: none;
+        display: none !important;
     }
 
     .show-on-iphone {
-        display: block;
+        display: block !important;
     }
 }
 
@@ -504,4 +522,128 @@ input[type=range]:focus::-ms-fill-upper {
     height: 100%;
     z-index: 0 !important;
     opacity: 0;
+}
+
+.CodeMirror-line {
+    word-break: break-word !important;
+}
+
+.editor-toolbar button {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+}
+
+.topic {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    padding: 5px 13px 5px 5px;
+    text-decoration: none;
+    background-color: var(--opposite-bg-color);
+    color: #FFF;
+    font-size: 110%;
+    max-width: 300px;
+    line-height: 1.3em;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: none;
+}
+
+    .topic-gradient {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background: -moz-linear-gradient(top,  rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top,  rgba(255,255,255,0.25) 0%,rgba(255,255,255,0) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to top,  rgba(255,255,255,0.25) 0%,rgba(255,255,255,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    }
+
+    .topic-icon {
+        display: inline-block;
+        background-position: 50% 50%;
+        background-size: cover;
+        vertical-align: middle;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background-color: #FFF;
+        border: solid 2px #FFF;
+    }
+
+    .topic-name {
+        padding-left: 5px;
+        vertical-align: middle;
+        font-weight: 500;
+    }
+
+        .topic:hover .topic-name {
+            color: #FFF;
+        }
+
+    .topic-type-inline {
+        padding: 2px 9px 2px 3px;
+        font-size: 90%;
+        top: -1px;
+    }
+
+        .topic-type-inline .topic-icon {
+            width: 15px;
+            height: 15px;
+        }
+
+        .topic-type-inline .topic-name {
+            padding-left: 1px;
+        }
+
+    .topic-type-card {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px 10px 10px;
+        box-sizing: border-box;
+        flex-direction: column;
+        align-items: center;
+        font-size: 100%;
+        border-radius: 30px;
+    }
+
+        .topic-type-card:hover {
+            transform: translateY(-2px);
+            transition: .2s;
+        }
+
+        .topic-type-card .topic-name {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0;
+            vertical-align: middle;
+            margin-bottom: 5px;
+        }
+
+        .topic-type-card .topic-icon {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            margin: 0 5px 0 0;
+        }
+
+    .topic-type-post {
+        display: flex;
+        align-items: center;
+    }
+
+        .topic-type-post:not(:only-child) {
+            margin-right: 10px;
+        }
+
+img.emoji {
+   height: 1.2em;
+   width: 1.2em;
+   margin: 0 .05em 0 .1em;
+   vertical-align: -0.1em;
 }

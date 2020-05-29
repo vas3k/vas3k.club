@@ -17,7 +17,7 @@ patreon = ">=0.5"
 sentry-sdk = "==0.14.3"
 psycopg2-binary = "==2.8.4"
 awesome-slugify = ">=1.6.5"
-mistune = "==2.0.0a2"
+mistune = "==2.0.0a4"
 click = "*"
 pillow = ">=7.1.1"
 django-simple-history = ">=2.8.0"
@@ -31,6 +31,12 @@ nltk = "==3.4.5"
 gunicorn = "==20.0.4"
 uvicorn = "*"
 premailer = "==3.6.1"
+django-webpack-loader = "*"
+typus = "*"
+gdal = "==2.4.0"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+nltk_download = "python -m nltk.downloader all"

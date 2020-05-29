@@ -5,7 +5,7 @@ from django.urls import reverse
 from django_q.tasks import async_task
 
 from bot.common import ADMIN_CHAT, send_telegram_message
-from users.models import User
+from users.models.user import User
 
 TRACK_DIFF_FIELDS = {
     "email",

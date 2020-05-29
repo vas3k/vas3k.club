@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block og_tags %}
-    <meta property="og:title" content="{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}">
     <meta property="og:type" content="website" />
@@ -15,7 +15,7 @@
     <meta property="og:image" content="{% static "images/share.png" %}">
 
     <meta name="twitter:card" content="summary_image">
-    <meta name="twitter:title" content="{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
     <meta name="twitter:image" content="{% static "images/logo/logo-256.png" %}">
 {% endblock %}
@@ -32,9 +32,30 @@
             <div class="post-comments" id="comments">
                 <div class="post-comments-title">
                     {% if post.comment_count > 0 %}
-                        {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                        <a href="#comments" class="post-comments-count">
+                            {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                        </a>
+
+                        <form action=".#comments" method="get" class="post-comments-order">
+                            <select name="comment_order" onchange="this.form.submit()">
+                                <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
+                                <option value="-created_at" {% if comment_order == "-created_at" %}selected{% endif %}>по свежести</option>
+                                <option value="created_at" {% if comment_order == "created_at" %}selected{% endif %}>по порядку</option>
+                            </select>
+                        </form>
                     {% elif post.is_commentable and post.is_visible %}
-                        Откомментируйте первым 👇
+                        <a href="#comments" class="post-comments-count">
+                            Откомментируйте первым 👇
+                        </a>
+                    {% endif %}
+
+                    {% if me %}
+                        <post-subscription
+                            url="{% url "toggle_post_subscription" post.slug %}"
+                            {% if subscription %}is-active-by-default{% endif %}
+                            class="post-comments-subscription"
+                        >
+                        </post-subscription>
                     {% endif %}
                 </div>
 
@@ -53,7 +74,7 @@
         {% endblock %}
 
         {% if not me %}
-            {% include "posts/common/join_the_club.html" %}
+            {% include "posts/widgets/join_the_club.html" %}
         {% endif %}
     </div>
 {% endblock %}

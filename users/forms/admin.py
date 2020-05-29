@@ -20,7 +20,7 @@ class UserAdminForm(forms.Form):
     new_hat_icon = ImageUploadField(
         label="Иконка",
         required=False,
-        resize=(256, 256)
+        resize=(256, 256),
     )
     new_hat_color = forms.CharField(
         label="Цвет",
@@ -33,13 +33,9 @@ class UserAdminForm(forms.Form):
         required=False
     )
 
-    add_achievement = forms.BooleanField(
-        label="Выдать новую ачивку",
-        required=False
-    )
     new_achievement = forms.ChoiceField(
-        label="Выбрать",
-        choices=[(None, "---")] + [(key, value.get("title")) for key, value in ACHIEVEMENTS.items()],
+        label="Выдать новую ачивку",
+        choices=[(None, "---")] + [(key, value.get("name")) for key, value in ACHIEVEMENTS],
         required=False,
     )
 
@@ -55,5 +51,15 @@ class UserAdminForm(forms.Form):
     ban_reason = forms.CharField(
         label="Причина бана",
         max_length=128,
+        required=False
+    )
+
+    is_unbanned = forms.BooleanField(
+        label="Разбанить",
+        required=False
+    )
+
+    is_rejected = forms.BooleanField(
+        label="Размодерирвать",
         required=False
     )

@@ -1,4 +1,3 @@
-import random
 from datetime import timedelta, datetime
 
 from django.conf import settings
@@ -11,7 +10,7 @@ from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
 from posts.models import Post, PostVote
-from users.models import User
+from users.models.user import User
 
 
 def email_confirm(request, user_id, secret):
@@ -45,7 +44,7 @@ def email_digest_switch(request, digest_type, user_id, secret):
     user = get_object_or_404(User, id=user_id, secret_hash=secret)
 
     if not dict(User.EMAIL_DIGEST_TYPES).get(digest_type):
-        return Http404()
+        raise Http404()
 
     user.email_digest_type = digest_type
     user.is_email_unsubscribed = False
@@ -82,8 +81,11 @@ def daily_digest(request, user_slug):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=1)
     if end_date.weekday() == 1:
-        # we don't have daily on mondays and weekends, we need to include all these posts at tuesday
+        # we don't have daily on sundays and mondays, we need to include all these posts at tuesday
         start_date = end_date - timedelta(days=3)
+
+    if settings.DEBUG:
+        start_date = end_date - timedelta(days=1000)
 
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
@@ -92,15 +94,16 @@ def daily_digest(request, user_slug):
     moon_phase = parse_horoscope()
 
     # New actions
-    post_comment_actions = Comment.visible_objects()\
+    subscription_comments = Comment.visible_objects()\
         .filter(
-            post__author=user,
+            post__subscriptions__user=user,
             **created_at_condition
         )\
-        .values("post__type", "post__slug", "post__title")\
+        .values("post__type", "post__slug", "post__title", "post__author_id")\
         .annotate(count=Count("id"))\
         .order_by()
-    reply_actions = Comment.visible_objects()\
+
+    replies = Comment.visible_objects()\
         .filter(
             reply_to__author=user,
             **created_at_condition
@@ -108,24 +111,32 @@ def daily_digest(request, user_slug):
         .values("post__type", "post__slug", "post__title")\
         .annotate(count=Count("reply_to_id"))\
         .order_by()
-    upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
-        + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
 
     new_events = [
         {
-            "type": "post_comment",
+            "type": "my_post_comment",
             "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
             "post_title": e["post__title"],
             "count": e["count"],
-        } for e in post_comment_actions
+        } for e in subscription_comments if e["post__author_id"] == user.id
+    ] + [
+        {
+            "type": "subscribed_post_comment",
+            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
+            "post_title": e["post__title"],
+            "count": e["count"],
+        } for e in subscription_comments if e["post__author_id"] != user.id
     ] + [
         {
             "type": "reply",
             "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
             "post_title": e["post__title"],
             "count": e["count"],
-        } for e in reply_actions
+        } for e in replies
     ]
+
+    upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
+        + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
 
     if upvotes:
         new_events = [
@@ -135,24 +146,25 @@ def daily_digest(request, user_slug):
             }
         ] + new_events
 
+    # Mentions
+    mentions = Comment.visible_objects() \
+        .filter(**created_at_condition) \
+        .filter(text__contains=f"@{user.slug}", is_deleted=False)\
+        .exclude(reply_to__author=user)\
+        .order_by("-upvotes")[:5]
+
     # Best posts
     posts = Post.visible_objects()\
         .filter(is_approved_by_moderator=True, **published_at_condition)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:100]
 
-    # Best comments
-    comments = Comment.visible_objects() \
-        .filter(**created_at_condition) \
-        .filter(is_deleted=False)\
-        .order_by("-upvotes")[:1]
-
     # New joiners
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")
 
-    if not posts and not comments and not intros:
+    if not posts and not mentions and not intros:
         raise Http404()
 
     return render(request, "emails/daily.html", {
@@ -160,7 +172,7 @@ def daily_digest(request, user_slug):
         "events": new_events,
         "intros": intros,
         "posts": posts,
-        "comments": comments,
+        "mentions": mentions,
         "date": end_date,
         "moon_phase": moon_phase,
     })
@@ -170,6 +182,9 @@ def weekly_digest(request):
     end_date = datetime.utcnow()
     start_date = end_date - timedelta(days=8)  # make 8, not 7, to include marginal users
 
+    if settings.DEBUG:
+        start_date = end_date - timedelta(days=1000)
+
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
@@ -177,8 +192,14 @@ def weekly_digest(request):
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")
+
     newbie_count = User.objects\
-        .filter(is_profile_reviewed=True, **created_at_condition)\
+        .filter(
+            is_profile_complete=True,
+            is_profile_reviewed=True,
+            is_profile_rejected=False,
+            **created_at_condition
+        )\
         .count()
 
     # Best posts
@@ -196,7 +217,10 @@ def weekly_digest(request):
         .filter(is_approved_by_moderator=True, **published_at_condition)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
-        .order_by("-upvotes")[:12]
+        .order_by("-upvotes")
+
+    post_count = posts.count()
+    posts = posts[:12]
 
     # Video of the week
     top_video_comment = Comment.visible_objects() \
@@ -220,6 +244,7 @@ def weekly_digest(request):
     comments = Comment.visible_objects() \
         .filter(**created_at_condition) \
         .filter(is_deleted=False)\
+        .exclude(post__type=Post.TYPE_BATTLE)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
@@ -229,11 +254,12 @@ def weekly_digest(request):
     if not author_intro and not posts and not comments:
         raise Http404()
 
-    return render(request, "emails/weekly_digest.html", {
+    return render(request, "emails/weekly.html", {
         "posts": posts,
         "comments": comments,
         "intros": intros,
         "newbie_count": newbie_count,
+        "post_count": post_count,
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
         "featured_post": featured_post,

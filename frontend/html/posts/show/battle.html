@@ -5,15 +5,23 @@
 {% load text_filters %}
 
 {% block post %}
-    <div class="block battle-header">
-        <div class="battle-header-side-a">
-            <div>{{ post.metadata.battle.sides.a.name }}</div>
+    <div class="battle-header">
+        {% if post.topic %}
+            <div class="battle-header-topic">
+                {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="block battle-title">
+        <div class="battle-title-side-a">
+            <div>{{ post.metadata.battle.sides.a.name | rutypography }}</div>
         </div>
-        <div class="battle-header-vs">
-            <div class="battle-header-vs-text">или</div>
+        <div class="battle-title-vs">
+            <div class="battle-title-vs-text">или</div>
         </div>
-        <div class="battle-header-side-b">
-            <div>{{ post.metadata.battle.sides.b.name }}</div>
+        <div class="battle-title-side-b">
+            <div>{{ post.metadata.battle.sides.b.name | rutypography }}</div>
         </div>
     </div>
 
@@ -28,11 +36,11 @@
 
         <div class="block post post-layout-block post-type-battle">
             <div class="post-upvote">
-                {% if me %}
-                    <a href="{% url "upvote_post" post.slug %}" class="upvote {% if is_voted %}upvote-voted{% endif %} post-body-rating" onclick="ajaxify(event, postUpvoted)">{{ post.upvotes }}</a>
-                {% else %}
-                    <span class="upvote upvote-voted post-body-rating">{{ post.upvotes }}</span>
-                {% endif %}
+                <post-upvote :post="JSON.parse('{{ post.to_dict | jsonify }}')"
+                             url="{% url "upvote_post" post.slug %}"
+                             {% if is_voted %}is-voted-by-default{% endif %}
+                             {% if not me|can_upvote:post %}is-disabled{% endif %}>
+                </post-upvote>
                 <div class="clearfix20"></div>
                 {% if post.author == me or me.is_moderator %}
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
@@ -42,7 +50,15 @@
                 {% render_post post %}
             </div>
             <div class="post-footer">
-                {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+                <div>
+                    {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+                </div>
+                <div>
+                    {% if me.is_moderator %}
+                        <a href="{% url "announce_post" post.slug %}">Анонс</a>
+                        | <a href="{% url "admin_post" post.slug %}">Админить</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -50,10 +66,24 @@
 
 {% block comments %}
     <div class="post-comments" id="comments">
+        {% if me %}
+            <post-subscription
+                url="{% url "toggle_post_subscription" post.slug %}"
+                {% if subscription %}is-active-by-default{% endif %}
+                class="post-comments-subscription"
+                style="margin-left: 0;"
+            >
+            </post-subscription>
+        {% endif %}
+
         {% battle_stats post comments %}
 
         {% if not post.comment_count and post.is_commentable and post.is_visible %}
-            <div class="post-comments-title">Аргументируйте первым 👇</div>
+            <div class="post-comments-title">
+                <a href="#comments" class="post-comments-count">
+                    Аргументируйте первым 👇
+                </a>
+            </div>
         {% endif %}
 
         {% if comments %}
@@ -67,5 +97,16 @@
                 {% include "comments/forms/battle.html" with post=post form=comment_form %}
             </div>
         {% endif %}
+    </div>
+
+    <div class="battle-etiquette">
+        <strong>Этикет батлов:</strong>
+        <ul>
+            <li>Батл — это схватка двух крайностей. Мы пытаемся выделить аргументы каждой из сторон чтобы потом по ним составить свою картину мира. Рекомендуется избегать аргументов типа «каждый хорош для своего».</li>
+            <li>Один аргумент — один комментарий. Не делайте списков, так сложнее вести дискуссию и подсчитывать статистику.</li>
+            <li>Можно топить как за одну, так и за обе стороны сразу. Просто выберите за кого вы при постинге.</li>
+            <li>На аргументы можно реплаить. Реплаи никуда не засчитываются и нужны только для срача.</li>
+            <li>Авторам батлам разрешено удалять повторы и комментарии не по формату.</li>
+        </ul>
     </div>
 {% endblock %}

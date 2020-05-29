@@ -10,7 +10,7 @@ from simple_history.models import HistoricalRecords
 from club.exceptions import NotFound
 from common.request import parse_ip_address, parse_useragent
 from posts.models import Post
-from users.models import User
+from users.models.user import User
 
 
 class Comment(models.Model):
@@ -58,6 +58,12 @@ class Comment(models.Model):
         db_table = "comments"
         ordering = ["created_at"]
 
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "upvotes": self.upvotes,
+        }
+
     def save(self, *args, **kwargs):
         if self.reply_to:
             self.reply_to = self.find_top_comment(self.reply_to)
@@ -79,8 +85,21 @@ class Comment(models.Model):
         return Comment.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
     @property
+    def battle_side(self):
+        if self.metadata:
+            side_code = self.metadata.get("battle", {}).get("side")
+            if side_code:
+                return self.post.metadata["battle"]["sides"][side_code]["name"]
+
+        return None
+
+    @property
     def is_editable(self):
         return self.created_at >= datetime.utcnow() - settings.COMMENT_EDIT_TIMEDELTA
+
+    @property
+    def is_deletable(self):
+        return self.created_at >= datetime.utcnow() - settings.COMMENT_DELETE_TIMEDELTA
 
     @classmethod
     def visible_objects(cls):
@@ -148,7 +167,7 @@ class CommentVote(models.Model):
 
     @classmethod
     def upvote(cls, request, user, comment):
-        if user.id == comment.author_id:
+        if not user.is_god and user.id == comment.author_id:
             return None, False
 
         post_vote, is_vote_created = CommentVote.objects.get_or_create(

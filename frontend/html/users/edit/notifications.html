@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Уведомления — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <form action="{% url "edit_notifications" user.slug %}" method="post" class="intro-form" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-title">💌<br>Уведомления</div>
+
+            {% if form.non_field_errors %}
+                <div class="form-row form-row-center">
+                    {% for error in form.non_field_errors %}
+                        <span class="form-row-errors">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="block" id="digest-settings">
+                <div class="block-header">📫<br>Как хотите следить за постами и комментами?</div>
+
+                {% if not form.instance.is_email_verified %}
+                    <div class="block form-warning">⚠️ Вы не подтвердили свой адрес электронной почты, так что мы пока не будем слать на него рассылки</div>
+                {% endif %}
+
+                <div class="clearfix20"></div>
+
+                <div class="form-row">
+                    <div class="user-edit-digest">
+                        <div class="user-edit-digest">
+                            <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
+                                <i class="fas fa-envelope-open"></i>
+                                <span class="user-edit-digest-name">Шлите мне всё!<br><small style="display: inline-block; margin-top: 20px; line-height: 1.3em;">+ гороскоп в подарок</small></span>
+                                {{  form.email_digest_type.1.tag }}
+                            </label>
+                            <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
+                                <i class="fas fa-calendar-week"></i>
+                                <span class="user-edit-digest-name">Только журнал раз в неделю</span>
+                                {{  form.email_digest_type.2.tag }}
+                            </label>
+                            <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
+                                <i class="fas fa-skull-crossbones"></i>
+                                <span class="user-edit-digest-name">Никак не хочу</span>
+                                {{  form.email_digest_type.0.tag }}
+                            </label>
+                        </div>
+                    </div>
+                    {% if form.email_digest_type.errors %}<span class="form-row-errors">{{ form.email_digest_type.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button button-red">Сохранить изменения</button>
+            </div>
+
+            <div class="block" id="digest-settings">
+                <div class="block-header">Другие способы быть в курсе 👇</div>
+
+                <div class="block-description" style="text-align: left;">
+                    <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a> — туда модераторы отбирают лучший контент. Он же главный источник всех анонсов.<br><br>
+                    <a href="https://vas3k.ru/notes/club_chat/" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
+                    <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Онлайн</a> — прямой эфир. Только для самых хардкорных.<br><br>
+                    <a href="{% url "edit_bot" user.slug %}" target="_blank" style="font-weight: bold;">Подключить нашего бота</a> — он умеет приносить вам уведомления, касающиеся лично вас.
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

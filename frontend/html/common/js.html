@@ -1,26 +1,11 @@
 {% load static %}
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-<script src="{% static "js/inline-attachment.js" %}?v={{ settings.CSS_HASH }}"></script>
-<script src="{% static "js/codemirror-4.inline-attachment.js" %}?v={{ settings.CSS_HASH }}"></script>
-<script src="{% static "js/lightense.min.js" %}?v={{ settings.CSS_HASH }}"></script>
-<script src="{% static "js/main.js" %}?v={{ settings.CSS_HASH }}" imageUploadUrl="{{ settings.MEDIA_UPLOAD_URL }}" imageUploadCode="{{ settings.MEDIA_UPLOAD_CODE }}"></script>
+{% load render_bundle from webpack_loader %}
 
-<!-- Emojis for poor people -->
-<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
-    var isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
-    if (!isApple) {
-        document.body = twemoji.parse(document.body);
-    }
+    window.imageUploadUrl = "{{ settings.MEDIA_UPLOAD_URL }}";
+    window.imageUploadCode = "{{ settings.MEDIA_UPLOAD_CODE }}";
 </script>
-<style>
-img.emoji {
-   height: 1.2em;
-   width: 1.2em;
-   margin: 0 .05em 0 .1em;
-   vertical-align: -0.1em;
-}
-</style>
-<!-- /Emojis for poor people -->
+{% render_bundle "main" "js" %}
 
+<!-- For twitter embeds -->
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

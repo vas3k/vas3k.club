@@ -1,7 +1,13 @@
+import json
+from datetime import datetime, timedelta
+
 from django import template
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.template.defaultfilters import date
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from typus import ru_typus
 
 from common.regexp import YOUTUBE_RE
 from common.markdown.markdown import markdown_text
@@ -38,6 +44,34 @@ def cool_number(value, num_decimals=1):
 
 
 @register.filter
+def cool_date(dt):
+    """
+    datetime -> "two days ago"
+    """
+    now = datetime.utcnow()
+    if dt > now - timedelta(days=2):
+        # recent
+        return naturaltime(dt)
+    elif dt.year != now.year:
+        # different year
+        return date(dt, "j E Y")
+    else:
+        # standard format
+        return date(dt, "j E в H:i")
+
+
+@register.filter
+def percentage_of(value, arg):
+    if not value:
+        return 0
+
+    if not arg:
+        return 100
+
+    return int(float(value) / float(arg) * 100)
+
+
+@register.filter
 def rupluralize(value, arg="дурак,дурака,дураков"):
     args = arg.split(",")
     number = abs(int(value))
@@ -51,6 +85,10 @@ def rupluralize(value, arg="дурак,дурака,дураков"):
     else:
         return args[2]
 
+
+@register.filter
+def rutypography(value):
+    return ru_typus(value)
 
 @register.filter
 def uncapitalize(value):
@@ -87,3 +125,8 @@ def youtube_id(value):
     if youtube_match:
         return youtube_match.group(1)
     return ""
+
+
+@register.filter()
+def jsonify(value):
+    return json.dumps(value)

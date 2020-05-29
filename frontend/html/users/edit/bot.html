@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Бот — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">🤖<br>Телеграм-бот</div>
+
+        <div class="block">
+            <div class="block-description">
+                <p>
+                    <strong>Бот — важное дополнение к Клубу.</strong>
+                    Он оповещает о новых комментариях, через него можно отвечать на них и даже писать посты, форвардя ему сообщения.
+                </p>
+
+                <p>
+                    На него завязано много фич и мы очень рекомендуем его подключить.
+                </p>
+
+                <p id="telegram-auth-data" style="font-weight: bold;">
+                    {% if user.telegram_id %}
+                       Сейчас привязан аккаунт: {{ user.telegram_data.username }} ✅
+                    {% endif %}
+                </p>
+
+                <p>
+                    <script async src="https://telegram.org/js/telegram-widget.js?8" data-telegram-login="vas3k_club_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+                    <script type="text/javascript">
+                        function onTelegramAuth(user) {
+                            fetch('{% url "link_telegram" %}?is_ajax=true', {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json, text/plain, */*',
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: "include",
+                                body: JSON.stringify(user)
+                            })
+                            .then((response) => {
+                                return response.json();
+                            })
+                            .then((data) => {
+                              if (data.status === "success") {
+                                  document.getElementById("telegram-auth-data").innerHTML = "😎 Вы авторизованы как: " + data.telegram.username;
+                                  document.getElementById("telegram-auth-button").style.display = "none";
+                              } else {
+                                  document.getElementById("telegram-auth-data").innerHTML = "Что-то пошло не так. Попробуйте снова.";
+                              }
+                              document.getElementById("telegram-auth-data").style.display = "block";
+                            });
+                        }
+                    </script>
+                </p>
+
+                <p style="font-size: 90%;">
+                    ☝️ Если кнопки сверху не видно, значит у вас Роскомнадзор или AdBlock. Придётся их обмануть.
+                    Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ user.secret_hash }}</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

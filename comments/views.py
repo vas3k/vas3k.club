@@ -10,6 +10,7 @@ from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
 from posts.models import Post, PostView
+from search.models import SearchIndex
 
 log = logging.getLogger(__name__)
 
@@ -51,11 +52,12 @@ def create_comment(request, post_slug):
             request.me.update_last_activity()
             Comment.update_post_counters(post)
             PostView.increment_unread_comments(post)
-            PostView.create_or_update(
+            PostView.register_view(
                 request=request,
                 user=request.me,
                 post=post,
             )
+            SearchIndex.update_comment_index(comment)
 
             return redirect("show_comment", post.slug, comment.id)
         else:
@@ -67,7 +69,7 @@ def create_comment(request, post_slug):
                 "data": form.cleaned_data.get("text")
             })
 
-    return Http404()
+    raise Http404()
 
 
 def show_comment(request, post_slug, comment_id):
@@ -86,10 +88,13 @@ def edit_comment(request, comment_id):
             raise AccessDenied()
 
         if not comment.is_editable:
-            raise AccessDenied(title="Этот комментарий больше нельзя редактировать")
+            raise AccessDenied(
+                title="Время вышло",
+                message="Комментарий можно редактировать только в первые 3 часа после создания"
+            )
 
         if not comment.post.is_visible or not comment.post.is_commentable:
-            raise AccessDenied(title="Комментарии к этому посту были закрыты")
+            raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post
 
@@ -102,6 +107,9 @@ def edit_comment(request, comment_id):
             comment.ipaddress = parse_ip_address(request)
             comment.useragent = parse_useragent(request)
             comment.save()
+
+            SearchIndex.update_comment_index(comment)
+
             return redirect("show_comment", post.slug, comment.id)
     else:
         form = CommentForm(instance=comment)
@@ -125,10 +133,10 @@ def delete_comment(request, comment_id):
                 message="Только автор комментария, поста или модератор может удалить комментарий"
             )
 
-        if not comment.is_editable:
+        if not comment.is_deletable:
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно отредактировать или удалить только в первые несколько часов их жизни"
+                message="Комментарий можно удалить только в первые 3 дня после создания"
             )
 
         if not comment.post.is_visible:

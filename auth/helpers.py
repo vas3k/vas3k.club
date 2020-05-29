@@ -51,14 +51,15 @@ def check_user_permissions(request):
     if not request.me:
         return render(request, "auth/access_denied.html")
 
-    if request.me.membership_expires_at < datetime.utcnow():
-        log.info("User membership expired. Redirecting")
-        return redirect("membership_expired")
-
+    # FIXME: really bad IF, fix it
     if not request.path.startswith("/profile/") \
             and not request.path.startswith("/auth/") \
             and not request.path.startswith("/intro/") \
             and not request.path.startswith("/telegram/"):
+
+        if request.me.membership_expires_at < datetime.utcnow():
+            log.info("User membership expired. Redirecting")
+            return redirect("membership_expired")
 
         if request.me.is_banned:
             log.info("User banned. Redirecting")

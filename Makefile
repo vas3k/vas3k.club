@@ -6,18 +6,25 @@
 PROJECT_NAME=vas3k_club
 
 run-dev:  ## Runs dev server
-	@pipenv run python manage.py runserver 0.0.0.0:8000
+	pipenv run python manage.py runserver 0.0.0.0:8000
 
 run-queue:  ## Runs task broker
-	@pipenv run python manage.py qcluster
+	pipenv run python manage.py qcluster
 
-run-uvicorn:  ## Runs production server using uvicorn (ASGI)
-	@pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
+run-queue-production:
+	python manage.py qcluster
 
-docker-run-dev:  ## Run dev server in docker
-	@pipenv run python ./utils/wait_for_postgres.py
-	@pipenv run python manage.py migrate
-	@pipenv run python manage.py runserver 0.0.0.0:8000
+run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
+	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
+
+docker-run-dev:  ## Runs dev server in docker
+	pipenv run python ./utils/wait_for_postgres.py
+	pipenv run python manage.py migrate
+	pipenv run python manage.py runserver 0.0.0.0:8000
+
+docker-run-production:  ## Runs production server in docker
+	python3 manage.py migrate
+	gunicorn club.asgi:application -w 7 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8814 --capture-output --log-level debug --access-logfile - --error-logfile -
 
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -27,23 +34,38 @@ help:  ## Display this help
 lint:  ## Lint code with flake8
 	@pipenv run flake8 $(PROJECT_NAME)
 
+requirements:  ## Generate requirements.txt for production
+	pipenv lock --requirements > requirements.txt
+
 migrate:  ## Migrate database to the latest version
-	@pipenv run python3 manage.py migrate
+	pipenv run python3 manage.py migrate
 
-mypy:  ## Check types with mypy
-	@pipenv run mypy .
+build-frontend:  ## Runs webpack
+	npm run --prefix frontend build
 
-test-ci: lint mypy  ## Run tests (intended for CI usage)
+test-ci: lint  ## Run tests (intended for CI usage)
+
+psql:
+	psql -h localhost -p 5433 -d vas3k_club -U vas3k
+
+redeploy:
+	npm run --prefix frontend build
+	docker-compose -f docker-compose.production.yml build club_app
+	docker-compose -f docker-compose.production.yml up --no-deps -d club_app
+	docker-compose -f docker-compose.production.yml build queue
+	docker-compose -f docker-compose.production.yml up --no-deps -d queue
+	docker image prune --force
 
 .PHONY: \
-  dev-requirements \
   docker-run-dev \
+  docker-run-production \
   run-dev \
   run-queue \
   run-uvicorn \
+  requirements \
   help \
   lint \
   migrate \
-  mypy \
-  run \
-  test-ci
+  build-frontend \
+  test-ci \
+  redeploy-production

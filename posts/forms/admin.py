@@ -1,9 +1,16 @@
 from django import forms
 
 from common.data.labels import LABELS
+from posts.models import Post
 
 
 class PostAdminForm(forms.Form):
+    change_type = forms.ChoiceField(
+        label="Сменить тип поста",
+        choices=[(None, "---")] + Post.TYPES,
+        required=False,
+    )
+
     new_label = forms.ChoiceField(
         label="Выдать лейбл",
         choices=[(None, "---")] + [(key, value.get("title")) for key, value in LABELS.items()],
@@ -35,6 +42,11 @@ class PostAdminForm(forms.Form):
 
     shadow_ban = forms.BooleanField(
         label="Шадоу бан (редко!)",
+        required=False,
+    )
+
+    hide_on_main = forms.BooleanField(
+        label="Скрыть с главной",
         required=False,
     )
 

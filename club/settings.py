@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
 DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don"t run with debug turned on in production!
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "vas3k.ru", "vas3k.club"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "dev.vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS = [
@@ -30,8 +30,10 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "notifications.apps.NotificationsConfig",
     "bot.apps.BotConfig",
+    "search.apps.SearchConfig",
     "simple_history",
     "django_q",
+    "webpack_loader",
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,7 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "club.context_processors.settings_processor",
+                "club.context_processors.data_processor",
                 "auth.context_processors.users.me",
                 "posts.context_processors.topics.topics",
             ]
@@ -131,7 +134,11 @@ APP_NAME = "Вастрик.Клуб"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
-DEFAULT_PAGE_SIZE = 100
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
+
+DEFAULT_PAGE_SIZE = 70
+SEARCH_PAGE_SIZE = 25
+PEOPLE_PAGE_SIZE = 18
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 
@@ -160,20 +167,33 @@ IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL")
 TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
-TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
-TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
+TELEGRAM_CLUB_CHANNEL_URL = os.getenv("TELEGRAM_CLUB_CHANNEL_URL")
+TELEGRAM_CLUB_CHANNEL_ID = os.getenv("TELEGRAM_CLUB_CHANNEL_ID")
 TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
+TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
+TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
 
 SIMPLEPARSER_API_KEY = os.getenv("SIMPLEPARSER_API_KEY")
 
 COMMENT_EDIT_TIMEDELTA = timedelta(hours=3)
+COMMENT_DELETE_TIMEDELTA = timedelta(days=3)
 RATE_LIMIT_POSTS_PER_DAY = 10
 RATE_LIMIT_COMMENTS_PER_DAY = 200
 
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
 
-CSS_HASH = str(random.random())
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "CACHE": not DEBUG,
+        "BUNDLE_DIR_NAME": "/dist/",  # must end with slash
+        "STATS_FILE": os.path.join(BASE_DIR, "frontend/webpack-stats.json"),
+        "POLL_INTERVAL": 0.1,
+        "TIMEOUT": None,
+        "IGNORE": [r'.+\.hot-update.js', r'.+\.map'],
+        "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
+    }
+}
 
 if SENTRY_DSN and not DEBUG:
     # activate sentry on production

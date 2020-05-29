@@ -12,11 +12,11 @@ from telegram import Update
 from auth.helpers import auth_required
 from bot.bot import bot
 from bot.handlers.moderator import process_moderator_actions
-from bot.handlers.personal import process_personal_chat_updates
+from bot.handlers.personal import process_personal_chat_updates, process_auth
 from bot.handlers.replies import process_comment_reply
 from club.exceptions import AccessDenied
 from common.request import ajax_request
-from users.models import User
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 
@@ -39,24 +39,24 @@ def webhook_telegram(request, token):
         log.info(f"Update: {update.to_dict()}")
 
         if update.effective_chat:
-            # reply to a comment
-            if update.message and update.message.reply_to_message \
+            # admin chat
+            if str(update.effective_chat.id) == settings.TELEGRAM_ADMIN_CHAT_ID:
+                if update.callback_query:
+                    process_moderator_actions(update)
+
+            # reply to a comment (in any chat excluding admin)
+            elif update.message and update.message.reply_to_message \
                     and update.message.reply_to_message.text \
                     and update.message.reply_to_message.text.startswith("💬"):
                 if is_club_user(update.effective_user.id):
                     process_comment_reply(update)
 
-            # admin chat
-            elif update.effective_chat and \
-                    str(update.effective_chat.id) == settings.TELEGRAM_ADMIN_CHAT_ID:
-                if update.callback_query:
-                    process_moderator_actions(update)
-
-            # user personal chats
-            elif update.effective_chat and update.effective_user \
-                    and update.effective_chat.id == update.effective_user.id:
+            # personal chats with users
+            elif update.effective_user and update.effective_chat.id == update.effective_user.id:
                 if is_club_user(update.effective_user.id):
                     process_personal_chat_updates(update)
+                else:
+                    process_auth(update)  # new user?
 
     return HttpResponse("OK")
 
@@ -64,7 +64,9 @@ def webhook_telegram(request, token):
 def is_club_user(telegram_user_id):
     club_users = cache.get("bot:telegram_user_ids")
     if not club_users:
-        club_users = User.objects.filter(telegram_id__isnull=False).values_list("telegram_id", flat=True)
+        club_users = User.objects\
+            .filter(telegram_id__isnull=False, is_profile_reviewed=True, is_profile_rejected=False)\
+            .values_list("telegram_id", flat=True)
         cache.set("bot:telegram_user_ids", list(club_users), 5 * 60)
     return str(telegram_user_id) in set(club_users)
 
@@ -89,6 +91,8 @@ def link_telegram(request):
         request.me.telegram_id = data["id"]
         request.me.telegram_data = data
         request.me.save()
+
+        cache.delete("bot:telegram_user_ids")
 
         full_name = str(request.me.telegram_data.get("first_name") or "") \
             + str(request.me.telegram_data.get("last_name") or "")

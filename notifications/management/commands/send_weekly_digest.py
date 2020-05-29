@@ -2,14 +2,17 @@ import logging
 from datetime import datetime, timedelta
 
 import requests
+import telegram
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.urls import reverse
 
+from bot.common import send_telegram_message, CLUB_CHANNEL, render_html_message
 from landing.models import GodSettings
 from notifications.email.sender import send_club_email
 from posts.models import Post
-from users.models import User
+from search.models import SearchIndex
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 
@@ -35,7 +38,7 @@ class Command(BaseCommand):
         # save digest as a post
         issue = (datetime.utcnow() - settings.LAUNCH_DATE).days // 7
         year, week, _ = (datetime.utcnow() - timedelta(days=7)).isocalendar()
-        Post.objects.update_or_create(
+        post, _ = Post.objects.update_or_create(
             slug=f"{year}_{week}",
             type=Post.TYPE_WEEKLY_DIGEST,
             defaults=dict(
@@ -48,6 +51,8 @@ class Command(BaseCommand):
                 is_public=False,
             )
         )
+
+        SearchIndex.update_post_index(post)
 
         # sending emails
         subscribed_users = User.objects\
@@ -87,5 +92,12 @@ class Command(BaseCommand):
         if options.get("production"):
             # flush digest intro for next time
             GodSettings.objects.update(digest_intro=None)
+
+        send_telegram_message(
+            chat=CLUB_CHANNEL,
+            text=render_html_message("weekly_digest_announce.html", post=post),
+            disable_preview=False,
+            parse_mode=telegram.ParseMode.HTML,
+        )
 
         self.stdout.write("Done 🥙")

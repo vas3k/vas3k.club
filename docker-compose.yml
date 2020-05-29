@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   club_app: &app
@@ -17,11 +17,12 @@ services:
       - REDIS_HOST=redis
     restart: always
     volumes:
-      - .:/app:delegated  # enable hot code reload in debug mode
+      - .:/app:delegated # enable hot code reload in debug mode
     depends_on:
       - postgres
       - redis
       - queue
+      - webpack
     ports:
       - "8000:8000"
 
@@ -49,16 +50,24 @@ services:
     image: postgres:11
     container_name: club_postgres
     environment:
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=postgres
-        - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=vas3k_club
     ports:
-        - 5432
+      - 5432
 
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+  webpack:
+    image: node:14-slim
+    command: npm run watch
+    restart: always
+    volumes:
+      - .:/app:delegated
+    working_dir: /app/frontend
 
   migrate_and_init:
     <<: *app

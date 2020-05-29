@@ -13,7 +13,6 @@ def announce_in_club_channel(post, announce_text=None, image=None):
             image_url=image,
             text=announce_text,
             parse_mode=telegram.ParseMode.HTML,
-
         )
     else:
         send_telegram_message(
@@ -24,13 +23,23 @@ def announce_in_club_channel(post, announce_text=None, image=None):
         )
 
 
-def announce_in_club_chat(post):
-    send_telegram_message(
-        chat=CLUB_CHAT,
-        text=render_html_message("channel_post_announce.html", post=post),
-        parse_mode=telegram.ParseMode.HTML,
-        disable_preview=True,
-    )
+def announce_in_club_chats(post):
+    if post.topic and post.topic.chat_id:
+        # announce to the topic chat
+        send_telegram_message(
+            chat=Chat(id=post.topic.chat_id),
+            text=render_html_message("channel_post_announce.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+            disable_preview=True,
+        )
+    else:
+        # announce to public chat
+        send_telegram_message(
+            chat=CLUB_CHAT,
+            text=render_html_message("channel_post_announce.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+            disable_preview=True,
+        )
 
 
 def notify_post_author_approved(post):

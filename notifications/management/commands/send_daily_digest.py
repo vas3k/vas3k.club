@@ -7,7 +7,7 @@ from django.template.defaultfilters import date
 from django.urls import reverse
 
 from notifications.email.sender import send_club_email
-from users.models import User
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 

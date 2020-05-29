@@ -6,10 +6,11 @@ from utils.images import upload_image_bytes
 
 
 class ImageUploadField(forms.ImageField):
-    def __init__(self, resize=None, convert_format="JPEG", **kwargs):
+    def __init__(self, resize=None, convert_to=None, quality=None, **kwargs):
         super().__init__(**kwargs)
         self.resize = resize
-        self.convert_format = convert_format
+        self.convert_to = convert_to
+        self.quality = int(quality or 90)
 
     def clean(self, data, initial=None):
         if not data:
@@ -19,6 +20,6 @@ class ImageUploadField(forms.ImageField):
             filename=data.name,
             data=io.BytesIO(data.read()),
             resize=self.resize,
-            convert_format=self.convert_format,
-            quality=90,
+            convert_to=self.convert_to,
+            quality=self.quality,
         )

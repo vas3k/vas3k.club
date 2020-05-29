@@ -27,6 +27,20 @@ pip-log.txt
 # Mac OS X
 .DS_Store
 
+# Node
+node_modules/
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.pnp.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+webpack-stats.json
+
+# Python
 .mypy_cache
 private_settings.py
 local_settings.py

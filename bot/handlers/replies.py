@@ -6,8 +6,8 @@ from django.urls import reverse
 from telegram import Update
 
 from bot.common import send_telegram_message, Chat
+from bot.handlers.common import get_bot_user
 from comments.models import Comment
-from users.models import User
 
 COMMENT_URL_RE = re.compile(r"https?:[/|.|\w|\s|-]*/post/.+?/comment/([a-fA-F0-9\-]+)/")
 
@@ -18,12 +18,8 @@ def process_comment_reply(update: Update):
     if not update.message.reply_to_message:
         return
 
-    user = User.objects.filter(telegram_id=update.effective_user.id).first()
+    user = get_bot_user(update)
     if not user:
-        send_telegram_message(
-            chat=Chat(id=update.effective_user.id),
-            text=f"😐 Извините, мы не знакомы. Привяжите свой аккаунт в профиле на https://vas3k.club"
-        )
         return
 
     comment_url_entity = [
@@ -48,11 +44,19 @@ def process_comment_reply(update: Update):
         )
         return
 
+    text = update.message.text or update.message.caption
+    if not text:
+        send_telegram_message(
+            chat=Chat(id=update.effective_chat.id),
+            text=f"😣 Сорян, я пока умею только в текстовые ответы"
+        )
+        return
+
     comment = Comment.objects.create(
         author=user,
         post=reply.post,
         reply_to=Comment.find_top_comment(reply),
-        text=update.message.text,
+        text=text,
         useragent="TelegramBot (like TwitterBot)",
         metadata={
             "telegram": update.to_dict()
@@ -64,5 +68,5 @@ def process_comment_reply(update: Update):
     })
     send_telegram_message(
         chat=Chat(id=update.effective_chat.id),
-        text=f"➜ [Отвечено]({new_comment_url}) 👍"
+        text=f"➜ <a href=\"{new_comment_url}\">Отвечено</a> 👍"
     )

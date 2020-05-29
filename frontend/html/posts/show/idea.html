@@ -1,0 +1,63 @@
+{% extends "posts/show/layout.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{% block post %}
+<div class="content">
+    <div class="post block post-layout-block">
+        <div class="post-upvote">
+            <post-upvote :post="JSON.parse('{{ post.to_dict | jsonify }}')"
+                         url="{% url "upvote_post" post.slug %}"
+                         {% if is_voted %}is-voted-by-default{% endif %}
+                         {% if not me|can_upvote:post %}is-disabled{% endif %}>
+            </post-upvote>
+        </div>
+        <div class="post-header">
+            <div class="post-title">
+                💡 Идея: {{ post.title | rutypography }}
+
+                {% if post.author == me or me.is_moderator %}
+                    <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
+                {% endif %}
+
+                {% if post.label %}
+                    {% include "posts/widgets/label.html" with label=post.label %}
+                {% endif %}
+
+                {% if not post.is_visible %}
+                    <div class="post-label">
+                        <span class="label label-type-draft">
+                            <span class="label-title">Черновик</span>
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="post-info">
+                {% if post.topic %}
+                    {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
+                {% endif %}
+                <span class="post-date">
+                    {{ post.effective_published_at|date:"j E Y" }}
+                    | {{ post.view_count }} {{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
+                    {% if post.is_public %}
+                        | <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
+                    {% else %}
+                        | <i class="fas fa-lock"></i>&nbsp;Только для своих
+                    {% endif %}
+                    {% if me.is_moderator %}
+                        | <a href="{% url "announce_post" post.slug %}">Анонс</a>
+                        | <a href="{% url "admin_post" post.slug %}">Админить</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="text-body text-body-type-post">
+            {% render_post post %}
+        </div>
+        <div class="post-footer">
+            {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+        </div>
+    </div>
+</div>
+{% endblock %}

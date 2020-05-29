@@ -71,6 +71,13 @@
             transform: translateX(-50%) translateY(-50%);
         }
 
+.search {
+    display: grid;
+    grid-template-columns: auto;
+    margin: 0 auto;
+    max-width: var(--normal-content-width);
+}
+
 .feed {
     display: grid;
     grid-template-columns: 250px auto;
@@ -78,12 +85,17 @@
     max-width: var(--max-content-width);
 }
 
+    @media only screen and (max-width : 1024px) {
+        .feed {
+            grid-template-columns: 210px auto;
+        }
+    }
+
     @media only screen and (max-width : 570px) {
         .feed {
             grid-template-columns: auto;
         }
     }
-
 
 .feed-post {
     display: grid;
@@ -132,12 +144,15 @@
 
 .profile-card {
     display: grid;
-    grid-template-columns: 250px auto;
+    grid-template-columns: 200px auto;
+    column-gap: 20px;
+    align-items: start;
 }
 
     @media only screen and (max-width : 570px) {
         .profile-card {
             grid-template-columns: auto;
+            align-items: center;
         }
     }
 
@@ -176,23 +191,24 @@
 
 .post-layout-block {
     display: grid;
-    grid-template-columns: 70px minmax(auto, 1fr);
-    grid-template-rows: auto auto 70px;
+    grid-template-columns: minmax(auto, 1fr) min-content;
+    grid-template-rows: auto auto auto;
     justify-content: stretch;
     align-items: start;
 }
 
     .post-layout-block .post-upvote {
-        grid-column-start: 1;
-        grid-column-end: 2;
+        grid-column-start: 2;
+        grid-column-end: 3;
         grid-row-start: 1;
         grid-row-end: 2;
-        justify-self: start;
+        justify-self: end;
+        padding-left: 10px;
     }
 
     .post-layout-block .post-header {
-        grid-column-start: 2;
-        grid-column-end: 3;
+        grid-column-start: 1;
+        grid-column-end: 2;
         grid-row-start: 1;
         grid-row-end: 2;
         justify-self: start;
@@ -207,8 +223,8 @@
     }
 
         .post-layout-block .text-body-layout-notitle {
-            grid-column-start: 2;
-            grid-column-end: 3;
+            grid-column-start: 1;
+            grid-column-end: 2;
             grid-row-start: 1;
             grid-row-end: 3;
             justify-self: start;
@@ -219,17 +235,19 @@
         grid-column-end: 3;
         grid-row-start: 3;
         grid-row-end: 4;
-        justify-self: start;
+        justify-self: stretch;
+        display: flex;
+        justify-content: space-between;
     }
 
-.battle-header {
+.battle-title {
     margin: 0 auto;
     max-width: var(--max-content-width);
     display: grid;
     grid-template-columns: minmax(auto, 1fr) 50px minmax(auto, 1fr);
 }
 
-    .battle-header-side-a {
+    .battle-title-side-a {
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 1;
@@ -237,7 +255,7 @@
         justify-self: stretch;
     }
 
-    .battle-header-vs {
+    .battle-title-vs {
         grid-column-start: 2;
         grid-column-end: 3;
         grid-row-start: 1;
@@ -245,7 +263,7 @@
         justify-self: stretch;
     }
 
-    .battle-header-side-b {
+    .battle-title-side-b {
         grid-column-start: 3;
         grid-column-end: 4;
         grid-row-start: 1;
@@ -353,7 +371,7 @@
 .reply {
     display: grid;
     grid-template-columns: 40px minmax(auto, 1fr) 50px;
-    grid-template-rows: auto 30px;
+    grid-template-rows: auto min-content;
     justify-content: start;
 }
 
@@ -475,7 +493,7 @@
 
 .comment-type-battle {
     display: grid;
-    grid-template-columns: 70px minmax(auto, 1fr);
+    grid-template-columns: min-content minmax(auto, 1fr);
     grid-template-rows: min-content auto 35px;
     justify-content: stretch;
 }
@@ -494,6 +512,7 @@
         grid-row-start: 1;
         grid-row-end: 2;
         justify-self: end;
+        padding-right: 10px;
     }
 
     .comment-type-battle .comment-body {
@@ -513,7 +532,7 @@
         display: flex;
     }
     .comment-type-battle-side-a {
-        grid-template-columns: 70px minmax(auto, 1fr);
+        grid-template-columns: min-content minmax(auto, 1fr);
         max-width: 90%;
         min-width: 50%;
         float: left;
@@ -525,6 +544,8 @@
             grid-row-start: 1;
             grid-row-end: 2;
             justify-self: start;
+            padding-left: 0;
+            padding-right: 10px;
         }
 
         .comment-type-battle-side-a .comment-header {
@@ -536,7 +557,7 @@
         }
 
     .comment-type-battle-side-b {
-        grid-template-columns: minmax(auto, 1fr) 70px;
+        grid-template-columns: minmax(auto, 1fr) min-content;
         max-width: 90%;
         min-width: 50%;
         float: right;
@@ -548,6 +569,8 @@
             grid-row-start: 1;
             grid-row-end: 2;
             justify-self: end;
+            padding-left: 10px;
+            padding-right: 0;
         }
 
         .comment-type-battle-side-b .comment-header {
@@ -557,3 +580,81 @@
             grid-row-end: 2;
             justify-self: end;
         }
+
+.people-wrapper {
+    display: grid;
+    grid-template-columns: 320px minmax(auto, 1fr);
+    grid-template-rows: 90px 100px 500px auto;
+    justify-content: stretch;
+    align-items: start;
+    column-gap: 20px;
+    row-gap: 20px;
+}
+
+    .people-title {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 2;
+        justify-self: start;
+        z-index: 100;
+    }
+
+    .people-search {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+        justify-self: start;
+        z-index: 100;
+    }
+
+    .people-filters {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 6;
+        justify-self: start;
+        z-index: 100;
+    }
+
+    .people-results {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 4;
+        grid-row-end: 5;
+        justify-self: start;
+        z-index: 100;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .people-wrapper {
+            grid-template-columns: auto;
+            grid-template-rows: 100px 250px auto;
+        }
+
+        .people-title {
+            display: none;
+        }
+
+        .people-search {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 2;
+        }
+
+        .people-filters {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 3;
+            grid-row-end: 4;
+        }
+
+        .people-results {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 4;
+            grid-row-end: 5;
+        }
+    }

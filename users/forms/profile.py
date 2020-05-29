@@ -4,7 +4,8 @@ from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
 from common.data.expertise import EXPERTISE
-from users.models import User, UserExpertise
+from users.models.user import User
+from users.models.expertise import UserExpertise
 from utils.forms import ImageUploadField
 
 
@@ -15,12 +16,13 @@ class UserEditForm(ModelForm):
         max_length=128
     )
     avatar = ImageUploadField(
-        label="Аватар",
+        label="Обновить аватар",
         required=False,
-        resize=(512, 512)
+        resize=(512, 512),
+        convert_to="jpg",
     )
     city = forms.CharField(
-        label="Город",
+        label="город",
         required=True,
         max_length=120
     )
@@ -30,27 +32,25 @@ class UserEditForm(ModelForm):
         required=True
     )
     bio = forms.CharField(
-        label="Краткая строчка о себе",
+        label="Ссылочки на себя и всякое такое",
         required=False,
-        max_length=256,
-        widget=forms.Textarea(attrs={"maxlength": 256}),
+        max_length=1024,
+        widget=forms.Textarea(attrs={"maxlength": 1024}),
     )
     company = forms.CharField(
         label="Компания",
-        required=False,
+        required=True,
         max_length=128
     )
     position = forms.CharField(
-        label="Должность",
+        label="Должность или что вы делаете",
         required=True,
         max_length=128
     )
-    email_digest_type = forms.ChoiceField(
-        label="Подписка на дайджест",
+    contact = forms.CharField(
+        label="Контакт для связи",
         required=True,
-        choices=User.EMAIL_DIGEST_TYPES,
-        initial=User.EMAIL_DIGEST_TYPE_WEEKLY,
-        widget=forms.RadioSelect(),
+        max_length=256,
     )
 
     class Meta:
@@ -63,6 +63,22 @@ class UserEditForm(ModelForm):
             "city",
             "country",
             "bio",
+            "contact",
+        ]
+
+
+class NotificationsEditForm(ModelForm):
+    email_digest_type = forms.ChoiceField(
+        label="Тип email-дайджеста",
+        required=True,
+        choices=User.EMAIL_DIGEST_TYPES,
+        initial=User.EMAIL_DIGEST_TYPE_WEEKLY,
+        widget=forms.RadioSelect(),
+    )
+
+    class Meta:
+        model = User
+        fields = [
             "email_digest_type",
         ]
 
@@ -70,11 +86,8 @@ class UserEditForm(ModelForm):
 class ExpertiseForm(ModelForm):
     expertise = forms.ChoiceField(
         label="Область",
-        required=False,
+        required=True,
         choices=EXPERTISE + [("custom", "[добавить своё]")],
-        widget=forms.Select(
-            attrs={"onchange": "onExpertiseSelectionChanged(event)"}  # wow, so bad
-        ),
     )
     expertise_custom = forms.CharField(
         label="Свой вариант",

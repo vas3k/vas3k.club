@@ -1,5 +1,5 @@
 {% load comments %}
-{% for subtree in comments|comment_tree:"top" %}
+{% for subtree in comments|comment_tree %}
     {% if subtree.comment.is_pinned %}
         {% include "comments/types/bold.html" with comment=subtree.comment %}
     {% elif type == "battle" %}

@@ -11,7 +11,7 @@ from django.shortcuts import reverse
 from simple_history.models import HistoricalRecords
 
 from common.request import parse_ip_address, parse_useragent
-from users.models import User
+from users.models.user import User
 from utils.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 
@@ -24,6 +24,10 @@ class Topic(models.Model):
     description = models.TextField(null=True)
     color = models.CharField(max_length=16, null=False)
     style = models.CharField(max_length=256, default="", null=True)
+
+    chat_name = models.CharField(max_length=128, null=True)
+    chat_url = models.URLField(null=True)
+    chat_id = models.CharField(max_length=64, null=True)
 
     last_activity_at = models.DateTimeField(auto_now_add=True, null=False)
 
@@ -49,6 +53,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_LINK = "link"
     TYPE_QUESTION = "question"
     TYPE_PAIN = "pain"
+    TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
     TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
@@ -58,7 +63,8 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_INTRO, "#intro"),
         (TYPE_LINK, "Ссылка"),
         (TYPE_QUESTION, "Вопрос"),
-        (TYPE_PAIN, "Расскажи где болит"),
+        (TYPE_PAIN, "Боль"),
+        (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
         (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
@@ -71,6 +77,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_LINK: "🔗",
         TYPE_QUESTION: "❓",
         TYPE_PAIN: "😭",
+        TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
         TYPE_REFERRAL: "🏢",
         TYPE_BATTLE: "🤜🤛"
@@ -78,9 +85,10 @@ class Post(models.Model, ModelDiffMixin):
 
     TYPE_TO_PREFIX = {
         TYPE_POST: "",
-        TYPE_INTRO: "Интро️:",
+        TYPE_INTRO: "",
         TYPE_LINK: "➜",
         TYPE_PAIN: "Боль:",
+        TYPE_IDEA: "Идея:",
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
         TYPE_REFERRAL: "Рефералка:",
@@ -138,6 +146,13 @@ class Post(models.Model, ModelDiffMixin):
         db_table = "posts"
         ordering = ["-created_at"]
 
+    def to_dict(self):
+        return {
+            "slug": self.slug,
+            "type": self.type,
+            "upvotes": self.upvotes,
+        }
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
@@ -147,7 +162,7 @@ class Post(models.Model, ModelDiffMixin):
 
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse("show_post", kwargs={"post_type": self.type, "post_slug": self.slug})
 
@@ -168,6 +183,10 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def is_pinned(self):
         return self.is_pinned_until and self.is_pinned_until > datetime.utcnow()
+
+    @property
+    def is_searchable(self):
+        return self.is_visible and not self.is_shadow_banned
 
     @property
     def description(self):
@@ -226,6 +245,10 @@ class Post(models.Model, ModelDiffMixin):
                 is_public=False,
             ),
         )
+        if not is_created:
+            intro.html = None
+            intro.save()
+
         return intro
 
 
@@ -246,7 +269,7 @@ class PostVote(models.Model):
 
     @classmethod
     def upvote(cls, request, user, post):
-        if user.id == post.author_id:
+        if not user.is_god and user.id == post.author_id:
             return None, False
 
         post_vote, is_vote_created = PostVote.objects.get_or_create(
@@ -285,7 +308,7 @@ class PostView(models.Model):
         unique_together = [["user", "post"]]
 
     @classmethod
-    def create_or_update(cls, request, user, post):
+    def register_view(cls, request, user, post):
         post_view, is_view_created = PostView.objects.get_or_create(
             user=user,
             post=post,
@@ -295,7 +318,10 @@ class PostView(models.Model):
             )
         )
 
-        # increment view counter for ne`w views or for re-opens after cooldown period
+        # save last view timestamp to highlight comments
+        last_view_at = post_view.last_view_at
+
+        # increment view counter for new views or for re-opens after cooldown period
         if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
             post_view.registered_view_at = datetime.utcnow()
             post.increment_view_count()
@@ -307,9 +333,57 @@ class PostView(models.Model):
 
         post_view.save()
 
-        return post_view, is_view_created
+        return post_view, last_view_at
+
+    @classmethod
+    def register_anonymous_view(cls, request, post):
+        is_view_created = False
+        post_view = PostView.objects.filter(
+            post=post,
+            ipaddress=parse_ip_address(request),
+        ).first()
+
+        if not post_view:
+            post_view = PostView.objects.create(
+                post=post,
+                ipaddress=parse_ip_address(request),
+                useragent=parse_useragent(request),
+            )
+            is_view_created = True
+
+        # increment view counter for new views or for re-opens after cooldown period
+        if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
+            post_view.registered_view_at = datetime.utcnow()
+            post.increment_view_count()
+            post_view.save()
+
+        return post_view
 
     @classmethod
     def increment_unread_comments(cls, post):
-        PostView.objects.filter(post=post)\
+        PostView.objects.filter(post=post, user__isnull=False)\
             .update(unread_comments=F("unread_comments") + 1)
+
+
+class PostSubscription(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+
+    user = models.ForeignKey(User, related_name="subscriptions", db_index=True, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="subscriptions", db_index=True, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "post_subscriptions"
+
+    @classmethod
+    def get(cls, user, post):
+        return cls.objects.filter(user=user, post=post).first()
+
+    @classmethod
+    def subscribe(cls, user, post):
+        return cls.objects.create(user=user, post=post)
+
+    @classmethod
+    def post_subscribers(cls, post):
+        return cls.objects.filter(post=post).select_related("user")

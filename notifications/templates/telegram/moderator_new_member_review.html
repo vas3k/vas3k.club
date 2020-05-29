@@ -1,6 +1,7 @@
 {% load posts %}👮‍♂️ <b>Нужно ревью для профиля:</b> <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{{ user.slug }}</a>
 
 <b>Имя:</b> {{ user.full_name }}
+<b>E-mail:</b> {{ user.email }}
 <b>Работа:</b> {{ user.position }}{% if user.company %} — {{ user.company }}{% endif %}
 <b>Город:</b> {{ user.city }} {{ user.country }}
 <b>Био:</b> {{ user.bio }}
