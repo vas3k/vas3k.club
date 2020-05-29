@@ -3,7 +3,7 @@ version: "3.7"
 services:
   club_app: &app
     build:
-      dockerfile: Dockerfile-production
+      dockerfile: production.dockerfile
       context: .
     command: make docker-run-production
     container_name: club_app
@@ -56,3 +56,12 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+  cron:
+    build:
+      dockerfile: cron.dockerfile
+      context: .
+    container_name: club_cron
+    restart: always
+    volumes:
+      - .:/app:delegated # to update jobs without restarting container
