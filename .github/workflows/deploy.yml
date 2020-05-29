@@ -16,4 +16,4 @@ jobs:
         host: ${{ secrets.PRODUCTION_SSH_HOST }}
         username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
         key: ${{ secrets.PRODUCTION_SSH_KEY }}
-        script: cd vas3k.club && ls -al
+        script: cd vas3k.club && git pull && make build-frontend && sudo supervisorctl restart all
