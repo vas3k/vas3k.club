@@ -13,7 +13,7 @@ jobs:
     - name: Pull new code and restart server
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
+        host: ${{ secrets.PRODUCTION_SSH_HOST }}
+        username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
+        key: ${{ secrets.PRODUCTION_SSH_KEY }}
         script: cd vas3k.club && ls -al
