@@ -8,6 +8,7 @@ import PostSubscription from "./components/PostSubscription.vue";
 import CommentUpvote from "./components/CommentUpvote.vue";
 import UserTag from "./components/UserTag.vue";
 import PeopleMap from "./components/PeopleMap.vue";
+import SidebarToggler from "./components/SidebarToggler.vue";
 import UserExpertiseWindow from "./components/UserExpertiseWindow.vue";
 import UserAvatarInput from "./components/UserAvatarInput.vue";
 import ClubApi from "./common/api.service";
@@ -18,6 +19,7 @@ Vue.component("user-expertise-window", UserExpertiseWindow);
 Vue.component("user-tag", UserTag);
 Vue.component("people-map", PeopleMap);
 Vue.component("user-avatar-input", UserAvatarInput);
+Vue.component("sidebar-toggler", SidebarToggler);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

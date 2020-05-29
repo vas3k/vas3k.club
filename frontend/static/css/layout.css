@@ -18,6 +18,11 @@
 
         .menu-left {
             text-align: left;
+            transition: margin-left .3s ease;
+        }
+
+        .mobile-menu-opened .menu-left {
+            display: none;
         }
 
         .menu-center {
@@ -31,6 +36,10 @@
         @media only screen and (max-width : 570px) {
             .menu-full {
                 grid-template-columns: auto min-content auto;
+            }
+
+            .mobile-menu-opened .menu-full {
+                grid-template-columns: auto 150px;
             }
         }
 
