@@ -1,8 +1,8 @@
 <template>
     <button
-        class="button feed-sidebar-toggler"
+        class="feed-sidebar-toggler"
         @click.prevent="toggle"
-    >{{ isShown ? "←" : "→"}} </button>
+    >{{ isShown ? "🔼" : "🔽"}} </button>
 </template>
 
 <script>
