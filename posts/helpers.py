@@ -6,7 +6,7 @@ from posts.models import Post
 MARKDOWN_IMAGES_RE = re.compile(r"!\[*\]\((.+)\)")
 
 
-def extract_some_image(post):
+def extract_any_image(post):
     if post.image and post.type != Post.TYPE_LINK:
         return post.image
 

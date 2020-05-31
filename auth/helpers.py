@@ -47,9 +47,9 @@ def auth_required(view):
     return wrapper
 
 
-def check_user_permissions(request):
+def check_user_permissions(request, **context):
     if not request.me:
-        return render(request, "auth/access_denied.html")
+        return render(request, "auth/access_denied.html", context)
 
     # FIXME: really bad IF, fix it
     if not request.path.startswith("/profile/") \
@@ -59,23 +59,23 @@ def check_user_permissions(request):
 
         if request.me.membership_expires_at < datetime.utcnow():
             log.info("User membership expired. Redirecting")
-            return redirect("membership_expired")
+            return redirect("membership_expired", context)
 
         if request.me.is_banned:
             log.info("User banned. Redirecting")
-            return redirect("banned")
+            return redirect("banned", context)
 
         if not request.me.is_profile_complete:
             log.info("User profile is not completed. Redirecting")
-            return redirect("intro")
+            return redirect("intro", context)
 
         if request.me.is_profile_rejected:
             log.info("User rejected. Redirecting")
-            return redirect("rejected")
+            return redirect("rejected", context)
 
         if not request.me.is_profile_reviewed:
             log.info("User on review. Redirecting")
-            return redirect("on_review")
+            return redirect("on_review", context)
 
     return None
 

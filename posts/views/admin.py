@@ -5,7 +5,7 @@ from bot.common import render_html_message
 from notifications.telegram.posts import announce_in_club_channel
 from posts.admin import do_post_admin_actions
 from posts.forms.admin import PostAdminForm, PostAnnounceForm
-from posts.helpers import extract_some_image
+from posts.helpers import extract_any_image
 from posts.models import Post
 
 
@@ -35,7 +35,7 @@ def announce_post(request, post_slug):
 
     initial = {
         "text": render_html_message("channel_post_announce.html", post=post),
-        "image": extract_some_image(post),
+        "image": extract_any_image(post),
     }
 
     if request.method == "POST":
