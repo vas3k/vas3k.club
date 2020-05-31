@@ -20,9 +20,11 @@ RUN apt-get update \
 
 WORKDIR /app
 
-ADD . /app
+ADD ./requirements.txt /app/requirements.txt
 
 RUN pip install -r requirements.txt
+
+ADD . /app
 
 RUN python -c "import nltk; nltk.download('punkt')"
 
