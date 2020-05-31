@@ -48,7 +48,7 @@ services:
     volumes:
       - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
     ports:
-      - "5433:5432"
+      - "54333:5432"
 
   redis:
     image: redis:alpine
@@ -56,12 +56,3 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-
-  cron:
-    build:
-      dockerfile: cron.dockerfile
-      context: .
-    container_name: club_cron
-    restart: always
-    volumes:
-      - .:/app:delegated # to update jobs without restarting container
