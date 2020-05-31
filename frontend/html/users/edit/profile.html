@@ -62,6 +62,10 @@
                     <label for="{{ form.avatar.id_for_label }}" class="form-label">
                         Обновить аватар
                     </label>
+                    <user-avatar-input 
+                        input-id="{{ form.avatar.id_for_label }}"
+                        current-avatar="{{ user.get_avatar }}"
+                    ></user-avatar-input>
                     {{ form.avatar }}
                     {% if form.avatar.errors %}<span class="form-row-errors">{{ form.avatar.errors }}</span>{% endif %}
                 </div>

@@ -9,18 +9,19 @@ import CommentUpvote from "./components/CommentUpvote.vue";
 import UserTag from "./components/UserTag.vue";
 import PeopleMap from "./components/PeopleMap.vue";
 import UserExpertiseWindow from "./components/UserExpertiseWindow.vue";
+import UserAvatarInput from "./components/UserAvatarInput.vue";
 import ClubApi from "./common/api.service";
-
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-subscription", PostSubscription);
 Vue.component("comment-upvote", CommentUpvote);
 Vue.component("user-expertise-window", UserExpertiseWindow);
 Vue.component("user-tag", UserTag);
 Vue.component("people-map", PeopleMap);
+Vue.component("user-avatar-input", UserAvatarInput);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.
-const noDelimiter = {replace: function(){}};
+const noDelimiter = { replace: function () {} };
 
 new Vue({
     el: "#app",
@@ -60,7 +61,7 @@ new Vue({
 
             // Define helper function
             function appendMarkdownTextareaValue(textarea, value) {
-                textarea.focus();  // on mobile
+                textarea.focus(); // on mobile
                 textarea.value = value;
                 const codeMirrorEditor = textarea.nextElementSibling.CodeMirror;
                 codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
