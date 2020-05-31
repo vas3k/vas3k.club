@@ -1,4 +1,4 @@
-name: Deploy master branch to production
+name: Deploy master to production
 
 on:
   push:
@@ -16,4 +16,4 @@ jobs:
         host: ${{ secrets.PRODUCTION_SSH_HOST }}
         username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
         key: ${{ secrets.PRODUCTION_SSH_KEY }}
-        script: cd vas3k.club && git pull && make build-frontend && sudo supervisorctl restart all
+        script: cd vas3k.club && make redeploy
