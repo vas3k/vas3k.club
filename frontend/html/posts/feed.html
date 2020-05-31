@@ -85,13 +85,19 @@
             {% endif %}
 
             <div class="feed-ordering">
-                <a href="{% url "feed_ordering" post_type "activity" %}" class="feed-ordering-item {% if ordering == "activity" %}feed-ordering-item-is-active{% endif %}">
+                <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "activity" %}{% else %}{% url "feed_ordering" post_type "activity" %}{% endif %}"
+                   class="feed-ordering-item {% if ordering == "activity" %}feed-ordering-item-is-active{% endif %}"
+                >
                     Обсуждаемое
                 </a>
-                <a href="{% url "feed_ordering" post_type "new" %}" class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}">
+                <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "new" %}{% else %}{% url "feed_ordering" post_type "new" %}{% endif %}"
+                   class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}"
+                >
                     Новое
                 </a>
-                <a href="{% url "feed_ordering" post_type "top" %}" class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" %}feed-ordering-item-is-active{% endif %}">
+                <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top" %}{% else %}{% url "feed_ordering" post_type "top" %}{% endif %}"
+                   class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" %}feed-ordering-item-is-active{% endif %}"
+                >
                     Лучшее
                 </a>
                 {% if ordering == "top" or ordering == "top_week" %}

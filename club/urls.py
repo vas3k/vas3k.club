@@ -83,6 +83,7 @@ urlpatterns = [
 
     path("search/", search, name="search"),
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
+    path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
 
     # keep these guys at the bottom
     re_path(r"^{}/$".format(POST_TYPE_RE), feed, name="feed_type"),
