@@ -59,23 +59,23 @@ def check_user_permissions(request, **context):
 
         if request.me.membership_expires_at < datetime.utcnow():
             log.info("User membership expired. Redirecting")
-            return redirect("membership_expired", context)
+            return redirect("membership_expired")
 
         if request.me.is_banned:
             log.info("User banned. Redirecting")
-            return redirect("banned", context)
+            return redirect("banned")
 
         if not request.me.is_profile_complete:
             log.info("User profile is not completed. Redirecting")
-            return redirect("intro", context)
+            return redirect("intro")
 
         if request.me.is_profile_rejected:
             log.info("User rejected. Redirecting")
-            return redirect("rejected", context)
+            return redirect("rejected")
 
         if not request.me.is_profile_reviewed:
             log.info("User on review. Redirecting")
-            return redirect("on_review", context)
+            return redirect("on_review")
 
     return None
 
