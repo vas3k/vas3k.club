@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect
+from django.urls import reverse
 
 from auth.helpers import auth_required
 from auth.models import Session
@@ -15,7 +16,16 @@ from utils.strings import random_string
 def login(request):
     if request.me:
         return redirect("profile", request.me.slug)
-    return redirect("patreon_login")  # TODO: for now we have only patreon
+
+    goto = request.GET.get("goto")
+
+    # TODO: for now we have only Patreon login, let's redirect user there immediately
+    if goto:
+        return redirect(reverse("patreon_login") + f"?goto={goto}")
+    else:
+        return redirect("patreon_login")
+
+    # TODO: use it in future
     # return render(request, "auth/login.html")
 
 

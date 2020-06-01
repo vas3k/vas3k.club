@@ -81,7 +81,7 @@ def profile(request, user_slug):
 
     if user.id == request.me.id:
         goto = request.GET.get("goto")
-        if goto:
+        if goto and goto.startswith(settings.APP_HOST):
             return redirect(goto)
 
     tags = Tag.objects.filter(is_visible=True).all()
