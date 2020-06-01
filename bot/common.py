@@ -28,13 +28,16 @@ def send_telegram_message(
 
     log.info(f"Telegram: sending the message: {text}")
 
-    return bot.send_message(
-        chat_id=chat.id,
-        text=text,
-        parse_mode=parse_mode,
-        disable_web_page_preview=disable_preview,
-        **kwargs
-    )
+    try:
+        return bot.send_message(
+            chat_id=chat.id,
+            text=text,
+            parse_mode=parse_mode,
+            disable_web_page_preview=disable_preview,
+            **kwargs
+        )
+    except telegram.error.TelegramError as ex:
+        log.warning(f"Telegram error: {ex}")
 
 
 def send_telegram_image(
@@ -50,13 +53,16 @@ def send_telegram_image(
 
     log.info(f"Telegram: sending the image: {image_url} {text}")
 
-    return bot.send_photo(
-        chat_id=chat.id,
-        photo=image_url,
-        caption=text[:1024],
-        parse_mode=parse_mode,
-        **kwargs
-    )
+    try:
+        return bot.send_photo(
+            chat_id=chat.id,
+            photo=image_url,
+            caption=text[:1024],
+            parse_mode=parse_mode,
+            **kwargs
+        )
+    except telegram.error.TelegramError as ex:
+        log.warning(f"Telegram error: {ex}")
 
 
 def remove_action_buttons(chat: Chat, message_id: str, **kwargs):
@@ -67,7 +73,7 @@ def remove_action_buttons(chat: Chat, message_id: str, **kwargs):
             reply_markup=None,
             **kwargs
         )
-    except telegram.error.BadRequest:
+    except telegram.error.TelegramError:
         log.info("Buttons are already removed. Skipping")
         return None
 

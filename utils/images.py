@@ -19,14 +19,20 @@ def upload_image_bytes(
     if resize:
         try:
             image = Image.open(data)
-        except OSError:
-            log.warning(f"Bad image data")
+        except Exception as ex:
+            log.warning(f"Bad image data: {ex}")
             return None
 
         image.thumbnail(resize)
         saved_image = io.BytesIO()
         saved_image.name = filename
-        image.save(saved_image)
+
+        try:
+            image.save(saved_image)
+        except OSError:
+            log.warning(f"Error saving image data: {ex}")
+            return None
+
         data = saved_image.getvalue()
 
     upload_params = {
@@ -53,7 +59,7 @@ def upload_image_bytes(
         try:
             response_data = uploaded.json()
         except Exception as ex:
-            log.exception(f"Image upload error: {ex} ({uploaded.content})")
+            log.error(f"Image upload error: {ex} ({uploaded.content})")
             return None
 
         return response_data["uploaded"][0]
