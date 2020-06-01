@@ -47,9 +47,9 @@ def auth_required(view):
     return wrapper
 
 
-def check_user_permissions(request):
+def check_user_permissions(request, **context):
     if not request.me:
-        return render(request, "auth/access_denied.html")
+        return render(request, "auth/access_denied.html", context)
 
     # FIXME: really bad IF, fix it
     if not request.path.startswith("/profile/") \

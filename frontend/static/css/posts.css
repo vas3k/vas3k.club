@@ -344,12 +344,13 @@
 
     .text-body code {
         font-family: Ubuntu, monospace;
+        display: block;
+        padding: 20px 25px;
     }
 
     .text-body pre {
         display: block;
-        padding: 20px 30px;
-        white-space: pre;
+        white-space: pre-wrap;
         background-color: var(--opposite-block-bg-color);
         color: var(--opposite-text-color);
         border-radius: 20px;

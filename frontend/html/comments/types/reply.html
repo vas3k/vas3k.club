@@ -32,7 +32,7 @@
         {% if comment.author == me and comment.is_editable or me.is_moderator %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
             {% if not comment.is_deleted %}
-                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-trash"></i></a>
+                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
             {% endif %}
         {% endif %}
     </div>

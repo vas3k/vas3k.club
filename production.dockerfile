@@ -20,10 +20,11 @@ RUN apt-get update \
 
 WORKDIR /app
 
-ADD . /app
-
-COPY ./vas3k_club.env /app/club/.env
-
+# install requirements into a separate layer
+COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
-
 RUN python -c "import nltk; nltk.download('punkt')"
+
+# copy the code
+COPY . /app
+COPY ./vas3k_club.env /app/club/.env

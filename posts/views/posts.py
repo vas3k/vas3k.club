@@ -19,7 +19,7 @@ def show_post(request, post_type, post_slug):
 
     # don't show private posts into public
     if not post.is_public:
-        access_denied = check_user_permissions(request)
+        access_denied = check_user_permissions(request, post=post)
         if access_denied:
             return access_denied
 

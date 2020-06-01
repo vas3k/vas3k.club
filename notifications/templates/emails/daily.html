@@ -119,11 +119,9 @@
                     {% endif %}
                 </h3>
 
-                {% if forloop.counter <= 3 %}
-                    <p>
-                        {{ post.description | nl_to_p }}
-                    </p>
-                {% endif %}
+                <p>
+                    {{ post.description | nl_to_p }}
+                </p>
 
                 <span class="post-footer">
                     <a href="{{ settings.APP_HOST }}{% url "profile" post.author.slug %}" style="text-decoration: none; color: #999;">

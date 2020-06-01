@@ -3,6 +3,7 @@ version: "3.7"
 services:
   club_app: &app
     build:
+      dockerfile: dev.dockerfile
       context: .
     command: make docker-run-dev
     container_name: club_app
@@ -28,6 +29,7 @@ services:
 
   queue:
     build:
+      dockerfile: dev.dockerfile
       context: .
     command: make run-queue
     environment:

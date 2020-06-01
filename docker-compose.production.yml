@@ -3,14 +3,14 @@ version: "3.7"
 services:
   club_app: &app
     build:
-      dockerfile: Dockerfile-production
+      dockerfile: production.dockerfile
       context: .
     command: make docker-run-production
     container_name: club_app
     environment:
       - PYTHONUNBUFFERED=1
       - DEBUG=false
-      - APP_HOST=https://dev.vas3k.club
+      - APP_HOST=https://vas3k.club
       - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
@@ -48,7 +48,7 @@ services:
     volumes:
       - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
     ports:
-      - "5433:5432"
+      - "54333:5432"
 
   redis:
     image: redis:alpine

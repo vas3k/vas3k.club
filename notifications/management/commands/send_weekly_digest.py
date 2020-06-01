@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 text=digest_html,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
-                is_public=False,
+                is_public=True,
             )
         )
 

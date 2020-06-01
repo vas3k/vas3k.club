@@ -35,12 +35,12 @@
         <h2>🤘 Новенькие</h2>
 
         <p class="center editorial">
-            На этой неделе у нас <strong>+{{ newbie_count }} {{ newbie_count|rupluralize:"новый член,новых члена,новых членов" }} Клуба</strong>.
+            На этой неделе у нас <strong><a href="{% url "people" %}">+{{ newbie_count }} {{ newbie_count|rupluralize:"новый член,новых члена,новых членов" }} Клуба</a></strong>.
             Вот самые интересные из них, набравшие больше всего плюсиков за своё #intro.
             Не стесняйтесь писать им комменты и расспрашивать за жизнь. Для того мы здесь и собрались!
         </p>
 
-        {% for intro in intros|slice:":3" %}
+        {% for intro in intros|slice:":5" %}
             <article class="block user">
                 <div class="user-avatar">
                     <img src="{{ intro.author.get_avatar }}" alt="" width="50" height="50">
@@ -60,20 +60,10 @@
                 </div>
             </article>
         {% endfor %}
-
-{#   TODO: temporarily disabled due to large number of new users     #}
-{#        {% if intros|slice:"3:" %}#}
-{#            <p style="editorial">#}
-{#                Ну и не забываем про других тоже:#}
-{#                {% for intro in intros|slice:"3:" %}#}
-{#                    <a href="{% url "profile" intro.author.slug %}">{{ intro.author.slug }}</a>{% if not forloop.last %}, {% endif %}#}
-{#                {% endfor %}#}
-{#            </p>#}
-{#        {% endif %}#}
     {% endif %}
 
     {% if featured_post %}
-        <h2>🚀 Главная тема</h2>
+        <h2>🚀 Тема недели</h2>
 
         <article class="block post">
             <h3>
@@ -97,7 +87,7 @@
     {% endif %}
 
     {% if posts %}
-        <h2>😎 Лучшие посты недели</h2>
+        <h2>😎 Лучшие посты</h2>
 
         <p class="center editorial">
             Всего за неделю написали <strong><a href="{% url "feed_ordering" "all" "top_week" %}">{{ post_count }} {{ post_count | rupluralize:"пост,поста,постов" }}</a></strong>.
@@ -124,11 +114,9 @@
                     {% endif %}
                 </h3>
 
-                {% if forloop.counter <= 3 %}
-                    <p>
-                        {{ post.description | nl_to_p }}
-                    </p>
-                {% endif %}
+                <p>
+                    {{ post.description | nl_to_p }}
+                </p>
 
                 <span class="post-footer">
                     <a href="{{ settings.APP_HOST }}{% url "profile" post.author.slug %}" style="text-decoration: none; color: #999;">

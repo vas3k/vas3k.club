@@ -1,4 +1,28 @@
 {% extends "layout.html" %}
+{% load static %}
+{% load posts %}
+
+{% block title %}
+    {% if post %}
+        {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %} [{{ post.topic.name }}]{% endif %} — {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block og_tags %}
+    {% if post %}
+        <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
+        <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+        <meta property="og:url" content="{{ settings.APP_HOST }}">
+        <meta property="og:type" content="website" />
+        <meta property="og:description" content="{{ post.description | truncatechars:100 }}">
+        <meta property="og:image" content="{{ post | any_image }}">
+
+        <meta name="twitter:card" content="summary_image">
+        <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
+        <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
+        <meta name="twitter:image" content="{{ post | any_image }}">
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="block access-denied">
@@ -11,7 +35,7 @@
 
         <p>
             <br>
-            <a href="{% url "index" %}#join" class="button">Вступить в Клуб</a>&nbsp;&nbsp;или&nbsp;&nbsp;<a href="{% url "login" %}">войти</a>
+            <a href="{% url "login" %}" class="button">Войти</a>&nbsp;&nbsp;или&nbsp;&nbsp;<a href="{% url "index" %}#join" class="button">Вступить в Клуб</a>
         </p>
     </div>
 {% endblock %}

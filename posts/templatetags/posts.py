@@ -8,6 +8,7 @@ from django.utils.safestring import mark_safe
 from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
 from common.regexp import FAVICON_RE
 from common.markdown.markdown import markdown_text, markdown_plain
+from posts.helpers import extract_any_image
 from posts.models import Post
 
 register = template.Library()
@@ -88,3 +89,8 @@ def link_summary(post):
 @register.filter
 def can_upvote(user, post_or_comment):
     return bool(user and user != post_or_comment.author)
+
+
+@register.filter
+def any_image(post, default="/static/images/share.png"):
+    return extract_any_image(post) or default
