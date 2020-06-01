@@ -14,16 +14,16 @@ RUN apt-get update \
       libc-dev \
       libpq-dev \
       gdal-bin \
-      python3-gdal \
       libgdal-dev \
       make \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-ADD . /app
+# install requirements into a separate layer
+COPY ./requirements.txt /app/requirements.txt
+RUN pip install -r requirements.txt
+RUN python -c "import nltk; nltk.download('punkt')"
 
-RUN pip install --no-cache-dir pipenv \
-    && pipenv install --dev \
-    && pip install --no-cache-dir nltk \
-    && python -c "import nltk; nltk.download('punkt')"
+# copy the code
+COPY . /app
