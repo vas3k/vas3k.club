@@ -13,11 +13,7 @@
                 {% endif %}
             </div>
             <div class="post-title">
-                {% if post.type == "intro" %}
-                    #intro: {{ post.author.full_name | rutypography }}
-                {% else %}
-                    {{ post.title | rutypography }}
-                {% endif %}
+                {% if post.prefix %}{{ post.prefix }}: {% endif %}{{ post.author.full_name | rutypography }}
 
                 {% if post.author == me or me.is_moderator %}
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>

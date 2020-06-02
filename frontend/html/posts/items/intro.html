@@ -8,7 +8,8 @@
     <div class="feed-post-header">
         <div class="feed-post-title">
             <a href="{% url "show_post" post.type post.slug %}">
-                <span>#intro: </span><span class="user-name {% if user.is_banned %}user-name-is-banned{% endif %}">{{ post.author.full_name }}</span>{% if me %}<span class="user-position">, {{ post.author.position }}</span>{% endif %}
+                <span>{{ post.prefix }}:</span>
+                <span class="user-name {% if user.is_banned %}user-name-is-banned{% endif %}">{{ post.author.full_name }}</span>{% if me %}<span class="user-position">, {{ post.author.position }}</span>{% endif %}
             </a>
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
