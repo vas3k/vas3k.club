@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from club.exceptions import AccessDenied
 from common.data.hats import HATS
 from users.models.badges import UserAchievement, Achievement
+from users.models.user import User
 
 
 def do_user_admin_actions(request, user, data):
@@ -57,7 +58,7 @@ def do_user_admin_actions(request, user, data):
 
     # Unmoderate
     if data["is_rejected"]:
-        user.is_profile_rejected = True
+        user.moderation_status = User.MODERATION_STATUS_REJECTED
         user.save()
 
     return redirect("profile", user.slug)

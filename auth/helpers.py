@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 
 from auth.models import Session
 from club.exceptions import AccessDenied
+from users.models.user import User
 
 log = logging.getLogger(__name__)
 
@@ -58,23 +59,23 @@ def check_user_permissions(request, **context):
             and not request.path.startswith("/telegram/"):
 
         if request.me.membership_expires_at < datetime.utcnow():
-            log.info("User membership expired. Redirecting")
+            log.info("User membership expired. Redirecting to payments page...")
             return redirect("membership_expired")
 
         if request.me.is_banned:
-            log.info("User banned. Redirecting")
+            log.info("User was banned. Redirecting to 'banned' page...")
             return redirect("banned")
 
-        if not request.me.is_profile_complete:
-            log.info("User profile is not completed. Redirecting")
+        if request.me.moderation_status == User.MODERATION_STATUS_INTRO:
+            log.info("New user. Redirecting to intro...")
             return redirect("intro")
 
-        if request.me.is_profile_rejected:
-            log.info("User rejected. Redirecting")
+        if request.me.moderation_status == User.MODERATION_STATUS_REJECTED:
+            log.info("Rejected user. Redirecting to 'rejected' page...")
             return redirect("rejected")
 
-        if not request.me.is_profile_reviewed:
-            log.info("User on review. Redirecting")
+        if request.me.moderation_status == User.MODERATION_STATUS_ON_REVIEW:
+            log.info("User on review. Redirecting to 'on_review' page...")
             return redirect("on_review")
 
     return None

@@ -65,7 +65,7 @@ def is_club_user(telegram_user_id):
     club_users = cache.get("bot:telegram_user_ids")
     if not club_users:
         club_users = User.objects\
-            .filter(telegram_id__isnull=False, is_profile_reviewed=True, is_profile_rejected=False)\
+            .filter(telegram_id__isnull=False, moderation_status=User.MODERATION_STATUS_APPROVED)\
             .values_list("telegram_id", flat=True)
         cache.set("bot:telegram_user_ids", list(club_users), 5 * 60)
     return str(telegram_user_id) in set(club_users)

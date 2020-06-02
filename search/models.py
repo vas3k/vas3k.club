@@ -102,7 +102,7 @@ class SearchIndex(models.Model):
             .values_list("vector", flat=True)\
             .first()
 
-        if user.is_profile_complete:
+        if user.moderation_status == User.MODERATION_STATUS_APPROVED:
             SearchIndex.objects.update_or_create(
                 profile=user,
                 defaults=dict(
@@ -115,7 +115,7 @@ class SearchIndex(models.Model):
 
     @classmethod
     def update_user_tags(cls, user):
-        if user.is_profile_complete:
+        if user.moderation_status == User.MODERATION_STATUS_APPROVED:
             SearchIndex.objects.filter(profile=user).update(
                 tags=list(UserTag.objects.filter(user=user).values_list("tag", flat=True)),
             )

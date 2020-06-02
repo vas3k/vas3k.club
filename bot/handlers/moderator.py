@@ -106,12 +106,13 @@ def unpublish_post(post_id: str, update: Update) -> (str, bool):
 
 def approve_user_profile(user_id: str, update: Update) -> (str, bool):
     user = User.objects.get(id=user_id)
-    if user.is_profile_reviewed and user.is_profile_complete:
+    if user.moderation_status == User.MODERATION_STATUS_APPROVED:
         return f"Пользователь «{user.full_name}» уже одобрен", True
 
-    user.is_profile_complete = True
-    user.is_profile_reviewed = True
-    user.is_profile_rejected = False
+    if user.moderation_status == User.MODERATION_STATUS_REJECTED:
+        return f"Пользователь «{user.full_name}» уже отклонен", True
+
+    user.moderation_status = User.MODERATION_STATUS_APPROVED
     user.save()
 
     # make intro visible
@@ -129,12 +130,10 @@ def approve_user_profile(user_id: str, update: Update) -> (str, bool):
 
 def reject_user_profile(user_id: str, update: Update) -> (str, bool):
     user = User.objects.get(id=user_id)
-    if user.is_profile_rejected and user.is_profile_complete:
+    if user.moderation_status == User.MODERATION_STATUS_REJECTED:
         return f"Пользователь «{user.full_name}» уже был отклонен и пошел все переделывать", True
 
-    user.is_profile_complete = True
-    user.is_profile_reviewed = True
-    user.is_profile_rejected = True
+    user.moderation_status = User.MODERATION_STATUS_REJECTED
     user.save()
 
     notify_user_profile_rejected(user)

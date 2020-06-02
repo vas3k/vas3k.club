@@ -56,9 +56,7 @@ def debug_dev_login(request):
             created_at=datetime.utcnow(),
             updated_at=datetime.utcnow(),
             is_email_verified=True,
-            is_profile_complete=True,
-            is_profile_reviewed=True,
-            is_profile_rejected=False,
+            moderation_status=User.MODERATION_STATUS_APPROVED,
             roles=["god"],
         ),
     )

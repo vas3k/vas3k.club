@@ -195,9 +195,7 @@ def weekly_digest(request):
 
     newbie_count = User.objects\
         .filter(
-            is_profile_complete=True,
-            is_profile_reviewed=True,
-            is_profile_rejected=False,
+            moderation_status=User.MODERATION_STATUS_APPROVED,
             **created_at_condition
         )\
         .count()

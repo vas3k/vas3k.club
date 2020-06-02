@@ -88,7 +88,6 @@ def patreon_oauth_callback(request):
             created_at=now,
             updated_at=now,
             is_email_verified=False,
-            is_profile_complete=False,  # redirect new users to an intro page
         ),
     )
 

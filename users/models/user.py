@@ -17,15 +17,6 @@ class User(models.Model, ModelDiffMixin):
         (MEMBERSHIP_PLATFORM_PATREON, "Patreon"),
     ]
 
-    MEMBERSHIP_TYPE_NORMAL = "normal"
-    MEMBERSHIP_TYPE_PRO = "pro"
-    MEMBERSHIP_TYPE_LIFETIME = "lifetime"
-    MEMBERSHIP_TYPES = [
-        (MEMBERSHIP_TYPE_NORMAL, "Normal"),
-        (MEMBERSHIP_TYPE_PRO, "Pro"),
-        (MEMBERSHIP_TYPE_LIFETIME, "Lifetime"),
-    ]
-
     EMAIL_DIGEST_TYPE_NOPE = "nope"
     EMAIL_DIGEST_TYPE_DAILY = "daily"
     EMAIL_DIGEST_TYPE_WEEKLY = "weekly"
@@ -35,11 +26,24 @@ class User(models.Model, ModelDiffMixin):
         (EMAIL_DIGEST_TYPE_WEEKLY, "Weekly"),
     ]
 
+    ROLE_CURATOR = "curator"
     ROLE_MODERATOR = "moderator"
     ROLE_GOD = "god"
     ROLES = [
+        (ROLE_CURATOR, "Куратор"),
         (ROLE_MODERATOR, "Модератор"),
-        (ROLE_GOD, "Режим Бога")
+        (ROLE_GOD, "Бог")
+    ]
+
+    MODERATION_STATUS_INTRO = "intro"
+    MODERATION_STATUS_ON_REVIEW = "on_review"
+    MODERATION_STATUS_REJECTED = "rejected"
+    MODERATION_STATUS_APPROVED = "approved"
+    MODERATION_STATUSES = [
+        (MODERATION_STATUS_INTRO, MODERATION_STATUS_INTRO),
+        (MODERATION_STATUS_ON_REVIEW, MODERATION_STATUS_ON_REVIEW),
+        (MODERATION_STATUS_REJECTED, MODERATION_STATUS_REJECTED),
+        (MODERATION_STATUS_APPROVED, MODERATION_STATUS_APPROVED),
     ]
 
     DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
@@ -71,25 +75,30 @@ class User(models.Model, ModelDiffMixin):
 
     membership_started_at = models.DateTimeField(null=False)
     membership_expires_at = models.DateTimeField(null=False)
-    membership_platform_type = models.CharField(max_length=128, choices=MEMBERSHIP_PLATFORMS,
-                                                default=MEMBERSHIP_PLATFORM_PATREON, null=False)
+    membership_platform_type = models.CharField(
+        max_length=128, choices=MEMBERSHIP_PLATFORMS,
+        default=MEMBERSHIP_PLATFORM_PATREON, null=False
+    )
     membership_platform_id = models.CharField(max_length=128, unique=True)
     membership_platform_data = JSONField(null=True)
-    membership_type = models.CharField(max_length=16, choices=MEMBERSHIP_TYPES,
-                                       default=MEMBERSHIP_TYPE_NORMAL, null=False)
 
-    email_digest_type = models.CharField(max_length=16, choices=EMAIL_DIGEST_TYPES,
-                                         default=EMAIL_DIGEST_TYPE_WEEKLY, null=False)
+    email_digest_type = models.CharField(
+        max_length=16, choices=EMAIL_DIGEST_TYPES,
+        default=EMAIL_DIGEST_TYPE_WEEKLY, null=False
+    )
 
     telegram_id = models.CharField(max_length=128, null=True)
     telegram_data = JSONField(null=True)
 
     is_email_verified = models.BooleanField(default=False)
     is_email_unsubscribed = models.BooleanField(default=False)
-    is_profile_complete = models.BooleanField(default=False)
-    is_profile_reviewed = models.BooleanField(default=False)
-    is_profile_rejected = models.BooleanField(default=False)
     is_banned_until = models.DateTimeField(null=True)
+
+    moderation_status = models.CharField(
+        max_length=32, choices=MODERATION_STATUSES,
+        default=MODERATION_STATUS_INTRO, null=False,
+        db_index=True
+    )
 
     roles = ArrayField(models.CharField(max_length=32, choices=ROLES), default=list, null=False)
 
@@ -140,15 +149,10 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def is_club_member(self):
-        return self.is_profile_complete \
-               and not self.is_banned \
-               and self.is_profile_reviewed \
-               and not self.is_profile_rejected
+        return self.moderation_status == User.MODERATION_STATUS_APPROVED and not self.is_banned
 
     @classmethod
     def registered_members(cls):
         return cls.objects.filter(
-            is_profile_complete=True,
-            is_profile_reviewed=True,
-            is_profile_rejected=False,
+            moderation_status=User.MODERATION_STATUS_APPROVED
         )

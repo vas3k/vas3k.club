@@ -24,7 +24,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Indexing post: {post.slug}")
             SearchIndex.update_post_index(post)
 
-        for user in User.objects.filter(is_profile_complete=True, is_profile_reviewed=True, is_profile_rejected=False):
+        for user in User.objects.filter(moderation_status=User.MODERATION_STATUS_APPROVED):
             self.stdout.write(f"Indexing user: {user.slug}")
             SearchIndex.update_user_index(user)
             SearchIndex.update_user_tags(user)

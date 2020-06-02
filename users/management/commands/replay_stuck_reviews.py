@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "Fix broken or stuck review messages"
 
     def handle(self, *args, **options):
-        users = User.objects.filter(is_profile_complete=True, is_profile_reviewed=False, is_profile_rejected=False)
+        users = User.objects.filter(moderation_status=User.MODERATION_STATUS_ON_REVIEW)
 
         for user in users:
             intro = Post.get_user_intro(user)

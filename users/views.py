@@ -28,11 +28,7 @@ from utils.models import top, group_by
 
 @auth_required
 def intro(request):
-    if (
-        request.me.is_profile_complete
-        and request.me.is_profile_reviewed
-        and not request.me.is_profile_rejected
-    ):
+    if request.me.moderation_status == User.MODERATION_STATUS_APPROVED:
         return redirect("profile", request.me.slug)
 
     if request.method == "POST":
@@ -41,9 +37,7 @@ def intro(request):
             user = form.save(commit=False)
 
             # send to moderation
-            user.is_profile_complete = True
-            user.is_profile_reviewed = False
-            user.is_profile_rejected = False
+            user.moderation_status = User.MODERATION_STATUS_ON_REVIEW
             user.save()
 
             # create intro post
@@ -76,7 +70,7 @@ def profile(request, user_slug):
 
     if not request.me.is_moderator:
         # hide unverified users
-        if not user.is_profile_complete or not user.is_profile_complete or user.is_profile_rejected:
+        if user.moderation_status != User.MODERATION_STATUS_APPROVED:
             raise Http404()
 
     if user.id == request.me.id:
@@ -246,7 +240,7 @@ def delete_expertise(request, expertise):
 
 @auth_required
 def on_review(request):
-    if request.me.is_profile_reviewed:
+    if request.me.moderation_status == User.MODERATION_STATUS_APPROVED:
         return redirect("profile", request.me.slug)
     return render(request, "users/messages/on_review.html")
 
