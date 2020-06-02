@@ -947,6 +947,7 @@
             border-radius: 50%;
             background-color: var(--block-bg-color);
             box-shadow: var(--block-shadow);
+            color: var(--text-color);
         }
 
         @media only screen and (max-width : 570px) {
