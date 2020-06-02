@@ -21,8 +21,8 @@ class Geo(models.Model):
         ordering = ["id"]
 
     def to_json_coordinates(self, randomize=True):
-        latitude = self.latitude + (random.uniform(-0.5, 0.5) if randomize else 0)
-        longitude = self.longitude + (random.uniform(-0.5, 0.5) if randomize else 0)
+        latitude = self.latitude + (random.uniform(-0.12, 0.12) if randomize else 0)
+        longitude = self.longitude + (random.uniform(-0.25, 0.25) if randomize else 0)
         return [longitude, latitude]
 
     @classmethod
