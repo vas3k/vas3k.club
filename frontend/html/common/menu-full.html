@@ -6,10 +6,10 @@
         </a>
     </div>
     <div class="menu-center">
-        <div class="menu-search hide-on-iphone">
+        <div class="menu-search">
             <form action="{% url "search" %}">
                 <label for="menu-search-input" class="menu-search-label {% if query %}menu-search-label-is-active{% endif %}"><i class="fas fa-search"></i></label>
-                <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}">
+                <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}" placeholder="Поиск">
                 <input type="submit" value="&rarr;" style="position: absolute; top: 0; left: -9999px;">
             </form>
         </div>
@@ -17,7 +17,7 @@
     <div class="menu-right">
         {% if me %}
             {% if me.is_club_member %}
-                <a href="{% url "compose" %}" class="button compose-button hide-on-iphone"><i class="fas fa-plus"></i>&nbsp;&nbsp;Пиши</a>
+                <a href="{% url "compose" %}" class="button compose-button"><i class="fas fa-plus"></i>&nbsp;&nbsp;Пиши</a>
             {% endif %}
             <a href="{% url "profile" me.slug %}" class="avatar menu-avatar" style="background-image: url('{{ me.get_avatar }}');"></a>
         {% else %}

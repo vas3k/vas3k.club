@@ -46,6 +46,10 @@
         height: 40px;
     }
 
+        .mobile-menu-opened .menu-avatar {
+            display: none;
+        }
+
     .menu-search {
         white-space: nowrap;
     }
@@ -76,6 +80,20 @@
             font-size: 26px;
             transform: none !important;
             color: var(--text-color) !important;
+        }
+
+        .menu-search-input::placeholder {
+            visibility: hidden;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .menu-search-input {
+                font-size: 20px;
+            }
+
+            .menu-search-input::placeholder {
+                visibility: visible;
+            }
         }
 
 .content {
@@ -898,6 +916,59 @@
         padding-right: 30px;
         font-size: 110%;
     }
+        @media only screen and (max-width : 570px) {
+            .feed-sidebar {
+                transform: translate(-100%);
+                position: absolute;
+                top: 90px;
+                left: 0;
+                right: 0;
+                background: var(--bg-color);
+                z-index: 2;
+                min-height: calc(100% - 120px);
+            }
+
+            .mobile-menu-opened .feed-sidebar {
+                transform: translate(0);
+            }
+        }
+
+        .feed-sidebar-toggle-wrapper {
+            display: none;
+        }
+
+        .feed-sidebar-toggler {
+            width: 40px;
+            height: 40px;
+            line-height: 35px;
+            text-align: center;
+            padding: 0;
+            outline: none;
+            border-radius: 50%;
+            background-color: var(--block-bg-color);
+            box-shadow: var(--block-shadow);
+            color: var(--text-color);
+        }
+
+        @media only screen and (max-width : 570px) {
+            .feed-sidebar-toggle-wrapper {
+                display: block;
+            }
+            .feed-sidebar-toggler {
+                display: inline-block;
+                position: fixed;
+                left: 20px;
+                bottom: 20px;
+                font-size: 35px;
+                z-index: 5;
+            }
+
+            .mobile-menu-opened .feed-sidebar-toggler {
+                left: auto;
+                right: 10px
+            }
+        }
+
 
         .feed-sidebar-block {
             padding-bottom: 20px;
@@ -906,6 +977,12 @@
         .feed-sidebar-header {
             font-size: 110%;
             font-weight: 600;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .feed-sidebar-header {
+                padding: 5px 10px;
+            }
         }
 
         .feed-sidebar-list {
@@ -1329,8 +1406,11 @@
 
     @media only screen and (max-width : 570px) {
         .compose-button {
-            margin-right: 10px;
-            padding: 10px 15px;
+            display: none;
+        }
+        .mobile-menu-opened .compose-button {
+            display: inline-block;
+            margin-right: 0;
         }
     }
 

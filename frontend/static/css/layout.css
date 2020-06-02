@@ -14,10 +14,33 @@
 
     .menu-full {
         grid-template-columns: 230px auto 230px;
+        position: relative;
     }
 
         .menu-left {
             text-align: left;
+            transition: margin-left .3s ease;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .menu-left {
+                flex-grow: 2;
+            }
+
+            .menu-center {
+                order: 3;
+                flex-grow: 2;
+                display: none;
+            }
+
+            .mobile-menu-opened .menu-center {
+                display: block;
+                position: absolute;
+                left: 20px;
+                right: 20px;
+                top: 100%;
+                z-index: 3;
+            }
         }
 
         .menu-center {
@@ -30,7 +53,10 @@
 
         @media only screen and (max-width : 570px) {
             .menu-full {
-                grid-template-columns: auto min-content auto;
+                grid-template-columns: none;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
             }
         }
 
