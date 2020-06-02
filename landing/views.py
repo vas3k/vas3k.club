@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render
 
+from auth.helpers import auth_required
 from club.exceptions import AccessDenied
 from landing.forms import GodSettingsEditForm
 from landing.models import GodSettings
@@ -26,6 +27,7 @@ def docs(request, doc_slug):
     return render(request, f"docs/{doc_slug}.html")
 
 
+@auth_required
 def god_settings(request):
     if not request.me.is_god:
         raise AccessDenied()
