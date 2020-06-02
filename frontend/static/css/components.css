@@ -82,9 +82,17 @@
             color: var(--text-color) !important;
         }
 
+        .menu-search-input::placeholder {
+            visibility: hidden;
+        }
+
         @media only screen and (max-width : 570px) {
             .menu-search-input {
                 font-size: 20px;
+            }
+
+            .menu-search-input::placeholder {
+                visibility: visible;
             }
         }
 
@@ -932,7 +940,7 @@
         .feed-sidebar-toggler {
             width: 40px;
             height: 40px;
-            line-height: 40px;
+            line-height: 35px;
             text-align: center;
             padding: 0;
             outline: none;
@@ -950,7 +958,7 @@
                 position: fixed;
                 left: 20px;
                 bottom: 20px;
-                font-size: 22px;
+                font-size: 35px;
                 z-index: 5;
             }
 
