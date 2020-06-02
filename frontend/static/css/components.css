@@ -926,6 +926,7 @@
                 background: var(--bg-color);
                 z-index: 2;
                 min-height: calc(100% - 120px);
+                padding: 30px 14px;
             }
 
             .mobile-menu-opened .feed-sidebar {
@@ -946,7 +947,7 @@
             outline: none;
             border-radius: 50%;
             background-color: var(--block-bg-color);
-            box-shadow: var(--block-shadow);
+            box-shadow: 10px 15px 40px rgba(83, 91, 110, 0.3);
             color: var(--text-color);
         }
 
@@ -954,6 +955,7 @@
             .feed-sidebar-toggle-wrapper {
                 display: block;
             }
+
             .feed-sidebar-toggler {
                 display: inline-block;
                 position: fixed;
