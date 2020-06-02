@@ -2,7 +2,7 @@
     <span
         class="feed-sidebar-toggler"
         @click.prevent="toggle"
-    >{{ isShown ? "×" : "&#9776;"}}</span>
+    >{{ isShown ? "&#8249;" : "&#8250;"}}</span>
 </template>
 
 <script>
