@@ -52,13 +52,11 @@ def refresh_auth_data(refresh_token: str) -> dict:
             },
         )
     except requests.exceptions.RequestException as ex:
-        log.exception(f"Patreon error on refreshing token: {ex}")
+        log.warning(f"Patreon error on refreshing token: {ex}")
         raise PatreonException(ex)
 
     if response.status_code >= 400:
-        log.error(
-            f"Patreon error on refreshing token {response.status_code}: {response.text}"
-        )
+        log.warning(f"Patreon error on refreshing token {response.status_code}: {response.text}")
         raise PatreonException(response.text)
 
     try:
