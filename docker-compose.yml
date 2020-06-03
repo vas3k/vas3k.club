@@ -31,7 +31,7 @@ services:
     build:
       dockerfile: dev.dockerfile
       context: .
-    command: make run-queue
+    command: make docker-run-queue
     environment:
       - DEBUG=true
       - PYTHONUNBUFFERED=1
@@ -70,10 +70,3 @@ services:
     volumes:
       - .:/app:delegated
     working_dir: /app/frontend
-
-  migrate_and_init:
-    <<: *app
-    container_name: club_migrate_and_init
-    restart: "no"
-    ports: []
-    command: make migrate
