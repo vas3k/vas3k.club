@@ -3,29 +3,28 @@ name: check_pr
 on: [pull_request]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
 
-# Disabled due errors with gdal installation
-#  lint:
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    - uses: actions/checkout@master
-#    - uses: actions/setup-python@v2
-#      with:
-#        python-version: '3.8'
-#        architecture: 'x64'
-#    - name: Install requirements
-#      run: |
-#        pip install --no-cache-dir pipenv
-#        pipenv install --dev
-#    - name: run lint
-#      run: make test-ci
-#      # continue-on-error: true
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+        architecture: 'x64'
+    - name: Install requirements
+      run: |
+        pip install --no-cache-dir flake8
+    - name: run flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings.
+        flake8 . --count --exit-zero --statistics
+
 
   dockerize:
     runs-on: ubuntu-latest
-#    needs: lint
-
     steps:
       - uses: actions/checkout@master
       - name: Build the docker-compose stack
@@ -36,7 +35,7 @@ jobs:
           time: '20s'
       - name: Check db migrate on container
         run: |
-          docker-compose exec -T club_app make migrate
+          docker-compose exec -T club_app make docker-migrate
       - name: Check build frontend on container
         run: |
           docker-compose exec -T webpack npm run build
