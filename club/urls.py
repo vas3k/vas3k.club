@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 from django.contrib.sitemaps.views import sitemap
 
 from auth.helpers import auth_switch
-from auth.views.auth import login, logout, debug_dev_login
+from auth.views.auth import login, logout, debug_dev_login, debug_random_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, pin_comment
@@ -80,6 +80,7 @@ urlpatterns = [
 
     path("godmode/", god_settings, name="god_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
+    path("godmode/random_login/", debug_random_login, name="debug_random_login"),
 
     path("search/", search, name="search"),
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
