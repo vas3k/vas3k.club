@@ -149,7 +149,7 @@ def daily_digest(request, user_slug):
     # Mentions
     mentions = Comment.visible_objects() \
         .filter(**created_at_condition) \
-        .filter(text__contains=f"@{user.slug}", is_deleted=False)\
+        .filter(text__regex=fr"@\y{user.slug}\y", is_deleted=False)\
         .exclude(reply_to__author=user)\
         .order_by("-upvotes")[:5]
 
