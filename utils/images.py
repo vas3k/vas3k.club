@@ -29,7 +29,7 @@ def upload_image_bytes(
 
         try:
             image.save(saved_image)
-        except OSError:
+        except OSError as ex:
             log.warning(f"Error saving image data: {ex}")
             return None
 
