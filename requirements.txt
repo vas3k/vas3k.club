@@ -13,6 +13,7 @@ cryptography==2.8
 cssselect==1.1.0
 cssutils==1.0.2
 decorator==4.4.2
+django-debug-toolbar==2.2
 django-picklefield==2.1.1
 django-q-sentry==0.1.1
 django-q[sentry]==1.2.1

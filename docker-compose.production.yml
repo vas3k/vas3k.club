@@ -30,7 +30,7 @@ services:
 
   queue:
     <<: *app
-    command: make run-queue-production
+    command: make docker-run-queue
     container_name: club_queue
     depends_on:
       - postgres
