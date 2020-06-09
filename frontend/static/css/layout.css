@@ -71,8 +71,8 @@
 }
 
 .footer {
-    display: grid;
-    grid-template-columns: auto 100px;
+    display: flex;
+    justify-content: space-between;
     margin: 0 auto;
     max-width: var(--max-content-width);
 }
