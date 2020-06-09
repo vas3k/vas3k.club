@@ -2,7 +2,7 @@ from django import forms
 
 from common.data.achievements import ACHIEVEMENTS
 from common.data.hats import HATS
-from utils.forms import ImageUploadField
+from common.forms import ImageUploadField
 
 
 class UserAdminForm(forms.Form):

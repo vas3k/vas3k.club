@@ -6,7 +6,7 @@ from common.data.countries import COUNTRIES
 from common.data.expertise import EXPERTISE
 from users.models.user import User
 from users.models.expertise import UserExpertise
-from utils.forms import ImageUploadField
+from common.forms import ImageUploadField
 
 
 class UserEditForm(ModelForm):

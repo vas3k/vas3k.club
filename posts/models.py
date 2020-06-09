@@ -12,7 +12,7 @@ from simple_history.models import HistoricalRecords
 
 from common.request import parse_ip_address, parse_useragent
 from users.models.user import User
-from utils.models import ModelDiffMixin
+from common.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 
 

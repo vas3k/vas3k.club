@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import F
 
 from users.models.geo import Geo
-from utils.models import ModelDiffMixin
+from common.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 from utils.strings import random_string
 

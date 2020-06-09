@@ -2,7 +2,7 @@ from django import forms
 
 from common.url_metadata_parser import parse_url_preview
 from posts.models import Topic, Post
-from utils.forms import ImageUploadField
+from common.forms import ImageUploadField
 
 
 class PostForm(forms.ModelForm):

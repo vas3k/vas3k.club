@@ -2,7 +2,7 @@ import io
 
 from django import forms
 
-from utils.images import upload_image_bytes
+from common.images import upload_image_bytes
 
 
 class ImageUploadField(forms.ImageField):

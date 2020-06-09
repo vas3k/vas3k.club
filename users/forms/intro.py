@@ -6,7 +6,7 @@ from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
 from users.models.user import User
-from utils.forms import ImageUploadField
+from common.forms import ImageUploadField
 
 
 class UserIntroForm(ModelForm):

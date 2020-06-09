@@ -20,10 +20,10 @@ from users.forms.intro import UserIntroForm
 from users.forms.profile import UserEditForm, ExpertiseForm, NotificationsEditForm
 from users.models.user import User
 from users.models.expertise import UserExpertise
-from users.models.achievements import UserAchievement, Achievement
+from users.models.achievements import UserAchievement
 from users.models.tags import Tag, UserTag
 from users.models.geo import Geo
-from utils.models import top, group_by
+from common.models import top, group_by
 
 
 @auth_required
@@ -253,14 +253,6 @@ def rejected(request):
 @auth_required
 def banned(request):
     return render(request, "users/messages/banned.html")
-
-
-@auth_required
-def achievements(request):
-    achievements = Achievement.objects.filter(is_visible=True)
-    return render(request, "users/achievements.html", {
-        "achievements": achievements
-    })
 
 
 @auth_required
