@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 
 from club.exceptions import AccessDenied
 from common.data.hats import HATS
-from users.models.badges import UserAchievement, Achievement
+from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
 
 

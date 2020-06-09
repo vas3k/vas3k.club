@@ -684,3 +684,8 @@
             grid-row-end: 5;
         }
     }
+
+.achievements {
+    margin: 50px auto;
+    max-width: var(--max-content-width);
+}

@@ -17,7 +17,7 @@ from posts.views.feed import feed
 from posts.sitemaps import PublicPostsSitemap
 from search.views import search
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
-    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people
+    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people, achievements
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week))"
@@ -44,6 +44,7 @@ urlpatterns = [
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
+    path("achievements/", achievements, name="achievements"),
     path("profile/tag/<slug:tag_code>/toggle/", toggle_tag, name="toggle_tag"),
     path("profile/expertise/add/", add_expertise, name="add_expertise"),
     path("profile/expertise/<slug:expertise>/delete/", delete_expertise, name="delete_expertise"),

@@ -115,6 +115,7 @@
                                 <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
                                 <span class="user-achievement-name">{{ achievement.name }}</span>
                             </span>
+                            <span class="user-achievement-popup" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>{{ achievement.description }}</span>
                         </span>
                     {% endfor %}
                 </div>

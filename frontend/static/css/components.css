@@ -125,7 +125,6 @@
     }
 
 .footer {
-    font-size: 90%;
     padding: 50px 20px 100px;
     margin-top: 200px;
 }
@@ -651,23 +650,26 @@
 
         .user-achievement {
             display: flex;
+            position: relative;
             align-items: center;
             width: 110px;
             margin: 20px;
             min-height: 170px;
             padding: 20px 20px 10px;
-            font-size: 110%;
+            font-size: 140%;
             font-weight: bold;
             text-align: center;
             text-decoration: none;
             box-shadow: var(--block-shadow);
-            background-color: var(--block-bg-color);
+            color: #FFF;
+            background-color: var(--opposite-block-bg-color);
             border-radius: var(--block-border-radius);
         }
 
             .user-achievement:hover {
                 transform: scale(1.1);
                 transition: all linear 0.1s;
+                z-index: 100;
             }
 
             .user-achievement-wrapper {
@@ -685,10 +687,29 @@
 
             .user-achievement-name {
                 display: block;
-                padding-top: 15px;
+                padding-top: 10px;
                 padding-bottom: 10px;
                 text-align: center;
+                line-height: 1.3em;
             }
+
+            .user-achievement-popup {
+                position: absolute;
+                top: 90%;
+                left: 50%;
+                width: 300px;
+                transform: translateX(-50%);
+                padding: 20px 10px;
+                border-radius: var(--block-border-radius);
+                background-color: var(--block-bg-color);
+                display: none;
+                font-size: 80% !important;
+            }
+
+                .user-achievement:hover .user-achievement-popup {
+                    display: block;
+                }
+
 
     .profile-expertise {
         padding-top: 30px;
