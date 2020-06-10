@@ -1505,9 +1505,8 @@
     .compose-form-title input {
         text-align: center;
         font-size: 150%;
-        height: 2.4em;
         font-weight: 600;
-        padding: 20px 20px;
+        padding: 15px;
     }
 
     .compose-form-text textarea {
