@@ -1,7 +1,7 @@
 ACHIEVEMENTS = [
     ("old", {
         "name": "Олды здесь",
-        "description": "Заслуженный ранний член Клуба",
+        "description": "Почётный ранний член Клуба",
         "image": "https://i.vas3k.club/3bl.png",
         "style": "color: #FFF; background-color: #65c3ba;",
     }),
