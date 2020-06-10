@@ -895,6 +895,23 @@
                 text-overflow: ellipsis;
             }
 
+.achievements {
+
+}
+
+    .achievements-header {
+        text-align: center;
+        font-size: 250%;
+        font-weight: 700;
+    }
+
+    .achievements-description {
+        max-width: 700px;
+        font-size: 120%;
+        margin: 30px auto;
+
+    }
+
 .search {
     padding: 50px 20px 0;
 }

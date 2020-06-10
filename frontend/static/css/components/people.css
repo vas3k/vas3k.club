@@ -133,8 +133,11 @@
         font-size: 190%;
         font-weight: 500;
         padding-bottom: 20px;
-        text-decoration: none;
     }
+
+        .people-filters-title a {
+            text-decoration: none;
+        }
 
         .people-filters-title strong {
             font-size: 120%;

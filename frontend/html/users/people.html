@@ -57,7 +57,11 @@
                 </div>
 
                 <div class="block people-filters">
-                    <a href="{% url "people" %}" class="people-filters-title hide-on-iphone">Коммьюнити</a>
+
+                    <div class="people-filters-title hide-on-iphone">
+                        <a href="{% url "people" %}">Коммьюнити</a>
+                        &nbsp;<a href="https://vas3k.club/post/2584/"><i class="fas fa-question-circle"></i></a>
+                    </div>
 
                     <div class="people-filters-title show-on-iphone">
                         {% if users %}
