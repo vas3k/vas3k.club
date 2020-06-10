@@ -56,7 +56,7 @@ def process_comment_reply(update: Update):
         author=user,
         post=reply.post,
         reply_to=Comment.find_top_comment(reply),
-        text=text,
+        text=f"@{reply.author.slug}, {text}",
         useragent="TelegramBot (like TwitterBot)",
         metadata={
             "telegram": update.to_dict()
