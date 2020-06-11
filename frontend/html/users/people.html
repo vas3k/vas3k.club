@@ -25,6 +25,9 @@
     <meta name="twitter:image" content="{% static "images/share.png" %}">
 {% endblock %}
 
+{% block css %}
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" media="print" onload="this.media='all'; this.onload=null;">
+{% endblock %}
 
 {% block content %}
     <div class="people">
