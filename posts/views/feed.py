@@ -56,7 +56,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         if ordering == ORDERING_ACTIVITY:
             posts = posts.order_by("-last_activity_at")
         elif ordering == ORDERING_NEW:
-            posts = posts.order_by("-created_at")
+            posts = posts.order_by("-published_at", "-created_at")
         elif ordering == ORDERING_TOP:
             posts = posts.order_by("-upvotes")
         elif ordering == ORDERING_TOP_WEEK:
