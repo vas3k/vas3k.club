@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+@import "../../node_modules/easymde/dist/easymde.min.css";
 @import "./normalize.css";
 @import "./fontawesome.min.css";
 @import "./theme.css";
