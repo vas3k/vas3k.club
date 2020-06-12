@@ -51,7 +51,7 @@ def create_comment(request, post_slug):
             # update the shitload of counters :)
             request.me.update_last_activity()
             Comment.update_post_counters(post)
-            PostView.increment_unread_comments(post)
+            PostView.increment_unread_comments(comment)
             PostView.register_view(
                 request=request,
                 user=request.me,
@@ -148,10 +148,12 @@ def delete_comment(request, comment_id):
     if not comment.is_deleted:
         # delete comment
         comment.delete(deleted_by=request.me)
+        PostView.decrement_unread_comments(comment)
     else:
         # undelete comment
         if comment.deleted_by == request.me or request.me.is_moderator:
             comment.undelete()
+            PostView.increment_unread_comments(comment)
         else:
             raise AccessDenied(
                 title="Нельзя!",
