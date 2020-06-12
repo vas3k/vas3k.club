@@ -10,7 +10,9 @@ class NewPostsRss(Feed):
     limit = 20
 
     def items(self):
-        return Post.visible_objects().order_by("-published_at", "-created_at")[:self.limit]
+        return Post.visible_objects()\
+                   .exclude(type=Post.TYPE_INTRO)\
+                   .order_by("-published_at", "-created_at")[:self.limit]
 
     def item_title(self, item):
         title = item.title
