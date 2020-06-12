@@ -62,11 +62,12 @@
             <div class="block" id="digest-settings">
                 <div class="block-header">Другие способы быть в курсе 👇</div>
 
-                <div class="block-description" style="text-align: left;">
+                <div class="block-description" style="text-align: left; padding-top: 40px;">
                     <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a> — туда модераторы отбирают лучший контент. Он же главный источник всех анонсов.<br><br>
                     <a href="https://vas3k.ru/notes/club_chat/" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
-                    <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Онлайн</a> — прямой эфир. Только для самых хардкорных.<br><br>
-                    <a href="{% url "edit_bot" user.slug %}" target="_blank" style="font-weight: bold;">Подключить нашего бота</a> — он умеет приносить вам уведомления, касающиеся лично вас.
+                    <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Онлайн</a> — прямой эфир всего. Только для самых хардкорных.<br><br>
+                    Ваш личный RSS-фид: <a href="{% url "rss" %}?hash={{ me.secret_hash }}" style="font-weight: bold;">[секретная ссылка]</a> <a href="https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fvas3k.club%2Fposts.rss%3Dhash={{ me.secret_hash }}" target="_blank" style="font-weight: bold;">[добавить в Feedly]</a><br><br>
+                    <a href="{% url "edit_bot" user.slug %}" target="_blank" style="font-weight: bold;">Подключите нашего бота</a> — он умеет приносить вам уведомления, касающиеся лично вас.
                 </div>
             </div>
         </form>

@@ -344,8 +344,6 @@
 
     .text-body code {
         font-family: Ubuntu, monospace;
-        display: block;
-        padding: 20px 25px;
     }
 
     .text-body pre {
@@ -358,6 +356,12 @@
         margin-bottom: 2em;
         overflow-x: scroll;
         overflow-y: hidden;
+    }
+
+    .text-body pre code {
+        font-family: Ubuntu, monospace;
+        display: block;
+        padding: 20px 25px;
     }
 
     .text-body figure {

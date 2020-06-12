@@ -11,10 +11,11 @@ from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired
 from posts.models import Post
+from posts.rss import NewPostsRss
 from posts.views.admin import admin_post, announce_post
 from posts.views.posts import show_post, edit_post, upvote_post, compose, compose_type, toggle_post_subscription
 from posts.views.feed import feed
-from posts.sitemaps import PublicPostsSitemap
+from posts.sitemaps import sitemaps
 from search.views import search
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
     add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people
@@ -23,13 +24,8 @@ from misc.views import achievements
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week))"
 
-sitemaps = {
-    "public_posts": PublicPostsSitemap,
-}
-
 urlpatterns = [
     path("", auth_switch(landing, feed), name="index"),
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
 
     path("auth/login/", login, name="login"),
     path("auth/logout/", logout, name="logout"),
@@ -63,6 +59,10 @@ urlpatterns = [
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment",),
 
+    path("search/", search, name="search"),
+    path("room/<slug:topic_slug>/", feed, name="feed_topic"),
+    path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
+
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
     path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
@@ -84,9 +84,9 @@ urlpatterns = [
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
 
-    path("search/", search, name="search"),
-    path("room/<slug:topic_slug>/", feed, name="feed_topic"),
-    path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
+    # feeds
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    path("posts.rss", NewPostsRss(), name="rss"),
 
     # keep these guys at the bottom
     re_path(r"^{}/$".format(POST_TYPE_RE), feed, name="feed_type"),

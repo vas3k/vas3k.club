@@ -151,6 +151,10 @@ class User(models.Model, ModelDiffMixin):
     def is_club_member(self):
         return self.moderation_status == User.MODERATION_STATUS_APPROVED and not self.is_banned
 
+    @property
+    def is_paid_member(self):
+        return self.is_club_member and self.membership_expires_at >= datetime.utcnow()
+
     @classmethod
     def registered_members(cls):
         return cls.objects.filter(

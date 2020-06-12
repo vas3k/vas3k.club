@@ -10,12 +10,19 @@
             document.documentElement.setAttribute('theme', theme);
         }
     </script>
+
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
+
+    <link rel="alternate" type="application/rss+xml"
+          title="Вастрик.Клуб: Новые посты"
+          href="{% url "rss" %}{% if me %}?hash={{ me.secret_hash }}{% endif %}" />
+
     {% block og_tags %}
         {% include "common/og.html" %}
     {% endblock %}
+
     {% include "common/favicon.html" %}
     {% render_bundle "main" "css" %}
 </head>
