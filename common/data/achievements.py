@@ -9,7 +9,7 @@ ACHIEVEMENTS = [
         "name": "Ёрли Инвестор",
         "description": "Человек, вложивший $1000 и более реальных денег в развитие Клуба",
         "image": "https://i.vas3k.club/3a1.png",
-        "style": "background-color: #FFDC00;",
+        "style": "background-color: #FFBE00;",
     }),
     ("contributor", {
         "name": "Контри-бьютор",
@@ -34,7 +34,7 @@ ACHIEVEMENTS = [
         "name": "Добытчик Золота",
         "description": "Нашел и запостил много офигенных ссылок, которые не раз попадали в топы недели",
         "image": "https://i.vas3k.club/3d2.png",
-        "style": "background-color: #F8D90F;",
+        "style": "background-color: #FABE0F;",
     }),
     ("helper", {
         "name": "Твой Бро",
