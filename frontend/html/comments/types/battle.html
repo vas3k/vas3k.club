@@ -3,7 +3,7 @@
 {% load battle %}
 {% load posts %}
 <div class="battle-comment-prefix battle-comment-prefix-side-{{ comment.metadata.battle.side }}">
-    за {{ comment.battle_side|uncapitalize }}
+    за «{{ comment.battle_side }}»
 </div>
 <div class="block comment comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}" id="comment-{{ comment.id }}">
     <div class="comment-header">
