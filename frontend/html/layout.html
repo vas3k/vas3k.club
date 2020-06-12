@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 {% load static %}
-{% load render_bundle from webpack_loader %}
 <html lang="ru">
 <head>
     <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
@@ -24,7 +23,8 @@
     {% endblock %}
 
     {% include "common/favicon.html" %}
-    {% render_bundle "main" "css" %}
+    {% include "common/css.html" %}
+    {% block css %}{% endblock %}
 </head>
 <body>
 

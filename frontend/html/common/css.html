@@ -1,0 +1,7 @@
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+{# Async CSS loading. https://github.com/filamentgroup/loadCSS#how-to-use #}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,400i,500,500i,700|Merriweather:300,400,400i,700,900&display=swap&subset=cyrillic,cyrillic-ext" media="print" onload="this.media='all'; this.onload=null;">
+
+{% render_bundle "main" "css" %}

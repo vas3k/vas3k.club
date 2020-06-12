@@ -528,12 +528,6 @@ input[type=range]:focus::-ms-fill-upper {
     word-break: break-word !important;
 }
 
-.editor-toolbar button {
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-}
-
 .topic {
     display: inline-block;
     position: relative;

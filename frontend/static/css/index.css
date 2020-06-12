@@ -1,10 +1,9 @@
-@import "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css";
-@import "https://fonts.googleapis.com/css?family=Ubuntu:400,400i,500,500i,700|Merriweather:300,400,400i,700,900&display=swap&subset=cyrillic,cyrillic-ext";
-@import "https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css";
-@import "//unpkg.com/leaflet/dist/leaflet.css";
+@charset "utf-8";
 
-@import "./normalize.css";
-@import "./fontawesome.min.css";
+@import "easymde/dist/easymde.min.css";
+@import "normalize.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
 @import "./theme.css";
 @import "./base.css";
 @import "./layout.css";

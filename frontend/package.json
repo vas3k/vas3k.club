@@ -28,10 +28,12 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
     "easymde": "^2.10.1",
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
     "mapbox-gl": "^1.10.1",
+    "normalize.css": "^8.0.1",
     "twemoji": "^12.1.6",
     "vue": "^2.6.11",
     "vue-mapbox": "^0.4.1"
