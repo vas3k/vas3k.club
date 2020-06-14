@@ -236,23 +236,20 @@
             .user-avatar {
                 display: block;
                 float: left;
+                width: 50px;
+                height: 50px;
+                min-width: 50px;
+                min-height: 50px;
+                background-size: cover;
+                background-position: 50% 50%;
+                margin: 0;
+                margin-right: 10px;
+                border-radius: 50%;
             }
 
-                .user-avatar img {
-                    width: 50px;
-                    height: 50px;
-                    min-width: 50px;
-                    min-height: 50px;
-                    vertical-align: middle;
-                    display: inline-block;
-                    margin: 0;
-                    border-radius: 50%;
-                    margin-right: 10px;
-                }
-
-                .user-title-small {
-                    font-size: 17px;
-                }
+            .user-title-small {
+                font-size: 17px;
+            }
 
         .avatar-small {
             width: 24px;
@@ -296,16 +293,18 @@
             h2 { font-size: 34px !important; }
             h3 { font-size: 25px !important; }
 
-            .user-avatar img {
+            .user-avatar {
                 width: 70px;
                 height: 70px;
                 min-width: 70px;
                 min-height: 70px;
                 margin-right: 20px;
             }
+
             p, .comment, .user, .post {
                 font-size: 17px;
             }
+
             .upvotes {
                 font-size: 22px;
                 padding: 8px 18px 8px;

@@ -148,9 +148,7 @@
 
         {% for intro in intros|slice:":1" %}
             <article class="block user">
-                <div class="user-avatar">
-                    <img src="{{ intro.author.get_avatar }}" alt="" width="50" height="50">
-                </div>
+                <div class="user-avatar" style="background-image: url('{{ intro.author.get_avatar }}');">&nbsp;</div>
 
                 <div>
                     <h3>
