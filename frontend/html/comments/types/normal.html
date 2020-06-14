@@ -42,11 +42,13 @@
             <a href="{% url "pin_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-thumbtack"></i></a>
         {% endif %}
 
-        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
-            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+        {% if me == comment.author and comment.is_deletable or me == comment.post.author or me.is_moderator %}
+            {% if not comment.is_deleted %}
+                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+            {% endif %}
         {% endif %}
 
-        {% if me == comment.author or me.is_moderator %}
+        {% if me == comment.author and comment.is_editable or me.is_moderator %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
