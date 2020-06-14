@@ -11,8 +11,9 @@ class NewPostsRss(Feed):
 
     def items(self):
         return Post.visible_objects()\
-                   .exclude(type=Post.TYPE_INTRO)\
-                   .order_by("-published_at", "-created_at")[:self.limit]
+           .filter(is_approved_by_moderator=True)\
+           .exclude(type=Post.TYPE_INTRO)\
+           .order_by("-published_at", "-created_at")[:self.limit]
 
     def item_title(self, item):
         title = item.title
