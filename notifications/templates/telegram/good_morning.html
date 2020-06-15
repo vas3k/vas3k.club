@@ -1,0 +1,6 @@
+👋 Доброе утро! Это тестовый дайджест постов за день
+
+{% for post in posts %}
+- <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}<b>{% if post.prefix %}{{ post.prefix }}: {% endif %}{{ post.title }}</b></a>{% if not post.is_public %} 🔒{% endif %} от {{ post.author.slug }} [+{{ post.upvotes }}]
+
+{% endfor %}
