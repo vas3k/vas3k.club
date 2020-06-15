@@ -19,7 +19,7 @@ class Command(BaseCommand):
                 published_at__gte=datetime.utcnow() - timedelta(hours=24),
             )\
             .exclude(type=Post.TYPE_INTRO)\
-            .order_by("-upvotes")[:10]
+            .order_by("-upvotes")[:7]
 
         send_telegram_message(
             chat=ADMIN_CHAT,
