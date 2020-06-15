@@ -44,7 +44,7 @@ def send_telegram_image(
     chat: Chat,
     image_url: str,
     text: str,
-    parse_mode: ParseMode = telegram.ParseMode.MARKDOWN,
+    parse_mode: ParseMode = telegram.ParseMode.HTML,
     **kwargs
 ):
     if not bot:

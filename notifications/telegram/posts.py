@@ -12,7 +12,6 @@ def announce_in_club_channel(post, announce_text=None, image=None):
             chat=CLUB_CHANNEL,
             image_url=image,
             text=announce_text,
-            parse_mode=telegram.ParseMode.HTML,
         )
     else:
         send_telegram_message(
