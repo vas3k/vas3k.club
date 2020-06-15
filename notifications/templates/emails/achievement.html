@@ -1,0 +1,103 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    h1, h2, h3, header {
+        text-align: left;
+    }
+
+    .user-achievement {
+        display: flex;
+        position: relative;
+        align-items: center;
+        width: 220px;
+        margin: 20px;
+        min-height: 270px;
+        padding: 20px 20px 10px;
+        font-size: 42px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: var(--block-shadow);
+        color: #FFF;
+        background-color: var(--opposite-block-bg-color);
+        border-radius: var(--block-border-radius);
+    }
+
+        .user-achievement:hover {
+            transform: scale(1.1);
+            transition: all linear 0.1s;
+            z-index: 100;
+        }
+
+        .user-achievement-wrapper {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-badge-image {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto;
+        }
+
+        .user-achievement-name {
+            display: block;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align: center;
+            line-height: 1.3em;
+        }
+
+        .user-achievement-description {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            width: 350px;
+            padding: 20px 10px;
+            font-size: 24px;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: var(--block-shadow);
+            color: #FFF;
+            background-color: var(--opposite-block-bg-color);
+            border-radius: var(--block-border-radius);
+            display: block;
+        }
+</style>
+{% endblock %}
+
+{% block logo %}
+<a href="https://vas3k.club">
+    <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
+</a>
+{% endblock %}
+
+{% block title %}
+    🎖 Вас наградили
+{% endblock %}
+
+{% block body %}
+    <a href="{% url "profile" user.slug %}" style="text-decoration: none;">
+        <div class="user-achievement" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+            <div class="user-achievement-wrapper">
+                <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
+                <div class="user-achievement-name">{{ achievement.name }}</div>
+            </div>
+        </div>
+
+        <div class="user-achievement-description" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>{{ achievement.description }}</div>
+    </a>
+
+    <p>
+        Поздравляем с новым бейджиком!<br><br>
+        Можете посмотреть как круто он смотрится <a href="{% url "profile" user.slug %}">у вас в профиле</a>.
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

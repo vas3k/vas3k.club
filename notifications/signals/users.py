@@ -34,12 +34,3 @@ def async_create_or_update_user(user, created):
             chat=ADMIN_CHAT,
             text=f"👶 <b>Зарегался новенький:</b> <a href=\"{user_profile_url}\">{user.slug}</a>"
         )
-
-    # Temporarily turned off
-    # else:
-    #     if set(user.changed_fields).intersection(TRACK_DIFF_FIELDS):
-    #         # user updated some parts of his profile
-    #         send_telegram_message(
-    #             chat=ADMIN_CHAT,
-    #             text=f"🙃 [{user.slug}]({user_profile_url}) обновил профиль: ``` {user.diff} ```",
-    #         )
