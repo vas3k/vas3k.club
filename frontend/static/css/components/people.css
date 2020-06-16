@@ -238,3 +238,17 @@
         opacity: 0.5;
         font-size: 150%;
     }
+.people-popup .mapboxgl-popup-content {
+    color: var(--text-color);
+    background-color: var(--block-bg-color);
+}
+
+.people-popup .mapboxgl-popup-tip {
+    border-top-color: var(--block-bg-color);
+}
+
+.people-popup-labels {
+    display: block;
+    font-size: 120%;
+    font-weight: 600;
+}
