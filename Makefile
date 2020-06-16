@@ -20,6 +20,7 @@ run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 docker-run-dev:  ## Runs dev server in docker
 	python ./utils/wait_for_postgres.py
 	python manage.py migrate
+	python manage.py update_tags
 	python manage.py runserver 0.0.0.0:8000
 
 docker-run-production:  ## Runs production server in docker
