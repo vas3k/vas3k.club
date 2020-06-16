@@ -103,32 +103,6 @@ export default {
                             markerElement.classList.add("people-map-user-marker");
                             markerElement.style.backgroundImage = "url('" + avatarOrDefault(props.avatar) + "')";
                             marker = new mapbox.Marker({element: markerElement}).setLngLat(coords);
-
-                            let markerPopup = new mapbox.Popup(
-                                {
-                                    offset: 25,
-                                    closeButton: false,
-                                    closeOnClick: false,
-                                    className: "people-popup"
-                                }
-                            );
-
-                            map.on("mouseenter", "users", function(e) {
-                                let user = e.features[0];
-                                let popup = `
-                                    <span class="people-popup-labels">${user.properties.full_name}</span>
-                                    <span class="people-popup-labels">${user.properties.position}</span>
-                                    <span class="people-popup-labels">${user.properties.company}</span>
-                                `;
-                                markerPopup
-                                    .setLngLat(e.lngLat)
-                                    .setHTML(popup)
-                                    .addTo(map);
-                            });
-
-                            map.on("mouseleave", "users", function() {
-                                markerPopup.remove();
-                            });
                         }
                     }
                     newMarkers[id] = marker;

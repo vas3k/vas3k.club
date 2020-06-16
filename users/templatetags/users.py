@@ -23,11 +23,7 @@ def users_geo_json(users):
             "properties": {
                 "id": user.slug,
                 "url": f"/user/{user.slug}/",
-                "full_name": user.full_name,
                 "avatar": user.avatar,
-                "avatar": user.avatar,
-                "position": user.position,
-                "company": user.company
             },
             "geometry": {
                 "type": "Point",
