@@ -4,37 +4,45 @@ from datetime import datetime
 import requests
 from django.conf import settings
 from django.core.cache import cache
+from django.utils.html import strip_tags
+from bs4 import BeautifulSoup
 from requests import RequestException
 
 log = logging.getLogger(__name__)
 
+MAGIC_URL = "https://www.life-moon.pp.ru/"
+
 
 def parse_horoscope():
-    if not settings.SIMPLEPARSER_API_KEY:
-        return {}
-
     moon_phase = cache.get("moon_phase")
     if not moon_phase:
         try:
-            moon_phase = requests.get(
-                f"https://simplescraper.io/api/y4gLaoFV8m9cnOMXk4JB"
-                f"?apikey={settings.SIMPLEPARSER_API_KEY}&offset=0&limit=20"
-            ).json()
-            cache.set("moon_phase", moon_phase, timeout=60 * 60)
-        except RequestException as ex:
-            log.exception(f"Horoscope error: {ex}")
-            return {}
+            soup = BeautifulSoup(requests.get(MAGIC_URL).text, features="lxml")
+        except RequestException:
+            return {
+                "club_day": (datetime.utcnow() - settings.LAUNCH_DATE).days,
+                "phase_num": "",
+                "phase_sign": "",
+                "phase_description": "",
+            }
+
+        moon_phase = {}
+
+        horoscope = soup.select("body > section > section > article > div:nth-child(6) > p:nth-child(3)")
+        moon_phase["phase_description"] = strip_tags(horoscope[0])[:-18] if horoscope else ""
+
+        phase_num = soup.select("body > section > section > article > div:nth-child(3) > div.text-center > "
+                                "table > tbody > tr:nth-child(1) > td.text-left > ul > li:nth-child(1)")
+        moon_phase["phase_num"] = strip_tags(phase_num[0]) if phase_num else ""
+
+        phase_sign = soup.select("body > section > section > article > div:nth-child(3) > div.text-center > "
+                                 "table > tbody > tr:nth-child(1) > td.text-left > ul > li:nth-child(2) > a")
+        moon_phase["phase_sign"] = strip_tags(phase_sign[0]) if phase_sign else ""
+        cache.set("moon_phase", moon_phase, timeout=60 * 60)
 
     return {
         "club_day": (datetime.utcnow() - settings.LAUNCH_DATE).days,
-        "phase_num": _get_by_index(moon_phase, "moon_phase", 1),
-        "phase_sign": _get_by_index(moon_phase, "moon_phase", 2),
-        "phase_description": _get_by_index(moon_phase, "moon_description", 11)[:-18],
+        "phase_num": moon_phase["phase_num"],
+        "phase_sign": moon_phase["phase_sign"],
+        "phase_description": moon_phase["phase_description"],
     }
-
-
-def _get_by_index(moon_phase, key, index):
-    try:
-        return [mp[key] for mp in moon_phase["data"] if mp["index"] == index][0]
-    except (KeyError, IndexError):
-        return ""
