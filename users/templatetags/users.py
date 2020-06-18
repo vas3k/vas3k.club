@@ -25,7 +25,7 @@ def users_geo_json(users):
                 "url": f"/user/{user.slug}/",
                 "full_name": user.full_name,
                 "avatar": user.avatar,
-                "position": user.position,
+                "position_role": user.position,
                 "company": user.company
             },
             "geometry": {

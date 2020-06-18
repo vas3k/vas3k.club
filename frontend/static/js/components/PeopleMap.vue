@@ -117,7 +117,7 @@ export default {
                                 let user = e.features[0];
                                 let popup = `
                                     <span class="people-popup-labels">${user.properties.full_name}</span>
-                                    <span class="people-popup-labels">${user.properties.position}</span>
+                                    <span class="people-popup-labels">${user.properties.position_role}</span>
                                     <span class="people-popup-labels">${user.properties.company}</span>
                                 `;
                                 markerPopup
