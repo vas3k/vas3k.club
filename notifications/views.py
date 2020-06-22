@@ -252,6 +252,8 @@ def weekly_digest(request):
     if not author_intro and not posts and not comments:
         raise Http404()
 
+    is_footer_excluded = "no_footer" in request.GET
+
     return render(request, "emails/weekly.html", {
         "posts": posts,
         "comments": comments,
@@ -262,5 +264,6 @@ def weekly_digest(request):
         "top_video_post": top_video_post,
         "featured_post": featured_post,
         "author_intro": author_intro,
-        "issue_number": (end_date - settings.LAUNCH_DATE).days // 7
+        "issue_number": (end_date - settings.LAUNCH_DATE).days // 7,
+        "is_footer_excluded": is_footer_excluded
     })
