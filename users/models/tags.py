@@ -12,12 +12,14 @@ class Tag(models.Model):
     GROUP_TECH = "tech"
     GROUP_CLUB = "club"
     GROUP_OTHER = "other"
+    GROUP_CARE = "care"
     GROUPS = [
         (GROUP_PERSONAL, "О себе"),
         (GROUP_TECH, "Технологии"),
         (GROUP_CLUB, "Для других членов Клуба я..."),
         (GROUP_HOBBIES, "Хобби"),
         (GROUP_OTHER, "Остальное"),
+        (GROUP_CARE, "Волнует"),
     ]
 
     code = models.CharField(primary_key=True, max_length=32, null=False, unique=True)
