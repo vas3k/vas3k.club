@@ -1,9 +1,12 @@
 @charset "utf-8";
 
-@import "easymde/dist/easymde.min.css";
-@import "normalize.css";
-@import "fonts.css";
-@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "~easymde/dist/easymde.min.css";
+@import "~normalize.css";
+
+@import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
+@import '~@fortawesome/fontawesome-free/scss/solid.scss';
+@import '~@fortawesome/fontawesome-free/scss/brands.scss';
+@import '~@fortawesome/fontawesome-free/scss/regular.scss';
 
 @import "./theme.css";
 @import "./base.css";

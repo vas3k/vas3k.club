@@ -13,7 +13,7 @@ class CommentForm(forms.ModelForm):
             attrs={
                 "maxlength": 10000,
                 "placeholder": "Напишите комментарий...",
-                "class": "markdown-editor-invisible",
+                "class": "markdown-editor-invisible markdown-editor--preview",
             }
         ),
     )
@@ -32,7 +32,7 @@ class ReplyForm(forms.ModelForm):
             attrs={
                 "maxlength": 10000,
                 "placeholder": "Напишите ответ...",
-                "class": "markdown-editor-invisible",
+                "class": "markdown-editor-invisible markdown-editor--preview",
             }
         ),
     )

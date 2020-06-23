@@ -5,7 +5,12 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
-import { findParentForm, isCommunicationForm } from "./common/domUtils";
+import {
+    findParentForm,
+    generateButton,
+    isCommunicationForm
+} from "./common/domUtils";
+import ClubApi from "./common/api.service";
 
 const INITIAL_SYNC_DELAY = 50;
 
@@ -228,6 +233,7 @@ const App = {
             });
 
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
+            this.initializeEditorPreview(editor)
         });
 
         return allEditors;
@@ -242,6 +248,27 @@ const App = {
 
             link.setAttribute("target", "_blank");
         });
+    },
+    /**
+     * Initialize edior preview feature if necessary
+     * @param {EasyMDE} editor
+     */
+    initializeEditorPreview(editor) {
+        const $el = editor.element;
+        if ($el.classList.contains('markdown-editor--preview')) {
+            const submitBtn = $el.form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const previewBtn = generateButton((() => {
+                    const fa = document.createElement('i')
+                    fa.classList.add("fa", "fa-eye");
+                    fa.appendChild(document.createTextNode("\u00a0Превью"))
+                    return fa;
+                })(), [...submitBtn.classList, 'button-inverted']);
+                previewBtn.addEventListener('click', EasyMDE.togglePreview.bind(editor, editor))
+                // insert "Preview" button just before "Submit"
+                submitBtn.parentNode.insertBefore(previewBtn, submitBtn);
+            }
+        }
     },
     initializeImageZoom() {
         Lightense(document.querySelectorAll(".text-body figure img"), {

@@ -20,6 +20,7 @@ module.exports = {
         new BundleTracker(),
         new MiniCssExtractPlugin({
             filename: mode === "production" ? "[name]-[hash].css": "[name].css",
+            hmr: mode === 'development',
             chunkFilename: "[id].css",
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
@@ -29,24 +30,32 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.(sa|sc|c)ss$/,
                 exclude: /node_modules/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     { loader: 'css-loader', options: { importLoaders: 1 } },
                     "postcss-loader",
+                    {
+                        loader:  "sass-loader",
+                        options: {
+                            implementation: require("node-sass")
+                        }
+                    }
                 ],
             },
             {
                 test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-                use: [{
-                    loader: "file-loader",
-                    options: {
-                        name: "[name].[ext]",
-                        outputPath: "fonts/",    // where the fonts will go
-                        publicPath: "fonts/"     // override the default path
-                    }
-                }]
+                use:  [
+                    mode === "production" ? {
+                        loader:  "file-loader",
+                        options: {
+                            name:       "[name].[ext]",
+                            outputPath: "fonts/",    // where the fonts will go
+                            publicPath: "fonts/"     // override the default path
+                        }
+                    } : "url-loader?limit=100000"
+                ]
             },
             {
                 test: /\.vue$/,

@@ -9,6 +9,27 @@ const ClubApi = {
             .then((response) => response.json())
             .then((data) => callback(data));
     },
+
+    /**
+     * @param {string} markdownPlaintext
+     * @param {function(string)} callback
+     */
+    markdownPreview(markdownPlaintext, callback) {
+        fetch("/post/preview/?is_ajax=true", {
+            method:  "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `markdownPlaintext=${markdownPlaintext}`
+        }).
+            then(this.handleErrors).
+            then((response) => response.json()).
+            then(({ markdown }) => callback(markdown)).
+            catch(() => callback('Дико извиняемся, но произошла ошибка 🤷‍♂️'))
+    },
+
+    handleErrors(response) {
+        if (!response.ok) throw Error(response.statusText);
+        return response;
+    }
 };
 
 export default ClubApi;
