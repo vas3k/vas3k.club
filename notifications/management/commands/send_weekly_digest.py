@@ -35,12 +35,12 @@ class Command(BaseCommand):
 
         digest_html = digest_html_response.text
 
-        digest_html_no_footer_response = requests.get(digest_url, params={"no_footer": 1})
-        if digest_html_no_footer_response.status_code > 400:
-            log.error("Weekly digest without footer error: bad status code", extra={"html": digest_html_no_footer_response.text})
+        no_footer_digest_response = requests.get(digest_url, params={"no_footer": 1})
+        if no_footer_digest_response.status_code > 400:
+            log.error("Weekly digest without footer error: bad status code", extra={"html": no_footer_digest_response.text})
             return
 
-        digest_no_footer_html = digest_html_no_footer_response.text
+        no_footer_digest_html = no_footer_digest_response.text
 
         # save digest as a post
         issue = (datetime.utcnow() - settings.LAUNCH_DATE).days // 7
@@ -51,8 +51,8 @@ class Command(BaseCommand):
             defaults=dict(
                 author=User.objects.filter(slug="vas3k").first(),
                 title=f"Клубный журнал. Итоги недели. Выпуск #{issue}",
-                html=digest_no_footer_html,
-                text=digest_no_footer_html,
+                html=no_footer_digest_html,
+                text=no_footer_digest_html,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
                 is_public=True,
