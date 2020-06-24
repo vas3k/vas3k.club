@@ -194,6 +194,8 @@ const App = {
                     autosave: {
                         enabled: true,
                         // something that separates this from other instances of EasyMDE elsewhere on vas3k.club
+                        // the text is saved into the localStorage with the key "smde_<uniqueId>"
+                        // uniqueId for intro's comment - /intro/<user>
                         // uniqueId for post's comment  - /post/<post-id>
                         // uniqueId for comment's reply - /post/<post-id>/:reply-form-<comment-uuid>
                         uniqueId: `${document.location.pathname}${element.form.id && `:${element.form.id}`}`,
