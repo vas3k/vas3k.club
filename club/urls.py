@@ -9,7 +9,7 @@ from auth.views.external import external_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
-    retract_comment_vote, pin_comment
+    retract_comment_vote, pin_comment, preview_comment
 from landing.views import landing, docs, god_settings
 from misc.views import achievements, network, robots
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
@@ -90,7 +90,8 @@ urlpatterns = [
     path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
-    path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment", ),
+    path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment",),
+    path("post/preview/", preview_comment, name="preview_comment"),
 
     path("bookmarks/", bookmarks, name="bookmarks"),
 
