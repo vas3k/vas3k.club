@@ -25,7 +25,7 @@ const imageUploadOptions = {
     },
 };
 
-const defaultMarkdownOptions = {
+const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
     spellChecker: false,
     forceSync: true,
@@ -42,7 +42,7 @@ const defaultMarkdownOptions = {
 function createMarkdownEditor(element, options) {
     const editor = new EasyMDE({
         element,
-        ...defaultMarkdownOptions,
+        ...defaultMarkdownEditorOptions,
         ...options,
     });
 
