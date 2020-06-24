@@ -25,6 +25,36 @@ const imageUploadOptions = {
     },
 };
 
+const defaultMarkdownOptions = {
+    autoDownloadFontAwesome: false,
+    spellChecker: false,
+    forceSync: true,
+    tabSize: 4,
+}
+
+/**
+ * Initialize EasyMDE editor
+ *
+ * @param {Element} element
+ * @param {EasyMDE.Options} options
+ * @return {EasyMDE}
+ */
+function createMarkdownEditor(element, options) {
+    const editor = new EasyMDE({
+        element,
+        ...defaultMarkdownOptions,
+        ...options,
+    });
+
+    // overriding default CodeMirror shortcuts
+    editor.codemirror.addKeyMap({
+        'Home': 'goLineLeft', // move the cursor to the left side of the visual line it is on
+        'End': 'goLineRight', // move the cursor to the right side of the visual line it is on
+    })
+
+    return editor;
+}
+
 const App = {
     onCreate() {
         this.initializeThemeSwitcher();
@@ -75,14 +105,13 @@ const App = {
             themeSwitch.checked = window.matchMedia("(prefers-color-scheme: dark)").matches;
         }
     },
+
     initializeMarkdownEditor() {
         if (this.isMobile()) return; // we don't need fancy features on mobiles
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
-                let editor = new EasyMDE({
-                    element,
-                    autoDownloadFontAwesome: false,
+                const editor = createMarkdownEditor(element, {
                     autosave: {
                         enabled: false,
                     },
@@ -139,10 +168,7 @@ const App = {
                             title: "Insert code",
                         },
                     ],
-                    spellChecker: false,
-                    forceSync: true,
-                    tabSize: 4,
-                });
+                })
 
                 return [...editors, editor];
             },
@@ -151,14 +177,9 @@ const App = {
 
         const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
             (editors, element) => {
-                const editor = new EasyMDE({
-                    element,
-                    autoDownloadFontAwesome: false,
+                const editor = createMarkdownEditor(element, {
                     toolbar: false,
-                    status: false,
-                    spellChecker: false,
-                    forceSync: true,
-                    tabSize: 4,
+                    status:  false
                 });
 
                 return [...editors, editor];
