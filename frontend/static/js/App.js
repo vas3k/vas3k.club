@@ -8,6 +8,8 @@ import "./codemirror-4.inline-attachment";
 import { findParentForm, isCommunicationForm } from "./common/domUtils";
 
 const INITIAL_SYNC_DELAY = 50;
+const SECOND = 1000;
+const MARKDOWN_EDITOR_AUTOSAVE_DELAY = 10 * SECOND;
 
 const imageUploadOptions = {
     uploadUrl: imageUploadUrl,
@@ -188,7 +190,18 @@ const App = {
         const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
             (editors, element) => {
                 const editor = createMarkdownEditor(element, {
-                    toolbar: false
+                    toolbar: false,
+                    autosave: {
+                        enabled: true,
+                        // something that separates this from other instances of EasyMDE elsewhere on vas3k.club
+                        // uniqueId for post's comment  - /post/<post-id>
+                        // uniqueId for comment's reply - /post/<post-id>/:reply-form-<comment-uuid>
+                        uniqueId: `${document.location.pathname}${element.form.id && `:${element.form.id}`}`,
+                        // delay between saves, in milliseconds (defaults to 10000 (10s))
+                        delay: MARKDOWN_EDITOR_AUTOSAVE_DELAY,
+                        // delay before assuming that submit of the form failed and saving the text, in milliseconds (defaults to autosave.delay or 10s)
+                        // submit_delay: MARKDOWN_EDITOR_AUTOSAVE_DELAY,
+                    },
                 });
 
                 return [...editors, editor];
