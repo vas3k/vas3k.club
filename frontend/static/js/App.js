@@ -18,10 +18,13 @@ const imageUploadOptions = {
     progressText: "![Загружаю файл...]()",
     urlText: "![]({filename})",
     errorText: "Ошибка при загрузке файла :(",
+    extraHeaders: {
+        "Accept": "application/json",
+    },
     extraParams: {
         code: imageUploadCode,
-        convert_to: "jpg",
-        quality: 90,
+        convert_to: "image/jpeg",
+        quality: 85,
     },
 };
 

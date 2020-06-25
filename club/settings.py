@@ -159,7 +159,7 @@ MAILGUN_API_URI = "https://api.eu.mailgun.net/v3/mailgun.vas3k.club"
 MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
 MAILGUN_EMAIL_FROM = "Вастрик.Клуб <club@vas3k.club>"
 
-MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/"
+MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}

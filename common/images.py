@@ -10,7 +10,7 @@ from django.conf import settings
 log = logging.getLogger(__name__)
 
 
-def upload_image_bytes(
+def upload_image_multipart(
     filename, data, resize=(192, 192), convert_to=None, quality=None
 ):
     if not data:
@@ -50,6 +50,7 @@ def upload_image_bytes(
             url=settings.MEDIA_UPLOAD_URL,
             params=upload_params,
             files={"media": (filename, data)},
+            headers={"Accept": "application/json"},
         )
     except requests.exceptions.RequestException as ex:
         log.error(f"Image upload error: {ex}")
@@ -83,4 +84,4 @@ def upload_image_from_url(url, resize=(192, 192), convert_to="jpg", quality=90):
     except requests.exceptions.RequestException:
         return None
 
-    return upload_image_bytes(image_name, image_data, resize=resize, convert_to=convert_to, quality=quality)
+    return upload_image_multipart(image_name, image_data, resize=resize, convert_to=convert_to, quality=quality)

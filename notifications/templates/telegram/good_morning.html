@@ -1,7 +1,6 @@
 👋 {{ greetings }}, Клуб!
 
 Вот <b>топ постов</b> за вчера:
-
 {% for post in posts %}
 <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}<b>{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</b></a>{% if not post.is_public %} 🔒{% endif %}
 {% endfor %}

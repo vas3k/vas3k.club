@@ -2,7 +2,7 @@ import io
 
 from django import forms
 
-from common.images import upload_image_bytes
+from common.images import upload_image_multipart
 
 
 class ImageUploadField(forms.ImageField):
@@ -16,7 +16,7 @@ class ImageUploadField(forms.ImageField):
         if not data:
             return initial
 
-        return upload_image_bytes(
+        return upload_image_multipart(
             filename=data.name,
             data=io.BytesIO(data.read()),
             resize=self.resize,
