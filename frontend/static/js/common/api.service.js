@@ -18,7 +18,8 @@ const ClubApi = {
         fetch("/post/preview/?is_ajax=true", {
             method:  "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `markdownPlaintext=${markdownPlaintext}`
+            // encodeURIComponent() escapes all characters except A-Z a-z 0-9 - _ . ! ~ * ' ( )
+            body: `markdownPlaintext=${encodeURIComponent(markdownPlaintext)}`
         }).
             then(this.handleErrors).
             then((response) => response.json()).
