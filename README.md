@@ -36,6 +36,14 @@ At the very beginning, you probably need a dev account to log in. Open [http://1
 
 Auto-reloading for backend and frontend is performed automatically on every code change. If everything is broken and not working (it happens), you can always rebuild the world from scratch using `docker-compose up --build`.
 
+### Advanced setup:
+- To run telegram bot you have to:
+    1. Copy env.exmaple file: `cp ./club/.env.example ./club/.env`
+    2. Fill all the requirement fields in `./club/env`, such as `TELEGRAM_TOKEN` etc.
+        - `TELEGRAM_TOKEN` you can get from [@BotFather](https://t.me/BotFather)
+        - To get `TELEGRAM_CLUB_CHANNEL_URL`, `TELEGRAM_ADMIN_CHAT_ID` etc Just Simply Forward a message from your group/channel to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
+    3. Rebuild application: `docker-compose up --build`
+
 Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
 
 ## 🛠 Tech stack
