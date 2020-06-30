@@ -223,4 +223,3 @@ def retract_comment_vote(request, comment_id):
             "upvotes": comment.upvotes - (1 if is_retracted else 0)
         }
     }
-
