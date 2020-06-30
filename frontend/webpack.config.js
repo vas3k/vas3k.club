@@ -34,23 +34,23 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    { loader: 'css-loader', options: { importLoaders: 1 } },
+                    { loader: "css-loader", options: { importLoaders: 1 } },
                     "postcss-loader",
                     {
-                        loader:  "sass-loader",
+                        loader: "sass-loader",
                         options: {
                             implementation: require("node-sass")
                         }
                     }
-                ],
+                ]
             },
             {
                 test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-                use:  [
+                use: [
                     mode === "production" ? {
-                        loader:  "file-loader",
+                        loader: "file-loader",
                         options: {
-                            name:       "[name].[ext]",
+                            name: "[name].[ext]",
                             outputPath: "fonts/",    // where the fonts will go
                             publicPath: "fonts/"     // override the default path
                         }
