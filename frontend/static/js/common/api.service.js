@@ -15,7 +15,7 @@ const ClubApi = {
      * @param {function(string)} callback
      */
     markdownPreview(markdownPlaintext, callback) {
-        fetch("/post/preview/?is_ajax=true", {
+        fetch("/markdown/preview/?is_ajax=true", {
             method:  "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             // encodeURIComponent() escapes all characters except A-Z a-z 0-9 - _ . ! ~ * ' ( )

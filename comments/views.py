@@ -4,8 +4,6 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from common.markdown.markdown import markdown_text
-
 from auth.helpers import auth_required
 from club.exceptions import AccessDenied, RateLimitException
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
@@ -226,11 +224,3 @@ def retract_comment_vote(request, comment_id):
         }
     }
 
-@ajax_request
-def preview_comment(request):
-    if request.method != "POST":
-        raise Http404()
-
-    return {
-        "markdown": markdown_text(request.POST.get("markdownPlaintext", ''))
-    }

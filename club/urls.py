@@ -91,7 +91,6 @@ urlpatterns = [
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment",),
-    path("post/preview/", preview_comment, name="preview_comment"),
 
     path("bookmarks/", bookmarks, name="bookmarks"),
 
@@ -123,6 +122,8 @@ urlpatterns = [
     path("godmode/", god_settings, name="god_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
+
+    path("markdown/preview/", preview_md, name="preview_md"),
 
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
