@@ -22,7 +22,7 @@ from users.views import profile, edit_profile, on_review, banned, rejected, intr
 from misc.views import achievements, network
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
-ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week))"
+ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month))"
 
 urlpatterns = [
     path("", auth_switch(landing, feed), name="index"),
