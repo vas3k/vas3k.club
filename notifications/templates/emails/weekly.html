@@ -26,21 +26,21 @@
 
 {% block body %}
     {% if author_intro %}
-        <p class="editorial">
+        <div class="editorial">
             {{ author_intro | email_markdown }}
-        </p>
+        </div>
     {% endif %}
 
     {% if intros %}
         <h2>🤘 Новенькие</h2>
 
-        <p class="center editorial">
+        <div class="center editorial">
             На этой неделе у нас <strong><a href="{% url "people" %}">+{{ newbie_count }} {{ newbie_count|rupluralize:"новый член,новых члена,новых членов" }} Клуба</a></strong>.
             Вот самые интересные из них, набравшие больше всего плюсиков за своё #intro.
             Не стесняйтесь писать им комменты и расспрашивать за жизнь. Для того мы здесь и собрались!
-        </p>
+        </div>
 
-        {% for intro in intros|slice:":5" %}
+        {% for intro in intros|slice:":4" %}
             <article class="block user">
                 <div class="user-avatar" style="background-image: url('{{ intro.author.get_avatar }}');">&nbsp;</div>
 
@@ -191,10 +191,10 @@
 
     <h2>На этом всё 👋</h2>
 
-    <p class="center editorial">
+    <div class="center editorial">
         Услышимся в журнале через неделю. Приносите годные ссылочки, пишите посты и палите инсайды.
         Только вместе мы делаем Клуб таким полезным и охуенным!
-    </p>
+    </div>
 
     <br><br><br>
 {% endblock %}
