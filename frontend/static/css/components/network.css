@@ -1,0 +1,91 @@
+.network {
+    font-size: 140%;
+    padding-top: 30px;
+}
+
+    .network-title {
+        font-size: 230%;
+        text-align: center;
+        font-weight: 500;
+        padding-top: 50px;
+        padding-bottom: 40px;
+        text-decoration: none;
+    }
+
+    .network-header {
+        font-size: 150%;
+        font-weight: 500;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding-top: 10px;
+        padding-left: 20px;
+        padding-bottom: 30px;
+    }
+
+    .network-description {
+        text-align: center;
+        max-width: var(--normal-content-width);
+        padding-bottom: 40px;
+        font-size: 110%;
+    }
+
+    .network-block {
+        padding-bottom: 40px;
+    }
+
+    .network-channels {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+        .network-channel {
+            position: relative;
+            display: block;
+            max-width: 180px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            text-decoration: none;
+        }
+
+            .network-channel-icon {
+                display: block;
+                width: 140px;
+                height: 140px;
+                background-color: #FFFFFF;
+            }
+
+            .network-channel-badge {
+                position: absolute;
+                display: block;
+                top: 16px;
+                right: 16px;
+                font-size: 200%;
+                border-radius: 50%;
+                background-color: var(--bg-color);
+                line-height: 1em;
+                min-width: 1em;
+                border: solid 2px var(--bg-color);
+            }
+
+            .network-channel-name {
+                display: block;
+                padding-top: 10px;
+                text-decoration: underline;
+            }
+
+            .network-channel-description {
+                display: block;
+                padding-top: 10px;
+                font-size: 70%;
+                opacity: 0.8;
+            }
+
+        .network-channel-footer {
+            font-size: 90%;
+            padding-top: 40px;
+        }

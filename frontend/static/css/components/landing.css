@@ -1,0 +1,29 @@
+.landing {
+    font-size: 130%;
+    line-height: 1.5em;
+}
+
+    .landing-block {
+        padding: 40px 40px 130px;
+    }
+
+        .landing-title {
+            font-size: 45px;
+            line-height: 1.2em;
+        }
+
+            @media only screen and (max-width : 570px) {
+                .landing-title {
+                    font-size: 5vw;
+                }
+
+                .landing {
+                    padding-top: 80px;
+                }
+            }
+
+        .landing-block h2 {
+            font-size: 220%;
+            line-height: 1.2em;
+            display: block;
+        }

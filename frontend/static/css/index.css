@@ -8,5 +8,8 @@
 @import "./base.css";
 @import "./layout.css";
 @import "./components.css";
+@import "./components/menu.css";
+@import "./components/landing.css";
 @import "./components/people.css";
-@import "./posts.css";
+@import "./components/network.css";
+@import "./components/posts.css";

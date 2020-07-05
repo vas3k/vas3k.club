@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from auth.helpers import auth_required
+from landing.models import GodSettings
 from users.models.achievements import Achievement
 
 
@@ -14,4 +15,7 @@ def achievements(request):
 
 @auth_required
 def network(request):
-    return render(request, "network.html")
+    secret_page_html = GodSettings.objects.first().network_page
+    return render(request, "misc/network.html", {
+        "page_html": secret_page_html,
+    })

@@ -16,8 +16,20 @@ class GodSettingsEditForm(forms.ModelForm):
         ),
     )
 
+    network_page = forms.CharField(
+        label="Страница «Сеть»",
+        required=False,
+        max_length=100000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 100000,
+            }
+        ),
+    )
+
     class Meta:
         model = GodSettings
         fields = [
             "digest_intro",
+            "network_page",
         ]

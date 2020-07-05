@@ -14,6 +14,7 @@ ORDERING_ACTIVITY = "activity"
 ORDERING_NEW = "new"
 ORDERING_TOP = "top"
 ORDERING_TOP_WEEK = "top_week"
+ORDERING_TOP_MONTH = "top_month"
 
 
 @auth_required
@@ -62,6 +63,10 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         elif ordering == ORDERING_TOP_WEEK:
             posts = posts.filter(
                 published_at__gte=datetime.utcnow() - timedelta(days=7)
+            ).order_by("-upvotes")
+        elif ordering == ORDERING_TOP_MONTH:
+            posts = posts.filter(
+                published_at__gte=datetime.utcnow() - timedelta(days=31)
             ).order_by("-upvotes")
         else:
             raise Http404()

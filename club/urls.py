@@ -19,7 +19,7 @@ from posts.sitemaps import sitemaps
 from search.views import search
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
     add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people
-from misc.views import achievements
+from misc.views import achievements, network
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week))"
@@ -79,6 +79,8 @@ urlpatterns = [
     path("notifications/renderer/digest/daily/<slug:user_slug>/", daily_digest, name="render_daily_digest"),
 
     path("docs/<slug:doc_slug>/", docs, name="docs"),
+
+    path("network/", network, name="network"),
 
     path("godmode/", god_settings, name="god_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),

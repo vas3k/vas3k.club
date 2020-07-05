@@ -1,0 +1,96 @@
+.menu {
+    font-size: 120%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+    .menu-logo {
+        font-size: 26px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .menu-logo {
+                font-size: 22px;
+            }
+        }
+
+        .menu-logo:hover {
+            color: var(--text-color);
+        }
+
+        .menu-logo img {
+            width: 1em;
+            height: 1em;
+            vertical-align: middle;
+            margin: 0 8px;
+            position: relative;
+            top: -2px;
+        }
+
+            html[theme="dark"] .menu-logo img {
+                filter: invert();
+            }
+
+            @media (prefers-color-scheme: dark) {
+                html:not([theme]) .menu-logo img {
+                    filter: invert();
+                }
+            }
+
+    .menu-avatar {
+        width: 40px;
+        height: 40px;
+    }
+
+        .mobile-menu-opened .menu-avatar {
+            display: none;
+        }
+
+    .menu-search {
+        white-space: nowrap;
+    }
+
+        .menu-search-label {
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 20px;
+            position: relative;
+            top: -1px;
+            opacity: 0.4;
+            padding-right: 15px;
+        }
+
+            .menu-search-label:hover,
+            .menu-search-label-is-active {
+                opacity: 1;
+            }
+
+        .menu-search-input {
+            width: 80%;
+            box-shadow: none !important;
+            background-color: transparent !important;
+            outline: none !important;
+            border: none !important;
+            padding: 0 !important;
+            font-weight: 500;
+            font-size: 26px;
+            transform: none !important;
+            color: var(--text-color) !important;
+        }
+
+        .menu-search-input::placeholder {
+            visibility: hidden;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .menu-search-input {
+                font-size: 20px;
+            }
+
+            .menu-search-input::placeholder {
+                visibility: visible;
+            }
+        }

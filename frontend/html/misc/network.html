@@ -22,33 +22,7 @@
 
 
 {% block content %}
-    <div class="network">
-        <div class="network-header">Основные каналы</div>
-
-        <div class="network-level">
-            <a href="" target="_blank" class="network-channel">
-                <span class="network-channel-icon" style="background-image: url('');"></span>
-                <span class="network-channel-name">Телеграм-канал Клуба</span>
-            </a>
-
-            <a href="" target="_blank" class="network-channel">
-                <span class="network-channel-icon" style="background-image: url('');"></span>
-                <span class="network-channel-name">Вастрик.Бар</span>
-            </a>
-
-            <a href="" target="_blank" class="network-channel">
-                <span class="network-channel-icon" style="background-image: url('');"></span>
-                <span class="network-channel-name">Телеграм-канал Клуба</span>
-            </a>
-        </div>
-
-        <div class="network-level">
-            <h2>Главные сателлиты</h2>
-
-            <a href="" target="_blank" class="network-channel">
-                <span class="network-channel-icon" style="background-image: url('');"></span>
-                <span class="network-channel-name">Телеграм-канал Клуба</span>
-            </a>
-        </div>
+    <div class="content network">
+        {{ page_html | safe }}
     </div>
 {% endblock %}
