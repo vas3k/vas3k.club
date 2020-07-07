@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from bot.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE
+from bot.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE, CLUB_CHAT
 from comments.models import Comment
 from common.regexp import USERNAME_RE
 from posts.models import PostSubscription
@@ -47,6 +47,18 @@ def async_create_or_update_comment(comment):
             chat=CLUB_ONLINE,
             text=render_html_message("comment_to_post_announce.html", comment=comment),
         )
+
+        # and to the topic channels
+        if comment.post.topic.chat_id:
+            send_telegram_message(
+                chat=Chat(comment.post.topic.chat_id),
+                text=render_html_message("comment_to_post_announce.html", comment=comment),
+            )
+        else:
+            send_telegram_message(
+                chat=CLUB_CHAT,
+                text=render_html_message("comment_to_post_announce.html", comment=comment),
+            )
 
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):
