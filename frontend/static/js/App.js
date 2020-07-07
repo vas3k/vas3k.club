@@ -233,7 +233,7 @@ const App = {
             keyboard: true,
             cubicBezier: "cubic-bezier(.2, 0, .1, 1)",
             background: "rgba(0, 0, 0, .4)",
-            zIndex: 2147483647,
+            zIndex: 1e6,
         });
     },
     blockCommunicationFormsResubmit() {
