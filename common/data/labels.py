@@ -49,4 +49,9 @@ LABELS = {
         "emoji": "🏛",
         "color": "#2ab7ca"
     },
+    "ad": {
+        "title": "Спонсор",
+        "emoji": "💰",
+        "color": "#F7DC6F"
+    },
 }
