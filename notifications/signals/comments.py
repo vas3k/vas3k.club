@@ -49,7 +49,7 @@ def async_create_or_update_comment(comment):
         )
 
         # and to the topic channels
-        if comment.post.topic.chat_id:
+        if comment.post.topic and comment.post.topic.chat_id:
             send_telegram_message(
                 chat=Chat(comment.post.topic.chat_id),
                 text=render_html_message("comment_to_post_announce.html", comment=comment),
