@@ -27,7 +27,7 @@
                 </p>
 
                 <p>
-                    <script async src="https://telegram.org/js/telegram-widget.js?8" data-telegram-login="vas3k_club_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
+                    <script src="https://telegram.org/js/telegram-widget.js?8" data-telegram-login="vas3k_club_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
                     <script type="text/javascript">
                         function onTelegramAuth(user) {
                             fetch('{% url "link_telegram" %}?is_ajax=true', {
@@ -56,7 +56,7 @@
                 </p>
 
                 <p style="font-size: 90%;">
-                    ☝️ Если кнопки сверху не видно, значит у вас Роскомнадзор или AdBlock. Придётся их обмануть.
+                    ☝️ Если кнопки сверху не видно, значит какой-то AdBlock её заблокировал. Придётся его обмануть.
                     Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ user.secret_hash }}</strong>
                 </p>
             </div>

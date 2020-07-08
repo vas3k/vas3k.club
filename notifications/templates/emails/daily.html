@@ -41,18 +41,7 @@
         </p>
 
         <p class="editorial">
-            {% if moon_phase.club_day %}Сегодня {{ moon_phase.club_day }} день от сотворения Клуба{% endif %}{% if moon_phase.phase_num %} и {{ moon_phase.phase_num }}{% endif %}.
-            {% if moon_phase.phase_sign %}{{ moon_phase.phase_sign | capfirst }}.{% endif %}
-        </p>
-
-        {% if moon_phase.phase_description %}
-            <p class="editorial">
-                {{ moon_phase.phase_description }}
-            </p>
-        {% endif %}
-
-        <p class="editorial">
-            Вот подборка самых важных событий в Клубе за день, специально для вас 👇
+            Вот подборка событий в Клубе за день, составленная нашей бездушной, но очень вежливой машиной специально для вас 👇
         </p>
 
         {% if events %}
@@ -171,6 +160,23 @@
                 {% for intro in intros|slice:"1:" %}
                     <a href="{% url "profile" intro.author.slug %}">{{ intro.author.slug }}</a>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
+            </p>
+        {% endif %}
+    {% endif %}
+
+    <br>
+
+    {% if moon_phase %}
+        <h2>✨ Гороскоп в конце</h2>
+
+        <p class="editorial">
+            {% if moon_phase.club_day %}Сегодня {{ moon_phase.club_day }} день от сотворения Клуба{% endif %}{% if moon_phase.phase_num %} и {{ moon_phase.phase_num }}{% endif %}.
+            {% if moon_phase.phase_sign %}{{ moon_phase.phase_sign | capfirst }}.{% endif %}
+        </p>
+
+        {% if moon_phase.phase_description %}
+            <p class="editorial">
+                {{ moon_phase.phase_description }}
             </p>
         {% endif %}
     {% endif %}

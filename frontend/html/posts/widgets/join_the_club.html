@@ -8,6 +8,6 @@
     </p>
 
     <p>
-        <br><a href="{% url "login" %}" class="button">Войти</a>
+        <br><a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="button">Войти</a>
     </p>
 </div>

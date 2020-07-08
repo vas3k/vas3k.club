@@ -21,7 +21,7 @@
             {% endif %}
             <a href="{% url "profile" me.slug %}" class="avatar menu-avatar" style="background-image: url('{{ me.get_avatar }}');"></a>
         {% else %}
-            <a href="{% url "login" %}" class="avatar menu-avatar" style="background-image: url('{% static "images/test/avatar.png" %}');"></a>
+            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar" style="background-image: url('{% static "images/test/avatar.png" %}');"></a>
         {% endif %}
     </div>
 </div>
