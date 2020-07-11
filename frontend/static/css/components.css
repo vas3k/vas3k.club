@@ -933,6 +933,10 @@
     .feed-main {
     }
 
+    .feed-main-closed {
+        display: none;
+    }
+
         .feed-topic-header {
             padding: 30px;
             box-sizing: border-box;
