@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 from django.contrib.sitemaps.views import sitemap
 
 from auth.helpers import auth_switch
-from auth.views.auth import login, logout, debug_dev_login, debug_random_login
+from auth.views.auth import login, logout, debug_dev_login, debug_random_login, join
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, pin_comment
@@ -27,6 +27,7 @@ ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month))"
 urlpatterns = [
     path("", auth_switch(landing, feed), name="index"),
 
+    path("join/", join, name="join"),
     path("auth/login/", login, name="login"),
     path("auth/logout/", logout, name="logout"),
     path("auth/patreon/", patreon_login, name="patreon_login"),

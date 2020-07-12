@@ -1,0 +1,101 @@
+.pay {
+    font-size: 120%;
+    padding-top: 30px;
+}
+
+    .pay-title {
+        text-align: center;
+        font-weight: 500;
+        font-size: 250%;
+        padding-top: 20px;
+    }
+
+        .pay-title small {
+            font-size: 60%;
+        }
+
+    .pay-subtitle {
+        text-align: center;
+        font-weight: 500;
+        font-size: 180%;
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .pay-description {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .pay-form {
+
+    }
+
+    .pay-services {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+        .pay-service {
+            display: block;
+            margin: 20px;
+            width: 360px;
+            transition: transform .2s;
+        }
+
+            .pay-service:hover {
+                transform: scale(1.01);
+            }
+
+            .pay-service-title {
+                font-size: 140%;
+                font-weight: 500;
+            }
+
+                .pay-service-title i {
+                    font-size: 130%;
+                    display: inline-block;
+                    padding-right: 15px;
+                }
+
+            .pay-service-list {
+                list-style: none;
+                padding: 0;
+            }
+
+                .pay-service-list li {
+                    padding-bottom: 10px;
+                }
+
+.block-top-users {
+    font-size: 140%;
+    max-width: 500px;
+    margin: 40px auto;
+}
+
+    .block-top-users ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .block-top-users li {
+        padding-bottom: 10px;
+    }
+
+
+.membership-expired {
+    max-width: 500px;
+    font-size: 140%;
+    margin: 80px auto;
+}
+
+    .membership-expired-title {
+        font-size: 120%;
+        font-weight: 500;
+    }
+
+    .membership-expired-description {
+        padding: 40px 0;
+    }

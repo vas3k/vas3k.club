@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content join">
+        <div class="join-title">Присоединиться</div>
+
+        <div class="join-description">
+            Мы всегда рады новым членам! Заранее предупреждаем, у нас тут запрещена анонимность, поэтому мы заставляем каждого заполнить профиль и рассказать о себе перед входом.
+            Если вы не хотите жить по таким <a href="{% url "docs" "about" %}" target="_blank">правилам</a>, рекомендуем сайт <a href="https://ok.ru/">Одноклассники</a>, там как-то попроще.
+        </div>
+
+        <form action="." method="get">
+
+        <div class="pay-services">
+            <div class="block pay-service">
+                <div class="pay-service-title"><i class="fas fa-money-check-alt"></i>&nbsp;Напрямую</div>
+                <ul class="pay-service-list">
+                    <li>✅ Пакеты сразу на год и дольше</li>
+                    <li>✅ Оплата без подписки</li>
+                    <li>🤔 Нет раннего доступа к блогу</li>
+                </ul>
+                <div class="join-service-button">
+                    <a href="#select_package" class="button">Ок, погнали 👇</a>
+                </div>
+            </div>
+
+            <div class="block pay-service">
+                <div class="pay-service-title"><i class="fab fa-patreon"></i>&nbsp;Через Patreon</div>
+                <ul class="pay-service-list">
+                    <li>✅ Можно платить помесячно</li>
+                    <li>🤔 Иногда он глючит</li>
+                    <li>🤔 Высокие комиссии</li>
+                </ul>
+                <div class="join-service-button">
+                    <a href="https://patreon.com/vas3k" class="button">Перейти на патреон</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="join-subtitle" id="select_package">Пакет брать будете?</div>
+
+        <div class="pay-packages">
+            <div>
+                <input type="radio" id="package-year" name="product_code" value="club1" checked>
+                <label for="package-year" class="block pay-package">
+                    <div class="pay-package-name">На год</div>
+                    <div class="pay-package-image">🤘</div>
+                    <div class="pay-package-price">€15</div>
+                </label>
+            </div>
+
+            <div>
+                <input type="radio" id="package-three" name="product_code" value="club3">
+                <label for="package-three" class="block pay-package">
+                    <div class="pay-package-name">На 3 года</div>
+                    <div class="pay-package-image">😎</div>
+                    <div class="pay-package-price">€40</div>
+                </label>
+            </div>
+
+            <div>
+                <input type="radio" id="package-hundred" name="product_code" value="club50">
+                <label for="package-hundred" class="block pay-package">
+                    <div class="pay-package-name">На 50 лет</div>
+                    <div class="pay-package-image">🚀</div>
+                    <div class="pay-package-price">€150</div>
+                </label>
+            </div>
+        </div>
+
+
+        <div class="join-subtitle">Ваш e-mail для входа</div>
+
+        <div class="block join-email">
+            <div class="join-email-form">
+                <label>Вот сюда 👉&nbsp;&nbsp;<input type="email" name="email" placeholder="you+club@gmail.com" required></label>
+            </div>
+        </div>
+
+        <label class="join-consent"><input type="checkbox" name="iconsent" value="true" required> даю согласие на обработку <a href="{% url "docs" "privacy_policy" %}" target="_blank">персональных данных</a>, соглашаюсь с <a href="{% url "docs" "tos" %}" target="_blank">правилами</a> Клуба и помню, что мне придётся заполнить профиль</label>
+
+        <button type="submit" class="button button-big join-button">Перейти к оплате</button>
+
+        </form>
+
+        <br><br><br><br><br><br>
+
+        <div style="font-size: 80%; text-align: center; max-width: 300px; margin: 0 auto;">Legal Entity: DE328977563, Vasily Zubarev Beratung, Greifenhagener Str. 48, 10437, Berlin, Germany</div>
+    </div>
+{% endblock %}

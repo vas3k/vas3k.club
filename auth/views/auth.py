@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from auth.helpers import auth_required
@@ -12,6 +12,10 @@ from club.exceptions import AccessDenied
 from posts.models import Post
 from users.models.user import User
 from utils.strings import random_string
+
+
+def join(request):
+    return render(request, "auth/join.html")
 
 
 def login(request):

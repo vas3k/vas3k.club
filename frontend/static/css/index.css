@@ -9,6 +9,8 @@
 @import "./layout.css";
 @import "./components.css";
 @import "./components/menu.css";
+@import "./components/auth.css";
+@import "./components/payments.css";
 @import "./components/landing.css";
 @import "./components/people.css";
 @import "./components/network.css";
