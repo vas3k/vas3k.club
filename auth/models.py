@@ -42,7 +42,7 @@ class Session(models.Model):
             user=user,
             token=random_string(length=32),
             created_at=datetime.utcnow(),
-            expires_at=user.membership_expires_at,
+            expires_at=max(user.membership_expires_at, datetime.utcnow() + timedelta(days=30)),
         )
 
 

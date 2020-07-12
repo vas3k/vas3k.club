@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime, timedelta
 from urllib.parse import quote
@@ -59,14 +60,14 @@ def pay(request):
                 membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
                 full_name=email.replace("@", " "),
                 membership_started_at=now,
-                membership_expires_at=now - timedelta(hours=1),
+                membership_expires_at=now + timedelta(days=1),
                 created_at=now,
                 updated_at=now,
                 moderation_status=User.MODERATION_STATUS_INTRO,
             ),
         )
 
-    payment = Payment.start(user, product_code)
+    payment = Payment.start(user, product)
 
     try:
         payment_link = ady.client.call_checkout_api({

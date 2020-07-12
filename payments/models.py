@@ -1,3 +1,4 @@
+import json
 import time
 from uuid import uuid4
 
@@ -7,6 +8,15 @@ from users.models.user import User
 
 
 class Payment(models.Model):
+    PAYMENT_STATUS_STARTED = "started"
+    PAYMENT_STATUS_FAILED = "failed"
+    PAYMENT_STATUS_SUCCESS = "success"
+    PAYMENT_STATUSES = [
+        (PAYMENT_STATUS_STARTED, PAYMENT_STATUS_STARTED),
+        (PAYMENT_STATUS_FAILED, PAYMENT_STATUS_FAILED),
+        (PAYMENT_STATUS_SUCCESS, PAYMENT_STATUS_SUCCESS),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     reference = models.CharField(max_length=256)
@@ -15,18 +25,21 @@ class Payment(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(max_length=32)
+    amount = models.FloatField(default=0.0)
+    status = models.CharField(choices=PAYMENT_STATUSES, default=PAYMENT_STATUS_STARTED, max_length=32)
+    data = models.TextField(null=True)
 
     class Meta:
         db_table = "payments"
 
     @classmethod
-    def start(cls, user, product_code):
-        reference = f"{user.slug}_{product_code}_{int(time.time())}"
+    def start(cls, user, product):
+        reference = f"{user.slug}_{product['code']}_{int(time.time())}"
         return Payment.objects.create(
             reference=reference,
             user=user,
-            product_code=product_code,
+            product_code=product["code"],
+            amount=product.get("amount") or 0.0,
         )
 
     @classmethod
@@ -34,9 +47,10 @@ class Payment(models.Model):
         return Payment.objects.filter(reference=reference).first()
 
     @classmethod
-    def finish(cls, reference, status="success"):
+    def finish(cls, reference, status=PAYMENT_STATUS_SUCCESS, data=None):
         payment = Payment.get(reference)
         if payment:
             payment.status = status
+            payment.data = json.dumps(data)
             payment.save()
         return payment

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render
 
-from auth.helpers import auth_required
+from auth.helpers import auth_required, set_session_cookie
 from auth.models import Session
 from club.exceptions import AccessDenied
 from posts.models import Post
@@ -63,15 +63,7 @@ def debug_dev_login(request):
 
     session = Session.create_for_user(user)
 
-    response = redirect("profile", user.slug)
-    response.set_cookie(
-        key="token",
-        value=session.token,
-        max_age=settings.SESSION_COOKIE_AGE,
-        httponly=True,
-        secure=False,
-    )
-    return response
+    return set_session_cookie(redirect("profile", user.slug), user, session)
 
 
 def debug_random_login(request):
@@ -103,12 +95,4 @@ def debug_random_login(request):
 
     session = Session.create_for_user(user)
 
-    response = redirect("profile", user.slug)
-    response.set_cookie(
-        key="token",
-        value=session.token,
-        max_age=settings.SESSION_COOKIE_AGE,
-        httponly=True,
-        secure=False,
-    )
-    return response
+    return set_session_cookie(redirect("profile", user.slug), user, session)

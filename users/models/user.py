@@ -81,7 +81,7 @@ class User(models.Model, ModelDiffMixin):
         max_length=128, choices=MEMBERSHIP_PLATFORMS,
         default=MEMBERSHIP_PLATFORM_PATREON, null=False
     )
-    membership_platform_id = models.CharField(max_length=128, unique=True)
+    membership_platform_id = models.CharField(max_length=128, null=True, unique=True)
     membership_platform_data = JSONField(null=True)
 
     email_digest_type = models.CharField(

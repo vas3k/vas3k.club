@@ -134,8 +134,6 @@ APP_NAME = "Вастрик.Клуб"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
-SESSION_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
-
 AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=1)
 AUTH_MAX_CODE_COUNT = 5
 AUTH_MAX_CODE_ATTEMPTS = 3

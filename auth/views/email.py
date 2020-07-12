@@ -1,8 +1,8 @@
-from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
+from auth.helpers import set_session_cookie
 from auth.models import Session, Code
 from notifications.email.users import send_auth_email
 from users.models.user import User
@@ -56,11 +56,4 @@ def email_login_code(request):
 
     redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
     response = redirect(redirect_to)
-    response.set_cookie(
-        key="token",
-        value=session.token,
-        expires=user.membership_expires_at,
-        httponly=True,
-        secure=not settings.DEBUG,
-    )
-    return response
+    return set_session_cookie(response, user, session)

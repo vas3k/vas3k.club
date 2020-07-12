@@ -1,9 +1,10 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.shortcuts import redirect, render
 
 from auth.models import Session
+from club import settings
 from club.exceptions import AccessDenied
 from users.models.user import User
 
@@ -15,15 +16,11 @@ def authorized_user_with_session(request):
     if not token:
         return None, None
 
-    # TODO: don't cache it with user profile
-    # session = cache.get(f"token:{token}:session")
-    # if not session:
     session = Session.objects\
         .filter(token=token)\
         .order_by()\
         .select_related("user")\
         .first()
-        # cache.set(f"token:{token}:session", session, timeout=60 * 60)
 
     if not session or session.expires_at <= datetime.utcnow():
         log.info("User session has expired")
@@ -56,6 +53,7 @@ def check_user_permissions(request, **context):
     if not request.path.startswith("/profile/") \
             and not request.path.startswith("/auth/") \
             and not request.path.startswith("/intro/") \
+            and not request.path.startswith("/network/") \
             and not request.path.startswith("/telegram/"):
 
         if request.me.membership_expires_at < datetime.utcnow():
@@ -103,3 +101,14 @@ def auth_switch(no, yes):
             return no(request, *args, **kwargs)
 
     return result
+
+
+def set_session_cookie(response, user, session):
+    response.set_cookie(
+        key="token",
+        value=session.token,
+        expires=max(user.membership_expires_at, datetime.utcnow() + timedelta(days=30)),
+        httponly=True,
+        secure=not settings.DEBUG,
+    )
+    return response

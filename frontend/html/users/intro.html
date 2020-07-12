@@ -16,11 +16,11 @@
                 </p>
 
                 <p>
-                    Ваш аккаунт создан и&nbsp;вы&nbsp;уже можете заходить к&nbsp;нам в&nbsp;<a href="https://vas3k.ru/notes/club_chat/" target="_blank">секретные чаты</a>, подписываться на&nbsp;<a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank">канал</a>, комментировать и&nbsp;смотреть закрытые <a href="https://vas3k.ru/blog/" target="_blank">посты в&nbsp;блоге</a>.
+                    Ваш аккаунт создан и&nbsp;вы&nbsp;уже можете заходить к&nbsp;нам в&nbsp;<a href="{% url "network" %}" target="_blank">секретные чаты</a>, подписываться на&nbsp;<a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank">канал</a>, комментировать и&nbsp;смотреть закрытые <a href="https://vas3k.ru/blog/" target="_blank">посты в&nbsp;блоге</a>.
                 </p>
 
                 <p>
-                    Но&nbsp;чтобы пустить вас в&nbsp;сам Клуб, нам надо сначала познакомиться. Открытые дружеские отношения и&nbsp;отсутствие оголтелых анонимусов&nbsp;&mdash; залог здорового и&nbsp;недушного коммьюнити. **Анонимность в Клубе запрещена**.
+                    Но&nbsp;чтобы пустить вас в&nbsp;сам Клуб, нам надо сначала познакомиться. Открытые дружеские отношения и&nbsp;отсутствие оголтелых анонимусов&nbsp;&mdash; залог здорового и&nbsp;недушного коммьюнити. <strong>Анонимность в Клубе запрещена</strong>.
                 </p>
 
                 <p>
@@ -52,7 +52,7 @@
                 </label>
                 {{ form.slug }}
                 {% if form.slug.errors %}<span class="form-row-errors">{{ form.slug.errors }}</span>{% endif %}
-                <span class="form-row-help">Будет использован как URL вашей странички и&nbsp;для реплаев.<br>Потому только латиница, циферки и&nbsp;чёрточки.<br>Без пробелов.</span>
+                <span class="form-row-help">Используется как URL вашей странички, для входа и для реплаев.<br>Потому только латиница, циферки и&nbsp;чёрточки без пробелов.</span>
             </div>
 
             <div class="form-row">
@@ -264,17 +264,17 @@
 
             <div class="clearfix50"></div>
 
-            <div class="form-row form-row-checkbox" style="font-size: 85%;">
+            <div class="form-row form-row-checkbox">
                 <label for="{{ form.privacy_policy_accepted.id_for_label }}" class="form-label">
                     {{ form.privacy_policy_accepted }}
-                    &nbsp;&nbsp;&larr; я&nbsp;даю согласие на&nbsp;обработку моих персональных данных, использование куков, гугланалитики и&nbsp;других вещей, без которых современный интернет вообще не&nbsp;будет работать
+                    &nbsp;&nbsp;&larr; я&nbsp;даю согласие на&nbsp;обработку моих персональных данных, использование куков, аналитики и&nbsp;других вещей, без которых современный интернет вообще не&nbsp;будет работать
                 </label>
                 {% if form.privacy_policy_accepted.errors %}<span class="form-row-errors">{{ form.privacy_policy_accepted.errors }}</span>{% endif %}
             </div>
 
             <div class="clearfix50"></div>
 
-            <button type="submit" class="button button-red">Отправить на&nbsp;ревью</button>
+            <button type="submit" class="button button-red button-big">Отправить на&nbsp;ревью</button>
         </form>
     </div>
 {% endblock %}

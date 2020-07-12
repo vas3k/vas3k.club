@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from auth.exceptions import PatreonException
-from auth.helpers import authorized_user
+from auth.helpers import authorized_user, set_session_cookie
 from auth.models import Session
 from auth.providers import patreon
 from users.models.user import User
@@ -112,11 +112,4 @@ def patreon_oauth_callback(request):
         redirect_to += f"?{state}"
 
     response = redirect(redirect_to)
-    response.set_cookie(
-        key="token",
-        value=session.token,
-        expires=user.membership_expires_at,
-        httponly=True,
-        secure=not settings.DEBUG,
-    )
-    return response
+    return set_session_cookie(response, user, session)
