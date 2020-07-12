@@ -172,6 +172,9 @@ class Post(models.Model, ModelDiffMixin):
     def increment_vote_count(self):
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
+    def decrement_vote_count(self):
+        return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
+
     @property
     def emoji(self):
         return self.TYPE_TO_EMOJI.get(self.type) or ""
@@ -287,6 +290,33 @@ class PostVote(models.Model):
 
         return post_vote, is_vote_created
 
+    @property
+    def is_retractable(self):
+        return self.created_at >= datetime.utcnow() - settings.RETRACT_VOTE_TIMEDELTA
+
+
+    @classmethod
+    def retract_vote(cls, request, user, post):
+        if not user.is_god and user.id == post.author_id:
+            return False
+
+        try:
+            post_vote = PostVote.objects.get(
+                user=user,
+                post=post
+            )
+
+            if not post_vote.is_retractable:
+                return False
+
+            is_vote_deleted, _ = post_vote.delete()
+            if is_vote_deleted:
+                post.decrement_vote_count()
+                post.author.decrement_vote_count()
+
+                return True if is_vote_deleted > 0 else False
+        except PostVote.DoesNotExist:
+            return False
 
 class PostView(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

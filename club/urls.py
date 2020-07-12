@@ -13,7 +13,7 @@ from payments.views import membership_expired
 from posts.models import Post
 from posts.rss import NewPostsRss
 from posts.views.admin import admin_post, announce_post
-from posts.views.posts import show_post, edit_post, upvote_post, compose, compose_type, toggle_post_subscription
+from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, toggle_post_subscription
 from posts.views.feed import feed
 from posts.sitemaps import sitemaps
 from search.views import search
@@ -53,6 +53,7 @@ urlpatterns = [
     path("create/<slug:post_type>/", compose_type, name="compose_type"),
     path("post/<slug:post_slug>/edit/", edit_post, name="edit_post"),
     path("post/<slug:post_slug>/upvote/", upvote_post, name="upvote_post"),
+    path("post/<slug:post_slug>/retract_vote/", retract_post_vote, name="retract_post_vote"),
     path("post/<slug:post_slug>/subscription/", toggle_post_subscription, name="toggle_post_subscription"),
     path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),

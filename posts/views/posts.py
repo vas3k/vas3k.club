@@ -100,6 +100,27 @@ def upvote_post(request, post_slug):
         }
     }
 
+@auth_required
+@ajax_request
+def retract_post_vote(request, post_slug):
+    if request.method != "POST":
+        raise Http404()
+
+    post = get_object_or_404(Post, slug=post_slug)
+
+    is_retracted = PostVote.retract_vote(
+        request=request,
+        user=request.me,
+        post=post,
+    )
+
+    return {
+        "success": is_retracted,
+        "post": {
+            "upvotes": post.upvotes - (1 if is_retracted else 0)
+        }
+    }
+
 
 @auth_required
 @ajax_request
