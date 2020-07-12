@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -16,18 +17,23 @@ def email_login(request):
         return redirect("login")
 
     email = email.lower().strip()
-    user = User.objects.filter(email=email).first()
+    user = User.objects.filter(Q(email=email) | Q(slug=email)).first()
     if not user:
         return render(request, "error.html", {
             "title": "Такого юзера нет 🤔",
-            "message": "Пользователь с такой почтой не найден среди членов клуба",
+            "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
+                       "Попробуйте другую почту или никнейм. "
+                       "Если совсем ничего не выйдет, напишите нам на club@vas3k.club, попробуем помочь.",
         })
 
     code = Code.create_for_user(user=user, recipient=email)
 
     send_auth_email(user, code)
 
-    return render(request, "auth/email.html", {"email": email, "goto": request.POST.get("goto")})
+    return render(request, "auth/email.html", {
+        "email": email,
+        "goto": request.POST.get("goto"),
+    })
 
 
 def email_login_code(request):
@@ -42,6 +48,11 @@ def email_login_code(request):
 
     user = Code.check_code(recipient=email, code=code)
     session = Session.create_for_user(user)
+
+    if not user.is_email_verified:
+        # save 1 click and verify email
+        user.is_email_verified = True
+        user.save()
 
     redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
     response = redirect(redirect_to)

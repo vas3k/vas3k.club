@@ -20,7 +20,10 @@ def join(request):
 def login(request):
     if request.me:
         return redirect("profile", request.me.slug)
-    return render(request, "auth/login.html", {"goto": request.GET.get("goto")})
+    return render(request, "auth/login.html", {
+        "goto": request.GET.get("goto"),
+        "email": request.GET.get("email"),
+    })
 
 
 @auth_required
