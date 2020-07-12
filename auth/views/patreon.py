@@ -11,7 +11,6 @@ from auth.models import Session
 from auth.providers import patreon
 from users.models.user import User
 from common.images import upload_image_from_url
-from utils.strings import random_string
 
 
 def patreon_login(request):
@@ -94,7 +93,8 @@ def patreon_oauth_callback(request):
     if is_created:
         user.balance = membership.lifetime_support_cents / 100
     else:
-        user.membership_expires_at = membership.expires_at
+        if membership.expires_at > user.membership_expires_at:
+            user.membership_expires_at = membership.expires_at
         user.balance = membership.lifetime_support_cents / 100  # TODO: remove when the real money comes in
 
     user.membership_platform_data = {
@@ -103,12 +103,7 @@ def patreon_oauth_callback(request):
     }
     user.save()
 
-    session = Session.objects.create(
-        user=user,
-        token=random_string(length=32),
-        created_at=now,
-        expires_at=user.membership_expires_at,
-    )
+    session = Session.create_for_user(user)
 
     redirect_to = reverse("profile", args=[user.slug])
 
@@ -120,7 +115,7 @@ def patreon_oauth_callback(request):
     response.set_cookie(
         key="token",
         value=session.token,
-        max_age=settings.SESSION_COOKIE_AGE,
+        expires=user.membership_expires_at,
         httponly=True,
         secure=not settings.DEBUG,
     )

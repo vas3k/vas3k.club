@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
 from auth.helpers import auth_required
 from auth.models import Session
@@ -21,17 +20,7 @@ def join(request):
 def login(request):
     if request.me:
         return redirect("profile", request.me.slug)
-
-    goto = request.GET.get("goto")
-
-    # TODO: for now we have only Patreon login, let's redirect user there immediately
-    if goto:
-        return redirect(reverse("patreon_login") + f"?goto={goto}")
-    else:
-        return redirect("patreon_login")
-
-    # TODO: use it in future
-    # return render(request, "auth/login.html")
+    return render(request, "auth/login.html", {"goto": request.GET.get("goto")})
 
 
 @auth_required
@@ -69,12 +58,7 @@ def debug_dev_login(request):
     if is_created:
         Post.upsert_user_intro(user, "Очень плохое интро", is_visible=True)
 
-    session = Session.objects.create(
-        user=user,
-        token=random_string(length=32),
-        created_at=datetime.utcnow(),
-        expires_at=datetime.utcnow() + timedelta(days=365 * 100),
-    )
+    session = Session.create_for_user(user)
 
     response = redirect("profile", user.slug)
     response.set_cookie(
@@ -114,12 +98,7 @@ def debug_random_login(request):
     if is_created:
         Post.upsert_user_intro(user, "Интро как интро, аппрув прошло :Р", is_visible=True)
 
-    session = Session.objects.create(
-        user=user,
-        token=random_string(length=32),
-        created_at=datetime.utcnow(),
-        expires_at=datetime.utcnow() + timedelta(days=365 * 100),
-    )
+    session = Session.create_for_user(user)
 
     response = redirect("profile", user.slug)
     response.set_cookie(

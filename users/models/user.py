@@ -12,8 +12,10 @@ from utils.strings import random_string
 
 
 class User(models.Model, ModelDiffMixin):
+    MEMBERSHIP_PLATFORM_DIRECT = "direct"
     MEMBERSHIP_PLATFORM_PATREON = "patreon"
     MEMBERSHIP_PLATFORMS = [
+        (MEMBERSHIP_PLATFORM_DIRECT, "Direct"),
         (MEMBERSHIP_PLATFORM_PATREON, "Patreon"),
     ]
 
@@ -120,12 +122,8 @@ class User(models.Model, ModelDiffMixin):
         if self.last_activity_at < now - timedelta(minutes=5):
             return User.objects.filter(id=self.id).update(last_activity_at=now)
 
-    def membership_days(self):
-        if self.membership_started_at:
-            return int(
-                (datetime.utcnow() - self.membership_started_at).total_seconds() / 60 / 60 / 24
-            )
-        return None
+    def membership_days_left(self):
+        return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
 
     def increment_vote_count(self):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)

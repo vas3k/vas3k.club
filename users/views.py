@@ -150,6 +150,22 @@ def edit_notifications(request, user_slug):
 
 
 @auth_required
+def edit_payments(request, user_slug):
+    if user_slug == "me":
+        return redirect("edit_payments", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    top_users = User.objects\
+        .filter(membership_expires_at__gte=datetime.utcnow() + timedelta(days=40))\
+        .order_by("-membership_expires_at")[:10]
+
+    return render(request, "users/edit/payments.html", {"user": user, "top_users": top_users})
+
+
+@auth_required
 def edit_bot(request, user_slug):
     if user_slug == "me":
         return redirect("edit_bot", request.me.slug, permanent=False)

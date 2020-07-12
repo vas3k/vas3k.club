@@ -39,3 +39,9 @@ class URLParsingException(ClubException):
     default_code = "url-parser-exception"
     default_title = "Не удалось распарсить URL"
     default_message = ""
+
+
+class InvalidCode(ClubException):
+    default_code = "invalid-code"
+    default_title = "Вы ввели неправильный код"
+    default_message = "Введите или запросите его еще раз. Через несколько неправильных попыток коды удаляются"

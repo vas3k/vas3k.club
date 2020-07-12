@@ -4,12 +4,14 @@ from django.contrib.sitemaps.views import sitemap
 
 from auth.helpers import auth_switch
 from auth.views.auth import login, logout, debug_dev_login, debug_random_login, join
+from auth.views.email import email_login, email_login_code
+from auth.views.external import external_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, retract_comment_vote, pin_comment
 from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
-from payments.views import membership_expired, stripe_webhook
+from payments.views import membership_expired, pay, stripe_webhook
 from posts.models import Post
 from posts.rss import NewPostsRss
 from posts.views.admin import admin_post, announce_post
@@ -18,7 +20,7 @@ from posts.views.feed import feed
 from posts.sitemaps import sitemaps
 from search.views import search
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
-    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people
+    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people, edit_payments
 from misc.views import achievements, network
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
@@ -32,6 +34,13 @@ urlpatterns = [
     path("auth/logout/", logout, name="logout"),
     path("auth/patreon/", patreon_login, name="patreon_login"),
     path("auth/patreon_callback/", patreon_oauth_callback, name="patreon_oauth_callback"),
+    path("auth/email/", email_login, name="email_login"),
+    path("auth/email/code/", email_login_code, name="email_login_code"),
+    path("auth/external/", external_login, name="external_login"),
+
+    path("monies/", pay, name="pay"),
+    path("monies/done/", pay, name="done"),
+    path("monies/adyen_callback/", pay, name="adyen_callback"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
     path("monies/stripe_webhook/", stripe_webhook, name="stripe_webhook"),
 
@@ -39,6 +48,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/edit/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/bot/", edit_bot, name="edit_bot"),
     path("user/<slug:user_slug>/edit/notifications/", edit_notifications, name="edit_notifications"),
+    path("user/<slug:user_slug>/edit/monies/", edit_payments, name="edit_payments"),
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
 
     path("intro/", intro, name="intro"),

@@ -26,6 +26,15 @@
         font-weight: 600;
         text-align: center;
         padding-top: 30px;
+        margin: 0 auto;
+    }
+
+    .block-subheader {
+        display: block;
+        font-size: 140%;
+        font-weight: 400;
+        text-align: center;
+        margin: 0 auto;
     }
 
     @media only screen and (max-width : 570px) {

@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="block membership-expired">
+
+        <div class="membership-expired-title">Ваша клубная карта истекла 💩</div>
+
+        <div class="membership-expired-description">
+            Так бывает, когда вы давно не продлевали свою подписку, отписались от патреона или на вашей карте просто не осталось денег и теперь вы нищий.
+        </div>
+
+    </div>
+
+
+    <div class="block-header" id="select_package">Продлевать будем?</div>
+
+    <br>
+
+    <form action="{% url "pay" %}" method="get">
+
+        {% include "payments/blocks/packages.html" %}
+
+        <br><br><br><br>
+
+        <input type="hidden" name="email" value="{{ me.email }}">
+
+        <button type="submit" class="button button-big join-button">Продлить 🤙</button>
+
+    </form>
+{% endblock %}

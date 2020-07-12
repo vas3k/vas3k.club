@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="login">
+        <div class="block login-code">
+            <div class="login-code-title">🤘 Вам отправлен код!</div>
+
+            <div class="login-code-description">Проверьте ваш ящик «{{ email }}» и введите секретный код доступа к Клубу</div>
+
+            <div class="login-code-form">
+                <form action="{% url "email_login_code" %}" method="get">
+                    <input type="text" name="code" placeholder="0000000" class="login-code-input">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    {% if goto %}<input type="hidden" name="goto" value="{{ goto }}">{% endif %}
+
+                    <button type="submit" class="button login-code-button">Предъявить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

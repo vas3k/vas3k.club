@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Клубные взносы — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">🎩<br>Клубные взносы</div>
+
+        <div class="block-subheader">Клубная карта активна до: <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong></div>
+
+        <form action="{% url "pay" %}" method="get">
+
+        <div class="pay-services">
+            <div class="block pay-service">
+                <div class="pay-service-title"><i class="fas fa-money-check-alt"></i>&nbsp;Напрямую</div>
+                <ul class="pay-service-list">
+                    <li>✅ Пополнение без подписки</li>
+                    <li>✅ Сразу на год и даже больше</li>
+                    <li>🤔 Нет раннего доступа к блогу</li>
+                </ul>
+                <div class="join-service-button">
+                    {% if me.membership_platform_type == "direct" %}
+                        <a href="#select_package" class="button">Пополнить ещё 👇</a>
+                    {% else %}
+                        <a href="#select_package" class="button">Перейти на прямое пополнение 👇</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="block pay-service">
+                <div class="pay-service-title"><i class="fab fa-patreon"></i>&nbsp;Через Patreon</div>
+                <ul class="pay-service-list">
+                    <li>✅ Ежемесячная подписка</li>
+                    <li>🤔 Оплата проходит не сразу</li>
+                    <li>🤔 Высокие комиссии</li>
+                </ul>
+                <div class="pay-service-button">
+                    {% if me.membership_platform_type == "patreon" %}
+                        <a href="https://patreon.com/vas3k" class="button" style="background-color: #53AA68; border-color: #53AA68;">👍 Сейчас активно</a>
+                    {% else %}
+                        💩 Обратно переходить нет смысла, а то весь срок потеряется
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="block-header" id="select_package">На сколько еще пополняем?</div>
+
+        <br>
+
+        {% include "payments/blocks/packages.html" %}
+
+        <div class="block-description">
+            Пополнять клубную карту можно когда угодно — дни будут просто суммироваться
+        </div>
+
+        <br><br><br><br>
+
+        <input type="hidden" name="email" value="{{ me.email }}">
+
+        <button type="submit" class="button button-big join-button">Продлить членство 🤙</button>
+
+        </form>
+
+        <div class="block-header" style="max-width: 600px; margin-top: 200px;">🏅<br>А чтобы было веселее, вот топ-10 членов Клуба с самой длинной подпиской</div>
+
+        <div class="block-description">
+            Собранные взносы идут на развитие Клуба, поэтому если вам хочется поддержать проект,
+            лучший способ это сделать — продлить свою карту ещё на пару сотен лет вперёд :)
+        </div>
+
+        <div class="block block-top-users">
+            <ul>
+                {% for user in top_users %}
+                    <li>{% if forloop.counter <= 3 %}<strong>🏆{{ forloop.counter }}</strong>{% else %}#{{ forloop.counter }}{% endif %}&nbsp;&nbsp;{% include "users/widgets/tiny.html" %} — <strong>до {{ me.membership_expires_at | date:"E Y" }} года</strong></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
