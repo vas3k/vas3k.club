@@ -6,7 +6,7 @@ from auth.helpers import auth_switch
 from auth.views.auth import login, logout, debug_dev_login, debug_random_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
-from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, pin_comment
+from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, retract_comment_vote, pin_comment
 from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired
@@ -65,6 +65,7 @@ urlpatterns = [
     path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
 
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
+    path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
     path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete/", delete_comment, name="delete_comment"),
