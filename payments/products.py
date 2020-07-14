@@ -12,7 +12,6 @@ def club_subscription_activator(product, payment, user):
 
     user.membership_expires_at += product["data"]["timedelta"]
     user.membership_platform_type = User.MEMBERSHIP_PLATFORM_DIRECT
-    user.membership_platform_id = str(payment.id)
     user.membership_platform_data = {"reference": payment.reference}
     user.save()
 

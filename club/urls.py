@@ -19,8 +19,9 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
 from posts.views.feed import feed
 from posts.sitemaps import sitemaps
 from search.views import search
+from users.api import api_profile
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
-    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people, edit_payments
+    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people, edit_payments, edit_auth
 from misc.views import achievements, network
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
@@ -48,6 +49,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/edit/bot/", edit_bot, name="edit_bot"),
     path("user/<slug:user_slug>/edit/notifications/", edit_notifications, name="edit_notifications"),
     path("user/<slug:user_slug>/edit/monies/", edit_payments, name="edit_payments"),
+    path("user/<slug:user_slug>/edit/auth/", edit_auth, name="edit_auth"),
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
 
     path("intro/", intro, name="intro"),
@@ -98,6 +100,9 @@ urlpatterns = [
     path("godmode/", god_settings, name="god_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
+
+    # api
+    path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
 
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),

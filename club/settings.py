@@ -134,6 +134,7 @@ APP_NAME = "Вастрик.Клуб"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
+AUTH_CODE_LENGTH = 6
 AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=1)
 AUTH_MAX_CODE_COUNT = 5
 AUTH_MAX_CODE_ATTEMPTS = 3

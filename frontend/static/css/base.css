@@ -35,6 +35,7 @@
         font-weight: 400;
         text-align: center;
         margin: 0 auto;
+        padding-bottom: 20px;
     }
 
     @media only screen and (max-width : 570px) {

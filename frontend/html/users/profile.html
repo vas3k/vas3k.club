@@ -50,8 +50,13 @@
                     </span>
                 </div>
                 <a href="{% url "edit_payments" user.slug %}" class="profile-status">
-                    <span class="profile-status-number">{% if user.membership_days_left < 10 %}💩{% else %}😎{% endif %} {{ user.membership_days_left | cool_number }}</span>
-                    <span class="profile-status-text">{{ user.membership_days_left | rupluralize:"день,дня,дней" }}</span>
+                    {% if user.membership_days_left < 730 %}
+                        <span class="profile-status-number">{% if user.membership_days_left < 10 %}💩{% else %}😎{% endif %} {{ user.membership_days_left | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_days_left | rupluralize:"день,дня,дней" }}</span>
+                    {% else %}
+                        <span class="profile-status-number">💎 {{ user.membership_years_left | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_years_left | rupluralize:"год,года,лет" }}</span>
+                    {% endif %}
                 </a>
                 <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
                     <span class="profile-status-icon">💌</span>

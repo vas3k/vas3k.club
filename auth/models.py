@@ -64,7 +64,7 @@ class Code(models.Model):
         ordering = ["-created_at"]
 
     @classmethod
-    def create_for_user(cls, user, recipient):
+    def create_for_user(cls, user, recipient, length=6):
         last_codes_count = Code.objects.filter(
             recipient=recipient,
             created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
@@ -75,7 +75,7 @@ class Code(models.Model):
         return Code.objects.create(
             recipient=recipient,
             user=user,
-            code=random_number(length=7),
+            code=random_number(length),
             created_at=datetime.utcnow(),
             expires_at=datetime.utcnow() + timedelta(hours=1),
         )

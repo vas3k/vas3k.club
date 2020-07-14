@@ -8,7 +8,7 @@ from django.db.models import F
 from users.models.geo import Geo
 from common.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
-from utils.strings import random_string
+from utils.strings import random_hash
 
 
 class User(models.Model, ModelDiffMixin):
@@ -54,7 +54,7 @@ class User(models.Model, ModelDiffMixin):
     slug = models.CharField(max_length=32, unique=True)
     card_number = models.IntegerField(default=0)
 
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=128, null=False)
     avatar = models.URLField(null=True, blank=True)
     secret_hash = models.CharField(max_length=16, db_index=True)
@@ -81,7 +81,7 @@ class User(models.Model, ModelDiffMixin):
         max_length=128, choices=MEMBERSHIP_PLATFORMS,
         default=MEMBERSHIP_PLATFORM_PATREON, null=False
     )
-    membership_platform_id = models.CharField(max_length=128, null=True, unique=True)
+    patreon_id = models.CharField(max_length=128, null=True, unique=True)
     membership_platform_data = JSONField(null=True)
 
     email_digest_type = models.CharField(
@@ -109,13 +109,22 @@ class User(models.Model, ModelDiffMixin):
 
     def save(self, *args, **kwargs):
         if not self.secret_hash:
-            self.secret_hash = random_string(length=10)
+            self.secret_hash = random_hash(length=16)
 
         if not self.slug:
             self.slug = generate_unique_slug(User, self.full_name, separator="")
 
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
+
+    def to_dict(self):
+        return {
+            "slug": self.slug,
+            "full_name": self.full_name,
+            "avatar": self.avatar,
+            "moderation_status": self.moderation_status,
+            "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
+        }
 
     def update_last_activity(self):
         now = datetime.utcnow()
@@ -124,6 +133,9 @@ class User(models.Model, ModelDiffMixin):
 
     def membership_days_left(self):
         return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
+
+    def membership_years_left(self):
+        return self.membership_days_left() / 365
 
     def increment_vote_count(self):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
@@ -155,6 +167,10 @@ class User(models.Model, ModelDiffMixin):
     @property
     def is_paid_member(self):
         return self.is_club_member and self.membership_expires_at >= datetime.utcnow()
+
+    @property
+    def secret_auth_code(self):
+        return f"{self.email}|-{self.secret_hash}"
 
     @classmethod
     def registered_members(cls):

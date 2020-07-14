@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -12,28 +13,45 @@ def email_login(request):
     if request.method != "POST":
         return redirect("login")
 
-    email = request.POST.get("email")
-    if not email:
+    goto = request.POST.get("goto")
+    email_or_login = request.POST.get("email_or_login")
+    if not email_or_login:
         return redirect("login")
 
-    email = email.lower().strip()
-    user = User.objects.filter(Q(email=email) | Q(slug=email)).first()
-    if not user:
-        return render(request, "error.html", {
-            "title": "Такого юзера нет 🤔",
-            "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
-                       "Попробуйте другую почту или никнейм. "
-                       "Если совсем ничего не выйдет, напишите нам на club@vas3k.club, попробуем помочь.",
+    email_or_login = email_or_login.strip()
+
+    if "|-" in email_or_login:
+        # secret_hash login
+        email_part, secret_hash_part = email_or_login.split("|-", 1)
+        user = User.objects.filter(email=email_part, secret_hash=secret_hash_part).first()
+        if not user:
+            return render(request, "error.html", {
+                "title": "Такого юзера нет 🤔",
+                "message": "Пользователь с таким кодом не найден. "
+                           "Попробуйте авторизоваться по обычной почте или юзернейму.",
+            })
+
+        session = Session.create_for_user(user)
+        redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
+        response = redirect(redirect_to)
+        return set_session_cookie(response, user, session)
+    else:
+        # email/nickname login
+        user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
+        if not user:
+            return render(request, "error.html", {
+                "title": "Такого юзера нет 🤔",
+                "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
+                           "Попробуйте другую почту или никнейм. "
+                           "Если совсем ничего не выйдет, напишите нам, попробуем помочь.",
+            })
+
+        code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
+        send_auth_email(user, code)
+        return render(request, "auth/email.html", {
+            "email": user.email,
+            "goto": goto,
         })
-
-    code = Code.create_for_user(user=user, recipient=email)
-
-    send_auth_email(user, code)
-
-    return render(request, "auth/email.html", {
-        "email": email,
-        "goto": request.POST.get("goto"),
-    })
 
 
 def email_login_code(request):

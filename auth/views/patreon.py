@@ -2,6 +2,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -75,20 +76,30 @@ def patreon_oauth_callback(request):
         })
 
     now = datetime.utcnow()
-    user, is_created = User.objects.get_or_create(
-        membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
-        membership_platform_id=membership.user_id,
-        defaults=dict(
-            email=membership.email,
-            full_name=membership.full_name[:120],
-            avatar=upload_image_from_url(membership.image) if membership.image else None,
-            membership_started_at=membership.started_at,
-            membership_expires_at=membership.expires_at,
-            created_at=now,
-            updated_at=now,
-            is_email_verified=False,
-        ),
-    )
+
+    try:
+        user, is_created = User.objects.get_or_create(
+            patreon_id=membership.user_id,
+            defaults=dict(
+                email=membership.email,
+                full_name=membership.full_name[:120],
+                avatar=upload_image_from_url(membership.image) if membership.image else None,
+                membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
+                membership_started_at=membership.started_at,
+                membership_expires_at=membership.expires_at,
+                created_at=now,
+                updated_at=now,
+                is_email_verified=False,
+            ),
+        )
+    except IntegrityError:
+        return render(request, "error.html", {
+            "title": "Придётся войти через почту",
+            "message": "Пользователь с таким имейлом уже зарегистрирован, но не через патреон. "
+                       "Чтобы защититься от угона аккаунтов через подделку почты на патреоне, "
+                       "нам придётся сейчас попросить вас войти через почту. "
+                       "В будущем вы можете написать нам в саппорт чтобы мы привязали ваш патреон тоже к аккаунту."
+        })
 
     if is_created:
         user.balance = membership.lifetime_support_cents / 100

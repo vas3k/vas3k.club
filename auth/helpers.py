@@ -1,21 +1,35 @@
 import logging
 from datetime import datetime, timedelta
 
-from django.shortcuts import redirect, render
+import jwt
+from django.shortcuts import redirect, render, get_object_or_404
 
 from auth.models import Session
 from club import settings
-from club.exceptions import AccessDenied
+from club.exceptions import AccessDenied, ApiAuthRequired, ApiAccessDenied
 from users.models.user import User
 
 log = logging.getLogger(__name__)
 
 
-def authorized_user_with_session(request):
-    token = request.COOKIES.get("token") or request.GET.get("token")
-    if not token:
-        return None, None
+def authorized_user(request):
+    user, _ = authorized_user_with_session(request)
+    return user
 
+
+def authorized_user_with_session(request):
+    auth_token = request.COOKIES.get("token") or request.GET.get("token")
+    if auth_token:
+        return user_by_token(auth_token)
+
+    jwt_token = request.COOKIES.get("jwt") or request.GET.get("jwt")
+    if jwt_token:
+        return user_by_jwt(jwt_token)
+
+    return None, None
+
+
+def user_by_token(token):
     session = Session.objects\
         .filter(token=token)\
         .order_by()\
@@ -23,15 +37,22 @@ def authorized_user_with_session(request):
         .first()
 
     if not session or session.expires_at <= datetime.utcnow():
-        log.info("User session has expired")
         return None, None  # session is expired
 
     return session.user, session
 
 
-def authorized_user(request):
-    user, _ = authorized_user_with_session(request)
-    return user
+def user_by_jwt(jwt_token):
+    try:
+        payload = jwt.decode(jwt_token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+    except (jwt.DecodeError, jwt.ExpiredSignatureError):
+        return None, None  # bad jwt token
+
+    user = get_object_or_404(User, slug=payload["user_slug"])
+    if user.moderation_status != User.MODERATION_STATUS_APPROVED:
+        raise ApiAccessDenied()
+
+    return user, None
 
 
 def auth_required(view):
@@ -86,6 +107,16 @@ def moderator_role_required(view):
 
         if not request.me.is_moderator:
             raise AccessDenied()
+
+        return view(request, *args, **kwargs)
+
+    return wrapper
+
+
+def api_required(view):
+    def wrapper(request, *args, **kwargs):
+        if not request.me:
+            raise ApiAuthRequired()
 
         return view(request, *args, **kwargs)
 
