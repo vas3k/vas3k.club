@@ -88,7 +88,7 @@ def upvote_post(request, post_slug):
 
     post = get_object_or_404(Post, slug=post_slug)
 
-    _, is_vote_created = PostVote.upvote(
+    post_vote, is_vote_created = PostVote.upvote(
         request=request,
         user=request.me,
         post=post,
@@ -96,8 +96,9 @@ def upvote_post(request, post_slug):
 
     return {
         "post": {
-            "upvotes": post.upvotes + (1 if is_vote_created else 0)
-        }
+            "upvotes": post.upvotes + (1 if is_vote_created else 0),
+        },
+        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
     }
 
 @auth_required

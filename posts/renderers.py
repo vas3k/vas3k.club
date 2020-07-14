@@ -18,10 +18,12 @@ def render_post(request, post, context=None):
     if request.me:
         comments = Comment.objects_for_user(request.me).filter(post=post).all()
         is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
+        upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
         subscription = PostSubscription.get(request.me, post)
     else:
         comments = Comment.visible_objects().filter(post=post).all()
         is_voted = False
+        upvoted_at = None
         subscription = None
 
     # order comments
@@ -41,6 +43,7 @@ def render_post(request, post, context=None):
         "comment_order": comment_order,
         "reply_form": ReplyForm(),
         "is_voted": is_voted,
+        "upvoted_at": upvoted_at,
         "subscription": subscription,
     }
 

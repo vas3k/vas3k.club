@@ -1,7 +1,6 @@
 <template>
-    <a
-        :href="url"
-        class="upvote"
+    <button
+        class="upvote button"
         :class="{
             'upvote-voted': isVoted && !isDisabled,
             'upvote-disabled': isDisabled,
@@ -10,7 +9,7 @@
         @click.prevent="toggle"
     >
         {{ upvotes }}
-    </a>
+    </button>
 </template>
 
 <script>
@@ -23,11 +22,14 @@ export default {
             type: Object,
             required: true,
         },
-        isVotedByDefault: {
+        initialIsVoted: {
             type: Boolean,
             default() {
                 return false;
             },
+        },
+        initialUpvoteTimestamp: {
+            type: String
         },
         isInline: {
             type: Boolean,
@@ -41,24 +43,53 @@ export default {
                 return false;
             },
         },
-        url: {
+        upvoteUrl: {
             type: String,
             required: true,
         },
+        retractVoteUrl: {
+            type: String,
+            required: true,
+        }
     },
     data() {
         return {
             upvotes: this.post.upvotes,
-            isVoted: this.isVotedByDefault,
+            isVoted: this.initialIsVoted,
+            upvotedTimestamp: this.initialUpvoteTimestamp && parseInt(this.initialUpvoteTimestamp)
         };
     },
     methods: {
         toggle() {
-            return ClubApi.ajaxify(this.url, (data) => {
-                this.upvotes = parseInt(data.post.upvotes);
-                this.isVoted = true;
-            });
+            if (!this.isVoted) {
+                return ClubApi.ajaxify(this.upvoteUrl, (data) => {
+                    this.upvotes = parseInt(data.post.upvotes);
+                    this.isVoted = true;
+                    this.upvotedTimestamp = data.upvoted_timestamp
+                });
+            }
+
+            if (this.isVoted && this.canRetractVote()) {
+                return ClubApi.ajaxify(this.retractVoteUrl, (data) => {
+                    this.upvotes = parseInt(data.post.upvotes);
+                    if (data.success) {
+                        this.isVoted = false;
+                        this.upvotedTimestamp = undefined;
+                    }
+                });
+            }
         },
+
+        canRetractVote() {
+            if (!this.upvotedTimestamp) {
+                return false;
+            }
+
+            const millisecondsInHour = 60 * 60 * 1000;
+            const hoursSinceVote = (Date.now() - this.upvotedTimestamp)  / millisecondsInHour;
+            return this.isVoted && hoursSinceVote <= 3;
+        }
+
     },
 };
 </script>
