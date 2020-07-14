@@ -71,9 +71,11 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         else:
             raise Http404()
 
-    # split results into pinned and unpinned posts
-    pinned_posts = posts.filter(is_pinned_until__gte=datetime.utcnow())
-    posts = posts.exclude(id__in=[p.id for p in pinned_posts])
+    # split results into pinned and unpinned posts on main page
+    pinned_posts = []
+    if ordering == ORDERING_ACTIVITY:
+        pinned_posts = posts.filter(is_pinned_until__gte=datetime.utcnow())
+        posts = posts.exclude(id__in=[p.id for p in pinned_posts])
 
     return render(request, "posts/feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
