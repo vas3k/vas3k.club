@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import timedelta, datetime
 
 from django.conf import settings
@@ -10,6 +11,7 @@ from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
 from posts.models import Post, PostVote
+from users.models.achievements import UserAchievement
 from users.models.user import User
 
 
@@ -252,12 +254,20 @@ def weekly_digest(request):
     if not author_intro and not posts and not comments:
         raise Http404()
 
+    # New achievements
+    achievements = UserAchievement.objects\
+        .filter(**created_at_condition)\
+        .select_related("user", "achievement")\
+        .order_by("achievement")  # required for grouping
+
+    # Exclude footer for archive
     is_footer_excluded = "no_footer" in request.GET
 
     return render(request, "emails/weekly.html", {
         "posts": posts,
         "comments": comments,
         "intros": intros,
+        "achievements": achievements,
         "newbie_count": newbie_count,
         "post_count": post_count,
         "top_video_comment": top_video_comment,

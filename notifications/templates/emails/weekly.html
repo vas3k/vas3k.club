@@ -10,6 +10,24 @@
     h1, h2, header {
         text-align: center;
     }
+
+    .achievement {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px 7px 10px;
+        color: #FFF;
+        text-decoration: none;
+        font-size: 100% !important;
+        border-radius: 20px;
+    }
+
+        .achievement-image {
+            display: inline-block;
+            height: 35px;
+            width: 35px;
+            min-width: 35px;
+            vertical-align: middle;
+        }
 </style>
 {% endblock %}
 
@@ -40,8 +58,8 @@
             Не стесняйтесь писать им комменты и расспрашивать за жизнь. Для того мы здесь и собрались!
         </div>
 
-        {% for intro in intros|slice:":4" %}
-            <article class="block user">
+        {% for intro in intros|slice:":3" %}
+            <div class="block user">
                 <div class="user-avatar" style="background-image: url('{{ intro.author.get_avatar }}');">&nbsp;</div>
 
                 <div>
@@ -56,14 +74,16 @@
                         <a href="{{ settings.APP_HOST }}{% url "show_post" "intro" intro.slug %}">Читать всё #intro &rarr;</a>
                     </span>
                 </div>
-            </article>
+            </div>
         {% endfor %}
     {% endif %}
 
     {% if featured_post %}
+        <br><br><br>
+
         <h2>🚀 Тема недели</h2>
 
-        <article class="block post">
+        <div class="block post">
             <h3>
                 {{ featured_post.prefix }}
                 <a href="{{ settings.APP_HOST }}{% url "show_post" featured_post.type featured_post.slug %}" target="_blank">{{ featured_post.title }}</a>
@@ -76,15 +96,17 @@
             <span class="post-footer">
                 <a href="{{ settings.APP_HOST }}{% url "profile" featured_post.author.slug %}" style="text-decoration: none; color: #999;">
                     <img src="{{ featured_post.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
-                    &nbsp;{{ featured_post.author.slug }}
+                    &nbsp;{{ featured_post.author.full_name }}
                 </a>
                 | {{ featured_post.view_count }}&nbsp;{{ featured_post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
                 | {{ featured_post.comment_count }}&nbsp;{{ featured_post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
             </span>
-        </article>
+        </div>
     {% endif %}
 
     {% if posts %}
+        <br><br><br>
+
         <h2>😎 Лучшие посты</h2>
 
         <p class="center editorial">
@@ -93,7 +115,7 @@
         </p>
 
         {% for post in posts %}
-            <article class="block post">
+            <div class="block post">
                 <span class="upvotes">
                     👍{{ post.upvotes }}
                 </span>
@@ -119,27 +141,29 @@
                 <span class="post-footer">
                     <a href="{{ settings.APP_HOST }}{% url "profile" post.author.slug %}" style="text-decoration: none; color: #999;">
                         <img src="{{ post.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
-                        &nbsp;{{ post.author.slug }}
+                        &nbsp;{{ post.author.full_name }}
                     </a>
                     | {{ post.view_count }}&nbsp;{{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
                     | {{ post.comment_count }}&nbsp;{{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
                 </span>
-            </article>
+            </div>
         {% endfor %}
     {% endif %}
 
     {% if comments %}
+        <br><br><br>
+
         <h2>💭 Топ комментариев</h2>
 
         {% for comment in comments %}
-            <article class="block comment">
+            <div class="block comment">
                 <span class="upvotes">
                     👍{{ comment.upvotes }}
                 </span>
                 <div>
                     <a href="{{ settings.APP_HOST }}{% url "profile" comment.author.slug %}" style="text-decoration: none;">
                         <img src="{{ comment.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
-                        &nbsp;{{ comment.author.slug }}
+                        &nbsp;{{ comment.author.full_name }}
                     </a>
                     на {{ comment.post.prefix|default:"пост"|lower }}
                     <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>
@@ -147,8 +171,24 @@
                 <div>
                     {% render_email comment %}
                 </div>
-            </article>
+            </div>
         {% endfor %}
+    {% endif %}
+
+    {% if achievements %}
+        <br><br><br>
+
+        <h2>🎖 Награды</h2>
+
+        <div class="block comment" style="font-size: 20px; text-align: center;">
+            {% regroup achievements by achievement as achievement_groups %}
+            {% for achievement_group in achievement_groups %}
+                <p>
+                    {% for achievement in achievement_group.list %}<img src="{{ achievement.user.get_avatar }}" alt="" width="24" height="24" class="avatar-small">&nbsp;<a href="{% url "profile" achievement.user.slug %}">{{ achievement.user.full_name }}</a>{% if forloop.revcounter0 == 1 %} и {% else %}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}
+                    {% if achievement_group.list|length == 1 %}получил{% else %}получили{% endif %} ачивку <a href="{% url "achievements" %}" class="achievement" style="{{ achievement_group.grouper.style }}"><img src="{{ achievement_group.grouper.image }}" alt="" height="35" width="35" class="achievement-image">&nbsp;{{ achievement_group.grouper.name }}</a>
+                </p>
+            {% endfor %}
+        </div>
     {% endif %}
 
     {% if top_video_comment or top_video_post %}
@@ -157,11 +197,11 @@
         <h2>🎥 Видосик недели</h2>
 
         {% if top_video_comment %}
-            <article class="block comment">
+            <div class="block comment">
                 <div>
                     <a href="{{ settings.APP_HOST }}{% url "profile" top_video_comment.author.slug %}" style="text-decoration: none;">
                         <img src="{{ top_video_comment.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
-                        &nbsp;{{ top_video_comment.author.slug }}
+                        &nbsp;{{ top_video_comment.author.full_name }}
                     </a>
                     на {{ top_video_comment.post.prefix|default:"пост"|lower }}
                     <a href="{% url "show_post" top_video_comment.post.type top_video_comment.post.slug %}#comment-{{ top_video_comment.id }}">{{ top_video_comment.post.title }}</a>
@@ -169,9 +209,9 @@
                 <div>
                     {% render_email top_video_comment %}
                 </div>
-            </article>
+            </div>
         {% elif top_video_post %}
-            <article class="block post">
+            <div class="block post">
                 <h3>
                     <a href="{{ settings.APP_HOST }}{% url "show_post" top_video_post.type top_video_post.slug %}" target="_blank">{{ top_video_post.title }}</a>
                     {% if top_video_post.label %}
@@ -183,7 +223,7 @@
                         <span class="ratio-16-9 video-preview" style="background-image: url('https://img.youtube.com/vi/{{ top_video_post.url | youtube_id }}/0.jpg');"></span>
                     </a>
                 </p>
-            </article>
+            </div>
         {% endif %}
     {% endif %}
 
