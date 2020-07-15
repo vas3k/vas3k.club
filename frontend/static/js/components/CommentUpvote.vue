@@ -67,7 +67,7 @@ export default {
     data() {
         return {
             upvotes: this.comment.upvotes,
-            isVoted: this.isVotedByDefault,
+            isVoted: this.initialIsVoted,
             upvotedTimestamp: this.initialUpvoteTimestamp && parseInt(this.initialUpvoteTimestamp)
         };
     },
