@@ -12,8 +12,13 @@
     </div>
     <div class="comment-rating">
         <comment-upvote :comment="JSON.parse('{{ comment.to_dict | jsonify }}')"
-                         url="{% url "upvote_comment" comment.id %}"
-                         {% if comment.is_voted %}is-voted-by-default{% endif %}
+                         v-bind:hours-to-retract-vote={{settings.RETRACT_VOTE_IN_HOURS}}
+                         upvote-url="{% url "upvote_comment" comment.id %}"
+                         retract-vote-url="{% url "retract_comment_vote" comment.id %}"
+                         {% if comment.is_voted %}
+                            initial-is-voted
+                            initial-upvote-timestamp="{{comment.upvoted_at}}"
+                         {% endif %}
                          {% if not me|can_upvote:comment %}is-disabled{% endif %}>
         </comment-upvote>
 

@@ -189,7 +189,7 @@ def upvote_comment(request, comment_id):
 
     comment = get_object_or_404(Comment, id=comment_id)
 
-    _, is_created = CommentVote.upvote(
+    post_vote, is_created = CommentVote.upvote(
         request=request,
         user=request.me,
         comment=comment,
@@ -198,7 +198,8 @@ def upvote_comment(request, comment_id):
     return {
         "comment": {
             "upvotes": comment.upvotes + (1 if is_created else 0)
-        }
+        },
+        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
     }
 
 @auth_required

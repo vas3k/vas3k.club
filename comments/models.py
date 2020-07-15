@@ -115,7 +115,10 @@ class Comment(models.Model):
         return cls.visible_objects().extra({
             "is_voted": "select 1 from comment_votes "
                         "where comment_votes.comment_id = comments.id "
-                        f"and comment_votes.user_id = '{user.id}'"
+                        f"and comment_votes.user_id = '{user.id}'",
+            "upvoted_at": "select ROUND(extract(epoch from created_at) * 1000) from comment_votes "
+                          "where comment_votes.comment_id = comments.id "
+                          f"and comment_votes.user_id = '{user.id}'",
         })
 
     @classmethod
