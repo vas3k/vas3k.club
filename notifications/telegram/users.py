@@ -58,5 +58,5 @@ def notify_user_ping(user, message):
     if user.telegram_id:
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
-            text=f"👋 Вам письмо от модераторов Клуба: {message}"
+            text=f"👋 <b>Вам письмо от модераторов Клуба:</b> {message}"
         )
