@@ -69,7 +69,7 @@ export default {
                 });
             }
 
-            if (this.isVoted && this.canRetractVote()) {
+            if (this.isVoted && this.getHoursSinceVote() <= 3) {
                 return ClubApi.ajaxify(this.retractVoteUrl, (data) => {
                     this.upvotes = parseInt(data.post.upvotes);
                     if (data.success) {
@@ -80,14 +80,13 @@ export default {
             }
         },
 
-        canRetractVote() {
+        getHoursSinceVote() {
             if (!this.upvotedTimestamp) {
                 return false;
             }
 
             const millisecondsInHour = 60 * 60 * 1000;
-            const hoursSinceVote = (Date.now() - this.upvotedTimestamp)  / millisecondsInHour;
-            return this.isVoted && hoursSinceVote <= 3;
+            return (Date.now() - this.upvotedTimestamp)  / millisecondsInHour;
         }
 
     },
