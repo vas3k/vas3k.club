@@ -63,3 +63,9 @@ class UserAdminForm(forms.Form):
         label="Размодерирвать",
         required=False
     )
+
+    ping = forms.CharField(
+        label="Отправить сообщение",
+        max_length=5000,
+        required=False
+    )

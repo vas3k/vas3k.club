@@ -115,5 +115,20 @@
                 <button type="submit" class="button">Размодерировать</button>
             </form>
         </div>
+
+        <div class="profile-header">Отправить сообщение</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.ping.label_tag }}
+                    {{ form.ping }}
+                    {% if form.ping.errors %}<span class="form-row-errors">{{ form.ping.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Отправить</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

@@ -48,3 +48,13 @@ def send_banned_email(user, days, reason):
         }),
         tags=["banned"]
     )
+
+
+def send_ping_email(user, message):
+    rejected_template = loader.get_template("emails/ping.html")
+    send_club_email(
+        recipient=user.email,
+        subject=f"👋 Вам письмо",
+        html=rejected_template.render({"message": message}),
+        tags=["ping"]
+    )

@@ -52,3 +52,11 @@ def notify_user_profile_rejected(user):
                  f"- 💨 Душность, глупость или желание обмануть модераторов.\n\n"
                  f"\n\nВот ссылка чтобы исправить недочёты и податься на ревью еще раз: {user_profile_url}"
         )
+
+
+def notify_user_ping(user, message):
+    if user.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=user.telegram_id),
+            text=f"👋 Вам письмо от модераторов Клуба: {message}"
+        )
