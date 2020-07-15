@@ -67,5 +67,6 @@ class UserAdminForm(forms.Form):
     ping = forms.CharField(
         label="Отправить сообщение",
         max_length=5000,
-        required=False
+        widget=forms.Textarea(),
+        required=False,
     )
