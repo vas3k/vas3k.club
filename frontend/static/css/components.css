@@ -258,6 +258,7 @@
         padding-top: 18px;
         padding-bottom: 18px;
         pointer-events: none;
+        cursor: none;
     }
 
     .upvote-disabled::before {
@@ -319,6 +320,7 @@
             .upvote-disabled {
                 padding-top: 11px;
                 padding-bottom: 10px;
+                cursor: none;
             }
 
             .upvote-type-inline {

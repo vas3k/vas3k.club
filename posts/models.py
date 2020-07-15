@@ -215,6 +215,9 @@ class Post(models.Model, ModelDiffMixin):
                 "is_voted": "select 1 from post_votes "
                             "where post_votes.post_id = posts.id "
                             f"and post_votes.user_id = '{user.id}'",
+                "upvoted_at": "select ROUND(extract(epoch from created_at) * 1000) from post_votes "
+                              "where post_votes.post_id = posts.id "
+                              f"and post_votes.user_id = '{user.id}'",
                 "unread_comments": f"select unread_comments from post_views "
                                    f"where post_views.post_id = posts.id "
                                    f"and post_views.user_id = '{user.id}'"
