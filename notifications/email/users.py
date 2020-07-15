@@ -21,3 +21,30 @@ def send_rejected_email(user):
         html=rejected_template.render({"user": user}),
         tags=["rejected"]
     )
+
+
+def send_unmoderated_email(user):
+    rejected_template = loader.get_template("emails/unmoderated.html")
+    send_club_email(
+        recipient=user.email,
+        subject=f"😱 Вас размодерировали",
+        html=rejected_template.render({"user": user}),
+        tags=["unmoderated"]
+    )
+
+
+def send_banned_email(user, days, reason):
+    if not user.is_banned or not days:
+        return  # not banned oO
+
+    rejected_template = loader.get_template("emails/banned.html")
+    send_club_email(
+        recipient=user.email,
+        subject=f"💩 Вас забанили",
+        html=rejected_template.render({
+            "user": user,
+            "days": days,
+            "reason": reason,
+        }),
+        tags=["banned"]
+    )
