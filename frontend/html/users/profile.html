@@ -29,7 +29,7 @@
         {% if me.id == user.id or me.is_moderator %}
             <div class="profile-user-edit">
                 <a href="{% url "edit_profile" user.slug %}">Редактировать профиль</a>
-                {% if me.is_moderator and not user.is_god %}
+                {% if me.is_moderator %}
                     | <a href="{% url "admin_profile" user.slug %}">Админка</a>
                 {% endif %}
             </div>

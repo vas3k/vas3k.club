@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.conf import settings
 from django.shortcuts import redirect
 
 from club.exceptions import AccessDenied
@@ -14,9 +13,6 @@ from users.models.user import User
 def do_user_admin_actions(request, user, data):
     if not request.me.is_moderator:
         raise AccessDenied()
-
-    if user.is_god and not settings.DEBUG:
-        raise AccessDenied(title="На этого юзера нельзя псить")
 
     # Hats
     if data["remove_hat"]:
@@ -49,9 +45,10 @@ def do_user_admin_actions(request, user, data):
 
     # Ban
     if data["is_banned"]:
-        user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
-        user.save()
-        send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
+        if not user.is_god:
+            user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
+            user.save()
+            send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
 
     # Unban
     if data["is_unbanned"]:

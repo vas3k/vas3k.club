@@ -1,4 +1,3 @@
-from collections import defaultdict
 from datetime import timedelta, datetime
 
 from django.conf import settings
