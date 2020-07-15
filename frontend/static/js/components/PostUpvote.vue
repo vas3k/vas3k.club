@@ -1,6 +1,7 @@
 <template>
-    <button
-        class="upvote button"
+    <a
+        href="upvoteUrl"
+        class="upvote"
         :class="{
             'upvote-voted': isVoted && !isDisabled,
             'upvote-disabled': isDisabled,
@@ -9,7 +10,7 @@
         @click.prevent="toggle"
     >
         {{ upvotes }}
-    </button>
+    </a>
 </template>
 
 <script>
@@ -21,6 +22,10 @@ export default {
         post: {
             type: Object,
             required: true,
+        },
+        hoursToRetractVote: {
+            type: Number,
+            default: 0
         },
         initialIsVoted: {
             type: Boolean,
@@ -43,11 +48,11 @@ export default {
                 return false;
             },
         },
-        upvoteUrl: {
+        retractVoteUrl: {
             type: String,
             required: true,
         },
-        retractVoteUrl: {
+        upvoteUrl: {
             type: String,
             required: true,
         }
@@ -69,7 +74,7 @@ export default {
                 });
             }
 
-            if (this.isVoted && this.getHoursSinceVote() <= 3) {
+            if (this.isVoted && this.getHoursSinceVote() <= this.hoursToRetractVote) {
                 return ClubApi.ajaxify(this.retractVoteUrl, (data) => {
                     this.upvotes = parseInt(data.post.upvotes);
                     if (data.success) {
