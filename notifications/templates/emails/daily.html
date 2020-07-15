@@ -115,7 +115,7 @@
                 <span class="post-footer">
                     <a href="{{ settings.APP_HOST }}{% url "profile" post.author.slug %}" style="text-decoration: none; color: #999;">
                         <img src="{{ post.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
-                        &nbsp;{{ post.author.slug }}
+                        &nbsp;{{ post.author.full_name }}
                     </a>
                     | {{ post.view_count }}&nbsp;{{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
                     | {{ post.comment_count }}&nbsp;{{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
