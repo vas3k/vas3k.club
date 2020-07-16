@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 
 from payments.models import Payment
 from payments.products import PRODUCTS
-from payments.service import ady
+from payments.service import stripe
 from users.models.user import User
 
 log = logging.getLogger()
@@ -39,7 +39,7 @@ def pay(request):
     if not product:
         return render(request, "error.html", {
             "title": "Не выбран пакет 😣",
-            "message": "Выберите насколько вы хотите пополнить свою карту"
+            "message": "Выберите что вы хотите купить или насколько пополнить свою карту"
         })
 
     # user authorized or we need to create a new one?
@@ -50,7 +50,7 @@ def pay(request):
         if email and "@" not in email:
             return render(request, "error.html", {
                 "title": "Плохой e-mail адрес 😣",
-                "message": "Нам ведь нужно будет как-то создать вам аккаунт"
+                "message": "Нам ведь нужно будет как-то привязать ваш аккаунт к платежу"
             })
 
         now = datetime.utcnow()
@@ -69,34 +69,55 @@ def pay(request):
 
     payment = Payment.start(user, product)
 
-    try:
-        payment_link = ady.client.call_checkout_api({
-            "id": str(payment.id),
-            "amount": {
-                "value": int(product["amount"]) * 100,
-                "currency": "EUR",
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=[{
+            "price_data": {
+                "currency": "eur",
+                "product_data": {
+                    "name": product["description"],
+                },
+                "unit_amount": int(product["amount"]) * 100,
             },
-            "description": product["description"],
-            "merchantAccount": settings.ADYEN_MERCHANT_ACCOUNT,
-            "reference": payment.reference,
-            "shopperReference": user.email,
-            "shopperEmail": user.email,
-            "shopperLocale": settings.ADYEN_LOCALE,
-            "status": "active",
-            "returnUrl": product["return_url"] + f"?reference={quote(payment.reference)}",
-        }, "paymentLinks")
-    except AdyenError as ex:
-        return render(request, "error.html", {
-            "title": "Ошибка создания платежа. Напишите нам в саппорт :(",
-            "message": f"{ex}: {ex.message}"
-        })
+            "quantity": 1,
+        }],
+        customer_email=user.email,
+        mode="payment",
+        success_url=product["return_url"] + f"?reference={quote(payment.reference)}",
+        cancel_url=settings.APP_HOST,
+    )
 
-    return redirect(payment_link.message["url"])
+    return render(request, "payments/pay.html", {
+        "session": session,
+        "product": product,
+        "user": user,
+    })
 
 
-def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-    print(f"STRIPE PAYLOAD: {payload}")
-    print(f"STRIPE SIG: {sig_header}")
-    return HttpResponse("[accepted]")
+# def adyen_callback(request):
+#     print(f"ADYEN CALLBACK: {request.body}")
+#     # success: {"live":"false","notificationItems":[{"NotificationRequestItem":{"additionalData":{"expiryDate":"03\\/2030","authCode":"040148","paymentLinkId":"PLCB37868FA2F60E24","recurring.recurringDetailReference":"8315945522101344","cardSummary":"1142","metadata.checkout.linkId":"PLCB37868FA2F60E24","recurringProcessingModel":"Subscription","recurring.shopperReference":"me@vas3k.ru","hmacSignature":"iucKmIhDArxQ+x9RXfk8yrh0XL7UyyMYvfKJJ8bTd1I="},"amount":{"currency":"EUR","value":4000},"eventCode":"AUTHORISATION","eventDate":"2020-07-12T15:17:43+02:00","merchantAccountCode":"VasilyZubarevBeratungECOM","merchantReference":"vas3k_club3_1594559849","operations":["CANCEL","CAPTURE","REFUND"],"paymentMethod":"visa","pspReference":"852594559862935G","reason":"040148:1142:03\\/2030","success":"true"}}]}
+#     # fail: {"live":"false","notificationItems":[{"NotificationRequestItem":{"additionalData":{"expiryDate":"12\/2012"," NAME1 ":"VALUE1","totalFraudScore":"10","cardSummary":"7777","NAME2":"  VALUE2  ","fraudCheck-6-ShopperIpUsage":"10"},"amount":{"currency":"EUR","value":10150},"eventCode":"AUTHORISATION","eventDate":"2020-07-12T12:58:40+02:00","merchantAccountCode":"VasilyZubarevBeratungECOM","merchantReference":"8313842560770001","paymentMethod":"visa","pspReference":"test_AUTHORISATION_3","reason":"REFUSED","success":"false"}}]}
+#
+#     data = json.loads(request.body)
+#     for notification in data["notificationItems"]:
+#         item = notification["NotificationRequestItem"]
+#         if not Adyen.util.is_valid_hmac_notification(item, settings.ADYEN_HMAC):
+#             return HttpResponse("bad signature")
+#
+#         if not item["success"]:
+#             Payment.finish(
+#                 reference=item["merchantReference"],
+#                 status=Payment.PAYMENT_STATUS_FAILED,
+#                 data=item,
+#             )
+#
+#         payment = Payment.finish(
+#             reference=item["merchantReference"],
+#             status=Payment.PAYMENT_STATUS_SUCCESS,
+#             data=item,
+#         )
+#         product = PRODUCTS[payment.product_code]
+#         product["activator"](product, payment, payment.user)
+#
+#     return HttpResponse("[accepted]")

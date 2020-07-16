@@ -2,21 +2,14 @@
 
 {% block content %}
     <div class="content pay">
-        <div class="pay-title">Платим 💰<br><small>аккаунт: {{ email }}</small></div>
-
-        <div class="pay-description">
-            Платежи для нас процессит <a href="https://adyen.com" target="_blank">Adyen</a> — платформа, которой
-            пользуются Spotify, Uber, Booking.com и многие стартапы в Европе.
-            Клуб не видит данные вашей карты и не сохраняет их.
-        </div>
+        <div class="pay-title">Платим 💰<br><small>аккаунт: {{ user.email }}</small></div>
 
         <div class="block pay-form">
-            {{ adyen_response }}
-            <div id="adyen-container"></div>
+            <div class="pay-description">
+                Платежи для нас процессит <a href="https://stripe.com" target="_blank">Stripe</a>.
+                Клуб не хочет даже видеть данные вашей карты, так что вот вам кнопочка чтобы перейти на их форму оплаты.
+            </div>
+            <stripe-checkout session-id="{{ session.id }}"></stripe-checkout>
         </div>
     </div>
-
-    <script>
-
-    </script>
 {% endblock %}
