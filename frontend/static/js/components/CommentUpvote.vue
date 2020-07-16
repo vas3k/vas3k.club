@@ -1,6 +1,6 @@
 <template>
     <a
-        :href="url"
+        :href="upvoteUrl"
         class="upvote"
         :class="{
             'upvote-voted': isVoted && !isDisabled,
@@ -24,11 +24,18 @@ export default {
             type: Object,
             required: true,
         },
-        isVotedByDefault: {
+        hoursToRetractVote: {
+            type: Number,
+            default: 0
+        },
+        initialIsVoted: {
             type: Boolean,
             default() {
                 return false;
             },
+        },
+        initialUpvoteTimestamp: {
+            type: String
         },
         isInline: {
             type: Boolean,
@@ -48,7 +55,11 @@ export default {
                 return false;
             },
         },
-        url: {
+        retractVoteUrl: {
+            type: String,
+            required: true,
+        },
+        upvoteUrl: {
             type: String,
             required: true,
         },
@@ -56,16 +67,39 @@ export default {
     data() {
         return {
             upvotes: this.comment.upvotes,
-            isVoted: this.isVotedByDefault,
+            isVoted: this.initialIsVoted,
+            upvotedTimestamp: this.initialUpvoteTimestamp && parseInt(this.initialUpvoteTimestamp)
         };
     },
     methods: {
         toggle() {
-            return ClubApi.ajaxify(this.url, (data) => {
-                this.upvotes = parseInt(data.comment.upvotes);
-                this.isVoted = true;
-            });
+            if (!this.isVoted) {
+                return ClubApi.ajaxify(this.upvoteUrl, (data) => {
+                    this.upvotes = parseInt(data.comment.upvotes);
+                    this.isVoted = true;
+                    this.upvotedTimestamp = data.upvoted_timestamp
+                });
+            }
+
+            if (this.isVoted && this.getHoursSinceVote() <= this.hoursToRetractVote) {
+                return ClubApi.ajaxify(this.retractVoteUrl,  (data) => {
+                    this.upvotes = parseInt(data.comment.upvotes);
+                    if (data.success) {
+                        this.isVoted = false;
+                        this.upvotedTimestamp = undefined;
+                    }
+                });
+            }
         },
+
+        getHoursSinceVote() {
+            if (!this.upvotedTimestamp) {
+                return false;
+            }
+
+            const millisecondsInHour = 60 * 60 * 1000;
+            return (Date.now() - this.upvotedTimestamp)  / millisecondsInHour;
+        }
     },
 };
 </script>

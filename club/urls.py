@@ -6,14 +6,14 @@ from auth.helpers import auth_switch
 from auth.views.auth import login, logout, debug_dev_login, debug_random_login, join
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from bot.views import webhook_telegram, link_telegram
-from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, pin_comment
+from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, retract_comment_vote, pin_comment
 from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired, adyen_callback
 from posts.models import Post
 from posts.rss import NewPostsRss
 from posts.views.admin import admin_post, announce_post
-from posts.views.posts import show_post, edit_post, upvote_post, compose, compose_type, toggle_post_subscription
+from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, toggle_post_subscription
 from posts.views.feed import feed
 from posts.sitemaps import sitemaps
 from search.views import search
@@ -55,6 +55,7 @@ urlpatterns = [
     path("create/<slug:post_type>/", compose_type, name="compose_type"),
     path("post/<slug:post_slug>/edit/", edit_post, name="edit_post"),
     path("post/<slug:post_slug>/upvote/", upvote_post, name="upvote_post"),
+    path("post/<slug:post_slug>/retract_vote/", retract_post_vote, name="retract_post_vote"),
     path("post/<slug:post_slug>/subscription/", toggle_post_subscription, name="toggle_post_subscription"),
     path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
@@ -66,6 +67,7 @@ urlpatterns = [
     path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
 
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
+    path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
     path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete/", delete_comment, name="delete_comment"),

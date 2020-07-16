@@ -189,7 +189,7 @@ def upvote_comment(request, comment_id):
 
     comment = get_object_or_404(Comment, id=comment_id)
 
-    _, is_created = CommentVote.upvote(
+    post_vote, is_created = CommentVote.upvote(
         request=request,
         user=request.me,
         comment=comment,
@@ -198,5 +198,27 @@ def upvote_comment(request, comment_id):
     return {
         "comment": {
             "upvotes": comment.upvotes + (1 if is_created else 0)
+        },
+        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
+    }
+
+@auth_required
+@ajax_request
+def retract_comment_vote(request, comment_id):
+    if request.method != "POST":
+        raise Http404()
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    is_retracted = CommentVote.retract_vote(
+        request=request,
+        user=request.me,
+        comment=comment,
+    )
+
+    return {
+        "success": is_retracted,
+        "comment": {
+            "upvotes": comment.upvotes - (1 if is_retracted else 0)
         }
     }

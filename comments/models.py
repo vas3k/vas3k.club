@@ -84,6 +84,9 @@ class Comment(models.Model):
     def increment_vote_count(self):
         return Comment.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
+    def decrement_vote_count(self):
+        return Comment.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
+
     @property
     def battle_side(self):
         if self.metadata:
@@ -112,7 +115,10 @@ class Comment(models.Model):
         return cls.visible_objects().extra({
             "is_voted": "select 1 from comment_votes "
                         "where comment_votes.comment_id = comments.id "
-                        f"and comment_votes.user_id = '{user.id}'"
+                        f"and comment_votes.user_id = '{user.id}'",
+            "upvoted_at": "select ROUND(extract(epoch from created_at) * 1000) from comment_votes "
+                          "where comment_votes.comment_id = comments.id "
+                          f"and comment_votes.user_id = '{user.id}'",
         })
 
     @classmethod
@@ -165,6 +171,10 @@ class CommentVote(models.Model):
         db_table = "comment_votes"
         unique_together = [["user", "comment"]]
 
+    @property
+    def is_retractable(self):
+        return self.created_at >= datetime.utcnow() - settings.RETRACT_VOTE_TIMEDELTA
+
     @classmethod
     def upvote(cls, request, user, comment):
         if not user.is_god and user.id == comment.author_id:
@@ -185,3 +195,26 @@ class CommentVote(models.Model):
             comment.author.increment_vote_count()
 
         return post_vote, is_vote_created
+
+    @classmethod
+    def retract_vote(cls, request, user, comment):
+        if not user.is_god and user.id == comment.author_id:
+            return False
+
+        try:
+            comment_vote = CommentVote.objects.get(
+                user=user,
+                comment=comment
+            )
+
+            if not comment_vote.is_retractable:
+                return False
+
+            is_vote_deleted, _ = comment_vote.delete()
+            if is_vote_deleted:
+                comment.decrement_vote_count()
+                comment.author.decrement_vote_count()
+
+                return True if is_vote_deleted > 0 else False
+        except CommentVote.DoesNotExist:
+            return False

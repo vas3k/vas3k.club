@@ -130,6 +130,9 @@ class User(models.Model, ModelDiffMixin):
     def increment_vote_count(self):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
+    def decrement_vote_count(self):
+        return User.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
+
     def get_avatar(self):
         return self.avatar or self.DEFAULT_AVATAR
 

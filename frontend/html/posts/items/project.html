@@ -7,8 +7,13 @@
 
     <div class="feed-post-votes">
         <post-upvote :post="JSON.parse('{{ post.to_dict | jsonify }}')"
-                     url="{% url "upvote_post" post.slug %}"
-                     {% if post.is_voted %}is-voted-by-default{% endif %}
+                     v-bind:hours-to-retract-vote={{settings.RETRACT_VOTE_IN_HOURS}}
+                     upvote-url="{% url "upvote_post" post.slug %}"
+                     retract-vote-url="{% url "retract_post_vote" post.slug %}"
+                     {% if post.is_voted %}
+                        initial-is-voted
+                        initial-upvote-timestamp={{post.upvoted_at}}
+                     {% endif %}
                      {% if not me|can_upvote:post %}is-disabled{% endif %}>
         </post-upvote>
     </div>
