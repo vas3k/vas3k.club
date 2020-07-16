@@ -1,20 +1,26 @@
 <template>
-    <button @click="pay">Плоти</button>
+    <button @click="pay">
+        <slot></slot>
+    </button>
 </template>
 
 <script>
 import {loadStripe} from "@stripe/stripe-js";
 
 export default {
-    name: "StripeCheckout",
+    name: "StripeCheckoutButton",
     props: {
+        publicKey: {
+            type: String,
+            required: true,
+        },
         sessionId: {
             type: String,
             required: true,
         },
     },
     async created() {
-        this.stripe = await loadStripe("pk_test_51H5W9dKgJMaF2rHt3v6m1ap2UQHAyrymYG5ALmPtXdQBc2eQz7JXFYcHvsVrseqEMcWNA8Gy7WRM6sVsMcR2GEay00wi5EAYw0");
+        this.stripe = await loadStripe(this.publicKey);
     },
     methods: {
         pay() {

@@ -11,7 +11,7 @@ from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, retract_comment_vote, pin_comment
 from landing.views import landing, docs, god_settings
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
-from payments.views import membership_expired, pay, done
+from payments.views import membership_expired, pay, done, stripe_webhook
 from posts.models import Post
 from posts.rss import NewPostsRss
 from posts.views.admin import admin_post, announce_post
@@ -41,8 +41,8 @@ urlpatterns = [
 
     path("monies/", pay, name="pay"),
     path("monies/done/", done, name="done"),
-    # path("monies/adyen_callback/", adyen_callback, name="adyen_callback"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
+    path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>/edit/", edit_profile, name="edit_profile"),

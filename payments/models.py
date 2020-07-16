@@ -1,5 +1,4 @@
 import json
-import time
 from uuid import uuid4
 
 from django.db import models
@@ -33,8 +32,7 @@ class Payment(models.Model):
         db_table = "payments"
 
     @classmethod
-    def start(cls, user, product):
-        reference = f"{user.slug}_{product['code']}_{int(time.time())}"
+    def start(cls, reference, user, product):
         return Payment.objects.create(
             reference=reference,
             user=user,

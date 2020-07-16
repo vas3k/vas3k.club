@@ -14,12 +14,16 @@ from utils.strings import random_string
 
 
 def join(request):
+    if request.me:
+        return redirect("profile", request.me.slug)
+
     return render(request, "auth/join.html")
 
 
 def login(request):
     if request.me:
         return redirect("profile", request.me.slug)
+
     return render(request, "auth/login.html", {
         "goto": request.GET.get("goto"),
         "email": request.GET.get("email"),

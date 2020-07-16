@@ -11,7 +11,7 @@ import PeopleMap from "./components/PeopleMap.vue";
 import SidebarToggler from "./components/SidebarToggler.vue";
 import UserExpertiseWindow from "./components/UserExpertiseWindow.vue";
 import UserAvatarInput from "./components/UserAvatarInput.vue";
-import StripeCheckout from "./components/StripeCheckout.vue";
+import StripeCheckoutButton from "./components/StripeCheckoutButton.vue";
 import ClubApi from "./common/api.service";
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-subscription", PostSubscription);
@@ -21,7 +21,7 @@ Vue.component("user-tag", UserTag);
 Vue.component("people-map", PeopleMap);
 Vue.component("user-avatar-input", UserAvatarInput);
 Vue.component("sidebar-toggler", SidebarToggler);
-Vue.component("stripe-checkout", StripeCheckout);
+Vue.component("stripe-checkout-button", StripeCheckoutButton);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

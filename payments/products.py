@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.conf import settings
-
 from users.models.user import User
 
 
@@ -21,9 +19,9 @@ def club_subscription_activator(product, payment, user):
 PRODUCTS = {
     "club1": {
         "code": "club1",
-        "amount": 15,
+        "stripe_id": "price_1H5byfKgJMaF2rHtJHeirP4V",
         "description": "Членство в Клубе на год",
-        "return_url": f"{settings.APP_HOST}/monies/done/",
+        "amount": 15,
         "activator": club_subscription_activator,
         "data": {
             "timedelta": timedelta(days=365),
@@ -31,9 +29,9 @@ PRODUCTS = {
     },
     "club3": {
         "code": "club3",
-        "amount": 40,
+        "stripe_id": "price_1H5c1sKgJMaF2rHtEQ1Jl7Pt",
         "description": "Членство в Клубе на 3 года",
-        "return_url": f"{settings.APP_HOST}/monies/done/",
+        "amount": 40,
         "activator": club_subscription_activator,
         "data": {
             "timedelta": timedelta(days=365 * 3),
@@ -41,9 +39,9 @@ PRODUCTS = {
     },
     "club50": {
         "code": "club50",
-        "amount": 150,
+        "stripe_id": "price_1H5c3JKgJMaF2rHtPiIED05T",
         "description": "Членство в Клубе на 50 лет",
-        "return_url": f"{settings.APP_HOST}/monies/done/",
+        "amount": 150,
         "activator": club_subscription_activator,
         "data": {
             "timedelta": timedelta(days=365 * 50),

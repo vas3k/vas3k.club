@@ -25,7 +25,7 @@
 
                 <p>
                     Для начала прочитайте <a href="{% url "docs" "about" %}">наши правила</a>. Потом налейте себе вина и&nbsp;заполните форму ниже.
-                    Если вы&nbsp;тут впервые, можете пойти почитать закрытые посты, чтобы проникнуться, и&nbsp;вернуться сюда позднее.
+                    Если вы&nbsp;тут впервые, можете пойти почитать открытые посты на канале и&nbsp;вернуться сюда позднее.
                 </p>
 
                 <p>
@@ -210,7 +210,7 @@
             <div class="block-description" style="text-align: left;">
                 <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a> — туда модераторы отбирают лучший контент. Он же главный источник всех анонсов.<br><br>
                 <a href="{{ settings.TELEGRAM_CLUB_CHAT_URL }}" target="_blank" style="font-weight: bold;">Вастрик.Бар</a> — главный чат в телеграме, где собираются члены Клуба. Там бывает громко.<br><br>
-                <a href="https://vas3k.ru/notes/club_chat/" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
+                <a href="{% url "network" %}" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
             </div>
 
             <div class="clearfix50"></div>

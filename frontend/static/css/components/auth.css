@@ -1,14 +1,18 @@
 .join {
     font-size: 120%;
-    padding-top: 30px;
+    padding-top: 80px;
 }
 
     .join-title {
         text-align: center;
         font-weight: 500;
-        font-size: 250%;
+        font-size: 280%;
         padding-top: 20px;
     }
+
+        .join-title a {
+            text-decoration: none;
+        }
 
     .join-subtitle {
         text-align: center;
@@ -20,7 +24,9 @@
 
     .join-description {
         text-align: center;
-        padding: 40px 20px;
+        padding: 50px 20px;
+        max-width: 700px;
+        margin: 0 auto;
     }
 
     .pay-packages {
