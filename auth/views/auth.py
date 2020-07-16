@@ -36,10 +36,11 @@ def login(request):
 
 @auth_required
 def logout(request):
-    token = request.COOKIES.get("token")
-    Session.objects.filter(token=token).delete()
-    cache.delete(f"token:{token}:session")
-    return redirect("index")
+    if request.method == 'POST':
+        token = request.COOKIES.get("token")
+        Session.objects.filter(token=token).delete()
+        cache.delete(f"token:{token}:session")
+        return redirect("index")
 
 
 def debug_dev_login(request):
