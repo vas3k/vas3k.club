@@ -65,6 +65,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "club.wsgi.application"
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler"
+        },
+    },
+    "loggers": {
+        "": {  # "catch all" loggers by referencing it with the empty string
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -199,7 +214,7 @@ WEBPACK_LOADER = {
         "STATS_FILE": os.path.join(BASE_DIR, "frontend/webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "TIMEOUT": None,
-        "IGNORE": [r'.+\.hot-update.js', r'.+\.map'],
+        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
         "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
     }
 }
