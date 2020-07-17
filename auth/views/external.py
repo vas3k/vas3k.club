@@ -26,5 +26,13 @@ def external_login(request):
         "user_name": me.full_name,
         "exp": datetime.utcnow() + settings.JWT_EXP_TIMEDELTA,
     }
+
     jwt_token = jwt.encode(payload, settings.JWT_SECRET, settings.JWT_ALGORITHM).decode("utf-8")
-    return redirect(f"{goto}?jwt={jwt_token}")
+
+    # TODO: implement proper url parsing + domain validation + query building
+    if "?" in goto:
+        goto += f"&jwt={jwt_token}"
+    else:
+        goto += f"?jwt={jwt_token}"
+
+    return redirect(goto)
