@@ -160,7 +160,10 @@ def edit_payments(request, user_slug):
         raise Http404()
 
     top_users = User.objects\
-        .filter(membership_expires_at__gte=datetime.utcnow() + timedelta(days=40))\
+        .filter(
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+            membership_expires_at__gte=datetime.utcnow() + timedelta(days=40)
+        )\
         .order_by("-membership_expires_at")[:10]
 
     return render(request, "users/edit/payments.html", {"user": user, "top_users": top_users})

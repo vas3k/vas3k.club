@@ -22,11 +22,7 @@
                     <li>🤔 Нет раннего доступа к блогу</li>
                 </ul>
                 <div class="join-service-button">
-                    {% if me.membership_platform_type == "direct" %}
-                        <a href="#select_package" class="button">Пополнить 👇</a>
-                    {% else %}
-                        <a href="#select_package" class="button">Перейти на прямое пополнение 👇</a>
-                    {% endif %}
+                    <a href="#select_package" class="button">Пополнить 👇</a>
                 </div>
             </div>
 
@@ -75,7 +71,7 @@
         <div class="block block-top-users">
             <ul>
                 {% for user in top_users %}
-                    <li>{% if forloop.counter <= 3 %}<strong>🏆{{ forloop.counter }}</strong>{% else %}#{{ forloop.counter }}{% endif %}&nbsp;&nbsp;{% include "users/widgets/tiny.html" %} — <strong>до {{ me.membership_expires_at | date:"E Y" }} года</strong></li>
+                    <li>{% if forloop.counter <= 3 %}<strong>🏆{{ forloop.counter }}</strong>{% else %}#{{ forloop.counter }}{% endif %}&nbsp;&nbsp;{% include "users/widgets/tiny.html" %} — <strong>до {{ user.membership_expires_at | date:"E Y" }} года</strong></li>
                 {% endfor %}
             </ul>
         </div>
