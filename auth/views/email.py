@@ -2,10 +2,12 @@ from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django_q.tasks import async_task
 
 from auth.helpers import set_session_cookie
 from auth.models import Session, Code
 from notifications.email.users import send_auth_email
+from notifications.telegram.users import notify_user_auth
 from users.models.user import User
 
 
@@ -47,7 +49,10 @@ def email_login(request):
             })
 
         code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
-        send_auth_email(user, code)
+
+        async_task(send_auth_email, user, code)
+        async_task(notify_user_auth, user, code)
+
         return render(request, "auth/email.html", {
             "email": user.email,
             "goto": goto,
