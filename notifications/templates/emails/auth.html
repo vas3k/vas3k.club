@@ -1,0 +1,82 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    .button {
+        display: inline-block;
+        padding: 17px 30px;
+        box-sizing: border-box;
+        text-decoration: none;
+        border-radius: 20px;
+        background-color: #000;
+        border: solid 2px #000;
+        color: #FFF;
+        text-align: center;
+        cursor: pointer;
+        line-height: 1em;
+        font-size: 25px;
+        margin: 20px 0 30px;
+    }
+
+        .button:hover {
+            color: #000 !important;
+            background-color: #FFF !important;
+            border-color: #000 !important;
+        }
+
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block logo %}
+<a href="https://vas3k.club">
+    <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
+</a>
+{% endblock %}
+
+{% block title %}
+    <span style="letter-spacing: 5px;">{{ code.code }}</span>
+{% endblock %}
+
+{% block body %}
+    <p>
+        Это ваш код для входа в Клуб.
+    </p>
+
+    <p>
+        Можете скопировать его или нажать на эту кнопку чтобы сразу войти на сайт 👇
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "email_login_code" %}?email={{ code.recipient }}&code={{ code.code }}" class="button">Войти в Клуб</a>
+    </p>
+
+    <p>
+        Если вы не запрашивали никаких кодов, значит кто-то пытается войти в ваш аккаунт.
+        Но без кода у них ничего не получится, а через несколько неправильных попыток мы их удаляем и не даём больше запрашивать какое-то время.
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

@@ -36,7 +36,7 @@ def webhook_telegram(request, token):
         updates = bot.get_updates()
 
     for update in updates:
-        log.info(f"Update: {update.to_dict()}")
+        # log.info(f"Update: {update.to_dict()}")
 
         if update.effective_chat:
             # admin chat

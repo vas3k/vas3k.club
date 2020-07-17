@@ -41,7 +41,7 @@
                     </li>
                     <li>
                         <a href="{% url "network" %}">
-                            🚨 Сеть
+                            💬 Сеть
                         </a>
                     </li>
                     <li>
@@ -101,7 +101,7 @@
                 <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "activity" %}{% else %}{% url "feed_ordering" post_type "activity" %}{% endif %}"
                    class="feed-ordering-item {% if ordering == "activity" %}feed-ordering-item-is-active{% endif %}"
                 >
-                    Обсуждаемое
+                    Фид
                 </a>
                 <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "new" %}{% else %}{% url "feed_ordering" post_type "new" %}{% endif %}"
                    class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}"
@@ -109,7 +109,7 @@
                     Новое
                 </a>
                 <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top" %}{% else %}{% url "feed_ordering" post_type "top" %}{% endif %}"
-                   class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" %}feed-ordering-item-is-active{% endif %}"
+                   class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
                 >
                     Лучшее
                 </a>

@@ -1,5 +1,5 @@
 .landing {
-    font-size: 130%;
+    font-size: 140%;
     line-height: 1.5em;
 }
 
@@ -26,4 +26,13 @@
             font-size: 220%;
             line-height: 1.2em;
             display: block;
+        }
+
+        .landing-block p {
+            opacity: 0.85;
+        }
+
+        .landing-block blockquote {
+            font-size: 170%;
+            margin: 40px 0;
         }

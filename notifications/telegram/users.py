@@ -60,3 +60,11 @@ def notify_user_ping(user, message):
             chat=Chat(id=user.telegram_id),
             text=f"👋 <b>Вам письмо от модераторов Клуба:</b> {message}"
         )
+
+
+def notify_user_auth(user, code):
+    if user.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=user.telegram_id),
+            text=f"<b>{code.code}</b> — ваш одноразовый код для входа в Клуб"
+        )

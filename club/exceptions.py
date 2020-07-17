@@ -39,3 +39,23 @@ class URLParsingException(ClubException):
     default_code = "url-parser-exception"
     default_title = "Не удалось распарсить URL"
     default_message = ""
+
+
+class InvalidCode(ClubException):
+    default_code = "invalid-code"
+    default_title = "Вы ввели неправильный код"
+    default_message = "Введите или запросите его еще раз. Через несколько неправильных попыток коды удаляются"
+
+
+class ApiException(ClubException):
+    default_message = None
+
+
+class ApiAuthRequired(ApiException):
+    default_code = "api-auth-required"
+    default_title = "Auth Required"
+
+
+class ApiAccessDenied(ApiException):
+    default_code = "api-access-denied"
+    default_title = "Access Denied"

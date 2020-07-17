@@ -65,6 +65,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "club.wsgi.application"
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler"
+        },
+    },
+    "loggers": {
+        "": {  # "catch all" loggers by referencing it with the empty string
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -134,7 +149,11 @@ APP_NAME = "Вастрик.Клуб"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
-SESSION_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
+AUTH_CODE_LENGTH = 6
+AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=15)
+AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=1)
+AUTH_MAX_CODE_COUNT = 4
+AUTH_MAX_CODE_ATTEMPTS = 3
 
 DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
@@ -174,9 +193,11 @@ TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
 
-ADIEN_HMAC = os.getenv("ADIEN_HMAC") or ""
-
-SIMPLEPARSER_API_KEY = os.getenv("SIMPLEPARSER_API_KEY")
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+STRIPE_CANCEL_URL = APP_HOST + "/join/"
+STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
 COMMENT_EDIT_TIMEDELTA = timedelta(hours=3)
 COMMENT_DELETE_TIMEDELTA = timedelta(days=3)
@@ -194,7 +215,7 @@ WEBPACK_LOADER = {
         "STATS_FILE": os.path.join(BASE_DIR, "frontend/webpack-stats.json"),
         "POLL_INTERVAL": 0.1,
         "TIMEOUT": None,
-        "IGNORE": [r'.+\.hot-update.js', r'.+\.map'],
+        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
         "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
     }
 }

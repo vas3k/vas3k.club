@@ -1,12 +1,34 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div class="message auth-form">
-        <h2>Вход по клубной карте</h2>
+    <div class="login">
+        <div class="login-services">
+            <div class="block login-service">
+                <div class="login-service-title">Вход по почте или нику</div>
+                <div class="login-service-form">
+                    <form action="{% url "email_login" %}" method="post">
+                        <input type="text" name="email_or_login" value="{{ email|default:"" }}" placeholder="your@gmail.com" class="login-email" required>
+                        {% if goto %}<input type="hidden" name="goto" value="{{ goto }}">{% endif %}
+                        <button type="submit" class="button login-button" style="min-width: 200px;">🤙 Войти</button>
+                    </form>
+                </div>
+            </div>
 
-        <p>
-            <br><br>
-            <a href="{% url "patreon_login" %}" class="button">Войти</a>
-        </p>
+            <div class="block login-service" style="max-width: 300px;">
+                <div class="login-service-title">Патреон</div>
+                <div class="login-service-description">
+                    Специальный вход тех, кто патронит <a href="https://patreon.com/vas3k">vas3k</a> и олдов.
+                </div>
+                <div class="login-service-form">
+                    <a href="{% url "patreon_login" %}" class="button login-button login-button-patreon"><i class="fab fa-patreon"></i> Войти</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-separator">🤔 Всё еще нет клубной карты?</div>
+
+        <div class="login-join">
+            <a href="{% url "join" %}" class="button">Вступить в Клуб</a>
+        </div>
     </div>
 {% endblock %}

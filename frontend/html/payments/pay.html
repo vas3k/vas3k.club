@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content pay">
+        <div class="block pay-description">
+            <div class="pay-title">Платим 💰<br><small>аккаунт: {{ user.email }}</small></div>
+
+            <stripe-checkout-button
+                public-key="{{ settings.STRIPE_PUBLIC_KEY }}"
+                session-id="{{ session.id }}"
+                class="button button-big pay-button">
+                Перейти к оплате
+            </stripe-checkout-button>
+
+            <p style="font-size: 300%; margin: 20px 0;">
+                ☝️
+            </p>
+
+            <p>
+                Платежи для нас процессит <a href="https://stripe.com" target="_blank">Stripe</a>. Его используют все модные стартапы.
+                Клуб не хочет даже видеть данные вашей карты, потому вот вам кнопочка чтобы перейти на их форму оплаты.
+            </p>
+        </div>
+    </div>
+{% endblock %}

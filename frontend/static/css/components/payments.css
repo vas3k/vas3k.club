@@ -6,12 +6,14 @@
     .pay-title {
         text-align: center;
         font-weight: 500;
-        font-size: 250%;
+        font-size: 200%;
         padding-top: 20px;
+        line-height: 1em;
     }
 
         .pay-title small {
-            font-size: 60%;
+            font-size: 50%;
+            font-weight: normal;
         }
 
     .pay-subtitle {
@@ -23,12 +25,14 @@
     }
 
     .pay-description {
+        font-size: 120%;
+        margin-top: 40px;
         text-align: center;
         padding: 40px 20px;
     }
 
-    .pay-form {
-
+    .pay-button {
+        margin: 50px 0 0;
     }
 
     .pay-services {
@@ -39,6 +43,7 @@
     }
 
         .pay-service {
+            font-size: 110%;
             display: block;
             margin: 20px;
             width: 360px;
@@ -55,9 +60,12 @@
             }
 
                 .pay-service-title i {
+                    position: relative;
+                    top: -2px;
                     font-size: 130%;
                     display: inline-block;
-                    padding-right: 15px;
+                    vertical-align: middle;
+                    padding-right: 5px;
                 }
 
             .pay-service-list {
@@ -71,7 +79,7 @@
 
 .block-top-users {
     font-size: 140%;
-    max-width: 500px;
+    max-width: 600px;
     margin: 40px auto;
 }
 

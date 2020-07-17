@@ -34,6 +34,7 @@ premailer = "==3.6.1"
 django-webpack-loader = "*"
 typus = "*"
 gdal = "==2.4.0"
+stripe = "*"
 
 [requires]
 python_version = "3.8"
