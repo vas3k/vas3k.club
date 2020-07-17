@@ -77,7 +77,7 @@ class Code(models.Model):
             user=user,
             code=random_number(length),
             created_at=datetime.utcnow(),
-            expires_at=datetime.utcnow() + timedelta(hours=1),
+            expires_at=datetime.utcnow() + settings.AUTH_CODE_EXPIRATION_TIMEDELTA,
         )
 
     @classmethod
