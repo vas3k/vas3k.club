@@ -27,7 +27,23 @@
                     </label>
                     {{ form.full_name }}
                     {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
-                    <span class="form-row-help">Рекомендуется указывать имя + фамилию, либо псевдоним, если вас лучше знают по нему.</span>
+                    <span class="form-row-help">Рекомендуется указывать имя и фамилию, либо псевдоним, если вас лучше знают по нему.</span>
+                </div>
+
+                <div class="form-row">
+                    <span class="form-label">
+                        E-mail
+                    </span>
+                    <strong>{{ form.instance.email }}</strong>
+                    <span class="form-row-help">Никому не виден. Используется для входа и оповещений.<br>Чтобы сменить, <a href="{% url "docs" "contact" %}">напишите</a> нам.</span>
+                </div>
+
+                <div class="form-row">
+                    <span class="form-label">
+                        Секретный код для входа
+                    </span>
+                    <strong><a href="{% url "edit_auth" form.instance.slug %}">[нажмите чтобы посмотреть]</a></strong>
+                    <span class="form-row-help">Используйте его вместо логина при входе, тогда будет не нужно запрашивать одноразовые коды по почте каждый раз.</span>
                 </div>
 
                 <div class="form-row">
@@ -62,7 +78,7 @@
                     <label for="{{ form.avatar.id_for_label }}" class="form-label">
                         Обновить аватар
                     </label>
-                    <user-avatar-input 
+                    <user-avatar-input
                         input-id="{{ form.avatar.id_for_label }}"
                         current-avatar="{{ user.get_avatar }}"
                     ></user-avatar-input>

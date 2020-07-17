@@ -23,6 +23,16 @@ def send_rejected_email(user):
     )
 
 
+def send_auth_email(user, code):
+    auth_template = loader.get_template("emails/auth.html")
+    send_club_email(
+        recipient=user.email,
+        subject=f"{code.code} — ваш код для входа",
+        html=auth_template.render({"user": user, "code": code}),
+        tags=["auth"]
+    )
+
+
 def send_unmoderated_email(user):
     rejected_template = loader.get_template("emails/unmoderated.html")
     send_club_email(

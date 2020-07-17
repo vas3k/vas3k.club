@@ -24,6 +24,7 @@ from users.models.achievements import UserAchievement
 from users.models.tags import Tag, UserTag
 from users.models.geo import Geo
 from common.models import top, group_by
+from utils.strings import random_hash
 
 
 @auth_required
@@ -147,6 +148,39 @@ def edit_notifications(request, user_slug):
         form = NotificationsEditForm(instance=user)
 
     return render(request, "users/edit/notifications.html", {"form": form, "user": user})
+
+
+@auth_required
+def edit_payments(request, user_slug):
+    if user_slug == "me":
+        return redirect("edit_payments", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    top_users = User.objects\
+        .filter(membership_expires_at__gte=datetime.utcnow() + timedelta(days=40))\
+        .order_by("-membership_expires_at")[:10]
+
+    return render(request, "users/edit/payments.html", {"user": user, "top_users": top_users})
+
+
+@auth_required
+def edit_auth(request, user_slug):
+    if user_slug == "me":
+        return redirect("edit_auth", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id:
+        raise Http404()
+
+    if request.method == "POST" and request.POST.get("regenerate"):
+        user.secret_hash = random_hash(length=16)
+        user.save()
+        return redirect("edit_auth", request.me.slug, permanent=False)
+
+    return render(request, "users/edit/auth.html", {"user": user})
 
 
 @auth_required

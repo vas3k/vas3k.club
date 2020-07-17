@@ -2,16 +2,16 @@ from datetime import datetime
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from auth.exceptions import PatreonException
-from auth.helpers import authorized_user
+from auth.helpers import authorized_user, set_session_cookie
 from auth.models import Session
 from auth.providers import patreon
 from users.models.user import User
 from common.images import upload_image_from_url
-from utils.strings import random_string
 
 
 def patreon_login(request):
@@ -76,25 +76,36 @@ def patreon_oauth_callback(request):
         })
 
     now = datetime.utcnow()
-    user, is_created = User.objects.get_or_create(
-        membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
-        membership_platform_id=membership.user_id,
-        defaults=dict(
-            email=membership.email,
-            full_name=membership.full_name[:120],
-            avatar=upload_image_from_url(membership.image) if membership.image else None,
-            membership_started_at=membership.started_at,
-            membership_expires_at=membership.expires_at,
-            created_at=now,
-            updated_at=now,
-            is_email_verified=False,
-        ),
-    )
+
+    try:
+        user, is_created = User.objects.get_or_create(
+            patreon_id=membership.user_id,
+            defaults=dict(
+                email=membership.email,
+                full_name=membership.full_name[:120],
+                avatar=upload_image_from_url(membership.image) if membership.image else None,
+                membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
+                membership_started_at=membership.started_at,
+                membership_expires_at=membership.expires_at,
+                created_at=now,
+                updated_at=now,
+                is_email_verified=False,
+            ),
+        )
+    except IntegrityError:
+        return render(request, "error.html", {
+            "title": "Придётся войти через почту",
+            "message": "Пользователь с таким имейлом уже зарегистрирован, но не через патреон. "
+                       "Чтобы защититься от угона аккаунтов через подделку почты на патреоне, "
+                       "нам придётся сейчас попросить вас войти через почту. "
+                       "В будущем вы можете написать нам в саппорт чтобы мы привязали ваш патреон тоже к аккаунту."
+        })
 
     if is_created:
         user.balance = membership.lifetime_support_cents / 100
     else:
-        user.membership_expires_at = membership.expires_at
+        if membership.expires_at > user.membership_expires_at:
+            user.membership_expires_at = membership.expires_at
         user.balance = membership.lifetime_support_cents / 100  # TODO: remove when the real money comes in
 
     user.membership_platform_data = {
@@ -103,12 +114,7 @@ def patreon_oauth_callback(request):
     }
     user.save()
 
-    session = Session.objects.create(
-        user=user,
-        token=random_string(length=32),
-        created_at=now,
-        expires_at=user.membership_expires_at,
-    )
+    session = Session.create_for_user(user)
 
     redirect_to = reverse("profile", args=[user.slug])
 
@@ -117,11 +123,4 @@ def patreon_oauth_callback(request):
         redirect_to += f"?{state}"
 
     response = redirect(redirect_to)
-    response.set_cookie(
-        key="token",
-        value=session.token,
-        max_age=settings.SESSION_COOKIE_AGE,
-        httponly=True,
-        secure=not settings.DEBUG,
-    )
-    return response
+    return set_session_cookie(response, user, session)

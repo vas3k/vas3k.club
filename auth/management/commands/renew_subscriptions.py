@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Fetches expiring Patreon accounts and tries to renew the subscription"
+    help = "Fetches expiring accounts and tries to renew the subscription"
 
     def add_arguments(self, parser):
         parser.add_argument("--days-before", nargs=1, type=int, required=False, default=2)
@@ -25,6 +25,7 @@ class Command(BaseCommand):
 
         expiring_users = User.objects\
             .filter(
+                membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
                 membership_expires_at__gte=datetime.utcnow() - timedelta(days=days_before),
                 membership_expires_at__lte=datetime.utcnow() + timedelta(days=days_after),
             )\

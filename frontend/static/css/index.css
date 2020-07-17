@@ -12,6 +12,8 @@
 @import "./components/auth.css";
 @import "./components/payments.css";
 @import "./components/landing.css";
+@import "./components/auth.css";
+@import "./components/payments.css";
 @import "./components/people.css";
 @import "./components/network.css";
 @import "./components/posts.css";

@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from slugify import slugify
 
-from utils.strings import random_string
+from utils.strings import random_number
 
 
 def generate_unique_slug(model, name, separator="-"):
@@ -13,5 +13,5 @@ def generate_unique_slug(model, name, separator="-"):
         if not is_exists:
             return slug
         attempts -= 1
-        name += random_string(length=2)
+        name += random_number(length=2)
     return str(uuid4())
