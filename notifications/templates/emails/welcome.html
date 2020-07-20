@@ -63,7 +63,7 @@ ul {
 
     {% if not user.is_email_verified %}
     <p>
-        <a href="{% url "email_confirm" user.id code %}" class="button">Подтвердить адрес почты</a>
+        <a href="{% url "email_confirm" user.id %}" class="button">Подтвердить адрес почты</a>
     </p>
     {% endif %}
 

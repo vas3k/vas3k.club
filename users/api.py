@@ -14,7 +14,7 @@ def api_profile(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
     if request.me.moderation_status != User.MODERATION_STATUS_APPROVED and request.me.id != user.id:
-        raise ApiAccessDenied(title="New users can only access their own profiles")
+        raise ApiAccessDenied(title="Non-approved users can only access their own profiles")
 
     return JsonResponse({
         "user": user.to_dict()

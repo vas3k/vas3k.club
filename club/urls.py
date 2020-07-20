@@ -86,7 +86,8 @@ urlpatterns = [
     path("telegram/link/", link_telegram, name="link_telegram"),
     path("telegram/webhook/<str:token>/", webhook_telegram, name="webhook_telegram"),
 
-    path("notifications/confirm/<str:user_id>/<str:secret>/", email_confirm, name="email_confirm"),
+    path("notifications/confirm/<str:secret>/", email_confirm, name="email_confirm"),
+    path("notifications/confirm/<str:secret>/<str:legacy_code>/", email_confirm, name="email_confirm_legacy"),
     path("notifications/unsubscribe/<str:user_id>/<str:secret>/", email_unsubscribe, name="email_unsubscribe"),
     path("notifications/switch/<str:digest_type>/<str:user_id>/<str:secret>/", email_digest_switch,
          name="email_digest_switch"),
