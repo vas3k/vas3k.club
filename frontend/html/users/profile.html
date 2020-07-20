@@ -50,7 +50,7 @@
                     </span>
                 </div>
                 <a href="{% url "edit_payments" user.slug %}" class="profile-status">
-                    {% if user.membership_days_left < 730 %}
+                    {% if user.membership_days_left < 400 %}
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}💩{% else %}😎{% endif %} {{ user.membership_days_left | cool_number }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | rupluralize:"день,дня,дней" }}</span>
                     {% else %}
