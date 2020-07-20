@@ -49,7 +49,6 @@ def email_login(request):
             })
 
         code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
-
         async_task(send_auth_email, user, code)
         async_task(notify_user_auth, user, code)
 

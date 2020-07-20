@@ -6,6 +6,7 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
+from auth.models import Code
 from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
@@ -15,7 +16,9 @@ from users.models.user import User
 
 
 def email_confirm(request, user_id, secret):
-    user = get_object_or_404(User, id=user_id, secret_hash=secret)
+    user = get_object_or_404(User, id=user_id)
+
+    user = Code.check_code(recipient=user.email, code=secret)
 
     user.is_email_verified = True
     user.save()

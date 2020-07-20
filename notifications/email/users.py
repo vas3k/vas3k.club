@@ -1,14 +1,17 @@
+from django.conf import settings
 from django.template import loader
 
+from auth.models import Code
 from notifications.email.sender import send_club_email
 
 
 def send_welcome_drink(user):
+    code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
     welcome_drink_template = loader.get_template("emails/welcome.html")
     send_club_email(
         recipient=user.email,
         subject=f"Велком дринк 🍸",
-        html=welcome_drink_template.render({"user": user}),
+        html=welcome_drink_template.render({"user": user, "code": code}),
         tags=["welcome"]
     )
 
