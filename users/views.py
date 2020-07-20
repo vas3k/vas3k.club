@@ -164,7 +164,7 @@ def edit_payments(request, user_slug):
             moderation_status=User.MODERATION_STATUS_APPROVED,
             membership_expires_at__gte=datetime.utcnow() + timedelta(days=70)
         )\
-        .order_by("-membership_expires_at")[:10]
+        .order_by("-membership_expires_at")[:25]
 
     return render(request, "users/edit/payments.html", {"user": user, "top_users": top_users})
 

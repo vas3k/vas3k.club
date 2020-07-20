@@ -61,7 +61,7 @@
 
         </form>
 
-        <div class="block-header" style="max-width: 600px; margin-top: 200px;">🏅<br>А чтобы было веселее, вот топ-10 членов Клуба с самой длинной подпиской</div>
+        <div class="block-header" style="max-width: 600px; margin-top: 200px;">🏅<br>А чтобы было веселее, вот топ членов Клуба с самой длинной подпиской</div>
 
         <div class="block-description">
             Собранные взносы идут на развитие Клуба, поэтому если вам хочется поддержать проект,
@@ -71,7 +71,7 @@
         <div class="block block-top-users">
             <ul>
                 {% for user in top_users %}
-                    <li>{% if forloop.counter <= 3 %}<strong>🏆{{ forloop.counter }}</strong>{% else %}#{{ forloop.counter }}{% endif %}&nbsp;&nbsp;{% include "users/widgets/tiny.html" %} — <strong>до {{ user.membership_expires_at | date:"E Y" }} года</strong></li>
+                    <li>{% if forloop.counter <= 3 %}<strong>🏆&nbsp;{{ forloop.counter }}</strong>{% else %}#{{ forloop.counter }}{% endif %}&nbsp;&nbsp;{% include "users/widgets/tiny.html" %} — <strong>до {{ user.membership_expires_at | date:"E Y" }} года</strong></li>
                 {% endfor %}
             </ul>
         </div>
