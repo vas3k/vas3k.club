@@ -43,8 +43,8 @@ def pay(request):
     if request.me:
         user = request.me
     else:
-        email = request.GET.get("email")
-        if email and "@" not in email:
+        email = request.GET.get("email") or ""
+        if not email or "@" not in email:
             return render(request, "error.html", {
                 "title": "Плохой e-mail адрес 😣",
                 "message": "Нам ведь нужно будет как-то привязать ваш аккаунт к платежу"
