@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.cache import cache
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import redirect, render
 
 from auth.helpers import auth_required, set_session_cookie
@@ -32,11 +33,13 @@ def login(request):
 
 @auth_required
 def logout(request):
-    if request.method == 'POST':
-        token = request.COOKIES.get("token")
-        Session.objects.filter(token=token).delete()
-        cache.delete(f"token:{token}:session")
-        return redirect("index")
+    allowed_methods = ('POST')
+    if request.method not in allowed_methods:
+        return HttpResponseNotAllowed(allowed_methods)
+    token = request.COOKIES.get("token")
+    Session.objects.filter(token=token).delete()
+    cache.delete(f"token:{token}:session")
+    return redirect("index")
 
 
 def debug_dev_login(request):
