@@ -49,8 +49,6 @@ def user_by_jwt(jwt_token):
         return None, None  # bad jwt token
 
     user = get_object_or_404(User, slug=payload["user_slug"])
-    if user.moderation_status != User.MODERATION_STATUS_APPROVED:
-        raise ApiAccessDenied()
 
     return user, None
 

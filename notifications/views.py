@@ -14,9 +14,9 @@ from users.models.achievements import UserAchievement
 from users.models.user import User
 
 
-def email_confirm(request, user_id, secret):
-    user = get_object_or_404(User, id=user_id, secret_hash=secret)
-
+def email_confirm(request, secret, legacy_code=None):
+    # secret is user.id (uuid)
+    user = get_object_or_404(User, id=secret)
     user.is_email_verified = True
     user.save()
 

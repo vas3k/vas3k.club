@@ -11,6 +11,7 @@ from auth.helpers import auth_required, moderator_role_required
 from common.pagination import paginate
 from common.request import ajax_request
 from notifications.telegram.users import notify_profile_needs_review
+from payments.service import stripe
 from posts.models import Post
 from comments.models import Comment
 from search.models import SearchIndex
@@ -164,9 +165,23 @@ def edit_payments(request, user_slug):
             moderation_status=User.MODERATION_STATUS_APPROVED,
             membership_expires_at__gte=datetime.utcnow() + timedelta(days=70)
         )\
-        .order_by("-membership_expires_at")[:10]
+        .order_by("-membership_expires_at")[:25]
 
-    return render(request, "users/edit/payments.html", {"user": user, "top_users": top_users})
+    subscriptions = []
+    if user.stripe_id:
+        stripe_subscriptions = stripe.Subscription.list(customer=user.stripe_id, limit=100)
+        subscriptions = [dict(
+            id=s["id"],
+            next_charge_at=datetime.utcfromtimestamp(s["current_period_end"]),
+            amount=int(s["plan"]["amount"] / 100),
+            interval=s["plan"]["interval"],
+        ) for s in stripe_subscriptions["data"]]
+
+    return render(request, "users/edit/payments.html", {
+        "user": user,
+        "subscriptions": subscriptions,
+        "top_users": top_users,
+    })
 
 
 @auth_required

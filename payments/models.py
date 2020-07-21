@@ -7,37 +7,39 @@ from users.models.user import User
 
 
 class Payment(models.Model):
-    PAYMENT_STATUS_STARTED = "started"
-    PAYMENT_STATUS_FAILED = "failed"
-    PAYMENT_STATUS_SUCCESS = "success"
-    PAYMENT_STATUSES = [
-        (PAYMENT_STATUS_STARTED, PAYMENT_STATUS_STARTED),
-        (PAYMENT_STATUS_FAILED, PAYMENT_STATUS_FAILED),
-        (PAYMENT_STATUS_SUCCESS, PAYMENT_STATUS_SUCCESS),
+    STATUS_STARTED = "started"
+    STATUS_FAILED = "failed"
+    STATUS_SUCCESS = "success"
+    STATUSES = [
+        (STATUS_STARTED, STATUS_STARTED),
+        (STATUS_FAILED, STATUS_FAILED),
+        (STATUS_SUCCESS, STATUS_SUCCESS),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
-    reference = models.CharField(max_length=256)
-    user = models.ForeignKey(User, related_name="payments", null=True, on_delete=models.SET_NULL)
+    reference = models.CharField(max_length=256, db_index=True)
+    user = models.ForeignKey(User, related_name="payments", null=True, on_delete=models.SET_NULL, db_index=True)
     product_code = models.CharField(max_length=64)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     amount = models.FloatField(default=0.0)
-    status = models.CharField(choices=PAYMENT_STATUSES, default=PAYMENT_STATUS_STARTED, max_length=32)
+    status = models.CharField(choices=STATUSES, default=STATUS_STARTED, max_length=32)
     data = models.TextField(null=True)
 
     class Meta:
         db_table = "payments"
 
     @classmethod
-    def start(cls, reference, user, product):
+    def create(cls, reference, user, product, data=None, status=STATUS_STARTED):
         return Payment.objects.create(
             reference=reference,
             user=user,
             product_code=product["code"],
             amount=product.get("amount") or 0.0,
+            status=status,
+            data=json.dumps(data),
         )
 
     @classmethod
@@ -45,10 +47,15 @@ class Payment(models.Model):
         return Payment.objects.filter(reference=reference).first()
 
     @classmethod
-    def finish(cls, reference, status=PAYMENT_STATUS_SUCCESS, data=None):
+    def finish(cls, reference, status=STATUS_SUCCESS, data=None):
         payment = Payment.get(reference)
         if payment:
             payment.status = status
-            payment.data = json.dumps(data)
+            if data:
+                payment.data = json.dumps(data)
             payment.save()
         return payment
+
+    @classmethod
+    def for_user(cls, user):
+        return Payment.objects.filter(user=user)
