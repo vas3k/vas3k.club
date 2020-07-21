@@ -33,7 +33,7 @@ def login(request):
 
 @auth_required
 def logout(request):
-    allowed_methods = ('POST')
+    allowed_methods = ('POST',)
     if request.method not in allowed_methods:
         return HttpResponseNotAllowed(allowed_methods)
     token = request.COOKIES.get("token")
