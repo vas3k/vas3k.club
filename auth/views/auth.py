@@ -33,9 +33,8 @@ def login(request):
 
 @auth_required
 def logout(request):
-    allowed_methods = ('POST',)
-    if request.method not in allowed_methods:
-        return HttpResponseNotAllowed(allowed_methods)
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     token = request.COOKIES.get("token")
     Session.objects.filter(token=token).delete()
     cache.delete(f"token:{token}:session")
