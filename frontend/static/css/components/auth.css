@@ -29,51 +29,6 @@
         margin: 0 auto;
     }
 
-    .pay-packages {
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-        .pay-packages input[type=radio] {
-            display: none;
-        }
-
-        .pay-package {
-            display: block;
-            margin: 10px;
-            width: 240px;
-            text-align: center;
-            font-size: 140%;
-            cursor: pointer;
-            transition: transform .2s;
-        }
-
-            .pay-package:hover {
-                transform: scale(1.05);
-            }
-
-            .pay-packages input[type=radio]:checked + .pay-package {
-                transform: scale(1.05);
-                background-color: var(--opposite-block-bg-color);
-                color: var(--opposite-text-color);
-            }
-
-            .pay-package-name {
-
-            }
-
-            .pay-package-image {
-                font-size: 56px;
-                padding: 10px 0;
-            }
-
-            .pay-package-price {
-                font-weight: 500;
-                font-size: 120%;
-            }
-
     .join-email {
         display: block;
         font-size: 120%;

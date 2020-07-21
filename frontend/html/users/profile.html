@@ -89,7 +89,7 @@
             </div>
         {% endif %}
 
-        {% if intro or me.id == user.id %}
+        {% if intro %}
             <div class="block profile-intro">
                 <div class="profile-header">
                     <a href="{% url "show_post" "intro" intro.slug %}">#intro &rarr;</a>
@@ -99,15 +99,9 @@
                         </a>
                     {% endif %}
                 </div>
-                {% if intro %}
-                    <div class="text-body profile-intro-text">
-                        {% render_post intro %}
-                    </div>
-                {% else %}
-                    <div class="profile-add-button">
-                        <a href="{% url "compose_type" "intro" %}" class="button profile-intro-create">Расскажите Клубу о себе</a>
-                    </div>
-                {% endif %}
+                <div class="text-body profile-intro-text">
+                    {% render_post intro %}
+                </div>
             </div>
         {% endif %}
 

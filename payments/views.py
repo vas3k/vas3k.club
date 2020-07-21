@@ -5,8 +5,9 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+from auth.helpers import auth_required
 from payments.models import Payment
-from payments.products import PRODUCTS
+from payments.products import PRODUCTS, find_by_price_id
 from payments.service import stripe
 from users.models.user import User
 
@@ -32,7 +33,13 @@ def done(request):
 
 def pay(request):
     product_code = request.GET.get("product_code")
+    is_recurrent = request.GET.get("is_recurrent")
+    if is_recurrent:
+        interval = request.GET.get("recurrent_interval") or "yearly"
+        product_code = f"{product_code}_recurrent_{interval}"
+
     product = PRODUCTS.get(product_code)
+
     if not product:
         return render(request, "error.html", {
             "title": "Не выбран пакет 😣",
@@ -64,19 +71,24 @@ def pay(request):
             ),
         )
 
+    if user.stripe_id:
+        customer_data = dict(customer=user.stripe_id)
+    else:
+        customer_data = dict(customer_email=user.email)
+
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[{
             "price": product["stripe_id"],
             "quantity": 1,
         }],
-        customer_email=user.email,
-        mode="payment",
+        **customer_data,
+        mode="subscription" if is_recurrent else "payment",
         success_url=settings.STRIPE_SUCCESS_URL,
         cancel_url=settings.STRIPE_CANCEL_URL,
     )
 
-    payment = Payment.start(session.id, user, product)
+    payment = Payment.create(session.id, user, product)
 
     return render(request, "payments/pay.html", {
         "session": session,
@@ -84,6 +96,24 @@ def pay(request):
         "payment": payment,
         "user": user,
     })
+
+
+@auth_required
+def stop_subscription(request, subscription_id):
+    try:
+        stripe.Subscription.delete(subscription_id)
+    except stripe.error.NameError:
+        return render(request, "error.html", {
+            "title": "Подписка не найдена",
+            "message": "В нашей базе нет подписки с таким ID"
+        })
+    except stripe.error.InvalidRequestError:
+        return render(request, "error.html", {
+            "title": "Подписка уже отменена 👌",
+            "message": "Stripe сказал, что эта подписка уже отменена, так что всё ок"
+        })
+
+    return render(request, "payments/messages/subscription_stopped.html")
 
 
 def stripe_webhook(request):
@@ -102,14 +132,40 @@ def stripe_webhook(request):
     except stripe.error.SignatureVerificationError:
         return HttpResponse("[invalid signature]", status=400)
 
+    log.info("Stripe webhook event: " + event["type"])
+
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
         payment = Payment.finish(
             reference=session["id"],
-            status=Payment.PAYMENT_STATUS_SUCCESS,
+            status=Payment.STATUS_SUCCESS,
             data=session,
         )
         product = PRODUCTS[payment.product_code]
         product["activator"](product, payment, payment.user)
+        return HttpResponse("[ok]", status=200)
 
-    return HttpResponse("[ok]", status=200)
+    if event["type"] == "invoice.paid":
+        invoice = event["data"]["object"]
+        if invoice["billing_reason"] == "subscription_create":
+            # already processed in "checkout.session.completed" event
+            return HttpResponse("[ok]", status=200)
+
+        user = User.objects.filter(stripe_id=invoice["customer"]).first()
+        payment = Payment.create(
+            reference=invoice["id"],
+            user=user,
+            product=find_by_price_id(invoice["lines"][0]["plan"]["id"]),
+            data=invoice,
+            status=Payment.STATUS_SUCCESS,
+        )
+        product = PRODUCTS[payment.product_code]
+        product["activator"](product, payment, user)
+        return HttpResponse("[ok]", status=200)
+
+    if event["type"] in {"customer.created", "customer.updated"}:
+        customer = event["data"]["object"]
+        User.objects.filter(email=customer["email"]).update(stripe_id=customer["id"])
+        return HttpResponse("[ok]", status=200)
+
+    return HttpResponse("[unknown event]", status=400)

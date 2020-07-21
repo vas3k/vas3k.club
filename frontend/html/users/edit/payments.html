@@ -9,39 +9,69 @@
     <div class="content user-edit">
         <div class="form-title">🎩<br>Клубные взносы</div>
 
-        <div class="block-subheader">Клубная карта активна до: <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong></div>
+        <div class="block-subheader">
+            Клубная карта активна до: <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong>
+        </div>
+
+        <div class="block-subheader">
+            {% if not subscriptions %}
+                <div class="block pay-subscription">Автопродление отключено 😟</div>
+            {% endif %}
+
+            {% for subscription in subscriptions %}
+                <div class="block pay-subscription">
+                    🔥 Включено автопополнение на <strong>€{{ subscription.amount | floatformat }}</strong> каждый
+                    {% if subscription.interval == "month" %}
+                        месяц <strong>{{ subscription.next_charge_at | date:"j" }} числа</strong>
+                    {% else %}
+                        год <strong>{{ subscription.next_charge_at | date:"j E" }}</strong>
+                    {% endif %}
+
+                    <br><br>
+
+                    <a href="{% url "stop_subscription" subscription.id %}" class="button button-small">Отключить</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="block-description" style="text-align: center;">
+            О любых проблемах с оплатой сразу пишите на <a href="mailto:monies@vas3k.club">monies@vas3k.club</a>.<br>
+            Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.
+        </div>
 
         <form action="{% url "pay" %}" method="get">
 
-        <div class="pay-services">
-            <div class="block pay-service">
-                <div class="pay-service-title"><i class="fas fa-money-check-alt"></i>&nbsp;Напрямую</div>
-                <ul class="pay-service-list">
-                    <li>✅ Сразу на год и больше</li>
-                    <li>✅ Можно пополнять без подписки</li>
-                    <li>🤔 Нет раннего доступа к блогу</li>
-                </ul>
-                <div class="join-service-button">
-                    <a href="#select_package" class="button">Пополнить 👇</a>
+        {% if me.membership_platform_type == "patreon" %}
+            <div class="pay-services">
+                <div class="block pay-service">
+                    <div class="pay-service-title"><i class="fas fa-money-check-alt"></i>&nbsp;Напрямую</div>
+                    <ul class="pay-service-list">
+                        <li>✅ Сразу на год и больше</li>
+                        <li>✅ Можно пополнять без подписки</li>
+                        <li>🤔 Нет раннего доступа к блогу</li>
+                    </ul>
+                    <div class="join-service-button">
+                        <a href="#select_package" class="button">Пополнить 👇</a>
+                    </div>
                 </div>
-            </div>
 
-            <div class="block pay-service">
-                <div class="pay-service-title"><i class="fab fa-patreon"></i>&nbsp;Через Patreon</div>
-                <ul class="pay-service-list">
-                    <li>✅ Ежемесячная подписка</li>
-                    <li>🤔 Оплата проходит не сразу</li>
-                    <li>🤔 Высокие комиссии</li>
-                </ul>
-                <div class="pay-service-button">
-                    {% if me.membership_platform_type == "patreon" %}
-                        <a href="https://patreon.com/vas3k" class="button" style="background-color: #53AA68; border-color: #53AA68;">👍 Сейчас активно</a>
-                    {% else %}
-                        💩 Вы уже пополняете напрямую, так что обратно переходить нет смысла
-                    {% endif %}
+                <div class="block pay-service">
+                    <div class="pay-service-title"><i class="fab fa-patreon"></i>&nbsp;Через Patreon</div>
+                    <ul class="pay-service-list">
+                        <li>✅ Ежемесячная подписка</li>
+                        <li>🤔 Оплата проходит не сразу</li>
+                        <li>🤔 Высокие комиссии</li>
+                    </ul>
+                    <div class="pay-service-button">
+                        {% if me.membership_platform_type == "patreon" %}
+                            <a href="https://patreon.com/vas3k" class="button" style="background-color: #53AA68; border-color: #53AA68;">👍 Сейчас активно</a>
+                        {% else %}
+                            💩 Вы уже пополняете напрямую, так что обратно переходить нет смысла
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
 
         <br><br>
 
@@ -51,21 +81,21 @@
 
         {% include "payments/blocks/packages.html" %}
 
-        <div class="block-description" style="text-align: center;">
-            Пополняйте когда вам удобно — новые дни будут просто суммироваться
-        </div>
-
-        <br><br><br><br>
-
         <button type="submit" class="button button-big join-button">Продлить членство 🤙</button>
 
         </form>
 
+        <br><br>
+
+        <div class="block-description" style="text-align: center;">
+            Пополняйте когда вам удобно — новые дни будут просто суммироваться
+        </div>
+
         <div class="block-header" style="max-width: 600px; margin-top: 200px;">🏅<br>А чтобы было веселее, вот топ членов Клуба с самой длинной подпиской</div>
 
         <div class="block-description">
-            Собранные взносы идут на развитие Клуба, поэтому если вам хочется поддержать проект,
-            лучший способ это сделать — продлить свою карту ещё на пару сотен тысяч лет вперёд :)
+            Собранные взносы идут на развитие Клуба, поэтому если вам хочется поддержать наш проект,
+            лучший способ это сделать — продлить свою карту ещё на пару тысяч лет вперёд :D
         </div>
 
         <div class="block block-top-users">

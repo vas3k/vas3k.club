@@ -92,6 +92,8 @@ class User(models.Model, ModelDiffMixin):
     telegram_id = models.CharField(max_length=128, null=True)
     telegram_data = JSONField(null=True)
 
+    stripe_id = models.CharField(max_length=128, null=True)
+
     is_email_verified = models.BooleanField(default=False)
     is_email_unsubscribed = models.BooleanField(default=False)
     is_banned_until = models.DateTimeField(null=True)

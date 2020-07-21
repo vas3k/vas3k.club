@@ -35,6 +35,11 @@
         margin: 50px 0 0;
     }
 
+    .pay-subscription {
+        display: block;
+        margin-top: 20px;
+    }
+
     .pay-services {
         display: flex;
         align-items: flex-start;
@@ -107,3 +112,71 @@
     .membership-expired-description {
         padding: 40px 0;
     }
+
+
+.pay-packages {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+    .pay-packages input[type=radio] {
+        display: none;
+    }
+
+    .pay-package {
+        display: block;
+        margin: 10px;
+        width: 240px;
+        text-align: center;
+        font-size: 140%;
+        cursor: pointer;
+        transition: transform .2s;
+    }
+
+        .pay-package:hover {
+            transform: scale(1.05);
+        }
+
+        .pay-packages input[type=radio]:checked + .pay-package {
+            transform: scale(1.05);
+            background-color: var(--opposite-block-bg-color);
+            color: var(--opposite-text-color);
+        }
+
+        .pay-package-name {
+
+        }
+
+        .pay-package-image {
+            font-size: 56px;
+            padding: 10px 0;
+        }
+
+        .pay-package-price {
+            font-weight: 500;
+            font-size: 120%;
+        }
+
+.pay-recurrent {
+    display: block;
+    padding: 20px;
+    text-align: center;
+}
+
+    .pay-recurrent-block {
+        display: inline-block;
+        font-size: 120%;
+        padding: 10px 30px;
+    }
+
+        .pay-recurrent-block input[type=checkbox] {
+            transform: scale(1.5);
+            margin-right: 5px;
+        }
+
+        .pay-recurrent-block select {
+            padding: 5px 10px;
+            margin-left: 5px;
+        }
