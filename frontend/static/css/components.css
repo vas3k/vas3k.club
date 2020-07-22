@@ -39,6 +39,11 @@
     .footer-logout {
         display: block;
         margin-top: 20px;
+        appearance: none;
+        border: none;
+        background: none;
+        text-decoration: underline;
+        cursor: pointer;
     }
 
 .error, .message, .access-denied {
