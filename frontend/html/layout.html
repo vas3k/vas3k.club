@@ -61,7 +61,7 @@
             {% if me %}
                 <form method="POST" action="{% url "logout" %}">
                     {% csrf_token %}
-                    <button type="submit" class="footer-logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Выйти</button>
+                    <button type="submit" class="footer-logout">Выйти&nbsp;<i class="fas fa-sign-out-alt"></i></button>
                 </form>
             {% endif %}
         </div>

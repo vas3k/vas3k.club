@@ -41,10 +41,16 @@
         margin-top: 20px;
         appearance: none;
         border: none;
+        outline: none;
         background: none;
         text-decoration: underline;
         cursor: pointer;
     }
+
+        .footer-logout i {
+            display: inline-block;
+            vertical-align: middle;
+        }
 
 .error, .message, .access-denied {
     display: block;
