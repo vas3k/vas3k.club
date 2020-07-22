@@ -59,7 +59,10 @@
             </label>
 
             {% if me %}
-                <a href="{% url "logout" %}" class="footer-logout">Выйти</a>
+                <form method="POST" action="{% url "logout" %}">
+                    {% csrf_token %}
+                    <button type="submit" class="footer-logout">Выйти</button>
+                </form>
             {% endif %}
         </div>
     </div>
