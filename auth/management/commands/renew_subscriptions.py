@@ -18,18 +18,19 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--days-before", nargs=1, type=int, required=False, default=2)
         parser.add_argument("--days-after", nargs=1, type=int, required=False, default=5)
+        parser.add_argument("--email", nargs=1, type=str, required=False)
 
     def handle(self, *args, **options):
-        days_before = options["days_before"]
-        days_after = options["days_after"]
-
-        expiring_users = User.objects\
-            .filter(
-                membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
-                membership_expires_at__gte=datetime.utcnow() - timedelta(days=days_before),
-                membership_expires_at__lte=datetime.utcnow() + timedelta(days=days_after),
-            )\
-            .all()
+        if options.get("email"):
+            expiring_users = User.objects.filter(email=options["email"])
+        else:
+            expiring_users = User.objects\
+                .filter(
+                    membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
+                    membership_expires_at__gte=datetime.utcnow() - timedelta(days=options["days_before"]),
+                    membership_expires_at__lte=datetime.utcnow() + timedelta(days=options["days_after"]),
+                )\
+                .all()
 
         for user in expiring_users:
             if user.membership_platform_type == User.MEMBERSHIP_PLATFORM_PATREON:
