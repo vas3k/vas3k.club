@@ -14,9 +14,9 @@ class Command(BaseCommand):
     help = "Fetches expiring accounts and tries to renew the subscription"
 
     def add_arguments(self, parser):
-        parser.add_argument("--days-before", nargs=1, type=int, required=False, default=2)
-        parser.add_argument("--days-after", nargs=1, type=int, required=False, default=5)
-        parser.add_argument("--email", nargs=1, type=str, required=False)
+        parser.add_argument("--days-before", type=int, required=False, default=2)
+        parser.add_argument("--days-after", type=int, required=False, default=5)
+        parser.add_argument("--email", type=str, required=False)
 
     def handle(self, *args, **options):
         if options.get("email"):

@@ -16,7 +16,7 @@ class Command(BaseCommand):
     help = "Send daily digest to subscribers"
 
     def add_arguments(self, parser):
-        parser.add_argument("--production", nargs=1, type=bool, required=False, default=False)
+        parser.add_argument("--production", type=bool, required=False, default=False)
 
     def handle(self, *args, **options):
         # select daily subscribers
