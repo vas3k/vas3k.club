@@ -48,8 +48,8 @@ class Command(BaseCommand):
                         "refresh_token": auth_data["refresh_token"],
                     }
                 except PatreonException as ex:
-                    self.stdout.write(f"Can't refresh user data {user.slug}: {ex}. Skipping...")
-                    pass
+                    self.stdout.write(f"Can't refresh user data {user.slug}: {ex}. Cleaning up active sessions...")
+                    Session.objects.filter(user=user).delete()
 
                 # fetch user pledge status
                 try:
@@ -57,6 +57,7 @@ class Command(BaseCommand):
                     self.stdout.write(f"Pledge status: {user_data}")
                 except PatreonException as ex:
                     self.stdout.write(f"Invalid patreon credentials for user {user.slug}: {ex}")
+                    Session.objects.filter(user=user).delete()
                     continue
 
                 # check the new expiration date
