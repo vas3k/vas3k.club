@@ -9,8 +9,6 @@ from auth.providers import patreon
 from auth.providers.patreon import fetch_user_data
 from users.models.user import User
 
-log = logging.getLogger(__name__)
-
 
 class Command(BaseCommand):
     help = "Fetches expiring accounts and tries to renew the subscription"
@@ -22,8 +20,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options.get("email"):
+            self.stdout.write(f"Selecting a user with email: {options['email']}")
             expiring_users = User.objects.filter(email=options["email"])
         else:
+            self.stdout.write(f"Selecting users with expired subscriptions "
+                              f"between {options['days_before']} days before and {options['days_after']} days after")
             expiring_users = User.objects\
                 .filter(
                     membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
@@ -33,12 +34,11 @@ class Command(BaseCommand):
                 .all()
 
         for user in expiring_users:
+            self.stdout.write(f"Checking user: {user.slug}")
             if user.membership_platform_type == User.MEMBERSHIP_PLATFORM_PATREON:
                 if not user.membership_platform_data or "refresh_token" not in user.membership_platform_data:
-                    log.warning(f"No auth data for user: {user.slug}")
+                    self.stdout.write(f"No auth data for user: {user.slug}")
                     continue
-
-                self.stdout.write(f"Renewing for user {user.slug}")
 
                 # refresh user data id needed
                 try:
@@ -48,14 +48,15 @@ class Command(BaseCommand):
                         "refresh_token": auth_data["refresh_token"],
                     }
                 except PatreonException as ex:
-                    log.warning(f"Can't refresh user data {user.slug}: {ex}")
+                    self.stdout.write(f"Can't refresh user data {user.slug}: {ex}. Skipping...")
                     pass
 
                 # fetch user pledge status
                 try:
                     user_data = fetch_user_data(user.membership_platform_data["access_token"])
+                    self.stdout.write(f"Pledge status: {user_data}")
                 except PatreonException as ex:
-                    log.warning(f"Invalid patreon credentials for user {user.slug}: {ex}")
+                    self.stdout.write(f"Invalid patreon credentials for user {user.slug}: {ex}")
                     continue
 
                 # check the new expiration date
