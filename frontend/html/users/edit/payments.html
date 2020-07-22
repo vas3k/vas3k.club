@@ -29,7 +29,7 @@
 
                     <br><br>
 
-                    <a href="{% url "stop_subscription" subscription.id %}" class="button button-small">Отключить</a>
+                    <a href="{% url "stop_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
                 </div>
             {% endfor %}
         </div>
