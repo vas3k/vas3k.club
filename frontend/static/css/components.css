@@ -1446,6 +1446,17 @@
     text-align: center;
 }
 
+    .post-join-icon {
+        font-size: 50px;
+        margin: 20px;
+        line-height: 1em;
+    }
+
+    .post-join-message {
+        font-size: 130%;
+        font-weight: 500;
+    }
+
 .post-comments {
     padding-top: 80px;
 }
