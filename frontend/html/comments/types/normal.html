@@ -11,7 +11,7 @@
             </span>
             <span class="user-info">
                 <a href="{% url "profile" comment.author.slug %}">
-                    <span class="user-name">{{ comment.author.full_name }}</span>{% if me %}<span class="user-position">, {{ comment.author.position }}</span>{% endif %}
+                    <span class="user-name">{{ comment.author.full_name }}</span><span class="user-position">, {{ comment.author.position }}</span>
                     {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
                 </a>
             </span>
