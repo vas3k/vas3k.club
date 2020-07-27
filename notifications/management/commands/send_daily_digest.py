@@ -1,3 +1,4 @@
+import base64
 import logging
 from datetime import datetime, timedelta
 
@@ -47,7 +48,7 @@ class Command(BaseCommand):
             user_digest_html = user_digest_html\
                 .replace("%username%", user.slug)\
                 .replace("%user_id%", str(user.id))\
-                .replace("%secret_code%", user.secret_hash)
+                .replace("%secret_code%", base64.b64encode(user.secret_hash.encode("utf-8")))
 
             self.stdout.write(f"Sending email to {user.email}...")
 

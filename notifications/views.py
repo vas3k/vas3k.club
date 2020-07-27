@@ -1,3 +1,4 @@
+import base64
 from datetime import timedelta, datetime
 
 from django.conf import settings
@@ -16,7 +17,7 @@ from users.models.user import User
 
 def email_confirm(request, secret, legacy_code=None):
     # secret is user.id (uuid)
-    user = get_object_or_404(User, id=secret)
+    user = get_object_or_404(User, id=base64.b64decode(secret.encode("utf-8")))
     user.is_email_verified = True
     user.save()
 
@@ -27,7 +28,7 @@ def email_confirm(request, secret, legacy_code=None):
 
 
 def email_unsubscribe(request, user_id, secret):
-    user = get_object_or_404(User, id=user_id, secret_hash=secret)
+    user = get_object_or_404(User, id=user_id, secret_hash=base64.b64decode(secret.encode("utf-8")))
 
     user.is_email_unsubscribed = True
     user.email_digest_type = User.EMAIL_DIGEST_TYPE_NOPE
@@ -42,7 +43,7 @@ def email_unsubscribe(request, user_id, secret):
 
 
 def email_digest_switch(request, digest_type, user_id, secret):
-    user = get_object_or_404(User, id=user_id, secret_hash=secret)
+    user = get_object_or_404(User, id=user_id, secret_hash=base64.b64decode(secret.encode("utf-8")))
 
     if not dict(User.EMAIL_DIGEST_TYPES).get(digest_type):
         raise Http404()
