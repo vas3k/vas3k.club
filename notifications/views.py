@@ -49,7 +49,13 @@ def email_unsubscribe(request, user_id, secret):
 
 
 def email_digest_switch(request, digest_type, user_id, secret):
-    user = get_object_or_404(User, id=user_id, secret_hash=base64.b64decode(secret.encode("utf-8")))
+    try:
+        # dirty hack to support legacy non-base64 codes
+        secret = base64.b64decode(secret.encode("utf-8"))
+    except:
+        pass
+
+    user = get_object_or_404(User, id=user_id, secret_hash=secret)
 
     if not dict(User.EMAIL_DIGEST_TYPES).get(digest_type):
         raise Http404()
