@@ -28,7 +28,13 @@ def email_confirm(request, secret, legacy_code=None):
 
 
 def email_unsubscribe(request, user_id, secret):
-    user = get_object_or_404(User, id=user_id, secret_hash=base64.b64decode(secret.encode("utf-8")))
+    try:
+        # dirty hack to support legacy non-base64 codes
+        secret = base64.b64decode(secret.encode("utf-8"))
+    except:
+        pass
+
+    user = get_object_or_404(User, id=user_id, secret_hash=secret)
 
     user.is_email_unsubscribed = True
     user.email_digest_type = User.EMAIL_DIGEST_TYPE_NOPE
