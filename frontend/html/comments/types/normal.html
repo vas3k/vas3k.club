@@ -29,7 +29,7 @@
                             initial-is-voted
                             initial-upvote-timestamp="{{comment.upvoted_at}}"
                          {% endif %}
-                         {% if not me|can_upvote:comment %}is-disabled{% endif %}
+                         {% if not me|can_upvote:comment or upvote_disabled %}is-disabled{% endif %}
                          is-small>
         </comment-upvote>
 
