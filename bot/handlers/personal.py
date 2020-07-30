@@ -19,7 +19,10 @@ log = logging.getLogger(__name__)
 
 
 def process_auth(update: Update):
-    user = User.objects.filter(secret_hash=str(update.message.text).strip()).first()
+    user = None
+    if update.message and update.message.text:
+        user = User.objects.filter(secret_hash=str(update.message.text).strip()).first()
+
     if not user:
         send_telegram_message(
             chat=Chat(id=update.effective_chat.id),
