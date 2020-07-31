@@ -155,6 +155,7 @@
             <div class="form-row form-row-intro">
                 {{ form.intro }}
                 {% if form.intro.errors %}<span class="form-row-errors">{{ form.intro.errors }}</span>{% endif %}
+                <span class="intro-length">{{ form.intro.initial|length }}</span> / {{ form.intro.field.widget.attrs.minlength }}
             </div>
 
             <div class="block-description" style="text-align: left;">
@@ -277,4 +278,40 @@
             <button type="submit" class="button button-red button-big">Отправить на&nbsp;ревью</button>
         </form>
     </div>
+{% endblock %}
+{% block js %}
+<script>
+    const $counter = document.querySelector('.intro-length');
+    const $introTextarea = document.querySelector('.intro-form textarea[name="intro"]');
+
+    $introTextarea.addEventListener(
+        'keyup',
+        throttle(e => changeCounter(e.target.value.length), 500)
+    )
+
+    function changeCounter(value) {
+        $counter.innerHTML = String(value);
+    }
+
+    function throttle (fn, wait) {
+        let inThrottle, lastFn, lastTime;
+        return function() {
+            const context = this,
+                args = arguments;
+            if (!inThrottle) {
+                fn.apply(context, args);
+                lastTime = Date.now();
+                inThrottle = true;
+            } else {
+                clearTimeout(lastFn);
+                lastFn = setTimeout(function() {
+                    if (Date.now() - lastTime >= wait) {
+                        fn.apply(context, args);
+                        lastTime = Date.now();
+                    }
+                }, Math.max(wait - (Date.now() - lastTime), 0));
+            }
+        };
+    }
+</script>
 {% endblock %}
