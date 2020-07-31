@@ -155,7 +155,7 @@
             <div class="form-row form-row-intro">
                 {{ form.intro }}
                 {% if form.intro.errors %}<span class="form-row-errors">{{ form.intro.errors }}</span>{% endif %}
-                <span class="intro-length">{{ form.intro.initial|length }}</span> / {{ form.intro.field.widget.attrs.minlength }}
+                <span class="intro-length">{{ form.intro.initial|length }}</span>&nbsp;&#47;&nbsp;{{ form.intro.field.widget.attrs.minlength }}
             </div>
 
             <div class="block-description" style="text-align: left;">
