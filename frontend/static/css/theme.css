@@ -36,6 +36,9 @@ html, html[theme="light"] {
     --button-hover-color: #333;
     --button-hover-bg-color: #FFF;
     --button-hover-border: solid 2px #333;
+
+    --select-color: #333;
+    --select-bg-color: #FFF;
 }
 
 html[theme="dark"] {
@@ -61,6 +64,9 @@ html[theme="dark"] {
     --button-hover-color: #FFF;
     --button-hover-bg-color: #333;
     --button-hover-border: solid 2px #FFF;
+
+    --select-color: #333;
+    --select-bg-color: #FFF;
 }
 
 @media (prefers-color-scheme: dark) {

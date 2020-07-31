@@ -14,6 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
 DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don"t run with debug turned on in production!
 
+# HINT: add "*" or your local IP to access appllication from a different device, e.g. a phone
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "dev.vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
 
