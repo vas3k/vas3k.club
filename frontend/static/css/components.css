@@ -1497,8 +1497,8 @@
             position: relative;
             padding: 4px 7px;
             top: -4px;
-            color: var(--opposite-text-color);
-            background-color: var(--opposite-bg-color);
+            color: var(--select-color);
+            background-color: var(--select-bg-color);
         }
 
     .post-comments-subscription {
