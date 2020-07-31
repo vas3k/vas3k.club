@@ -45,6 +45,8 @@
         background: none;
         text-decoration: underline;
         cursor: pointer;
+        color: var(--link-color);
+        transition: color linear .1s;
     }
 
         .footer-logout i {
@@ -1495,6 +1497,8 @@
             position: relative;
             padding: 4px 7px;
             top: -4px;
+            color: var(--opposite-text-color);
+            background-color: var(--opposite-bg-color);
         }
 
     .post-comments-subscription {
