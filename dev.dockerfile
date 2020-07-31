@@ -23,6 +23,10 @@ WORKDIR /app
 # install requirements into a separate layer
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r requirements.txt
+
+COPY ./dev_requirements.txt /app/dev_requirements.txt
+RUN pip install -r dev_requirements.txt
+
 RUN python -c "import nltk; nltk.download('punkt')"
 
 # copy the code
