@@ -6,7 +6,7 @@ from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
 from users.models.user import User
-from common.forms import ImageUploadField
+from common.forms import ImageUploadField, DefaultChoiceField
 
 
 class UserIntroForm(ModelForm):
@@ -40,7 +40,7 @@ class UserIntroForm(ModelForm):
         required=True,
         max_length=120
     )
-    country = forms.ChoiceField(
+    country = DefaultChoiceField(
         label="Страна",
         choices=COUNTRIES,
         required=True

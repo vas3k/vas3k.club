@@ -6,7 +6,7 @@ from common.data.countries import COUNTRIES
 from common.data.expertise import EXPERTISE
 from users.models.user import User
 from users.models.expertise import UserExpertise
-from common.forms import ImageUploadField
+from common.forms import ImageUploadField, DefaultChoiceField
 
 
 class UserEditForm(ModelForm):
@@ -26,7 +26,7 @@ class UserEditForm(ModelForm):
         required=True,
         max_length=120
     )
-    country = forms.ChoiceField(
+    country = DefaultChoiceField(
         label="Страна",
         choices=COUNTRIES,
         required=True
@@ -84,7 +84,7 @@ class NotificationsEditForm(ModelForm):
 
 
 class ExpertiseForm(ModelForm):
-    expertise = forms.ChoiceField(
+    expertise = DefaultChoiceField(
         label="Область",
         required=True,
         choices=EXPERTISE + [("custom", "[добавить своё]")],

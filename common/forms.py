@@ -30,3 +30,14 @@ class DefaultSelect(forms.Select):
 
     def __init__(self):
         super().__init__(attrs={'class': self.DEFAULT_CLASS})
+
+
+class DefaultChoiceField(forms.ChoiceField):
+    def __init__(self, widget=None, **kwargs):
+        self.widget = DefaultSelect()
+        super().__init__(**kwargs)
+
+class DefaultModelChoiceField(forms.ModelChoiceField):
+    def __init__(self, widget=None, **kwargs):
+        self.widget = DefaultSelect()
+        super().__init__(**kwargs)
