@@ -5,7 +5,9 @@
         </div>
         <div class="comment-form-body comment-form-battle">
             <div class="comment-form-body-battle-side">Я за
-                <select name="{{ form.battle_side.name }}" id="{{ form.battle_side.id_for_label }}">
+                <select name="{{ form.battle_side.name }}"
+                        id="{{ form.battle_side.id_for_label }}"
+                        class="select">
                     {% for code, side in post.metadata.battle.sides.items %}
                         <option value="{{ code }}">{{ side.name }}</option>
                     {% endfor %}

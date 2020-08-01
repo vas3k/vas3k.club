@@ -114,7 +114,7 @@
                     Лучшее
                 </a>
                 {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}
-                    <select class="feed-ordering-item" onchange="location.href += '../' + event.target.value">
+                    <select class="feed-ordering-item select" onchange="location.href += '../' + event.target.value">
                         <option value="top">вообще</option>
                         <option value="top_week" {% if ordering == "top_week" %}selected{% endif %}>за неделю</option>
                         <option value="top_month" {% if ordering == "top_month" %}selected{% endif %}>за месяц</option>

@@ -116,8 +116,6 @@
 
         .people-search-country > select {
             width: 200px;
-            background-color: var(--block-bg-color);
-            color: var(--text-color);
         }
 
 .people-filters {

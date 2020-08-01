@@ -50,7 +50,7 @@
                     </div>
 
                     <div class="people-search-country">
-                        <select name="country" @change="$event.target.form.submit()">
+                        <select name="country" class="select" @change="$event.target.form.submit()">
                             <option value="">Весь мир</option>
                             {% for country in active_countries %}
                                 <option value="{{ country.country }}" {% if country.country == people_query.country %}selected{% endif %}>{{ country.country }} ({{ country.country_count }})</option>

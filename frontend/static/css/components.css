@@ -1497,8 +1497,6 @@
             position: relative;
             padding: 4px 7px;
             top: -4px;
-            color: var(--select-color);
-            background-color: var(--select-bg-color);
         }
 
     .post-comments-subscription {
