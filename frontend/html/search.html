@@ -33,7 +33,7 @@
                         {% include "posts/items/items.html" with post=result.post upvote_disabled=True %}
                     {% endif %}
                     {% if result.comment %}
-                        {% include "comments/types/normal.html" with comment=result.comment upvote_disabled=True %}
+                        {% include "comments/types/snippet.html" with comment=result.comment %}
                     {% endif %}
                     {% if result.profile %}
                         {% include "users/widgets/card.html" with user=result.profile %}
