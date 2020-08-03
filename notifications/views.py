@@ -171,6 +171,7 @@ def daily_digest(request, user_slug):
     posts = Post.visible_objects()\
         .filter(is_approved_by_moderator=True, **published_at_condition)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")[:100]
 
     # New joiners
@@ -230,6 +231,7 @@ def weekly_digest(request):
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
         .exclude(label__isnull=False, label__code="ad")\
+        .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")
 
     post_count = posts.count()
