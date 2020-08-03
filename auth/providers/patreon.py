@@ -135,7 +135,7 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
             if last_charged_at:
                 membership_expires_at = last_charged_at + timedelta(days=45)
             else:
-                membership_expires_at = first_day_of_next_month(now) + timedelta(days=15)
+                membership_expires_at = first_day_of_next_month(now) + timedelta(days=7)
 
             return Membership(
                 platform=Platform.patreon,

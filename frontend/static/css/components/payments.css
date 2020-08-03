@@ -99,18 +99,19 @@
 
 
 .membership-expired {
-    max-width: 500px;
+    max-width: 600px;
     font-size: 140%;
     margin: 80px auto;
 }
 
     .membership-expired-title {
-        font-size: 120%;
+        font-size: 140%;
         font-weight: 500;
+        padding-top: 20px;
     }
 
     .membership-expired-description {
-        padding: 40px 0;
+        padding: 20px 0;
     }
 
 

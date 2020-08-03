@@ -15,10 +15,6 @@ from common.images import upload_image_from_url
 
 
 def patreon_login(request):
-    user = authorized_user(request)
-    if user:
-        return redirect("profile", user.slug)
-
     state = {}
     goto = request.GET.get("goto")
     if goto:
