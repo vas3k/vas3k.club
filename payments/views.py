@@ -57,6 +57,7 @@ def pay(request):
                 "message": "Нам ведь нужно будет как-то привязать ваш аккаунт к платежу"
             })
 
+        email = email.lower()
         now = datetime.utcnow()
         user, _ = User.objects.get_or_create(
             email=email,

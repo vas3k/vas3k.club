@@ -65,6 +65,7 @@ class Code(models.Model):
 
     @classmethod
     def create_for_user(cls, user, recipient, length=6):
+        recipient = recipient.lower()
         last_codes_count = Code.objects.filter(
             recipient=recipient,
             created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
@@ -82,6 +83,7 @@ class Code(models.Model):
 
     @classmethod
     def check_code(cls, recipient, code):
+        recipient = recipient.lower()
         last_code = Code.objects.filter(recipient=recipient).order_by("-created_at").first()
         if not last_code:
             raise InvalidCode()

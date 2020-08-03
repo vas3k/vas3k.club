@@ -77,7 +77,7 @@ def patreon_oauth_callback(request):
         user, is_created = User.objects.get_or_create(
             patreon_id=membership.user_id,
             defaults=dict(
-                email=membership.email,
+                email=membership.email.lower(),
                 full_name=membership.full_name[:120],
                 avatar=upload_image_from_url(membership.image) if membership.image else None,
                 membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
