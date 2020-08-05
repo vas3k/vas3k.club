@@ -76,11 +76,11 @@
                          {% endif %}
                          {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
             </post-upvote>
-            <div class="text-body text-body-type-post">
+            <div class="text-body text-body-type-post e-content">
                 {% render_post post %}
             </div>
         </div>
-        <div class="post-footer">
+        <div class="post-footer p-author">
             {% include "users/widgets/card.html" with user=post.author %}
         </div>
     </div>

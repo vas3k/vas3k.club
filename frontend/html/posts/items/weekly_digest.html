@@ -1,9 +1,9 @@
 {% load text_filters %}
-<div class="feed-post feed-post-type-{{ post.type }}">
+<div class="feed-post feed-post-type-{{ post.type }} h-entry">
     <div class="feed-post-author">💌</div>
     <div class="feed-post-header">
-        <div class="feed-post-title">
-            <a href="{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
+        <div class="feed-post-title p-name">
+            <a href="{% url "show_post" post.type post.slug %}" class="u-url">{{ post.title }}</a>
         </div>
     </div>
 </div>

@@ -13,7 +13,7 @@
         {% endif %}
     </div>
 
-    <div class="block battle-title">
+    <div class="block battle-title p-name">
         <div class="battle-title-side-a">
             <div>{{ post.metadata.battle.sides.a.name | rutypography }}</div>
         </div>
@@ -51,11 +51,11 @@
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
                 {% endif %}
             </div>
-            <div class="text-body text-body-layout-notitle text-body-type-post">
+            <div class="text-body text-body-layout-notitle text-body-type-post e-content">
                 {% render_post post %}
             </div>
             <div class="post-footer">
-                <div>
+                <div class="p-author">
                     {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
                 </div>
                 <div>

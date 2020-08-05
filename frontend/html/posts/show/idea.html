@@ -20,7 +20,7 @@
         </div>
         <div class="post-header">
             <div class="post-title">
-                💡 Идея: {{ post.title | rutypography }}
+                <span class="p-name">💡 Идея: {{ post.title | rutypography }}</span>
 
                 {% if post.author == me or me.is_moderator %}
                     <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
@@ -57,10 +57,10 @@
                 </span>
             </div>
         </div>
-        <div class="text-body text-body-type-post">
+        <div class="text-body text-body-type-post e-content">
             {% render_post post %}
         </div>
-        <div class="post-footer">
+        <div class="post-footer p-author">
             {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
         </div>
     </div>

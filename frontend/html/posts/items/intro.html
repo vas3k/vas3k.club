@@ -1,16 +1,17 @@
 {% load text_filters %}
 {% load posts %}
-<div class="feed-post feed-post-type-{{ post.type }}">
+<div class="feed-post feed-post-type-{{ post.type }} h-entry">
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
 
     <div class="feed-post-header">
         <div class="feed-post-title">
-            <a href="{% url "show_post" post.type post.slug %}">
+            <a href="{% url "show_post" post.type post.slug %}" class="p-name">
                 <span>{{ post.prefix }}:</span>
                 <span class="user-name {% if user.is_banned %}user-name-is-banned{% endif %}">{{ post.author.full_name }}</span>{% if me %}<span class="user-position">, {{ post.author.position }}</span>{% endif %}
             </a>
+
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
             {% endif %}
@@ -34,5 +35,5 @@
             {% endif %}
         </div>
     </div>
-    <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
+    <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </div>

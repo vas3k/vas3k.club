@@ -1,6 +1,6 @@
 {% load posts %}
 {% load text_filters %}
-<div class="block feed-post {% css_classes post %}">
+<div class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
@@ -21,7 +21,11 @@
     <div class="feed-post-header">
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
-            Боль: <a href="{% url "show_post" post.type post.slug %}">{{ post.title | rutypography }}</a>
+
+            <span class="p-name">
+                Боль: <a href="{% url "show_post" post.type post.slug %}">{{ post.title | rutypography }}</a>
+            </span>
+
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
             {% endif %}
@@ -45,5 +49,5 @@
             </a>
         {% endif %}
     </div>
-    <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
+    <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </div>

@@ -1,6 +1,6 @@
 {% load posts %}
 {% load text_filters %}
-<div class="block feed-post {% css_classes post %}">
+<div class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
@@ -24,7 +24,7 @@
 
             {% link_icon post %}
 
-            &rarr; <a href="{{ post.url }}" target="_blank">{{ post.title | rutypography }}</a>
+            &rarr; <a href="{{ post.url }}" target="_blank" class="p-name">{{ post.title | rutypography }}</a>
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
@@ -48,5 +48,5 @@
             </a>
         {% endif %}
     </div>
-    <a class="block-link" href="{% url "show_post" post.type post.slug %}"></a>
+    <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </div>
