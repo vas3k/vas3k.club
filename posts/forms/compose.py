@@ -106,7 +106,7 @@ class PostLinkForm(PostForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        parsed_url = parse_url_preview(cleaned_data["url"])
+        parsed_url = parse_url_preview(cleaned_data.get("url"))
         if parsed_url:
             self.instance.metadata = dict(parsed_url._asdict())
             self.instance.url = parsed_url.url
