@@ -18,13 +18,21 @@ const imageUploadOptions = {
     progressText: "![Загружаю файл...]()",
     urlText: "![]({filename})",
     errorText: "Ошибка при загрузке файла :(",
+    allowedTypes: [
+        // Images
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/gif",
+        // Videos (for animation only)
+        "video/mp4",
+        "video/quicktime" // .mov (macOS' default record format)
+    ],
     extraHeaders: {
         "Accept": "application/json",
     },
     extraParams: {
         code: imageUploadCode,
-        convert_to: "image/jpeg",
-        quality: 85,
     },
 };
 
