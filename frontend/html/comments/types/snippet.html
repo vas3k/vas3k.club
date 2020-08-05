@@ -1,0 +1,31 @@
+{% load text_filters %}
+{% load comments %}
+<div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %}">
+    <div class="comment-header">
+        <div class="user user-small">
+            <span class="user-avatar">
+                <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+            </span>
+            <span class="user-info">
+                <span>
+                    <span class="user-name">{{ comment.author.full_name }}</span><span class="user-position">, {{ comment.author.position }}</span>
+                    {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+                </span>
+            </span>
+            <span class="user-footer">{{ comment.created_at | cool_date }}</span>
+        </div>
+    </div>
+    <div class="comment-rating">
+        <span class="upvote upvote-disabled">{{ comment.upvotes }}</span>
+
+        {% if comment.is_pinned %}
+        <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
+        {% endif %}
+    </div>
+    <div class="comment-body">
+        <div class="text-body text-body-type-comment">
+            {% render_comment comment %}
+        </div>
+    </div>
+    <a class="block-link" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}"></a>
+</div>
