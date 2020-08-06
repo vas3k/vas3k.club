@@ -5,7 +5,7 @@
         <form :action="submitFormAction" method="post">
             <div class="edit-expertise">
                 <div class="edit-expertise-select">
-                    <select name="expertise" id="id_expertise" class="select" @change="onSelectionChange">
+                    <select name="expertise" id="id_expertise" @change="onSelectionChange">
                         <optgroup v-for="group in expertiseList" :label="group[0]">
                             <option v-for="option in group[1]" :value="option[0]">{{ option[1] }}</option>
                         </optgroup>

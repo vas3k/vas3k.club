@@ -23,10 +23,3 @@ class ImageUploadField(forms.ImageField):
             convert_to=self.convert_to,
             quality=self.quality,
         )
-
-
-class DefaultSelect(forms.Select):
-    DEFAULT_CLASS = 'select'
-
-    def __init__(self):
-        super().__init__(attrs={'class': self.DEFAULT_CLASS})

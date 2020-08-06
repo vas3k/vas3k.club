@@ -38,7 +38,7 @@
                         </a>
 
                         <form action=".#comments" method="get" class="post-comments-order">
-                            <select name="comment_order" class="select" onchange="this.form.submit()">
+                            <select name="comment_order" onchange="this.form.submit()">
                                 <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
                                 <option value="-created_at" {% if comment_order == "-created_at" %}selected{% endif %}>по свежести</option>
                                 <option value="created_at" {% if comment_order == "created_at" %}selected{% endif %}>по порядку</option>

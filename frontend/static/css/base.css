@@ -182,11 +182,6 @@
         font-weight: normal;
     }
 
-.select {
-    color: var(--select-color);
-    background-color: var(--select-bg-color);
-}
-
 /* SLIDER THEME */
 input[type=range] {
   -webkit-appearance: none;
