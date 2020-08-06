@@ -1,0 +1,19 @@
+{% extends "sidebar_layout.html" %}
+{% load text_filters %}
+{% load paginator %}
+
+{% block title %}
+    Изранные посты — {{ block.super }}
+{% endblock %}
+
+{% block feed_content %}
+    <h2>Избранные посты</h2>
+
+    {% for post in posts %}
+        {% include "posts/items/items.html" %}
+    {% endfor %}
+
+    <div class="feed-paginator">
+        {% paginator posts %}
+    </div>
+{% endblock %}

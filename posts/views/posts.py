@@ -3,9 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from auth.helpers import check_user_permissions, auth_required
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
+from common.pagination import paginate
 from common.request import ajax_request
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
-from posts.models import Post, PostView, PostVote, PostSubscription
+from posts.models import Post, PostView, PostVote, PostSubscription, PostFavourite
 from posts.renderers import render_post
 from search.models import SearchIndex
 
@@ -196,4 +197,36 @@ def compose_type(request, post_type):
     return render(request, f"posts/compose/{post_type}.html", {
         "mode": "create",
         "form": form
+    })
+
+
+@auth_required
+@ajax_request
+def toggle_post_favourite(request, post_slug):
+    if request.method != "POST":
+        raise Http404()
+
+    post = get_object_or_404(Post, slug=post_slug)
+
+    favourite, is_created = PostFavourite.objects.get_or_create(
+        user=request.me,
+        post=post,
+    )
+
+    if not is_created:
+        favourite.delete()
+
+    return {
+        "status": "created" if is_created else "deleted"
+    }
+
+
+@auth_required
+def favourite_posts(request):
+    user = request.me
+
+    posts = Post.objects.filter(favourites__user=user).order_by('-favourites__created_at').all()
+
+    return render(request, "posts/favourite.html", {
+        "posts": paginate(request, posts),
     })

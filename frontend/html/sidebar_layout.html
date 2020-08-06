@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load paginator %}
+{% load text_filters %}
+
+{% block og_tags %}
+    <meta property="og:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="{% if topic %}{{ topic.description }}{% endif %}">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="{% if topic %}{{ topic.description }}{% endif %}">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block content %}
+<div class="feed">
+    <div class="feed-sidebar-toggle-wrapper">
+        <sidebar-toggler />
+    </div>
+    <div class="feed-sidebar">
+        <div class="feed-sidebar-block">
+            <ul class="feed-sidebar-list feed-sidebar-menu">
+                <li>
+                    <a href="{% url "index" %}" class="{% if not post_type and not topic %}feed-sidebar-menu-selected{% endif %}">
+                        🏠 Главная
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "people" %}">
+                        🌍 Коммьюнити
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "network" %}">
+                        💬 Сеть
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
+                        🤔 Вопросы Клубу
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "idea" %}" class="{% if post_type == "idea" %}feed-sidebar-menu-selected{% endif %}">
+                        💡 Идеи
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "post" %}" class="{% if post_type == "post" %}feed-sidebar-menu-selected{% endif %}">
+                        ✏️ Лонгриды
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "battle" %}" class="{% if post_type == "battle" %}feed-sidebar-menu-selected{% endif %}">
+                        🤜 Батлы
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
+                        🏗 Проекты
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="feed-sidebar-block">
+            <div class="feed-sidebar-header">Комнаты</div>
+            <div class="feed-sidebar-topics">
+                {% for topic in topics %}
+                    {% include "posts/widgets/topic.html" with topic=topic type="card" %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="feed-main">
+        {% block feed_content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}
