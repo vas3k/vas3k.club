@@ -6,7 +6,7 @@ from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
 from common.pagination import paginate
 from common.request import ajax_request
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
-from posts.models import Post, PostView, PostVote, PostSubscription, PostFavourite
+from posts.models import Post, PostView, PostVote, PostSubscription
 from posts.renderers import render_post
 from search.models import SearchIndex
 
@@ -198,27 +198,6 @@ def compose_type(request, post_type):
         "mode": "create",
         "form": form
     })
-
-
-@auth_required
-@ajax_request
-def toggle_post_favourite(request, post_slug):
-    if request.method != "POST":
-        raise Http404()
-
-    post = get_object_or_404(Post, slug=post_slug)
-
-    favourite, is_created = PostFavourite.objects.get_or_create(
-        user=request.me,
-        post=post,
-    )
-
-    if not is_created:
-        favourite.delete()
-
-    return {
-        "status": "created" if is_created else "deleted"
-    }
 
 
 @auth_required
