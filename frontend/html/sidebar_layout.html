@@ -3,20 +3,6 @@
 {% load paginator %}
 {% load text_filters %}
 
-{% block og_tags %}
-    <meta property="og:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
-    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
-    <meta property="og:url" content="{{ settings.APP_HOST }}">
-    <meta property="og:type" content="website" />
-    <meta property="og:description" content="{% if topic %}{{ topic.description }}{% endif %}">
-    <meta property="og:image" content="{% static "images/share.png" %}">
-
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
-    <meta name="twitter:description" content="{% if topic %}{{ topic.description }}{% endif %}">
-    <meta name="twitter:image" content="{% static "images/share.png" %}">
-{% endblock %}
-
 {% block content %}
 <div class="feed">
     <div class="feed-sidebar-toggle-wrapper">
