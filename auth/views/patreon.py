@@ -3,11 +3,12 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.db import IntegrityError
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from auth.exceptions import PatreonException
-from auth.helpers import authorized_user, set_session_cookie
+from auth.helpers import set_session_cookie
 from auth.models import Session
 from auth.providers import patreon
 from users.models.user import User
@@ -73,36 +74,36 @@ def patreon_oauth_callback(request):
 
     now = datetime.utcnow()
 
-    try:
-        user, is_created = User.objects.get_or_create(
-            patreon_id=membership.user_id,
-            defaults=dict(
+    # get user by patreon_id or email
+    user = User.objects.filter(Q(patreon_id=membership.user_id) | Q(email=membership.email.lower())).first()
+    if not user:
+        # user is new, create it
+        try:
+            user = User.objects.create(
+                patreon_id=membership.user_id,
                 email=membership.email.lower(),
                 full_name=membership.full_name[:120],
                 avatar=upload_image_from_url(membership.image) if membership.image else None,
                 membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
                 membership_started_at=membership.started_at,
                 membership_expires_at=membership.expires_at,
+                balance=membership.lifetime_support_cents / 100,
                 created_at=now,
                 updated_at=now,
                 is_email_verified=False,
-            ),
-        )
-    except IntegrityError:
-        return render(request, "error.html", {
-            "title": "Придётся войти через почту",
-            "message": "Пользователь с таким имейлом уже зарегистрирован, но не через патреон. "
-                       "Чтобы защититься от угона аккаунтов через подделку почты на патреоне, "
-                       "нам придётся сейчас попросить вас войти через почту. "
-                       "В будущем вы можете написать нам в саппорт чтобы мы привязали ваш патреон тоже к аккаунту."
-        })
-
-    if is_created:
-        user.balance = membership.lifetime_support_cents / 100
+            )
+        except IntegrityError:
+            return render(request, "error.html", {
+                "title": "Придётся войти через почту",
+                "message": "Пользователь с таким имейлом уже зарегистрирован, но не через патреон. "
+                           "Чтобы защититься от угона аккаунтов через подделку почты на патреоне, "
+                           "нам придётся сейчас попросить вас войти через почту."
+            })
     else:
+        # user exists, update membership dates
+        user.balance = membership.lifetime_support_cents / 100  # TODO: remove when the real money comes in
         if membership.expires_at > user.membership_expires_at:
             user.membership_expires_at = membership.expires_at
-        user.balance = membership.lifetime_support_cents / 100  # TODO: remove when the real money comes in
 
     user.membership_platform_data = {
         "access_token": auth_data["access_token"],
@@ -110,10 +111,9 @@ def patreon_oauth_callback(request):
     }
     user.save()
 
+    # create a new session token to authorize the user
     session = Session.create_for_user(user)
-
     redirect_to = reverse("profile", args=[user.slug])
-
     state = request.GET.get("state")
     if state:
         redirect_to += f"?{state}"
