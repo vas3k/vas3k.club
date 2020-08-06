@@ -2,7 +2,6 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from comments.models import Comment
-from common.forms import DefaultChoiceField
 
 
 class CommentForm(forms.ModelForm):
@@ -58,7 +57,7 @@ class ReplyForm(forms.ModelForm):
 
 
 class BattleCommentForm(forms.ModelForm):
-    battle_side = DefaultChoiceField(
+    battle_side = forms.ChoiceField(
         label="На чьей вы стороне?",
         required=True,
         choices=[("a", "A"), ("b", "B")],
