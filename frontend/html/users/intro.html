@@ -156,7 +156,7 @@
                 {{ form.intro }}
                 {% if form.intro.errors %}<span class="form-row-errors">{{ form.intro.errors }}</span>{% endif %}
                 <input-length-counter
-                    for=".intro-form textarea[name='intro']"
+                    element=".intro-form textarea[name='intro']"
                     :min-length={{ form.intro.field.widget.attrs.minlength }}
                 />
             </div>

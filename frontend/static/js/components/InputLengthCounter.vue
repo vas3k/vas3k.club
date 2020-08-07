@@ -14,7 +14,7 @@ export default {
             type: Number,
             default: 300,
         },
-        for: {
+        element: {
             type: String,
             required: true,
         },
@@ -26,13 +26,13 @@ export default {
         };
     },
     mounted() {
-        this.$target = document.querySelector(this.for);
+        this.$target = document.querySelector(this.element);
         if (!this.$target) {
-            return console.warn(`${this.for} is not found.`);
+            return console.warn(`${this.element} is not found.`);
         }
 
         if (!(this.$target instanceof HTMLTextAreaElement) && !(this.$target instanceof HTMLInputElement)) {
-            return console.warn(`${this.for} is not an input element.`);
+            return console.warn(`${this.element} is not an input element.`);
         }
 
         this.counter = this.$target.value.length;
