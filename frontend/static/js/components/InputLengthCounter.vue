@@ -1,0 +1,81 @@
+<template>
+    <span>{{ counter !== null ? (counter === minLength ? '👋🔥' : counter) : '-' }}&nbsp;&#47;&nbsp;{{ minLength }}</span>
+</template>
+
+<script>
+export default {
+    name: "InputLengthCounter",
+    props: {
+        minLength: {
+            type: Number,
+            default: 0,
+        },
+        delay: {
+            type: Number,
+            default: 300,
+        },
+        for: {
+            type: String,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            counter: null,
+            $target: null,
+        };
+    },
+    mounted() {
+        this.$target = document.querySelector(this.for);
+        if (!this.$target) {
+            return console.warn(`${this.for} is not found.`);
+        }
+
+        if (!(this.$target instanceof HTMLTextAreaElement) && !(this.$target instanceof HTMLInputElement)) {
+            return console.warn(`${this.for} is not an input element.`);
+        }
+
+        this.counter = this.$target.value.length;
+
+        this.throttledCounterHandler = throttle(e => {
+            this.counter = e.target.value.length;
+        }, this.delay);
+
+        this.$target.addEventListener('keyup', this.throttledCounterHandler);
+    },
+    beforeDestroy() {
+        if (this.$target) {
+            this.$target.removeEventListener('keyup', this.throttledCounterHandler);
+        }
+    },
+}
+
+function throttle (fn, wait) {
+    let inThrottle, lastFn, lastTime;
+    return function() {
+        const context = this,
+            args = arguments;
+        if (!inThrottle) {
+            fn.apply(context, args);
+            lastTime = Date.now();
+            inThrottle = true;
+        } else {
+            clearTimeout(lastFn);
+            lastFn = setTimeout(function() {
+                if (Date.now() - lastTime >= wait) {
+                    fn.apply(context, args);
+                    lastTime = Date.now();
+                }
+            }, Math.max(wait - (Date.now() - lastTime), 0));
+        }
+    };
+}
+
+</script>
+
+<style scoped>
+    span {
+        font-weight: bold;
+        font-size: 140%;
+    }
+</style>
