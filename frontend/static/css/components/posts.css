@@ -57,6 +57,13 @@
                 top: -5px;
             }
 
+            .post-type-post .post-is-public {
+                font-size: initial;g
+                font-weight: lighter;
+                opacity: 0.6;
+                vertical-align: middle;
+            }
+
         .post-type-post .post-data {
             padding-top: 20px;
             padding-bottom: 20px;
@@ -96,6 +103,10 @@
             left: -110px;
             padding-left: 20px;
             padding-right: 20px;
+        }
+
+        .post-type-post .favourite {
+            text-decoration: none;
         }
 
         .post-type-post .upvote:not(.upvote-disabled) {
