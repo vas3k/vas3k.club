@@ -19,7 +19,7 @@ We're bullshitless community!
 2. Clone the repo
 
 ```
-git clone git@github.com:vas3k/vas3k.club.git
+git clone https://github.com/vas3k/vas3k.club.git
 cd vas3k.club
 ```
 
