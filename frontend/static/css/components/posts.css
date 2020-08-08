@@ -34,6 +34,10 @@
         vertical-align: middle;
     }
 
+    .post .favourite {
+        text-decoration: none;
+    }
+
     .post-type-post {
 
     }
@@ -104,10 +108,6 @@
             left: -110px;
             padding-left: 20px;
             padding-right: 20px;
-        }
-
-        .post-type-post .favourite {
-            text-decoration: none;
         }
 
         .post-type-post .upvote:not(.upvote-disabled) {
