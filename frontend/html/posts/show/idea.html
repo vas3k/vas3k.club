@@ -22,10 +22,6 @@
             <div class="post-title">
                 <span class="p-name">💡 Идея: {{ post.title | rutypography }}</span>
 
-                {% if post.author == me or me.is_moderator %}
-                    <a href="{% url "edit_post" post.slug %}" class="button post-edit-button"><i class="fas fa-edit"></i></a>
-                {% endif %}
-
                 <span class="post-is-public">
                     {% if post.is_public %}
                         <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
@@ -50,9 +46,9 @@
                 {% if post.topic %}
                     {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
                 {% endif %}
-                <span class="post-date">
-                    {{ post.effective_published_at|date:"j E Y" }}
-                    | {{ post.view_count }} {{ post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
+                <div class="post-date">
+                    {{ post.effective_published_at|date:"j E Y" }}&nbsp;&nbsp;&nbsp;
+                    <i class="fas fa-eye"></i>&nbsp;{{ post.view_count }}&nbsp;&nbsp;&nbsp;
                     <post-favourite :post="JSON.parse('{{ post.to_dict | jsonify }}')"
                          favourite-url="{% url "toggle_post_favourite" post.slug %}"
                          {% if is_favourite %}
@@ -62,11 +58,14 @@
                             initial-is-enabled
                          {% endif %}>
                     </post-favourite>
-                    {% if me.is_moderator %}
-                        | <a href="{% url "announce_post" post.slug %}">Анонс</a>
-                        | <a href="{% url "admin_post" post.slug %}">Админить</a>
+                    {% if post.author == me or me.is_moderator %}
+                        <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
                     {% endif %}
-                </span>
+                    {% if me.is_moderator %}
+                        <a href="{% url "announce_post" post.slug %}"><i class="fas fa-bullhorn"></i></a>&nbsp;&nbsp;&nbsp;
+                        <a href="{% url "admin_post" post.slug %}"><i class="fas fa-tools"></i></a>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div class="text-body text-body-type-post e-content">

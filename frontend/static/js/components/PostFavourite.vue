@@ -4,8 +4,8 @@
         class="favourite"
         @click.prevent="toggle">
 
-        <span v-if="isFavourite"> | <i class="fas fa-bookmark"></i>&nbsp;Убрать из закладок</span>
-        <span v-else> | <i class="far fa-bookmark"></i>&nbsp;В закладки</span>
+        <span v-if="isFavourite"><i class="fas fa-bookmark"></i>&nbsp;Убрать из закладок&nbsp;&nbsp;&nbsp;</span>
+        <span v-else><i class="far fa-bookmark"></i>&nbsp;В закладки&nbsp;&nbsp;&nbsp;</span>
     </a>
 </template>
 

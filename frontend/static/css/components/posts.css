@@ -22,20 +22,21 @@
         opacity: 0.6;
     }
 
+        .post-date a {
+            display: inline-block;
+            text-decoration: none;
+        }
+
     .post-text {
         position: relative;
     }
 
-    .post-is-public {
+    .post-title .post-is-public {
         display: inline-block;
         font-size: initial;
         font-weight: lighter;
         opacity: 0.6;
         vertical-align: middle;
-    }
-
-    .post .favourite {
-        text-decoration: none;
     }
 
     .post-type-post {
@@ -508,13 +509,20 @@
         padding-top: 20px;
     }
 
+.battle-title-main{
+}
+
+    .battle-title-main .post-date {
+        text-align: center;
+    }
+
 .battle-title {
     padding: 0;
     overflow: hidden;
     font-size: 250%;
     min-height: 140px;
     color: #FFF;
-    margin: 50px auto 65px;
+    margin: 50px auto 20px;
 }
 
     .battle-title-side-a,
