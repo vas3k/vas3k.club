@@ -1,9 +1,8 @@
 <template>
-    <a  v-show="Enabled"
+    <a  v-show="IsEnabled"
         href="favouriteUrl"
         class="favourite"
         @click.prevent="toggle">
-
         <span v-if="isFavourite"><i class="fas fa-bookmark"></i>&nbsp;Убрать из закладок&nbsp;&nbsp;&nbsp;</span>
         <span v-else><i class="far fa-bookmark"></i>&nbsp;В закладки&nbsp;&nbsp;&nbsp;</span>
     </a>
@@ -15,10 +14,6 @@ import ClubApi from "../common/api.service";
 export default {
     name: "PostFavourite",
     props: {
-        post: {
-            type: Object,
-            required: true,
-        },
         initialIsFavourite: {
             type: Boolean,
             default() {
@@ -38,7 +33,7 @@ export default {
     },
     data() {
         return {
-            Enabled: this.InitialIsEnabled,
+            IsEnabled: this.InitialIsEnabled,
             isFavourite: this.initialIsFavourite,
         };
     },
