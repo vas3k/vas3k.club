@@ -16,7 +16,6 @@ export default {
     methods: {
         toggle() {
             this.isShown = !this.isShown;
-            console.log('toggle!', this.isShown);
             document.getElementById('app').classList.toggle('mobile-menu-opened', this.isShown);
             document.querySelector('.feed-main').classList.toggle('feed-main-closed', this.isShown);
         },
