@@ -1336,20 +1336,34 @@
     line-height: 1em;
 }
 
-.compose-button {
-    margin-right: 30px;
+.menu-button {
     font-size: 80%;
     padding: 10px 18px;
 }
 
     @media only screen and (max-width : 570px) {
-        .compose-button {
+        .menu-button {
             display: none;
         }
-        .mobile-menu-opened .compose-button {
+        .mobile-menu-opened .menu-button {
             display: inline-block;
             margin-right: 0;
         }
+    }
+
+.menu-button-compose {
+    margin-right: 10px;
+}
+
+.menu-button-bookmark {
+    font-size: 110%;
+    opacity: 0.5;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+    .menu-button-bookmark:hover {
+        opacity: 1.0;
     }
 
 .compose {
