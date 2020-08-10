@@ -21,7 +21,7 @@ from posts.views.admin import admin_post, announce_post
 from posts.views.api import toggle_post_bookmark
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
-    toggle_post_subscription, bookmark_posts
+    toggle_post_subscription, bookmarks
 from search.views import search
 from users.api import api_profile
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
@@ -77,7 +77,8 @@ urlpatterns = [
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment",),
-    path("bookmarks/", bookmark_posts, name="bookmark_posts"),
+
+    path("bookmarks/", bookmarks, name="bookmarks"),
 
     path("search/", search, name="search"),
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),

@@ -201,7 +201,7 @@ def compose_type(request, post_type):
 
 
 @auth_required
-def bookmark_posts(request):
+def bookmarks(request):
     user = request.me
 
     posts = Post.objects.filter(bookmarks__user=user).order_by('-bookmarks__created_at').all()
