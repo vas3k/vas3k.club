@@ -77,7 +77,7 @@ urlpatterns = [
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment",),
-    path("post/bookmarks/", bookmark_posts, name="bookmark_posts"),
+    path("bookmarks/", bookmark_posts, name="bookmark_posts"),
 
     path("search/", search, name="search"),
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
