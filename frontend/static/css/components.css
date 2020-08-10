@@ -1349,6 +1349,10 @@
             display: inline-block;
             margin-right: 0;
         }
+
+        .menu-button-bookmark {
+            padding-right: 8px;
+        }
     }
 
 .menu-button-compose {
