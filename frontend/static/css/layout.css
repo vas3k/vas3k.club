@@ -13,7 +13,7 @@
 }
 
     .menu-full {
-        grid-template-columns: 230px auto 230px;
+        grid-template-columns: 230px auto 270px;
         position: relative;
     }
 

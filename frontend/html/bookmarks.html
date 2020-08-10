@@ -1,0 +1,25 @@
+{% extends "common/sidebar_layout.html" %}
+{% load text_filters %}
+{% load paginator %}
+
+{% block title %}
+    Закладки — {{ block.super }}
+{% endblock %}
+
+{% block feed_content %}
+    <h2>Закладки</h2>
+
+    {% for post in posts %}
+        {% include "posts/items/items.html" %}
+    {% endfor %}
+
+    {% if not posts %}
+        <div class="post-bookmarks-placeholder" style="opacity: 0.6;">
+                Тут будут храниться посты, которые вы добавите в закладки. Ищите специальную кнопку под заголовками постов
+        </div>
+    {% endif %}
+
+    <div class="feed-paginator">
+        {% paginator posts %}
+    </div>
+{% endblock %}
