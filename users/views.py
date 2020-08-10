@@ -83,7 +83,7 @@ def profile(request, user_slug):
     tags = Tag.objects.filter(is_visible=True).all()
 
     intro = Post.get_user_intro(user)
-    projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, post__is_visible=True).all()
+    projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
