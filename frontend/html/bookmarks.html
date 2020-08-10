@@ -1,4 +1,4 @@
-{% extends "common/sidebar_layout.html" %}
+{% extends "sidebar_layout.html" %}
 {% load text_filters %}
 {% load paginator %}
 
@@ -7,19 +7,23 @@
 {% endblock %}
 
 {% block feed_content %}
-    <h2>Закладки</h2>
+    <div class="bookmarks">
+        <div class="bookmarks-title">Мои закладки</div>
 
-    {% for post in posts %}
-        {% include "posts/items/items.html" %}
-    {% endfor %}
+        <div class="bookmarks-list">
+            {% for post in posts %}
+                {% include "posts/items/items.html" %}
+            {% endfor %}
 
-    {% if not posts %}
-        <div class="post-bookmarks-placeholder">
-            Сюда можно сохранять понравившиеся посты, используя волшебный флажочек <i class="far fa-bookmark"></i>
+            {% if not posts %}
+                <div class="bookmarks-list-placeholder">
+                    Сюда можно сохранять всякие крутые посты, используя волшебный флажочек <i class="far fa-bookmark"></i>
+                </div>
+            {% endif %}
+
+            <div class="feed-paginator">
+                {% paginator posts %}
+            </div>
         </div>
-    {% endif %}
-
-    <div class="feed-paginator">
-        {% paginator posts %}
     </div>
 {% endblock %}
