@@ -297,7 +297,6 @@ class PostVote(models.Model):
     def is_retractable(self):
         return self.created_at >= datetime.utcnow() - settings.RETRACT_VOTE_TIMEDELTA
 
-
     @classmethod
     def retract_vote(cls, request, user, post):
         if not user.is_god and user.id == post.author_id:
@@ -426,15 +425,3 @@ class PostSubscription(models.Model):
     @classmethod
     def post_subscribers(cls, post):
         return cls.objects.filter(post=post).select_related("user")
-
-
-class PostBookmark(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-
-    user = models.ForeignKey(User, related_name="bookmarks", db_index=True, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, related_name="bookmarks", db_index=True, on_delete=models.CASCADE)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = "post_bookmarks"

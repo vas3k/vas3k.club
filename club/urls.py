@@ -21,7 +21,8 @@ from posts.views.admin import admin_post, announce_post
 from posts.views.api import toggle_post_bookmark
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
-    toggle_post_subscription, bookmarks
+    toggle_post_subscription
+from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
 from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \

@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from auth.helpers import check_user_permissions, auth_required
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from common.pagination import paginate
 from common.request import ajax_request
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models import Post, PostView, PostVote, PostSubscription
@@ -197,15 +196,4 @@ def compose_type(request, post_type):
     return render(request, f"posts/compose/{post_type}.html", {
         "mode": "create",
         "form": form
-    })
-
-
-@auth_required
-def bookmarks(request):
-    user = request.me
-
-    posts = Post.objects.filter(bookmarks__user=user).order_by('-bookmarks__created_at').all()
-
-    return render(request, "bookmarks.html", {
-        "posts": paginate(request, posts),
     })

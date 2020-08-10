@@ -1,8 +1,9 @@
 <template>
-    <a  href="bookmarkUrl"
-        class="bookmark"
-        @click.prevent="toggle">
-        <span v-if="isBookmark"><i class="fas fa-bookmark"></i>&nbsp;Убрать из закладок&nbsp;&nbsp;&nbsp;</span>
+    <a :href="bookmarkUrl"
+       class="bookmark"
+       @click.prevent="toggle">
+        <span v-if="isLoading">🤔</span>
+        <span v-if="isBookmarked"><i class="fas fa-bookmark"></i>&nbsp;Убрать из закладок&nbsp;&nbsp;&nbsp;</span>
         <span v-else><i class="far fa-bookmark"></i>&nbsp;В закладки&nbsp;&nbsp;&nbsp;</span>
     </a>
 </template>
@@ -13,30 +14,31 @@ import ClubApi from "../common/api.service";
 export default {
     name: "PostBookmark",
     props: {
-        initialIsBookmark: {
+        initialIsBookmarked: {
             type: Boolean,
             default() {
                 return false;
             },
         },
-        BookmarkUrl: {
+        bookmarkUrl: {
             type: String,
             required: true,
         },
     },
     data() {
         return {
-            isBookmark: this.initialIsBookmark,
+            isBookmarked: this.initialIsBookmarked,
+            isLoading: false,
         };
     },
     methods: {
         toggle() {
-            return ClubApi.ajaxify(this.BookmarkUrl, (data) => {
-                this.isBookmark = !this.isBookmark;
+            this.isLoading = true;
+            return ClubApi.ajaxify(this.bookmarkUrl, (data) => {
+                this.isLoading = false;
+                this.isBookmarked = !this.isBookmarked;
             });
         },
     },
 };
 </script>
-
-<style scoped></style>

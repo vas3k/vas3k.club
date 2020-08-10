@@ -43,7 +43,7 @@
                         <post-bookmark
                             bookmark-url="{% url "toggle_post_bookmark" post.slug %}"
                             {% if is_bookmark %}
-                                initial-is-bookmark
+                                initial-is-bookmarked
                             {% endif %}>
                         </post-bookmark>
                     {% endif %}

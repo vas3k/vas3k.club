@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "club",
     "auth.apps.AuthConfig",
+    "bookmarks.apps.BookmarksConfig",
     "comments.apps.CommentsConfig",
     "landing.apps.LandingConfig",
     "payments.apps.PaymentsConfig",
