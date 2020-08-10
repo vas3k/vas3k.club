@@ -1849,3 +1849,7 @@
     font-weight: bolder;
     opacity: 0.6;
 }
+
+.bookmark-button {
+    padding-right: 10px;
+}

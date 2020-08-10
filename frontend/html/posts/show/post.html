@@ -18,15 +18,14 @@
                 {% else %}
                     {{ post.title | rutypography }}
                 {% endif %}
-
-                <span class="post-is-public">
-                    {% if post.is_public %}
-                        <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
-                    {% else %}
-                        <i class="fas fa-lock"></i>&nbsp;Только для своих
-                    {% endif %}
-                </span>
             </div>
+            <span class="post-is-public">
+                {% if post.is_public %}
+                    <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
+                {% else %}
+                    <i class="fas fa-lock"></i>&nbsp;Только для своих
+                {% endif %}
+            </span>
             <div class="post-data">
                 {% if not post.is_visible %}
                     <div class="post-label">
