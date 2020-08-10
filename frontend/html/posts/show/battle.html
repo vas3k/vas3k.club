@@ -35,15 +35,14 @@
             </span>
             {{ post.effective_published_at|date:"j E Y" }}&nbsp;&nbsp;&nbsp;
             <i class="fas fa-eye"></i>&nbsp;{{ post.view_count }}&nbsp;&nbsp;&nbsp;
-            <post-favourite
-                 favourite-url="{% url "toggle_post_favourite" post.slug %}"
-                 {% if is_favourite %}
-                    initial-is-favourite
-                 {% endif %}
-                 {% if me %}
-                    initial-is-enabled
-                 {% endif %}>
-            </post-favourite>
+            {% if me %}
+                <post-bookmark
+                    bookmark-url="{% url "toggle_post_bookmark" post.slug %}"
+                    {% if is_bookmark %}
+                        initial-is-bookmark
+                    {% endif %}>
+                </post-bookmark>
+            {% endif %}
             {% if post.author == me or me.is_moderator %}
                 <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
             {% endif %}

@@ -4,7 +4,7 @@ from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment
-from posts.models import Post, PostFavourite, PostSubscription, PostVote
+from posts.models import Post, PostBookmark, PostSubscription, PostVote
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
@@ -17,14 +17,14 @@ def render_post(request, post, context=None):
     # select votes and comments
     if request.me:
         comments = Comment.objects_for_user(request.me).filter(post=post).all()
-        is_favourite = PostFavourite.objects.filter(post=post, user=request.me).exists()
+        is_bookmark = PostBookmark.objects.filter(post=post, user=request.me).exists()
         is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
         upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
         subscription = PostSubscription.get(request.me, post)
     else:
         comments = Comment.visible_objects().filter(post=post).all()
         is_voted = False
-        is_favourite = False
+        is_bookmark = False
         upvoted_at = None
         subscription = None
 
@@ -44,7 +44,7 @@ def render_post(request, post, context=None):
         "comment_form": CommentForm(),
         "comment_order": comment_order,
         "reply_form": ReplyForm(),
-        "is_favourite": is_favourite,
+        "is_bookmark": is_bookmark,
         "is_voted": is_voted,
         "upvoted_at": upvoted_at,
         "subscription": subscription,

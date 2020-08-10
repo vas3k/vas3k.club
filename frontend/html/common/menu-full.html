@@ -18,7 +18,7 @@
         {% if me %}
             {% if me.is_club_member %}
                 <a href="{% url "compose" %}" class="button menu-button menu-button-compose"><i class="fas fa-plus"></i>&nbsp;&nbsp;Пиши</a>
-                <a href="{% url "favourite_posts" %}" class="menu-button menu-button-bookmark"><i class="fa fa-bookmark"></i>&nbsp;&nbsp;</a>
+                <a href="{% url "bookmark_posts" %}" class="menu-button menu-button-bookmark"><i class="fa fa-bookmark"></i>&nbsp;&nbsp;</a>
             {% endif %}
             <a href="{% url "profile" me.slug %}" class="avatar menu-avatar" style="background-image: url('{{ me.get_avatar }}');"></a>
         {% else %}

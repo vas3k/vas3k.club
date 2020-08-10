@@ -1844,3 +1844,8 @@
     font-size: 120%;
     border-radius: var(--button-border-radius);
 }
+
+.post-bookmarks-placeholder {
+    font-weight: bolder;
+    opacity: 0.6;
+}

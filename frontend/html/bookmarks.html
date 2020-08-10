@@ -13,6 +13,12 @@
         {% include "posts/items/items.html" %}
     {% endfor %}
 
+    {% if not posts %}
+        <div class="post-bookmarks-placeholder" style="opacity: 0.6;">
+                Тут будут храниться посты, которые вы добавите в закладки. Ищите специальную кнопку под заголовками постов
+        </div>
+    {% endif %}
+
     <div class="feed-paginator">
         {% paginator posts %}
     </div>

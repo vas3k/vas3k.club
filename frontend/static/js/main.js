@@ -4,7 +4,7 @@ import "../css/index.css";
 
 import App from "./App.js";
 import PostUpvote from "./components/PostUpvote.vue";
-import PostFavourite from "./components/PostFavourite.vue";
+import PostBookmark from "./components/PostBookmark.vue";
 import PostSubscription from "./components/PostSubscription.vue";
 import CommentUpvote from "./components/CommentUpvote.vue";
 import UserTag from "./components/UserTag.vue";
@@ -15,7 +15,7 @@ import UserAvatarInput from "./components/UserAvatarInput.vue";
 import StripeCheckoutButton from "./components/StripeCheckoutButton.vue";
 import ClubApi from "./common/api.service";
 Vue.component("post-upvote", PostUpvote);
-Vue.component("post-favourite", PostFavourite);
+Vue.component("post-bookmark", PostBookmark);
 Vue.component("post-subscription", PostSubscription);
 Vue.component("comment-upvote", CommentUpvote);
 Vue.component("user-expertise-window", UserExpertiseWindow);

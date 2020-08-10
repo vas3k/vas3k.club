@@ -201,11 +201,11 @@ def compose_type(request, post_type):
 
 
 @auth_required
-def favourite_posts(request):
+def bookmark_posts(request):
     user = request.me
 
-    posts = Post.objects.filter(favourites__user=user).order_by('-favourites__created_at').all()
+    posts = Post.objects.filter(bookmarks__user=user).order_by('-bookmarks__created_at').all()
 
-    return render(request, "posts/favourite.html", {
+    return render(request, "bookmarks.html", {
         "posts": paginate(request, posts),
     })
