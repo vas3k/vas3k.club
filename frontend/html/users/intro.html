@@ -155,6 +155,10 @@
             <div class="form-row form-row-intro">
                 {{ form.intro }}
                 {% if form.intro.errors %}<span class="form-row-errors">{{ form.intro.errors }}</span>{% endif %}
+                <input-length-counter
+                    element=".intro-form textarea[name='intro']"
+                    :min-length={{ form.intro.field.widget.attrs.minlength }}
+                />
             </div>
 
             <div class="block-description" style="text-align: left;">
