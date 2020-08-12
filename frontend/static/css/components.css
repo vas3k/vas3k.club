@@ -1093,6 +1093,22 @@
             font-weight: 500;
         }
 
+        .intro-form-counter {
+            display: block;
+            text-align: right;
+            font-size: 120%;
+            font-weight: bold;
+            padding-top: 5px;
+        }
+
+            .intro-form-counter.bad {
+                color: #c41509;
+            }
+
+            .intro-form-counter.good {
+                color: #53AA68;
+            }
+
         .user-edit-digest {
             display: flex;
             flex-wrap: wrap;

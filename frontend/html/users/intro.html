@@ -157,11 +157,12 @@
                 {% if form.intro.errors %}<span class="form-row-errors">{{ form.intro.errors }}</span>{% endif %}
                 <input-length-counter
                     element=".intro-form textarea[name='intro']"
-                    :min-length={{ form.intro.field.widget.attrs.minlength }}
+                    class="intro-form-counter"
+                    :min-length="{{ form.intro.field.widget.attrs.minlength }}"
                 />
             </div>
 
-            <div class="block-description" style="text-align: left;">
+            <div class="block-description" style="text-align: left; padding-top: 0;">
                 <p>
                     Писать о&nbsp;себе всегда сложно, так что можете использовать следующие вопросы:
                 </p>
@@ -174,7 +175,7 @@
                     <li>Может у&nbsp;вас есть странная привычка или хобби?</li>
                     <li>О&nbsp;чем вы&nbsp;мечтаете?</li>
                     <li>Может у вас есть какие-то личные проекты?</li>
-                    <li>Какой из&nbsp;последних постов Вастрика вам понравился больше всего?</li>
+                    <li>Какой из&nbsp;последних постов вам понравился больше всего?</li>
                 </ul>
             </div>
 

@@ -1,5 +1,13 @@
 <template>
-    <span>{{ counter !== null ? (counter === minLength ? '👋🔥' : counter) : '-' }}&nbsp;&#47;&nbsp;{{ minLength }}</span>
+    <span :class="{ bad: counter < minLength, good: counter >= minLength }">
+        <slot></slot>
+        <span v-if="counter < minLength">💩</span>
+        <span v-if="counter >= minLength && counter < minLength + 100">🙂</span>
+        <span v-if="counter >= minLength + 100 && counter < minLength + 300">😎</span>
+        <span v-if="counter >= minLength + 300 && counter < minLength + 500">🚀</span>
+        <span v-if="counter >= minLength + 500">💎🚀👍</span>
+        {{ counter !== null ? counter : '-' }}&nbsp;&#47;&nbsp;{{ minLength }}
+    </span>
 </template>
 
 <script>
@@ -72,10 +80,3 @@ function throttle (fn, wait) {
 }
 
 </script>
-
-<style scoped>
-    span {
-        font-weight: bold;
-        font-size: 140%;
-    }
-</style>
