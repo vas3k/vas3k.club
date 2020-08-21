@@ -138,6 +138,11 @@ img {
     max-width: 100%;
 }
 
+select {
+    color: var(--select-color);
+    background-color: var(--select-bg-color);
+}
+
 input[type=text],
 input[type=number],
 input[type=file],
