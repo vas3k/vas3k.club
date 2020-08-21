@@ -190,6 +190,9 @@
 
 {% block footer %}
     <p>
-        Вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">отписаться от этих дайджестов</a> или снизить их количество, перейдя на <a href="{{ settings.APP_HOST }}/notifications/switch/weekly/%user_id%/%secret_code%/">еженедельный журнал</a>. Тогда письма будут приходить реже, но лучше.
+        Если ежедневный дайджест слишком надоедает, вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/weekly/%user_id%/%secret_code%/">перейти на еженедельный</a> или <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">вообще отписаться от дайджестов</a> и жить в темноте и грусти.
     </p>
+{% endblock %}
+
+{% block unsubscribe %}
 {% endblock %}

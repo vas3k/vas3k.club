@@ -241,6 +241,9 @@
 
 {% block footer %}
     <p>
-        Вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">отписаться от журнала</a> или, наоборот, <a href="{{ settings.APP_HOST }}/notifications/switch/daily/%user_id%/%secret_code%/">подписаться на ежедневные дайджесты</a> чтобы получать самый свежий контент.
+        Напоминаем, что вы всегда можете <a href="{{ settings.APP_HOST }}/notifications/switch/daily/%user_id%/%secret_code%/">перейти на ежедневный дайджест</a> чтобы получать контент чаще или <a href="{{ settings.APP_HOST }}/notifications/switch/nope/%user_id%/%secret_code%/">вообще отписаться от них</a> и жить в темноте и грусти.
     </p>
+{% endblock %}
+
+{% block unsubscribe %}
 {% endblock %}

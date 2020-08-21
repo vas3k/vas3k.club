@@ -30,7 +30,7 @@ def email_confirm(request, secret, legacy_code=None):
 def email_unsubscribe(request, user_id, secret):
     try:
         # dirty hack to support legacy non-base64 codes
-        secret = base64.b64decode(secret.encode("utf-8"))
+        secret = base64.b64decode(secret.encode("utf-8")).decode()
     except:
         pass
 
@@ -51,7 +51,7 @@ def email_unsubscribe(request, user_id, secret):
 def email_digest_switch(request, digest_type, user_id, secret):
     try:
         # dirty hack to support legacy non-base64 codes
-        secret = base64.b64decode(secret.encode("utf-8"))
+        secret = base64.b64decode(secret.encode("utf-8")).decode()
     except:
         pass
 
