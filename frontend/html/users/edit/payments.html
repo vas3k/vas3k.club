@@ -14,8 +14,12 @@
         </div>
 
         <div class="block-subheader">
-            {% if not subscriptions %}
-                <div class="block pay-subscription">Автопродление отключено 😟</div>
+            {% if me.membership_platform_type == "patreon" %}
+                <div class="block pay-subscription">🙂 Включено автопродление через <a href="https://www.patreon.com/vas3k" target="_blank">Patreon</a></div>
+            {% else %}
+                {% if not subscriptions %}
+                    <div class="block pay-subscription">Автопродление отключено 😟</div>
+                {% endif %}
             {% endif %}
 
             {% for subscription in subscriptions %}

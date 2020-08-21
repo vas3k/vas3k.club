@@ -13,37 +13,11 @@
 
         <form action="{% url "pay" %}" method="get">
 
-        <div class="pay-services">
-            <div class="block pay-service">
-                <div class="pay-service-title"><i class="fab fa-cc-stripe"></i>&nbsp;Напрямую</div>
-                <ul class="pay-service-list">
-                    <li>✅ Сразу на год и больше</li>
-                    <li>✅ Без подписки</li>
-                    <li>💩 Нет раннего доступа к блогу</li>
-                </ul>
-                <div class="join-service-button">
-                    <a href="#select_package" class="button">Ок, погнали 👇</a>
-                </div>
-            </div>
-
-            <div class="block pay-service">
-                <div class="pay-service-title"><i class="fab fa-patreon"></i>&nbsp;Через Patreon</div>
-                <ul class="pay-service-list">
-                    <li>✅ Можно платить помесячно</li>
-                    <li>💩 Иногда он глючит</li>
-                    <li>💩 Высокие комиссии</li>
-                </ul>
-                <div class="join-service-button">
-                    <a href="https://patreon.com/vas3k" class="button">Перейти на патреон</a>
-                </div>
-            </div>
-        </div>
-
         <div class="join-subtitle" id="select_package">Пакет брать будете?</div>
 
         {% include "payments/blocks/packages.html" %}
 
-        <div class="join-subtitle">Ваш e-mail для входа</div>
+        <div class="join-subtitle">Ваш e-mail</div>
 
         <div class="block join-email">
             <div class="join-email-form">
@@ -51,7 +25,7 @@
             </div>
         </div>
 
-        <label class="join-consent"><input type="checkbox" name="iconsent" value="true" required> даю согласие на обработку <a href="{% url "docs" "privacy_policy" %}" target="_blank">персональных данных</a>, соглашаюсь с <a href="{% url "docs" "about" %}" target="_blank">правилами</a> Клуба и помню, что мне придётся заполнить профиль перед входом</label>
+        <label class="join-consent"><input type="checkbox" name="iconsent" value="true" required> &larr; я даю согласие на обработку <a href="{% url "docs" "privacy_policy" %}" target="_blank">персональных данных</a>, соглашаюсь с <a href="{% url "docs" "about" %}" target="_blank">правилами</a> Клуба и помню, что мне придётся заполнить профиль перед входом</label>
 
         <button type="submit" class="button button-big join-button">Перейти к оплате</button>
 
