@@ -30,7 +30,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@stripe/stripe-js": "^1.8.0",
-    "easymde": "^2.10.1",
+    "easymde": "^2.11.0",
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
     "mapbox-gl": "^1.10.1",

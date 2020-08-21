@@ -8,7 +8,6 @@ import "./codemirror-4.inline-attachment";
 import { findParentForm, isCommunicationForm } from "./common/domUtils";
 
 const INITIAL_SYNC_DELAY = 50;
-const SECOND = 1000;
 
 const imageUploadOptions = {
     uploadUrl: imageUploadUrl,
@@ -19,12 +18,10 @@ const imageUploadOptions = {
     urlText: "![]({filename})",
     errorText: "Ошибка при загрузке файла :(",
     allowedTypes: [
-        // Images
         "image/jpeg",
         "image/png",
         "image/jpg",
         "image/gif",
-        // Videos (for animation only)
         "video/mp4",
         "video/quicktime" // .mov (macOS' default record format)
     ],
@@ -40,8 +37,10 @@ const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
     spellChecker: false,
     forceSync: true,
-    tabSize: 4,
-}
+    status: false,
+    inputStyle: "textarea",
+    tabSize: 4
+};
 
 /**
  * Initialize EasyMDE editor
@@ -189,8 +188,7 @@ const App = {
         const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
             (editors, element) => {
                 const editor = createMarkdownEditor(element, {
-                    toolbar: false,
-                    status:  false
+                    toolbar: false
                 });
 
                 return [...editors, editor];

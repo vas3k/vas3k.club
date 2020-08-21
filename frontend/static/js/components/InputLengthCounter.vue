@@ -6,7 +6,8 @@
         <span v-if="counter >= minLength + 100 && counter < minLength + 300">😎</span>
         <span v-if="counter >= minLength + 300 && counter < minLength + 500">🚀</span>
         <span v-if="counter >= minLength + 500">💎🚀👍</span>
-        {{ counter !== null ? counter : '-' }}&nbsp;&#47;&nbsp;{{ minLength }}
+        {{ counter !== null ? counter : '-' }}
+        <span v-if="counter <= minLength">&nbsp;&#47;&nbsp;{{ minLength }}</span>
     </span>
 </template>
 

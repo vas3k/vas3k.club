@@ -31,11 +31,6 @@
                     ☝️ Обратите внимание, что проекты с описанием из одного абзаца или односложными ответами на вопросы мы здесь считаем рекламными и модераторы сразу их удаляют.
                     Клуб — не источник халявного трафа. Здесь мы делимся опытом.
                 </p>
-
-                <p>
-                    ⚠️⚠️⚠️️ Окей, видимо, предыдущее предупреждение не сработало.
-                    Нам пришлось <strong>ограничить минимальную длину описания проекта 1500 символами</strong>.
-                </p>
             </div>
         {% endif %}
 
@@ -65,12 +60,7 @@
                 <div class="form-row compose-form-text">
                     <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
                     {{ form.text }}
-                    {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
-                    <span class="form-row-help form-row-help-wide">
-                        ☝️ Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a>.
-                        Для загрузки картинок просто перетащите их в редактор.
-                        Еще он пока иногда глючит потому перед публикацией длинного поста, скопируйте его в блокнот чтобы не потерять :D
-                    </span>
+                    {% if form.text.errors %}<span class="compose-form-errors">{{ form.text.errors }}</span>{% endif %}
                 </div>
 
                 <div class="form-row compose-form-title">
