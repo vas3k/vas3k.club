@@ -1,0 +1,43 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    💾 Ваш архив с данными готов
+{% endblock %}
+
+{% block body %}
+    <p>
+        Вот кнопочка чтобы нажимать 👇
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{{ url }}" class="button">Скачать архив</a>
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

@@ -14,6 +14,7 @@ from landing.views import landing, docs, god_settings
 from misc.views import achievements, network
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
+from posts.api import md_show_post, api_show_post
 from posts.models import Post
 from posts.rss import NewPostsRss
 from posts.sitemaps import sitemaps
@@ -25,8 +26,13 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
 from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
-from users.views import profile, edit_profile, on_review, banned, rejected, intro, toggle_tag, \
-    add_expertise, admin_profile, delete_expertise, edit_notifications, edit_bot, people, edit_payments, edit_auth
+from gdpr.views import request_data
+from users.views.messages import on_review, rejected, banned
+from users.views.profile import profile, edit_profile, edit_notifications, edit_payments, edit_auth, edit_bot, \
+    toggle_tag, add_expertise, delete_expertise, edit_data
+from users.views.intro import intro
+from users.views.admin import admin_profile
+from users.views.people import people
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month))"
@@ -50,11 +56,13 @@ urlpatterns = [
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
+    path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
     path("user/<slug:user_slug>/edit/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/bot/", edit_bot, name="edit_bot"),
     path("user/<slug:user_slug>/edit/notifications/", edit_notifications, name="edit_notifications"),
     path("user/<slug:user_slug>/edit/monies/", edit_payments, name="edit_payments"),
     path("user/<slug:user_slug>/edit/auth/", edit_auth, name="edit_auth"),
+    path("user/<slug:user_slug>/edit/data/", edit_data, name="edit_data"),
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
 
     path("intro/", intro, name="intro"),
@@ -110,8 +118,7 @@ urlpatterns = [
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
 
-    # api
-    path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
+    path("data/user/<slug:user_slug>/request/", request_data, name="request_user_data"),
 
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
@@ -121,6 +128,8 @@ urlpatterns = [
     re_path(r"^{}/$".format(POST_TYPE_RE), feed, name="feed_type"),
     re_path(r"^{}/{}/$".format(POST_TYPE_RE, ORDERING_RE), feed, name="feed_ordering"),
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
+    path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
+    path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),
 ]
 
 if settings.DEBUG:

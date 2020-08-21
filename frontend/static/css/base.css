@@ -20,6 +20,10 @@
             margin-top: 0;
         }
 
+        .block-description-center {
+            text-align: center;
+        }
+
     .block-header {
         display: block;
         font-size: 180%;

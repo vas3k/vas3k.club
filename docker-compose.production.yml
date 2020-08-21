@@ -21,6 +21,7 @@ services:
     restart: always
     volumes:
       - ./frontend/static:/app/frontend/static
+      - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres
       - redis

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from django.contrib.postgres.fields import JSONField, ArrayField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import F
 
@@ -66,7 +66,7 @@ class User(models.Model, ModelDiffMixin):
     geo = models.ForeignKey(Geo, on_delete=models.SET_NULL, null=True)
     bio = models.TextField(null=True)
     contact = models.CharField(max_length=256, null=True)
-    hat = JSONField(null=True)
+    hat = models.JSONField(null=True)
 
     balance = models.IntegerField(default=0)
     upvotes = models.IntegerField(default=0)
@@ -82,7 +82,7 @@ class User(models.Model, ModelDiffMixin):
         default=MEMBERSHIP_PLATFORM_PATREON, null=False
     )
     patreon_id = models.CharField(max_length=128, null=True, unique=True)
-    membership_platform_data = JSONField(null=True)
+    membership_platform_data = models.JSONField(null=True)
 
     email_digest_type = models.CharField(
         max_length=16, choices=EMAIL_DIGEST_TYPES,
@@ -90,7 +90,7 @@ class User(models.Model, ModelDiffMixin):
     )
 
     telegram_id = models.CharField(max_length=128, null=True)
-    telegram_data = JSONField(null=True)
+    telegram_data = models.JSONField(null=True)
 
     stripe_id = models.CharField(max_length=128, null=True)
 

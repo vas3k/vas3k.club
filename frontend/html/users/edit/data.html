@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Данные — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">💽<br>Ваши данные</div>
+
+        <div class="block-description block-description-center">
+            Тут описание того, что мы готовы отдать все ваши данные в любое время и удалить аккаунт
+        </div>
+
+        <div class="block">
+            <div class="block-header">Архив с данными</div>
+
+            <div class="block-description">
+                Тут описание того, что мы сгенерируем machine-friendly архив со всеми вашими данными чтобы вы могли в любой момент переехать
+            </div>
+
+            <div class="block-description">
+                <form action="{% url "request_user_data" user.slug %}" method="post">
+                    <button type="submit" class="button">Запросить архив</button>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="block">
+            <div class="block-header">Удаление аккаунта</div>
+
+            <div class="block-description">
+                Тут описание того, как мы удаляем аккаунт. Напишите "я хочу удалить аккаунт" в поле внизу
+            </div>
+
+            <div class="block-description">
+                <form action="{% url "request_user_data" user.slug %}">
+                    <input type="text" placeholder="я хочу удалить аккаунт" required>
+                    <button type="submit" class="button">Удалить аккаунт</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "bot.apps.BotConfig",
     "search.apps.SearchConfig",
+    "gdpr.apps.GdprConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -163,6 +164,10 @@ AUTH_MAX_CODE_ATTEMPTS = 3
 DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
 PEOPLE_PAGE_SIZE = 18
+
+GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(BASE_DIR, "gdpr/downloads")
+GDPR_ARCHIVE_URL = "/downloads/"
+GDPR_ARCHIVE_TIMEDELTA = timedelta(hours=1)
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 

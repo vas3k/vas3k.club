@@ -75,3 +75,13 @@ def send_ping_email(user: User, message: str):
         html=rejected_template.render({"message": message}),
         tags=["ping"]
     )
+
+
+def send_data_archive_ready_email(user, url):
+    auth_template = loader.get_template("emails/data_archive_ready.html")
+    send_club_email(
+        recipient=user.email,
+        subject=f"Ваш архив с данными сгенерировался",
+        html=auth_template.render({"user": user, "url": url}),
+        tags=["gdpr"]
+    )
