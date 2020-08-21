@@ -20,7 +20,7 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
     user = user_achievement.user
     achievement = user_achievement.achievement
 
-    # telegram
+    # messages
     if user.is_club_member and user.telegram_id:
         if achievement.image:
             send_telegram_image(

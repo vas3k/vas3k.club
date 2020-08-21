@@ -12,9 +12,9 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
-DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don"t run with debug turned on in production!
+DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don't run with debug turned on in production!
 
-# HINT: add "*" or your local IP to access appllication from a different device, e.g. a phone
+# HINT: add "*" or your local IP to access application from a different device, e.g. a phone
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "dev.vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -50,8 +50,11 @@ ROOT_URLCONF = "club.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "frontend/html")],
-        "APP_DIRS": True,
+        "DIRS": [
+            os.path.join(BASE_DIR, "notifications/telegram/templates"),
+            os.path.join(BASE_DIR, "frontend/html"),
+        ],
+        "APP_DIRS": False,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",

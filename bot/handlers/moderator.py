@@ -1,12 +1,14 @@
 from datetime import datetime
+from functools import partial
 
 from django.conf import settings
 from django.urls import reverse
 from telegram import Update
 
-from bot.common import send_telegram_message, ADMIN_CHAT, remove_action_buttons
+from bot.common import send_telegram_message, ADMIN_CHAT, remove_action_buttons, RejectReason
 from notifications.email.users import send_welcome_drink, send_rejected_email
-from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected, announce_in_club_chats
+from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected, \
+    announce_in_club_chats
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models import Post
 from search.models import SearchIndex
@@ -73,12 +75,12 @@ def approve_post(post_id: str, update: Update) -> (str, bool):
     notify_post_author_approved(post)
     announce_in_club_chats(post)
 
-    announce_post_url = settings.APP_HOST + reverse("announce_post", kwargs={
+    post_url = settings.APP_HOST + reverse("show_post", kwargs={
+        "post_type": post.type,
         "post_slug": post.slug,
     })
 
-    return f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}). " \
-           f"Можно запостить его на канал вот здесь: {announce_post_url}", True
+    return f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}", True
 
 
 def forgive_post(post_id: str, update: Update) -> (str, bool):
@@ -88,7 +90,13 @@ def forgive_post(post_id: str, update: Update) -> (str, bool):
         post.published_at = datetime.utcnow()
     post.save()
 
-    return f"😕 Пост «{post.title}» не одобрен, но оставлен на сайте ({update.effective_user.full_name})", True
+    post_url = settings.APP_HOST + reverse("show_post", kwargs={
+        "post_type": post.type,
+        "post_slug": post.slug,
+    })
+
+    return f"😕 Пост «{post.title}» не одобрен, но оставлен на сайте " \
+           f"({update.effective_user.full_name}): {post_url}", True
 
 
 def unpublish_post(post_id: str, update: Update) -> (str, bool):
@@ -130,7 +138,7 @@ def approve_user_profile(user_id: str, update: Update) -> (str, bool):
     return f"✅ Пользователь «{user.full_name}» одобрен ({update.effective_user.full_name})", True
 
 
-def reject_user_profile(user_id: str, update: Update) -> (str, bool):
+def reject_user_profile(user_id: str, update: Update, reason: RejectReason) -> (str, bool):
     user = User.objects.get(id=user_id)
     if user.moderation_status == User.MODERATION_STATUS_REJECTED:
         return f"Пользователь «{user.full_name}» уже был отклонен и пошел все переделывать", True
@@ -138,10 +146,11 @@ def reject_user_profile(user_id: str, update: Update) -> (str, bool):
     user.moderation_status = User.MODERATION_STATUS_REJECTED
     user.save()
 
-    notify_user_profile_rejected(user)
-    send_rejected_email(user)
+    notify_user_profile_rejected(user, reason)
+    send_rejected_email(user, reason)
 
-    return f"❌ Пользователь «{user.full_name}» отклонен ({update.effective_user.full_name})", True
+    return f"❌ Пользователь «{user.full_name}» отклонен по причине «{reason.value}» " \
+           f"({update.effective_user.full_name})", True
 
 
 ACTIONS = {
@@ -149,5 +158,9 @@ ACTIONS = {
     "forgive_post": forgive_post,
     "delete_post": unpublish_post,
     "approve_user": approve_user_profile,
-    "reject_user": reject_user_profile,
+    "reject_user": partial(reject_user_profile, reason=RejectReason.intro),  # FIXME: DEPRECATED
+    "reject_user_intro": partial(reject_user_profile, reason=RejectReason.intro),
+    "reject_user_data": partial(reject_user_profile, reason=RejectReason.data),
+    "reject_user_aggression": partial(reject_user_profile, reason=RejectReason.aggression),
+    "reject_user_general": partial(reject_user_profile, reason=RejectReason.general),
 }

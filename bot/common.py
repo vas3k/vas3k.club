@@ -1,4 +1,5 @@
 from collections import namedtuple
+from enum import Enum
 
 import telegram
 from django.conf import settings
@@ -13,6 +14,13 @@ ADMIN_CHAT = Chat(id=settings.TELEGRAM_ADMIN_CHAT_ID)
 CLUB_CHAT = Chat(id=settings.TELEGRAM_CLUB_CHAT_ID)
 CLUB_CHANNEL = Chat(id=settings.TELEGRAM_CLUB_CHANNEL_ID)
 CLUB_ONLINE = Chat(id=settings.TELEGRAM_ONLINE_CHANNEL_ID)
+
+
+class RejectReason(Enum):
+    intro = "intro"
+    data = "data"
+    aggression = "aggression"
+    general = "general"
 
 
 def send_telegram_message(
@@ -79,7 +87,7 @@ def remove_action_buttons(chat: Chat, message_id: str, **kwargs):
 
 
 def render_html_message(template, **data):
-    template = loader.get_template(f"telegram/{template}")
+    template = loader.get_template(f"messages/{template}")
     return template.render({
         **data,
         "settings": settings
