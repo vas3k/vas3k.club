@@ -1,0 +1,14 @@
+{% extends "message.html" %}
+
+{% block message %}
+    <h2>☠️ Ваш аккаунт будет удалён через 5 дней</h2>
+
+    <p>
+        Всего хорошего, и спасибо за рыбу!
+    </p>
+
+    <form method="POST" action="{% url "logout" %}">
+        {% csrf_token %}
+        <button type="submit" class="button button-big">Выйти из Клуба&nbsp;<i class="fas fa-sign-out-alt"></i></button>
+    </form>
+{% endblock %}

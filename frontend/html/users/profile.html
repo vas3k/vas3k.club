@@ -28,10 +28,10 @@
     <div class="content profile">
         {% if me.id == user.id or me.is_moderator %}
             <div class="profile-user-edit">
-                <a href="{% url "edit_profile" user.slug %}">Редактировать профиль</a>
                 {% if me.is_moderator %}
-                    | <a href="{% url "admin_profile" user.slug %}">Админка</a>
+                    <a href="{% url "admin_profile" user.slug %}"><i class="fas fa-tools"></i>&nbsp;Админка</a>&nbsp;&nbsp;&nbsp;
                 {% endif %}
+                <a href="{% url "profile_settings" user.slug %}"><i class="fas fa-cog"></i>&nbsp;Настройки профиля</a>
             </div>
         {% endif %}
 
@@ -205,7 +205,7 @@
             {% else %}
                 <div class="block">
                     <div class="profile-add-button">
-                        <a href="{% url "compose_type" "project" %}" class="button">Расскажите над чем работаете</a>
+                        <a href="{% url "compose_type" "project" %}" class="button">Над чем работаешь?</a>
                     </div>
                 </div>
             {% endif %}

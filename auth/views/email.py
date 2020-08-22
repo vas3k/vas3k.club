@@ -33,6 +33,11 @@ def email_login(request):
                            "Попробуйте авторизоваться по обычной почте или юзернейму.",
             })
 
+        if user.deleted_at:
+            # cancel user deletion
+            user.deleted_at = None
+            user.save()
+
         session = Session.create_for_user(user)
         redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
         response = redirect(redirect_to)
@@ -55,6 +60,7 @@ def email_login(request):
         return render(request, "auth/email.html", {
             "email": user.email,
             "goto": goto,
+            "restore": user.deleted_at is not None,
         })
 
 
@@ -74,6 +80,11 @@ def email_login_code(request):
     if not user.is_email_verified:
         # save 1 click and verify email
         user.is_email_verified = True
+        user.save()
+
+    if user.deleted_at:
+        # cancel user deletion
+        user.deleted_at = None
         user.save()
 
     redirect_to = reverse("profile", args=[user.slug]) if not goto else goto

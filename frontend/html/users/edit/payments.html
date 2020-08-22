@@ -13,32 +13,32 @@
             Клубная карта активна до: <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong>
         </div>
 
-        <div class="block-subheader">
-            {% if me.membership_platform_type == "patreon" %}
-                <div class="block pay-subscription">🙂 Включено автопродление через <a href="https://www.patreon.com/vas3k" target="_blank">Patreon</a></div>
-            {% else %}
-                {% if not subscriptions %}
-                    <div class="block pay-subscription">Автопродление отключено 😟</div>
-                {% endif %}
+        {% if me.membership_platform_type == "patreon" %}
+            <div class="block pay-subscription">
+                🙂 Подключён <a href="https://www.patreon.com/vas3k" target="_blank">Patreon</a>
+            </div>
+        {% else %}
+            {% if not subscriptions %}
+                <div class="block pay-subscription">Автопродление отключено 😟</div>
             {% endif %}
+        {% endif %}
 
-            {% for subscription in subscriptions %}
-                <div class="block pay-subscription">
-                    🔥 Включено автопополнение на <strong>€{{ subscription.amount | floatformat }}</strong> каждый
-                    {% if subscription.interval == "month" %}
-                        месяц <strong>{{ subscription.next_charge_at | date:"j" }} числа</strong>
-                    {% else %}
-                        год <strong>{{ subscription.next_charge_at | date:"j E" }}</strong>
-                    {% endif %}
+        {% for subscription in subscriptions %}
+            <div class="block pay-subscription">
+                🔥 Включено автопополнение на <strong>€{{ subscription.amount | floatformat }}</strong> каждый
+                {% if subscription.interval == "month" %}
+                    месяц <strong>{{ subscription.next_charge_at | date:"j" }} числа</strong>
+                {% else %}
+                    год <strong>{{ subscription.next_charge_at | date:"j E" }}</strong>
+                {% endif %}
 
-                    <br><br>
+                <br><br>
 
-                    <a href="{% url "stop_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
-                </div>
-            {% endfor %}
-        </div>
+                <a href="{% url "stop_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
+            </div>
+        {% endfor %}
 
-        <div class="block-description" style="text-align: center;">
+        <div class="block-description block-description-center">
             О любых проблемах с оплатой сразу пишите на <a href="mailto:monies@vas3k.club">monies@vas3k.club</a>.<br>
             Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.
         </div>
@@ -91,7 +91,7 @@
 
         <br><br>
 
-        <div class="block-description" style="text-align: center;">
+        <div class="block-description block-description-center">
             Пополняйте когда вам удобно — новые дни будут просто суммироваться
         </div>
 

@@ -14,8 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
 DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don't run with debug turned on in production!
 
-# HINT: add "*" or your local IP to access application from a different device, e.g. a phone
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "dev.vas3k.club"]
+ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 INSTALLED_APPS = [
@@ -33,6 +32,7 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "bot.apps.BotConfig",
     "search.apps.SearchConfig",
+    "gdpr.apps.GdprConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -163,6 +163,14 @@ AUTH_MAX_CODE_ATTEMPTS = 3
 DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
 PEOPLE_PAGE_SIZE = 18
+
+GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(BASE_DIR, "gdpr/downloads")
+GDPR_ARCHIVE_URL = "/downloads/"
+GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
+GDPR_ARCHIVE_DELETE_TIMEDELTA = timedelta(hours=24)
+GDPR_DELETE_CODE_LENGTH = 14
+GDPR_DELETE_CONFIRMATION = "я готов удалиться навсегда"
+GDPR_DELETE_TIMEDELTA = timedelta(hours=5 * 24)
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 

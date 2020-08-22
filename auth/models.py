@@ -71,7 +71,7 @@ class Code(models.Model):
             created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
         ).count()
         if last_codes_count > settings.AUTH_MAX_CODE_COUNT:
-            raise RateLimitException(title="Вы запросили слишком много кодов")
+            raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
 
         return Code.objects.create(
             recipient=recipient,

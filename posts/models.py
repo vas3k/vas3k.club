@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import F
 from django.template.defaultfilters import truncatechars
@@ -101,7 +100,7 @@ class Post(models.Model, ModelDiffMixin):
     author = models.ForeignKey(User, related_name="posts", db_index=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
-    label = JSONField(null=True)
+    label = models.JSONField(null=True)
 
     title = models.TextField(null=False)
     text = models.TextField(null=False)
@@ -109,7 +108,7 @@ class Post(models.Model, ModelDiffMixin):
     url = models.URLField(null=True)
     image = models.URLField(null=True)
 
-    metadata = JSONField(null=True)
+    metadata = models.JSONField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -148,7 +147,10 @@ class Post(models.Model, ModelDiffMixin):
 
     def to_dict(self):
         return {
+            # "id": str(self.id),
             "slug": self.slug,
+            # "title": self.title,
+            # "text": self.text,
             "type": self.type,
             "upvotes": self.upvotes,
         }

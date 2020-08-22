@@ -9,14 +9,14 @@ from users.models.expertise import UserExpertise
 from common.forms import ImageUploadField
 
 
-class UserEditForm(ModelForm):
+class ProfileEditForm(ModelForm):
     full_name = forms.CharField(
-        label="Имя",
+        label="Имя и фамилия",
         required=True,
         max_length=128
     )
     avatar = ImageUploadField(
-        label="Обновить аватар",
+        label="Аватар",
         required=False,
         resize=(512, 512),
         convert_to="jpg",

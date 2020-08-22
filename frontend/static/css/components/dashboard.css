@@ -1,0 +1,35 @@
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+    .dashboard-item {
+        display: block;
+        min-width: 180px;
+        text-align: center;
+        text-decoration: none;
+        margin: 20px 5px;
+        padding: 30px 20px;
+        border-radius: var(--block-border-radius);
+    }
+
+        .dashboard-item:hover {
+            box-shadow: var(--block-shadow);
+        }
+
+        .dashboard-item-icon {
+            display: block;
+            width: 100%;
+            font-size: 60px;
+            line-height: 1em;
+            padding-bottom: 10px;
+        }
+
+        .dashboard-item-title {
+            display: block;
+            width: 100%;
+            font-size: 140%;
+            line-height: 1.5em;
+        }

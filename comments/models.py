@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import F
 from simple_history.models import HistoricalRecords
@@ -25,7 +24,7 @@ class Comment(models.Model):
     html = models.TextField(null=True)
     url = models.URLField(null=True)
 
-    metadata = JSONField(null=True)
+    metadata = models.JSONField(null=True)
 
     ipaddress = models.GenericIPAddressField(null=True)
     useragent = models.CharField(max_length=512, null=True)

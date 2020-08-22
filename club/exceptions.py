@@ -10,6 +10,12 @@ class ClubException(Exception):
         self.data = data or {}
 
 
+class BadRequest(ClubException):
+    default_code = "bad-request"
+    default_title = "Неправильный параметр запроса"
+    default_message = "Что-то сломалось"
+
+
 class NotFound(ClubException):
     default_code = "not-found"
     default_title = "Не найдено"

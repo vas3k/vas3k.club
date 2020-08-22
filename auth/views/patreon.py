@@ -94,13 +94,20 @@ def patreon_oauth_callback(request):
             )
         except IntegrityError:
             return render(request, "error.html", {
-                "title": "Придётся войти через почту",
+                "title": "💌 Придётся войти через почту",
                 "message": "Пользователь с таким имейлом уже зарегистрирован, но не через патреон. "
                            "Чтобы защититься от угона аккаунтов через подделку почты на патреоне, "
                            "нам придётся сейчас попросить вас войти через почту."
             })
     else:
-        # user exists, update membership dates
+        # user exists
+        if user.deleted_at:
+            return render(request, "error.html", {
+                "title": "💀 Аккаунт был удалён",
+                "message": "Войти через этот патреон больше не получится"
+            })
+
+        # update membership dates
         user.balance = membership.lifetime_support_cents / 100  # TODO: remove when the real money comes in
         if membership.expires_at > user.membership_expires_at:
             user.membership_expires_at = membership.expires_at

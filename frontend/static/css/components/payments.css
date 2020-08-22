@@ -38,6 +38,8 @@
     .pay-subscription {
         display: block;
         margin-top: 20px;
+        font-size: 130%;
+        text-align: center;
     }
 
     .pay-services {
