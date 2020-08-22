@@ -105,8 +105,8 @@ class Post(models.Model, ModelDiffMixin):
     title = models.TextField(null=False)
     text = models.TextField(null=False)
     html = models.TextField(null=True)
-    url = models.URLField(null=True)
-    image = models.URLField(null=True)
+    url = models.URLField(max_length=1024, null=True)
+    image = models.URLField(max_length=1024, null=True)
 
     metadata = models.JSONField(null=True)
 
