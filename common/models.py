@@ -47,8 +47,11 @@ class ModelDiffMixin:
         return model_to_dict(self, fields=[field.name for field in self._meta.fields])
 
 
-def top(values, key):
-    return Counter([getattr(v, key) for v in values if getattr(v, key)]).most_common()
+def top(values, key, skip=None):
+    skip = skip or {}
+    return Counter([
+        getattr(v, key) for v in values if getattr(v, key) and getattr(v, key) not in skip
+    ]).most_common()
 
 
 def group_by(values, key, todict=True):

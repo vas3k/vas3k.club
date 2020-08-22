@@ -64,7 +64,7 @@ def people(request):
         .order_by("-country_count")
 
     map_stat_groups = {
-        "💼 Топ компаний": top(users, "company")[:5],
+        "💼 Топ компаний": top(users, "company", skip={"-"})[:5],
         "🏰 Города": top(users, "city")[:5],
         "🎬 Экспертиза": top(UserExpertise.objects.filter(user_id__in=[u.id for u in users]), "name")[:5],
     }
