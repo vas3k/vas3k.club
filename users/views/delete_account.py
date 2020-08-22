@@ -40,7 +40,6 @@ def request_delete_account(request, user_slug):
         user=user,
         code=code
     )
-    send_delete_account_request_email(user, code)
 
     return render(request, "users/messages/delete_account_requested.html", {"user": user})
 
@@ -80,7 +79,6 @@ def confirm_delete_account(request, user_slug):
         send_delete_account_confirm_email,
         user=user,
     )
-    send_delete_account_confirm_email(user=user)
 
     # notify admins
     async_task(
