@@ -1875,3 +1875,15 @@
 .bookmark-button {
     padding-right: 10px;
 }
+
+.license {
+    display: block;
+    text-decoration: none;
+    font-size: 200%;
+    text-align: center;
+}
+
+    .license img {
+        width: 80px;
+        height: 80px;
+    }
