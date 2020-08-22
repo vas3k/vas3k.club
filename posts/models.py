@@ -147,12 +147,17 @@ class Post(models.Model, ModelDiffMixin):
 
     def to_dict(self):
         return {
-            # "id": str(self.id),
-            "slug": self.slug,
-            # "title": self.title,
-            # "text": self.text,
+            "id": str(self.id),
             "type": self.type,
+            "slug": self.slug,
+            "author_slug": self.author.slug,
+            "title": self.title,
+            "text": self.text,
             "upvotes": self.upvotes,
+            "metadata": self.metadata,
+            "published_at": self.published_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+            "last_activity_at": self.last_activity_at.isoformat(),
         }
 
     def save(self, *args, **kwargs):

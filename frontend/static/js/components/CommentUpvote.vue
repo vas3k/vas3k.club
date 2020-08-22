@@ -20,13 +20,14 @@ import ClubApi from "../common/api.service";
 export default {
     name: "CommentUpvote",
     props: {
-        comment: {
-            type: Object,
-            required: true,
-        },
         hoursToRetractVote: {
             type: Number,
             default: 0
+        },
+        initialUpvotes: {
+            type: Number,
+            default: 0,
+            required: true
         },
         initialIsVoted: {
             type: Boolean,
@@ -66,7 +67,7 @@ export default {
     },
     data() {
         return {
-            upvotes: this.comment.upvotes,
+            upvotes: this.initialUpvotes,
             isVoted: this.initialIsVoted,
             upvotedTimestamp: this.initialUpvoteTimestamp && parseInt(this.initialUpvoteTimestamp)
         };
@@ -103,5 +104,3 @@ export default {
     },
 };
 </script>
-
-<style scoped></style>

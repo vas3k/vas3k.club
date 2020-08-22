@@ -2,10 +2,10 @@
     <a
         :href="url"
         :class="{ 'user-tag-active': isActive }"
-        :style="{ 'background-color': isActive ? tag.color : null }"
+        :style="{ 'background-color': isActive ? tagColor : null }"
         @click.prevent="toggle"
     >
-        {{ tag.name }}
+        {{ tagName }}
     </a>
 </template>
 
@@ -15,9 +15,13 @@ import ClubApi from "../common/api.service";
 export default {
     name: "UserTag",
     props: {
-        tag: {
-            type: Object,
-            required: true,
+        tagName: {
+            type: String,
+            required: true
+        },
+        tagColor: {
+            type: String,
+            required: true
         },
         isActiveByDefault: {
             type: Boolean,

@@ -130,7 +130,12 @@
                         <div class="user-tags">
                             {% for tag in tag_group.list %}
                                 {% if me.id == user.id  %}
-                                    <user-tag :tag="JSON.parse('{{ tag.to_dict | jsonify }}')" class="user-tag" url="{% url "toggle_tag" tag.code %}" {% if tag.code in active_tags %}is-active-by-default{% endif %}></user-tag>
+                                    <user-tag tag-name="{{ tag.name }}"
+                                              tag-color="{{ tag.color }}"
+                                              class="user-tag"
+                                              url="{% url "toggle_tag" tag.code %}"
+                                              {% if tag.code in active_tags %}is-active-by-default{% endif %}
+                                    ></user-tag>
                                 {% else %}
                                     {% if tag.code in active_tags %}
                                         <span class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">{{ tag.name }}</span>
