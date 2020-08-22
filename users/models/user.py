@@ -52,7 +52,6 @@ class User(models.Model, ModelDiffMixin):
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     slug = models.CharField(max_length=32, unique=True)
-    card_number = models.IntegerField(default=0)
 
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=128, null=False)
@@ -105,6 +104,8 @@ class User(models.Model, ModelDiffMixin):
     )
 
     roles = ArrayField(models.CharField(max_length=32, choices=ROLES), default=list, null=False)
+
+    deleted_at = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "users"
@@ -164,7 +165,9 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def is_club_member(self):
-        return self.moderation_status == User.MODERATION_STATUS_APPROVED and not self.is_banned
+        return self.moderation_status == User.MODERATION_STATUS_APPROVED \
+               and not self.is_banned \
+               and self.deleted_at is None
 
     @property
     def is_paid_member(self):

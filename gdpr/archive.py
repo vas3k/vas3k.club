@@ -30,7 +30,7 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         archive_path = shutil.make_archive(os.path.join(save_path, str(user.slug)), "zip", tmp_dir)
 
         # remove archive after timeout
-        schedule(delete_data_archive, archive_path, next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_TIMEDELTA)
+        schedule(delete_data_archive, archive_path, next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA)
 
         # notify the user
         send_data_archive_ready_email(

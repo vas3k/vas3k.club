@@ -2,6 +2,13 @@
 
 {% block content %}
     <div class="login">
+        {% if restore %}
+            <div class="block block-description block-description-center">
+                ⚠️ <strong>Аккаунт будет восстановлен.</strong>
+                Вы недавно запросили удаление всех своих данных, но если вы войдёте сейчас в аккаунт — всё вернётся как было.
+            </div>
+        {% endif %}
+
         <div class="block login-code">
             <div class="login-code-title">🤘 Вам отправлен код!</div>
 
@@ -9,7 +16,7 @@
 
             <div class="login-code-form">
                 <form action="{% url "email_login_code" %}" method="get">
-                    <input type="tel" pattern="[0-9]*" name="code" placeholder="000000" class="login-code-input" autocomplete="off" autofocus>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" name="code" placeholder="000000" class="login-code-input" autocomplete="off" autofocus>
                     <input type="hidden" name="email" value="{{ email }}">
                     {% if goto %}<input type="hidden" name="goto" value="{{ goto }}">{% endif %}
 

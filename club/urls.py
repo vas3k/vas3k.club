@@ -26,10 +26,11 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
 from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
-from gdpr.views import request_data
+from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.messages import on_review, rejected, banned
-from users.views.profile import profile, edit_profile, edit_notifications, edit_payments, edit_auth, edit_bot, \
-    toggle_tag, add_expertise, delete_expertise, edit_data
+from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise
+from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
+    edit_bot, edit_data, request_data
 from users.views.intro import intro
 from users.views.admin import admin_profile
 from users.views.people import people
@@ -57,13 +58,17 @@ urlpatterns = [
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
-    path("user/<slug:user_slug>/edit/", edit_profile, name="edit_profile"),
+    path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
+    path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
+    path("user/<slug:user_slug>/edit/account/", edit_account, name="edit_account"),
     path("user/<slug:user_slug>/edit/bot/", edit_bot, name="edit_bot"),
     path("user/<slug:user_slug>/edit/notifications/", edit_notifications, name="edit_notifications"),
     path("user/<slug:user_slug>/edit/monies/", edit_payments, name="edit_payments"),
-    path("user/<slug:user_slug>/edit/auth/", edit_auth, name="edit_auth"),
     path("user/<slug:user_slug>/edit/data/", edit_data, name="edit_data"),
+    path("user/<slug:user_slug>/edit/data/request/", request_data, name="request_user_data"),
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
+    path("user/<slug:user_slug>/delete/", request_delete_account, name="request_delete_account"),
+    path("user/<slug:user_slug>/delete/confirm/", confirm_delete_account, name="confirm_delete_account"),
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
@@ -117,8 +122,6 @@ urlpatterns = [
     path("godmode/", god_settings, name="god_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
-
-    path("data/user/<slug:user_slug>/request/", request_data, name="request_user_data"),
 
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),

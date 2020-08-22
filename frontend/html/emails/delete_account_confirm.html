@@ -1,0 +1,26 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+</style>
+{% endblock %}
+
+{% block title %}
+    ✌️ Ваш аккаунт будет удалён через 5 дней
+{% endblock %}
+
+{% block body %}
+    <p>
+        Спасибо, что были с нами.
+        В течение этих 5 дней вы еще можете войти по почте чтобы отменить удаление, если вдруг вы сделали это по ошибке или вас взломали.
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

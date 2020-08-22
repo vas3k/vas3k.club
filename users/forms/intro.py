@@ -21,7 +21,7 @@ class UserIntroForm(ModelForm):
         }),
     )
     full_name = forms.CharField(
-        label="Ваше реальное имя",
+        label="Как вас зовут",
         required=True,
         max_length=128
     )

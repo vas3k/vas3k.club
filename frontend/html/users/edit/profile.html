@@ -22,68 +22,21 @@
 
             <div class="block">
                 <div class="form-row">
-                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
-                        Имя
-                    </label>
-                    {{ form.full_name }}
-                    {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
-                    <span class="form-row-help">Рекомендуется указывать имя и фамилию, либо псевдоним, если вас лучше знают по нему.</span>
-                </div>
-
-                <div class="form-row">
-                    <span class="form-label">
-                        E-mail
-                    </span>
-                    <strong>{{ form.instance.email }}</strong>
-                    <span class="form-row-help">Никому не виден. Используется для входа и оповещений.<br>Чтобы сменить, <a href="{% url "docs" "contact" %}">напишите</a> нам.</span>
-                </div>
-
-                <div class="form-row">
-                    <span class="form-label">
-                        Секретный код для входа
-                    </span>
-                    <strong><a href="{% url "edit_auth" form.instance.slug %}">[нажмите чтобы посмотреть]</a></strong>
-                    <span class="form-row-help">Используйте его вместо логина при входе, тогда будет не нужно запрашивать одноразовые коды по почте каждый раз.</span>
-                </div>
-
-                <div class="form-row">
-                    <label for="{{ form.country.id_for_label }}" class="form-label">
-                        Страна и город
-                    </label>
-                    {{ form.country }} {{ form.city }}
-                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
-                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
-                    <span class="form-row-help">Вдруг мы решим собраться на митап или типа того.</span>
-                </div>
-
-                <div class="form-row">
-                    <label for="{{ form.bio.id_for_label }}" class="form-label">
-                        Ссылочки на себя и всякое такое
-                    </label>
-                    {{ form.bio }}
-                    {% if form.bio.errors %}<span class="form-row-errors">{{ form.bio.errors }}</span>{% endif %}
-                    <span class="form-row-help">Можно Markdown</span>
-                </div>
-
-                <div class="form-row">
-                    <label for="{{ form.contact.id_for_label }}" class="form-label">
-                        Контакт для обратной связи
-                    </label>
-                    {{ form.contact }}
-                    {% if form.contact.errors %}<span class="form-row-errors">{{ form.contact.errors }}</span>{% endif %}
-                    <span class="form-row-help">Он будет виден другим участникам Клуба. Так они смогут вам написать и завязать нетворкинг. Если хотите. Наружу он не виден.</span>
-                </div>
-
-                <div class="form-row">
-                    <label for="{{ form.avatar.id_for_label }}" class="form-label">
-                        Обновить аватар
-                    </label>
                     <user-avatar-input
                         input-id="{{ form.avatar.id_for_label }}"
                         current-avatar="{{ user.get_avatar }}"
                     ></user-avatar-input>
                     {{ form.avatar }}
                     {% if form.avatar.errors %}<span class="form-row-errors">{{ form.avatar.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
+                        Имя
+                    </label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
+                    <span class="form-row-help">Рекомендуется указывать имя и фамилию, либо псевдоним, если вас лучше знают по нему.</span>
                 </div>
 
                 <div class="form-row">
@@ -101,11 +54,41 @@
                     {{ form.position }}
                     {% if form.position.errors %}<span class="form-row-errors">{{ form.position.errors }}</span>{% endif %}
                 </div>
+
+                <div class="form-row">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">
+                        Страна и город
+                    </label>
+                    {{ form.country }} {{ form.city }}
+                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
+                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
+                    <span class="form-row-help">Вдруг мы решим собраться на митап или типа того</span>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.bio.id_for_label }}" class="form-label">
+                        Ссылочки на себя и всякое такое
+                    </label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}<span class="form-row-errors">{{ form.bio.errors }}</span>{% endif %}
+                    <span class="form-row-help">
+                        Используйте Markdown и Эмодзи чтобы сделать красиво. Всё зависит от вашего воображения
+                    </span>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.contact.id_for_label }}" class="form-label">
+                        Контакт для обратной связи
+                    </label>
+                    {{ form.contact }}
+                    {% if form.contact.errors %}<span class="form-row-errors">{{ form.contact.errors }}</span>{% endif %}
+                    <span class="form-row-help">Он будет виден другим участникам Клуба. Так они смогут вам написать и завязать нетворкинг. Если хотите. Наружу он не виден.</span>
+                </div>
+
+                <button type="submit" class="button button-big">Сохранить изменения</button>
+
+                <div class="clearfix50"></div>
             </div>
-
-            <div class="clearfix50"></div>
-
-            <button type="submit" class="button button-red">Сохранить изменения</button>
         </form>
     </div>
 {% endblock %}

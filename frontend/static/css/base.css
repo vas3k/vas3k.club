@@ -13,7 +13,7 @@
         margin: 0 auto;
         max-width: 90%;
         padding: 20px 0;
-        font-size: 120%;
+        font-size: 130%;
     }
 
         .block-description > p:first-child {
@@ -24,9 +24,13 @@
             text-align: center;
         }
 
+        .block-description li {
+            padding-bottom: 0.8em;
+        }
+
     .block-header {
         display: block;
-        font-size: 180%;
+        font-size: 200%;
         font-weight: 600;
         text-align: center;
         padding-top: 30px;
@@ -35,7 +39,7 @@
 
     .block-subheader {
         display: block;
-        font-size: 140%;
+        font-size: 150%;
         font-weight: 400;
         text-align: center;
         margin: 0 auto;
@@ -184,6 +188,11 @@
         padding: 5px 10px;
         font-size: 90%;
         font-weight: normal;
+    }
+
+    .button-red {
+        background-color: #ff1917;
+        border-color: #ff1917;
     }
 
 /* SLIDER THEME */
@@ -347,7 +356,7 @@ input[type=range]:focus::-ms-fill-upper {
 
     .form-title {
         display: block;
-        font-size: 230%;
+        font-size: 250%;
         font-weight: 600;
         text-align: center;
         padding-top: 20px;
@@ -654,3 +663,24 @@ img.emoji {
    margin: 0 .05em 0 .1em;
    vertical-align: -0.1em;
 }
+
+.text-center {
+    text-align: center;
+}
+
+.text-80 {
+    font-size: 80%;
+}
+
+.text-120 {
+    font-size: 120%;
+}
+
+.text-140 {
+    font-size: 140%;
+}
+
+.text-200 {
+    font-size: 200%;
+}
+
