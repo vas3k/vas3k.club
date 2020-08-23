@@ -1,5 +1,3 @@
-import stripe
-
 from auth.models import Session, Code
 from bookmarks.models import PostBookmark
 from posts.models import Post
@@ -49,14 +47,3 @@ def delete_user_data(user: User):
     Session.objects.filter(user=user).delete()
     Code.objects.filter(user=user).delete()
     PostBookmark.objects.filter(user=user).delete()
-
-    # cancel stripe subscriptions
-    if user.stripe_id:
-        stripe_subscriptions = stripe.Subscription.list(customer=user.stripe_id, limit=100)
-        subscription_ids = [s["id"] for s in stripe_subscriptions["data"]]
-
-        for subscription_id in subscription_ids:
-            try:
-                stripe.Subscription.delete(subscription_id)
-            except Exception:
-                pass

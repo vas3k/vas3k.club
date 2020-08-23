@@ -12,6 +12,7 @@ from club.exceptions import BadRequest, AccessDenied
 from gdpr.forget import delete_user_data
 from gdpr.models import DataRequests
 from notifications.email.users import send_delete_account_request_email, send_delete_account_confirm_email
+from payments.helpers import cancel_all_stripe_subscriptions
 from users.models.user import User
 
 
@@ -64,7 +65,10 @@ def confirm_delete_account(request, user_slug):
     # verify code (raises an exception)
     Code.check_code(recipient=user.email, code=code)
 
-    # mark user for future deletion
+    # cancel payments
+    cancel_all_stripe_subscriptions(user.stripe_id)
+
+    # mark user for deletion
     user.deleted_at = datetime.utcnow()
     user.save()
 
