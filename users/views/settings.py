@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import stripe
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 from django_q.tasks import async_task
@@ -158,6 +159,9 @@ def request_data(request, user_slug):
 
     DataRequests.register_archive_request(user)
 
-    async_task(generate_data_archive, user=user)
+    if settings.DEBUG:
+        generate_data_archive(user)
+    else:
+        async_task(generate_data_archive, user=user)
 
     return render(request, "users/messages/data_requested.html")

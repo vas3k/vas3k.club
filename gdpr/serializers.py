@@ -1,5 +1,9 @@
 from typing import List
 
+from django.conf import settings
+from django.urls import reverse
+
+from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models import Post
 from users.models.expertise import UserExpertise
@@ -38,10 +42,11 @@ def comment_to_md(comment: Comment) -> str:
 
 
 def comments_to_json(comments: List[Comment]) -> dict:
-    comments_json = {"comments": []}
-    for comment in comments:
-        comments_json["comments"].append(comment_to_json(comment))
-    return comments_json
+    return {
+        "comments": [
+            comment_to_json(comment) for comment in comments
+        ]
+    }
 
 
 def comment_to_json(comment: Comment) -> dict:
@@ -99,10 +104,11 @@ def user_to_json(user: User) -> dict:
 
 
 def user_tags_to_json(user_tags: List[UserTag]) -> dict:
-    user_tags_json = {"user_tags": []}
-    for user_tag in user_tags:
-        user_tags_json["user_tags"].append(user_tag_to_json(user_tag))
-    return user_tags_json
+    return {
+        "user_tags": [
+            user_tag_to_json(user_tag) for user_tag in user_tags
+        ]
+    }
 
 
 def user_tag_to_json(user_tag: UserTag) -> dict:
@@ -114,10 +120,11 @@ def user_tag_to_json(user_tag: UserTag) -> dict:
 
 
 def user_expertises_to_json(user_expertises: List[UserExpertise]) -> dict:
-    user_expertise_json = {"user_expertise": []}
-    for user_expertise in user_expertises:
-        user_expertise_json["user_expertise"].append(user_expertise_to_json(user_expertise))
-    return user_expertise_json
+    return {
+        "user_expertise": [
+            user_expertise_to_json(user_expertise) for user_expertise in user_expertises
+        ]
+    }
 
 
 def user_expertise_to_json(user_expertise: UserExpertise) -> dict:
@@ -126,4 +133,21 @@ def user_expertise_to_json(user_expertise: UserExpertise) -> dict:
         "name": user_expertise.name,
         "value": user_expertise.value,
         "created_at": user_expertise.created_at.isoformat() if user_expertise.created_at else None,
+    }
+
+
+def bookmarks_to_json(bookmarks: List[PostBookmark]) -> dict:
+    return {
+        "bookmarks": [
+            bookmark_to_json(bookmark) for bookmark in bookmarks
+        ]
+    }
+
+
+def bookmark_to_json(bookmark: PostBookmark) -> dict:
+    return {
+        "url": settings.APP_HOST + reverse("show_post", kwargs={
+            "post_type": bookmark.post.type, "post_slug": bookmark.post.slug
+        }),
+        "created_at": bookmark.created_at.isoformat() if bookmark.created_at else None,
     }

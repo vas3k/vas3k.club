@@ -7,9 +7,10 @@ from datetime import datetime
 from django.conf import settings
 from django_q.tasks import schedule
 
+from bookmarks.models import PostBookmark
 from comments.models import Comment
 from gdpr.serializers import post_to_json, post_to_md, user_to_json, comments_to_json, user_tags_to_json, \
-    user_expertises_to_json, comment_to_md, comment_to_json
+    user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json
 from notifications.email.users import send_data_archive_ready_email
 from posts.models import Post
 from users.models.expertise import UserExpertise
@@ -25,6 +26,7 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         dump_user_profile(user_dir, user)
         dump_user_posts(user_dir, user)
         dump_user_comments(user_dir, user)
+        dump_user_bookmarks(user_dir, user)
 
         # save zip archive
         archive_path = shutil.make_archive(os.path.join(save_path, str(user.slug)), "zip", tmp_dir)
@@ -37,6 +39,10 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
             user=user,
             url=settings.GDPR_ARCHIVE_URL + os.path.basename(archive_path),
         )
+
+
+def delete_data_archive(archive_path):
+    os.remove(archive_path)
 
 
 def dump_user_profile(user_dir, user):
@@ -90,5 +96,8 @@ def dump_user_comments(user_dir, user):
             f.write(json.dumps(comments_to_json(comment_replies), ensure_ascii=False))
 
 
-def delete_data_archive(archive_path):
-    os.remove(archive_path)
+def dump_user_bookmarks(user_dir, user):
+    bookmarks = PostBookmark.objects.filter(user=user).select_related("post")
+
+    with open(os.path.join(user_dir, "bookmarks.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(bookmarks_to_json(bookmarks), ensure_ascii=False))
