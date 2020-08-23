@@ -55,4 +55,4 @@ class CodeModelTests(TestCase):
 
             # no exception raises
             code = Code.create_for_user(user=self.new_user, recipient=recipient)
-            self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH)
+            self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH) 

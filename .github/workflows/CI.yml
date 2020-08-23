@@ -5,22 +5,39 @@ on: [pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-        architecture: 'x64'
-    - name: Install requirements
-      run: |
-        pip install --no-cache-dir flake8
-    - name: run flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings.
-        flake8 . --count --exit-zero --statistics
+      - uses: actions/checkout@master
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+      - name: Install requirements
+        run: |
+          pip install --no-cache-dir flake8
+      - name: run flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings.
+          flake8 . --count --exit-zero --statistics
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build image
+        run: |
+          docker-compose -f docker-compose.test.yml build
+      - name: Run postgres
+        run: |
+          docker-compose -f docker-compose.test.yml up -d postgres
+      - name: Wait postgres
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '20s'
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.test.yml run --rm tests
 
 
   dockerize:

@@ -50,7 +50,8 @@ docker-migrate:
 build-frontend:  ## Runs webpack
 	npm run --prefix frontend build
 
-test-ci: lint  ## Run tests (intended for CI usage)
+test-ci:   ## Run tests (intended for CI usage)
+	python3 manage.py test
 
 psql:
 	psql -h localhost -p 5433 -d vas3k_club -U vas3k
