@@ -64,7 +64,7 @@ class Code(models.Model):
         ordering = ["-created_at"]
 
     @classmethod
-    def create_for_user(cls, user, recipient, length=6):
+    def create_for_user(cls, user: User, recipient: str, length=6):
         recipient = recipient.lower()
         last_codes_count = Code.objects.filter(
             recipient=recipient,
@@ -82,7 +82,7 @@ class Code(models.Model):
         )
 
     @classmethod
-    def check_code(cls, recipient, code):
+    def check_code(cls, recipient: str, code: str) -> User:
         recipient = recipient.lower()
         last_code = Code.objects.filter(recipient=recipient).order_by("-created_at").first()
         if not last_code:
