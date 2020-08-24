@@ -360,7 +360,7 @@
     }
 
     .text-body code {
-        font-family: monospace;
+        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
     }
 
     .text-body pre {
@@ -376,7 +376,7 @@
     }
 
     .text-body pre code {
-        font-family: monospace;
+        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
         display: block;
         padding: 20px 25px;
     }
