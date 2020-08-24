@@ -2,13 +2,26 @@ from datetime import datetime, timedelta
 
 import django
 from django.conf import settings
-from django.test import TestCase
+from django.test import Client, TestCase
+from django.urls import reverse
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
-from .models import Code
+from .models import Code, Session
 from club.exceptions import RateLimitException, InvalidCode
 from users.models.user import User
+
+
+class HelperClient(Client):
+
+    def authorise_user(self, user: User):
+        session = Session.create_for_user(user)
+        self.cookies["token"] = session.token
+        self.cookies["token"]["expires"] = datetime.utcnow() + timedelta(days=30)
+        self.cookies["token"]['httponly'] = True
+        self.cookies["token"]['secure'] = True
+
+        return self
 
 
 class CodeModelTests(TestCase):
@@ -123,3 +136,30 @@ class CodeModelTests(TestCase):
 
         with self.assertRaises(InvalidCode):
             Code.check_code(recipient=recipient, code=code.code)
+
+
+class ViewsAuthTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up data for the whole TestCase
+        cls.new_user = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4"
+        )
+
+    def setUp(self):
+        self.client = HelperClient()
+
+    def test_join_anonymous(self):
+        response = self.client.get(reverse('join'))
+        # check auth/join.html is rendered
+        self.assertContains(response=response, text="Всегда рады новым членам", status_code=200)
+
+    def test_join_authorised(self):
+        self.client.authorise_user(self.new_user)
+
+        response = self.client.get(reverse('join'))
+        self.assertRedirects(response=response, expected_url=f'/user/{self.new_user.slug}/',
+                             fetch_redirect_response=False)
