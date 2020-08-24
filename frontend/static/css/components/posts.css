@@ -360,7 +360,7 @@
     }
 
     .text-body code {
-        font-family: Ubuntu, monospace;
+        font-family: monospace;
     }
 
     .text-body pre {
@@ -376,7 +376,7 @@
     }
 
     .text-body pre code {
-        font-family: Ubuntu, monospace;
+        font-family: monospace;
         display: block;
         padding: 20px 25px;
     }
