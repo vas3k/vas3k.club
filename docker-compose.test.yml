@@ -16,8 +16,11 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+    volumes:
+      - .:/app:delegated
     depends_on:
       - postgres
+      - webpack
 
   postgres:
     image: postgres:11
@@ -28,3 +31,13 @@ services:
       - POSTGRES_DB=vas3k_club
     ports:
       - 5432
+
+  webpack:
+    build:
+      dockerfile: dev.frontend.dockerfile
+      context: .
+    command: npm run watch
+    restart: "no"
+    volumes:
+      - .:/app:delegated
+    working_dir: /app/frontend
