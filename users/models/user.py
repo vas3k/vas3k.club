@@ -129,15 +129,11 @@ class User(models.Model, ModelDiffMixin):
             "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
             "membership_started_at": self.membership_started_at.isoformat(),
             "membership_expires_at": self.membership_expires_at.isoformat(),
-            "membership_platform_type": self.membership_platform_type,
             "company": self.company,
             "position": self.position,
             "city": self.city,
             "country": self.country,
-            "bio": self.bio,
-            "contact": self.contact,
             "created_at": self.created_at.isoformat(),
-            "last_activity_at": self.last_activity_at.isoformat(),
         }
 
     def update_last_activity(self):
