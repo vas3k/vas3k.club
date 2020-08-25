@@ -1395,6 +1395,10 @@
         .compose {
             font-size: 80%;
         }
+
+        .compose-text {
+            display: none;
+        }
     }
 
     .compose-types {
