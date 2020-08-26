@@ -18,16 +18,16 @@ We're bullshitless community!
 
 2. Clone the repo
 
-```
-git clone https://github.com/vas3k/vas3k.club.git
-cd vas3k.club
-```
+    ```sh
+    $ git clone https://github.com/vas3k/vas3k.club.git
+    $ cd vas3k.club
+    ```
 
 3. Run
 
-```
-docker-compose up
-```
+    ```sh
+    $ docker-compose up
+    ```
 
 It will start the development server with all the necessary services. Wait till it starts and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/). Voila.
 
