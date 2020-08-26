@@ -50,10 +50,10 @@ To run telegram bot you have to:
 Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
 
 #### Local development
-Once you decided to code something in project you'll need to setup your environment. Here's how you can make it.
+Once you decided to code something in the project you'll need to setup your environment. Here's how you can make it.
 
 ##### Setup venv
-pipenv (у меня с ним было 2 проблемы)
+Through `pipenv` // todo: (у меня с ним было 2 проблемы)
  - сходу не получилось выпилить установку gdal либы (удаление из pipfile и pipfile.locka не помогло), чтобы оно не фейлило установку остальных пакетов
  - не получилось указать папку созданного из консоли pipenv'а в pycharm'е
 
@@ -72,9 +72,11 @@ If you don't need to work with Geo Data and installation of `gdal` package is fa
 ```
 
 ##### Setup postgres
-- locally 
-  First you'll need required to create db in your local postgress (in case you dont want to do this look section how to run postgres in docker). Here is brief instruction:
-  1. install postgresql (for macos https://postgresapp.com/ is easies start)
+###### locally
+  
+  First you'll need require to create db in your local postgress (in case you dont want to do this look section how to run postgres in docker). Here is brief instruction:
+  
+  1. Install postgresql (for macos https://postgresapp.com/ is easies start)
   2. After you install and run postgress create a project database:
         ```sh
         # create db
@@ -95,7 +97,8 @@ If you don't need to work with Geo Data and installation of `gdal` package is fa
         # check connection
         $ psql -d vas3k_club -U vas3k
         ```
-- through docker (TBD)
+###### through docker (TBD)
+  
   You can run postgress in docker ...
 
 ##### Setup frontend
