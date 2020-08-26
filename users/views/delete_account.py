@@ -9,7 +9,6 @@ from auth.helpers import auth_required
 from auth.models import Code, Session
 from bot.common import send_telegram_message, ADMIN_CHAT
 from club.exceptions import BadRequest, AccessDenied
-from gdpr.forget import delete_user_data
 from gdpr.models import DataRequests
 from notifications.email.users import send_delete_account_request_email, send_delete_account_confirm_email
 from payments.helpers import cancel_all_stripe_subscriptions
@@ -75,8 +74,12 @@ def confirm_delete_account(request, user_slug):
     # remove sessions
     Session.objects.filter(user=user).delete()
 
-    # schedule data cleanup
-    schedule(delete_user_data, user, next_run=datetime.utcnow() + settings.GDPR_DELETE_TIMEDELTA)
+    # schedule data cleanup task
+    schedule(
+        "gdpr.forget.delete_user_data",
+        user,
+        next_run=datetime.utcnow() + settings.GDPR_DELETE_TIMEDELTA
+    )
 
     # notify user
     async_task(

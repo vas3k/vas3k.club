@@ -32,8 +32,12 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         archive_name = f"{user.slug}-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}"
         archive_path = shutil.make_archive(os.path.join(save_path, archive_name), "zip", tmp_dir)
 
-        # remove archive after timeout
-        schedule(delete_data_archive, archive_path, next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA)
+        # schedule a task to remove archive after timeout
+        schedule(
+            "gdpr.archive.delete_data_archive",
+            archive_path,
+            next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA
+        )
 
         # notify the user
         send_data_archive_ready_email(
