@@ -185,7 +185,7 @@ class CommentVote(models.Model):
             comment=comment,
             defaults=dict(
                 post=comment.post,
-                ipaddress=parse_ip_address(request) if request else null,
+                ipaddress=parse_ip_address(request) if request else None,
                 useragent=useragent if useragent else parse_useragent(request),
             )
         )
