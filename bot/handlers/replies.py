@@ -7,8 +7,7 @@ from telegram import Update
 
 from bot.common import send_telegram_message, Chat
 from bot.handlers.common import get_bot_user
-from comments.models import Comment
-from posts.models import PostVote
+from comments.models import Comment, CommentVote
 
 COMMENT_URL_RE = re.compile(r"https?:[/|.|\w|\s|-]*/post/.+?/comment/([a-fA-F0-9\-]+)/")
 
@@ -53,10 +52,11 @@ def process_comment_reply(update: Update):
         )
         return
 
-    if text in ["+", "+1", "++", "👍"]:
-        is_vote_created = PostVote.upvote(
+    if text in ["+", "+1", "++", "👍", "up"]:
+        is_vote_created = CommentVote.upvote(
             user=user,
-            post=reply.post,
+            comment=reply,
+            useragent="TelegramBot (like TwitterBot)",
             request=None
         )
         send_telegram_message(

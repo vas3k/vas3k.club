@@ -281,7 +281,7 @@ class PostVote(models.Model):
         post_vote, is_vote_created = PostVote.objects.get_or_create(
             user=user,
             post=post,
-            defaults=dict() if not request else dict(
+            defaults=dict(
                 ipaddress=parse_ip_address(request),
                 useragent=parse_useragent(request),
             )
