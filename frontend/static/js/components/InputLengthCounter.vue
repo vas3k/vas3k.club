@@ -1,13 +1,13 @@
 <template>
     <span :class="{ bad: counter < minLength, good: counter >= minLength }">
         <slot></slot>
-        <span v-if="counter < minLength">💩</span>
-        <span v-if="counter >= minLength && counter < minLength + 100">🙂</span>
-        <span v-if="counter >= minLength + 100 && counter < minLength + 300">😎</span>
-        <span v-if="counter >= minLength + 300 && counter < minLength + 500">🚀</span>
-        <span v-if="counter >= minLength + 500">💎🚀👍</span>
+        <span v-if="counter < minLength" key="poop">💩</span>
+        <span v-if="counter >= minLength && counter < minLength + 100" key="ok">🙂</span>
+        <span v-if="counter >= minLength + 100 && counter < minLength + 300" key="cool">😎</span>
+        <span v-if="counter >= minLength + 300 && counter < minLength + 500" key="awesome">🚀</span>
+        <span v-if="counter >= minLength + 500" key="star">💎🚀👍</span>
         {{ counter !== null ? counter : '-' }}
-        <span v-if="counter <= minLength">&nbsp;&#47;&nbsp;{{ minLength }}</span>
+        <span v-if="counter < minLength">&nbsp;&#47;&nbsp;{{ minLength }}</span>
     </span>
 </template>
 
