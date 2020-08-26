@@ -49,6 +49,20 @@ To run telegram bot you have to:
 #### Docker-compose
 Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
 
+#### Local development
+Once you decided to code something in project you'll need to setup your environment. Here's how you can make it.
+
+##### Setup venv
+pipenv
+virtualenv
+##### Setup postgres
+- locally 
+- through docker (TBD)
+
+##### Setup frontend
+- locally 
+- through docker (TBD)
+
 ## 🛠 Tech stack
 
 👨‍💻 **TL;DR: Django, Postgres, Redis, Vue.js, Webpack**
