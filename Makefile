@@ -50,6 +50,9 @@ docker-migrate:
 build-frontend:  ## Runs webpack
 	npm run --prefix frontend build
 
+test:
+	pipenv run python3 manage.py test
+
 test-ci:   ## Run tests (intended for CI usage)
 	python3 manage.py test
 
