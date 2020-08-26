@@ -56,7 +56,10 @@ We try to keep our stack as simple and stupid as possible. Because we're not ver
 
 ## 🚢 Deployment
 
-We desperately need someone to set us up with an automatic deploy via Ansible and Github Actions (or Travis CI) on merging to master. Right now I have to push the button myself every time. ⚠️ 
+CI/CD has setuped via github-actions. Go further to the [.github](.github/) folder to see details.
+
+:point_up: We still need someone who will improve and optimize ci workflows
+
 
 ## 😍 Contributions
 
