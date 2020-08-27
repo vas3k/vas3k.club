@@ -21,7 +21,15 @@ services:
       - .:/app:delegated
     depends_on:
       - postgres
+      - redis
       - webpack
+
+  redis:
+    image: redis:alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379
 
   postgres:
     image: postgres:11
