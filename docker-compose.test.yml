@@ -8,7 +8,8 @@ services:
     command: make test-ci
     container_name: tests
     environment:
-      - DEBUG=true
+      - DEBUG=true  # regardless of this value django will override it on false
+      - TESTS_RUN=da
       - PYTHONUNBUFFERED=1
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=postgres
