@@ -46,6 +46,13 @@ class HelperClient(Client):
 
         return content_dict["is_authorised"]
 
+    def print_me(self):
+        response = self.get(reverse('debug_api_me'))
+        content = response.content.decode(response.charset)
+        content_dict = json.loads(content)
+
+        return content_dict
+
     @staticmethod
     def is_access_denied(response):
         return HelperClient.is_response_contain(response, text="Эта страница доступна только участникам Клуба")
@@ -226,3 +233,37 @@ class ViewsAuthTests(TestCase):
 
         response = self.client.delete(reverse('logout'))
         self.assertEqual(response.status_code, HttpResponseNotAllowed.status_code)
+
+    def test_debug_dev_login_unauthorised(self):
+        response = self.client.post(reverse('debug_dev_login'))
+        self.assertTrue(self.client.is_authorised())
+
+        me = self.client.print_me()
+        self.assertIsNotNone(me['id'])
+        self.assertEqual(me['email'], 'dev@dev.dev')
+        self.assertTrue(me['is_email_verified'])
+        self.assertTrue(me['slug'], 'dev')
+        self.assertEqual(me['moderation_status'], 'approved')
+        self.assertEqual(me['roles'], ['god'])
+        # todo: check created post (intro)
+
+    def test_debug_dev_login_authorised(self):
+        self.client.authorise()
+
+        response = self.client.post(reverse('debug_dev_login'))
+        self.assertTrue(self.client.is_authorised())
+
+        me = self.client.print_me()
+        self.assertTrue(me['slug'], self.new_user.slug)
+
+    def test_debug_random_login_unauthorised(self):
+        response = self.client.post(reverse('debug_random_login'))
+        self.assertTrue(self.client.is_authorised())
+
+        me = self.client.print_me()
+        self.assertIsNotNone(me['id'])
+        self.assertIn('@random.dev', me['email'])
+        self.assertTrue(me['is_email_verified'])
+        self.assertEqual(me['moderation_status'], 'approved')
+        self.assertEqual(me['roles'], [])
+        # todo: check created post (intro)
