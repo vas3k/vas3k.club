@@ -90,7 +90,7 @@ urlpatterns = [
     path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
-    path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment",),
+    path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment", ),
 
     path("bookmarks/", bookmarks, name="bookmarks"),
 
@@ -137,4 +137,13 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+
+# According to django doc: https://docs.djangoproject.com/en/3.1/topics/testing/overview/#other-test-conditions
+# Regardless of the value of the DEBUG setting in your configuration file, all Django tests run with DEBUG=False
+# so we use separate special var instead of settings.DEBUG
+if settings.TESTS_RUN:
+    from debug.api import api_me
+
+    urlpatterns.append(path("debug/me", api_me, name="debug_api_me"))

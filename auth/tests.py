@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
+import json
 
 import django
 from django.conf import settings
 from django.test import Client, TestCase
 from django.urls import reverse
+from django.http.response import HttpResponseNotAllowed
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
@@ -14,14 +16,39 @@ from users.models.user import User
 
 class HelperClient(Client):
 
-    def authorise_user(self, user: User):
-        session = Session.create_for_user(user)
+    def __init__(self, user):
+        super(HelperClient, self).__init__()
+        self.user = user
+
+    def authorise(self):
+        session = Session.create_for_user(self.user)
         self.cookies["token"] = session.token
         self.cookies["token"]["expires"] = datetime.utcnow() + timedelta(days=30)
         self.cookies["token"]['httponly'] = True
         self.cookies["token"]['secure'] = True
 
         return self
+
+    @staticmethod
+    def is_response_contain(response, text):
+        content = response.content
+        if not isinstance(text, bytes):
+            text = str(text)
+            content = content.decode(response.charset)
+
+        real_count = content.count(text)
+        return real_count != 0
+
+    def is_authorised(self) -> bool:
+        response = self.get(reverse('debug_api_me'))
+        content = response.content.decode(response.charset)
+        content_dict = json.loads(content)
+
+        return content_dict["is_authorised"]
+
+    @staticmethod
+    def is_access_denied(response):
+        return HelperClient.is_response_contain(response, text="Эта страница доступна только участникам Клуба")
 
 
 class CodeModelTests(TestCase):
@@ -150,7 +177,7 @@ class ViewsAuthTests(TestCase):
         )
 
     def setUp(self):
-        self.client = HelperClient()
+        self.client = HelperClient(user=self.new_user)
 
     def test_join_anonymous(self):
         response = self.client.get(reverse('join'))
@@ -158,8 +185,44 @@ class ViewsAuthTests(TestCase):
         self.assertContains(response=response, text="Всегда рады новым членам", status_code=200)
 
     def test_join_authorised(self):
-        self.client.authorise_user(self.new_user)
+        self.client.authorise()
 
         response = self.client.get(reverse('join'))
         self.assertRedirects(response=response, expected_url=f'/user/{self.new_user.slug}/',
                              fetch_redirect_response=False)
+
+    def test_login_anonymous(self):
+        response = self.client.get(reverse('login'))
+        # check auth/join.html is rendered
+        self.assertContains(response=response, text="Вход по почте или нику", status_code=200)
+
+    def test_login_authorised(self):
+        self.client.authorise()
+
+        response = self.client.get(reverse('login'))
+        self.assertRedirects(response=response, expected_url=f'/user/{self.new_user.slug}/',
+                             fetch_redirect_response=False)
+
+    def test_logout_success(self):
+        self.client.authorise()
+
+        response = self.client.post(reverse('logout'))
+
+        self.assertRedirects(response=response, expected_url=f'/', fetch_redirect_response=False)
+        self.assertFalse(self.client.is_authorised())
+
+    def test_logout_unauthorised(self):
+        response = self.client.post(reverse('logout'))
+        self.assertTrue(self.client.is_access_denied(response))
+
+    def test_logout_wrong_method(self):
+        self.client.authorise()
+
+        response = self.client.get(reverse('logout'))
+        self.assertEqual(response.status_code, HttpResponseNotAllowed.status_code)
+
+        response = self.client.put(reverse('logout'))
+        self.assertEqual(response.status_code, HttpResponseNotAllowed.status_code)
+
+        response = self.client.delete(reverse('logout'))
+        self.assertEqual(response.status_code, HttpResponseNotAllowed.status_code)
