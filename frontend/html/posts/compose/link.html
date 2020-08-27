@@ -59,6 +59,12 @@
                     {{ form.text }}
                     {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
                     <span class="form-row-help form-row-help-wide">☝️ Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
+
+                    <input-length-counter
+                        element="#{{ form.text.id_for_label }}"
+                        class="intro-form-counter"
+                        :min-length="{{ form.text.field.widget.attrs.minlength }}"
+                    />
                 </div>
 
                 <div class="form-row form-row-checkbox">
