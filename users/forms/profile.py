@@ -110,7 +110,15 @@ class ExpertiseForm(ModelForm):
         super().clean()
         custom_expertise = self.cleaned_data.get("expertise_custom")
         if custom_expertise:
-            self.cleaned_data["expertise"] = custom_expertise
+            self.cleaned_data["expertise"] = UserExpertise.make_custom_expertise_slug(custom_expertise)
 
         if not self.cleaned_data["expertise"]:
             raise ValidationError("Name is required")
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        custom_expertise = self.cleaned_data.get("expertise_custom")
+        if custom_expertise:
+            instance.name = custom_expertise
+        return instance
+
