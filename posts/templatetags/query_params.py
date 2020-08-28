@@ -1,4 +1,4 @@
-from urllib.parse import urlencode
+from copy import deepcopy
 
 from django import template
 
@@ -7,6 +7,6 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def append_query_param(context, **kwargs):
-    query_params = dict(context.request.GET.items())
+    query_params = deepcopy(context.request.GET)
     query_params.update(kwargs)
-    return "?" + urlencode(query_params)
+    return "?" + query_params.urlencode()
