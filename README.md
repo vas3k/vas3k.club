@@ -73,34 +73,46 @@ If you don't need to work with Geo Data and installation of `gdal` package is fa
 
 ##### Setup postgres
 ###### locally
+  Easies way is to run postgres is to run in docker, just run it with follow command:
+  ```sh
+  $ docker-compose -f docker-compose.yml up -d postgres
+  ```
+  When you need to connect to postgres use next params:
+  ```dotenv
+  POSTGRES_DB=vas3k_club
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_HOST=localhost
+  ```
+
+  <details><summary>In case you really want setup local postgres then go under cut...</summary>
+
+    Brief instruction:
   
-  First you'll need require to create db in your local postgress (in case you dont want to do this look section how to run postgres in docker). Here is brief instruction:
+    1. Install postgresql (for macos https://postgresapp.com/ is easies start)
+    2. After you install and run postgress create a project database:
+          ```sh
+          # create db
+          $ psql postgres
+          postgres=# createdb vas3k_club
+
+          # create user (user: vas3k, password: vas3k)
+          postgres=# createuser --interactive --pwpromp
+
+          # grant priviliges
+          postgres=# GRANT ALL PRIVILEGES ON DATABASE vas3k_club TO vas3k;
+          postgres=# \connect vas3k_club
+          postgres=# GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vas3k;
+          postgres=# GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public to vas3k;
+          postgres=# GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public to vas3k;
+          postgres=# \q
+
+          # check connection
+          $ psql -d vas3k_club -U vas3k
+          ```
+
+  </details>
   
-  1. Install postgresql (for macos https://postgresapp.com/ is easies start)
-  2. After you install and run postgress create a project database:
-        ```sh
-        # create db
-        $ psql postgres
-        postgres=# createdb vas3k_club
-
-        # create user (user: vas3k, password: vas3k)
-        postgres=# createuser --interactive --pwpromp
-
-        # grant priviliges
-        postgres=# GRANT ALL PRIVILEGES ON DATABASE vas3k_club TO vas3k;
-        postgres=# \connect vas3k_club
-        postgres=# GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vas3k;
-        postgres=# GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public to vas3k;
-        postgres=# GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public to vas3k;
-        postgres=# \q
-
-        # check connection
-        $ psql -d vas3k_club -U vas3k
-        ```
-###### through docker (TBD)
-  
-  You can run postgress in docker ...
-
 ##### Setup frontend
 ```sh
 $ cd frontend
