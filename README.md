@@ -152,8 +152,19 @@ Basically tests automatically runs in CI in opened PR, but if you want to run te
 4. pycharm *common edition*
    - Make sure you have set `Unittest` as default test runner: Settings --> Tools --> Python Integrated Tools --> Default Test Runner: Unittests
    ![Default Test Runner](_docs/images/pycharm-ce.settings.default-test-runner.png)
-   - In Run/Debug Configuration put `DJANGO_SETTINGS_MODULE=club.settings` in environment variables
-   ![Test template](_docs/images/pycharm-ce.debug-run-configurations.template.png)
+   - In Run/Debug Configuration put next environment variables
+     ```dotenv
+     DJANGO_SETTINGS_MODULE=club.settings;
+     PYTHONUNBUFFERED=1;
+     TESTS_RUN=da
+     POSTGRES_DB=vas3k_club
+     POSTGRES_USER=postgres
+     POSTGRES_PASSWORD=postgres
+     POSTGRES_HOST=localhost
+     REDIS_DB=0
+     REDIS_HOST=localhost
+     ```
+     ![Test template](_docs/images/pycharm-ce.debug-run-configurations.template.png)
    - For workaround *"django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."* add this lines to test file before importing models:
      ```python
      import django
@@ -167,7 +178,20 @@ Consider next required conditions for running tests :
 - venv 
   Don't forget to run it under configurred venv. Look [TBD section]() how to configure venv
 - postgres
-  Due to our tests make database queries (namely in django notation, model tests) the local database should be running. How to setup local db look [TBD section]() 
+  Due to our tests make database queries (model tests) the local postgres should be running. 
+  Run postgres:
+  ```sh
+  $ docker-compose -f docker-compose.yml up -d postgres
+  ```
+  Just in case run migrations
+  ```sh 
+  (venv) $ ./manage.py migrate
+  ```
+- redis
+  Run redis:
+  ```sh
+  $ docker-compose -f docker-compose.yml up -d redis
+  ```
 - builded frontend
   For [views tests](https://docs.djangoproject.com/en/3.1/intro/tutorial05/#a-test-for-a-view) its essential to build our frontend upfront. Hot to build front look [probably-TBD section](), for now just run next commands:
   ```sh
