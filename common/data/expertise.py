@@ -1,3 +1,5 @@
+from itertools import chain
+
 EXPERTISE = [
     ("Хард-скиллы", [
         ("frontend", "Фронтенд"),
@@ -47,3 +49,6 @@ EXPERTISE = [
         ("csharp", "C#"),
     ])
 ]
+
+
+EXPERTISE_FLAT_MAP = dict(chain.from_iterable(items for _, items in EXPERTISE))
