@@ -27,13 +27,11 @@
         </div>
     </div>
     <div class="comment-footer">
-        {% if me == comment.author and comment.is_deletable or me == comment.post.author or me.is_moderator %}
-            {% if not comment.is_deleted %}
-                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
-            {% endif %}
+        {% if not comment.is_deleted and me == comment.post.author or me.is_moderator or me == comment.author and comment.is_deletable %}
+            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
         {% endif %}
 
-        {% if comment.author == me and comment.is_editable or me.is_moderator %}
+        {% if me.is_moderator or me == comment.author and comment.is_editable %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 

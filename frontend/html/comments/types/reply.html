@@ -29,11 +29,11 @@
             {{ comment.created_at | cool_date }}
         </a>
 
-        {% if comment.author == me and comment.is_editable or me.is_moderator %}
+        {% if me.is_moderator or comment.author == me and comment.is_editable %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
-        {% if comment.author == me and comment.is_deletable or me.is_moderator %}
+        {% if me.is_moderator or comment.author == me and comment.is_deletable %}
             {% if not comment.is_deleted %}
                 <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
             {% endif %}
