@@ -1444,7 +1444,7 @@
         padding: 15px;
     }
 
-    .compose-form-text textarea {
+    .compose-form-text textarea.markdown-editor-full {
         padding: 20px;
         min-height: 500px;
         font-family: var(--serif-font);
