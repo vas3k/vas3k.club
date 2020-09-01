@@ -27,6 +27,15 @@ def network(request):
         "page_html": secret_page_html,
     })
 
+@require_GET
+def robots(request):
+    lines = [
+        "User-agent: *",
+        "Sitemap: https://vas3k.club/sitemap.xml",
+        "Host: https://vas3k.club",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
 @ajax_request
 def preview_md(request):
     if request.method != "POST":

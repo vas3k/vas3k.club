@@ -34,50 +34,6 @@ const imageUploadOptions = {
     },
 };
 
-const defaultMarkdownEditorOptions = {
-    autoDownloadFontAwesome: false,
-    spellChecker: false,
-    forceSync: true,
-    status: false,
-    inputStyle: "textarea",
-    tabSize: 4
-};
-
-/**
- * Initialize EasyMDE editor
- *
- * @param {Element} element
- * @param {EasyMDE.Options} options
- * @return {EasyMDE}
- */
-function createMarkdownEditor(element, options) {
-    const editor = new EasyMDE({
-        element,
-        ...defaultMarkdownEditorOptions,
-        ...options,
-    });
-
-    // overriding default CodeMirror shortcuts
-    editor.codemirror.addKeyMap({
-        'Home': 'goLineLeft', // move the cursor to the left side of the visual line it is on
-        'End': 'goLineRight', // move the cursor to the right side of the visual line it is on
-    });
-
-    // adding ability to fire events on the hidden element
-    if (element.dataset.listen) {
-        const events = element.dataset.listen.split(' ')
-        events.forEach(event => {
-            try {
-                editor.codemirror.on(event, e => e.getTextArea().dispatchEvent(new Event(event)))
-            } catch (e) {
-                console.warn('Invalid event provided', event)
-            }
-        });
-    }
-
-    return editor;
-}
-
 const App = {
     onCreate() {
         this.initializeThemeSwitcher();
