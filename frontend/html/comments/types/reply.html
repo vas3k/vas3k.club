@@ -33,10 +33,8 @@
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
-        {% if me.is_moderator or comment.author == me and comment.is_deletable %}
-            {% if not comment.is_deleted %}
-                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
-            {% endif %}
+        {% if not comment.is_deleted and me == comment.post.author or me.is_moderator or me == comment.author and comment.is_deletable %}
+            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
         {% endif %}
     </div>
 </div>
