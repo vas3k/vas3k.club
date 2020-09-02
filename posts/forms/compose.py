@@ -82,10 +82,13 @@ class PostLinkForm(PostForm):
         label="TL;DR",
         required=True,
         max_length=50000,
+        min_length=500,
         widget=forms.Textarea(
             attrs={
+                "minlength": 500,
                 "maxlength": 50000,
                 "class": "markdown-editor-full",
+                "data-listen": "keyup",
                 "placeholder": "Напишите TL;DR чтобы сэкономить другим время."
                                "\n\nКоротко расскажите о чем ссылка и почему все должны её прочитать. ",
             }
@@ -222,6 +225,7 @@ class PostProjectForm(PostForm):
                 "maxlength": 500000,
                 "minlength": 1500,
                 "class": "markdown-editor-full",
+                "data-listen": "keyup",
                 "placeholder": "Расскажите подробности о вашем проекте!"
                                "\n- В чем его суть и как он помогает людям?"
                                "\n- Как появилась идея?"

@@ -60,7 +60,19 @@ function createMarkdownEditor(element, options) {
     editor.codemirror.addKeyMap({
         'Home': 'goLineLeft', // move the cursor to the left side of the visual line it is on
         'End': 'goLineRight', // move the cursor to the right side of the visual line it is on
-    })
+    });
+
+    // adding ability to fire events on the hidden element
+    if (element.dataset.listen) {
+        const events = element.dataset.listen.split(' ')
+        events.forEach(event => {
+            try {
+                editor.codemirror.on(event, e => e.getTextArea().dispatchEvent(new Event(event)))
+            } catch (e) {
+                console.warn('Invalid event provided', event)
+            }
+        });
+    }
 
     return editor;
 }
