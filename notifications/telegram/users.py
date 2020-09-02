@@ -69,6 +69,14 @@ def notify_user_ping(user, message):
         )
 
 
+def notify_admin_user_ping(user, message):
+    if user.telegram_id:
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=f"🛎 <b>Юзера {user.slug} пинганули:</b> {message}"
+        )
+
+
 def notify_user_auth(user, code):
     if user.telegram_id:
         send_telegram_message(

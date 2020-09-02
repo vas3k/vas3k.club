@@ -35,14 +35,6 @@
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                {% if form.non_field_errors %}
-                    <div class="form-row form-row-center">
-                        {% for error in form.non_field_errors %}
-                            <span class="form-row-errors">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
                 <div class="form-row form-row-center">
                     {{ form.topic }}
                     {% if form.topic.errors %}<span class="form-row-errors">{{ form.topic.errors }}</span>{% endif %}
@@ -61,27 +53,20 @@
                     <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
                     {{ form.text }}
                     {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
-                    <span class="form-row-help form-row-help-wide">☝️ Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
+                    <span class="form-row-help form-row-help-wide">Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
                 </div>
 
-                <div class="form-row form-row-checkbox">
-                    {{ form.is_public }}
-                    <label for="{{ form.is_public.id_for_label }}">Батл виден в Большой Интернет?</label>
-                </div>
+                {% include "posts/compose/elements/post_settings.html" %}
 
-                {% if me.is_moderator %}
-                    <div class="form-row form-row-checkbox">
-                        {{ form.is_visible_on_main_page }}
-                        <label for="{{ form.is_visible_on_main_page.id_for_label }}">Пост виден на главной?</label>
+                {% if form.non_field_errors %}
+                    <div class="form-row form-row-center">
+                        {% for error in form.non_field_errors %}
+                            <span class="form-row-errors">{{ error }}</span>
+                        {% endfor %}
                     </div>
                 {% endif %}
 
-                <div class="form-row form-row-space-between">
-                    <button name="is_visible" value="false" class="button button-inverted">В черновики</button>
-                    <button type="submit" name="is_visible" value="true" class="button">
-                        {% if mode == "create" or not form.instance.is_visible %}Опубликовать{% else %}Сохранить изменения{% endif %}
-                    </button>
-                </div>
+                {% include "posts/compose/elements/save_buttons.html" %}
             </form>
         </div>
     </div>
