@@ -801,8 +801,34 @@
     }
 
 .search {
-    padding: 50px 20px 0;
+    padding: 30px 20px 0;
 }
+
+.search-filters {
+    padding: 0 20px 50px;
+}
+
+    .search-filters-types {
+        display: flex;
+        align-items: center;
+    }
+
+        .search-filters-type {
+            display: block;
+            font-size: 140%;
+            padding: 10px 20px;
+            text-decoration: none;
+        }
+
+            .search-filters-type-selected {
+                background-color: var(--opposite-bg-color);
+                color: var(--opposite-text-color);
+            }
+
+
+        .search-filters-ordering {
+            margin-left: auto;
+        }
 
 .search-results {
 }

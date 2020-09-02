@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load static %}
+{% load query_params %}
 {% load paginator %}
 {% load text_filters %}
 
@@ -23,6 +24,35 @@
 
 {% block content %}
     <div class="search">
+        <div class="search-filters">
+            <form action="." method="get" class="">
+                <input type="hidden" name="type" value="{{ type }}">
+                <input type="hidden" name="q" value="{{ query }}">
+
+                <div class="search-filters-types">
+                    <a href="{% append_query_param type="all" %}" class="search-filters-type {% if not type %}search-filters-type-selected{% endif %}">
+                        Везде
+                    </a>
+                    <a href="{% append_query_param type="post" %}" class="search-filters-type {% if type == "post" %}search-filters-type-selected{% endif %}">
+                        Посты
+                    </a>
+                    <a href="{% append_query_param type="comment" %}" class="search-filters-type {% if type == "comment" %}search-filters-type-selected{% endif %}">
+                        Комменты
+                    </a>
+                    <a href="{% append_query_param type="user" %}" class="search-filters-type {% if type == "user" %}search-filters-type-selected{% endif %}">
+                        Люди
+                    </a>
+
+                    <div class="search-filters-ordering">
+                        <select name="ordering" onchange="this.form.submit()">
+                            <option value="-rank" {% if ordering == "-rank" %}selected{% endif %}>по релевантности</option>
+                            <option value="-created_at" {% if ordering == "-created_at" %}selected{% endif %}>по свежести</option>
+                            <option value="created_at" {% if ordering == "created_at" %}selected{% endif %}>по старости</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="search-results">
             {% if results %}
                 <div class="search-results-title show-on-iphone">
@@ -35,14 +65,14 @@
                     {% if result.comment %}
                         {% include "comments/types/snippet.html" with comment=result.comment %}
                     {% endif %}
-                    {% if result.profile %}
-                        {% include "users/widgets/card.html" with user=result.profile %}
+                    {% if result.user %}
+                        {% include "users/widgets/card.html" with user=result.user %}
                     {% endif %}
                 {% endfor %}
             {% else %}
                 <div class="search-results-placeholder">
                     По запросу «{{ query }}» ничего не найдено...<br>
-                    <small>но мы и не Яндекс :(</small>
+                    <small>но и мы тут не Яндекс :(</small>
                 </div>
             {% endif %}
 
