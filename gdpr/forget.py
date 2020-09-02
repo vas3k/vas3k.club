@@ -1,6 +1,6 @@
 from auth.models import Session, Code
 from bookmarks.models import PostBookmark
-from posts.models import Post
+from posts.models.post import Post
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
 from users.models.tags import UserTag

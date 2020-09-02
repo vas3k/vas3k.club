@@ -3,7 +3,7 @@ import logging
 from django.core.management import BaseCommand
 
 from comments.models import Comment
-from posts.models import Post
+from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.user import User
 

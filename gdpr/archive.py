@@ -12,7 +12,7 @@ from comments.models import Comment
 from gdpr.serializers import post_to_json, post_to_md, user_to_json, comments_to_json, user_tags_to_json, \
     user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json
 from notifications.email.users import send_data_archive_ready_email
-from posts.models import Post
+from posts.models.post import Post
 from users.models.expertise import UserExpertise
 from users.models.tags import UserTag
 

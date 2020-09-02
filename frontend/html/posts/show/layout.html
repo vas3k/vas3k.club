@@ -74,6 +74,10 @@
             </div>
         {% endblock %}
 
+        {% if me and not post.is_commentable %}
+            {% include "posts/widgets/not_commentable.html" %}
+        {% endif %}
+
         {% if not me %}
             {% include "posts/widgets/join_the_club.html" %}
         {% endif %}

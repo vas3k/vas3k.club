@@ -9,7 +9,7 @@ from django.shortcuts import redirect, render
 from auth.helpers import auth_required, set_session_cookie
 from auth.models import Session
 from club.exceptions import AccessDenied
-from posts.models import Post
+from posts.models.post import Post
 from users.models.user import User
 from utils.strings import random_string
 

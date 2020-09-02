@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django_q.tasks import async_task
 
 from bot.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE
-from posts.models import Post
+from posts.models.post import Post
 
 
 @receiver(post_save, sender=Post)

@@ -5,7 +5,7 @@ from django_q.tasks import async_task
 from bot.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE
 from comments.models import Comment
 from common.regexp import USERNAME_RE
-from posts.models import PostSubscription
+from posts.models.subscriptions import PostSubscription
 from users.models.user import User
 
 

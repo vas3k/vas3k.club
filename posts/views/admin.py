@@ -6,7 +6,7 @@ from notifications.telegram.posts import announce_in_club_channel
 from posts.admin import do_post_admin_actions
 from posts.forms.admin import PostAdminForm, PostAnnounceForm
 from posts.helpers import extract_any_image
-from posts.models import Post
+from posts.models.post import Post
 
 
 @auth_required

@@ -10,7 +10,8 @@ from django.urls import reverse
 from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
-from posts.models import Post, PostVote
+from posts.models.post import Post
+from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
 from users.models.user import User
 

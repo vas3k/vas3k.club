@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404, render
 
 from auth.helpers import auth_required
 from common.pagination import paginate
-from posts.models import Post, Topic
+from posts.models.post import Post
+from posts.models.topics import Topic
 
 POST_TYPE_ALL = "all"
 

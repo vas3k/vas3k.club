@@ -3,7 +3,7 @@ import logging
 from django.core.management import BaseCommand
 
 from notifications.telegram.users import notify_profile_needs_review
-from posts.models import Post
+from posts.models.post import Post
 from users.models.user import User
 
 log = logging.getLogger(__name__)

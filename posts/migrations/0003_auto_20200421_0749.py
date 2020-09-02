@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='postvote',
             name='post',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='voters', to='posts.Post'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='voters', to='posts.models.post.Post'),
         ),
         migrations.CreateModel(
             name='PostView',
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('useragent', models.CharField(max_length=512, null=True)),
                 ('first_viewed_at', models.DateTimeField(auto_now_add=True)),
                 ('last_viewed_at', models.DateTimeField(auto_now=True)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='viewers', to='posts.Post')),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='viewers', to='posts.models.post.Post')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='post_views', to='users.User')),
             ],
             options={

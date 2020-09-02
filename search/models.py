@@ -8,7 +8,7 @@ from django.db import models
 from django.db.models import F
 
 from comments.models import Comment
-from posts.models import Post
+from posts.models.post import Post
 from users.models.user import User
 from users.models.tags import UserTag
 

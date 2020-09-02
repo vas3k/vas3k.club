@@ -9,7 +9,8 @@ from club.exceptions import AccessDenied, RateLimitException
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
-from posts.models import Post, PostView
+from posts.models.post import Post
+from posts.models.views import PostView
 from search.models import SearchIndex
 
 log = logging.getLogger(__name__)

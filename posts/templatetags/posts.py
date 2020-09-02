@@ -9,7 +9,7 @@ from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
 from common.regexp import FAVICON_RE
 from common.markdown.markdown import markdown_text, markdown_plain
 from posts.helpers import extract_any_image
-from posts.models import Post
+from posts.models.post import Post
 
 register = template.Library()
 

@@ -8,7 +8,7 @@ from simple_history.models import HistoricalRecords
 
 from club.exceptions import NotFound
 from common.request import parse_ip_address, parse_useragent
-from posts.models import Post
+from posts.models.post import Post
 from users.models.user import User
 
 

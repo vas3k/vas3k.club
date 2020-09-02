@@ -11,7 +11,7 @@ from django.urls import reverse
 from bot.common import send_telegram_message, CLUB_CHANNEL, render_html_message
 from landing.models import GodSettings
 from notifications.email.sender import send_club_email
-from posts.models import Post
+from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.user import User
 

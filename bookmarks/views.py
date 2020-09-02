@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from auth.helpers import auth_required
 from common.pagination import paginate
-from posts.models import Post
+from posts.models.post import Post
 
 
 @auth_required

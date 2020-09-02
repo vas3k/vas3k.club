@@ -1,7 +1,7 @@
 from django import forms
 
 from common.data.labels import LABELS
-from posts.models import Post
+from posts.models.post import Post
 
 
 class PostAdminForm(forms.Form):
@@ -47,6 +47,11 @@ class PostAdminForm(forms.Form):
 
     hide_on_main = forms.BooleanField(
         label="Скрыть с главной",
+        required=False,
+    )
+
+    close_comments = forms.BooleanField(
+        label="Закрыть комменты",
         required=False,
     )
 

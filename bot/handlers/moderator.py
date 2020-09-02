@@ -10,7 +10,7 @@ from notifications.email.users import send_welcome_drink, send_rejected_email
 from notifications.telegram.posts import notify_post_author_approved, notify_post_author_rejected, \
     announce_in_club_chats
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
-from posts.models import Post
+from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.user import User
 

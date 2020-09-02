@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from bookmarks.models import PostBookmark
 from comments.models import Comment
-from posts.models import Post
+from posts.models.post import Post
 from users.models.expertise import UserExpertise
 from users.models.tags import UserTag
 from users.models.user import User

@@ -46,4 +46,9 @@ def do_post_admin_actions(request, post, data):
         post.is_visible_on_main_page = False
         post.save()
 
+    # Close comments
+    if data["close_comments"]:
+        post.is_commentable = False
+        post.save()
+
     return redirect("show_post", post.type, post.slug)

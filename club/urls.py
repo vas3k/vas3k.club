@@ -15,7 +15,7 @@ from misc.views import achievements, network
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
 from posts.api import md_show_post, api_show_post
-from posts.models import Post
+from posts.models.post import Post
 from posts.rss import NewPostsRss
 from posts.sitemaps import sitemaps
 from posts.views.admin import admin_post, announce_post

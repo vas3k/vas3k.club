@@ -3,7 +3,7 @@ from django_q.tasks import async_task
 
 from auth.helpers import auth_required
 from notifications.telegram.users import notify_profile_needs_review
-from posts.models import Post
+from posts.models.post import Post
 from users.forms.intro import UserIntroForm
 from users.models.geo import Geo
 from users.models.user import User

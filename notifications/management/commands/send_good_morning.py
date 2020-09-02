@@ -6,7 +6,7 @@ from django.core.management import BaseCommand
 
 from bot.common import send_telegram_message, ADMIN_CHAT, render_html_message
 from common.data.greetings import DUMB_GREETINGS
-from posts.models import Post
+from posts.models.post import Post
 
 log = logging.getLogger(__name__)
 

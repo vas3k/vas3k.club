@@ -1,4 +1,4 @@
-from posts.models import Topic
+from posts.models.topics import Topic
 
 
 def topics(request):

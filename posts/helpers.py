@@ -1,6 +1,6 @@
 import re
 
-from posts.models import Post
+from posts.models.post import Post
 
 
 MARKDOWN_IMAGES_RE = re.compile(r"!\[*\]\((.+)\)")

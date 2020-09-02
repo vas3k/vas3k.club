@@ -1,6 +1,6 @@
 from django.contrib.syndication.views import Feed
 
-from posts.models import Post
+from posts.models.post import Post
 
 
 class NewPostsRss(Feed):

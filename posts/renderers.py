@@ -4,8 +4,10 @@ from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment
-from posts.models import Post, PostSubscription, PostVote
+from posts.models.post import Post
 from bookmarks.models import PostBookmark
+from posts.models.subscriptions import PostSubscription
+from posts.models.votes import PostVote
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 

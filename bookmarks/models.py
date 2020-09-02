@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from django.db import models
 
-from posts.models import Post
+from posts.models.post import Post
 from users.models.user import User
 
 

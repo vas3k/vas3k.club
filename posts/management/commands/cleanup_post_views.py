@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.core.management import BaseCommand
 
-from posts.models import PostView
+from posts.models.views import PostView
 
 log = logging.getLogger(__name__)
 

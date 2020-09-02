@@ -6,7 +6,7 @@ from auth.helpers import auth_required
 from comments.models import Comment
 from common.pagination import paginate
 from common.request import ajax_request
-from posts.models import Post
+from posts.models.post import Post
 from search.models import SearchIndex
 from users.forms.profile import ExpertiseForm
 from users.models.achievements import UserAchievement
