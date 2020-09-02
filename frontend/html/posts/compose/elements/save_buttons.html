@@ -1,17 +1,17 @@
 <div class="form-row form-row-space-between">
     <button name="is_visible" value="false" class="button button-inverted">
-        {% if form.instance.is_visible %}
-            Перенести в черновики
-        {% else %}
+        {% if mode == "create" or not form.instance.is_visible %}
             Сохранить черновик
+        {% else %}
+            Перенести в черновики
         {% endif %}
     </button>
 
     <button type="submit" name="is_visible" value="true" class="button">
-        {% if form.instance.is_visible %}
-            Сохранить изменения
-        {% else %}
+        {% if mode == "create" or not form.instance.is_visible %}
             Опубликовать
+        {% else %}
+            Сохранить изменения
         {% endif %}
     </button>
 </div>
