@@ -72,9 +72,11 @@ new Vue({
                 textarea.focus(); // on mobile
                 textarea.value = value;
                 const codeMirrorEditor = textarea.nextElementSibling.CodeMirror;
-                codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
-                codeMirrorEditor.focus();
-                codeMirrorEditor.setCursor(codeMirrorEditor.lineCount(), 0);
+                if (codeMirrorEditor !== undefined) {
+                    codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
+                    codeMirrorEditor.focus();
+                    codeMirrorEditor.setCursor(codeMirrorEditor.lineCount(), 0);
+                }
             }
 
             // Add username to reply
