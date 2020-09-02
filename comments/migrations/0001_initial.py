@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('is_deleted', models.BooleanField(default=False)),
                 ('is_pinned', models.BooleanField(default=False)),
                 ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='comments', to='users.User')),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='posts.models.post.Post')),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='posts.Post')),
                 ('reply_to', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='replies', to='comments.Comment')),
             ],
             options={
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
                 ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='users.User')),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='users.User')),
-                ('post', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='posts.models.post.Post')),
+                ('post', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='posts.Post')),
                 ('reply_to', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='comments.Comment')),
             ],
             options={
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='votes', to='comments.Comment')),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_votes', to='posts.models.post.Post')),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_votes', to='posts.Post')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='comment_votes', to='users.User')),
             ],
             options={
