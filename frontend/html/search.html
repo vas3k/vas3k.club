@@ -27,7 +27,10 @@
         <div class="search-filters">
             <form action="." method="get" class="">
                 <input type="hidden" name="type" value="{{ type }}">
-                <input type="hidden" name="q" value="{{ query }}">
+
+                <div class="search-query show-on-iphone">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Поиск..." class="search-query-input">
+                </div>
 
                 <div class="search-filters-types">
                     <a href="{% append_query_param type="all" %}" class="search-filters-type {% if not type %}search-filters-type-selected{% endif %}">
@@ -55,9 +58,6 @@
         </div>
         <div class="search-results">
             {% if results %}
-                <div class="search-results-title show-on-iphone">
-                    Поиск: «{{ query }}»
-                </div>
                 {% for result in results %}
                     {% if result.post %}
                         {% include "posts/items/items.html" with post=result.post upvote_disabled=True %}
