@@ -156,7 +156,7 @@ def stripe_webhook(request):
         payment = Payment.create(
             reference=invoice["id"],
             user=user,
-            product=find_by_price_id(invoice["lines"][0]["plan"]["id"]),
+            product=find_by_price_id(invoice["lines"]["data"][0]["plan"]["id"]),
             data=invoice,
             status=Payment.STATUS_SUCCESS,
         )

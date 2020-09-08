@@ -1,9 +1,11 @@
+import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
 
 from users.models.user import User
 
+log = logging.getLogger(__name__)
 
 IS_TEST_STRIPE = settings.STRIPE_API_KEY.startswith("sk_test")
 
@@ -131,4 +133,5 @@ def find_by_price_id(price_id):
     for product in PRODUCTS.values():
         if product["stripe_id"] == price_id:
             return product
+    log.error(f"Can't find the product: {price_id}")
     return None
