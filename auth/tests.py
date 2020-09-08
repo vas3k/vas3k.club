@@ -267,3 +267,63 @@ class ViewsAuthTests(TestCase):
         self.assertEqual(me['moderation_status'], 'approved')
         self.assertEqual(me['roles'], [])
         # todo: check created post (intro)
+
+
+class TestEmailLoginView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up data for the whole TestCase
+        cls.new_user = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4"
+        )
+
+    def setUp(self):
+        self.client = HelperClient(user=self.new_user)
+
+    # @patch('bot.bot')
+    def test_login_by_email_positive(self):
+
+        #with patch('bot.common.send_telegram_message') as bot_mock:
+        # with patch('auth.views.email.send_auth_email') as bot_mock:
+        with patch('notifications.email.users.send_club_email') as bot_mock:
+            response = self.client.post(reverse('email_login'),
+                                        data={'email_or_login': self.new_user.email, })
+
+            self.assertContains(response=response, text="Вам отправлен код!", status_code=200)
+            issued_code = Code.objects.filter(recipient=self.new_user.email)
+            self.assertIsNotNone(issued_code)
+
+            bot_mock.assert_called_with(1)
+            # todo: check email was sent
+            # todo: check notify wast sent
+
+        self.assertTrue(False)
+
+    def test_login_user_not_exist(self):
+        response = self.client.post(reverse('email_login'),
+                                    data={'email_or_login': 'not-existed@user.com', })
+        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=200)
+
+    def test_secret_hash_login_blabla(self):
+        self.assertTrue(False)
+
+    def test_email_login_missed_input_data(self):
+        response = self.client.post(reverse('email_login'), data={})
+        self.assertRedirects(response=response, expected_url=f'/auth/login/',
+                             fetch_redirect_response=False)
+
+    def test_email_login_wrong_method(self):
+        response = self.client.get(reverse('email_login'))
+        self.assertRedirects(response=response, expected_url=f'/auth/login/',
+                             fetch_redirect_response=False)
+
+        response = self.client.put(reverse('email_login'))
+        self.assertRedirects(response=response, expected_url=f'/auth/login/',
+                             fetch_redirect_response=False)
+
+        response = self.client.delete(reverse('email_login'))
+        self.assertRedirects(response=response, expected_url=f'/auth/login/',
+                             fetch_redirect_response=False)
