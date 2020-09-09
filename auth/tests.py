@@ -3,9 +3,13 @@ import json
 
 import django
 from django.conf import settings
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.http.response import HttpResponseNotAllowed
+from django_q.brokers import Broker
+from django_q import brokers
+from django_q.conf import Conf
+from django_q.signing import SignedPackage
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
@@ -269,6 +273,51 @@ class ViewsAuthTests(TestCase):
         # todo: check created post (intro)
 
 
+class SingletonDecorator:
+    def __init__(self, klass):
+        self.klass = klass
+        self.instance = None
+
+    def __call__(self, *args, **kwds):
+        if self.instance == None:
+            self.instance = self.klass(*args, **kwds)
+        return self.instance
+
+
+@SingletonDecorator
+class CustomBroker(Broker):
+    tasks = []
+
+    def __init__(self, list_key: str = Conf.PREFIX):
+        super().__init__(list_key)
+
+    def info(self):
+        return 'My Custom Broker'
+
+    # def async_task(self, task):
+    #     self.enqueue(task)
+
+    def enqueue(self, task):
+        print("custom: put to queue")
+        self.tasks.append(task)
+
+    def dequeue(self):
+        print("custom: pop from queue")
+        if self.tasks:
+            return self.tasks.pop()
+        return None
+
+    def purge_queue(self):
+        self.tasks = []
+
+    def ping(self) -> bool:
+        print("custom: ping")
+        return True
+
+    def queue_size(self):
+        return len(self.tasks)
+
+
 class TestEmailLoginView(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -280,27 +329,39 @@ class TestEmailLoginView(TestCase):
             slug="ujlbu4"
         )
 
+        cls.broker = brokers.get_broker()
+        cls.assertTrue(cls.broker.ping(), 'broker is not available')
+
     def setUp(self):
         self.client = HelperClient(user=self.new_user)
 
-    # @patch('bot.bot')
+        self.broker.purge_queue()
+
     def test_login_by_email_positive(self):
+        # when
+        response = self.client.post(reverse('email_login'),
+                                    data={'email_or_login': self.new_user.email, })
 
-        #with patch('bot.common.send_telegram_message') as bot_mock:
-        # with patch('auth.views.email.send_auth_email') as bot_mock:
-        with patch('notifications.email.users.send_club_email') as bot_mock:
-            response = self.client.post(reverse('email_login'),
-                                        data={'email_or_login': self.new_user.email, })
+        # then
+        self.assertContains(response=response, text="Вам отправлен код!", status_code=200)
+        issued_code = Code.objects.filter(recipient=self.new_user.email).get()
+        self.assertIsNotNone(issued_code)
 
-            self.assertContains(response=response, text="Вам отправлен код!", status_code=200)
-            issued_code = Code.objects.filter(recipient=self.new_user.email)
-            self.assertIsNotNone(issued_code)
+        # check email was sent
+        packages = self.broker.dequeue()
+        task_signed = packages[0][1]
+        task = SignedPackage.loads(task_signed)
+        self.assertEqual(task['func'].__name__, 'send_auth_email')
+        self.assertEqual(task['args'][0].id, self.new_user.id)
+        self.assertEqual(task['args'][1].id, issued_code.id)
 
-            bot_mock.assert_called_with(1)
-            # todo: check email was sent
-            # todo: check notify wast sent
-
-        self.assertTrue(False)
+        # check notify wast sent
+        packages = self.broker.dequeue()
+        task_signed = packages[0][1]
+        task = SignedPackage.loads(task_signed)
+        self.assertEqual(task['func'].__name__, 'notify_user_auth')
+        self.assertEqual(task['args'][0].id, self.new_user.id)
+        self.assertEqual(task['args'][1].id, issued_code.id)
 
     def test_login_user_not_exist(self):
         response = self.client.post(reverse('email_login'),
