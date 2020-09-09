@@ -74,13 +74,6 @@ def confirm_delete_account(request, user_slug):
     # remove sessions
     Session.objects.filter(user=user).delete()
 
-    # schedule data cleanup task
-    schedule(
-        "gdpr.forget.delete_user_data",
-        user,
-        next_run=datetime.utcnow() + settings.GDPR_DELETE_TIMEDELTA
-    )
-
     # notify user
     async_task(
         send_delete_account_confirm_email,
@@ -93,5 +86,7 @@ def confirm_delete_account(request, user_slug):
         chat=ADMIN_CHAT,
         text=f"💀 Юзер удалился: {settings.APP_HOST}/user/{user.slug}/",
     )
+
+    # an actual deletion will be done in a cron task ("manage.py delete_users")
 
     return render(request, "users/messages/delete_account_confirmed.html",)
