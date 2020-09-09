@@ -8,7 +8,7 @@
             </span>
             <span class="user-info">
                 <span>
-                    <span class="user-name">{{ comment.author.full_name }}</span><span class="user-position">, {{ comment.author.position }}</span>
+                    <span class="user-name">{{ comment.author.full_name }}</span>{% if comment.author.position %}<span class="user-position">, {{ comment.author.position }}</span>{% endif %}
                     {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
                 </span>
             </span>

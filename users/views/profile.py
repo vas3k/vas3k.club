@@ -23,10 +23,11 @@ def profile(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
     if not request.me.is_moderator:
-        # hide unverified users
-        if user.moderation_status != User.MODERATION_STATUS_APPROVED:
+        # hide unverified and deleted users
+        if user.moderation_status != User.MODERATION_STATUS_APPROVED or user.deleted_at:
             raise Http404()
 
+    # handle auth redirect
     if user.id == request.me.id:
         goto = request.GET.get("goto")
         if goto and goto.startswith(settings.APP_HOST):
