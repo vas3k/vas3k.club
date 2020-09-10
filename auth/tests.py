@@ -5,7 +5,7 @@ import django
 from django.conf import settings
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from django.http.response import HttpResponseNotAllowed
+from django.http.response import HttpResponseNotAllowed, HttpResponseBadRequest
 from django_q.brokers import Broker
 from django_q import brokers
 from django_q.conf import Conf
@@ -67,7 +67,7 @@ class CodeModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up data for the whole TestCase
-        cls.new_user = User.objects.create(
+        cls.new_user: User = User.objects.create(
             email="testemail@xx.com",
             membership_started_at=datetime.now() - timedelta(days=5),
             membership_expires_at=datetime.now() + timedelta(days=5),
@@ -181,7 +181,7 @@ class ViewsAuthTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up data for the whole TestCase
-        cls.new_user = User.objects.create(
+        cls.new_user: User = User.objects.create(
             email="testemail@xx.com",
             membership_started_at=datetime.now() - timedelta(days=5),
             membership_expires_at=datetime.now() + timedelta(days=5),
@@ -323,7 +323,7 @@ class TestEmailLoginView(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Set up data for the whole TestCase
-        cls.new_user = User.objects.create(
+        cls.new_user: User = User.objects.create(
             email="testemail@xx.com",
             membership_started_at=datetime.now() - timedelta(days=5),
             membership_expires_at=datetime.now() + timedelta(days=5),
@@ -407,3 +407,48 @@ class TestEmailLoginView(TestCase):
         response = self.client.delete(reverse('email_login'))
         self.assertRedirects(response=response, expected_url=f'/auth/login/',
                              fetch_redirect_response=False)
+
+
+class TestEmailLoginCodeView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up data for the whole TestCase
+        cls.new_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4"
+        )
+        cls.code = Code.create_for_user(user=cls.new_user, recipient=cls.new_user.email)
+
+    def setUp(self):
+        self.client = HelperClient(user=self.new_user)
+
+    def test_correct_code(self):
+        # given
+        # email is not verified yet
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
+
+        # when
+        response = self.client.get(reverse('email_login_code'),
+                                   data={'email': self.new_user.email, 'code': self.code.code})
+
+        self.assertRedirects(response=response, expected_url=f'/user/{self.new_user.slug}/',
+                             fetch_redirect_response=False)
+        self.assertTrue(self.client.is_authorised())
+        self.assertTrue(User.objects.get(id=self.new_user.id).is_email_verified)
+
+    def test_empty_params(self):
+        response = self.client.get(reverse('email_login_code'), data={})
+        self.assertRedirects(response=response, expected_url=f'/auth/login/',
+                             fetch_redirect_response=False)
+        self.assertFalse(self.client.is_authorised())
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
+
+    def test_wrong_code(self):
+        response = self.client.get(reverse('email_login_code'),
+                                   data={'email': self.new_user.email, 'code': 'intentionally-wrong-code'})
+
+        self.assertEqual(response.status_code, HttpResponseBadRequest.status_code)
+        self.assertFalse(self.client.is_authorised())
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
