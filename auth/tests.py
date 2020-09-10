@@ -3,12 +3,10 @@ import json
 
 import django
 from django.conf import settings
-from django.test import Client, TestCase, override_settings
+from django.test import Client, TestCase
 from django.urls import reverse
 from django.http.response import HttpResponseNotAllowed, HttpResponseBadRequest
-from django_q.brokers import Broker
 from django_q import brokers
-from django_q.conf import Conf
 from django_q.signing import SignedPackage
 from unittest import skip
 
@@ -272,51 +270,6 @@ class ViewsAuthTests(TestCase):
         self.assertEqual(me['moderation_status'], 'approved')
         self.assertEqual(me['roles'], [])
         # todo: check created post (intro)
-
-
-class SingletonDecorator:
-    def __init__(self, klass):
-        self.klass = klass
-        self.instance = None
-
-    def __call__(self, *args, **kwds):
-        if self.instance == None:
-            self.instance = self.klass(*args, **kwds)
-        return self.instance
-
-
-@SingletonDecorator
-class CustomBroker(Broker):
-    tasks = []
-
-    def __init__(self, list_key: str = Conf.PREFIX):
-        super().__init__(list_key)
-
-    def info(self):
-        return 'My Custom Broker'
-
-    # def async_task(self, task):
-    #     self.enqueue(task)
-
-    def enqueue(self, task):
-        print("custom: put to queue")
-        self.tasks.append(task)
-
-    def dequeue(self):
-        print("custom: pop from queue")
-        if self.tasks:
-            return self.tasks.pop()
-        return None
-
-    def purge_queue(self):
-        self.tasks = []
-
-    def ping(self) -> bool:
-        print("custom: ping")
-        return True
-
-    def queue_size(self):
-        return len(self.tasks)
 
 
 class TestEmailLoginView(TestCase):
