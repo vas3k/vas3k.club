@@ -10,6 +10,7 @@ from django_q.brokers import Broker
 from django_q import brokers
 from django_q.conf import Conf
 from django_q.signing import SignedPackage
+from unittest import skip
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
@@ -363,12 +364,30 @@ class TestEmailLoginView(TestCase):
         self.assertEqual(task['args'][0].id, self.new_user.id)
         self.assertEqual(task['args'][1].id, issued_code.id)
 
+        # it's not yet authorised, only code was sent
+        self.assertFalse(self.client.is_authorised())
+
     def test_login_user_not_exist(self):
         response = self.client.post(reverse('email_login'),
                                     data={'email_or_login': 'not-existed@user.com', })
         self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=200)
 
-    def test_secret_hash_login_blabla(self):
+    def test_secret_hash_login(self):
+        response = self.client.post(reverse('email_login'),
+                                    data={'email_or_login': self.new_user.secret_auth_code, })
+
+        self.assertRedirects(response=response, expected_url=f'/user/{self.new_user.slug}/',
+                             fetch_redirect_response=False)
+        self.assertTrue(self.client.is_authorised())
+
+    def test_secret_hash_user_not_exist(self):
+        response = self.client.post(reverse('email_login'),
+                                    data={'email_or_login': 'not-existed@user.com|-xxx', })
+        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=200)
+
+    @skip("todo")
+    def test_secret_hash_cancel_user_deletion(self):
+        # todo: mark user as deleted
         self.assertTrue(False)
 
     def test_email_login_missed_input_data(self):
