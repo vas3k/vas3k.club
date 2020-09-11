@@ -472,3 +472,14 @@ class TestExternalLoginView(TestCase):
                              fetch_redirect_response=False)
 
         self.assertFalse(self.client.is_authorised())
+
+
+class TestPatreonLoginView(TestCase):
+    def test_positive(self):
+        with self.settings(PATREON_CLIENT_ID="x-client_id",
+                           PATREON_REDIRECT_URL="http://x-redirect_url.com",
+                           PATREON_SCOPE="x-scope"):
+            response = self.client.get(reverse('patreon_login'), )
+            self.assertRedirects(response=response,
+                                 expected_url='https://www.patreon.com/oauth2/authorize?client_id=x-client_id&redirect_uri=http%3A%2F%2Fx-redirect_url.com&response_type=code&scope=x-scope',
+                                 fetch_redirect_response=False)
