@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import json
+from urllib.parse import urljoin
 
 import django
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.urls import reverse
 from django.http.response import HttpResponseNotAllowed, HttpResponseBadRequest
 from django_q import brokers
 from django_q.signing import SignedPackage
+import jwt
 from unittest import skip
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
@@ -19,11 +21,14 @@ from users.models.user import User
 
 class HelperClient(Client):
 
-    def __init__(self, user):
+    def __init__(self, user=None):
         super(HelperClient, self).__init__()
         self.user = user
 
     def authorise(self):
+        if not self.user:
+            raise ValueError('Missed `user` property to use this method')
+
         session = Session.create_for_user(self.user)
         self.cookies["token"] = session.token
         self.cookies["token"]["expires"] = datetime.utcnow() + timedelta(days=30)
@@ -405,3 +410,65 @@ class TestEmailLoginCodeView(TestCase):
         self.assertEqual(response.status_code, HttpResponseBadRequest.status_code)
         self.assertFalse(self.client.is_authorised())
         self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
+
+
+class TestExternalLoginView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up data for the whole TestCase
+        cls.new_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4"
+        )
+
+    def setUp(self):
+        self.client = HelperClient()
+
+    def test_successful_flat_redirect(self):
+        # given
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
+
+        # when
+        with self.settings(JWT_SECRET="xxx"):
+            response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+
+        # then
+        self.assertRegex(text=urljoin(response.request['PATH_INFO'], response.url),
+                         expected_regex='\/auth\/external\/some-page\?jwt=.*')
+
+        # check jwt
+        url_params = response.url.split("?")[1]
+        jwt_str = url_params.split("=")[1]
+        payload = jwt.decode(jwt_str, key="xxx", verify=True)
+        self.assertIsNotNone(payload)
+        self.assertEqual(payload['user_slug'], self.new_user.slug)
+        self.assertEqual(payload['user_name'], self.new_user.full_name)
+        self.assertIsNotNone(payload['exp'])
+
+    def test_successful_redirect_with_query_params(self):
+        # given
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
+
+        # when
+        with self.settings(JWT_SECRET="xxx"):
+            response = self.client.get(reverse('external_login'), data={'redirect': 'some-page?param1=value1'})
+
+        # then
+        self.assertRegex(text=urljoin(response.request['PATH_INFO'], response.url),
+                         expected_regex='\/auth\/external\/some-page\?param1=value1&jwt=.*')
+
+    def test_param_redirect_absent(self):
+        response = self.client.get(reverse('external_login'))
+        self.assertContains(response=response, text="Нужен параметр ?redirect", status_code=200)
+
+    def test_user_is_unauthorised(self):
+        response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+        self.assertRedirects(response=response,
+                             expected_url='/auth/login/?goto=%2Fauth%2Fexternal%2F%3Fredirect%3Dsome-page',
+                             fetch_redirect_response=False)
+
+        self.assertFalse(self.client.is_authorised())
