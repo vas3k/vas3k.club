@@ -388,8 +388,6 @@ class ViewPatreonOauthCallbackTests(TestCase):
     def setUp(self):
         self.client = HelperClient()
 
-        self.patreon_member_email = "platform@patreon.com"
-        self.patreon_member_id = "12345"
         self.stub_patreon_response_oauth_token = {
             "access_token": "xxx-access-token",
             "refresh_token": "xxx-refresh-token",
