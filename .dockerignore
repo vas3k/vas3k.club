@@ -1,0 +1,11 @@
+.git/
+node_modules/
+
+.editorconfig
+.gitignore
+
+CHANGELOG.md
+README.md
+
+*.tmp
+*.log

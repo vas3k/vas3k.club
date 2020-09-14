@@ -64,13 +64,13 @@ class Code(models.Model):
         ordering = ["-created_at"]
 
     @classmethod
-    def create_for_user(cls, user, recipient, length=6):
+    def create_for_user(cls, user: User, recipient: str, length=6):
         recipient = recipient.lower()
         last_codes_count = Code.objects.filter(
             recipient=recipient,
             created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
         ).count()
-        if last_codes_count > settings.AUTH_MAX_CODE_COUNT:
+        if last_codes_count >= settings.AUTH_MAX_CODE_COUNT:
             raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
 
         return Code.objects.create(
@@ -82,7 +82,7 @@ class Code(models.Model):
         )
 
     @classmethod
-    def check_code(cls, recipient, code):
+    def check_code(cls, recipient: str, code: str) -> User:
         recipient = recipient.lower()
         last_code = Code.objects.filter(recipient=recipient).order_by("-created_at").first()
         if not last_code:

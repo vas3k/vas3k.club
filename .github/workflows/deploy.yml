@@ -10,10 +10,10 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Pull new code and restart server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.PRODUCTION_SSH_HOST }}
-        username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
-        key: ${{ secrets.PRODUCTION_SSH_KEY }}
-        script: cd vas3k.club && git pull && make redeploy
+      - name: Pull new code and restart server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: cd vas3k.club && git pull && make redeploy

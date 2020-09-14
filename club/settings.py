@@ -13,6 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
 DEBUG = (os.getenv("DEBUG") == "true")  # SECURITY WARNING: don't run with debug turned on in production!
+TESTS_RUN = True if os.getenv("TESTS_RUN") else False
 
 ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
@@ -157,7 +158,7 @@ LAUNCH_DATE = datetime(2020, 4, 13)
 AUTH_CODE_LENGTH = 6
 AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=15)
 AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=1)
-AUTH_MAX_CODE_COUNT = 4
+AUTH_MAX_CODE_COUNT = 5
 AUTH_MAX_CODE_ATTEMPTS = 3
 
 DEFAULT_PAGE_SIZE = 70

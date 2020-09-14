@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  tests:
+    build:
+      dockerfile: dev.dockerfile
+      context: .
+    command: make test-ci
+    container_name: tests
+    environment:
+      - DEBUG=true  # regardless of this value django will override it on false
+      - TESTS_RUN=da
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    volumes:
+      - .:/app:delegated
+    depends_on:
+      - postgres
+      - redis
+      - webpack
+
+  redis:
+    image: redis:alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379
+
+  postgres:
+    image: postgres:11
+    container_name: club_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=vas3k_club
+    ports:
+      - 5432
+
+  webpack:
+    build:
+      dockerfile: dev.frontend.dockerfile
+      context: .
+    command: npm run watch
+    restart: "no"
+    volumes:
+      - .:/app:delegated
+    working_dir: /app/frontend

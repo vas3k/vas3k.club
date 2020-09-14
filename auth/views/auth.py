@@ -42,7 +42,7 @@ def logout(request):
 
 
 def debug_dev_login(request):
-    if not settings.DEBUG:
+    if not (settings.DEBUG or settings.TESTS_RUN):
         raise AccessDenied(title="Эта фича доступна только при DEBUG=true")
 
     user, is_created = User.objects.get_or_create(
@@ -74,7 +74,7 @@ def debug_dev_login(request):
 
 
 def debug_random_login(request):
-    if not settings.DEBUG:
+    if not (settings.DEBUG or settings.TESTS_RUN):
         raise AccessDenied(title="Эта фича доступна только при DEBUG=true")
 
     slug = "random_" + random_string()
