@@ -64,9 +64,9 @@ Basically tests automatically runs in CI in opened PR, but if you want to run te
    Use `django tests` template out of the box
 4. pycharm *common edition*
    - Make sure you have set `Unittest` as default test runner: Settings --> Tools --> Python Integrated Tools --> Default Test Runner: Unittests
-   ![Default Test Runner](docs/images/pycharm-ce.settings.default-test-runner.png)
+   ![Default Test Runner](images/pycharm-ce.settings.default-test-runner.png)
    - In Run/Debug Configuration put environment variables from [prerequisites](#Prerequisites)
-     ![Test template](docs/images/pycharm-ce.debug-run-configurations.template.png)
+     ![Test template](images/pycharm-ce.debug-run-configurations.template.png)
    - For workaround *"django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."* add this lines to test file before importing models:
      ```python
      import django
