@@ -46,11 +46,11 @@ Auto-reloading for backend and frontend is performed automatically on every code
 
 ## 🧑‍💻 Advanced setup for developers
 
-We use standard Django testing framework.
-
 See [docs/setup.md](docs/setup.md)
 
 ## ☄️ Testing
+
+We use standard Django testing framework.
 
 See [docs/test.md](docs/test.md)
 
