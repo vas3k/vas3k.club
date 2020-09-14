@@ -135,13 +135,14 @@ $ docker-compose -f docker-compose.yml up redis
 (venv) $ ./manage.py runserver 0.0.0.0:8000
 ```
 
+
 #### Tests
 
 ##### Prerequisites
 Consider next required conditions for running tests :
 - **venv**
 
-  Don't forget to run it under configurred venv. Look [TBD section]() how to configure venv
+  Don't forget to run it under configured venv. Look [setup venv](#setup-venv) how to configure venv
 - **postgres**
 
   Due to tests make database queries the local postgres should be running. 
@@ -162,7 +163,7 @@ Consider next required conditions for running tests :
 - build **frontend**
   
   For [views tests](https://docs.djangoproject.com/en/3.1/intro/tutorial05/#a-test-for-a-view) its essential to build our frontend upfront. 
-  Hot to build front look [probably-TBD section](), for now just run next commands:
+  Hot to build front look [setup-frontend](#setup-frontend) section, for now just run next commands:
   ```sh
   $ cd frontend
   $ npm ci # or npm install
