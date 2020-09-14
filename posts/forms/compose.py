@@ -86,7 +86,7 @@ class PostLinkForm(PostForm):
         min_length=500,
         widget=forms.Textarea(
             attrs={
-                "minlength": 500,
+                "minlength": 400,
                 "maxlength": 50000,
                 "class": "markdown-editor-full",
                 "data-listen": "keyup",
