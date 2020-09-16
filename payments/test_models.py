@@ -7,6 +7,7 @@ from django.test import TestCase
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
+from payments import products
 from payments.products import PRODUCTS
 from users.models.user import User
 
@@ -74,3 +75,70 @@ class TestPaymentModel(TestCase):
                                 data={"some": "data"})
         self.assertIsNone(result)
 
+
+class TestProducts(TestCase):
+
+    def test_club_subscription_activator_positive_membership_expires_in_future(self):
+        # given
+        future_membership_expiration = datetime.utcnow() + timedelta(days=5)
+        existed_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.utcnow() - timedelta(days=5),
+            membership_expires_at=future_membership_expiration,
+        )
+        new_payment: Payment = Payment.create(reference=f"random-reference-{uuid.uuid4()}",
+                                              user=existed_user,
+                                              product=PRODUCTS["club1"])
+
+        # when
+        result = products.club_subscription_activator(product=PRODUCTS["club1_recurrent_yearly"],
+                                                      payment=new_payment,
+                                                      user=existed_user)
+
+        # then
+        self.assertTrue(result)
+
+        user = User.objects.get(id=existed_user.id)
+        self.assertAlmostEquals(user.membership_expires_at, future_membership_expiration + timedelta(days=365),
+                                delta=timedelta(seconds=10))
+        self.assertEqual(user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
+        self.assertEqual(user.membership_platform_data, {"reference": new_payment.reference,
+                                                         "recurrent": "yearly"})
+
+    def test_club_subscription_activator_positive_membership_expires_in_past(self):
+        # given
+        membership_expiration_in_past = datetime.utcnow() - timedelta(days=5)
+        existed_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.utcnow() - timedelta(days=10),
+            membership_expires_at=membership_expiration_in_past,
+        )
+        new_payment: Payment = Payment.create(reference=f"random-reference-{uuid.uuid4()}",
+                                              user=existed_user,
+                                              product=PRODUCTS["club1"])
+
+        # when
+        result = products.club_subscription_activator(product=PRODUCTS["club1_recurrent_yearly"],
+                                                      payment=new_payment,
+                                                      user=existed_user)
+
+        # then
+        self.assertTrue(result)
+
+        user = User.objects.get(id=existed_user.id)
+        self.assertAlmostEquals(user.membership_expires_at, datetime.utcnow() + timedelta(days=365),
+                                delta=timedelta(seconds=10))
+        self.assertEqual(user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
+        self.assertEqual(user.membership_platform_data, {"reference": new_payment.reference,
+                                                         "recurrent": "yearly"})
+
+    def test_find_by_price_id_positive(self):
+        result = products.find_by_price_id(price_id="price_1H73q7KgJMaF2rHtswNA3rha")
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result, PRODUCTS["club50_recurrent_monthly"])
+
+    def test_find_by_price_id_not_existed(self):
+        result = products.find_by_price_id(price_id="not-existed-price-id")
+
+        self.assertIsNone(result)
