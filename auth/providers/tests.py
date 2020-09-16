@@ -89,13 +89,9 @@ class UnitTestsParseActiveMembership(SimpleTestCase):
             self.assertEqual(result.email, "user-email@email.com")
             self.assertEqual(result.image, 'https://url.example')
 
-            self.assertGreaterEqual(result.started_at, datetime.utcnow() - timedelta(seconds=5))
-            self.assertLessEqual(result.started_at, datetime.utcnow() + timedelta(seconds=5))
-
-            self.assertGreaterEqual(result.expires_at,
-                                    datetime.utcnow() + timedelta(days=100 * 365) - timedelta(seconds=5))
-            self.assertLessEqual(result.expires_at,
-                                 datetime.utcnow() + timedelta(days=100 * 365) + timedelta(seconds=5))
+            self.assertAlmostEquals(result.started_at, datetime.utcnow(), delta=timedelta(seconds=5))
+            self.assertAlmostEquals(result.expires_at, datetime.utcnow() + timedelta(days=100*365),
+                                    delta=timedelta(seconds=5))
 
             self.assertEqual(result.lifetime_support_cents, -1)
             self.assertEqual(result.currently_entitled_amount_cents, 0)
