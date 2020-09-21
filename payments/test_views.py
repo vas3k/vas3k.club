@@ -129,7 +129,7 @@ class TestPayView(TestCase):
                                    })
 
         # check
-        self.assertTrue(User.objects.filter(email=email).exists, )
+        self.assertTrue(User.objects.filter(email=email).exists(), )
         created_user: User = User.objects.get(email=email)
         self.assertEqual(created_user.email, email)
         self.assertEqual(created_user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
@@ -142,11 +142,56 @@ class TestPayView(TestCase):
         self.assertTrue(Payment.get(reference=session.id))
         self.assertContains(response=response, text="Платим 💰", status_code=200)
 
-    def test_positive_existed_user(self):
-        self.assertTrue()
+    def test_positive_existed_authorised_user(self, mocked_stripe):
+        # given
+        product_code = "club1"
+        StripeSession = namedtuple('Session', "id")
+        session = StripeSession(id=f"{uuid.uuid4()}")
+        mocked_stripe.checkout.Session.create.return_value = session
+        self.client.authorise()
 
-    def test_negative_new_user_with_broken_email(self):
-        self.assertTrue(False)
+        # when
+        response = self.client.get(reverse("pay"),
+                                   data={
+                                       "product_code": product_code,
+                                   })
 
-    def test_product_not_found(self):
-        self.assertTrue(False)
+        # check
+        self.assertTrue(User.objects.filter(email=self.existed_user.email).exists(), )
+        user_after: User = User.objects.get(email=self.existed_user.email)
+        self.assertEqual(user_after.membership_platform_type, self.existed_user.membership_platform_type)
+        self.assertEqual(user_after.full_name, self.existed_user.full_name)
+        self.assertEqual(user_after.membership_started_at, self.existed_user.membership_started_at)
+        self.assertAlmostEquals(user_after.membership_expires_at, self.existed_user.membership_expires_at)
+        self.assertEqual(user_after.moderation_status, self.existed_user.moderation_status)
+
+        self.assertTrue(Payment.get(reference=session.id))
+        self.assertContains(response=response, text="Платим 💰", status_code=200)
+
+    def test_negative_new_user_with_broken_email(self, mocked_stripe):
+        # given
+        product_code = "club1"
+        broken_email = f"email-invalid"
+
+        # when
+        response = self.client.get(reverse("pay"),
+                                   data={
+                                       "product_code": product_code,
+                                       "email": broken_email
+                                   })
+
+        # check
+        self.assertFalse(User.objects.filter(email=broken_email).exists(), )
+        self.assertContains(response=response, text="Плохой e-mail адрес", status_code=200)
+
+    def test_product_not_found(self, mocked_stripe):
+        product_code = "unexisted-product-code"
+
+        # when
+        response = self.client.get(reverse("pay"),
+                                   data={
+                                       "product_code": product_code,
+                                   })
+
+        # check
+        self.assertContains(response=response, text="Не выбран пакет", status_code=200)

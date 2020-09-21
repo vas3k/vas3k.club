@@ -40,7 +40,7 @@ class TestPaymentModel(TestCase):
         self.assertIsNotNone(payment)
         self.assertIsNotNone(payment.id)
         self.assertTrue(
-            Payment.objects.filter(pk=payment.id).exists,
+            Payment.objects.filter(pk=payment.id).exists(),
             "The only payment I expect is here, persisted, and correct."
         )
 
