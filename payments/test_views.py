@@ -5,7 +5,11 @@ import django
 from django.urls import reverse
 from django.conf import settings
 from django.test import SimpleTestCase, TestCase
+import json
+import time
 from unittest.mock import patch
+
+from stripe.webhook import WebhookSignature
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
@@ -15,7 +19,7 @@ from tests.helpers import HelperClient
 from users.models.user import User
 
 
-class TestMembershipExpired(TestCase):
+class TestMembershipExpiredView(TestCase):
 
     def test_membership_expires_future(self):
         # given
@@ -195,3 +199,94 @@ class TestPayView(TestCase):
 
         # check
         self.assertContains(response=response, text="Не выбран пакет", status_code=200)
+
+
+class TestStripeWebhookView(TestCase):
+
+    def setup(self):
+        self.client = HelperClient()
+
+    def test_(self):
+        # links:
+        #   https://stripe.com/docs/webhooks/signatures
+        #   https://stripe.com/docs/api/events/object
+
+        strip_secret = "stripe_secret"
+        with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+            timestamp = int(time.time())
+            signature = "6844409814d3258cc0d08cac7b942e3ee27c34b09efd105bd3b2e1111c15a16c"
+            json_data = """{
+  "id": "evt_1CiPtv2eZvKYlo2CcUZsDcO6",
+  "object": "event",
+  "api_version": "2018-05-21",
+  "created": 1530291411,
+  "data": {
+    "object": {
+      "id": "cs_test_J60UFbzAxRlESqK4V5JiREcXWxyO7JKWqYcBJ4M6lJ049EOGAwowNPUI",
+      "object": "checkout.session",
+      "amount_subtotal": 4000,
+      "amount_total": 4000,
+      "billing_address_collection": null,
+      "cancel_url": "http://127.0.0.1:8000/join/",
+      "client_reference_id": null,
+      "currency": "eur",
+      "customer": "cus_HggKhYyxiBopsO",
+      "customer_email": "me+bewbew@vas3k.ru",
+      "livemode": false,
+      "locale": null,
+      "metadata": {
+      },
+      "mode": "subscription",
+      "payment_intent": null,
+      "payment_method_types": [
+        "card"
+      ],
+      "setup_intent": null,
+      "shipping": null,
+      "shipping_address_collection": null,
+      "submit_type": null,
+      "subscription": "sub_HggKyfpIktYmlt",
+      "success_url": "http://127.0.0.1:8000/monies/done/?reference={CHECKOUT_SESSION_ID}",
+      "total_details": {
+        "amount_discount": 0,
+        "amount_tax": 0
+      }
+    }
+  },
+  "livemode": false,
+  "pending_webhooks": 0,
+  "request": {
+    "id": null,
+    "idempotency_key": null
+  },
+  "type": "checkout.session.completed"
+}
+"""
+
+            signed_payload = f"{timestamp}.{json.dumps(json.loads(json_data))}"
+            computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
+
+            header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
+            response = self.client.post(reverse("stripe_webhook"), data=json.loads(json_data),
+                                        content_type='application/json', **header)
+
+        self.assertTrue(False)
+
+    def test_negative_no_payload(self):
+        header = {'HTTP_STRIPE_SIGNATURE': 'xxx'}
+        response = self.client.post(reverse("stripe_webhook"), content_type='application/json', **header)
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_negative_no_signature(self):
+        response = self.client.post(reverse("stripe_webhook"), data={"xxx": 1}, content_type='application/json')
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_negative_invalid_signature(self):
+        header = {'HTTP_STRIPE_SIGNATURE': 'invalid-signature'}
+        with self.settings(STRIPE_WEBHOOK_SECRET="stripe_secret"):
+            response = self.client.post(reverse("stripe_webhook"), data={"xxx": 1}, content_type='application/json',
+                                        **header)
+
+            self.assertEqual(response.status_code, 400)
