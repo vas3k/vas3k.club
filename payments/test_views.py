@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
 from collections import namedtuple
+import os
 import uuid
+
 import django
 from django.urls import reverse
 from django.conf import settings
 from django.test import SimpleTestCase, TestCase
 import json
 import time
+import yaml
 from unittest.mock import patch
 
 from stripe.webhook import WebhookSignature
@@ -203,74 +206,191 @@ class TestPayView(TestCase):
 
 class TestStripeWebhookView(TestCase):
 
-    def setup(self):
+    def setUp(self):
         self.client = HelperClient()
 
-    def test_(self):
+        self.existed_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4"
+        )
+
+    @staticmethod
+    def read_json_event(event_file_name):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(current_dir, f'./_stubs/{event_file_name}.json')
+        with open(file_path, 'r') as f:
+            json_event = yaml.safe_load(f.read())
+
+        return json_event
+
+    def test_event_checkout_session_completed_positive(self):
         # links:
         #   https://stripe.com/docs/webhooks/signatures
         #   https://stripe.com/docs/api/events/object
 
+        # given
+        product = PRODUCTS["club1"]
+        opened_payment: Payment = Payment.create(reference=f"random-reference-{uuid.uuid4()}",
+                                                 user=self.existed_user,
+                                                 product=product)
+
         strip_secret = "stripe_secret"
         with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
-            timestamp = int(time.time())
-            signature = "6844409814d3258cc0d08cac7b942e3ee27c34b09efd105bd3b2e1111c15a16c"
-            json_data = """{
-  "id": "evt_1CiPtv2eZvKYlo2CcUZsDcO6",
-  "object": "event",
-  "api_version": "2018-05-21",
-  "created": 1530291411,
-  "data": {
-    "object": {
-      "id": "cs_test_J60UFbzAxRlESqK4V5JiREcXWxyO7JKWqYcBJ4M6lJ049EOGAwowNPUI",
-      "object": "checkout.session",
-      "amount_subtotal": 4000,
-      "amount_total": 4000,
-      "billing_address_collection": null,
-      "cancel_url": "http://127.0.0.1:8000/join/",
-      "client_reference_id": null,
-      "currency": "eur",
-      "customer": "cus_HggKhYyxiBopsO",
-      "customer_email": "me+bewbew@vas3k.ru",
-      "livemode": false,
-      "locale": null,
-      "metadata": {
-      },
-      "mode": "subscription",
-      "payment_intent": null,
-      "payment_method_types": [
-        "card"
-      ],
-      "setup_intent": null,
-      "shipping": null,
-      "shipping_address_collection": null,
-      "submit_type": null,
-      "subscription": "sub_HggKyfpIktYmlt",
-      "success_url": "http://127.0.0.1:8000/monies/done/?reference={CHECKOUT_SESSION_ID}",
-      "total_details": {
-        "amount_discount": 0,
-        "amount_tax": 0
-      }
-    }
-  },
-  "livemode": false,
-  "pending_webhooks": 0,
-  "request": {
-    "id": null,
-    "idempotency_key": null
-  },
-  "type": "checkout.session.completed"
-}
-"""
+            json_event = self.read_json_event('checkout.session.completed')
+            json_event['data']['object']['id'] = opened_payment.reference
 
-            signed_payload = f"{timestamp}.{json.dumps(json.loads(json_data))}"
+            timestamp = int(time.time())
+            signed_payload = f"{timestamp}.{json.dumps(json_event)}"
             computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
 
+            # when
             header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
-            response = self.client.post(reverse("stripe_webhook"), data=json.loads(json_data),
+            response = self.client.post(reverse("stripe_webhook"), data=json_event,
                                         content_type='application/json', **header)
 
-        self.assertTrue(False)
+            # then
+            self.assertEqual(response.status_code, 200)
+            # subscription prolongated
+            user = User.objects.get(id=self.existed_user.id)
+            self.assertAlmostEquals(user.membership_expires_at,
+                                    self.existed_user.membership_expires_at + product['data']['timedelta'],
+                                    delta=timedelta(seconds=10))
+
+    def test_event_checkout_session_completed_negative_payment_not_found(self):
+        # given
+        strip_secret = "stripe_secret"
+        with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+            json_event = self.read_json_event('checkout.session.completed')
+            json_event['data']['object']['id'] = "some-payment-reference-not-existed"  # not existed payment reference
+
+            timestamp = int(time.time())
+            signed_payload = f"{timestamp}.{json.dumps(json_event)}"
+            computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
+
+            # when
+            header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
+            response = self.client.post(reverse("stripe_webhook"), data=json_event,
+                                        content_type='application/json', **header)
+
+            # then
+            self.assertEqual(response.status_code, 409)  # conflict due to payment not found (let it try latter)
+            # subscription expiration not prolongated
+            user = User.objects.get(id=self.existed_user.id)
+            self.assertEqual(user.membership_expires_at, self.existed_user.membership_expires_at)
+
+    def test_event_invoice_paid_with_billing_reason_subscription_create_positive(self):
+        # links:
+        #   https://stripe.com/docs/webhooks/signatures
+        #   https://stripe.com/docs/api/events/object
+
+        # given
+        strip_secret = "stripe_secret"
+        with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+            json_event = self.read_json_event('invoice.paid')
+            json_event['data']['object']['id'] = f'payment-id-{uuid.uuid4()}'
+            json_event['data']['object']['billing_reason'] = "subscription_create"
+
+            timestamp = int(time.time())
+            signed_payload = f"{timestamp}.{json.dumps(json_event)}"
+            computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
+
+            # when
+            header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
+            response = self.client.post(reverse("stripe_webhook"), data=json_event,
+                                        content_type='application/json', **header)
+
+            # then
+            self.assertEqual(response.status_code, 200)
+            # subscription not prolonging, cause it assumes it has already done in `checkout.session.completed` event
+            user = User.objects.get(id=self.existed_user.id)
+            self.assertEqual(user.membership_expires_at, self.existed_user.membership_expires_at)
+
+    def test_event_invoice_paid_with_billing_reason_subscription_cycle_positive(self):
+        # given
+        strip_secret = "stripe_secret"
+        with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+            self.existed_user.stripe_id = f'stripe-id-{uuid.uuid4()}'
+            self.existed_user.save()
+
+            json_event = self.read_json_event('invoice.paid')
+            json_event['data']['object']['id'] = f'payment-id-{uuid.uuid4()}'
+            json_event['data']['object']['billing_reason'] = "subscription_cycle"
+            json_event['data']['object']['customer'] = self.existed_user.stripe_id
+            product = PRODUCTS['club3_recurrent_yearly']
+            json_event['data']['object']['lines']["data"][0]["plan"]["id"] = product['stripe_id']
+
+            timestamp = int(time.time())
+            signed_payload = f"{timestamp}.{json.dumps(json_event)}"
+            computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
+
+            # when
+            header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
+            response = self.client.post(reverse("stripe_webhook"), data=json_event,
+                                        content_type='application/json', **header)
+
+            # then
+            # subscription prolonged
+            self.assertEqual(response.status_code, 200)
+            # subscription prolonged
+            user = User.objects.get(id=self.existed_user.id)
+            self.assertAlmostEquals(user.membership_expires_at,
+                                    self.existed_user.membership_expires_at + product['data']['timedelta'],
+                                    delta=timedelta(seconds=10))
+
+    def test_event_invoice_paid_negative_user_not_found(self):
+        # given
+        strip_secret = "stripe_secret"
+        with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+            strip_secret = "stripe_secret"
+            with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+                self.existed_user.stripe_id = f'stripe-id-{uuid.uuid4()}'
+                self.existed_user.save()
+
+                json_event = self.read_json_event('invoice.paid')
+                json_event['data']['object']['id'] = f'payment-id-{uuid.uuid4()}'
+                json_event['data']['object']['billing_reason'] = "subscription_cycle"
+                json_event['data']['object']['customer'] = "not-existed-user"
+
+                timestamp = int(time.time())
+                signed_payload = f"{timestamp}.{json.dumps(json_event)}"
+                computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
+
+                # when
+                header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
+                response = self.client.post(reverse("stripe_webhook"), data=json_event,
+                                            content_type='application/json', **header)
+
+                # then
+                self.assertEqual(response.status_code, 409)  # conflict due to payment not found (let it try latter)
+                # subscription expiration not prolonged
+                user = User.objects.get(id=self.existed_user.id)
+                self.assertEqual(user.membership_expires_at, self.existed_user.membership_expires_at)
+
+    def test_event_customer_updated_positive(self):
+        strip_secret = "stripe_secret"
+        with self.settings(STRIPE_WEBHOOK_SECRET=strip_secret):
+            self.assertEqual(self.existed_user.stripe_id, None)
+
+            json_event = self.read_json_event('customer.updated')
+            json_event['data']['object']['email'] = self.existed_user.email
+
+            timestamp = int(time.time())
+            signed_payload = f"{timestamp}.{json.dumps(json_event)}"
+            computed_signature = WebhookSignature._compute_signature(signed_payload, strip_secret)
+
+            # when
+            header = {'HTTP_STRIPE_SIGNATURE': f't={timestamp},v1={computed_signature}'}
+            response = self.client.post(reverse("stripe_webhook"), data=json_event,
+                                        content_type='application/json', **header)
+
+            # then
+            self.assertEqual(response.status_code, 200)
+            # subscription not prolonging, cause it assumes it has already done in `checkout.session.completed` event
+            user = User.objects.get(id=self.existed_user.id)
+            self.assertEqual(user.stripe_id, json_event['data']['object']['id'])
+            self.assertEqual(user.membership_expires_at, self.existed_user.membership_expires_at)
 
     def test_negative_no_payload(self):
         header = {'HTTP_STRIPE_SIGNATURE': 'xxx'}
