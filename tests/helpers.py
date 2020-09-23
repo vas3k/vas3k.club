@@ -1,27 +1,10 @@
 from datetime import datetime, timedelta
 import json
-# from urllib.parse import urljoin
-# import uuid
 
-# import django
 from django.test import Client
 from django.urls import reverse
-# from django.http.response import HttpResponseNotAllowed, HttpResponseBadRequest
-# from django_q import brokers
-# from django_q.signing import SignedPackage
-# import jwt
-# from unittest import skip
-# from unittest.mock import patch
-#
-# django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
-from auth.models import Code, Session
-
-
-# from auth.providers.common import Membership, Platform
-# from auth.exceptions import PatreonException
-# from tests.helpers import HelperClient
-# from users.models.user import User
+from auth.models import Session
 
 
 class HelperClient(Client):
