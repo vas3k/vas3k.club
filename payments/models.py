@@ -32,7 +32,7 @@ class Payment(models.Model):
         db_table = "payments"
 
     @classmethod
-    def create(cls, reference, user, product, data=None, status=STATUS_STARTED):
+    def create(cls, reference: str, user: User, product: dict, data: dict = None, status: str = STATUS_STARTED):
         return Payment.objects.create(
             reference=reference,
             user=user,

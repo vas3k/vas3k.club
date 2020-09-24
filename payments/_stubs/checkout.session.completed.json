@@ -1,0 +1,46 @@
+{
+  "id": "evt_1CiPtv2eZvKYlo2CcUZsDcO6",
+  "object": "event",
+  "api_version": "2018-05-21",
+  "created": 1530291411,
+  "data": {
+    "object": {
+      "id": "cs_test_J60UFbzAxRlESqK4V5JiREcXWxyO7JKWqYcBJ4M6lJ049EOGAwowNPUI",
+      "object": "checkout.session",
+      "amount_subtotal": 4000,
+      "amount_total": 4000,
+      "billing_address_collection": null,
+      "cancel_url": "http://127.0.0.1:8000/join/",
+      "client_reference_id": null,
+      "currency": "eur",
+      "customer": "cus_HggKhYyxiBopsO",
+      "customer_email": "me+bewbew@vas3k.ru",
+      "livemode": false,
+      "locale": null,
+      "metadata": {
+      },
+      "mode": "subscription",
+      "payment_intent": null,
+      "payment_method_types": [
+        "card"
+      ],
+      "setup_intent": null,
+      "shipping": null,
+      "shipping_address_collection": null,
+      "submit_type": null,
+      "subscription": "sub_HggKyfpIktYmlt",
+      "success_url": "http://127.0.0.1:8000/monies/done/?reference={CHECKOUT_SESSION_ID}",
+      "total_details": {
+        "amount_discount": 0,
+        "amount_tax": 0
+      }
+    }
+  },
+  "livemode": false,
+  "pending_webhooks": 0,
+  "request": {
+    "id": null,
+    "idempotency_key": null
+  },
+  "type": "checkout.session.completed"
+}
