@@ -34,6 +34,7 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.admin import admin_profile
 from users.views.people import people
+from bot_api.views import process_user
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month))"
@@ -133,6 +134,8 @@ urlpatterns = [
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
     path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
     path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),
+
+    path("bot_api/user/<slug:user_slug>/<str:secret_hash>", process_user, name="bot_api_process_user")
 ]
 
 if settings.DEBUG:

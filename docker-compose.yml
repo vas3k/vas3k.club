@@ -72,3 +72,7 @@ services:
     volumes:
       - .:/app:delegated
     working_dir: /app/frontend
+
+#  bot:
+#    image: "vas3k.club-bot"
+#    command: make polling
