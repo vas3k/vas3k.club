@@ -1,16 +1,17 @@
-<div align="center">
-  <br>
-  <img src="frontend/static/images/logo/logo-256.png" alt="">
-  <h1>vas3k.club</h1>
-</div>
+# How to contribute
 
-Welcome to the [vas3k.club](https://vas3k.club) codebase. Here we are building our small lifestyle IT community. If you want to help us with that, welcome.
+Bug reports and pull requests from users are what keep this project working.
 
-[vas3k.club](https://vas3k.club) is a platform with private and paid memberships that has emerged around the [vas3k.ru](https://vas3k.ru) blog and satellite chat rooms. It's not a typical IT community with tutorials and framework reviews, but rather more of a lifestyle one. We are trying to build a peaceful and useful ecosystem, which the Internet has lost a long ago. Therefore, we carefully select and filter new members and do not seek wild growth.
+## Basics
 
-Our values: honesty, fair share, respect for other members, rationality, friendliness and usefulness. We have a zero-tolerance policy on anonymity, insults and toxicity. But we always try to stay in touch with reality, so we're also not tolerant of witch hunting and call-out culture.
+1. Create an issue and describe your idea
+2. [Fork it](https://github.com/vas3k/vas3k.club/fork)
+3. Create your feature branch (`git checkout -b my-new-feature`)
+4. Commit your changes (`git commit -am 'Add some feature'`)
+5. Publish the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request on Github (if you are new with Github: [here is tutorial](https://guides.github.com/activities/hello-world/)
 
-We're bullshitless community!
+---
 
 ## 🛠 Tech stack
 
@@ -26,20 +27,21 @@ We try to keep our stack as simple and stupid as possible. Because we're not ver
 
 2. Clone the repo
 
-    ```sh
-    $ git clone https://github.com/vas3k/vas3k.club.git
-    $ cd vas3k.club
-    ```
+   ```sh
+   $ git clone https://github.com/vas3k/vas3k.club.git
+   $ cd vas3k.club
+   ```
 
 3. Run
 
-    ```sh
-    $ docker-compose up
-    ```
+   ```sh
+   $ docker-compose up
+   ```
 
 It will start the development server with all the necessary services. Wait till it starts and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/). Voila.
 
 At the very beginning, you probably need a dev account to log in. Open [http://127.0.0.1:8000/godmode/dev_login/](http://127.0.0.1:8000/godmode/dev_login/) in your browser and it will create one for you and log you in.
+
 - To create new test user: open [http://127.0.0.1:8000/godmode/random_login/](http://127.0.0.1:8000/godmode/random_login/)
 
 Auto-reloading for backend and frontend is performed automatically on every code change. If everything is broken and not working (it happens), you can always rebuild the world from scratch using `docker-compose up --build`.
@@ -97,25 +99,3 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 - **bug** — the first priority, obviously.
 - **improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, be sure to provide a sketch before you start.
 - **new feature** —  completely new features. Usually they're too hard for newbies, leave them for experienced contributors. 
-
-## 👍 Our top contributors
-
-I would like to press F and give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
-
-- [@vas3k](https://github.com/vas3k)
-- [@nlopin](https://github.com/nlopin)
-- [@fr33mang](https://github.com/fr33mang)
-- [@Vostenzuk](https://github.com/Vostenzuk)
-- [@nikolay-govorov](https://github.com/nikolay-govorov)
-- [@FMajesty](https://github.com/FMajesty)
-
-
-## 👩‍💼 License 
-
-[MIT](LICENSE)
-
-In other words, you can use the code for private and commercial purposes with an author attribution (by including the original license file or mentioning the Club 🎩).
-
-Feel free to contact us via email [club@vas3k.club](mailto:club@vas3k.club).
-
-❤️
