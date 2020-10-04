@@ -1,4 +1,6 @@
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_GET
 
 from auth.helpers import auth_required
 from landing.models import GodSettings
@@ -19,3 +21,12 @@ def network(request):
     return render(request, "pages/network.html", {
         "page_html": secret_page_html,
     })
+
+@require_GET
+def robots(request):
+    lines = [
+        "User-agent: *",
+        "Sitemap: https://vas3k.club/sitemap.xml",
+        "Host: https://vas3k.club",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
