@@ -68,7 +68,7 @@
                         <span class="user-title-small">{{ intro.author.position }}{% if intro.author.company %} — {{ intro.author.company }}{% endif %}</span>
                     </h3>
 
-                    <p>{{ intro.description | truncatechars:450 | nl_to_p }}</p>
+                    <p>{{ intro.text | markdown | truncatechars:400 }}</p>
 
                     <span>
                         <a href="{{ settings.APP_HOST }}{% url "show_post" "intro" intro.slug %}">Читать всё #intro &rarr;</a>
@@ -90,7 +90,7 @@
             </h3>
 
             <p>
-                {{ featured_post.description | nl_to_p }}
+                {{ featured_post.text | markdown | truncatechars:400 }}
             </p>
 
             <span class="post-footer">
@@ -135,7 +135,7 @@
                 </h3>
 
                 <p>
-                    {{ post.description | nl_to_p }}
+                    {{ post.text | markdown | truncatechars:400 }}
                 </p>
 
                 <span class="post-footer">
