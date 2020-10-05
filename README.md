@@ -93,26 +93,26 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 - **For big changes** open an issues first or (if it's already opened) leave a comment with brief explanation what and why you're going to change. Many tickets hang open not because they cannot be done, but because they cause many logical contradictions that you may not know. It's better to clarify them in comments before sending a PR.
 
-  #### 🚦Pay attention to issue labels classification:
+### 🚦Pay attention to issue labels classification
 
-  ##### 🟩 Ready to implement:
+#### 🟩 Ready to implement
 
 - **good first issue** — good tickets **for first-timers**. Usually these are simple and not critical things that allow you to quickly feel the code and start contributing to it.
 - **bug** — the **first priority**, obviously.
 
 - **improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, **be sure to provide a sketch before you start.**
 
-  ##### 🟨 Discussion is needed:
+#### 🟨 Discussion is needed
 
 - **new feature** —  completely new features. Usually they're too hard for newbies, leave them **for experienced contributors.** 
 
 - **idea** — **discussion is needed**. Those tickets look adequate, but waiting for real proposals how they will be done. Don't implement them right away.
 
-  ##### 🟥 Questionable:
+#### 🟥 Questionable
 
 - [¯\\_(ツ)_/¯](https://github.com/vas3k/vas3k.club/labels/ ̄\_(ツ)_%2F ̄) - special label for **questionable issues**. (should be closed in 60 days of inactivity)
 
-- **<no label>** — ticket is new or controversial. Feel free to discuss it but **wait for our maintainers' decision** before starting to implement it.
+- **[no label]** — ticket is new or controversial. Feel free to discuss it but **wait for our maintainers' decision** before starting to implement it.
 
 ## 👍 Our top contributors
 
