@@ -114,7 +114,7 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 ## 👍 Our top contributors
 
-I would like to press F and give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
+Take some time to press F and give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
 
 - [@vas3k](https://github.com/vas3k)
 - [@nlopin](https://github.com/nlopin)
