@@ -113,7 +113,7 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 ##### 🟥 Questionable
 
-- [¯\\_(ツ)_/¯](https://github.com/vas3k/vas3k.club/labels/ ̄\_(ツ)_%2F ̄) - special label for **questionable issues**. (should be closed in 60 days of inactivity)
+- [¯\\_(ツ)\_/¯](https://github.com/vas3k/vas3k.club/labels/%C2%AF%5C_%28%E3%83%84%29_%2F%C2%AF) - special label for **questionable issues**. (should be closed in 60 days of inactivity)
 
 - **[no label]** — ticket is new or controversial. Feel free to discuss it but **wait for our maintainers' decision** before starting to implement it.
 
