@@ -326,28 +326,40 @@
             font-size: 16px;
         }
 
-            .upvote::before {
-                font-size: 10px;
-            }
+        .upvote::before {
+            font-size: 10px;
+        }
 
-            .upvote-disabled {
-                padding-top: 11px;
-                padding-bottom: 10px;
-                cursor: none;
-            }
+        .post-comments .upvote {
+            padding: 7px;
+            font-size: 14px;
+        }
 
-            .upvote-type-inline {
-                padding: 4px 10px;
-            }
+        .post-comments .upvote::before {
+            font-size: 110%;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
 
-                .upvote-type-inline::before {
-                    position: relative;
-                    top: 0;
-                    left: 0;
-                    bottom: 0;
-                    content: "+";
-                    font-size: 110%;
-                }
+        .upvote-disabled {
+            padding-top: 11px;
+            padding-bottom: 10px;
+            cursor: none;
+        }
+
+        .upvote-type-inline {
+            padding: 7px;
+        }
+
+        .upvote-type-inline::before {
+            position: relative;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            content: "+";
+            font-size: 110%;
+        }
     }
 
 .profile {
