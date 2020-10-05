@@ -34,20 +34,20 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 ### 🚦Pay attention to issue labels classification
 
-#### 🟩 Ready to implement
+##### 🟩 Ready to implement
 
 - **good first issue** — good tickets **for first-timers**. Usually these are simple and not critical things that allow you to quickly feel the code and start contributing to it.
 - **bug** — the **first priority**, obviously.
 
 - **improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, **be sure to provide a sketch before you start.**
 
-#### 🟨 Discussion is needed
+##### 🟨 Discussion is needed
 
 - **new feature** —  completely new features. Usually they're too hard for newbies, leave them **for experienced contributors.** 
 
 - **idea** — **discussion is needed**. Those tickets look adequate, but waiting for real proposals how they will be done. Don't implement them right away.
 
-#### 🟥 Questionable
+##### 🟥 Questionable
 
 - [¯\\_(ツ)_/¯](https://github.com/vas3k/vas3k.club/labels/ ̄\_(ツ)_%2F ̄) - special label for **questionable issues**. (should be closed in 60 days of inactivity)
 
