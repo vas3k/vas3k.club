@@ -67,6 +67,8 @@ Contributions are welcome.
 
 The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues).
 
+Here's our contribution guidelines — [CONTRIBUTING.md](CONTRIBUTING.md).
+
 We also run the public [Github Project Board](https://github.com/vas3k/vas3k.club/projects/3) to track progress and develop roadmaps.
 
 > The official development language at the moment is Russian, because 100% of our users speak it. We don't want to introduce unnecessary barriers for them. But we are used to writing commits and comments in English and we won't mind communicating with you in it.
