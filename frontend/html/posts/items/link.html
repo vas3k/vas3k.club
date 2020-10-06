@@ -48,15 +48,10 @@
             </a>
         {% endif %}
 
-        {% if me and show_bookmark_controls %}
-            &nbsp;&nbsp;&nbsp;
-            <post-bookmark
-                bookmark-url="{% url "toggle_post_bookmark" post.slug %}"
-                {% if is_bookmark %}
-                    initial-is-bookmarked
-                {% endif %}>
-            </post-bookmark>
-        {% endif %}
+
+        {% include "posts/items/bookmark_controls.html" %}
+
+
     </div>
     <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </div>
