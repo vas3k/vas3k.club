@@ -47,6 +47,16 @@
                 +{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}
             </a>
         {% endif %}
+
+        {% if me and show_bookmark_controls %}
+            &nbsp;&nbsp;&nbsp;
+            <post-bookmark
+                bookmark-url="{% url "toggle_post_bookmark" post.slug %}"
+                {% if is_bookmark %}
+                    initial-is-bookmarked
+                {% endif %}>
+            </post-bookmark>
+        {% endif %}
     </div>
     <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </div>
