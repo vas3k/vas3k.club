@@ -24,6 +24,8 @@ html, html[theme="light"] {
     --block-bg-color: #FFF;
     --opposite-block-bg-color: #282c35;
     --block-shadow: 10px 15px 40px rgba(83, 91, 110, 0.11);
+    --block-shadow-hover: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
+    --block-border: none;
 
     --link-color: #333;
     --link-hover-color: #000;
@@ -52,6 +54,8 @@ html[theme="dark"] {
     --block-bg-color: #1B1B1C;
     --opposite-block-bg-color: #FFF;
     --block-shadow: 0px 0px 0px #000;
+    --block-shadow-hover: none;
+    --block-border: solid 1px #FCFDFF;
 
     --link-color: #DDD;
     --link-hover-color: #FFF;
@@ -81,6 +85,8 @@ html[theme="dark"] {
         --block-bg-color: #1B1B1C;
         --opposite-block-bg-color: #FFF;
         --block-shadow: 0px 0px 0px #000;
+        --block-shadow-hover: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
+        --block-border: solid 1px #FCFDFF;
 
         --link-color: #DDD;
         --link-hover-color: #FFF;
