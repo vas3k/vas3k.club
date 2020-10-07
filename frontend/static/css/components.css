@@ -1189,16 +1189,22 @@
 
             .user-edit-digest-label {
                 display: block;
+                position: relative;
                 cursor: pointer;
                 width: 220px;
                 min-height: 250px;
-                padding: 10px;
+                margin: 10px;
                 box-sizing: border-box;
                 text-decoration: none;
                 box-shadow: var(--block-shadow);
                 background-color: var(--block-bg-color);
                 border-radius: 10px;
+                border: var(--block-border);
                 text-align: center;
+            }
+
+            .user-edit-digest-label:hover {
+                box-shadow: var(--block-shadow-hover);
             }
 
                 .user-edit-digest-label i {
@@ -1210,7 +1216,11 @@
                 .user-edit-digest-label input {
                     display: inline-block;
                     width: auto;
+                    position: absolute;
                     padding-bottom: 10px;
+                    bottom: 40px;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
                 }
 
                 .user-edit-digest-name {
