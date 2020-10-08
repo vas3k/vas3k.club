@@ -1314,6 +1314,12 @@
         white-space: nowrap;
     }
 
+    .feed-post-footer .bookmark-button {
+        display: inline-block;
+        text-decoration: none;
+        opacity: 0.6;
+    }
+
     .feed-post-is-pinned {
         background-color: var(--opposite-block-bg-color);
         color: var(--opposite-text-color);
