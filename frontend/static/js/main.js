@@ -71,11 +71,15 @@ new Vue({
             function appendMarkdownTextareaValue(textarea, value) {
                 textarea.focus(); // on mobile
                 textarea.value = value;
-                const codeMirrorEditor = textarea.nextElementSibling.CodeMirror || textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
-                if (codeMirrorEditor !== undefined) {
-                    codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
-                    codeMirrorEditor.focus();
-                    codeMirrorEditor.setCursor(codeMirrorEditor.lineCount(), 0);
+
+                // On mobile the next element sibling is undefined
+                if (textarea.nextElementSibling) {
+                    const codeMirrorEditor = textarea.nextElementSibling.CodeMirror || textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
+                    if (codeMirrorEditor !== undefined) {
+                        codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
+                        codeMirrorEditor.focus();
+                        codeMirrorEditor.setCursor(codeMirrorEditor.lineCount(), 0);
+                    }
                 }
             }
 
