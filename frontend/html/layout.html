@@ -6,6 +6,12 @@
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
+    <script>
+        const theme = localStorage.getItem('theme');
+        if (theme !== null) {
+            document.documentElement.setAttribute('theme', theme);
+        }
+    </script>
 
     <link rel="alternate" type="application/rss+xml"
           title="Вастрик.Клуб: Новые посты"
@@ -63,11 +69,5 @@
 
 {% include "common/js.html" %}
 {% block js %}{% endblock %}
-<script>
-    const theme = localStorage.getItem('theme');
-    if (theme !== null) {
-        document.documentElement.setAttribute('theme', theme);
-    }
-</script>
 </body>
 </html>
