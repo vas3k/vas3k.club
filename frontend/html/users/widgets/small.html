@@ -1,4 +1,4 @@
-<div class="user user-small">
+<article class="user user-small">
     <span class="user-avatar">
         <a href="{% url "profile" user.slug %}">
             <span class="avatar" style="background-image: url('{{ user.get_avatar }}');"></span>
@@ -15,4 +15,4 @@
             {{ created_at | date:"j E Y" }}
         </span>
     {% endif %}
-</div>
+</article>
