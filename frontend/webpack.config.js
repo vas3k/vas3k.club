@@ -39,7 +39,7 @@ module.exports = {
                     {
                         loader: "sass-loader",
                         options: {
-                            implementation: require("node-sass")
+                            implementation: require("sass")
                         }
                     }
                 ]
