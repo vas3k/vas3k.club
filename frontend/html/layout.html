@@ -3,13 +3,6 @@
 <html lang="ru">
 <head>
     <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
-    <script>
-        const theme = localStorage.getItem('theme');
-        if (theme !== null) {
-            document.documentElement.setAttribute('theme', theme);
-        }
-    </script>
-
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
@@ -70,5 +63,11 @@
 
 {% include "common/js.html" %}
 {% block js %}{% endblock %}
+<script>
+    const theme = localStorage.getItem('theme');
+    if (theme !== null) {
+        document.documentElement.setAttribute('theme', theme);
+    }
+</script>
 </body>
 </html>
