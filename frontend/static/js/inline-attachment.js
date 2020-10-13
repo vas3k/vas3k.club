@@ -266,6 +266,11 @@
                 me.onFileUploadError(xhr);
             }
         };
+
+        xhr.onerror = function () {
+            me.onFileUploadError(xhr);
+        };
+
         if (settings.beforeFileUpload(xhr) !== false) {
             xhr.send(formData);
         }
