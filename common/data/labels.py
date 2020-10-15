@@ -29,6 +29,11 @@ LABELS = {
         "emoji": "🌚️",
         "color": "#2b374b"
     },
+    "drama": {
+        "title": "Драма",
+        "emoji": "🍿",
+        "color": "#0E2F44"
+    },
     "comments": {
         "title": "Дискуссия",
         "emoji": "💭",

@@ -48,6 +48,9 @@
                 +{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}
             </a>
         {% endif %}
+
+        {% include "posts/items/bookmark_controls.html" %}
+
     </div>
     <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </div>

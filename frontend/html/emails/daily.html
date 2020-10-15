@@ -109,7 +109,7 @@
                 </h3>
 
                 <p>
-                    {{ post.text | markdown | truncatechars:400 }}
+                    {{ post.text | markdown | striptags | truncatechars:400 }}
                 </p>
 
                 <span class="post-footer">
