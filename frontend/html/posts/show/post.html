@@ -49,6 +49,9 @@
 
                     {% if post.author == me or me.is_moderator %}
                         <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
+                        {% if not post.published_at %}
+                        <a href="{% url "delete_post" post.slug %}" onclick="return confirm('Удалить без возможности восстановления?')"><i class="fas fa-trash"></i>&nbsp;Удалить навсегда&nbsp;&nbsp;&nbsp;</a>
+                        {% endif %}
                     {% endif %}
                     {% if me.is_moderator %}
                         <a href="{% url "announce_post" post.slug %}"><i class="fas fa-bullhorn"></i></a>&nbsp;&nbsp;&nbsp;

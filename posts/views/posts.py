@@ -84,6 +84,17 @@ def edit_post(request, post_slug):
 
 
 @auth_required
+def delete_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if post.author != request.me or post.published_at:
+        raise AccessDenied()
+
+    post.delete()
+
+    return redirect("compose")
+
+
+@auth_required
 @ajax_request
 def upvote_post(request, post_slug):
     if request.method != "POST":
