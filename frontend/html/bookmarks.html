@@ -12,7 +12,9 @@
 
         <div class="bookmarks-list">
             {% for post in posts %}
-                {% include "posts/items/items.html" %}
+                {% if post.is_visible %}
+                    {% include "posts/items/items.html" %}
+                {% endif %}
             {% endfor %}
 
             {% if not posts %}
