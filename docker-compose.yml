@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  club_app: &app
+  app:
     build:
       dockerfile: dev.dockerfile
       context: .
@@ -73,6 +73,9 @@ services:
       - .:/app:delegated
     working_dir: /app/frontend
 
-#  bot:
-#    image: "vas3k.club-bot"
-#    command: make polling
+  bot:
+    image: "birdi7/vas3k.club-bot"
+    container_name: club_bot
+
+    environment:
+      - PYTHONUNBUFFERED=1
