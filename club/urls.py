@@ -135,7 +135,7 @@ urlpatterns = [
     path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
     path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),
 
-    path("bot_api/user/<slug:user_slug>/<str:secret_hash>", process_user, name="bot_api_process_user")
+    path("bot_api/user/<str:secret_hash>", process_user, name="bot_api_process_user")
 ]
 
 if settings.DEBUG:
