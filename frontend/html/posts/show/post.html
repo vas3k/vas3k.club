@@ -27,7 +27,13 @@
                 {% endif %}
             </span>
             <div class="post-data">
-                {% if not post.is_visible %}
+                {% if post.deleted_at %}
+                    <div class="post-label">
+                        <span class="label label-type-deleted">
+                            <span class="label-title">Удалённый пост</span>
+                        </span>
+                    </div>
+                {% elif not post.is_visible %}
                     <div class="post-label">
                         <span class="label label-type-draft">
                             <span class="label-title">Черновик</span>
@@ -49,9 +55,12 @@
 
                     {% if post.author == me or me.is_moderator %}
                         <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
-                        {% if not post.published_at %}
-                        <a href="{% url "delete_post" post.slug %}" onclick="return confirm('Удалить без возможности восстановления?')"><i class="fas fa-trash"></i>&nbsp;Удалить навсегда&nbsp;&nbsp;&nbsp;</a>
-                        {% endif %}
+                    {% endif %}
+                    {% if post.author == me and not post.deleted_at and not post.is_visible %}
+                        <a href="{% url "delete_post" post.slug %}"><i class="fas fa-trash"></i>&nbsp;Удалить&nbsp;&nbsp;&nbsp;</a>
+                    {% endif %}
+                    {% if post.author == me and post.deleted_at and not post.is_visible %}
+                        <a href="{% url "delete_post" post.slug %}"><i class="fas fa-trash-restore"></i>&nbsp;Восстановить&nbsp;&nbsp;&nbsp;</a>
                     {% endif %}
                     {% if me.is_moderator %}
                         <a href="{% url "announce_post" post.slug %}"><i class="fas fa-bullhorn"></i></a>&nbsp;&nbsp;&nbsp;

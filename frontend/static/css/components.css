@@ -222,6 +222,14 @@
             color: var(--opposite-text-color);
         }
 
+    .label-type-deleted {
+        background-color: var(--opposite-block-bg-color);
+    }
+
+        .label-type-deleted .label-title {
+            color: #F00;
+        }
+
     .label-title {
         display: inline-block;
         color: #FFFFFF;

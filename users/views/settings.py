@@ -9,6 +9,7 @@ from django_q.tasks import async_task
 from auth.helpers import auth_required
 from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
+from posts.models.post import Post
 from search.models import SearchIndex
 from users.forms.profile import ProfileEditForm, NotificationsEditForm
 from users.models.geo import Geo
@@ -165,3 +166,18 @@ def request_data(request, user_slug):
         async_task(generate_data_archive, user=user)
 
     return render(request, "users/messages/data_requested.html")
+
+
+@auth_required
+def show_deleted(request, user_slug):
+    user = get_object_or_404(User, slug=user_slug)
+
+    if user.id != request.me.id:
+        raise Http404()
+
+    deleted = Post.objects.filter(author=request.me, deleted_at__isnull=False)[:100]
+    return render(request, "users/deleted.html", {
+        "deleted": deleted
+    })
+
+
