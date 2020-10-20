@@ -1189,16 +1189,22 @@
 
             .user-edit-digest-label {
                 display: block;
+                position: relative;
                 cursor: pointer;
                 width: 220px;
                 min-height: 250px;
-                padding: 10px;
+                margin: 10px;
                 box-sizing: border-box;
                 text-decoration: none;
                 box-shadow: var(--block-shadow);
                 background-color: var(--block-bg-color);
                 border-radius: 10px;
+                border: var(--block-border);
                 text-align: center;
+            }
+
+            .user-edit-digest-label:hover {
+                box-shadow: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
             }
 
                 .user-edit-digest-label i {
@@ -1210,7 +1216,11 @@
                 .user-edit-digest-label input {
                     display: inline-block;
                     width: auto;
+                    position: absolute;
                     padding-bottom: 10px;
+                    bottom: 40px;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
                 }
 
                 .user-edit-digest-name {
@@ -1312,6 +1322,12 @@
         text-decoration: none;
         color: #999;
         white-space: nowrap;
+    }
+
+    .feed-post-footer .bookmark-button {
+        display: inline-block;
+        text-decoration: none;
+        opacity: 0.6;
     }
 
     .feed-post-is-pinned {
