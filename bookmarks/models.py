@@ -14,5 +14,9 @@ class PostBookmark(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @classmethod
+    def visible_objects(cls):
+        return cls.objects.filter(is_visible=True)
+
     class Meta:
         db_table = "post_bookmarks"
