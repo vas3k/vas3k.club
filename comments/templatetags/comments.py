@@ -1,8 +1,11 @@
+import json
 from collections import namedtuple
 
 from django import template
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from posts.templatetags.text_filters import cool_date
 from club import settings
 from common.markdown.markdown import markdown_text
 
@@ -33,6 +36,29 @@ def comment_tree(comments):
 
     return tree
 
+@register.simple_tag()
+def comment_data(comment, user):
+    return json.dumps({
+        "url": reverse("show_post", args=[comment.post.type, comment.post.slug]),
+        "createdAt": cool_date(comment.created_at),
+        "author": {
+            "fullName": comment.author.full_name,
+            "slug": comment.author.slug,
+            "profileUrl": reverse("profile", args=[comment.author.slug]),
+            "position": comment.author.position,
+            "avatar": comment.author.get_avatar(),
+            "hat": comment.author.hat
+        },
+        "upvote": {
+            "count": comment.upvotes,
+            "hoursToRetract":settings.RETRACT_VOTE_IN_HOURS,
+            "upvoteUrl": reverse("upvote_comment", args=[comment.id]),
+            "retractVoteUrl": reverse("retract_comment_vote", args=[comment.id]),
+            "isVoted": True if comment.is_voted else False,
+            "upvotedAt" : comment.upvoted_at,
+            "isDisabled": not bool(user and user != comment.author)
+        }
+    })
 
 @register.simple_tag(takes_context=True)
 def render_comment(context, comment):

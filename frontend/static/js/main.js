@@ -15,6 +15,8 @@ import UserAvatarInput from "./components/UserAvatarInput.vue";
 import StripeCheckoutButton from "./components/StripeCheckoutButton.vue";
 import ClubApi from "./common/api.service";
 import InputLengthCounter from "./components/InputLengthCounter.vue";
+import Comment from "./components/comment/Comment.vue";
+
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-bookmark", PostBookmark);
 Vue.component("post-subscription", PostSubscription);
@@ -26,6 +28,7 @@ Vue.component("user-avatar-input", UserAvatarInput);
 Vue.component("sidebar-toggler", SidebarToggler);
 Vue.component("stripe-checkout-button", StripeCheckoutButton);
 Vue.component("input-length-counter", InputLengthCounter);
+Vue.component("comment", Comment);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.
@@ -74,7 +77,9 @@ new Vue({
 
                 // On mobile the next element sibling is undefined
                 if (textarea.nextElementSibling) {
-                    const codeMirrorEditor = textarea.nextElementSibling.CodeMirror || textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
+                    const codeMirrorEditor =
+                        textarea.nextElementSibling.CodeMirror ||
+                        textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
                     if (codeMirrorEditor !== undefined) {
                         codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
                         codeMirrorEditor.focus();
