@@ -57,7 +57,7 @@
                         <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
                     {% endif %}
                     {% if post.author == me and not post.deleted_at and not post.is_visible %}
-                        <a href="{% url "delete_post" post.slug %}"><i class="fas fa-trash"></i>&nbsp;Удалить&nbsp;&nbsp;&nbsp;</a>
+                        <a href="{% url "delete_post" post.slug %}" onclick="return confirm('Действительно удалить?')"><i class="fas fa-trash"></i>&nbsp;Удалить&nbsp;&nbsp;&nbsp;</a>
                     {% endif %}
                     {% if post.author == me and post.deleted_at and not post.is_visible %}
                         <a href="{% url "delete_post" post.slug %}"><i class="fas fa-trash-restore"></i>&nbsp;Восстановить&nbsp;&nbsp;&nbsp;</a>

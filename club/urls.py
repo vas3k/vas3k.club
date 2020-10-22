@@ -30,7 +30,7 @@ from users.views.delete_account import request_delete_account, confirm_delete_ac
 from users.views.messages import on_review, rejected, banned
 from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
-    edit_bot, edit_data, request_data, show_deleted
+    edit_bot, edit_data, request_data
 from users.views.intro import intro
 from users.views.admin import admin_profile
 from users.views.people import people
@@ -69,7 +69,6 @@ urlpatterns = [
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
     path("user/<slug:user_slug>/delete/", request_delete_account, name="request_delete_account"),
     path("user/<slug:user_slug>/delete/confirm/", confirm_delete_account, name="confirm_delete_account"),
-    path("user/<slug:user_slug>/trash/", show_deleted, name="show_deleted"),
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
