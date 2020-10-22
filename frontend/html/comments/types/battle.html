@@ -1,48 +1,14 @@
 {% load comments %}
 {% load text_filters %}
 {% load battle %}
-{% load posts %}
-<div class="battle-comment-prefix battle-comment-prefix-side-{{ comment.metadata.battle.side }}">
-    за «{{ comment.battle_side }}»
-</div>
-<div class="block comment comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}" id="comment-{{ comment.id }}">
-    <div class="comment-header">
-        <div class="comment-title">{{ comment.title | rutypography }}</div>
-        {% include "users/widgets/tiny.html" with user=comment.author %}
-    </div>
-    <div class="comment-rating">
-        <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
-                         :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
-                         upvote-url="{% url "upvote_comment" comment.id %}"
-                         retract-vote-url="{% url "retract_comment_vote" comment.id %}"
-                         {% if comment.is_voted %}
-                            initial-is-voted
-                            initial-upvote-timestamp="{{comment.upvoted_at}}"
-                         {% endif %}
-                         {% if not me|can_upvote:comment or upvote_disabled %}is-disabled{% endif %}>
-        </comment-upvote>
 
-        {% if comment.is_pinned %}
-            <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
-        {% endif %}
-    </div>
-    <div class="comment-body">
-        <div class="text-body text-body-type-comment">
-            {% render_comment comment %}
-        </div>
-    </div>
-    <div class="comment-footer">
-        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
-            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
-        {% endif %}
-
-        {% if me == comment.author or me.is_moderator %}
-            <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
-        {% endif %}
-
-        {% if me and comment.post.is_commentable %}
-            <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
-        {% endif %}
-    </div>
-</div>
-<div class="clearfix"></div>
+<battle-comment
+    id="{{ comment.id }}"
+    :comment="{% battle_comment_data comment me %}"
+    title="{{ comment.title | rutypography }}"
+    content="{% render_comment comment %}"
+    {% if me == comment.author or me.is_moderator %}edit-url="{% url "edit_comment" comment.id %}"{% endif %}
+    {% if me == comment.author or me == comment.post.author or me.is_moderator %}delete-url="{% url "delete_comment" comment.id %}"{% endif %}
+    {% if me and comment.post.is_commentable %}can-reply{% endif %}
+>
+</battle-comment>

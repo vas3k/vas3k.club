@@ -1,5 +1,9 @@
+import json
+
+from django.conf import settings
 from django import template
 from django.template import loader
+from django.urls import reverse
 
 register = template.Library()
 
@@ -33,6 +37,28 @@ def battle_stats(post, comments):
         "battle": post,
     })
 
+@register.simple_tag()
+def battle_comment_data(comment, user):
+    return json.dumps({
+        "side": comment.battle_side,
+        "sideSlug": comment.metadata["battle"]["side"],
+        "author": {
+            "fullName": comment.author.full_name,
+            "slug": comment.author.slug,
+            "profileUrl": reverse("profile", args=[comment.author.slug]),
+            "avatar": comment.author.get_avatar(),
+            "isBanned": comment.author.is_banned
+        },
+        "upvote": {
+            "count": comment.upvotes,
+            "hoursToRetract":settings.RETRACT_VOTE_IN_HOURS,
+            "upvoteUrl": reverse("upvote_comment", args=[comment.id]),
+            "retractVoteUrl": reverse("retract_comment_vote", args=[comment.id]),
+            "isVoted": True if comment.is_voted else False,
+            "upvotedAt" : comment.upvoted_at,
+            "isDisabled": not bool(user and user != comment.author)
+        }
+    })
 
 @register.filter()
 def side_name(battle, side_code):
