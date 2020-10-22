@@ -1,14 +1,15 @@
 ---
-name: Feature Request
-about: Suggest ideas, new features or enhancements
-labels: "enhancement"
+name: Фича
+title: "Фича: <короткое описание>"
+about: Новые идеи и функционал клуба
+labels: "improvement"
 ---
 
-<!-- WARNING: Ignoring this template could lead to the issue being closed as incomplete -->
+<!-- WARNING: Игнорирование шаблона может привести к тому, что таску закроют -->
 
-## Checklist
-- [ ] I believe the idea is awesome and would benefit the 🎩 vas3k.club.
-- [ ] I have searched in the issue tracker for similar requests, including closed ones.
+## Чеклист
+- [ ] Я считаю, что идея офигенная и принесет пользу клубу 🎩
+- [ ] Я искал в трекере похожие проблемы, в том числе в закрытых Issues.
 
-## Description
-A detailed description of the request.
+## Описание
+Описание фичи.

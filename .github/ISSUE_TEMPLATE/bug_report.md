@@ -1,17 +1,24 @@
 ---
-name: Bug Report
-about: Create a bug report affecting the 🎩 vas3k.club
+name: Баг
+about: Что-то работает не так, как надо 🎩 vas3k.club
+title: "Баг: <короткое описание>"
 labels: "bug"
 ---
 
-<!-- WARNING: Ignoring this template could lead to the issue being closed as incomplete -->
+<!-- WARNING: Игнорирование шаблона может привести к тому, что таску закроют -->
 
-## Checklist
-- [ ] I am sure the error is coming from 🎩 vas3k.club's code and not elsewhere.
-- [ ] I have searched in the issue tracker for similar bug reports, including closed ones.
+## Чеклист
+- [ ] Я уверен, что ошибка пришла на сайте vas3k.club, а не на стороне браузера (плагины, адблок, vpn, итд)
+- [ ] Я искал в трекере похожие проблемы, в том числе в закрытых Issues.
 
-## Description
-A clear and concise description of the problem.
+## Описание
+Четкое и краткое описание проблемы.
 
-## Steps to Reproduce
-[A minimal, reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+## Наблюдаемый результат
+Скриншот или описание бага.
+
+## Ожидаемый результат
+Как должно выглядеть.
+
+## Шаги к воспроизведению
+[Минимальный воспроизводимый пример] (https://stackoverflow.com/help/minimal-reproducible-example).
