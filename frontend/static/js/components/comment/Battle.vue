@@ -34,7 +34,12 @@
             <div class="comment-footer">
                 <delete-action v-if="deleteUrl" :url="deleteUrl" />
                 <edit-action v-if="editUrl" :url="editUrl" />
-                <reply-action :comment-id="id" :username="comment.author.slug" v-on:reply="$root.showReplyForm" />
+                <reply-action
+                    v-if="canReply"
+                    :comment-id="id"
+                    :username="comment.author.slug"
+                    v-on:reply="$root.showReplyForm"
+                />
             </div>
         </div>
         <div class="clearfix"></div>
@@ -66,9 +71,12 @@ export default {
             type: Object,
             required: true,
         },
+        canReply: {
+            type: Boolean,
+            default: true,
+        },
         editUrl: String,
         deleteUrl: String,
-        canReply: String,
     },
     computed: {
         wrapperId: function () {

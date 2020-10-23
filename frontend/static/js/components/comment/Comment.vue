@@ -44,7 +44,12 @@
             <pin-action v-if="pinUrl" :url="pinUrl" />
             <delete-action v-if="deleteUrl" :url="deleteUrl" />
             <edit-action v-if="editUrl" :url="editUrl" />
-            <reply-action :comment-id="id" :username="comment.author.slug" v-on:reply="$root.showReplyForm" />
+            <reply-action
+                v-if="canReply"
+                :comment-id="id"
+                :username="comment.author.slug"
+                v-on:reply="$root.showReplyForm"
+            />
         </div>
     </div>
 </template>
@@ -84,10 +89,13 @@ export default {
             type: Boolean,
             default: false,
         },
+        canReply: {
+            type: Boolean,
+            default: true,
+        },
         pinUrl: String,
         editUrl: String,
         deleteUrl: String,
-        canReply: String,
     },
     computed: {
         wrapperId: function () {
