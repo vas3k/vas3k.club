@@ -47,6 +47,7 @@ def comment_data(comment, user):
             "profileUrl": reverse("profile", args=[comment.author.slug]),
             "position": comment.author.position,
             "avatar": comment.author.get_avatar(),
+            "isBanned": comment.author.is_banned,
             "hat": comment.author.hat
         },
         "upvote": {

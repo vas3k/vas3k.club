@@ -5,7 +5,7 @@
                 <span class="avatar" :style="{ backgroundImage: `url(${avatarUrl})` }"></span>
             </a>
         </span>
-        <span class="user-info">
+        <span class="user-info" :class="{ 'user-name-is-banned': isBanned }">
             <a :href="profileUrl">
                 <span class="user-name">{{ displayName }}</span>
                 <span class="user-position" v-if="description">, {{ description }}</span>
@@ -36,6 +36,10 @@ export default {
         displayName: {
             type: String,
             required: true,
+        },
+        isBanned: {
+            type: Boolean,
+            default: false,
         },
         description: String,
         hat: Object,

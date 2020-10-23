@@ -15,6 +15,7 @@
                 :display-name="comment.author.fullName"
                 :description="comment.author.position"
                 :hat="comment.author.hat"
+                :is-banned="comment.author.isBanned"
             >
                 <template v-slot:footer>
                     <a :href="anchor">{{ comment.createdAt }}</a>
@@ -76,6 +77,10 @@ export default {
             default: false,
         },
         isPinned: {
+            type: Boolean,
+            default: false,
+        },
+        isBanned: {
             type: Boolean,
             default: false,
         },
