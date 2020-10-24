@@ -274,8 +274,7 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        with self.settings(JWT_SECRET="xxx"):
-            response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+        response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
 
         # then
         self.assertRegex(text=urljoin(response.request['PATH_INFO'], response.url),
@@ -284,7 +283,7 @@ class ViewExternalLoginTests(TestCase):
         # check jwt
         url_params = response.url.split("?")[1]
         jwt_str = url_params.split("=")[1]
-        payload = jwt.decode(jwt_str, key="xxx", verify=True)
+        payload = jwt.decode(jwt_str, verify=False)
         self.assertIsNotNone(payload)
         self.assertEqual(payload['user_slug'], self.new_user.slug)
         self.assertEqual(payload['user_name'], self.new_user.full_name)
