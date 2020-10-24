@@ -17,6 +17,7 @@ import ClubApi from "./common/api.service";
 import InputLengthCounter from "./components/InputLengthCounter.vue";
 import Comment from "./components/comment/Comment.vue";
 import BattleComment from "./components/comment/Battle.vue";
+import Reply from "./components/comment/Reply.vue";
 
 Vue.component("post-upvote", PostUpvote);
 Vue.component("post-bookmark", PostBookmark);
@@ -31,6 +32,7 @@ Vue.component("stripe-checkout-button", StripeCheckoutButton);
 Vue.component("input-length-counter", InputLengthCounter);
 Vue.component("comment", Comment);
 Vue.component("battle-comment", BattleComment);
+Vue.component("reply", Reply);
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

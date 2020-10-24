@@ -41,6 +41,7 @@ def comment_data(comment, user):
     return json.dumps({
         "url": reverse("show_post", args=[comment.post.type, comment.post.slug]),
         "createdAt": cool_date(comment.created_at),
+        "replyTo": str(comment.reply_to_id) if comment.reply_to_id is not None else None,
         "author": {
             "fullName": comment.author.full_name,
             "slug": comment.author.slug,
@@ -62,7 +63,7 @@ def comment_data(comment, user):
     })
 
 @register.simple_tag(takes_context=True)
-def render_comment(context, comment):
+def unsafe_render_comment(context, comment):
     if comment.is_deleted:
         if comment.deleted_by == comment.author_id:
             by_who = " его автором"
@@ -71,9 +72,7 @@ def render_comment(context, comment):
         else:
             by_who = " модератором"
 
-        return mark_safe(
-            f"""<p class="comment-text-deleted">😱 Комментарий удален{by_who}...</p>"""
-        )
+        return f"""<p class="comment-text-deleted">😱 Комментарий удален{by_who}...</p>"""
 
     if not comment.html or settings.DEBUG:
         new_html = markdown_text(comment.text)
@@ -82,4 +81,9 @@ def render_comment(context, comment):
             comment.html = new_html
             comment.save()
 
-    return mark_safe(comment.html or "")
+    return comment.html or ""
+
+
+@register.simple_tag(takes_context=True)
+def render_comment(context, comment):
+    return mark_safe(unsafe_render_comment(context, comment))
