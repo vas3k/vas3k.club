@@ -40,7 +40,7 @@ def comment_tree(comments):
 def comment_data(comment, user):
     return json.dumps({
         "url": reverse("show_post", args=[comment.post.type, comment.post.slug]),
-        "createdAt": cool_date(comment.created_at),
+        "createdAt": str(cool_date(comment.created_at)),
         "replyTo": str(comment.reply_to_id) if comment.reply_to_id is not None else None,
         "author": {
             "fullName": comment.author.full_name,
