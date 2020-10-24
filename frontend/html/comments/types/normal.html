@@ -13,6 +13,6 @@
     {% if me == comment.author or me.is_moderator %}edit-url="{% url "edit_comment" comment.id %}"{% endif %}
     {% if me == comment.author or me == comment.post.author or me.is_moderator %}delete-url="{% url "delete_comment" comment.id %}"{% endif %}
     {% if me and comment.post.is_commentable %}can-reply{% endif %}
-    content="{% render_comment comment %}"
+    content="{% unsafe_render_comment comment %}"
 >
 </comment>
