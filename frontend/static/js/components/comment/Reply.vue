@@ -26,7 +26,9 @@
                 class="comment-reply-button"
                 v-on:click="$root.showReplyForm(comment.replyTo, comment.author.slug, true)"
             >
-                —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
+                <span v-if="comment.author.isBanned" class="user-name-is-banned">
+                    —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
+                </span>
             </span>
 
             <a :href="anchor" class="comment-reply-date">
