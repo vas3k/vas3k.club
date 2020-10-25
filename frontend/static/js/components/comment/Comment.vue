@@ -85,10 +85,6 @@ export default {
             type: Boolean,
             default: false,
         },
-        isBanned: {
-            type: Boolean,
-            default: false,
-        },
         canReply: {
             type: Boolean,
             default: true,
