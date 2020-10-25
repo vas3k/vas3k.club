@@ -18,7 +18,7 @@ django.setup()  # todo: how to run tests from PyCharm without this workaround?
 from auth.models import Code, Session
 from auth.providers.common import Membership, Platform
 from auth.exceptions import PatreonException
-from tests.helpers import HelperClient
+from tests.helpers import HelperClient, JWT_STUB_VALUES
 from users.models.user import User
 
 
@@ -274,7 +274,8 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+        with self.settings(JWT_PRIVATE_KEY=JWT_STUB_VALUES.JWT_PRIVATE_KEY):
+            response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
 
         # then
         self.assertRegex(text=urljoin(response.request['PATH_INFO'], response.url),
@@ -295,7 +296,7 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        with self.settings(JWT_SECRET="xxx"):
+        with self.settings(JWT_PRIVATE_KEY=JWT_STUB_VALUES.JWT_PRIVATE_KEY):
             response = self.client.get(reverse('external_login'), data={'redirect': 'some-page?param1=value1'})
 
         # then
