@@ -133,10 +133,10 @@ class TestProducts(TestCase):
                                                          "recurrent": "yearly"})
 
     def test_find_by_price_id_positive(self):
-        result = products.find_by_price_id(price_id="price_1H73q7KgJMaF2rHtswNA3rha")
+        result = products.find_by_price_id(price_id="price_1H74BCKgJMaF2rHtRhUtbn3C")
 
         self.assertIsNotNone(result)
-        self.assertEqual(result, PRODUCTS["club50_recurrent_monthly"])
+        self.assertEqual(result, PRODUCTS["club1_recurrent_yearly"])
 
     def test_find_by_price_id_not_existed(self):
         result = products.find_by_price_id(price_id="not-existed-price-id")

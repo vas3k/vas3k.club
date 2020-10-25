@@ -30,7 +30,7 @@ class ClubRenderer(mistune.HTMLRenderer):
 
         # users can try to "hack" our parser by using non-image urls
         # so, if its not an image or video, display it as a link to avoid auto-loading
-        return f'<a href="{src}">{src}</a>'
+        return f'<a href="{escape_html(src)}">{escape_html(src)}</a>'
 
     def embed(self, src, alt="", title=None):
         if IMAGE_RE.match(src):
@@ -49,7 +49,7 @@ class ClubRenderer(mistune.HTMLRenderer):
 
     def simple_image(self, src, alt="", title=None):
         title = title or alt
-        image_tag = f'<img loading="lazy" src="{src}" alt="{title}">'
+        image_tag = f'<img loading="lazy" src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f"<figure>{image_tag}{caption}</figure>"
 
@@ -66,7 +66,7 @@ class ClubRenderer(mistune.HTMLRenderer):
 
     def video(self, src, alt="", title=None):
         video_tag = (
-            f'<video src="{src}" controls autoplay loop muted playsinline>{alt}</video>'
+            f'<video src="{escape_html(src)}" controls autoplay loop muted playsinline>{escape_html(alt)}</video>'
         )
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f"<figure>{video_tag}{caption}</figure>"
