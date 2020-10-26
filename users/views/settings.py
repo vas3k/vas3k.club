@@ -9,6 +9,7 @@ from django_q.tasks import async_task
 from auth.helpers import auth_required
 from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
+from notifications.email.users import send_welcome_drink
 from search.models import SearchIndex
 from users.forms.profile import ProfileEditForm, NotificationsEditForm
 from users.models.geo import Geo
@@ -89,6 +90,18 @@ def edit_notifications(request, user_slug):
         form = NotificationsEditForm(instance=user)
 
     return render(request, "users/edit/notifications.html", {"form": form, "user": user})
+
+
+@auth_required
+def resend_welcome_drink(request, user_slug):
+    if user_slug == "me":
+        return redirect("resend_welcome_drink", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+    send_welcome_drink(user)
+    return redirect("edit_notifications", request.me.slug, permanent=False)
 
 
 @auth_required
