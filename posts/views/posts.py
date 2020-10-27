@@ -11,6 +11,7 @@ from posts.models.views import PostView
 from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
+from users.models.user import User
 
 
 def show_post(request, post_type, post_slug):
@@ -84,6 +85,22 @@ def edit_post(request, post_slug):
 
 
 @auth_required
+def delete_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if post.author != request.me:
+        raise AccessDenied()
+
+    if post.deleted_at:
+        # restore post
+        post.undelete()
+    else:
+        # delete post
+        post.delete()
+
+    return redirect("compose")
+
+
+@auth_required
 @ajax_request
 def upvote_post(request, post_slug):
     if request.method != "POST":
@@ -149,7 +166,7 @@ def toggle_post_subscription(request, post_slug):
 
 @auth_required
 def compose(request):
-    drafts = Post.objects.filter(author=request.me, is_visible=False)[:100]
+    drafts = Post.objects.filter(author=request.me, is_visible=False, deleted_at__isnull=True)[:100]
     return render(request, "posts/compose/compose.html", {
         "drafts": drafts
     })

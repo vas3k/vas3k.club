@@ -22,7 +22,7 @@ from posts.views.admin import admin_post, announce_post
 from posts.views.api import toggle_post_bookmark
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
-    toggle_post_subscription
+    toggle_post_subscription, delete_post
 from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
@@ -82,6 +82,7 @@ urlpatterns = [
 
     path("create/", compose, name="compose"),
     path("create/<slug:post_type>/", compose_type, name="compose_type"),
+    path("post/<slug:post_slug>/delete/", delete_post, name="delete_post"),
     path("post/<slug:post_slug>/edit/", edit_post, name="edit_post"),
     path("post/<slug:post_slug>/bookmark/", toggle_post_bookmark, name="toggle_post_bookmark"),
     path("post/<slug:post_slug>/upvote/", upvote_post, name="upvote_post"),
