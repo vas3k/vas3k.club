@@ -1223,6 +1223,7 @@
 
                 .user-edit-digest-label input {
                     display: inline-block;
+                    visibility: hidden;
                     width: auto;
                     position: absolute;
                     padding-bottom: 10px;
