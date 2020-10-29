@@ -1,10 +1,23 @@
 version: "3.7"
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx:/etc/nginx
+      - ./frontend:/frontend
+      - ./gdpr:/gdpr
+    ports:
+      - 80:80
+    depends_on:
+      - club_app
+    environment:
+      - PUID=1000
+      - PGID=1000
+
   club_app: &app
-    build:
-      dockerfile: dev.dockerfile
-      context: .
+    image: ghcr.io/umag/vas3k.club:latest
     command: make docker-run-dev
     container_name: club_app
     environment:
@@ -16,21 +29,21 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+      - PUID=1000
+      - PGID=1000
     restart: always
-    volumes:
-      - .:/app:delegated # enable hot code reload in debug mode
     depends_on:
       - postgres
       - redis
       - queue
-      - webpack
     ports:
       - "8000:8000"
+    volumes:
+      - ./frontend:/app/frontend
+      - ./gdpr/downloads:/app/gdpr/downloads
 
   queue:
-    build:
-      dockerfile: dev.dockerfile
-      context: .
+    image: ghcr.io/umag/vas3k.club:latest
     command: make docker-run-queue
     environment:
       - DEBUG=true
@@ -41,35 +54,32 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+      - PUID=1000
+      - PGID=1000
     restart: always
-    volumes:
-      - .:/app:delegated
     depends_on:
       - postgres
       - redis
-    ports: []
-    
+
   postgres:
-    image: postgres:11
+    image: postgres:12
     container_name: club_postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=vas3k_club
+      - PUID=1000
+      - PGID=1000
     ports:
       - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data:rw
 
   redis:
     image: redis:alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      - PUID=1000
+      - PGID=1000
     ports:
       - 6379:6379
-
-  webpack:
-    image: node:14-slim
-    command: npm run watch
-    restart: always
-    volumes:
-      - .:/app:delegated
-    working_dir: /app/frontend

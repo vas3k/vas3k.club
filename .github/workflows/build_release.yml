@@ -1,0 +1,96 @@
+on:
+  push:
+    branches:
+      - uat
+
+name: Build and Publish frontend and backend
+
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run build --if-present
+        working-directory: frontend
+      - run: npm test
+        working-directory: frontend
+        env:
+          CI: true
+      - uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -qq -r ./zip/frontend.zip ./frontend
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_id }}
+          release_name: Release ${{ github.run_id }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./zip/frontend.zip
+          asset_name: frontend.zip
+          asset_content_type: application/zip
+
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set global env
+        id: global_env
+        run: |
+          REPOSITORY=$(echo $GITHUB_REPOSITORY | tr '[A-Z]' '[a-z]')
+          echo "::set-output name=IMAGE_NAME::${REPOSITORY#*/}"
+          echo "::set-output name=DOCKERHUB_IMAGE_NAME::ghcr.io/${REPOSITORY}"
+
+#     Build Docker image:
+      - name: Build and tag image
+        run: |
+          docker build -t "${{ steps.global_env.outputs.DOCKERHUB_IMAGE_NAME }}:latest" -t "${{ steps.global_env.outputs.DOCKERHUB_IMAGE_NAME }}:${GITHUB_SHA::8}" -f dev.dockerfile .
+
+      - name: Docker login
+        run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{secrets.PAT}}
+
+#     Publish image to github package repository:
+      - name: Publish image
+        run: docker push "${{steps.global_env.outputs.DOCKERHUB_IMAGE_NAME}}"
+      - name: Sync compose
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.DOCKER_HOST }}
+          privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          username: ${{ secrets.DOCKER_USER }}
+          command: cd ~/vas3k.club && mkdir -p ./nginx  && wget https://raw.githubusercontent.com/uMag/vas3k.club/uat/docker-compose.uat.yml -O docker-compose.yml && wget https://raw.githubusercontent.com/uMag/vas3k.club/uat/etc/nginx/vas3k.club-uat.conf -O ./nginx/nginx.conf
+      - name: Deploy frontend
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.DOCKER_HOST }}
+          privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          username: ${{ secrets.DOCKER_USER }}
+          command: cd ~/vas3k.club && wget https://github.com/umag/vas3k.club/releases/latest/download/frontend.zip -O frontend.zip && unzip -o frontend.zip
+      - name: Deploy to Docker-compose
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.DOCKER_HOST }}
+          privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          username: ${{ secrets.DOCKER_USER }}
+          command: cd ~/vas3k.club && docker-compose pull && docker-compose down && docker-compose up -d
