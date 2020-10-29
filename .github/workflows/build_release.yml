@@ -79,14 +79,14 @@ jobs:
           host: ${{ secrets.DOCKER_HOST }}
           privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           username: ${{ secrets.DOCKER_USER }}
-          command: cd ~/vas3k.club && mkdir -p ./nginx  && wget https://raw.githubusercontent.com/uMag/vas3k.club/uat/docker-compose.uat.yml -O docker-compose.yml && wget https://raw.githubusercontent.com/uMag/vas3k.club/uat/etc/nginx/vas3k.club-uat.conf -O ./nginx/nginx.conf
+          command: cd ~/vas3k.club && mkdir -p ./nginx  && wget https://raw.githubusercontent.com/vas3k/vas3k.club/uat/docker-compose.uat.yml -O docker-compose.yml && wget https://raw.githubusercontent.com/vas3k/vas3k.club/uat/etc/nginx/vas3k.club-uat.conf -O ./nginx/nginx.conf
       - name: Deploy frontend
         uses: garygrossgarten/github-action-ssh@release
         with:
           host: ${{ secrets.DOCKER_HOST }}
           privateKey: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           username: ${{ secrets.DOCKER_USER }}
-          command: cd ~/vas3k.club && wget https://github.com/umag/vas3k.club/releases/latest/download/frontend.zip -O frontend.zip && unzip -o frontend.zip
+          command: cd ~/vas3k.club && wget https://github.com/vas3k/vas3k.club/releases/latest/download/frontend.zip -O frontend.zip && unzip -o frontend.zip
       - name: Deploy to Docker-compose
         uses: garygrossgarten/github-action-ssh@release
         with:

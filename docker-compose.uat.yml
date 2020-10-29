@@ -17,7 +17,7 @@ services:
       - PGID=1000
 
   club_app: &app
-    image: ghcr.io/umag/vas3k.club:latest
+    image: ghcr.io/vas3k/vas3k.club:latest
     command: make docker-run-dev
     container_name: club_app
     environment:
@@ -43,7 +43,7 @@ services:
       - ./gdpr/downloads:/app/gdpr/downloads
 
   queue:
-    image: ghcr.io/umag/vas3k.club:latest
+    image: ghcr.io/vas3k/vas3k.club:latest
     command: make docker-run-queue
     environment:
       - DEBUG=true
