@@ -27,7 +27,13 @@
                 {% endif %}
             </span>
             <div class="post-data">
-                {% if not post.is_visible %}
+                {% if post.deleted_at %}
+                    <div class="post-label">
+                        <span class="label label-type-deleted">
+                            <span class="label-title">Удалённый пост</span>
+                        </span>
+                    </div>
+                {% elif not post.is_visible %}
                     <div class="post-label">
                         <span class="label label-type-draft">
                             <span class="label-title">Черновик</span>
@@ -50,6 +56,7 @@
                     {% if post.author == me or me.is_moderator %}
                         <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
                     {% endif %}
+                    {% include "posts/widgets/delete_restore.html" %}
                     {% if me.is_moderator %}
                         <a href="{% url "announce_post" post.slug %}"><i class="fas fa-bullhorn"></i></a>&nbsp;&nbsp;&nbsp;
                         <a href="{% url "admin_post" post.slug %}"><i class="fas fa-tools"></i></a>

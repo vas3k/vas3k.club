@@ -83,6 +83,7 @@ class Post(models.Model, ModelDiffMixin):
     updated_at = models.DateTimeField(auto_now=True)
     last_activity_at = models.DateTimeField(auto_now_add=True, db_index=True)
     published_at = models.DateTimeField(null=True, db_index=True)
+    deleted_at = models.DateTimeField(null=True, db_index=True)
 
     comment_count = models.IntegerField(default=0)
     view_count = models.IntegerField(default=0)
@@ -232,3 +233,12 @@ class Post(models.Model, ModelDiffMixin):
             intro.save()
 
         return intro
+
+    def delete(self, *args, **kwargs):
+        self.deleted_at = datetime.utcnow()
+        self.save()
+
+    def undelete(self, *args, **kwargs):
+        self.deleted_at = None
+        self.save()
+

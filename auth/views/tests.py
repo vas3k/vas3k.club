@@ -18,7 +18,7 @@ django.setup()  # todo: how to run tests from PyCharm without this workaround?
 from auth.models import Code, Session
 from auth.providers.common import Membership, Platform
 from auth.exceptions import PatreonException
-from tests.helpers import HelperClient
+from tests.helpers import HelperClient, JWT_STUB_VALUES
 from users.models.user import User
 
 
@@ -274,7 +274,7 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        with self.settings(JWT_SECRET="xxx"):
+        with self.settings(JWT_PRIVATE_KEY=JWT_STUB_VALUES.JWT_PRIVATE_KEY):
             response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
 
         # then
@@ -284,7 +284,7 @@ class ViewExternalLoginTests(TestCase):
         # check jwt
         url_params = response.url.split("?")[1]
         jwt_str = url_params.split("=")[1]
-        payload = jwt.decode(jwt_str, key="xxx", verify=True)
+        payload = jwt.decode(jwt_str, verify=False)
         self.assertIsNotNone(payload)
         self.assertEqual(payload['user_slug'], self.new_user.slug)
         self.assertEqual(payload['user_name'], self.new_user.full_name)
@@ -296,7 +296,7 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        with self.settings(JWT_SECRET="xxx"):
+        with self.settings(JWT_PRIVATE_KEY=JWT_STUB_VALUES.JWT_PRIVATE_KEY):
             response = self.client.get(reverse('external_login'), data={'redirect': 'some-page?param1=value1'})
 
         # then

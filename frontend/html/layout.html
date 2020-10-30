@@ -3,16 +3,15 @@
 <html lang="ru">
 <head>
     <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
+    {% block meta %}
+        {% include "common/meta.html" %}
+    {% endblock %}
     <script>
         const theme = localStorage.getItem('theme');
         if (theme !== null) {
             document.documentElement.setAttribute('theme', theme);
         }
     </script>
-
-    {% block meta %}
-        {% include "common/meta.html" %}
-    {% endblock %}
 
     <link rel="alternate" type="application/rss+xml"
           title="Вастрик.Клуб: Новые посты"

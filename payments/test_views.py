@@ -320,7 +320,7 @@ class TestStripeWebhookView(TestCase):
             json_event['data']['object']['id'] = f'payment-id-{uuid.uuid4()}'
             json_event['data']['object']['billing_reason'] = "subscription_cycle"
             json_event['data']['object']['customer'] = self.existed_user.stripe_id
-            product = PRODUCTS['club3_recurrent_yearly']
+            product = PRODUCTS['club1_recurrent_yearly']
             json_event['data']['object']['lines']["data"][0]["plan"]["id"] = product['stripe_id']
 
             timestamp = int(time.time())

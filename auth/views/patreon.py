@@ -1,5 +1,5 @@
 from datetime import datetime
-from urllib.parse import urlencode
+from urllib.parse import urlencode, parse_qsl
 
 from django.conf import settings
 from django.db import IntegrityError
@@ -123,7 +123,9 @@ def patreon_oauth_callback(request):
     redirect_to = reverse("profile", args=[user.slug])
     state = request.GET.get("state")
     if state:
-        redirect_to += f"?{state}"
+        state_dict = dict(parse_qsl(state))
+        if "goto" in state_dict:
+            redirect_to = state_dict["goto"]
 
     response = redirect(redirect_to)
     return set_session_cookie(response, user, session)
