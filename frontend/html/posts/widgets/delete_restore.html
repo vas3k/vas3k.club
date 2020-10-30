@@ -1,0 +1,7 @@
+{% if post.author == me and not post.is_visible %}
+    {% if not post.deleted_at %}
+        <a href="{% url "delete_post" post.slug %}" onclick="return confirm('Действительно удалить?')"><i class="fas fa-trash"></i>&nbsp;Удалить&nbsp;&nbsp;&nbsp;</a>
+    {% else %}
+        <a href="{% url "delete_post" post.slug %}"><i class="fas fa-trash-restore"></i>&nbsp;Восстановить&nbsp;&nbsp;&nbsp;</a>
+    {% endif %}
+{% endif %}
