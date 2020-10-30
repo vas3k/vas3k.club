@@ -3,29 +3,19 @@ import Vue from "vue";
 import "../css/index.css";
 
 import App from "./App.js";
-import PostUpvote from "./components/PostUpvote.vue";
-import PostBookmark from "./components/PostBookmark.vue";
-import PostSubscription from "./components/PostSubscription.vue";
-import CommentUpvote from "./components/CommentUpvote.vue";
-import UserTag from "./components/UserTag.vue";
-import PeopleMap from "./components/PeopleMap.vue";
-import SidebarToggler from "./components/SidebarToggler.vue";
-import UserExpertiseWindow from "./components/UserExpertiseWindow.vue";
-import UserAvatarInput from "./components/UserAvatarInput.vue";
-import StripeCheckoutButton from "./components/StripeCheckoutButton.vue";
 import ClubApi from "./common/api.service";
-import InputLengthCounter from "./components/InputLengthCounter.vue";
-Vue.component("post-upvote", PostUpvote);
-Vue.component("post-bookmark", PostBookmark);
-Vue.component("post-subscription", PostSubscription);
-Vue.component("comment-upvote", CommentUpvote);
-Vue.component("user-expertise-window", UserExpertiseWindow);
-Vue.component("user-tag", UserTag);
-Vue.component("people-map", PeopleMap);
-Vue.component("user-avatar-input", UserAvatarInput);
-Vue.component("sidebar-toggler", SidebarToggler);
-Vue.component("stripe-checkout-button", StripeCheckoutButton);
-Vue.component("input-length-counter", InputLengthCounter);
+
+Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
+Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
+Vue.component("post-subscription", () => import("./components/PostSubscription.vue"));
+Vue.component("comment-upvote", () => import("./components/CommentUpvote.vue"));
+Vue.component("user-expertise-window", () => import("./components/UserExpertiseWindow.vue"));
+Vue.component("user-tag", () => import("./components/UserTag.vue"));
+Vue.component("people-map", () => import("./components/PeopleMap.vue"));
+Vue.component("user-avatar-input", () => import("./components/PostUpvote.vue"));
+Vue.component("sidebar-toggler", () => import("./components/SidebarToggler.vue"));
+Vue.component("stripe-checkout-button", () => import("./components/StripeCheckoutButton.vue"));
+Vue.component("input-length-counter", () => import("./components/InputLengthCounter.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

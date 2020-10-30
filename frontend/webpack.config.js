@@ -11,6 +11,7 @@ module.exports = {
     context: __dirname,
     entry: path.join(__dirname, "static/js/main.js"),
     output: {
+        publicPath: "/static/dist/",
         path: path.join(__dirname, "static/dist"),
         filename: mode === "production" ? "[name]-[hash].js": "[name].js",
         libraryTarget: "var",
