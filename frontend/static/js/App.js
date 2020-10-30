@@ -129,7 +129,7 @@ const App = {
     },
 
     initializeMarkdownEditor() {
-        if (this.isMobile()) return; // we don't need fancy features on mobiles
+        if (this.isMobile()) return []; // we don't need fancy features on mobiles
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {

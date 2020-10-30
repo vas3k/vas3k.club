@@ -10,12 +10,11 @@ from utils.strings import random_string, random_number
 
 
 class Apps(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-
+    id = models.CharField(max_length=16, primary_key=True)
     name = models.CharField(max_length=64, unique=True)
-
-    secret_key = models.CharField(max_length=128, unique=True)
-    app_key = models.CharField(max_length=256, unique=True)
+    jwt_secret = models.CharField(max_length=256, unique=True)
+    jwt_algorithm = models.CharField(max_length=16)
+    jwt_expire_hours = models.IntegerField(default=240)
     redirect_urls = models.TextField()
 
     class Meta:

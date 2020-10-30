@@ -20,7 +20,7 @@
                     Специальный вход тех, кто патронит <a href="https://patreon.com/vas3k">vas3k</a> и олдов.
                 </div>
                 <div class="login-service-form">
-                    <a href="{% url "patreon_login" %}" class="button login-button login-button-patreon"><i class="fab fa-patreon"></i> Войти</a>
+                    <a href="{% url "patreon_login" %}{% if goto %}?goto={{ goto|urlencode }}{% endif %}" class="button login-button login-button-patreon"><i class="fab fa-patreon"></i> Войти</a>
                 </div>
             </div>
         </div>
