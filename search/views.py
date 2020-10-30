@@ -28,8 +28,7 @@ def search(request):
         content_type = None
 
     # exclude all deleted comments
-    if content_type == "comment" or content_type == None:
-        results = results.exclude(comment__is_deleted=True)
+    results = results.exclude(comment__isnull=False, comment__is_deleted=True)
 
     # ordering
     ordering = request.GET.get("ordering")
