@@ -4,6 +4,9 @@
 <html lang="ru" theme="dark">
 <head>
     <title>{% block title %}Вастрик.Клуб ✖️‍{% endblock %}</title>
+    {% block fonts %}
+        {% include "common/fonts.html" %}
+    {% endblock %}
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
