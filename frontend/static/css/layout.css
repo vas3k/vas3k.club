@@ -336,6 +336,10 @@
             font-size: 150%;
         }
 
+        .comment-form-body-battle-side select {
+            width: 100%;
+        }
+
         .comment-form-body-title {
             padding: 20px 0;
         }
