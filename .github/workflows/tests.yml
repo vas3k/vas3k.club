@@ -1,6 +1,10 @@
-name: check_pr
+name: tests
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   lint:
@@ -44,21 +48,3 @@ jobs:
       - name: Run tests
         run: |
           docker-compose -f docker-compose.test.yml run --rm tests
-
-
-  dockerize:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - name: Build the docker-compose stack
-        run: docker-compose up -d
-      - name: Sleep
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '20s'
-      - name: Check db migrate on container
-        run: |
-          docker-compose exec -T club_app make docker-migrate
-      - name: Check build frontend on container
-        run: |
-          docker-compose exec -T webpack npm run build
