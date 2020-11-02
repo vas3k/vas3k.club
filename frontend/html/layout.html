@@ -28,7 +28,7 @@
 <body>
 
 {% block body %}
-    <div id="app">
+    <main id="app">
         {% block menu %}
             {% if me %}
                 {% include "common/menu-full.html" %}
@@ -38,11 +38,11 @@
         {% endblock %}
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
 {% endblock %}
 
 {% block footer %}
-    <div class="footer">
+    <footer class="footer">
         <div class="footer-left">
             <a href="{% url "docs" "about" %}">О Клубе</a><br><br>
 
@@ -64,7 +64,7 @@
                 </form>
             {% endif %}
         </div>
-    </div>
+    </footer>
 {% endblock %}
 
 {% include "common/js.html" %}

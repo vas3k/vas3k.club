@@ -1,5 +1,5 @@
 {% load static %}
-<div class="menu menu-full">
+<nav class="menu menu-full">
     <div class="menu-left">
         <a href="{% url "index" %}" class="menu-logo">
             Вастрик<img src="{% static "images/logo/logo-128.png" %}" alt=" x ">Клуб
@@ -25,4 +25,4 @@
             <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar" style="background-image: url('{% static "images/test/avatar.png" %}');"></a>
         {% endif %}
     </div>
-</div>
+</nav>
