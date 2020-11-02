@@ -16,7 +16,7 @@
 <body>
 
 {% block body %}
-    <div class="landing">
+    <main class="landing">
         <div class="landing-block landing-block-title">
             <img src="{% static "images/logo/logo-1024.png" %}" alt="">
             <div class="landing-title">
@@ -80,17 +80,17 @@
                 </p>
             </div>
         </div>
-    </div>
+    </main>
 {% endblock %}
 
 {% block footer %}
-    <div class="footer">
+    <footer class="footer">
         <div class="footer-left" style="text-align: center; font-size: 130%;">
             &copy; <a href="https://vas3k.ru" target="_blank">Вастрик</a> {% now "Y" %}
             &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
             <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
         </div>
-    </div>
+    </footer>
 {% endblock %}
 
     {% include "common/js.html" %}
