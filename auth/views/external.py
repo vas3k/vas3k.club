@@ -24,6 +24,7 @@ def external_login(request):
     payload = {
         "user_slug": me.slug,
         "user_name": me.full_name,
+        "user_email": me.email,
         "exp": datetime.utcnow() + settings.JWT_EXP_TIMEDELTA,
     }
 
