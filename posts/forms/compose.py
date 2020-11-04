@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytz
 from django import forms
+from django.core.exceptions import ValidationError
 
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
@@ -278,6 +279,22 @@ class PostEventForm(PostForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # validate event date
+        try:
+            now = datetime.utcnow()
+            year = now.year if int(cleaned_data["event_month"]) >= now.year else now.year + 1
+            datetime(
+                year=year,
+                month=int(cleaned_data["event_month"]),
+                day=int(cleaned_data["event_day"]),
+                hour=cleaned_data["event_time"].hour,
+                minute=cleaned_data["event_time"].minute,
+                second=cleaned_data["event_time"].second,
+            )
+        except (KeyError, ValueError):
+            raise ValidationError({"event_day": "Несуществующая дата"})
+
         self.instance.metadata = {
             "event": {
                 "day": cleaned_data["event_day"],

@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="post-event-calendar">
-                    <i class="fas fa-calendar-times"></i> Добавить в
+                    Добавить в&nbsp;
                     <a class="button button-small" href="{% url "generate_ical_invite" %}?title={{ post.title|urlencode }}&date={{ post.event_datetime|date:"c"|urlencode }}&timezone={{ post.metadata.event.timezone|urlencode }}{% if post.metadata.event.location %}&location={{ post.metadata.event.location|urlencode }}{% endif %}&url={{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank"><i class="fab fa-apple"></i>&nbsp;Apple Календарь</a>
                     <a class="button button-small" href="{% url "generate_google_invite" %}?title={{ post.title|urlencode }}&date={{ post.event_datetime|date:"c"|urlencode }}&timezone={{ post.metadata.event.timezone|urlencode }}{% if post.metadata.event.location %}&location={{ post.metadata.event.location|urlencode }}{% endif %}&url={{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank"><i class="fab fa-google"></i>&nbsp;Google Календарь</a>
                 </div>

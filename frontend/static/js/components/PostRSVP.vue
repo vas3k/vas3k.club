@@ -2,9 +2,10 @@
     <span>
         <label class="button event-rsvp-button">
             <span v-if="isActive" class="event-rsvp-button-icon"><i class="fas fa-check-square"></i></span>
-            <span v-else class="event-rsvp-button-icon"><i class="far fa-check-square"></i></span>
+            <span v-else class="event-rsvp-button-icon"><i class="far fa-square"></i></span>
 
-            <span class="event-rsvp-button-text">Я в деле!</span>
+            <span v-if="isActive" class="event-rsvp-button-text">Я в деле!</span>
+            <span v-else class="event-rsvp-button-text">Я приду</span>
 
             <input type="checkbox" v-model="isActive" @change.prevent="toggle" style="display: none;">
         </label>
