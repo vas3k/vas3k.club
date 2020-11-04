@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {% if mode == "edit" %}
+        Событие — {{ block.super }}
+    {% else %}
+        Новое событие — {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="content compose">
+        <div class="content-header">Событие</div>
+
+        {% if mode == "create" %}
+            <div class="content-description">
+                <p>
+                    🎉 Место для анонса событий внутри Клуба.
+                    По сути это обычный пост, у которого есть дата.
+                    Люди могут подписаться и получать уведомления в указанное время.
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="block compose-text">
+            <form action="." method="post" class="compose-form" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row compose-form-title">
+                    {{ form.title }}
+                    {% if form.title.errors %}<span class="form-row-errors">{{ form.title.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="compose-form-datetime">
+                        <div>Когда? </div>
+
+                        <div class="compose-form-datetime-day">
+                            {{ form.event_day }}
+                        </div>
+
+                        <div class="compose-form-datetime-month">
+                            {{ form.event_month }}
+                        </div>
+
+                        <div>в</div>
+
+                        <div class="compose-form-datetime-time">
+                            {{ form.event_time }}
+                        </div>
+
+                        <div class="compose-form-datetime-utc-offset">
+                            {{ form.event_timezone }}
+                        </div>
+                    </div>
+                    <span class="form-row-errors">
+                        {% if form.event_day.errors %}{{ form.event_day.errors }}{% endif %}
+                        {% if form.event_month.errors %}{{ form.event_month.errors }}{% endif %}
+                        {% if form.event_time.errors %}{{ form.event_time.errors }}{% endif %}
+                        {% if form.event_timezone.errors %}{{ form.event_timezone.errors }}{% endif %}
+                    </span>
+                </div>
+
+
+                <div class="form-row">
+                    <div class="compose-form-location">
+                        <div>Где? </div>
+                        <div>{{ form.event_location }}</div>
+                    </div>
+                    {% if form.event_day.errors %}<span class="form-row-errors">{{ form.event_location.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row compose-form-text">
+                    <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
+                    {{ form.text }}
+                    {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
+                    <span class="form-row-help form-row-help-wide">Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
+                </div>
+
+                {% include "posts/compose/elements/post_settings.html" %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-row form-row-center">
+                        {% for error in form.non_field_errors %}
+                            <span class="form-row-errors">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% include "posts/compose/elements/save_buttons.html" %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

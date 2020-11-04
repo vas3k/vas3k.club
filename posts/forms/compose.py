@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import pytz
 from django import forms
 
 from common.url_metadata_parser import parse_url_preview
@@ -185,6 +188,110 @@ class PostIdeaForm(PostForm):
         ]
 
 
+class PostEventForm(PostForm):
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get("instance")
+        if instance and instance.metadata:
+            kwargs.update(initial={
+                "event_day": instance.metadata.get("event", {}).get("day") or datetime.utcnow().day,
+                "event_month": instance.metadata.get("event", {}).get("month") or datetime.utcnow().month,
+                "event_time": instance.metadata.get("event", {}).get("time") or "00:00",
+                "event_timezone": instance.metadata.get("event", {}).get("timezone") or "UTC",
+                "event_location": instance.metadata.get("event", {}).get("location") or "",
+            })
+        super().__init__(*args, **kwargs)
+
+    title = forms.CharField(
+        label="Название события",
+        required=True,
+        max_length=128,
+        widget=forms.TextInput(attrs={"placeholder": "Название и дата события 📅"}),
+    )
+    event_day = forms.ChoiceField(
+        label="День",
+        required=True,
+        initial=lambda: datetime.utcnow().day,
+        choices=[(i, i) for i in range(1, 32)],
+    )
+    event_month = forms.ChoiceField(
+        label="Месяц",
+        required=True,
+        initial=lambda: datetime.utcnow().month,
+        choices=[
+            (1, "января"),
+            (2, "февраля"),
+            (3, "марта"),
+            (4, "апреля"),
+            (5, "мая"),
+            (6, "июня"),
+            (7, "июля"),
+            (8, "августа"),
+            (9, "сентября"),
+            (10, "октября"),
+            (11, "ноября"),
+            (12, "декабря"),
+        ]
+    )
+    event_time = forms.TimeField(
+        label="Время",
+        required=True,
+        widget=forms.TimeInput(attrs={"type": "time", "value": "10:00"}),
+    )
+    event_timezone = forms.ChoiceField(
+        label="Таймзона",
+        required=True,
+        choices=[
+            ("Europe/Moscow", "по Москве"),
+            ("UTC", "UTC"),
+        ]
+    )
+    event_location = forms.CharField(
+        label="Локейшен",
+        required=True,
+        max_length=140,
+        widget=forms.TextInput(attrs={"placeholder": "📍 Адрес или ссылка"}),
+    )
+    text = forms.CharField(
+        label="Развернутое описание",
+        required=True,
+        max_length=500000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 500000,
+                "class": "markdown-editor-full",
+                "placeholder": "Расскажите что, где и когда произойдёт. "
+                               "Не забудьте оставить контакты для связи с организаторами "
+                               "и приложить все необходимые ссылочки.",
+            }
+        ),
+    )
+
+    class Meta:
+        model = Post
+        fields = [
+            "title",
+            "text",
+            "topic",
+            "is_visible",
+            "is_public"
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.instance.metadata = {
+            "event": {
+                "day": cleaned_data["event_day"],
+                "month": cleaned_data["event_month"],
+                "time": str(cleaned_data["event_time"]),
+                "timezone": cleaned_data["event_timezone"],
+                "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
+                .utcoffset().total_seconds() // 60,
+                "location": cleaned_data["event_location"],
+            }
+        }
+        return cleaned_data
+
+
 class PostProjectForm(PostForm):
     title = forms.CharField(
         label="Название проекта",
@@ -320,4 +427,5 @@ POST_TYPE_MAP = {
     Post.TYPE_IDEA: PostIdeaForm,
     Post.TYPE_PROJECT: PostProjectForm,
     Post.TYPE_BATTLE: PostBattleForm,
+    Post.TYPE_EVENT: PostEventForm,
 }

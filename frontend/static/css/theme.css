@@ -150,6 +150,7 @@ input[type=text],
 input[type=number],
 input[type=file],
 input[type=email],
+input[type=time],
 textarea,
 select,
 .CodeMirror {

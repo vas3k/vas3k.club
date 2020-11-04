@@ -13,10 +13,6 @@
                 <span class="compose-type-icon">📝</span>
                 <span class="compose-type-name">Пост</span>
             </a>
-            <a href="{% url "compose_type" "link" %}" class="compose-type">
-                <span class="compose-type-icon">🔗</span>
-                <span class="compose-type-name">Ссылку</span>
-            </a>
             <a href="{% url "compose_type" "question" %}" class="compose-type">
                 <span class="compose-type-icon">🤔️️</span>
                 <span class="compose-type-name">Вопрос</span>
@@ -25,10 +21,18 @@
                 <span class="compose-type-icon">💡</span>
                 <span class="compose-type-name">Идея</span>
             </a>
+            <a href="{% url "compose_type" "link" %}" class="compose-type">
+                <span class="compose-type-icon">🔗</span>
+                <span class="compose-type-name">Ссылка</span>
+            </a>
             <a href="{% url "compose_type" "battle" %}" class="compose-type">
                 <span class="compose-type-icon">🤜🤛</span>
                 <span class="compose-type-name">Батл</span>
             </a>
+<!--            <a href="{% url "compose_type" "event" %}" class="compose-type">-->
+<!--                <span class="compose-type-icon">📅</span>-->
+<!--                <span class="compose-type-name">Событие</span>-->
+<!--            </a>-->
             <a href="{% url "compose_type" "project" %}" class="compose-type">
                 <span class="compose-type-icon">🏗</span>
                 <span class="compose-type-name">Проект</span>
