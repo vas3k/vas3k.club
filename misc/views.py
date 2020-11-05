@@ -1,6 +1,7 @@
 from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
+import pytz
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
@@ -48,14 +49,13 @@ def generate_ical_invite(request):
     if not event_title or not event_date or not event_timezone:
         return HttpResponse("No date, tz or title")
 
+    event_date = datetime.fromisoformat(event_date).replace(tzinfo=pytz.timezone(event_timezone))
+
     cal = Calendar()
     event = Event()
     event.add("summary", event_title)
-    event.add("dtstart", datetime.fromisoformat(event_date))
-    event.add("dtend", datetime.fromisoformat(event_date) + timedelta(hours=2))
-
-    timezone = Timezone()
-    timezone.add("TZID", event_timezone)
+    event.add("dtstart", event_date)
+    event.add("dtend", event_date + timedelta(hours=2))
 
     if event_url:
         event.add("description", f"{event_url}")

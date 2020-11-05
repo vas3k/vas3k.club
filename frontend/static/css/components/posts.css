@@ -615,7 +615,7 @@
 
 .post-event {
     display: grid;
-    grid-template-columns: 110px auto 90px;
+    grid-template-columns: 120px auto 90px;
     grid-template-rows: auto auto auto;
     justify-content: stretch;
     align-items: stretch;
@@ -682,6 +682,10 @@
         font-size: 110%;
         padding-bottom: 10px;
     }
+
+        .post-event-location i {
+            opacity: 0.7;
+        }
 
     .post-event-calendar {
         grid-column-start: 2;
