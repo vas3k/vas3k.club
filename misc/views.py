@@ -65,7 +65,9 @@ def generate_ical_invite(request):
 
     cal.add_component(event)
 
-    return HttpResponse(cal.to_ical(), content_type="text/calendar")
+    response = HttpResponse(cal.to_ical(), content_type="application/force-download")
+    response["Content-Disposition"] = "attachment; filename=ical_vas3k_club.ics"
+    return response
 
 
 @auth_required
