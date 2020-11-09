@@ -4,8 +4,8 @@
 {% load text_filters %}
 
 {% block post %}
-    <div class="content">
-        <div class="post block post-layout-block">
+    <section class="content">
+        <article class="post block post-layout-block">
             <div class="post-upvote">
                 <post-upvote :initial-upvotes="{{ post.upvotes }}"
                              :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
@@ -19,7 +19,7 @@
                 </post-upvote>
             </div>
 
-            <div class="post-header">
+            <header class="post-header">
                 <div class="post-title">
                     {% link_icon post %}
 
@@ -76,17 +76,17 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
-            <div class="text-body text-body-type-post e-content">
+            </header>
+            <section class="text-body text-body-type-post e-content">
                 {% render_post post %}
-            </div>
-            <div class="post-footer p-author">
+            </section>
+            <footer class="post-footer p-author">
                 {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
-            </div>
-        </div>
+            </footer>
+        </article>
 
         {% if post.metadata %}
             {% link_summary post %}
         {% endif %}
-    </div>
+    </section>
 {% endblock %}

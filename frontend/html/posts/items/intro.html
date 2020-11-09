@@ -1,6 +1,6 @@
 {% load text_filters %}
 {% load posts %}
-<div class="feed-post feed-post-type-{{ post.type }} h-entry">
+<article class="feed-post feed-post-type-{{ post.type }} h-entry">
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
@@ -36,4 +36,4 @@
         </div>
     </div>
     <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
-</div>
+</article>
