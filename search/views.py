@@ -27,6 +27,9 @@ def search(request):
     else:
         content_type = None
 
+    # exclude all deleted comments
+    results = results.exclude(comment__isnull=False, comment__is_deleted=True)
+
     # ordering
     ordering = request.GET.get("ordering")
     if ordering not in ALLOWED_ORDERING:

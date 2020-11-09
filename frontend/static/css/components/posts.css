@@ -72,7 +72,7 @@
 
         .post-type-post .post-data {
             padding-top: 20px;
-            padding-bottom: 20px;
+            padding-bottom: 0;
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -90,7 +90,7 @@
 
         .post-type-post .post-author {
             font-size: 110%;
-            padding-bottom: 20px;
+            padding-bottom: 40px;
         }
 
             .post-type-post .post-author .avatar {
@@ -612,3 +612,171 @@
             margin-top: 5px;
             margin-bottom: 10px;
         }
+
+.post-event {
+    display: grid;
+    grid-template-columns: min-content auto min-content;
+    grid-template-rows: auto auto auto;
+    justify-content: stretch;
+    align-items: stretch;
+
+    max-width: var(--post-width);
+    margin-bottom: 60px;
+}
+
+    .post-event-side {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 4;
+
+        padding-right: 20px;
+    }
+
+    .post-event-date {
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: 60% 40%;
+        justify-content: stretch;
+        align-items: stretch;
+
+        width: 90px;
+        height: 100px;
+        border-radius: 20px;
+        box-sizing: border-box;
+        box-shadow: var(--block-shadow);
+        text-align: center;
+        overflow: hidden;
+
+        font-size: 20px;
+    }
+
+        .post-event-date-day {
+            font-size: 200%;
+            line-height: 1em;
+            padding: 11px;
+            color: var(--opposite-text-color);
+            background-color: var(--opposite-bg-color);
+        }
+
+        .post-event-date-month {
+            font-weight: 500;
+            background-color: #FB1324;
+            color: #FFF;
+            padding: 3px;
+        }
+
+    .post-event-title {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 2;
+
+        font-size: 160%;
+        padding-bottom: 10px;
+    }
+
+    .post-event-location {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+
+        font-size: 120%;
+        padding-bottom: 10px;
+    }
+
+        .post-event-location i {
+            opacity: 0.7;
+        }
+
+    .post-event-calendar {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 3;
+        grid-row-end: 4;
+
+        font-size: 90%;
+        padding-top: 10px;
+    }
+
+    .post-event-rsvp {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 4;
+
+        padding-left: 20px;
+    }
+
+        .event-rsvp-button {
+            display: block;
+            padding: 10px;
+            width: 90px;
+            text-align: center;
+            color: var(--opposite-text-color);
+            background-color: var(--opposite-bg-color);
+            border-radius: 20px;
+        }
+
+            .event-rsvp-button-icon {
+                display: block;
+                font-size: 160%;
+                text-align: center;
+                padding-bottom: 10px;
+            }
+
+            .event-rsvp-button-text {
+                display: block;
+                font-size: 130%;
+                text-align: center;
+                line-height: 1.2em;
+            }
+
+    @media only screen and (max-width : 570px) {
+        .post-event {
+            display: grid;
+            grid-template-columns: min-content auto;
+            grid-template-rows: 90px auto auto auto auto;
+            justify-content: stretch;
+            align-items: stretch;
+        }
+
+        .post-event-date {
+            height: 70px;
+            width: 70px;
+            font-size: 14px;
+        }
+
+        .post-event-location {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            grid-row-start: 2;
+            grid-row-end: 3;
+
+            font-size: 130%;
+        }
+
+        .post-event-calendar {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            grid-row-start: 3;
+            grid-row-end: 4;
+
+            padding-top: 30px;
+        }
+
+        .post-event-rsvp {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            grid-row-start: 4;
+            grid-row-end: 5;
+
+            padding-top: 40px;
+            padding-left: 0;
+        }
+
+            .event-rsvp-button {
+                width: 100%;
+            }
+    }

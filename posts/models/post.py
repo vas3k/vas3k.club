@@ -23,6 +23,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_PAIN = "pain"
     TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
+    TYPE_EVENT = "event"
     TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
     TYPE_WEEKLY_DIGEST = "weekly_digest"
@@ -34,6 +35,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_PAIN, "Боль"),
         (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
+        (TYPE_EVENT, "Событие"),
         (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
@@ -47,6 +49,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_PAIN: "😭",
         TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
+        TYPE_EVENT: "📅",
         TYPE_REFERRAL: "🏢",
         TYPE_BATTLE: "🤜🤛"
     }
@@ -59,6 +62,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_IDEA: "Идея:",
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
+        TYPE_EVENT: "Событие:",
         TYPE_REFERRAL: "Рефералка:",
         TYPE_BATTLE: "Батл:"
     }
@@ -175,6 +179,18 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def effective_published_at(self):
         return self.published_at or self.created_at
+
+    @property
+    def event_datetime(self):
+        if self.metadata and self.metadata.get("event"):
+            hour, minute, second = map(int, self.metadata["event"]["time"].split(":", 2))
+            day = int(self.metadata["event"].get("day") or 0)
+            month = int(self.metadata["event"].get("month") or self.effective_published_at.month)
+            if month < self.effective_published_at.month:
+                year = self.effective_published_at.year + 1
+            else:
+                year = self.effective_published_at.year
+            return datetime(year, month, day, hour, minute, second)
 
     @classmethod
     def check_duplicate(cls, user, title):

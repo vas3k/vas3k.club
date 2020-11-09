@@ -28,7 +28,7 @@
 <body>
 
 {% block body %}
-    <div id="app">
+    <main id="app">
         {% block menu %}
             {% if me %}
                 {% include "common/menu-full.html" %}
@@ -38,7 +38,7 @@
         {% endblock %}
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
 {% endblock %}
 
 {% block footer %}

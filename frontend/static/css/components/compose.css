@@ -1,0 +1,28 @@
+.compose-form-datetime {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 130%;
+}
+
+    .compose-form-datetime > * {
+        padding-left: 10px;
+    }
+
+.compose-form-location {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 130%;
+}
+
+    .compose-form-location > * {
+        padding-left: 10px;
+    }
+
+    .compose-form-location input {
+        min-width: 580px;
+        text-align: left !important;
+    }

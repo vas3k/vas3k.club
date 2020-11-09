@@ -11,7 +11,7 @@ from bot.views import webhook_telegram, link_telegram
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment
 from landing.views import landing, docs, god_settings
-from misc.views import achievements, network, robots
+from misc.views import achievements, network, robots, generate_ical_invite, generate_google_invite
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch
 from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
 from posts.api import md_show_post, api_show_post
@@ -120,9 +120,14 @@ urlpatterns = [
 
     path("network/", network, name="network"),
 
+    # admin features
     path("godmode/", god_settings, name="god_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
+
+    # misc
+    path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),
+    path("misc/calendar/google", generate_google_invite, name="generate_google_invite"),
 
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),

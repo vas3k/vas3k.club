@@ -4,28 +4,25 @@
 {% load text_filters %}
 
 {% block post %}
-<section class="content">
-    <article class="post post-type-post">
-        <header class="post-header">
+<div class="content">
+    <div class="post post-type-post">
+        <div class="post-header">
             <div class="post-info">
                 {% if post.topic %}
                     {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
                 {% endif %}
             </div>
             <div class="post-title">
-                {% if post.type == "intro" %}
-                    {{ post.prefix}}: {{ post.author.full_name | rutypography }}
-                {% else %}
-                    {{ post.title | rutypography }}
-                {% endif %}
+                📅 {{ post.title | rutypography }}
             </div>
             <span class="post-is-public">
                 {% if post.is_public %}
-                    <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
+                    <i class="fas fa-globe-americas"></i>&nbsp;Публичный ивент
                 {% else %}
                     <i class="fas fa-lock"></i>&nbsp;Только для своих
                 {% endif %}
             </span>
+
             <div class="post-data">
                 {% if post.deleted_at %}
                     <div class="post-label">
@@ -63,12 +60,6 @@
                     {% endif %}
                 </div>
 
-                {% if post.type != "intro" %}
-                    <div class="post-author">
-                        {% include "users/widgets/tiny.html" with user=post.author %}
-                    </div>
-                {% endif %}
-
                 {% if post.label %}
                     <div class="post-label">
                         {% include "posts/widgets/label.html" with label=post.label %}
@@ -81,8 +72,50 @@
                     </div>
                 {% endif %}
             </div>
-        </header>
-        <section class="post-text">
+        </div>
+
+        <div class="block post-event">
+            <div class="post-event-side">
+                {% if post.metadata.event %}
+                    <div class="post-event-date">
+                        <div class="post-event-date-day">
+                            {{ post.event_datetime|date:"d" }}
+                        </div>
+                        <div class="post-event-date-month">
+                            {{ post.event_datetime|date:"E"|lower  }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="post-event-title">
+                {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} по {% if post.metadata.event.timezone == "UTC" %}UTC{% else %}Москве{% endif %}
+            </div>
+
+            <div class="post-event-location">
+                {% if post.metadata.event.location %}
+                    <i class="fas fa-map-marker-alt"></i>&nbsp;{{ post.metadata.event.location | urlize }}
+                {% endif %}
+            </div>
+
+            <div class="post-event-calendar">
+                Добавить в&nbsp;
+                <a class="button button-small" href="{% url "generate_ical_invite" %}?title={{ post.title|urlencode }}&date={{ post.event_datetime|date:"c"|urlencode }}&timezone={{ post.metadata.event.timezone|urlencode }}{% if post.metadata.event.location %}&location={{ post.metadata.event.location|urlencode }}{% endif %}&url={{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank"><i class="fab fa-apple"></i>&nbsp;Apple Календарь</a>
+                <a class="button button-small" href="{% url "generate_google_invite" %}?title={{ post.title|urlencode }}&date={{ post.event_datetime|date:"c"|urlencode }}&timezone={{ post.metadata.event.timezone|urlencode }}{% if post.metadata.event.location %}&location={{ post.metadata.event.location|urlencode }}{% endif %}&url={{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank"><i class="fab fa-google"></i>&nbsp;Google Календарь</a>
+            </div>
+
+            <div class="post-event-rsvp">
+                {% if me %}
+                    <post-rsvp
+                        url="{% url "toggle_post_subscription" post.slug %}"
+                        {% if subscription %}is-active-by-default{% endif %}
+                    >
+                    </post-rsvp>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="post-text">
             <post-upvote :initial-upvotes="{{ post.upvotes }}"
                          :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                          upvote-url="{% url "upvote_post" post.slug %}"
@@ -93,13 +126,14 @@
                          {% endif %}
                          {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
             </post-upvote>
+
             <div class="text-body text-body-type-post e-content">
                 {% render_post post %}
             </div>
-        </section>
-        <footer class="post-footer p-author">
+        </div>
+        <div class="post-footer p-author">
             {% include "users/widgets/card.html" with user=post.author %}
-        </footer>
-    </article>
-</section>
+        </div>
+    </div>
+</div>
 {% endblock %}
