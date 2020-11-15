@@ -92,6 +92,7 @@ class Post(models.Model, ModelDiffMixin):
     comment_count = models.IntegerField(default=0)
     view_count = models.IntegerField(default=0)
     upvotes = models.IntegerField(default=0, db_index=True)
+    hotness = models.IntegerField(default=0, db_index=True)
 
     is_visible = models.BooleanField(default=True)
     is_visible_on_main_page = models.BooleanField(default=True)
@@ -109,9 +110,11 @@ class Post(models.Model, ModelDiffMixin):
             "created_at",
             "updated_at",
             "last_activity_at",
+            "published_at",
             "comment_count",
             "view_count",
             "upvotes",
+            "hotness",
         ],
     )
 

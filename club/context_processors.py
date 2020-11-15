@@ -4,7 +4,9 @@ from common.data.expertise import EXPERTISE
 
 
 def settings_processor(request):
-    return {"settings": settings}
+    return {
+        "settings": settings
+    }
 
 
 def data_processor(request):

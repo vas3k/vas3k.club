@@ -36,7 +36,7 @@ from users.views.admin import admin_profile
 from users.views.people import people
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
-ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month))"
+ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|hot))"
 
 urlpatterns = [
     path("", auth_switch(landing, feed), name="index"),

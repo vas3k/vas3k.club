@@ -43,21 +43,38 @@
         >
             Фид
         </a>
+
         <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "new" %}{% else %}{% url "feed_ordering" post_type "new" %}{% endif %}"
         class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}"
         >
             Новое
         </a>
-        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top" %}{% else %}{% url "feed_ordering" post_type "top" %}{% endif %}"
-        class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
-        >
-            Лучшее
-        </a>
+
+<!--        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "hot" %}{% else %}{% url "feed_ordering" post_type "hot" %}{% endif %}"-->
+<!--        class="feed-ordering-item {% if ordering == "hot" %}feed-ordering-item-is-active{% endif %}"-->
+<!--        >-->
+<!--            Обсуждаемое-->
+<!--        </a>-->
+
+        {% if me and me.created_at < date_month_ago %}
+            <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top_month" %}{% else %}{% url "feed_ordering" post_type "top_month" %}{% endif %}"
+            class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
+            >
+                Лучшее
+            </a>
+        {% else %}
+            <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top" %}{% else %}{% url "feed_ordering" post_type "top" %}{% endif %}"
+            class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
+            >
+                Лучшее
+            </a>
+        {% endif %}
+
         {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}
             <select class="feed-ordering-item" onchange="location.href += '../' + event.target.value">
-                <option value="top">вообще</option>
-                <option value="top_week" {% if ordering == "top_week" %}selected{% endif %}>за неделю</option>
+                <option value="top" {% if ordering == "top" %}selected{% endif %}>вообще</option>
                 <option value="top_month" {% if ordering == "top_month" %}selected{% endif %}>за месяц</option>
+                <option value="top_week" {% if ordering == "top_week" %}selected{% endif %}>за неделю</option>
             </select>
         {% endif %}
     </div>

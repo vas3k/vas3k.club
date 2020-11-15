@@ -38,6 +38,7 @@ gdal = "==2.4.0"
 stripe = "*"
 icalendar = "*"
 httptools = "*"
+croniter = "*"
 
 [requires]
 python_version = "3.8"
