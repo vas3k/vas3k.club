@@ -21,7 +21,7 @@ class Command(BaseCommand):
                         select round(sum(
                             pow(
                                 (%s - abs(extract(epoch from age(c.created_at, now())))) / 3600,
-                                1.3
+                                1.1
                             )
                         ))
                         from (
