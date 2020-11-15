@@ -1,20 +1,37 @@
-import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.core.management import BaseCommand
+from django.db import connection
 
-from posts.models.views import PostView
-
-log = logging.getLogger(__name__)
+from club.settings import POST_HOTNESS_PERIOD
+from posts.models.post import Post
 
 
 class Command(BaseCommand):
     help = "Updates hotness rank"
 
     def handle(self, *args, **options):
+        Post.objects.exclude(hotness=0).update(hotness=0)
 
-
-        day_ago = datetime.utcnow() - timedelta(days=1)
-        PostView.objects.filter(unread_comments=0, registered_view_at__lte=day_ago).delete()
-
-        self.stdout.write("Done 🥙")
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                update posts
+                set hotness = (
+                    select round(sum(
+                        pow(
+                            (%s - abs(extract(epoch from age(created_at, now())))) / 3600,
+                            1.3
+                        )
+                    ))
+                    from comments
+                    where comments.post_id = posts.id
+                        and is_deleted = false
+                        and created_at > %s
+                )
+                where is_visible = true
+                    and last_activity_at > %s
+            """, [
+                POST_HOTNESS_PERIOD.total_seconds(),
+                datetime.utcnow() - POST_HOTNESS_PERIOD,
+                datetime.utcnow() - POST_HOTNESS_PERIOD,
+            ])
