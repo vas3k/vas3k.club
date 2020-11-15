@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: dev.dockerfile
       context: .
-    command: make test-ci
+    command: make docker-migrate && make test-ci
     container_name: tests
     environment:
       - DEBUG=true  # regardless of this value django will override it on false
