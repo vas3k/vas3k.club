@@ -56,7 +56,7 @@ class Command(BaseCommand):
                 text=no_footer_digest_html,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
-                is_public=False,
+                is_public=True,
             )
         )
 
@@ -104,7 +104,7 @@ class Command(BaseCommand):
         send_telegram_message(
             chat=CLUB_CHANNEL,
             text=render_html_message("weekly_digest_announce.html", post=post),
-            disable_preview=False,
+            disable_preview=True,
             parse_mode=telegram.ParseMode.HTML,
         )
 
