@@ -18,17 +18,20 @@ class Command(BaseCommand):
                 update posts
                 set hotness = coalesce(
                     (
-                        select distinct on (author_id) round(sum(
+                        select round(sum(
                             pow(
-                                (%s - abs(extract(epoch from age(created_at, now())))) / 3600,
+                                (%s - abs(extract(epoch from age(c.created_at, now())))) / 3600,
                                 1.3
                             )
                         ))
-                        from comments
-                        where comments.post_id = posts.id
-                            and is_deleted = false
-                            and created_at > %s
-                        group by author_id
+                        from (
+                            select distinct on (author_id) created_at
+                            from comments
+                            where comments.post_id = posts.id
+                                and is_deleted = false
+                                and created_at > %s
+                            order by author_id
+                        ) as c
                     )
                 , 0.0)
                 where is_visible = true
