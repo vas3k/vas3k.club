@@ -17,7 +17,7 @@ class Command(BaseCommand):
             cursor.execute("""
                 update posts
                 set hotness = coalesce(
-                    select round(sum(
+                    (select round(sum(
                         pow(
                             (%s - abs(extract(epoch from age(created_at, now())))) / 3600,
                             1.3
@@ -27,6 +27,7 @@ class Command(BaseCommand):
                     where comments.post_id = posts.id
                         and is_deleted = false
                         and created_at > %s
+                    )
                 , 0.0)
                 where is_visible = true
                     and last_activity_at > %s
