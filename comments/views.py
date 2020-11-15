@@ -176,7 +176,13 @@ def pin_comment(request, comment_id):
             message="Только автор поста или модератор может пинить посты"
         )
 
-    comment.is_pinned = not comment.is_pinned  # toggle
+    if comment.reply_to:
+        raise AccessDenied(
+            title="Нельзя!",
+            message="Можно пинить только комменты первого уровня"
+        )
+
+    comment.is_pinned = not comment.is_pinned  # toggle pin/unpin
     comment.save()
 
     return redirect("show_comment", comment.post.slug, comment.id)
@@ -202,6 +208,7 @@ def upvote_comment(request, comment_id):
         },
         "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
     }
+
 
 @auth_required
 @ajax_request

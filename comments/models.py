@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import F
 from simple_history.models import HistoricalRecords
 
-from club.exceptions import NotFound
+from club.exceptions import NotFound, BadRequest
 from common.request import parse_ip_address, parse_useragent
 from posts.models.post import Post
 from users.models.user import User
@@ -64,8 +64,8 @@ class Comment(models.Model):
         }
 
     def save(self, *args, **kwargs):
-        if self.reply_to:
-            self.reply_to = self.find_top_comment(self.reply_to)
+        if self.reply_to and self.reply_to.reply_to and self.reply_to.reply_to.reply_to_id:
+            raise BadRequest(message="3 уровня комментариев это максимум")
 
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)

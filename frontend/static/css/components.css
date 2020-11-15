@@ -1650,6 +1650,7 @@
 .comment-replies {
     padding-top: 10px;
     padding-bottom: 0;
+    padding-left: 75px;
 }
 
 .comment-form {
@@ -1883,7 +1884,7 @@
         }
 
 .reply {
-    margin: 0 20px 15px 75px;
+    margin: 0 20px 15px 0;
     padding: 10px;
 }
 

@@ -52,10 +52,15 @@ def process_comment_reply(update: Update):
         )
         return
 
+    # max 3 levels of comments are allowed
+    reply_to = reply.id
+    if reply.reply_to.reply_to:
+        reply_to = reply.reply_to.id
+
     comment = Comment.objects.create(
         author=user,
         post=reply.post,
-        reply_to=Comment.find_top_comment(reply),
+        reply_to=reply_to,
         text=f"@{reply.author.slug}, {text}",
         useragent="TelegramBot (like TwitterBot)",
         metadata={

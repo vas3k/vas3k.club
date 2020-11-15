@@ -8,7 +8,6 @@ from auth.helpers import auth_required
 from common.pagination import paginate
 from posts.models.post import Post
 from posts.models.topics import Topic
-from posts.scheduled import update_post_hotness
 
 POST_TYPE_ALL = "all"
 

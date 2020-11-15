@@ -26,7 +26,7 @@
         </comment-upvote>
     </div>
     <div class="reply-footer">
-        <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.reply_to_id }}', '{{ comment.author.slug }}', true)">
+        <span class="comment-reply-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
             —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
         </span>
 
