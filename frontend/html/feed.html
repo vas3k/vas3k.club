@@ -50,11 +50,11 @@
             Новое
         </a>
 
-<!--        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "hot" %}{% else %}{% url "feed_ordering" post_type "hot" %}{% endif %}"-->
-<!--        class="feed-ordering-item {% if ordering == "hot" %}feed-ordering-item-is-active{% endif %}"-->
-<!--        >-->
-<!--            Обсуждаемое-->
-<!--        </a>-->
+        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "hot" %}{% else %}{% url "feed_ordering" post_type "hot" %}{% endif %}"
+        class="feed-ordering-item {% if ordering == "hot" %}feed-ordering-item-is-active{% endif %}"
+        >
+            Обсуждаемое
+        </a>
 
         {% if me and me.created_at < date_month_ago %}
             <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top_month" %}{% else %}{% url "feed_ordering" post_type "top_month" %}{% endif %}"
