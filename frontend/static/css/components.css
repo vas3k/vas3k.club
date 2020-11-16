@@ -1653,6 +1653,12 @@
     padding-left: 75px;
 }
 
+    @media only screen and (max-width : 570px) {
+        .comment-replies {
+            padding-left: 20px;
+        }
+    }
+
 .comment-form {
     width: 100%;
 }
@@ -1890,7 +1896,6 @@
 
     @media only screen and (max-width : 570px) {
         .reply {
-            margin-left: 20px;
             margin-right: 0;
             padding: 5px;
         }
