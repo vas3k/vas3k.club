@@ -30,10 +30,10 @@ def process_comment_reply(update: Update):
         log.info(f"Comment url not found in: {update.message.reply_to_message.entities}")
         return
 
-    reply_to_id = COMMENT_URL_RE.match(comment_url_entity[0]).group(1)
-    reply = Comment.objects.filter(id=reply_to_id).first()
-    if not reply:
-        log.info(f"Reply not found: {reply_to_id}")
+    comment_id = COMMENT_URL_RE.match(comment_url_entity[0]).group(1)
+    comment = Comment.objects.filter(id=comment_id).first()
+    if not comment:
+        log.info(f"Comment not found: {comment_id}")
         return
 
     is_ok = Comment.check_rate_limits(user)
@@ -53,23 +53,23 @@ def process_comment_reply(update: Update):
         return
 
     # max 3 levels of comments are allowed
-    reply_to = reply.id
-    if reply.reply_to.reply_to:
-        reply_to = reply.reply_to.id
+    reply_to = comment.id
+    if comment.reply_to_id and comment.reply_to.reply_to_id:
+        reply_to = comment.reply_to_id
 
-    comment = Comment.objects.create(
+    reply = Comment.objects.create(
         author=user,
-        post=reply.post,
+        post=comment.post,
         reply_to=reply_to,
-        text=f"@{reply.author.slug}, {text}",
+        text=f"@{comment.author.slug}, {text}",
         useragent="TelegramBot (like TwitterBot)",
         metadata={
             "telegram": update.to_dict()
         }
     )
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
-        "post_slug": comment.post.slug,
-        "comment_id": comment.id
+        "post_slug": reply.post.slug,
+        "comment_id": reply.id
     })
     send_telegram_message(
         chat=Chat(id=update.effective_chat.id),
