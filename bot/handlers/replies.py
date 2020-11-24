@@ -53,14 +53,14 @@ def process_comment_reply(update: Update):
         return
 
     # max 3 levels of comments are allowed
-    reply_to = comment.id
+    reply_to_id = comment.id
     if comment.reply_to_id and comment.reply_to.reply_to_id:
-        reply_to = comment.reply_to_id
+        reply_to_id = comment.reply_to_id
 
     reply = Comment.objects.create(
         author=user,
         post=comment.post,
-        reply_to=reply_to,
+        reply_to_id=reply_to_id,
         text=f"@{comment.author.slug}, {text}",
         useragent="TelegramBot (like TwitterBot)",
         metadata={
