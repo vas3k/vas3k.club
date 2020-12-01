@@ -1195,6 +1195,17 @@
             font-size: 17px;
         }
 
+            .user-edit-digest-item input {
+                display: inline-block;
+                visibility: hidden;
+                width: auto;
+                position: absolute;
+                padding-bottom: 10px;
+                bottom: 40px;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
             .user-edit-digest-label {
                 display: block;
                 position: relative;
@@ -1211,6 +1222,15 @@
                 text-align: center;
             }
 
+            .user-edit-digest-item input:checked + .user-edit-digest-label {
+                background-color: var(--opposite-block-bg-color);
+                color: var(--opposite-text-color);
+            }
+
+            .user-edit-digest-item input:checked + .user-edit-digest-label a {
+                color: var(--opposite-text-color);
+            }
+
             .user-edit-digest-label:hover {
                 box-shadow: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
             }
@@ -1219,17 +1239,6 @@
                     display: block;
                     font-size: 60px;
                     padding-top: 20px;
-                }
-
-                .user-edit-digest-label input {
-                    display: inline-block;
-                    visibility: hidden;
-                    width: auto;
-                    position: absolute;
-                    padding-bottom: 10px;
-                    bottom: 40px;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
                 }
 
                 .user-edit-digest-name {
