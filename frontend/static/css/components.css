@@ -1196,14 +1196,8 @@
         }
 
             .user-edit-digest-item input {
-                display: inline-block;
                 visibility: hidden;
-                width: auto;
                 position: absolute;
-                padding-bottom: 10px;
-                bottom: 40px;
-                left: 50%;
-                transform: translate(-50%, -50%);
             }
 
             .user-edit-digest-label {
