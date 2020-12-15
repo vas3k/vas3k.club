@@ -1,6 +1,8 @@
 import os
 
 from django.conf import settings
+from django.core.cache import cache
+from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import render
 
@@ -8,6 +10,7 @@ from auth.helpers import auth_required
 from club.exceptions import AccessDenied
 from landing.forms import GodSettingsEditForm
 from landing.models import GodSettings
+from users.models.user import User
 
 EXISTING_DOCS = [
     os.path.splitext(f)[0]  # get only filenames
@@ -17,7 +20,18 @@ EXISTING_DOCS = [
 
 
 def landing(request):
-    return render(request, "landing.html")
+    stats = cache.get("landing_stats")
+    if not stats:
+        stats = {
+            "users": User.registered_members().count(),
+            "countries": User.registered_members().values("country")
+            .annotate(total=Count("country")).order_by().count() + 1,
+        }
+        cache.set("landing_stats", stats, settings.LANDING_CACHE_TIMEOUT)
+
+    return render(request, "landing.html", {
+        "stats": stats
+    })
 
 
 def docs(request, doc_slug):

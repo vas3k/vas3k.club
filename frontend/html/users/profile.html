@@ -6,11 +6,11 @@
 {% load paginator %}
 
 {% block title %}
-    {{ user.slug }} — {{ block.super }}
+    {{ user.full_name }} — {{ block.super }}
 {% endblock %}
 
 {% block og_tags %}
-    <meta property="og:title" content="{{ user.slug }} — {{ settings.APP_NAME }}">
+    <meta property="og:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}">
     <meta property="og:type" content="website" />
@@ -18,7 +18,7 @@
     <meta property="og:image" content="{% static "images/share.png" %}">
 
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{{ user.slug }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta name="twitter:image" content="{% static "images/share.png" %}">
 {% endblock %}

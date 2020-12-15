@@ -148,6 +148,8 @@ CACHES = {
     }
 }
 
+LANDING_CACHE_TIMEOUT = 60 * 60 * 24
+
 # App
 
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
@@ -235,7 +237,7 @@ RATE_LIMIT_POSTS_PER_DAY = 10
 RATE_LIMIT_COMMENTS_PER_DAY = 200
 
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
-POST_HOTNESS_PERIOD = timedelta(days=7)
+POST_HOTNESS_PERIOD = timedelta(days=5)
 
 WEBPACK_LOADER = {
     "DEFAULT": {

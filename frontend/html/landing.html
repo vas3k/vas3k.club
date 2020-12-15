@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load text_filters %}
 {% load render_bundle from webpack_loader %}
 <html lang="ru" theme="dark">
 <head>
@@ -17,7 +18,7 @@
 
 {% block body %}
     <main class="landing">
-        <div class="landing-block landing-block-title">
+        <div class="landing-block landing-block-limited">
             <img src="{% static "images/logo/logo-1024.png" %}" alt="">
             <div class="landing-title">
                 <h1>Вастрик.Клуб</h1>
@@ -26,51 +27,215 @@
             </div>
         </div>
 
-        <div class="landing-block" id="why">
+        <div class="landing-block landing-block-narrow" id="why">
             <div>
-                <h2>ЗАЧЕМ?</h2>
-
-                <p>
-                    Интернет стал слишком большим.
-                    Открытость дала ему разнообразие, но сделала всё поверхностным.
-                    Лучшие идеи не рождаются в толпе.
-                </p>
+                <h2>ЗАЧЕМ</h2>
 
                 <p>
                     Клуб — это наше закрытое и в меру айтишное сообщество, в котором мы обсуждаем важные темы вдали от большого интернета.
                 </p>
 
                 <p>
-                    У нас нет секретной цели изменить мир и другой идейной херни.
-                    Напротив, мы собрались здесь чтобы наконец-то поговорить честно и открыто.
-                    Можно почитать подробнее в разделе <a href="{% url "docs" "about" %}" target="_blank">О Клубе</a>.
-                </p>
-
-                <p>
-                    Участники Клуба получают доступ к коммьюнити, ко всем закрытым движухам, новым проектам,
-                    экспериментам и плюшкам от меня и друзей Клуба. Они общаются в чатах и ходят на сходки по всему миру.
+                    У нас нет секретной цели, желания захватить мир и другой идейной херни.
+                    Мы лишь собрались здесь чтобы наконец-то поговорить честно и открыто, вдали от посторонних глаз.
                 </p>
             </div>
         </div>
 
-        <div class="landing-block" id="join">
+        <div class="landing-block landing-block-limited" id="features">
+            <h2 class="landing-block-title">Что внутри?</h2>
+        </div>
+
+        <div class="landing-block landing-block-limited">
+            <div class="landing-block-40">
+                <h3 class="feature-title">Чужой опыт и инсайды</h3>
+
+                <ul class="feature-list">
+                    <li>В Клубе пишут статьи, просят советов, делятся идеями и показывают пет-проджекты</li>
+                    <li>Формат «только для своих» позволяет обсудить некоторые темы без посторонних</li>
+                    <li>Комментарии больше не зашквар</li>
+                    <li>Никаких алгоритмических лент, охоты за вниманием и FOMO</li>
+                </ul>
+            </div>
+            <div class="landing-block-60 landing-posts">
+                <div class="landing-post">
+                    <div class="avatar landing-post-avatar" style="background-image: url('https://i.vas3k.club/na.jpg');"></div>
+                    <div class="landing-post-title">
+                        Невероятно полезные, но неизвестные миру тулзы
+                        <span class="label" style="background-color: rgb(254, 74, 73);">
+                            <span class="label-title">🤙 Рекомендовано</span>
+                        </span>
+                    </div>
+                    <div class="landing-post-footer">312 комментариев <strong>+21 новый</strong></div>
+                    <div class="landing-post-upvotes">365</div>
+                    <a href="https://vas3k.club/post/1657/" target="_blank" class="landing-post-link">&nbsp;</a>
+                </div>
+
+                <div class="landing-post" style="left: 6%;">
+                    <div class="avatar landing-post-avatar" style="background-image: url('https://i.vas3k.club/fa.jpg');"></div>
+                    <div class="landing-post-title">🚄 Переезд в Японию 🎌</div>
+                    <div class="landing-post-footer">49 комментариев</div>
+                    <div class="landing-post-upvotes">183</div>
+                    <a href="https://vas3k.club/post/4787/" target="_blank" class="landing-post-link">&nbsp;</a>
+                </div>
+
+                <div class="landing-post" style="left: 2%;">
+                    <div class="avatar landing-post-avatar" style="background-image: url('https://i.vas3k.ru/lr0.jpg');"></div>
+                    <div class="landing-post-title">Вопрос: Самый полезный навык, которому можно научиться за вечер?</div>
+                    <div class="landing-post-footer">123 комментария <strong>+15 новых</strong></div>
+                    <div class="landing-post-upvotes">256</div>
+                    <a href="https://vas3k.club/question/5/" target="_blank" class="landing-post-link">&nbsp;</a>
+                </div>
+
+                <div class="landing-post" style="left: 8%;">
+                    <div class="avatar landing-post-avatar" style="background-image: url('https://i.vas3k.club/22x.jpg');"></div>
+                    <div class="landing-post-title">Книги, которые разделили мою жизнь на до и после</div>
+                    <div class="landing-post-footer">
+                        <span class="topic topic-type-inline" style="background-color: rgb(243, 156, 18);">
+                            <span class="topic-gradient"></span>
+                            <span class="topic-icon-wrapper">
+                                <span class="topic-icon" style="background-image: url('https://i.vas3k.ru/lra.jpg');"></span>
+                            </span>
+                            <span class="topic-name-wrapper">
+                                <span class="topic-name">Книжный Клуб</span>
+                            </span>
+                        </span>&nbsp;&nbsp;
+
+                        164 комментария <strong>+3 новых</strong>
+                    </div>
+                    <div class="landing-post-upvotes">227</div>
+                    <a href="https://vas3k.club/post/2389/" target="_blank" class="landing-post-link">&nbsp;</a>
+                </div>
+
+                <div class="landing-post" style="left: 1%;">
+                    <div class="avatar landing-post-avatar" style="background-image: url('https://i.vas3k.club/n4.jpg');"></div>
+                    <div class="landing-post-title">🔒 Делимся классными местами на Airbnb, Booking, etc</div>
+                    <div class="landing-post-footer">
+                        <span class="topic topic-type-inline" style="background-color: rgb(144, 12, 63);">
+                            <span class="topic-gradient"></span>
+                            <span class="topic-icon-wrapper">
+                                <span class="topic-icon" style="background-image: url('https://i.vas3k.club/18.png');"></span>
+                            </span>
+                            <span class="topic-name-wrapper">
+                                <span class="topic-name">Тревел</span>
+                            </span>
+                        </span>&nbsp;&nbsp;
+
+                        29 комментариев
+                    </div>
+                    <div class="landing-post-upvotes">87</div>
+                    <a href="https://vas3k.club/post/5774/" target="_blank" class="landing-post-link">&nbsp;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-block landing-screenshots hide-on-iphone">
+            <a href="https://vas3k.club/post/1289/" target="_blank" class="landing-screenshot">
+                <img src="{% static "images/landing/posts/p00003.png" %}" alt="post">
+            </a>
+
+            <a href="https://vas3k.club/post/3467/" target="_blank" class="landing-screenshot">
+                <img src="{% static "images/landing/posts/p00004.png" %}" alt="post">
+            </a>
+
+            <a href="https://vas3k.club/post/2970/" target="_blank" class="landing-screenshot">
+                <img src="{% static "images/landing/posts/p00005.png" %}" alt="post">
+            </a>
+
+            <a href="https://vas3k.club/post/1494/" target="_blank" class="landing-screenshot">
+                <img src="{% static "images/landing/posts/p00009.png" %}" alt="post">
+            </a>
+        </div>
+
+        <div class="landing-block landing-block-limited">
+            <div class="landing-block-50">
+                <img src="{% static "images/landing/rooms.png" %}" class="feature-image" alt="chats" style="padding-top: 40px;">
+            </div>
+
+            <div class="landing-block-50">
+                <h3 class="feature-title">Тусовки по интересам</h3>
+
+                <ul class="feature-list">
+                    <li>Сеть клубных чатиков в телеграме</li>
+                    <li>Коммьюнити по городам и странам</li>
+                    <li>АМА с экспертами и отзывчивые участники</li>
+                    <li>Место, в котором хорошо</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="landing-block landing-block-chats">
+            <img src="{% static "images/landing/chats1.png" %}" class="feature-image" alt="chats">
+            <img src="{% static "images/landing/chats2.png" %}" class="feature-image" alt="chats">
+            <img src="{% static "images/landing/chats3.png" %}" class="feature-image" alt="chats">
+            <img src="{% static "images/landing/chats4.png" %}" class="feature-image" alt="chats">
+        </div>
+
+        <div class="landing-block landing-block-limited">
+            <div class="landing-block-40">
+                <h3 class="feature-title">Движухи, фан и взаимопомощь</h3>
+
+                <ul class="feature-list">
+                    <li>Митапы и онлайн-сходки</li>
+                    <li>Коучинг и менторство между участниками Клуба</li>
+                    <li>У нас запрещена анонимность и действует жесткая модерация. Так мы сохраняем здоровое коммьюнити без говна</li>
+                    <li>Подробнее о правилах можно почитать в разделе <a href="{% url "docs" "about" %}" target="_blank">О Клубе</a></li>
+                </ul>
+            </div>
+
+            <div class="landing-block-60">
+                <img src="{% static "images/landing/activities.png" %}" class="feature-image" alt="chats">
+            </div>
+        </div>
+
+        <div class="landing-block landing-block-limited landing-block-map-title" id="map">
+            <h3 class="feature-title">Недушное коммьюнити</h3>
+        </div>
+
+        <div class="landing-block landing-block-map">
+            <div class="map-background" style="background-image: url('{% static "images/landing/map.jpg" %}');">
+            </div>
+
+            <div class="map-container">
+                <div class="map-sidebar hide-on-iphone">
+                    <div class="map-sidebar-item">📍 В моем городе</div>
+                    <div class="map-sidebar-item map-sidebar-item-selected">🎉 Открыты к общению</div>
+                    <div class="map-sidebar-item">🤟 Ищут друзей</div>
+                    <div class="map-sidebar-item">🤪️ Любят движуху</div>
+                    <div class="map-sidebar-header">Путешествия</div>
+                    <div class="map-sidebar-item map-sidebar-item-selected">🍻 Можем выпить по пиву</div>
+                    <div class="map-sidebar-item map-sidebar-item-selected">🏢 Могу показать офис</div>
+                    <div class="map-sidebar-item">🗼 Могу показать город</div>
+                    <div class="map-sidebar-item">🛌 Могу вписать на ночь</div>
+                    <div class="map-sidebar-header">Профессиональное</div>
+                    <div class="map-sidebar-item">💼 Могу зареферить в компанию</div>
+                    <div class="map-sidebar-item">🔍 Ищу сотрудников</div>
+                    <div class="map-sidebar-item">🔎 Ищу работу</div>
+                    <div class="map-sidebar-item">🛋 Хочу удалёнку</div>
+                    <div class="map-sidebar-item">🚜 Хочу релокацию</div>
+                    <div class="map-sidebar-item">📱 FAANG</div>
+                </div>
+
+                <div class="map-counters">
+                    <div class="map-counter">{{ stats.users }} {{ stats.users | rupluralize:"человек,человека,человек" }}</div>
+                    <div class="map-counter">{{ stats.countries }} {{ stats.countries | rupluralize:"страна,страны,стран"  }}</div>
+                    <div class="map-counter">25+ чатов</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="landing-block landing-block-narrow" id="join">
             <div>
-                <h2>КАК ВСТУПИТЬ?</h2>
+                <h2 class="landing-block-title">Как вступить?</h2>
+
+                <img src="{% static "images/landing/dolor.png" %}" alt="$1" class="landing-dolor">
 
                 <p>
-                    Как в любом закрытом Клубе, у нас платное членство. Это позволяет нам оставаться независимыми от каких-либо организаций или инвесторов.
+                    Членство в Клубе платное. Это позволяет нам оставаться независимыми от других организаций и мнения инвесторов.
                 </p>
 
                 <p>
-                    Клубу можно заносить каждый месяц через <a href="https://www.patreon.com/vas3k" target="_blank">патреон</a> или купить сразу <a href="{% url "join" %}">пакет на год</a> вперёд без подписки. Как вам больше нравится.
-                </p>
-
-                <p>
-                    Сразу предупреждаем, что у нас действует жёсткая модерация и запрещена анонимность.
-                </p>
-
-                <p>
-                    Так мы сохраняем взрослое, здоровое и недушное коммьюнити.
+                    Плюс, мы не пускаем анонимов. Вам придется заполнить профиль и рассказать о себе.
                 </p>
 
                 <br>
@@ -93,7 +258,7 @@
     </footer>
 {% endblock %}
 
-    {% include "common/js.html" %}
-    {% block js %}{% endblock %}
+{% include "common/js.html" %}
+{% block js %}{% endblock %}
 </body>
 </html>

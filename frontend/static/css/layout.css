@@ -77,26 +77,6 @@
     max-width: var(--max-content-width);
 }
 
-.landing {
-}
-
-    .landing-block {
-        position: relative;
-        max-width: var(--normal-content-width);
-        margin: 0 auto;
-    }
-
-    .landing-block-title {
-        max-width: var(--max-content-width);
-    }
-
-        .landing-title {
-            position: absolute;
-            top: 45%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-50%);
-        }
-
 .search {
     display: grid;
     grid-template-columns: auto;
