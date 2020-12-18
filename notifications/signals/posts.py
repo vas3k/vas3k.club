@@ -3,8 +3,10 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from bot.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE
+from bot.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE, Chat
+from common.regexp import USERNAME_RE
 from posts.models.post import Post
+from users.models.user import User
 
 
 @receiver(post_save, sender=Post)
@@ -53,3 +55,15 @@ def async_create_or_update_post(post, is_created):
         parse_mode=telegram.ParseMode.HTML,
         disable_preview=True,
     )
+
+    # parse @nicknames and notify mentioned users (only if post is visible)
+    if post.is_visible and (is_created or "is_visible" in post.changed_fields):
+        notified_user_ids = set()
+        for username in USERNAME_RE.findall(post.text):
+            user = User.objects.filter(slug=username).first()
+            if user and user.telegram_id and user.id not in notified_user_ids:
+                send_telegram_message(
+                    chat=Chat(id=user.telegram_id),
+                    text=render_html_message("post_mention.html", post=post),
+                )
+                notified_user_ids.add(user.id)

@@ -48,7 +48,8 @@ def do_user_admin_actions(request, user, data):
         if not user.is_god:
             user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
             user.save()
-            send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
+            if data["ban_days"] > 0:
+                send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
 
     # Unban
     if data["is_unbanned"]:
