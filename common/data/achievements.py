@@ -42,6 +42,12 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/3bo.png",
         "style": "background-color: #4D446F;",
     }),
+    ("org", {
+        "name": "За Движ",
+        "description": "Ачивка за организацию движух внутри Клуба",
+        "image": "https://vas3k.club/static/images/achievements/org.png",
+        "style": "background-color: #FF4E50; font-size: 185%;",
+    }),
     ("offline", {
         "name": "За взятие офлайна",
         "description": "Медаль за участие в офлайн-сходках. "
@@ -86,7 +92,12 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/3d1.png",
         "style": "background-color: #F04393; font-size: 100%;",
     }),
+    ("2020", {
+        "name": "2020",
+        "description": "Призовое место в итогах 2020 года",
+        "image": "https://vas3k.club/static/images/achievements/2020.png",
+        "style": "background-color: #FC913A; font-size: 190%;",
+    }),
 ]
-
 
 # VIP: https://i.vas3k.club/3cb.png
