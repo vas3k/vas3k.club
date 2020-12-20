@@ -35,7 +35,7 @@ PRODUCTS = {
         "recurrent": False,
         "activator": club_subscription_activator,
         "data": {
-            "timedelta": timedelta(days=365),
+            "timedelta": timedelta(days=365 + 90),
         },
     },
     "club1_recurrent_yearly": {
@@ -46,7 +46,7 @@ PRODUCTS = {
         "recurrent": "yearly",
         "activator": club_subscription_activator,
         "data": {
-            "timedelta": timedelta(days=365),
+            "timedelta": timedelta(days=365 + 90),
         },
     },
     "club1_recurrent_monthly": {
@@ -57,7 +57,7 @@ PRODUCTS = {
         "recurrent": "monthly",
         "activator": club_subscription_activator,
         "data": {
-            "timedelta": timedelta(days=365),
+            "timedelta": timedelta(days=365 + 90),
         },
     },
     "club3": {
