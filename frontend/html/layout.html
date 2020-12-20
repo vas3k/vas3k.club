@@ -44,12 +44,13 @@
 {% block footer %}
     <footer class="footer">
         <div class="footer-left">
-            <a href="{% url "docs" "about" %}">О Клубе</a><br><br>
+            <a href="{% url "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "contact" %}">Написать нам</a><br><br>
+            <a href="{% url "docs" "contact" %}">Написать нам</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a>
+            <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a><br><br>
 
+            CC BY-SA
         </div>
         <div class="footer-right">
             <label class="theme-switcher" for="checkbox">
