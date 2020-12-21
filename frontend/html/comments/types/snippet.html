@@ -12,7 +12,9 @@
                     {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
                 </span>
             </span>
-            <span class="user-footer">{{ comment.created_at | cool_date }}</span>
+            <span class="user-footer">
+                <span> {{comment.post.title | rutypography }} </span> | {{ comment.created_at | cool_date }}
+            </span>
         </div>
     </div>
     <div class="comment-rating">
