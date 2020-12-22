@@ -70,7 +70,7 @@ summary_template = loader.get_template("posts/embeds/summary.html")
 
 @register.simple_tag()
 def link_summary(post):
-    if not post.metadata:
+    if not post.metadata or not post.metadata.get("title") or not post.metadata.get("url"):
         return ""
 
     embed = ""
