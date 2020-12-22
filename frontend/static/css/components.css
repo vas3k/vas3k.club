@@ -1767,6 +1767,7 @@
         cursor: pointer;
         user-select: none;
         max-width: 300px;
+        line-height: 15px;
     }
 
         .comment-date:hover,
