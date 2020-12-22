@@ -40,7 +40,8 @@
                                 {{ form.email_digest_type.1.tag }}
                                 <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
                                     <i class="fas fa-envelope-open"></i>
-                                    <span class="user-edit-digest-name">Дайджест каждый день<br><small style="display: inline-block; margin-top: 20px; line-height: 1.3em; color: #8A8A8A">+ гороскоп в подарок</small></span>
+                                    <span class="user-edit-digest-name">Дайджест каждый день</span>
+                                    <span class="user-edit-digest-description">+ гороскоп в подарок</span>
                                 </label>
                             </div>
                             <div class="user-edit-digest-item">
@@ -48,13 +49,15 @@
                                 <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
                                     <i class="fas fa-calendar-week"></i>
                                     <span class="user-edit-digest-name">Только журнал раз в неделю</span>
+                                    <span class="user-edit-digest-description">Подборка лучшего по понедельникам</span>
                                 </label>
                             </div>
                             <div class="user-edit-digest-item">
                                 {{ form.email_digest_type.0.tag }}
                                 <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
                                     <i class="fas fa-skull-crossbones"></i>
-                                    <span class="user-edit-digest-name">Не надо писем</span>
+                                    <span class="user-edit-digest-name">Не надо никаких писем</span>
+                                    <span class="user-edit-digest-description">Я сам подпишусь где мне нравится</span>
                                 </label>
                             </div>
                         </div>
