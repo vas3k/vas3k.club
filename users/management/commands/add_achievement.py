@@ -2,6 +2,7 @@ import logging
 
 from django.core.management import BaseCommand
 
+from notifications.signals.achievements import async_create_or_update_achievement
 from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
 
@@ -26,9 +27,11 @@ class Command(BaseCommand):
 
         users = User.objects.filter(slug__in=usernames)
         for user in users:
-            UserAchievement.objects.get_or_create(
+            user_achievement, is_created = UserAchievement.objects.get_or_create(
                 user=user,
                 achievement=achievement,
             )
+            if is_created:
+                async_create_or_update_achievement(user_achievement)
 
         self.stdout.write("Done 🥙")
