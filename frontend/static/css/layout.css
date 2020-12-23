@@ -320,6 +320,11 @@
             width: 100%;
         }
 
+            .comment-form-body-battle-side #id_battle_side {
+                width: auto;
+                max-width: 60%;
+            }
+
         .comment-form-body-title {
             padding: 20px 0;
         }
