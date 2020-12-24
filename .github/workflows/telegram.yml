@@ -25,7 +25,7 @@ jobs:
       if: always()
       with:
         chat: -1001287599988
-        token: ${{ secrets.token }} # bot token at settings/secrets with name: token
+        token: ${{ secrets.telegram_dev_bot_token }} # bot token at settings/secrets with name: TELEGRAM_DEV_BOT_TOKEN
         status: ${{ job.status }}
         event: ${{ github.event_name }}
         actor: ${{ github.actor }}
