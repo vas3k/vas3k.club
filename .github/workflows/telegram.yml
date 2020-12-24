@@ -24,7 +24,7 @@ jobs:
       uses: GokulDas027/TelegramBridge@master
       if: always()
       with:
-        chat: -324719594
+        chat: -1001287599988
         token: ${{ secrets.token }} # bot token at settings/secrets with name: token
         status: ${{ job.status }}
         event: ${{ github.event_name }}
