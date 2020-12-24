@@ -1,0 +1,31 @@
+name: Telegram Bridge
+
+# triggers for notifying
+# these are some important trigger cases could be change as need
+# check here https://developer.github.com/webhooks/
+on:
+  issue_comment:
+    types: created
+  issues:
+    types: [opened, edited, pinned, closed, reopened, assigned, labeled]
+  pull_request:
+    types: [opened, closed, edited, ready_for_review, review_requested, reopened]
+  pull_request_review_comment:
+    types: created
+  push:
+
+jobs:
+  build:
+    name: Notifier
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Telegram Bridge
+      uses: GokulDas027/TelegramBridge@master
+      if: always()
+      with:
+        chat: -1001287599988
+        token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }} # bot token at settings/secrets with name: TELEGRAM_DEV_BOT_TOKEN
+        status: ${{ job.status }}
+        event: ${{ github.event_name }}
+        actor: ${{ github.actor }}
