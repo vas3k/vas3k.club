@@ -3,9 +3,9 @@ version: "3.7"
 services:
   tests:
     build:
-      dockerfile: Dockerfile
+      dockerfile: dev.dockerfile
       context: .
-    command: pip install -r dev_requirements.txt && make test-ci
+    command: make test-ci
     container_name: tests
     environment:
       - DEBUG=true  # regardless of this value django will override it on false
@@ -43,7 +43,7 @@ services:
 
   webpack:
     build:
-      dockerfile: frontend/Dockerfile
+      dockerfile: dev.frontend.dockerfile
       context: .
     command: npm run watch
     restart: "no"
