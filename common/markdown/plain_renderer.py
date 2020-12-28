@@ -30,7 +30,7 @@ class PlainRenderer(mistune.HTMLRenderer):
         return "\n"
 
     def block_quote(self, text):
-        return text
+        return "> " + text
 
     def block_code(self, code, info=None):
         return code
@@ -39,7 +39,7 @@ class PlainRenderer(mistune.HTMLRenderer):
         return text
 
     def list_item(self, text, level):
-        return "- " + text
+        return "- " + text + "\n"
 
     def thematic_break(self):
         return '---\n'
