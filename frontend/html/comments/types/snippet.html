@@ -8,8 +8,9 @@
             </span>
             <span class="user-info">
                 <span>
-                    <span class="user-name">{{ comment.author.full_name }}</span>{% if comment.author.position %}<span class="user-position">, {{ comment.author.position }}</span>{% endif %}
-                    {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+                    <a href="{% url "profile" comment.author.slug %}" class="user-name">{{ comment.author.full_name }}</a>
+                    на пост
+                    <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="user-name-post">{{ comment.post.title }}</a>
                 </span>
             </span>
             <span class="user-footer">{{ comment.created_at | cool_date }}</span>
@@ -17,15 +18,10 @@
     </div>
     <div class="comment-rating">
         <span class="upvote upvote-disabled upvote-type-small">{{ comment.upvotes }}</span>
-
-        {% if comment.is_pinned %}
-        <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
-        {% endif %}
     </div>
     <div class="comment-body">
         <div class="text-body text-body-type-comment">
             {% render_comment comment %}
         </div>
     </div>
-    <a class="block-link" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}"></a>
 </div>

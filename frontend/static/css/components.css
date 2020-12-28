@@ -153,6 +153,11 @@
                 font-weight: 500;
             }
 
+            .user-small .user-name-post {
+                font-weight: 500;
+                text-decoration: underline;
+            }
+
             .user-small .user-position {
                 opacity: 0.7;
             }

@@ -197,26 +197,19 @@
             </div>
         {% endif %}
 
-        {% if projects or me.id == user.id %}
+        {% if projects %}
             <div class="profile-header">Проекты</div>
-            {% if projects %}
-                <div class="user-projects">
-                    {% for project in projects %}
-                        <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
-                            {% if project.image %}
-                                <img src="{{ project.image }}" alt="{{ project.title }}">
-                            {% endif %}
-                            <span class="user-project-title">{{ project.title }}</span>
-                        </a>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="block">
-                    <div class="profile-add-button">
-                        <a href="{% url "compose_type" "project" %}" class="button">Над чем работаешь?</a>
-                    </div>
-                </div>
-            {% endif %}
+
+            <div class="user-projects">
+                {% for project in projects %}
+                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
+                        {% if project.image %}
+                            <img src="{{ project.image }}" alt="{{ project.title }}">
+                        {% endif %}
+                        <span class="user-project-title">{{ project.title }}</span>
+                    </a>
+                {% endfor %}
+            </div>
         {% endif %}
 
         {% if comments %}
