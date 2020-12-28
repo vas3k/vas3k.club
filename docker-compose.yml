@@ -1,11 +1,11 @@
 version: "3.7"
 
 services:
-  club_app: &app
+  club_app:
     build:
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile
       context: .
-    command: make docker-run-dev
+    command: pip install -r dev_requirements.txt && make docker-run-dev
     container_name: club_app
     environment:
       - DEBUG=true
@@ -29,9 +29,9 @@ services:
 
   queue:
     build:
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile
       context: .
-    command: make docker-run-queue
+    command: pip install -r dev_requirements.txt && make docker-run-queue
     environment:
       - DEBUG=true
       - PYTHONUNBUFFERED=1

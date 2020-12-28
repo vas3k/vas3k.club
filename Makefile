@@ -79,4 +79,4 @@ redeploy:
   migrate \
   build-frontend \
   test-ci \
-  redeploy-production
+  redeploy

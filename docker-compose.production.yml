@@ -3,7 +3,7 @@ version: "3.7"
 services:
   club_app: &app
     build:
-      dockerfile: production.dockerfile
+      dockerfile: Dockerfile
       context: .
     command: make docker-run-production
     container_name: club_app
