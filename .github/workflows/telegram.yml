@@ -7,8 +7,6 @@ on:
     types: [ opened, edited, closed, reopened ]
   pull_request:
     types: [ opened, ready_for_review, review_requested, reopened ]
-  pull_request_review_comment:
-    types: [ created ]
   push:
 
 jobs:
@@ -25,23 +23,11 @@ jobs:
         with:
           text: "🗣 Комментарий от @${{ github.event.comment.user.login }} в [${{ github.event.issue.title }}](${{ github.event.issue.html_url }}) - ${{ github.event.comment.body }}"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
-      - name: Notify about PR review comment
-        if: ${{ github.event_name == 'pull_request_review_comment' && github.event.action == 'created'}}
-        uses: ./.github/actions/tg
-        with:
-          text: "💩 [Там](${{ github.event.pull_request.html_url}}) правки - @${{ github.event.pull_request.user.login}}, переделывай"
-          token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about new issue
         if: ${{ github.event_name == 'issues' && github.event.action == 'opened'}}
         uses: ./.github/actions/tg
         with:
           text: "👾 Задач привалило: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }}) от @${{ github.event.issue.user.login }}"
-          token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
-      - name: Notify about edit issue
-        if: ${{ github.event_name == 'issues' && github.event.action == 'edited'}}
-        uses: ./.github/actions/tg
-        with:
-          text: "🗒 Обновлена задача: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about issue closed
         if: ${{ github.event_name == 'issues' && github.event.action == 'closed'}}
@@ -65,13 +51,13 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && github.event.action == 'ready_for_review'}}
         uses: ./.github/actions/tg
         with:
-          text: "✅ [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}}) теперь готов к просмотру. @vas3k"
+          text: "✅ [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}}) готов к просмотру"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about PR open
         if: ${{ github.event_name == 'pull_request' && github.event.action == 'review_requested'}}
         uses: ./.github/actions/tg
         with:
-          text: "❗️ [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}}) запросил ревью. @vas3k"
+          text: "❗️Требуется ревью для [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}})"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about push in master
         if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/master'}}
