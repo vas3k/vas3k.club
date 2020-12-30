@@ -8,7 +8,7 @@
     <article class="post post-type-post">
         <header class="post-header">
             <div class="post-title p-name">
-                Проект: <a href="{{ post.url }}" target="_blank">{{ post.title | rutypography }}</a>
+                Проект: <a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.title | rutypography }}</a>
                 <span class="post-is-public">
                     {% if post.is_public %}
                         <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
@@ -58,12 +58,6 @@
                         <a href="{% url "admin_post" post.slug %}"><i class="fas fa-tools"></i></a>
                     {% endif %}
                 </div>
-
-                {% if post.type != "intro" %}
-                    <div class="post-author">
-                        {% include "users/widgets/tiny.html" with user=post.author %}
-                    </div>
-                {% endif %}
 
                 {% if post.image %}
                     <div class="post-image">

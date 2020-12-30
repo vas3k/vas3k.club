@@ -23,7 +23,7 @@
                 <div class="post-title">
                     {% link_icon post %}
 
-                    &rarr; <a href="{{ post.url }}" target="_blank" class="p-name">{{ post.title | rutypography }}</a>
+                    &rarr; <a href="{{ post.url }}" target="_blank" class="p-name" rel="noopener">{{ post.title | rutypography }}</a>
 
                     <span class="post-is-public">
                         {% if post.is_public %}

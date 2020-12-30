@@ -22,9 +22,7 @@
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 
-            {% link_icon post %}
-
-            &rarr; <a href="{{ post.url }}" target="_blank" class="p-name">{{ post.title | rutypography }}</a>
+            {% link_icon post %} &rarr; <a href="{% url "show_post" post.type post.slug %}" class="p-name">{{ post.title | rutypography }}</a>
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}

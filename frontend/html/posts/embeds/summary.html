@@ -9,13 +9,13 @@
     {% else %}
 
         {% if post.metadata.image %}
-            <a href="{{ post.url }}" target="_blank">
+            <a href="{{ post.url }}" target="_blank" rel="noopener">
                 <img src="{{ post.metadata.image }}" alt="{{ post.title }}">
             </a>
         {% endif %}
 
         <h3>
-            <a href="{{ post.url }}" target="_blank">{{ post.metadata.title }}</a>
+            <a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.metadata.title }}</a>
         </h3>
 
         <p>

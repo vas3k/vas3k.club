@@ -33,7 +33,7 @@ jobs:
         if: ${{ github.event_name == 'issues' && github.event.action == 'closed'}}
         uses: ./.github/actions/tg
         with:
-          text: "🏁 Грац! Закрыта задача: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})"
+          text: "✅ Задача закрыта: [${{ github.event.issue.title }}](${{ github.event.issue.html_url }})"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about issue reopen
         if: ${{ github.event_name == 'issues' && github.event.action == 'reopened'}}
@@ -45,19 +45,19 @@ jobs:
         if: ${{ github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened') }}
         uses: ./.github/actions/tg
         with:
-          text: "🛠 @${{ github.event.pull_request.user.login}} хочет влить [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}})"
+          text: "🛠 @${{ github.event.pull_request.user.login}} прислал новый PR: [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}})"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about PR ready for review
         if: ${{ github.event_name == 'pull_request' && github.event.action == 'ready_for_review'}}
         uses: ./.github/actions/tg
         with:
-          text: "✅ [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}}) готов к просмотру"
+          text: "✅ PR [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}}) готов к просмотру"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about PR open
         if: ${{ github.event_name == 'pull_request' && github.event.action == 'review_requested'}}
         uses: ./.github/actions/tg
         with:
-          text: "❗️Требуется ревью для [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}})"
+          text: "❗️Требуется ревью для PR: [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}})"
           token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
       - name: Notify about push in master
         if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/master'}}

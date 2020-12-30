@@ -2,7 +2,7 @@
 {% load text_filters %}
 <article class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-image">
-        <a href="{% url "show_post" post.type post.slug %}"><img src="{{ post.image }}" alt="" loading="lazy"></a>
+        <a href="{% url "show_post" post.type post.slug %}"><img src="{{ post.image }}" alt="" loading="lazy" width="150" height="auto"></a>
     </div>
 
     <div class="feed-post-votes">
