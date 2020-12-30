@@ -45,40 +45,6 @@
 
         <form action="{% url "pay" %}" method="get">
 
-        {% if me.membership_platform_type == "patreon" %}
-            <div class="pay-services">
-                <div class="block pay-service">
-                    <div class="pay-service-title"><i class="fas fa-money-check-alt"></i>&nbsp;Напрямую</div>
-                    <ul class="pay-service-list">
-                        <li>✅ Сразу на год и больше</li>
-                        <li>✅ Можно пополнять без подписки</li>
-                        <li>🤔 Нет раннего доступа к блогу</li>
-                    </ul>
-                    <div class="join-service-button">
-                        <a href="#select_package" class="button">Пополнить 👇</a>
-                    </div>
-                </div>
-
-                <div class="block pay-service">
-                    <div class="pay-service-title"><i class="fab fa-patreon"></i>&nbsp;Через Patreon</div>
-                    <ul class="pay-service-list">
-                        <li>✅ Ежемесячная подписка</li>
-                        <li>🤔 Оплата проходит не сразу</li>
-                        <li>🤔 Высокие комиссии</li>
-                    </ul>
-                    <div class="pay-service-button">
-                        {% if me.membership_platform_type == "patreon" %}
-                            <a href="https://patreon.com/vas3k" class="button" style="background-color: #53AA68; border-color: #53AA68;">👍 Сейчас активно</a>
-                        {% else %}
-                            💩 Вы уже пополняете напрямую, так что обратно переходить нет смысла
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-
-        <br><br>
-
         <div class="block-header" id="select_package">На сколько еще пополняем?</div>
 
         <br>
