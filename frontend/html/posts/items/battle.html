@@ -3,7 +3,7 @@
 <article class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}">
-            <img src="{{ post.author.get_avatar }}" class="avatar" width="52" height="52" loading="lazy">
+            <img src="{{ post.author.get_avatar }}" class="avatar" width="52" height="52" loading="lazy" alt="">
         </a>
     </div>
     <div class="feed-post-votes">

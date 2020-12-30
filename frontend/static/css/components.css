@@ -1261,6 +1261,11 @@
     cursor: pointer;
 }
 
+    .feed-post-type-intro,
+    .feed-post-type-weekly_digest {
+        min-height: 20px;
+    }
+
     .feed-post a {
         z-index: 1;
     }
