@@ -2,9 +2,7 @@
 {% load text_filters %}
 <article class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-author">
-        <a href="{% url "profile" post.author.slug %}">
-            <img src="{{ post.author.get_avatar }}" class="avatar" width="52" height="52" loading="lazy" alt="">
-        </a>
+        <a href="{% url "profile" post.author.slug %}" class="avatar" style="background-image: url('{{ post.author.get_avatar }}');"></a>
     </div>
     <div class="feed-post-votes">
         <post-upvote :initial-upvotes="{{ post.upvotes }}"
