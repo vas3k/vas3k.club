@@ -57,6 +57,7 @@
         background-color: var(--block-bg-color);
         border: solid 2px var(--block-bg-color);
         color: #FFF;
+        text-shadow: 0 0 2px black;
         text-align: center;
         font-weight: 700;
         font-size: 12px;
