@@ -4,7 +4,7 @@
 {% load text_filters %}
 
 {% block title %}
-    {{ post.prefix}}: {{ post.author.full_name | rutypography }} — {{ block.super }}
+    {{ post.prefix}}: {{ post.author.full_name | rutypography }} — {{ settings.APP_NAME }}
 {% endblock %}
 
 {% block og_tags %}
