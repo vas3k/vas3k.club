@@ -19,6 +19,9 @@
     <meta name="twitter:title" content="{{ post.prefix}}: {{ post.author.full_name | rutypography }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="{{ user.get_avatar }}">
+
+    <!-- Exclude intros from search engines -->
+    <meta name="robots" content="noindex">
 {% endblock %}
 
 {% block post %}

@@ -21,6 +21,9 @@
     <meta name="twitter:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta name="twitter:image" content="{{ user.get_avatar }}">
+
+    <!-- Exclude profiles from search engines -->
+    <meta name="robots" content="noindex">
 {% endblock %}
 
 {% block content %}
