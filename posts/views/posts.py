@@ -11,7 +11,6 @@ from posts.models.views import PostView
 from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
-from users.models.user import User
 
 
 def show_post(request, post_type, post_slug):
