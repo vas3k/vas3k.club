@@ -53,14 +53,14 @@
                 </div>
                 <a href="{% url "edit_payments" user.slug %}" class="profile-status">
                     {% if user.membership_days_left < 150 %}
-                        <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_days_left | rupluralize:"день,дня,дней" }}</span>
+                        <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
                     {% elif user.membership_days_left < 700 %}
-                        <span class="profile-status-number">😎 {{ user.membership_months_left | cool_number  }}</span>
-                        <span class="profile-status-text">{{ user.membership_months_left | rupluralize:"месяц,месяца,месяцев" }}</span>
+                        <span class="profile-status-number">😎 {{ user.membership_months_left | ceil | cool_number  }}</span>
+                        <span class="profile-status-text">{{ user.membership_months_left | ceil | rupluralize:"месяц,месяца,месяцев" }}</span>
                     {% else %}
-                        <span class="profile-status-number">💎 {{ user.membership_years_left | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_years_left | rupluralize:"год,года,лет" }}</span>
+                        <span class="profile-status-number">💎 {{ user.membership_years_left | ceil | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_years_left | ceil | rupluralize:"год,года,лет" }}</span>
                     {% endif %}
                 </a>
                 <a href="{% url "edit_notifications" user.slug %}" class="profile-status">

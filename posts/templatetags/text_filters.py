@@ -1,4 +1,5 @@
 import json
+import math
 from datetime import datetime, timedelta
 
 from django import template
@@ -26,6 +27,11 @@ def nl_to_p(text):
 @register.filter(is_safe=True)
 def markdown(text):
     return mark_safe(markdown_text(text))
+
+
+@register.filter
+def ceil(value):
+    return math.ceil(value or 0)
 
 
 @register.filter
