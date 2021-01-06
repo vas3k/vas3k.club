@@ -36,10 +36,11 @@ const imageUploadOptions = {
 const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
     spellChecker: false,
+    nativeSpellcheck: true,
     forceSync: true,
     status: false,
-    inputStyle: "textarea",
-    tabSize: 4
+    inputStyle: "contenteditable",
+    tabSize: 4,
 };
 
 /**
