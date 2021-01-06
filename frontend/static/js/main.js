@@ -65,7 +65,9 @@ new Vue({
 
                 // On mobile the next element sibling is undefined
                 if (textarea.nextElementSibling) {
-                    const codeMirrorEditor = textarea.nextElementSibling.CodeMirror || textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
+                    const codeMirrorEditor =
+                        textarea.nextElementSibling.CodeMirror ||
+                        textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
                     if (codeMirrorEditor !== undefined) {
                         codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
                         codeMirrorEditor.focus();

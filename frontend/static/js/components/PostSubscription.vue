@@ -1,7 +1,7 @@
 <template>
     <span>
         <span v-if="isLoading">🤔</span>
-        <input v-else type="checkbox" id="post-subscribed" v-model="isActive" @change.prevent="toggle">
+        <input v-else type="checkbox" id="post-subscribed" v-model="isActive" @change.prevent="toggle" />
         <label for="post-subscribed">подписка</label>
     </span>
 </template>
@@ -15,19 +15,19 @@ export default {
         isActiveByDefault: {
             type: Boolean,
             default() {
-                return false
-            }
+                return false;
+            },
         },
         url: {
             type: String,
             required: true,
-        }
+        },
     },
     data() {
         return {
             isActive: this.isActiveByDefault,
             isLoading: false,
-        }
+        };
     },
     methods: {
         toggle() {
@@ -44,6 +44,6 @@ export default {
                 }
             });
         },
-    }
+    },
 };
 </script>

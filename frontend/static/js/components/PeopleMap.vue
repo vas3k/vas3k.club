@@ -7,8 +7,8 @@
         :scrollZoom="false"
         @load="onMapLoaded"
     >
-        <MglNavigationControl position="top-right"/>
-        <MglGeolocateControl position="top-right"/>
+        <MglNavigationControl position="top-right" />
+        <MglGeolocateControl position="top-right" />
         <slot></slot>
     </MglMap>
 </template>
@@ -16,12 +16,7 @@
 <script>
 import Mapbox from "mapbox-gl";
 
-import {
-    MglMap,
-    MglNavigationControl,
-    MglGeolocateControl,
-    MglMarker,
-} from "vue-mapbox";
+import { MglMap, MglNavigationControl, MglGeolocateControl, MglMarker } from "vue-mapbox";
 
 export default {
     name: "PeopleMap",
@@ -61,13 +56,13 @@ export default {
                 clusterRadius: 25,
             });
             map.addLayer({
-                "id": "users",
-                "type": "circle",
-                "source": "usersGeojson",
-                "filter": ["!=", "cluster", true],
-                "paint": {
+                id: "users",
+                type: "circle",
+                source: "usersGeojson",
+                filter: ["!=", "cluster", true],
+                paint: {
                     "circle-opacity": 0.0,
-                }
+                },
             });
 
             let markers = {};
@@ -91,9 +86,9 @@ export default {
                             clusterElement.innerText = props.point_count;
                             const clusterAvatar = getClusterAvatar(coords);
                             clusterElement.style.backgroundImage = "url('" + avatarOrDefault(clusterAvatar) + "')";
-                            marker = new mapbox.Marker({element: clusterElement}).setLngLat(coords);
-                            clusterElement.addEventListener("click", function() {
-                                map.flyTo({center: coords, zoom: map.getZoom() + 2, offset: [200, 0]});
+                            marker = new mapbox.Marker({ element: clusterElement }).setLngLat(coords);
+                            clusterElement.addEventListener("click", function () {
+                                map.flyTo({ center: coords, zoom: map.getZoom() + 2, offset: [200, 0] });
                             });
                         } else {
                             // it's a normal marker
@@ -102,7 +97,7 @@ export default {
                             markerElement.target = "_blank";
                             markerElement.classList.add("people-map-user-marker");
                             markerElement.style.backgroundImage = "url('" + avatarOrDefault(props.avatar) + "')";
-                            marker = new mapbox.Marker({element: markerElement}).setLngLat(coords);
+                            marker = new mapbox.Marker({ element: markerElement }).setLngLat(coords);
                         }
                     }
                     newMarkers[id] = marker;
@@ -124,16 +119,15 @@ export default {
                     if (!el.properties.avatar || el.properties.avatar === "null") return;
                     let elPixels = map.project(el.geometry.coordinates);
                     let pixelDistance = Math.sqrt(
-                        Math.pow(elPixels.x - pointPixels.x, 2) +
-                        Math.pow(elPixels.y - pointPixels.y, 2)
+                        Math.pow(elPixels.x - pointPixels.x, 2) + Math.pow(elPixels.y - pointPixels.y, 2)
                     );
                     return Math.abs(pixelDistance) <= 20;
                 });
-                return (avatarFeature) ? avatarFeature.properties.avatar : defaultAvatar;
+                return avatarFeature ? avatarFeature.properties.avatar : defaultAvatar;
             }
 
             function avatarOrDefault(avatar) {
-                return (avatar && avatar !== "null") ? avatar : defaultAvatar
+                return avatar && avatar !== "null" ? avatar : defaultAvatar;
             }
 
             map.on("data", function (e) {
@@ -143,7 +137,6 @@ export default {
                 updateMarkers();
             });
         },
-
-    }
+    },
 };
 </script>
