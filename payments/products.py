@@ -128,6 +128,8 @@ PRODUCTS = {
     },
 }
 
+TAX_RATE_VAT = "txr_1I82AfKgJMaF2rHtoUStb1cL"
+
 
 def find_by_price_id(price_id):
     for product in PRODUCTS.values():
