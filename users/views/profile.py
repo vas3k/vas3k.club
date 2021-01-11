@@ -14,6 +14,17 @@ from users.models.expertise import UserExpertise
 from users.models.tags import Tag, UserTag
 from users.models.user import User
 
+def calculate_similarity(my, theirs, tags):
+    similarity = {}
+    for group in ('personal', 'hobbies'):
+        all_names = {tag.code for tag in tags if tag.group == group}
+        my_names = all_names & my
+        their_names = all_names & theirs
+        both = my_names | their_names
+        same = my_names & their_names
+        similarity[group] = len(same) * 100 / len(both) if both else 0
+    return similarity
+
 
 @auth_required
 def profile(request, user_slug):
@@ -38,6 +49,10 @@ def profile(request, user_slug):
     intro = Post.get_user_intro(user)
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
+    similarity = {}
+    if user.id != request.me.id:
+        my_tags = {t.tag_id for t in UserTag.objects.filter(user=request.me).all()}
+        similarity = calculate_similarity(my_tags, active_tags, tags)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
     comments = Comment.visible_objects().filter(author=user, post__is_visible=True).order_by("-created_at")[:3]
@@ -55,6 +70,7 @@ def profile(request, user_slug):
         "expertises": expertises,
         "comments": comments,
         "posts": paginate(request, posts),
+        "similarity": similarity,
     })
 
 

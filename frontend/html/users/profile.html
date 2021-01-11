@@ -149,6 +149,17 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% if similarity %}
+                        {% if tag_group.list.0.group == "personal" %}
+                        <div class="profile-tags-footer">
+                            Вы похожи с этим членом клуба на {{ similarity.personal|floatformat }}%
+                        </div>
+                        {% elif tag_group.list.0.group == "hobbies" %}
+                        <div class="profile-tags-footer">
+                            Ваши увлечения совпадают на {{ similarity.hobbies|floatformat }}%
+                        </div>
+                        {% endif %}
+                    {% endif %}
                     {% if tag_group.list.0.group == "club" %}
                         <div class="profile-tags-footer">
                             {% if user.contact %}
