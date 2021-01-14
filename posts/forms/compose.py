@@ -19,17 +19,12 @@ class PostForm(forms.ModelForm):
     )
     is_public = forms.BooleanField(
         label="Виден ли в большой интернет?",
-        initial=True,
+        initial=False,
         required=False
     )
     is_visible = forms.BooleanField(
         label="Виден ли пост вообще?",
         initial=False,
-        required=False
-    )
-    is_visible_on_main_page = forms.BooleanField(
-        label="Видел ли пост на главной странице?",
-        initial=True,
         required=False
     )
 
