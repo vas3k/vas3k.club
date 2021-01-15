@@ -8,6 +8,34 @@
 {% block content %}
     <div class="content">
 
+        <div class="profile-header">Изменить данные</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row form-row-right">
+                    {{ info_form.slug.label_tag }}
+                    {{ info_form.slug }}
+                    {% if info_form.slug.errors %}<span class="form-row-errors">{{ info_form.slug.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row form-row-right">
+                    {{ info_form.full_name.label_tag }}
+                    {{ info_form.full_name }}
+                    {% if info_form.full_name.errors %}<span class="form-row-errors">{{ info_form.full_name.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row form-row-right">
+                    {{ info_form.email.label_tag }}
+                    {{ info_form.email }}
+                    {% if info_form.email.errors %}<span class="form-row-errors">{{ info_form.email.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Сохранить</button>
+            </form>
+        </div>
+
+
         <div class="profile-header">Дать шапку</div>
         <div class="block">
             <form action="." method="post" enctype="multipart/form-data">

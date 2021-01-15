@@ -1,8 +1,10 @@
 from django import forms
+from django.forms import ModelForm
 
 from common.data.achievements import ACHIEVEMENTS
 from common.data.hats import HATS
 from common.forms import ImageUploadField
+from users.models.user import User
 
 
 class UserAdminForm(forms.Form):
@@ -70,3 +72,33 @@ class UserAdminForm(forms.Form):
         widget=forms.Textarea(),
         required=False,
     )
+
+
+class UserInfoAdminForm(ModelForm):
+    slug = forms.CharField(
+        label="Никнейм",
+        required=True,
+        max_length=32,
+        min_length=3,
+        widget=forms.TextInput(attrs={
+            "pattern": "[A-Za-z0-9_-]+",
+            "minlength": 3,
+        }),
+    )
+    full_name = forms.CharField(
+        label="Имя и фамилия",
+        required=True,
+        max_length=128
+    )
+    email = forms.EmailField(
+        label="E-mail",
+        required=True
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            "slug",
+            "full_name",
+            "email",
+        ]
