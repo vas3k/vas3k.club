@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 from auth.helpers import auth_required
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_price_id
+from payments.products import PRODUCTS, find_by_price_id, TAX_RATE_VAT
 from payments.service import stripe
 from users.models.user import User
 
@@ -82,6 +82,7 @@ def pay(request):
         line_items=[{
             "price": product["stripe_id"],
             "quantity": 1,
+            "tax_rates": [TAX_RATE_VAT],
         }],
         **customer_data,
         mode="subscription" if is_recurrent else "payment",
