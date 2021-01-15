@@ -544,6 +544,16 @@
             text-overflow: ellipsis;
         }
 
+        .profile-intro-footer {
+            padding-top: 20px;
+            text-align: center;
+        }
+
+            .profile-intro-footer a {
+                text-decoration: none;
+                font-weight: 500;
+            }
+
     .profile-intro-edit {
         position: absolute;
         right: 0;
