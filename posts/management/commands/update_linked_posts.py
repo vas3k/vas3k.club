@@ -16,7 +16,9 @@ class Command(BaseCommand):
             print(f"Parsing post: {post.slug}")
             LinkedPost.create_links_from_text(post, post.text)
 
-        comments = Comment.visible_objects().select_related("post")
+        del posts
+
+        comments = Comment.visible_objects()
         for comment in comments:
             print(f"Parsing comment: {comment.id}")
             LinkedPost.create_links_from_text(comment.post, comment.text)
