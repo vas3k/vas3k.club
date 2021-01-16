@@ -81,5 +81,8 @@
             {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
         </footer>
     </article>
+    {% if linked_posts %}
+        {% include "posts/widgets/linked_posts.html" %}
+    {% endif %}
 </section>
 {% endblock %}

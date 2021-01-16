@@ -89,4 +89,7 @@
             {% link_summary post %}
         {% endif %}
     </section>
+    {% if linked_posts %}
+        {% include "posts/widgets/linked_posts.html" %}
+    {% endif %}
 {% endblock %}

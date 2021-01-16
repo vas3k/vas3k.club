@@ -780,3 +780,27 @@
                 width: 100%;
             }
     }
+
+.linked-posts {
+    margin-top: 50px;
+}
+
+    .linked-posts-title {
+        display: block;
+        font-size: 170%;
+        width: 100%;
+        font-weight: 500;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .linked-posts-scroll {
+        display: block;
+        overflow-x: visible;
+        overflow-y: scroll;
+        width: 100%;
+        max-height: 520px;
+        padding: 30px 30px 30px 10px;
+        box-sizing: border-box;
+        font-size: 90%;
+    }

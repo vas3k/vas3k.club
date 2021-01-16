@@ -95,5 +95,8 @@
             {% include "users/widgets/card.html" with user=post.author %}
         </footer>
     </article>
+    {% if linked_posts %}
+        {% include "posts/widgets/linked_posts.html" %}
+    {% endif %}
 </section>
 {% endblock %}

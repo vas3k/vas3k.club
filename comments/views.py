@@ -9,6 +9,7 @@ from club.exceptions import AccessDenied, RateLimitException
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
+from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.views import PostView
 from search.models import SearchIndex
@@ -59,6 +60,7 @@ def create_comment(request, post_slug):
                 post=post,
             )
             SearchIndex.update_comment_index(comment)
+            LinkedPost.create_links_from_text(post, comment.text)
 
             return redirect("show_comment", post.slug, comment.id)
         else:
