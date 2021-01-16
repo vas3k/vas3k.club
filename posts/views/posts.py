@@ -47,10 +47,10 @@ def show_post(request, post_type, post_slug):
             post=post,
         )
 
-    linked_posts = sorted([
+    linked_posts = sorted({
         link.post_to if link.post_to != post else link.post_from
         for link in LinkedPost.links_for_post(post)[:50]
-    ], key=lambda p: p.upvotes, reverse=True)
+    }, key=lambda p: p.upvotes, reverse=True)
 
     return render_post(request, post, {
         "post_last_view_at": last_view_at,
