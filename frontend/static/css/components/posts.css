@@ -783,11 +783,13 @@
 
 .linked-posts {
     margin-top: 50px;
+    padding-bottom: 0;
+    padding-right: 10px;
 }
 
     .linked-posts-title {
         display: block;
-        font-size: 170%;
+        font-size: 180%;
         width: 100%;
         font-weight: 500;
         padding: 0;
@@ -800,7 +802,13 @@
         overflow-y: scroll;
         width: 100%;
         max-height: 520px;
-        padding: 30px 30px 30px 10px;
+        padding: 30px 30px 30px 5px;
         box-sizing: border-box;
         font-size: 90%;
     }
+
+        @media only screen and (max-width : 570px) {
+            .linked-posts-scroll {
+                padding-right: 10px;
+            }
+        }

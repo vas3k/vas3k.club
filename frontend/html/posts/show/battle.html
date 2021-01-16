@@ -92,6 +92,9 @@
                 </div>
             </div>
         </div>
+        {% if linked_posts %}
+            {% include "posts/widgets/linked_posts.html" %}
+        {% endif %}
     </div>
 {% endblock %}
 
