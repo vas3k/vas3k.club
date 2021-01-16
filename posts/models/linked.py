@@ -26,6 +26,9 @@ class LinkedPost(models.Model):
         if not post_from.is_visible or not post_to.is_visible:
             return None, False
 
+        if post_from.id == post_to.id:
+            return None, False
+
         linked_post, is_created = LinkedPost.objects.get_or_create(
             post_from=post_from,
             post_to=post_to,
