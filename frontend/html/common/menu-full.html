@@ -20,9 +20,9 @@
                 <a href="{% url "compose" %}" class="button menu-button menu-button-compose"><i class="fas fa-pen"></i><span class="compose-text">&nbsp;&nbsp;Пиши</span></a>
                 <a href="{% url "bookmarks" %}" class="menu-button menu-button-bookmark"><i class="fa fa-bookmark"></i>&nbsp;&nbsp;</a>
             {% endif %}
-            <a href="{% url "profile" me.slug %}" class="avatar menu-avatar" style="background-image: url('{{ me.get_avatar }}');"></a>
+            <a href="{% url "profile" me.slug %}" class="avatar menu-avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" /></a>
         {% else %}
-            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar" style="background-image: url('{% static "images/test/avatar.png" %}');"></a>
+            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar"><img src="{% static "images/test/avatar.png"%}" alt="Аватар" /></a>
         {% endif %}
     </div>
 </nav>

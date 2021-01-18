@@ -6,7 +6,7 @@
         <form action="{% url "edit_comment" comment.id %}" method="post" class="form comment-form-form">
             <div class="comment-form">
                 <div class="comment-form-avatar">
-                    <div class="avatar" style="background-image: url('{% if form.instance.author.avatar %}{{ form.instance.author.get_avatar }}{% else %}{{ me.get_avatar }}{% endif %}');"></div>
+                    <div class="avatar"><img src="{% if form.instance.author.avatar %}{{ form.instance.author.get_avatar }}{% else %}{{ me.get_avatar }}{% endif %}" alt="Аватар" /></div>
                 </div>
                 <div class="comment-form-body">
                     {{ form.text }}
