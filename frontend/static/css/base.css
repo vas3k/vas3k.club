@@ -415,6 +415,10 @@ input[type=range]:focus::-ms-fill-upper {
                 padding: 10px;
             }
 
+            .form-row input[type=radio] {
+                width: auto;
+            }
+
             .form-row input[type=text],
             .form-row input[type=email] {
                 text-align: center;
