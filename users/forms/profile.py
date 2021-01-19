@@ -51,7 +51,6 @@ class ProfileEditForm(ModelForm):
     class Meta:
         model = User
         fields = [
-            "full_name",
             "avatar",
             "company",
             "position",
