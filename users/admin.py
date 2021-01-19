@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from club.exceptions import AccessDenied
 from common.data.hats import HATS
 from notifications.email.users import send_unmoderated_email, send_banned_email, send_ping_email
-from notifications.telegram.users import notify_user_ping, notify_admin_user_ping
+from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate
 from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
 
@@ -61,6 +61,7 @@ def do_user_admin_actions(request, user, data):
         user.moderation_status = User.MODERATION_STATUS_REJECTED
         user.save()
         send_unmoderated_email(user)
+        notify_admin_user_unmoderate(user)
 
     # Ping
     if data["ping"]:
