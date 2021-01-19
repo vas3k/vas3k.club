@@ -31,15 +31,6 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="{{ form.full_name.id_for_label }}" class="form-label">
-                        Имя
-                    </label>
-                    {{ form.full_name }}
-                    {% if form.full_name.errors %}<span class="form-row-errors">{{ form.full_name.errors }}</span>{% endif %}
-                    <span class="form-row-help">Рекомендуется указывать имя и фамилию, либо псевдоним, если вас лучше знают по нему.</span>
-                </div>
-
-                <div class="form-row">
                     <label for="{{ form.company.id_for_label }}" class="form-label">
                         Компания
                     </label>

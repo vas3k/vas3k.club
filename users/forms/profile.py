@@ -10,11 +10,6 @@ from common.forms import ImageUploadField
 
 
 class ProfileEditForm(ModelForm):
-    full_name = forms.CharField(
-        label="Имя и фамилия",
-        required=True,
-        max_length=128
-    )
     avatar = ImageUploadField(
         label="Аватар",
         required=False,
