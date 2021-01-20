@@ -1526,6 +1526,7 @@
             font-size: 20px;
         }
 
+        .menu .compose-text,
         .compose > .compose-text > form {
             display: none;
         }
