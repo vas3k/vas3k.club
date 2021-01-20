@@ -24,7 +24,7 @@
 {% block feed_content %}
     {% if topic %}
         <div class="feed-topic-header" style="background-color: {{ topic.color }};">
-            <span class="topic-icon feed-topic-header-icon"><img src="{{ topic.icon }}" alt="Иконка комнаты {{ topic.name }}" /></span>
+            <span class="topic-icon feed-topic-header-icon"><img src="{{ topic.icon }}" alt="Иконка комнаты {{ topic.name }}" loading="lazy" /></span>
             <h1 class="feed-topic-header-name">{{ topic.name }}</h1>
             <span class="feed-topic-header-desctiption">
                 {{ topic.description | markdown }}
