@@ -1,7 +1,7 @@
 {% load text_filters %}
 <article class="block profile-card h-card">
     <div class="profile-card-photo u-photo">
-        <div class="avatar profile-user-avatar" style="background-image: url('{{ user.get_avatar }}');"></div>
+        <div class="avatar profile-user-avatar"><img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" /></div>
     </div>
     <div class="profile-card-info">
         <a href="{% url "profile" user.slug %}" class="profile-user-name u-url">

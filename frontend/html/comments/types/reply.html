@@ -3,8 +3,8 @@
 {% load comments %}
 <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
     <div class="reply-author">
-        <a href="{% url "profile" comment.author.slug %}">
-            <span class="avatar user-avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+        <a class="avatar user-avatar" href="{% url "profile" comment.author.slug %}">
+            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
         </a>
     </div>
     <div class="reply-body">

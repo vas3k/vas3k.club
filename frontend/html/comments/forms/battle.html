@@ -1,7 +1,7 @@
 <form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
     <div class="comment-form">
         <div class="comment-form-avatar">
-            <div class="avatar" style="background-image: url('{{ me.get_avatar }}');"></div>
+            <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" loading="lazy" /></div>
         </div>
         <div class="comment-form-body comment-form-battle">
             <div class="comment-form-body-battle-side">Я за

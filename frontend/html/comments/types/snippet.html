@@ -3,8 +3,8 @@
 <div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %}">
     <div class="comment-header">
         <div class="user user-small">
-            <span class="user-avatar">
-                <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+            <span class="avatar user-avatar">
+                <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
             </span>
             <span class="user-info">
                 <span>

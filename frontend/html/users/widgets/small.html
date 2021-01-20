@@ -1,7 +1,7 @@
 <article class="user user-small">
     <span class="user-avatar">
-        <a href="{% url "profile" user.slug %}">
-            <span class="avatar" style="background-image: url('{{ user.get_avatar }}');"></span>
+        <a class="avatar" href="{% url "profile" user.slug %}">
+            <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
         </a>
     </span>
     <span class="user-info">

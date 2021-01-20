@@ -5,8 +5,8 @@
     <div class="comment-header">
         <div class="user user-small">
             <span class="user-avatar">
-                <a href="{% url "profile" comment.author.slug %}">
-                    <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+                <a class="avatar" href="{% url "profile" comment.author.slug %}">
+                    <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
                 </a>
             </span>
             <span class="user-info">
