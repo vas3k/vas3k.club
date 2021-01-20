@@ -1515,7 +1515,18 @@
             font-size: 80%;
         }
 
-        .compose-text {
+
+
+        .compose > .compose-text {
+            text-align: center;
+        }
+
+        .compose > .compose-text:before {
+            content: '🚨 Поверни экран, чтоб получить доступ к форме 📝';
+            font-size: 20px;
+        }
+
+        .compose > .compose-text > form {
             display: none;
         }
     }
