@@ -101,13 +101,15 @@
     background-color: #bdc3c7;
     vertical-align: middle;
     overflow: hidden;
+    background-position: 50% 50%;
+    background-size: cover;
 }
 
-.avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
 .icon {
     width: 14px;
