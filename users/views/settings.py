@@ -105,7 +105,7 @@ def edit_payments(request, user_slug):
             moderation_status=User.MODERATION_STATUS_APPROVED,
             membership_expires_at__gte=datetime.utcnow() + timedelta(days=70)
         )\
-        .order_by("-membership_expires_at")[:25]
+        .order_by("-membership_expires_at")[:64]
 
     subscriptions = []
     if user.stripe_id:
