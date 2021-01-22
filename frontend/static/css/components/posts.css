@@ -782,7 +782,8 @@
     }
 
 .linked-posts {
-    margin-top: 50px;
+    max-width: var(--normal-content-width);
+    margin: 50px auto 0;
     padding-bottom: 0;
     padding-right: 10px;
 }
