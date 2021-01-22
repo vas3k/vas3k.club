@@ -120,7 +120,7 @@ def approve_user_profile(user_id: str, update: Update) -> (str, bool):
         return f"Пользователь «{user.full_name}» уже одобрен", True
 
     if user.moderation_status == User.MODERATION_STATUS_REJECTED:
-        return f"Пользователь «{user.full_name}» уже отклонен", True
+        return f"Пользователь «{user.full_name}» уже был отклонен", True
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
     user.save()
@@ -142,6 +142,9 @@ def reject_user_profile(user_id: str, update: Update, reason: RejectReason) -> (
     user = User.objects.get(id=user_id)
     if user.moderation_status == User.MODERATION_STATUS_REJECTED:
         return f"Пользователь «{user.full_name}» уже был отклонен и пошел все переделывать", True
+
+    if user.moderation_status == User.MODERATION_STATUS_APPROVED:
+        return f"Пользователь «{user.full_name}» уже был принят, его нельзя реджектить", True
 
     user.moderation_status = User.MODERATION_STATUS_REJECTED
     user.save()
