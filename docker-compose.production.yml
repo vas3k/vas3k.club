@@ -41,6 +41,7 @@ services:
   bot:
     <<: *app
     command: make docker-run-bot
+    container_name: club_bot
     depends_on:
       - club_app
       - postgres

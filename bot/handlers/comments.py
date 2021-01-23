@@ -13,7 +13,9 @@ log = logging.getLogger(__name__)
 
 
 def comment(update: Update, context: CallbackContext) -> None:
-    if not update.message.reply_to_message or not update.message.reply_to_message.text:
+    if not update.message \
+            or not update.message.reply_to_message \
+            or not update.message.reply_to_message.text:
         return None
 
     reply_text_start = update.message.reply_to_message.text[:10]

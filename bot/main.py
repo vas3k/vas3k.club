@@ -5,7 +5,6 @@ import django
 
 # IMPORTANT: this should go before any django-related imports (models, apps, settings)
 # These lines must be kept together till THE END
-sys.path.remove(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "club.settings")
 django.setup()
