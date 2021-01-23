@@ -64,10 +64,10 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("top", top.command_top))
     dispatcher.add_handler(CommandHandler("whois", whois.command_whois))
     dispatcher.add_handler(
-        MessageHandler(Filters.reply & ~Filters.chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)
+        MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
     )
     dispatcher.add_handler(
-        MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
+        MessageHandler(Filters.reply & ~Filters.chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)
     )
 
     # Only private chats
