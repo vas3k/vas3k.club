@@ -47,10 +47,14 @@ def show_post(request, post_type, post_slug):
             post=post,
         )
 
+    # find linked posts and sort them by upvotes
     linked_posts = sorted({
         link.post_to if link.post_to != post else link.post_from
         for link in LinkedPost.links_for_post(post)[:50]
     }, key=lambda p: p.upvotes, reverse=True)
+
+    # force cleanup deleted/hidden posts from linked
+    linked_posts = [p for p in linked_posts if p.is_visible]
 
     return render_post(request, post, {
         "post_last_view_at": last_view_at,
