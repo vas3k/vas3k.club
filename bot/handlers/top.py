@@ -15,26 +15,38 @@ def command_top(update: Update, context: CallbackContext) -> None:
     top_posts = Post.visible_objects()\
         .filter(is_approved_by_moderator=True, published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .order_by("-upvotes")[:7]
+        .order_by("-upvotes")[:5]
+
+    # Hot posts
+    hot_posts = Post.visible_objects()\
+        .filter(is_approved_by_moderator=True, published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
+        .exclude(id__in=[p.id for p in top_posts]) \
+        .order_by("-hotness")[:3]
 
     # Top intros
     top_intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .select_related("author")\
         .order_by("-upvotes")[:3]
 
     # Top comments
-    top_comments = Comment.visible_objects() \
+    top_comment = Comment.visible_objects() \
         .filter(created_at__gte=datetime.utcnow() - TOP_TIMEDELTA) \
         .filter(is_deleted=False)\
-        .exclude(post__type=Post.TYPE_BATTLE)\
-        .order_by("-upvotes")[:3]
+        .exclude(post__type=Post.TYPE_BATTLE) \
+        .select_related("author") \
+        .order_by("-upvotes") \
+        .first()
 
     update.effective_chat.send_message(
         render_html_message(
             template="top.html",
             top_posts=top_posts,
+            hot_posts=hot_posts,
             top_intros=top_intros,
-            top_comments=top_comments
+            top_comment=top_comment,
         ),
-        parse_mode=ParseMode.HTML
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True,
     )
