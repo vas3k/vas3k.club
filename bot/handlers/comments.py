@@ -8,10 +8,11 @@ from bot.handlers.common import get_club_user, COMMENT_REPLY_RE, POST_COMMENT_RE
 from bot.decorators import is_club_member
 from club import settings
 from comments.models import Comment
+from posts.models.post import Post
 
 log = logging.getLogger(__name__)
 
-MIN_COMMENT_LEN = 200
+MIN_COMMENT_LEN = 160
 
 
 def comment(update: Update, context: CallbackContext) -> None:
@@ -90,7 +91,7 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
         return None
 
     post = get_club_post(update)
-    if not post:
+    if not post or post.type in [Post.TYPE_BATTLE, Post.TYPE_WEEKLY_DIGEST]:
         return None
 
     is_ok = Comment.check_rate_limits(user)
