@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from bot.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE
+from notifications.telegram.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE
 from comments.models import Comment
 from common.regexp import USERNAME_RE
 from posts.models.subscriptions import PostSubscription

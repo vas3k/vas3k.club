@@ -1,4 +1,4 @@
-💬 <b>Новый реплай к вашему комментарию под постом «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b> от <a href="{{ settings.APP_HOST }}{% url "profile" comment.author.slug %}">{{ comment.author.slug }}</a>
+💬 <b>Новый реплай к вашему комментарию под постом «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b>
 
 {% load posts %}<b>{{ comment.author.slug }}:</b> {% render_plain comment %}
 

@@ -1,6 +1,6 @@
 import telegram
 
-from bot.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
+from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
 
 
 def announce_in_club_channel(post, announce_text=None, image=None):

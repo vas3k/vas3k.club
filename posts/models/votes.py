@@ -25,7 +25,7 @@ class PostVote(models.Model):
         unique_together = [["user", "post"]]
 
     @classmethod
-    def upvote(cls, request, user, post):
+    def upvote(cls, user, post, request=None):
         if not user.is_god and user.id == post.author_id:
             return None, False
 
@@ -33,8 +33,8 @@ class PostVote(models.Model):
             user=user,
             post=post,
             defaults=dict(
-                ipaddress=parse_ip_address(request),
-                useragent=parse_useragent(request),
+                ipaddress=parse_ip_address(request) if request else None,
+                useragent=parse_useragent(request) if request else None
             )
         )
 

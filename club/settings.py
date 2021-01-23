@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     "posts.apps.PostsConfig",
     "users.apps.UsersConfig",
     "notifications.apps.NotificationsConfig",
-    "bot.apps.BotConfig",
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
     "simple_history",
@@ -222,6 +221,9 @@ TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
+TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
+TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
+TELEGRAM_BOT_WEBHOOK_PORT = 8816
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""

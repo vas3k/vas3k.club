@@ -1,12 +1,11 @@
 from collections import namedtuple
-from enum import Enum
 
 import telegram
 from django.conf import settings
 from django.template import loader
 from telegram import ParseMode
 
-from bot.bot import bot, log
+from notifications.telegram.bot import bot, log
 
 Chat = namedtuple("Chat", ["id"])
 
@@ -14,13 +13,6 @@ ADMIN_CHAT = Chat(id=settings.TELEGRAM_ADMIN_CHAT_ID)
 CLUB_CHAT = Chat(id=settings.TELEGRAM_CLUB_CHAT_ID)
 CLUB_CHANNEL = Chat(id=settings.TELEGRAM_CLUB_CHANNEL_ID)
 CLUB_ONLINE = Chat(id=settings.TELEGRAM_ONLINE_CHANNEL_ID)
-
-
-class RejectReason(Enum):
-    intro = "intro"
-    data = "data"
-    aggression = "aggression"
-    general = "general"
 
 
 def send_telegram_message(

@@ -199,9 +199,9 @@ def upvote_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
     post_vote, is_created = CommentVote.upvote(
-        request=request,
         user=request.me,
         comment=comment,
+        request=request,
     )
 
     return {

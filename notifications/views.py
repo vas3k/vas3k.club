@@ -1,14 +1,22 @@
 import base64
+import hashlib
+import hmac
+import json
 from datetime import timedelta, datetime
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Q, Count
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 
+from auth.helpers import auth_required
+from club.exceptions import AccessDenied
+
 from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
+from common.request import ajax_request
 from landing.models import GodSettings
 from posts.models.post import Post
 from posts.models.votes import PostVote
@@ -293,3 +301,57 @@ def weekly_digest(request):
         "issue_number": (end_date - settings.LAUNCH_DATE).days // 7,
         "is_footer_excluded": is_footer_excluded
     })
+
+
+@auth_required
+@ajax_request
+def link_telegram(request):
+    if not request.body:
+        raise Http404()
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        if not data.get("id") or not data.get("hash"):
+            return render(request, "error.html", {
+                "title": "Что-то пошло не так",
+                "message": "Попробуйте авторизоваться снова.",
+            })
+
+        if not is_valid_telegram_data(data, settings.TELEGRAM_TOKEN):
+            raise AccessDenied(title="Подпись сообщения не совпадает")
+
+        request.me.telegram_id = data["id"]
+        request.me.telegram_data = data
+        request.me.save()
+
+        cache.delete("bot:telegram_user_ids")
+
+        full_name = str(request.me.telegram_data.get("first_name") or "") \
+            + str(request.me.telegram_data.get("last_name") or "")
+
+        return {
+            "status": "success",
+            "telegram": {
+                "id": request.me.telegram_id,
+                "username": request.me.telegram_data.get("username") or full_name,
+                "full_name": full_name,
+            }
+        }
+
+    return {"status": "nope"}
+
+
+def is_valid_telegram_data(data, bot_token):
+    data = dict(data)
+    check_hash = data.pop('hash')
+    check_list = ['{}={}'.format(k, v) for k, v in data.items()]
+    check_string = '\n'.join(sorted(check_list))
+
+    secret_key = hashlib.sha256(bot_token.encode()).digest()
+    hmac_hash = hmac.new(
+        secret_key,
+        check_string.encode(),
+        hashlib.sha256,
+    ).hexdigest()
+
+    return hmac_hash == check_hash

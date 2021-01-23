@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.template import loader
 from django_q.tasks import async_task
 
-from bot.common import Chat, render_html_message, send_telegram_image
+from notifications.telegram.common import Chat, render_html_message, send_telegram_image
 from notifications.email.sender import send_club_email
 from users.models.achievements import UserAchievement
 

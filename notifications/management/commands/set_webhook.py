@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.urls import reverse
 
-from bot.bot import bot
+from notifications.telegram.bot import bot
 
 log = logging.getLogger(__name__)
 

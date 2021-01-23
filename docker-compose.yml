@@ -48,6 +48,28 @@ services:
       - postgres
       - redis
 
+  bot:
+    build:
+      dockerfile: dev.dockerfile
+      context: .
+    command: make docker-run-bot
+    environment:
+      - DEBUG=true
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    restart: always
+    volumes:
+      - .:/app:delegated
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+
   postgres:
     image: postgres:11
     container_name: club_postgres

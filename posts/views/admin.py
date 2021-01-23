@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 
 from auth.helpers import auth_required, moderator_role_required
-from bot.common import render_html_message
+from notifications.telegram.common import render_html_message
 from notifications.telegram.posts import announce_in_club_channel
 from posts.admin import do_post_admin_actions
 from posts.forms.admin import PostAdminForm, PostAnnounceForm

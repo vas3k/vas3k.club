@@ -116,9 +116,9 @@ def upvote_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
     post_vote, is_vote_created = PostVote.upvote(
-        request=request,
         user=request.me,
         post=post,
+        request=request,
     )
 
     return {

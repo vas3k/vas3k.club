@@ -14,6 +14,12 @@ run-queue:  ## Runs task broker
 docker-run-queue:
 	python manage.py qcluster
 
+run-bot:  ## Runs telegram bot
+	pipenv run python bot/main.py
+
+docker-run-bot:
+	python bot/main.py
+
 run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
 
@@ -65,6 +71,8 @@ redeploy:
 	docker-compose -f docker-compose.production.yml up --no-deps -d club_app
 	docker-compose -f docker-compose.production.yml build queue
 	docker-compose -f docker-compose.production.yml up --no-deps -d queue
+	docker-compose -f docker-compose.production.yml build bot
+	docker-compose -f docker-compose.production.yml up --no-deps -d bot
 	docker image prune --force
 
 .PHONY: \
@@ -72,6 +80,8 @@ redeploy:
   docker-run-production \
   run-dev \
   run-queue \
+  run-bot \
+  docker-run-bot \
   run-uvicorn \
   requirements \
   help \

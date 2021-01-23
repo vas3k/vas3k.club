@@ -3,11 +3,11 @@ from datetime import datetime
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
-from django_q.tasks import async_task, schedule
+from django_q.tasks import async_task
 
 from auth.helpers import auth_required
 from auth.models import Code, Session
-from bot.common import send_telegram_message, ADMIN_CHAT
+from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from club.exceptions import BadRequest, AccessDenied
 from gdpr.models import DataRequests
 from notifications.email.users import send_delete_account_request_email, send_delete_account_confirm_email

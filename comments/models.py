@@ -175,7 +175,7 @@ class CommentVote(models.Model):
         return self.created_at >= datetime.utcnow() - settings.RETRACT_VOTE_TIMEDELTA
 
     @classmethod
-    def upvote(cls, request, user, comment):
+    def upvote(cls, user, comment, request=None):
         if not user.is_god and user.id == comment.author_id:
             return None, False
 
@@ -184,8 +184,8 @@ class CommentVote(models.Model):
             comment=comment,
             defaults=dict(
                 post=comment.post,
-                ipaddress=parse_ip_address(request),
-                useragent=parse_useragent(request),
+                ipaddress=parse_ip_address(request) if request else None,
+                useragent=parse_useragent(request) if request else None,
             )
         )
 

@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from bot.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE, Chat
+from notifications.telegram.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE, Chat
 from common.regexp import USERNAME_RE
 from posts.models.post import Post
 from users.models.user import User

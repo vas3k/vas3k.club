@@ -3,7 +3,8 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
-from bot.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message, RejectReason
+from notifications.telegram.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message
+from bot.handlers.common import RejectReason
 from users.models.user import User
 
 

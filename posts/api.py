@@ -31,7 +31,7 @@ def api_show_post(request, post_type, post_slug):
 
     # drafts are visible only to authors and moderators
     if not post.is_visible:
-        if not request.me or (request.me != post.author and not request.me.is_moderator):
+        if not request.me or (request.me != post.author and not bot.handlers2.decorators.is_moderator):
             raise Http404()
 
     return JsonResponse({

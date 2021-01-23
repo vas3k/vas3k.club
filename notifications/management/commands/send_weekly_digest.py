@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.urls import reverse
 
-from bot.common import send_telegram_message, CLUB_CHANNEL, render_html_message
+from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message
 from landing.models import GodSettings
 from notifications.email.sender import send_club_email
 from posts.models.post import Post

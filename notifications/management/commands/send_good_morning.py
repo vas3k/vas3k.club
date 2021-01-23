@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from django.core.management import BaseCommand
 
-from bot.common import send_telegram_message, ADMIN_CHAT, render_html_message
+from notifications.telegram.common import send_telegram_message, ADMIN_CHAT, render_html_message
 from common.data.greetings import DUMB_GREETINGS
 from posts.models.post import Post
 

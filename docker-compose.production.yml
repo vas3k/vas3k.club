@@ -38,6 +38,16 @@ services:
       - redis
     ports: []
 
+  bot:
+    <<: *app
+    command: make docker-run-bot
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+    ports:
+      - "8816:8816"
+
   postgres:
     image: postgres:12
     container_name: club_postgres

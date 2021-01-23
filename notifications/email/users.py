@@ -1,7 +1,7 @@
 from django.template import loader, TemplateDoesNotExist
 
 from auth.models import Code
-from bot.common import RejectReason
+from bot.handlers.common import RejectReason
 from notifications.email.sender import send_club_email
 from users.models.user import User
 
