@@ -3,7 +3,7 @@
 {{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
 {% endfor %}
 
-😎 <b>Обсуждаемые темы</b>
+🔥 <b>Обсуждаемые темы</b>
 {% for post in hot_posts %}
 {{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
 {% endfor %}

@@ -19,7 +19,7 @@ def command_top(update: Update, context: CallbackContext) -> None:
 
     # Hot posts
     hot_posts = Post.visible_objects()\
-        .filter(is_approved_by_moderator=True, published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .filter(is_approved_by_moderator=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
         .exclude(id__in=[p.id for p in top_posts]) \
         .order_by("-hotness")[:3]
