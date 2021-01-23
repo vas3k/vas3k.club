@@ -28,7 +28,7 @@ Through old fashion `virtualenv`:
  - install deps from [requirements.txt](requirements.txt) and [dev_requirements.txt](dev_requirements.txt)
   ```sh
   (venv) $ pip install --upgrade -r requirements.txt  
-  (venv) $ pip install --upgrade -r requirements.dev.txt  
+  (venv) $ pip install --upgrade -r dev_requirements.txt 
   ```
 
 If you don't need to work with Geo Data and installation of `gdal` package is failed so skip it with next workaround:
