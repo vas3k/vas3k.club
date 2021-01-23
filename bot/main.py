@@ -84,6 +84,7 @@ def main() -> None:
             port=settings.TELEGRAM_BOT_WEBHOOK_PORT,
             url_path=settings.TELEGRAM_TOKEN,
         )
+        log.info(f"Set webhook: {settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN}")
         updater.bot.set_webhook(settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN)
 
     # Wait all threads
