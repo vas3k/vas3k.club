@@ -16,7 +16,7 @@
                 </p>
 
                 <p>
-                    Ваш аккаунт создан и вы можете залетать к нам в <a href="{% url "network" %}" target="_blank">секретные чаты</a>, подписываться на <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank">канал</a> и читать закрытые <a href="https://vas3k.ru/blog/" target="_blank">посты в блоге</a>.
+                    Ваш аккаунт создан и вы можете залетать к нам в <a href="{% url "network" %}" rel="noreferrer" target="_blank">секретные чаты</a>, подписываться на <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">канал</a> и читать закрытые <a href="https://vas3k.ru/blog/" rel="noreferrer" target="_blank">посты в блоге</a>.
                 </p>
 
                 <p>
@@ -213,7 +213,7 @@
                         {{ form.email_digest_type.0.tag }}
                         <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
                             <i class="fab fa-telegram"></i>
-                            <span class="user-edit-digest-name">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank">телеграме</a></span>
+                            <span class="user-edit-digest-name">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
                             <span class="user-edit-digest-description">Не хочу никаких писем, сам подпишусь</span>
                         </label>
                     </div>
@@ -227,7 +227,7 @@
 
             <div class="block network-block" id="main">
                 <div class="network-channels">
-                    <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" target="_blank" class="network-channel">
+                    <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank" class="network-channel">
                         <span class="avatar network-channel-icon" style="background-image: url('https://i.vas3k.club/eab0c7350e8159ec630d820b430e41ac4ad9a7533b7e5cbb931618e8d6e70233.jpg');"></span>
                         <span class="network-channel-name text-120">Телеграм-канал Клуба</span>
                         <span class="network-channel-description">Лучшие посты, отобранные руками</span>
@@ -239,7 +239,7 @@
                         <span class="network-channel-description">Бездушная машина постит ссылки на новые посты</span>
                     </a>
 
-                    <a href="{{ settings.TELEGRAM_CLUB_CHAT_URL }}" target="_blank" class="network-channel">
+                    <a href="{{ settings.TELEGRAM_CLUB_CHAT_URL }}" rel="noreferrer" target="_blank" class="network-channel">
                         <span class="avatar network-channel-icon" style="background-image: url('https://i.vas3k.club/b8c8cc57c58470a1ea7633b53e5f8014a7d9ad638169c440a3cfc6ff6a89da59.jpg');"></span>
                         <span class="network-channel-name text-120">Вастрик.Бар</span>
                         <span class="network-channel-description">Главный чат Клуба, но там бывает шумно</span>
@@ -295,7 +295,7 @@
 
                 <p class="text-80">
                     ☝️ Если кнопки сверху не видно, значит какой-то AdBlock её заблокировал. Придётся пойти другим путём.
-                    Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ form.instance.secret_hash }}</strong>
+                    Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" rel="noreferrer" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ form.instance.secret_hash }}</strong>
                 </p>
 
                 <p class="user-telegram-auth-data" id="telegram-auth-data" style="display: none;"></p>
