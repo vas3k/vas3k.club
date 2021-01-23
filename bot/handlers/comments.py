@@ -11,6 +11,7 @@ from comments.models import Comment
 
 log = logging.getLogger(__name__)
 
+MIN_COMMENT_LEN = 200
 
 def comment(update: Update, context: CallbackContext) -> None:
     if not update.message \
@@ -101,6 +102,12 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
     if not text:
         update.message.reply_text(
             f"😣 Сорян, я пока умею только в текстовые реплаи"
+        )
+        return None
+
+    if len(text) < MIN_COMMENT_LEN:
+        update.message.reply_text(
+            f"😋 Твой коммент слишком короткий, пускай остается в чате"
         )
         return None
 

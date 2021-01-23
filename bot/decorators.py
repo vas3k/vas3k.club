@@ -8,7 +8,7 @@ from users.models.user import User
 
 def is_moderator(callback):
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
-        if update.effective_chat.id != settings.TELEGRAM_ADMIN_CHAT_ID:
+        if update.effective_chat.id != int(settings.TELEGRAM_ADMIN_CHAT_ID):
             update.effective_chat.send_message("❌ Для этого действия нужно быть в чате модераторов")
             return None
 
