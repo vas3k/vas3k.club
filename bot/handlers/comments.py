@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 MIN_COMMENT_LEN = 200
 
+
 def comment(update: Update, context: CallbackContext) -> None:
     if not update.message \
             or not update.message.reply_to_message \
@@ -77,7 +78,8 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text(
         f"➜ <a href=\"{new_comment_url}\">Отвечено</a> 👍",
-        parse_mode=ParseMode.HTML
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True
     )
 
 
@@ -127,5 +129,6 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_text(
         f"➜ <a href=\"{new_comment_url}\">Отвечено</a> 👍",
-        parse_mode=ParseMode.HTML
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=True
     )

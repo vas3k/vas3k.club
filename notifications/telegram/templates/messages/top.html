@@ -1,0 +1,17 @@
+🏆 <b>Лучшие посты за последние пару дней:</b>
+
+{% for post in top_posts %}
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
+{% endfor %}
+
+😎 <b>Лучшие интро:</b>
+
+{% for intro in top_intros %}
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "profile" intro.author.slug %}">{{ intro.author.full_name }}</a> (+{{ intro.upvotes }})
+{% endfor %}
+
+🤣 <b>Лучшие комментарии:</b>
+
+{% for comment in top_comments %}
+{{ forloop.counter }}: К посту <a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}">{{ comment.post.title }}</a> от {{ comment.author.full_name }} (+{{ comment.upvotes }})
+{% endfor %}

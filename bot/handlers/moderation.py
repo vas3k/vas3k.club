@@ -44,7 +44,8 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     })
 
     update.effective_chat.send_message(
-        f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}"
+        f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}",
+        disable_web_page_preview=True
     )
 
     # hide buttons
@@ -69,7 +70,8 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
     })
 
     update.effective_chat.send_message(
-        f"😕 Пост «{post.title}» не одобрен, но оставлен на сайте ({update.effective_user.full_name}): {post_url}"
+        f"😕 Пост «{post.title}» не одобрен, но оставлен на сайте ({update.effective_user.full_name}): {post_url}",
+        disable_web_page_preview=True
     )
 
     # hide buttons
@@ -118,6 +120,7 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
         return None
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
+    user.created_at = datetime.utcnow()
     user.save()
 
     # make intro visible
