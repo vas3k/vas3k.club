@@ -17,11 +17,11 @@ export default {
     props: {
         tagName: {
             type: String,
-            required: true
+            required: true,
         },
         tagColor: {
             type: String,
-            required: true
+            required: true,
         },
         isActiveByDefault: {
             type: Boolean,
