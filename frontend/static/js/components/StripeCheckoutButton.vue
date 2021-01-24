@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import {loadStripe} from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 export default {
     name: "StripeCheckoutButton",
@@ -24,11 +24,13 @@ export default {
     },
     methods: {
         pay() {
-            this.stripe.redirectToCheckout({
-                sessionId: this.sessionId,
-            }).then(function (result) {
-                alert(result.error.message);
-            });
+            this.stripe
+                .redirectToCheckout({
+                    sessionId: this.sessionId,
+                })
+                .then(function (result) {
+                    alert(result.error.message);
+                });
         },
     },
 };

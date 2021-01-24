@@ -23,10 +23,10 @@ const imageUploadOptions = {
         "image/jpg",
         "image/gif",
         "video/mp4",
-        "video/quicktime" // .mov (macOS' default record format)
+        "video/quicktime", // .mov (macOS' default record format)
     ],
     extraHeaders: {
-        "Accept": "application/json",
+        Accept: "application/json",
     },
     extraParams: {
         code: imageUploadCode,
@@ -59,18 +59,18 @@ function createMarkdownEditor(element, options) {
 
     // overriding default CodeMirror shortcuts
     editor.codemirror.addKeyMap({
-        'Home': 'goLineLeft', // move the cursor to the left side of the visual line it is on
-        'End': 'goLineRight', // move the cursor to the right side of the visual line it is on
+        Home: "goLineLeft", // move the cursor to the left side of the visual line it is on
+        End: "goLineRight", // move the cursor to the right side of the visual line it is on
     });
 
     // adding ability to fire events on the hidden element
     if (element.dataset.listen) {
-        const events = element.dataset.listen.split(' ')
-        events.forEach(event => {
+        const events = element.dataset.listen.split(" ");
+        events.forEach((event) => {
             try {
-                editor.codemirror.on(event, e => e.getTextArea().dispatchEvent(new Event(event)))
+                editor.codemirror.on(event, (e) => e.getTextArea().dispatchEvent(new Event(event)));
             } catch (e) {
-                console.warn('Invalid event provided', event)
+                console.warn("Invalid event provided", event);
             }
         });
     }
@@ -191,7 +191,7 @@ const App = {
                             title: "Insert code",
                         },
                     ],
-                })
+                });
 
                 return [...editors, editor];
             },
@@ -201,7 +201,7 @@ const App = {
         const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
             (editors, element) => {
                 const editor = createMarkdownEditor(element, {
-                    toolbar: false
+                    toolbar: false,
                 });
 
                 return [...editors, editor];

@@ -1,12 +1,6 @@
 <template>
-    <label 
-		class="user-avatar-input" 
-		:for="inputId"
-	>
-        <div 
-			class="avatar profile-user-avatar" 
-			:style="avatarStyle" 
-		/>
+    <label class="user-avatar-input" :for="inputId">
+        <div class="avatar profile-user-avatar" :style="avatarStyle" />
     </label>
 </template>
 <script>
