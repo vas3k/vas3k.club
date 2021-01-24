@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
+from bot.decorators import is_club_member
 from comments.models import Comment
 from notifications.telegram.common import render_html_message
 from posts.models.post import Post
@@ -10,6 +11,7 @@ from posts.models.post import Post
 TOP_TIMEDELTA = timedelta(days=3)
 
 
+@is_club_member
 def command_top(update: Update, context: CallbackContext) -> None:
     # Top posts
     top_posts = Post.visible_objects()\

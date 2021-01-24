@@ -20,7 +20,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
     user = User.objects.filter(telegram_id=telegram_id).first()
     if not user:
         update.message.reply_text(
-            f"🤨 Пользователь {telegram_id} не найден в Клубе. Гоните его, надсмехайтесь над ним!",
+            f"🤨 Пользователь не найден в Клубе. Гоните его, надсмехайтесь над ним!",
             quote=True
         )
         return None
