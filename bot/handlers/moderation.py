@@ -26,7 +26,7 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     post = Post.objects.get(id=post_id)
     if post.is_approved_by_moderator:
         update.callback_query.answer()
-        update.message.reply_text(f"Пост «{post.title}» уже одобрен")
+        update.effective_chat.send_message(f"Пост «{post.title}» уже одобрен")
         return
 
     post.is_approved_by_moderator = True
@@ -86,7 +86,7 @@ def unpublish_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     if not post.is_visible:
-        update.message.reply_text(f"Пост «{post.title}» уже перенесен в черновики")
+        update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
         return None
 
     post.is_visible = False
