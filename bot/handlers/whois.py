@@ -16,6 +16,13 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         )
         return None
 
+    if update.message.reply_to_message.from_user.is_bot:
+        update.message.reply_text(
+            "Это бот, глупышка",
+            quote=True
+        )
+        return None
+
     telegram_id = update.message.reply_to_message.from_user.id
     user = User.objects.filter(telegram_id=telegram_id).first()
     if not user:
