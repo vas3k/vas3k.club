@@ -144,6 +144,22 @@
             </form>
         </div>
 
+        {% if me.is_god %}
+            <div class="profile-header">Удалить аккаунт юзера</div>
+            <div class="block">
+                <form action="." method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        {{ form.delete_account.label_tag }}
+                        {{ form.delete_account }}
+                        {% if form.delete_account.errors %}<span class="form-row-errors">{{ form.delete_account.errors }}</span>{% endif %}
+                    </div>
+                    <button type="submit" class="button" onclick="return confirm('Точно удаляем юзера?')">Я УВЕРЕН</button>
+                </form>
+            </div>
+        {% endif %}
+
         <div class="profile-header">Отправить сообщение</div>
         <div class="block">
             <form action="." method="post" enctype="multipart/form-data">

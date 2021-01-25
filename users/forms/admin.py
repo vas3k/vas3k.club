@@ -66,6 +66,11 @@ class UserAdminForm(forms.Form):
         required=False
     )
 
+    delete_account = forms.BooleanField(
+        label="Удалить аккаунт и обнулить подписку",
+        required=False
+    )
+
     ping = forms.CharField(
         label="Отправить сообщение",
         max_length=5000,

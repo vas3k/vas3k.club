@@ -1,11 +1,15 @@
 from datetime import datetime, timedelta
 
 from django.shortcuts import redirect
+from django_q.tasks import async_task
 
+from auth.models import Session
 from club.exceptions import AccessDenied
 from common.data.hats import HATS
-from notifications.email.users import send_unmoderated_email, send_banned_email, send_ping_email
+from notifications.email.users import send_unmoderated_email, send_banned_email, send_ping_email, \
+    send_delete_account_confirm_email
 from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate
+from payments.helpers import cancel_all_stripe_subscriptions
 from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
 
@@ -62,6 +66,23 @@ def do_user_admin_actions(request, user, data):
         user.save()
         send_unmoderated_email(user)
         notify_admin_user_unmoderate(user)
+
+    # Delete account
+    if data["delete_account"] and request.me.is_god:
+        user.membership_expires_at = datetime.utcnow()
+
+        # mark user for deletion
+        user.deleted_at = datetime.utcnow()
+        user.save()
+
+        # remove sessions
+        Session.objects.filter(user=user).delete()
+
+        # notify user
+        async_task(
+            send_delete_account_confirm_email,
+            user=user,
+        )
 
     # Ping
     if data["ping"]:
