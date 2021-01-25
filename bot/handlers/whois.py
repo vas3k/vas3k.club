@@ -10,7 +10,7 @@ from users.models.user import User
 @is_club_member
 def command_whois(update: Update, context: CallbackContext) -> None:
     if not update.message or not update.message.reply_to_message:
-        update.message.reply_text(
+        update.effective_chat.send_message(
             "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать",
             quote=True
         )

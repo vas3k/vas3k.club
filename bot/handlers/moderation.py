@@ -124,9 +124,12 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     user.save()
 
     # make intro visible
-    Post.objects\
-        .filter(author=user, type=Post.TYPE_INTRO)\
-        .update(is_visible=True, published_at=datetime.utcnow(), is_approved_by_moderator=True)
+    intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
+    intro.is_approved_by_moderator = True
+    intro.is_visible = True
+    if not intro.published_at:
+        intro.published_at = datetime.utcnow()
+    intro.save()
 
     SearchIndex.update_user_index(user)
 
