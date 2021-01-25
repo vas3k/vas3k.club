@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.shortcuts import redirect
 from django_q.tasks import async_task
 
@@ -8,6 +9,7 @@ from club.exceptions import AccessDenied
 from common.data.hats import HATS
 from notifications.email.users import send_unmoderated_email, send_banned_email, send_ping_email, \
     send_delete_account_confirm_email
+from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate
 from payments.helpers import cancel_all_stripe_subscriptions
 from users.models.achievements import UserAchievement, Achievement
@@ -70,6 +72,10 @@ def do_user_admin_actions(request, user, data):
     # Delete account
     if data["delete_account"] and request.me.is_god:
         user.membership_expires_at = datetime.utcnow()
+        user.is_banned_until = datetime.utcnow() + timedelta(days=5000)
+
+        # cancel recurring payments
+        cancel_all_stripe_subscriptions(user.stripe_id)
 
         # mark user for deletion
         user.deleted_at = datetime.utcnow()
@@ -79,9 +85,14 @@ def do_user_admin_actions(request, user, data):
         Session.objects.filter(user=user).delete()
 
         # notify user
-        async_task(
-            send_delete_account_confirm_email,
+        send_delete_account_confirm_email(
             user=user,
+        )
+
+        # notify admins
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=f"💀 Юзер был удален админами: {settings.APP_HOST}/user/{user.slug}/",
         )
 
     # Ping
