@@ -61,7 +61,7 @@ new Vue({
             // Define helper function
             function appendMarkdownTextareaValue(textarea, value) {
                 textarea.focus(); // on mobile
-                textarea.value = value;
+                textarea.value = textarea.value + value;
 
                 // On mobile the next element sibling is undefined
                 if (textarea.nextElementSibling) {
