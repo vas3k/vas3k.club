@@ -217,6 +217,7 @@ def compose_type(request, post_type):
                     post.topic.update_last_activity()
 
                 SearchIndex.update_post_index(post)
+                LinkedPost.create_links_from_text(post, post.text)
 
                 return redirect("show_post", post.type, post.slug)
 
