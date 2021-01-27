@@ -7,7 +7,7 @@ from users.models.user import User
 
 def command_auth(update: Update, context: CallbackContext) -> None:
     if not update.message or not update.message.text or " " not in update.message.text:
-        update.message.reply_text(
+        update.effective_chat.send_message(
             "☝️ Нужно прислать мне секретный код. "
             "Напиши /auth и код из <a href=\"https://vas3k.club/user/me/edit/bot/\">профиля в Клубе</a> "
             "через пробел. Только не публикуй его в публичных чатах!",
@@ -19,7 +19,7 @@ def command_auth(update: Update, context: CallbackContext) -> None:
     user = User.objects.filter(secret_hash=secret_code).first()
 
     if not user:
-        update.message.reply_text("Пользователь с таким кодом не найден")
+        update.effective_chat.send_message("Пользователь с таким кодом не найден")
         return None
 
     user.telegram_id = update.effective_user.id
@@ -32,7 +32,7 @@ def command_auth(update: Update, context: CallbackContext) -> None:
     }
     user.save()
 
-    update.message.reply_text(f"Отличный код! Приятно познакомиться, {user.slug}")
+    update.effective_chat.send_message(f"Отличный код! Приятно познакомиться, {user.slug}")
     update.message.delete()
 
     # Refresh the cache by deleting and requesting it again

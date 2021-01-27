@@ -1,3 +1,4 @@
+import logging
 import re
 from enum import Enum
 from typing import Optional
@@ -13,6 +14,8 @@ POST_COMMENT_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🔥].*")
 
 COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
 POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
+
+log = logging.getLogger(__name__)
 
 
 class RejectReason(Enum):
@@ -54,7 +57,7 @@ def get_club_comment(update: Update) -> Optional[Comment]:
             if comment_id:
                 break
     else:
-        update.message.reply_text(f"🤨 Нет ссылки на коммент. Что-то не так. Я сломался")
+        log.warning(f"Comment URL not found: {update.message.reply_to_message}")
         return None
 
     comment = Comment.objects.filter(id=comment_id).first()
@@ -77,7 +80,7 @@ def get_club_post(update: Update) -> Optional[Post]:
             if post_id:
                 break
     else:
-        update.message.reply_text(f"🤨 Нет ссылки на пост. Что-то не так. Я сломался")
+        log.warning(f"Post URL not found: {update.message.reply_to_message}")
         return None
 
     post = Post.objects.filter(slug=post_id).first()
