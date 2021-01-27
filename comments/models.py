@@ -106,7 +106,7 @@ class Comment(models.Model):
     @classmethod
     def visible_objects(cls):
         return cls.objects\
-            .filter(is_visible=True)\
+            .filter(is_visible=True, deleted_by__isnull=True)\
             .select_related("author", "reply_to")
 
     @classmethod
