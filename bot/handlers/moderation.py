@@ -87,6 +87,7 @@ def unpublish_post(update: Update, context: CallbackContext) -> None:
     post = Post.objects.get(id=post_id)
     if not post.is_visible:
         update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
+        update.callback_query.answer()
         return None
 
     post.is_visible = False
@@ -113,10 +114,12 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     user = User.objects.get(id=user_id)
     if user.moderation_status == User.MODERATION_STATUS_APPROVED:
         update.effective_chat.send_message(f"Пользователь «{user.full_name}» уже одобрен")
+        update.callback_query.answer()
         return None
 
     if user.moderation_status == User.MODERATION_STATUS_REJECTED:
         update.effective_chat.send_message(f"Пользователь «{user.full_name}» уже был отклонен")
+        update.callback_query.answer()
         return None
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
@@ -162,12 +165,14 @@ def reject_user_profile(update: Update, context: CallbackContext):
         update.effective_chat.send_message(
             f"Пользователь «{user.full_name}» уже был отклонен и пошел все переделывать"
         )
+        update.callback_query.answer()
         return None
 
     if user.moderation_status == User.MODERATION_STATUS_APPROVED:
         update.effective_chat.send_message(
             f"Пользователь «{user.full_name}» уже был принят, его нельзя реджектить"
         )
+        update.callback_query.answer()
         return None
 
     user.moderation_status = User.MODERATION_STATUS_REJECTED
