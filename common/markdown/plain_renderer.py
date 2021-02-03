@@ -3,7 +3,10 @@ import mistune
 
 class PlainRenderer(mistune.HTMLRenderer):
     def link(self, link, text=None, title=None):
-        return "[" + (text or link) + "]"
+        if text:
+            return f'[{text}]({link})'
+        else:
+            return f'({link})'
 
     def image(self, src, alt="", title=None):
         return "🖼"
