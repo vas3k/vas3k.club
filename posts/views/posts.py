@@ -17,16 +17,16 @@ from search.models import SearchIndex
 def show_post(request, post_type, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
+    # drafts are visible only to authors and moderators
+    if not post.is_visible:
+        if not request.me or (request.me != post.author and not request.me.is_moderator):
+            raise Http404()
+
     # don't show private posts into public
     if not post.is_public:
         access_denied = check_user_permissions(request, post=post)
         if access_denied:
             return access_denied
-
-    # drafts are visible only to authors and moderators
-    if not post.is_visible:
-        if not request.me or (request.me != post.author and not request.me.is_moderator):
-            raise Http404()
 
     # post_type can be changed by moderator
     if post.type != post_type:
