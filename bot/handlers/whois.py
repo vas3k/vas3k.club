@@ -20,7 +20,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
     if update.message.forward_date:
         if not update.message.forward_from:
             update.effective_chat.send_message(
-                f"🤨 Кажется, {message.forward_sender_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
+                f"🤨 Кажется, {update.message.forward_sender_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
                 quote=True
             )
             return None
