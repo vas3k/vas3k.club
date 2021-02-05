@@ -17,10 +17,6 @@ from search.models import SearchIndex
 def show_post(request, post_type, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
-    # post_type can be changed by moderator
-    if post.type != post_type:
-        return redirect("show_post", post.type, post.slug)
-
     # don't show private posts into public
     if not post.is_public:
         access_denied = check_user_permissions(request, post=post)
@@ -31,6 +27,10 @@ def show_post(request, post_type, post_slug):
     if not post.is_visible:
         if not request.me or (request.me != post.author and not request.me.is_moderator):
             raise Http404()
+
+    # post_type can be changed by moderator
+    if post.type != post_type:
+        return redirect("show_post", post.type, post.slug)
 
     # record a new view
     last_view_at = None
