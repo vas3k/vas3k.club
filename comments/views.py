@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -93,7 +94,7 @@ def edit_comment(request, comment_id):
         if not comment.is_editable:
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно редактировать только в первые 3 часа после создания"
+                message=f"Комментарий можно редактировать только в первые {settings.COMMENT_EDIT_TIMEDELTA} часа после создания"
             )
 
         if not comment.post.is_visible or not comment.post.is_commentable:
@@ -139,7 +140,7 @@ def delete_comment(request, comment_id):
         if not comment.is_deletable:
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно удалить только в первые 3 дня после создания"
+                message=f"Комментарий можно удалить только в первые {settings.COMMENT_DELETE_TIMEDELTA//365} лет после создания"
             )
 
         if not comment.post.is_visible:
