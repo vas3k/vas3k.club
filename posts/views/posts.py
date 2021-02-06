@@ -99,7 +99,7 @@ def edit_post(request, post_slug):
 @auth_required
 def publish_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
-    if post.author != request.me or not request.me.is_moderator:
+    if post.author != request.me and not request.me.is_moderator:
         raise AccessDenied(title="Только автор или модератор может опубликовать пост")
 
     post.publish()
