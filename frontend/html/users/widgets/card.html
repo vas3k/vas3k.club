@@ -5,7 +5,7 @@
     </div>
     <div class="profile-card-info">
         <a href="{% url "profile" user.slug %}" class="profile-user-name u-url">
-            <span class="profile-user-fullname {% if user.is_banned %}user-name-is-banned{% endif %} p-name">{{ user.full_name }}</span>
+            <span class="profile-user-fullname {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %} p-name">{{ user.full_name }}</span>
             <span class="profile-user-nickname p-nickname">@{{ user.slug }}</span>
         </a>
 
