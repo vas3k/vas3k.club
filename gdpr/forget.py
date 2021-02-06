@@ -37,7 +37,7 @@ def delete_user_data(user: User):
     # delete intro
     Post.objects.filter(author=user, type=Post.TYPE_INTRO).delete()
 
-    # delete draft posts
+    # delete draft and unpublished posts
     Post.objects.filter(author=user, is_visible=False).delete()
 
     # drop related data

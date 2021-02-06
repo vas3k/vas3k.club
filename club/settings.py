@@ -241,6 +241,12 @@ RATE_LIMIT_COMMENTS_PER_DAY = 200
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
 POST_HOTNESS_PERIOD = timedelta(days=5)
 
+MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 15
+CLEARED_POST_TEXT = "```\n" \
+    "😥 Этот пост был удален самим автором и от него остались лишь комменты. " \
+    "Если вы хотите приютить и развивать эту тему, напишите модераторам Клуба: moderator@vas3k.club." \
+    "\n```"
+
 WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": not DEBUG,

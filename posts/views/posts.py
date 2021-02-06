@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -82,7 +83,7 @@ def edit_post(request, post_slug):
             SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)
 
-            if post.is_visible:
+            if post.is_visible or request.POST.get("show_preview"):
                 return redirect("show_post", post.type, post.slug)
             else:
                 return redirect("compose")
@@ -93,6 +94,47 @@ def edit_post(request, post_slug):
         "mode": "edit",
         "form": form
     })
+
+
+@auth_required
+def publish_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if post.author != request.me or not request.me.is_moderator:
+        raise AccessDenied(title="Только автор или модератор может опубликовать пост")
+
+    post.publish()
+
+    return redirect("show_post", post.type, post.slug)
+
+
+@auth_required
+def unpublish_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if not request.me.is_moderator:
+        if post.author != request.me:
+            raise AccessDenied(title="Только автор или модератор может удалить пост")
+
+        if post.comment_count >= settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR:
+            raise AccessDenied(
+                title="Только модератор может полностью удалить этот пост",
+                message=f"Так как в нём уже больше {settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR} комментов "
+                        f"и некоторые из них могут быть ценны их авторам и коммьюнити в целом"
+            )
+
+    post.unpublish()
+
+    return redirect("show_post", post.type, post.slug)
+
+
+@auth_required
+def clear_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if post.author != request.me and not request.me.is_moderator:
+        raise AccessDenied(title="Только автор или модератор может очистить пост")
+
+    post.clear()
+
+    return redirect("show_post", post.type, post.slug)
 
 
 @auth_required
@@ -131,6 +173,7 @@ def upvote_post(request, post_slug):
         },
         "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
     }
+
 
 @auth_required
 @ajax_request
@@ -219,9 +262,10 @@ def compose_type(request, post_type):
                 SearchIndex.update_post_index(post)
                 LinkedPost.create_links_from_text(post, post.text)
 
+            if post.is_visible or request.POST.get("show_preview"):
                 return redirect("show_post", post.type, post.slug)
-
-            return redirect("compose")
+            else:
+                return redirect("compose")
     else:
         form = FormClass()
 

@@ -94,13 +94,13 @@ class Post(models.Model, ModelDiffMixin):
     upvotes = models.IntegerField(default=0, db_index=True)
     hotness = models.IntegerField(default=0, db_index=True)
 
-    is_visible = models.BooleanField(default=True)
-    is_visible_on_main_page = models.BooleanField(default=True)
-    is_commentable = models.BooleanField(default=True)
-    is_approved_by_moderator = models.BooleanField(default=False)
-    is_public = models.BooleanField(default=False)
-    is_pinned_until = models.DateTimeField(null=True)
-    is_shadow_banned = models.BooleanField(default=False)
+    is_visible = models.BooleanField(default=False)  # published or draft
+    is_visible_on_main_page = models.BooleanField(default=True)  # main page or room-only post
+    is_commentable = models.BooleanField(default=True)  # allow comments
+    is_approved_by_moderator = models.BooleanField(default=False)  # expose in newsletters, rss, etc
+    is_public = models.BooleanField(default=False)  # visible for the outside world
+    is_pinned_until = models.DateTimeField(null=True)  # pin on top of the main feed
+    is_shadow_banned = models.BooleanField(default=False)  # hide from main page
 
     history = HistoricalRecords(
         user_model=User,
@@ -252,6 +252,21 @@ class Post(models.Model, ModelDiffMixin):
             intro.save()
 
         return intro
+
+    def clear(self):
+        self.text = settings.CLEARED_POST_TEXT
+        self.html = None
+        self.save()
+
+    def publish(self):
+        self.is_visible = True
+        self.published_at = datetime.utcnow()
+        self.save()
+
+    def unpublish(self):
+        self.is_visible = False
+        self.published_at = None
+        self.save()
 
     def delete(self, *args, **kwargs):
         self.deleted_at = datetime.utcnow()

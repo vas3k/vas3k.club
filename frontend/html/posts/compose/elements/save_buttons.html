@@ -1,17 +1,36 @@
+{% if form.instance.comment_count >= settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR and not request.me.is_moderator %}
 <div class="form-row form-row-space-between">
-    <button name="is_visible" value="false" class="button button-inverted">
-        {% if mode == "create" or not form.instance.is_visible %}
-            Сохранить черновик
-        {% else %}
-            Перенести в черновики
-        {% endif %}
-    </button>
+    <div class="block form-warning">
+        💬 В посте уже больше {{ settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR }} комментариев.
+        Из уважения к комментаторам, его теперь нельзя полностью удалить, можно только очистить.
+    </div>
+</div>
+{% endif %}
 
-    <button type="submit" name="is_visible" value="true" class="button">
-        {% if mode == "create" or not form.instance.is_visible %}
-            Опубликовать
+<div class="form-row form-row-space-between">
+    {% if not form.instance.is_visible %}
+        <button type="submit" class="button button-inverted">Сохранить черновик</button>
+
+        {% if form.instance.slug %}
+            <a href="{% url "publish_post" form.instance.slug %}" class="button" onclick="return confirm('Публикуем? Пост увидят все и он попадет на модерацию')">
+                Опубликовать 🚀
+            </a>
         {% else %}
-            Сохранить изменения
+            <button type="submit" name="show_preview" value="true" class="button">
+                Предпросмотр 👀
+            </button>
         {% endif %}
-    </button>
+    {% else %}
+        {% if form.instance.comment_count <= settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR or request.me.is_moderator %}
+            <a href="{% url "unpublish_post" form.instance.slug %}" class="button button-inverted"  onclick="return confirm('Удаляем?')">
+                Удалить пост
+            </a>
+        {% else %}
+            <a href="{% url "clear_post" form.instance.slug %}" class="button button-inverted" onclick="return confirm('Очищаем пост?')">
+                Очистить пост
+            </a>
+        {% endif %}
+
+        <button type="submit" class="button">Сохранить изменения</button>
+    {% endif %}
 </div>
