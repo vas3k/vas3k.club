@@ -150,6 +150,20 @@ class User(models.Model, ModelDiffMixin):
     def membership_years_left(self):
         return self.membership_days_left() / 365
 
+    def membership_days_total(self):
+        if self.created_at > datetime.utcnow():
+            return 0
+        return (datetime.utcnow() - self.created_at).days
+
+    def membership_days(self):
+        return self.membership_days_total() % 365 % 30
+
+    def membership_months(self):
+        return self.membership_days_total() // 30 % 12
+
+    def membership_years(self):
+        return self.membership_days_total() // 365
+
     def increment_vote_count(self):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 

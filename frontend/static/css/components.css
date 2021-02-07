@@ -466,6 +466,12 @@
             font-size: 90%;
         }
 
+        .profile-user-membership-since {
+            display: block;
+            opacity: 0.7;
+            font-size: 90%;
+        }
+
             .profile-user-bio img {
                 max-width: 200px;
             }
@@ -530,6 +536,10 @@
         .profile-status-status {
             display: block;
             font-size: 90%;
+        }
+
+        .profile-status-membership-since-text {
+            font-size: 100%;
         }
 
     .profile-intro {
