@@ -1,5 +1,7 @@
 import logging
+from datetime import datetime
 
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -136,10 +138,11 @@ def delete_comment(request, comment_id):
                 message="Только автор комментария, поста или модератор может удалить комментарий"
             )
 
-        if not comment.is_deletable:
+        if not comment.is_deletable_by(request.me):
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно удалить только в первые 3 дня после создания"
+                message="Комментарий можно удалить только в первые дни после создания. "
+                        "Потом он становится  срока только модератор может это сделать. "
             )
 
         if not comment.post.is_visible:
