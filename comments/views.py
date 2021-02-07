@@ -141,8 +141,8 @@ def delete_comment(request, comment_id):
         if not comment.is_deletable_by(request.me):
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно удалить только в первые дни после создания. "
-                        "Потом он становится  срока только модератор может это сделать. "
+                message="Комментарий можно удалять только в первые дни после создания. "
+                        "Потом только автор или модератор может это сделать."
             )
 
         if not comment.post.is_visible:
