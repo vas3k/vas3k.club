@@ -109,14 +109,19 @@ class Comment(models.Model):
         return user.is_moderator
 
     @classmethod
-    def visible_objects(cls):
-        return cls.objects\
-            .filter(is_visible=True, deleted_by__isnull=True)\
+    def visible_objects(cls, show_deleted=False):
+        comments = cls.objects\
+            .filter(is_visible=True)\
             .select_related("author", "reply_to")
+
+        if not show_deleted:
+            comments = comments.filter(deleted_by__isnull=True)
+
+        return comments
 
     @classmethod
     def objects_for_user(cls, user):
-        return cls.visible_objects().extra({
+        return cls.visible_objects(show_deleted=True).extra({
             "is_voted": "select 1 from comment_votes "
                         "where comment_votes.comment_id = comments.id "
                         f"and comment_votes.user_id = '{user.id}'",

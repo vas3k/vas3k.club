@@ -25,7 +25,7 @@ def render_post(request, post, context=None):
         upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
         subscription = PostSubscription.get(request.me, post)
     else:
-        comments = Comment.visible_objects().filter(post=post).all()
+        comments = Comment.visible_objects(show_deleted=True).filter(post=post).all()
         is_voted = False
         is_bookmark = False
         upvoted_at = None
