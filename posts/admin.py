@@ -2,10 +2,15 @@ from datetime import datetime, timedelta
 
 from django.shortcuts import redirect
 
+from club.exceptions import AccessDenied
 from common.data.labels import LABELS
+from users.models.user import User
 
 
 def do_post_admin_actions(request, post, data):
+    if not request.me.is_moderator:
+        raise AccessDenied()
+
     # Change type
     if data["change_type"]:
         post.type = data["change_type"]
@@ -50,5 +55,12 @@ def do_post_admin_actions(request, post, data):
     if data["close_comments"]:
         post.is_commentable = False
         post.save()
+
+    # Transfer ownership to the given username
+    if data["transfer_ownership"]:
+        user = User.objects.filter(slug=data["transfer_ownership"].strip()).first()
+        if user:
+            post.author = user
+            post.save()
 
     return redirect("show_post", post.type, post.slug)
