@@ -17,6 +17,7 @@ class CommentForm(forms.ModelForm):
             }
         ),
     )
+    post_comment_order = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Comment
@@ -37,12 +38,14 @@ class ReplyForm(forms.ModelForm):
         ),
     )
     reply_to_id = forms.UUIDField(label="Ответ на", required=True)
+    post_comment_order = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Comment
         fields = [
             "text",
-            # "reply_to"
+            # "reply_to",
+            "post_comment_order"
         ]
 
     def clean(self):
@@ -83,6 +86,7 @@ class BattleCommentForm(forms.ModelForm):
             }
         ),
     )
+    post_comment_order = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Comment
