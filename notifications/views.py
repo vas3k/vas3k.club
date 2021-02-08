@@ -269,6 +269,7 @@ def weekly_digest(request):
         .filter(**created_at_condition) \
         .filter(is_deleted=False)\
         .exclude(post__type=Post.TYPE_BATTLE)\
+        .exclude(post__is_visible=False)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
