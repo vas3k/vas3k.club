@@ -45,7 +45,6 @@ class ReplyForm(forms.ModelForm):
         fields = [
             "text",
             # "reply_to",
-            "post_comment_order"
         ]
 
     def clean(self):
