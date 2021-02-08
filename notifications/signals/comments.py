@@ -2,7 +2,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
 
-from notifications.telegram.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE
+from club import settings
+from notifications.telegram.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE, ADMIN_CHAT
 from comments.models import Comment
 from common.regexp import USERNAME_RE
 from posts.models.subscriptions import PostSubscription
@@ -51,9 +52,18 @@ def async_create_or_update_comment(comment):
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):
         user = User.objects.filter(slug=username).first()
-        if user and user.telegram_id and user.id not in notified_user_ids:
+        if not user:
+            continue
+
+        if user.telegram_id and user.id not in notified_user_ids:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message("comment_mention.html", comment=comment),
             )
             notified_user_ids.add(user.id)
+
+        if user.slug == settings.MODERATOR_USERNAME:
+            send_telegram_message(
+                chat=ADMIN_CHAT,
+                text=render_html_message("comment_to_post_announce.html", comment=comment),
+            )

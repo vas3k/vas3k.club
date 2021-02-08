@@ -248,6 +248,8 @@ CLEARED_POST_TEXT = "```\n" \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
     "\n```"
 
+MODERATOR_USERNAME = "moderator"
+
 WEBPACK_LOADER = {
     "DEFAULT": {
         "CACHE": not DEBUG,
