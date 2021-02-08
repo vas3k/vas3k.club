@@ -260,6 +260,7 @@ class Post(models.Model, ModelDiffMixin):
     def clear(self):
         self.text = settings.CLEARED_POST_TEXT
         self.html = None
+        self.author = User.objects.filter(slug=settings.DELETED_USERNAME).first()
         self.save()
 
     def publish(self):

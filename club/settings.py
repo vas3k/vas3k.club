@@ -249,6 +249,7 @@ CLEARED_POST_TEXT = "```\n" \
     "\n```"
 
 MODERATOR_USERNAME = "moderator"
+DELETED_USERNAME = "deleted"
 
 WEBPACK_LOADER = {
     "DEFAULT": {

@@ -51,19 +51,17 @@ def async_create_or_update_comment(comment):
 
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):
-        user = User.objects.filter(slug=username).first()
-        if not user:
+        if username == settings.MODERATOR_USERNAME:
+            send_telegram_message(
+                chat=ADMIN_CHAT,
+                text=render_html_message("moderator_mention.html", comment=comment),
+            )
             continue
 
-        if user.telegram_id and user.id not in notified_user_ids:
+        user = User.objects.filter(slug=username).first()
+        if user and user.telegram_id and user.id not in notified_user_ids:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message("comment_mention.html", comment=comment),
             )
             notified_user_ids.add(user.id)
-
-        if user.slug == settings.MODERATOR_USERNAME:
-            send_telegram_message(
-                chat=ADMIN_CHAT,
-                text=render_html_message("comment_to_post_announce.html", comment=comment),
-            )
