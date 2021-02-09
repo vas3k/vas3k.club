@@ -204,7 +204,7 @@ def daily_digest(request, user_slug):
 
 def weekly_digest(request):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=8)  # make 8, not 7, to include marginal users
+    start_date = end_date - timedelta(days=7)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
@@ -247,8 +247,8 @@ def weekly_digest(request):
     posts = posts[:12]
 
     # Video of the week
-    top_video_comment = Comment.visible_objects() \
-        .filter(**created_at_condition) \
+    top_video_comment = Comment.visible_objects()\
+        .filter(**created_at_condition)\
         .filter(is_deleted=False)\
         .filter(upvotes__gte=3)\
         .filter(Q(text__contains="https://youtu.be/") | Q(text__contains="youtube.com/watch"))\
