@@ -114,7 +114,7 @@ def unpublish_post(request, post_slug):
         if post.author != request.me:
             raise AccessDenied(title="Только автор или модератор может удалить пост")
 
-        if post.is_safely_deletable_by_author:
+        if !post.is_safely_deletable_by_author:
             raise AccessDenied(
                 title="Только модератор может полностью удалить этот пост",
                 message=f"Так как в нём уже больше {settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR} комментов "
