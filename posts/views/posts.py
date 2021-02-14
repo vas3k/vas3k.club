@@ -214,7 +214,11 @@ def create_or_edit(request, post_type, post=None, mode="create"):
     form = FormClass(request.POST, request.FILES, instance=post)
     if form.is_valid():
         if not request.me.is_moderator:
-            if Post.check_duplicate(user=request.me, title=form.cleaned_data["title"]):
+            if Post.check_duplicate(
+                user=request.me,
+                title=form.cleaned_data["title"],
+                ignore_post_id=post.id if post else None
+            ):
                 raise ContentDuplicated()
 
             is_ok = Post.check_rate_limits(request.me)
