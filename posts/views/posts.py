@@ -187,18 +187,31 @@ def compose_type(request, post_type):
     if post_type not in dict(Post.TYPES):
         raise Http404()
 
+    return create_or_edit(request, post_type, mode="create")
+
+
+@auth_required
+def edit_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if post.author != request.me and not request.me.is_moderator:
+        raise AccessDenied()
+
+    return create_or_edit(request, post.type, post=post, mode="edit")
+
+
+def create_or_edit(request, post_type, post=None, mode="create"):
     FormClass = POST_TYPE_MAP.get(post_type) or PostTextForm
 
     # show blank form on GET
     if request.method != "POST":
-        form = FormClass()
+        form = FormClass(instance=post)
         return render(request, f"posts/compose/{post_type}.html", {
-            "mode": "create",
+            "mode": mode,
             "form": form
         })
 
     # validate form on POST
-    form = FormClass(request.POST, request.FILES)
+    form = FormClass(request.POST, request.FILES, instance=post)
     if form.is_valid():
         if not request.me.is_moderator:
             if Post.check_duplicate(user=request.me, title=form.cleaned_data["title"]):
@@ -212,8 +225,10 @@ def compose_type(request, post_type):
                 )
 
         post = form.save(commit=False)
-        post.author = request.me
+        if not post.author_id:
+            post.author = request.me
         post.type = post_type
+        post.html = None  # flush cache
         post.save()
 
         PostSubscription.subscribe(request.me, post)
@@ -235,49 +250,6 @@ def compose_type(request, post_type):
             return redirect("compose")
 
     return render(request, f"posts/compose/{post_type}.html", {
-        "mode": "create",
-        "form": form
-    })
-
-
-@auth_required
-def edit_post(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-    if post.author != request.me and not request.me.is_moderator:
-        raise AccessDenied()
-
-    PostFormClass = POST_TYPE_MAP.get(post.type) or PostTextForm
-
-    # show edit form on GET
-    if request.method != "POST":
-        form = PostFormClass(instance=post)
-        return render(request, f"posts/compose/{post.type}.html", {
-            "mode": "edit",
-            "form": form
-        })
-
-    # save changes on POST
-    form = PostFormClass(request.POST, request.FILES, instance=post)
-    if form.is_valid():
-        post = form.save(commit=False)
-        if not post.author:
-            post.author = request.me
-        post.html = None  # flush cache
-        post.save()
-
-        SearchIndex.update_post_index(post)
-        LinkedPost.create_links_from_text(post, post.text)
-
-        action = request.POST.get("action")
-        if action == "publish":
-            post.publish()
-
-        if post.is_visible or action == "preview":
-            return redirect("show_post", post.type, post.slug)
-        else:
-            return redirect("compose")
-
-    return render(request, f"posts/compose/{post.type}.html", {
-        "mode": "edit",
+        "mode": mode,
         "form": form
     })
