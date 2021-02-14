@@ -231,7 +231,8 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.html = None  # flush cache
         post.save()
 
-        PostSubscription.subscribe(request.me, post)
+        if mode == "create":
+            PostSubscription.subscribe(request.me, post)
 
         if post.is_visible:
             if post.topic:
