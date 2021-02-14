@@ -64,50 +64,6 @@ def show_post(request, post_type, post_slug):
 
 
 @auth_required
-def edit_post(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-    if post.author != request.me and not request.me.is_moderator:
-        raise AccessDenied()
-
-    PostFormClass = POST_TYPE_MAP.get(post.type) or PostTextForm
-
-    if request.method == "POST":
-        form = PostFormClass(request.POST, request.FILES, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            if not post.author:
-                post.author = request.me
-            post.html = None  # flush cache
-            post.save()
-
-            SearchIndex.update_post_index(post)
-            LinkedPost.create_links_from_text(post, post.text)
-
-            if post.is_visible or request.POST.get("show_preview"):
-                return redirect("show_post", post.type, post.slug)
-            else:
-                return redirect("compose")
-    else:
-        form = PostFormClass(instance=post)
-
-    return render(request, f"posts/compose/{post.type}.html", {
-        "mode": "edit",
-        "form": form
-    })
-
-
-@auth_required
-def publish_post(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-    if post.author != request.me and not request.me.is_moderator:
-        raise AccessDenied(title="Только автор или модератор может опубликовать пост")
-
-    post.publish()
-
-    return redirect("show_post", post.type, post.slug)
-
-
-@auth_required
 def unpublish_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if not request.me.is_moderator:
@@ -233,43 +189,95 @@ def compose_type(request, post_type):
 
     FormClass = POST_TYPE_MAP.get(post_type) or PostTextForm
 
-    if request.method == "POST":
-        form = FormClass(request.POST, request.FILES)
-        if form.is_valid():
-
-            if not request.me.is_moderator:
-                if Post.check_duplicate(user=request.me, title=form.cleaned_data["title"]):
-                    raise ContentDuplicated()
-
-                is_ok = Post.check_rate_limits(request.me)
-                if not is_ok:
-                    raise RateLimitException(
-                        title="🙅‍♂️ Слишком много постов",
-                        message="В последнее время вы создали слишком много постов. Потерпите, пожалуйста."
-                    )
-
-            post = form.save(commit=False)
-            post.author = request.me
-            post.type = post_type
-            post.save()
-
-            PostSubscription.subscribe(request.me, post)
-
-            if post.is_visible:
-                if post.topic:
-                    post.topic.update_last_activity()
-
-                SearchIndex.update_post_index(post)
-                LinkedPost.create_links_from_text(post, post.text)
-
-            if post.is_visible or request.POST.get("show_preview"):
-                return redirect("show_post", post.type, post.slug)
-            else:
-                return redirect("compose")
-    else:
+    # show blank form on GET
+    if request.method != "POST":
         form = FormClass()
+        return render(request, f"posts/compose/{post_type}.html", {
+            "mode": "create",
+            "form": form
+        })
+
+    # validate form on POST
+    form = FormClass(request.POST, request.FILES)
+    if form.is_valid():
+        if not request.me.is_moderator:
+            if Post.check_duplicate(user=request.me, title=form.cleaned_data["title"]):
+                raise ContentDuplicated()
+
+            is_ok = Post.check_rate_limits(request.me)
+            if not is_ok:
+                raise RateLimitException(
+                    title="🙅‍♂️ Слишком много постов",
+                    message="В последнее время вы создали слишком много постов. Потерпите, пожалуйста."
+                )
+
+        post = form.save(commit=False)
+        post.author = request.me
+        post.type = post_type
+        post.save()
+
+        PostSubscription.subscribe(request.me, post)
+
+        if post.is_visible:
+            if post.topic:
+                post.topic.update_last_activity()
+
+            SearchIndex.update_post_index(post)
+            LinkedPost.create_links_from_text(post, post.text)
+
+        action = request.POST.get("action")
+        if action == "publish":
+            post.publish()
+
+        if post.is_visible or action == "preview":
+            return redirect("show_post", post.type, post.slug)
+        else:
+            return redirect("compose")
 
     return render(request, f"posts/compose/{post_type}.html", {
         "mode": "create",
+        "form": form
+    })
+
+
+@auth_required
+def edit_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if post.author != request.me and not request.me.is_moderator:
+        raise AccessDenied()
+
+    PostFormClass = POST_TYPE_MAP.get(post.type) or PostTextForm
+
+    # show edit form on GET
+    if request.method != "POST":
+        form = PostFormClass(instance=post)
+        return render(request, f"posts/compose/{post.type}.html", {
+            "mode": "edit",
+            "form": form
+        })
+
+    # save changes on POST
+    form = PostFormClass(request.POST, request.FILES, instance=post)
+    if form.is_valid():
+        post = form.save(commit=False)
+        if not post.author:
+            post.author = request.me
+        post.html = None  # flush cache
+        post.save()
+
+        SearchIndex.update_post_index(post)
+        LinkedPost.create_links_from_text(post, post.text)
+
+        action = request.POST.get("action")
+        if action == "publish":
+            post.publish()
+
+        if post.is_visible or action == "preview":
+            return redirect("show_post", post.type, post.slug)
+        else:
+            return redirect("compose")
+
+    return render(request, f"posts/compose/{post.type}.html", {
+        "mode": "edit",
         "form": form
     })

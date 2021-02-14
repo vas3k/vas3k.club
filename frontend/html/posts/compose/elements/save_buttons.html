@@ -12,11 +12,11 @@
         <button type="submit" class="button button-inverted">Сохранить черновик</button>
 
         {% if form.instance.slug %}
-            <a href="{% url "publish_post" form.instance.slug %}" class="button" onclick="return confirm('Публикуем? Пост увидят все и он попадет на модерацию')">
+            <button type="submit" name="action" value="publish" class="button button-inverted" onclick="return confirm('Публикуем? Пост увидят все и он попадет на модерацию')">
                 Опубликовать 🚀
-            </a>
+            </button>
         {% else %}
-            <button type="submit" name="show_preview" value="true" class="button">
+            <button type="submit" name="action" value="preview" class="button">
                 Предпросмотр 👀
             </button>
         {% endif %}
