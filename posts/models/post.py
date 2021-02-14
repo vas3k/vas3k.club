@@ -200,9 +200,12 @@ class Post(models.Model, ModelDiffMixin):
             return datetime(year, month, day, hour, minute, second)
 
     @classmethod
-    def check_duplicate(cls, user, title):
-        latest_user_post = Post.objects.filter(author=user).order_by("-created_at").first()
-        return latest_user_post and latest_user_post.title == title
+    def check_duplicate(cls, user, title, ignore_post_id=None):
+        last_post = Post.objects\
+            .filter(author=user) \
+            .order_by("-created_at")\
+            .first()
+        return last_post and last_post.id != ignore_post_id and last_post.title == title
 
     @classmethod
     def visible_objects(cls):
