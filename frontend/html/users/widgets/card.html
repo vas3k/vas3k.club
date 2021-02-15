@@ -16,20 +16,25 @@
             </div>
         {% endif %}
 
-        {% if user.membership_days_total > 0 %}
+        {% if user.membership_days_total >= 0 %}
             <div class="profile-user-membership-since">
-                В клубе уже
-                {% if user.membership_years > 0 %}
-                    <span class="profile-status-membership-since-text">{{ user.membership_years | cool_number }}
-                        {{ user.membership_years | rupluralize:"год,года,лет" }}</span>
-                {% endif %}
-                {% if user.membership_months > 0 %}
-                    <span class="profile-status-membership-since-text">{{ user.membership_months | cool_number  }}
-                        {{ user.membership_months | rupluralize:"месяц,месяца,месяцев" }}</span>
-                {% endif %}
-                {% if user.membership_days > 0 %}
-                    <span class="profile-status-membership-since-text">{% if user.membership_years > 0 or user.membership_months > 0 %} и&nbsp;{% endif %}{{ user.membership_days | cool_number }}
-                        {{ user.membership_days | rupluralize:"день,дня,дней" }}</span>
+                {% if user.membership_days_total == 0 %}
+                    В клубе пополнение!
+                {% else %}
+
+                    В клубе уже
+                    {% if user.membership_years > 0 %}
+                        <span class="profile-status-membership-since-text">{{ user.membership_years | cool_number }}
+                            {{ user.membership_years | rupluralize:"год,года,лет" }}</span>
+                    {% endif %}
+                    {% if user.membership_months > 0 %}
+                        <span class="profile-status-membership-since-text">{% if user.membership_years > 0 and user.membership_days == 0 %} и&nbsp;{% endif %}{{ user.membership_months | cool_number  }}
+                            {{ user.membership_months | rupluralize:"месяц,месяца,месяцев" }}</span>
+                    {% endif %}
+                    {% if user.membership_days > 0 %}
+                        <span class="profile-status-membership-since-text">{% if user.membership_years > 0 or user.membership_months > 0 %} и&nbsp;{% endif %}{{ user.membership_days | cool_number }}
+                            {{ user.membership_days | rupluralize:"день,дня,дней" }}</span>
+                    {% endif %}
                 {% endif %}
             </div>
         {% endif %}
