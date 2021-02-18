@@ -1,5 +1,7 @@
 from datetime import timedelta, datetime
 
+from django.conf import settings
+from django.db.models import Q
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
@@ -15,13 +17,13 @@ TOP_TIMEDELTA = timedelta(days=3)
 def command_top(update: Update, context: CallbackContext) -> None:
     # Top posts
     top_posts = Post.visible_objects()\
-        .filter(is_approved_by_moderator=True, published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
+         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:5]
 
     # Hot posts
     hot_posts = Post.visible_objects()\
-        .filter(is_approved_by_moderator=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
         .exclude(id__in=[p.id for p in top_posts]) \
         .order_by("-hotness")[:3]
