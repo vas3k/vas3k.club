@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
-from django.db import models
+from django.db import models, connection
 from django.db.models import F
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
@@ -225,6 +225,17 @@ class Post(models.Model, ModelDiffMixin):
                                    f"where post_views.post_id = posts.id "
                                    f"and post_views.user_id = '{user.id}'"
             })  # TODO: i've been trying to use .annotate() here for 2 hours and I have no idea why it's not working
+
+    def update_is_voted(self, user):
+        with connection.cursor() as cursor:
+            cursor.execute(f"select 1 from post_votes "
+                           f"where post_votes.post_id = '{self.id}' "
+                           f"and post_votes.user_id = '{user.id}'")
+            row = cursor.fetchone()
+            if row:
+                self.is_voted = row[0]
+
+        return self
 
     @classmethod
     def check_rate_limits(cls, user):
