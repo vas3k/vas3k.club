@@ -42,7 +42,7 @@ class ReplyForm(forms.ModelForm):
         model = Comment
         fields = [
             "text",
-            # "reply_to"
+            # "reply_to",
         ]
 
     def clean(self):
