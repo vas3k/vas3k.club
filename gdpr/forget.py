@@ -1,5 +1,10 @@
+from django.conf import settings
+from django.db.models import Value
+from django.db.models.functions import Replace
+
 from auth.models import Session, Code
 from bookmarks.models import PostBookmark
+from comments.models import Comment
 from posts.models.post import Post
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
@@ -12,6 +17,8 @@ def delete_user_data(user: User):
     if user.deleted_at is None:
         # user changed his mind
         return
+
+    old_slug = str(user.slug)
 
     # anonymize user
     user.slug = random_string(length=32)
@@ -39,6 +46,20 @@ def delete_user_data(user: User):
 
     # delete draft and unpublished posts
     Post.objects.filter(author=user, is_visible=False).delete()
+
+    # transfer visible post ownership to "@deleted" user
+    deleted_user = User.objects.filter(slug=settings.DELETED_USERNAME).first()
+    if deleted_user:
+        Post.objects.filter(author=user, is_visible=True).update(author=deleted_user)
+
+    # replace nickname in replies
+    new_slug = str(user.slug)
+    Comment.objects\
+        .filter(reply_to__isnull=False, text__contains=f"@{old_slug}")\
+        .update(
+            text=Replace("text", Value(f"@{old_slug}"), Value(f"@{new_slug}")),
+            html=None
+        )
 
     # drop related data
     UserAchievement.objects.filter(user=user).delete()
