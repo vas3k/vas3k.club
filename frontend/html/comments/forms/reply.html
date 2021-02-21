@@ -1,4 +1,5 @@
 <form action="{% url "create_comment" post.slug %}" method="post" class="form reply-form-form" id="reply-form-{{ comment.id }}"  style="display: none;">
+    <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
     <div class="reply-form">
         <div class="reply-form-avatar">
             <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" loading="lazy" /></div>
