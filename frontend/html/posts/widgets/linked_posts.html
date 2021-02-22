@@ -2,7 +2,7 @@
     <div class="linked-posts-title">Связанные посты</div>
     <div class="linked-posts-scroll">
         {% for post in linked_posts %}
-            {% include "posts/items/items.html" %}
+            {% include "posts/items/items.html" with upvote_disabled=True %}
         {% endfor %}
     </div>
 </div>

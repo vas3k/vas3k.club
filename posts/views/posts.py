@@ -57,9 +57,6 @@ def show_post(request, post_type, post_slug):
     # force cleanup deleted/hidden posts from linked
     linked_posts = [p for p in linked_posts if p.is_visible]
 
-    if request.me:
-        linked_posts = [post.update_is_voted(request.me) for post in linked_posts]
-
     return render_post(request, post, {
         "post_last_view_at": last_view_at,
         "linked_posts": linked_posts,
