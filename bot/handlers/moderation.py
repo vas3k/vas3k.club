@@ -90,8 +90,7 @@ def unpublish_post(update: Update, context: CallbackContext) -> None:
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
-    post.is_visible = False
-    post.save()
+    post.unpublish()
 
     SearchIndex.update_post_index(post)
 

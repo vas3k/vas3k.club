@@ -471,7 +471,7 @@ input[type=range]:focus::-ms-fill-upper {
         }
 
         .form-warning {
-            font-size: 110%;
+            font-size: 90%;
             text-align: center;
             background-color: rgba(243, 255, 81, 0.3);
         }

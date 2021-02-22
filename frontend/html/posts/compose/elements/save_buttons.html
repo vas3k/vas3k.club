@@ -1,17 +1,37 @@
+{% if not form.instance.is_safely_deletable_by_author %}
 <div class="form-row form-row-space-between">
-    <button name="is_visible" value="false" class="button button-inverted">
-        {% if mode == "create" or not form.instance.is_visible %}
-            Сохранить черновик
-        {% else %}
-            Перенести в черновики
-        {% endif %}
-    </button>
+    <div class="block form-warning">
+        💬 В посте уже набралось больше {{ settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR }} комментариев.
+        Из уважения к их авторам, кнопка удаления поста превратилась в очистку и анонимизацию.
+    </div>
+</div>
+{% endif %}
 
-    <button type="submit" name="is_visible" value="true" class="button">
-        {% if mode == "create" or not form.instance.is_visible %}
-            Опубликовать
+<div class="form-row form-row-space-between">
+    {% if not form.instance.is_visible %}
+        <button type="submit" class="button button-inverted">Сохранить черновик</button>
+
+        {% if form.instance.slug %}
+            <button type="submit" name="action" value="publish" class="button button-inverted" onclick="return confirm('Публикуем? Пост увидят все и он попадет на модерацию')">
+                Опубликовать 🚀
+            </button>
         {% else %}
-            Сохранить изменения
+            <button type="submit" name="action" value="preview" class="button">
+                Предпросмотр 👀
+            </button>
         {% endif %}
-    </button>
+    {% else %}
+        {% if form.instance.is_safely_deletable_by_author or request.me.is_moderator %}
+            <a href="{% url "unpublish_post" form.instance.slug %}" class="button button-inverted"  onclick="return confirm('Удаляем?')">
+                Удалить пост
+            </a>
+        {% endif %}
+        {% if not form.instance.is_safely_deletable_by_author or request.me.is_moderator %}
+            <a href="{% url "clear_post" form.instance.slug %}" class="button button-inverted" onclick="return confirm('Очищаем пост?')">
+                Очистить пост
+            </a>
+        {% endif %}
+
+        <button type="submit" class="button">Сохранить изменения</button>
+    {% endif %}
 </div>

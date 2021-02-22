@@ -120,7 +120,7 @@ class SearchIndex(models.Model):
                 user=user,
                 defaults=dict(
                     type=SearchIndex.TYPE_USER,
-                    index=user_index + " " + intro_index,
+                    index=(user_index or "") + " " + (intro_index or ""),
                     created_at=user.created_at,
                     updated_at=datetime.utcnow(),
                 )

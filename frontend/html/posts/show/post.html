@@ -31,9 +31,7 @@
                     </div>
                 {% elif not post.is_visible %}
                     <div class="post-label">
-                        <span class="label label-type-draft">
-                            <span class="label-title">Черновик</span>
-                        </span>
+                        {% include "posts/widgets/draft_label.html" %}
                     </div>
                 {% endif %}
 

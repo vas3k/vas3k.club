@@ -1432,11 +1432,6 @@
     margin-left: 40px;
 }
 
-    .feed-post-type-intro .feed-post-header,
-    .feed-post-type-weekly_digest .feed-post-header {
-        padding: 0;
-    }
-
     .feed-post-type-intro .feed-post-title,
     .feed-post-type-weekly_digest .feed-post-title {
         font-size: 100%;
@@ -1531,7 +1526,7 @@
             font-size: 80%;
         }
 
-        .compose-text {
+        .compose-btn-text {
             display: none;
         }
     }

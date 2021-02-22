@@ -166,6 +166,8 @@ DEFAULT_PAGE_SIZE = 70
 SEARCH_PAGE_SIZE = 25
 PEOPLE_PAGE_SIZE = 18
 
+COMMUNITY_APPROVE_UPVOTES = 20
+
 GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(BASE_DIR, "gdpr/downloads")
 GDPR_ARCHIVE_URL = "/downloads/"
 GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
@@ -231,8 +233,9 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET") or ""
 STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
-COMMENT_EDIT_TIMEDELTA = timedelta(hours=24)
-COMMENT_DELETE_TIMEDELTA = timedelta(days=10 * 365)
+COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
+COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
+COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA = timedelta(days=14)
 RETRACT_VOTE_IN_HOURS = 3
 RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
 RATE_LIMIT_POSTS_PER_DAY = 10
@@ -240,6 +243,15 @@ RATE_LIMIT_COMMENTS_PER_DAY = 200
 
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
 POST_HOTNESS_PERIOD = timedelta(days=5)
+
+MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10
+CLEARED_POST_TEXT = "```\n" \
+    "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
+    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
+    "\n```"
+
+MODERATOR_USERNAME = "moderator"
+DELETED_USERNAME = "deleted"
 
 WEBPACK_LOADER = {
     "DEFAULT": {

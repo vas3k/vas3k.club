@@ -11,6 +11,18 @@
                 {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
             </div>
         {% endif %}
+
+        {% if post.deleted_at %}
+            <div class="post-label">
+                <span class="label label-type-deleted">
+                    <span class="label-title">Удалённый пост</span>
+                </span>
+            </div>
+        {% elif not post.is_visible %}
+            <div class="post-label">
+                {% include "posts/widgets/draft_label.html" %}
+            </div>
+        {% endif %}
     </div>
     <div class="battle-title-main">
         <div class="block battle-title p-name">
@@ -55,20 +67,6 @@
     </div>
 
     <div class="content">
-        {% if post.deleted_at %}
-            <div class="post-label">
-                <span class="label label-type-deleted">
-                    <span class="label-title">Удалённый пост</span>
-                </span>
-            </div>
-        {% elif not post.is_visible %}
-            <div class="post-label">
-                <span class="label label-type-draft">
-                    <span class="label-title">Черновик</span>
-                </span>
-            </div>
-        {% endif %}
-
         <div class="block post post-layout-block post-type-battle">
             <div class="post-upvote">
                 <post-upvote :initial-upvotes="{{ post.upvotes }}"

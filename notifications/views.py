@@ -178,7 +178,8 @@ def daily_digest(request, user_slug):
 
     # Best posts
     posts = Post.visible_objects()\
-        .filter(is_approved_by_moderator=True, **published_at_condition)\
+        .filter(**published_at_condition)\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")[:100]
@@ -204,7 +205,7 @@ def daily_digest(request, user_slug):
 
 def weekly_digest(request):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=8)  # make 8, not 7, to include marginal users
+    start_date = end_date - timedelta(days=7)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
@@ -236,7 +237,8 @@ def weekly_digest(request):
         .first()
 
     posts = Post.visible_objects()\
-        .filter(is_approved_by_moderator=True, **published_at_condition)\
+        .filter(**published_at_condition)\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
         .exclude(label__isnull=False, label__code="ad")\
@@ -247,8 +249,8 @@ def weekly_digest(request):
     posts = posts[:12]
 
     # Video of the week
-    top_video_comment = Comment.visible_objects() \
-        .filter(**created_at_condition) \
+    top_video_comment = Comment.visible_objects()\
+        .filter(**created_at_condition)\
         .filter(is_deleted=False)\
         .filter(upvotes__gte=3)\
         .filter(Q(text__contains="https://youtu.be/") | Q(text__contains="youtube.com/watch"))\
@@ -269,6 +271,7 @@ def weekly_digest(request):
         .filter(**created_at_condition) \
         .filter(is_deleted=False)\
         .exclude(post__type=Post.TYPE_BATTLE)\
+        .exclude(post__is_visible=False)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
