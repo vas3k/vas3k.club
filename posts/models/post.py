@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
-from django.db import models, connection
+from django.db import models
 from django.db.models import F
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
