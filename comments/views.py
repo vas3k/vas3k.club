@@ -32,6 +32,8 @@ def create_comment(request, post_slug):
     else:
         ProperCommentForm = CommentForm
 
+    comment_order = request.POST.get("post_comment_order", "created_at")
+
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
         if form.is_valid():
@@ -64,7 +66,11 @@ def create_comment(request, post_slug):
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
 
-            return redirect("show_comment", post.slug, comment.id)
+            # return redirect("show_comment", post.slug, comment.id)
+            return redirect(
+                reverse("show_post", kwargs={"post_type": post.type,
+                                             "post_slug": post.slug}) + f"?comment_order={comment_order}#comment-{comment.id}"
+            )
         else:
             log.error(f"Comment form error: {form.errors}")
             return render(request, "error.html", {
