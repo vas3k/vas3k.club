@@ -21,11 +21,11 @@ def delete_user_data(user: User):
     old_slug = str(user.slug)
 
     # anonymize user
-    user.slug = random_string(length=32)
+    user.slug = random_string(length=16)
     user.email = f"{user.slug}@deleted.com"
     user.is_email_unsubscribed = True
     user.is_email_verified = False
-    user.moderation_status = User.MODERATION_STATUS_REJECTED
+    user.moderation_status = User.MODERATION_STATUS_DELETED
     user.full_name = "💀 Юзер Удалился"
     user.avatar = None
     user.company = None

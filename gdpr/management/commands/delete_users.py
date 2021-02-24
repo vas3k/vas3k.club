@@ -14,7 +14,9 @@ class Command(BaseCommand):
     help = "Cron job to actually delete users"
 
     def handle(self, *args, **options):
-        users = User.objects.filter(deleted_at__lte=datetime.utcnow() - settings.GDPR_DELETE_TIMEDELTA)
+        users = User.objects\
+            .filter(deleted_at__lte=datetime.utcnow() - settings.GDPR_DELETE_TIMEDELTA)\
+            .exclude(moderation_status=User.MODERATION_STATUS_DELETED)
 
         for user in users:
             self.stdout.write(f"Deleting user: {user.slug}")
