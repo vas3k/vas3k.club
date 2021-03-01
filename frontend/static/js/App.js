@@ -107,6 +107,7 @@ const App = {
     },
     initializeThemeSwitcher() {
         const themeSwitch = document.querySelector('.theme-switcher input[type="checkbox"]');
+        const mediaQueryList = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
 
         themeSwitch.addEventListener(
             "change",
@@ -122,11 +123,21 @@ const App = {
         );
 
         const theme = localStorage.getItem("theme");
-        if (theme !== null) {
-            themeSwitch.checked = theme === "dark";
-        } else if (window.matchMedia) {
-            themeSwitch.checked = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        }
+        themeSwitch.checked = theme ? theme === "dark" : mediaQueryList.matches;
+
+        const setFaviconHref = (e) => {
+            const svgFavicon = document.querySelector('link[type="image/svg+xml"]');
+            const isDark = e.matches;
+
+            if (!theme) {
+                themeSwitch.checked = isDark;
+            }
+
+            svgFavicon.href = isDark ? "/static/images/favicon/favicon-dark.svg" : "/static/images/favicon/favicon.svg";
+        };
+
+        setFaviconHref(mediaQueryList);
+        mediaQueryList.addListener(setFaviconHref);
     },
 
     initializeMarkdownEditor() {
