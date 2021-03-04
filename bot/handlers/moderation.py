@@ -137,6 +137,7 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
 
     notify_user_profile_approved(user)
     send_welcome_drink(user)
+    announce_in_club_chats(intro)
 
     update.effective_chat.send_message(
         f"✅ Пользователь «{user.full_name}» одобрен ({update.effective_user.full_name})"

@@ -14,8 +14,8 @@ from utils.strings import random_string
 
 
 def delete_user_data(user: User):
-    if user.deleted_at is None:
-        # user changed his mind
+    if user.deleted_at is None or user.moderation_status == User.MODERATION_STATUS_DELETED:
+        # user changed his mind or already deleted
         return
 
     old_slug = str(user.slug)
