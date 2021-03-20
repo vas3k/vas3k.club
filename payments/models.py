@@ -59,3 +59,13 @@ class Payment(models.Model):
     @classmethod
     def for_user(cls, user):
         return Payment.objects.filter(user=user)
+
+    def invited_user_email(self):
+        # this is hacky, need to use a proper JSON field here
+        if self.data:
+            try:
+                payment_data = json.loads(self.data)
+                return payment_data.get("metadata", {}).get("invite") or payment_data.get("invite")
+            except (KeyError, AttributeError):
+                return None
+        return None

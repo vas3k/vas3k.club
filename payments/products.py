@@ -2,7 +2,9 @@ import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
+from django_q.tasks import async_task
 
+from notifications.email.invites import send_invited_email, send_invite_confirmation
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -24,6 +26,23 @@ def club_subscription_activator(product, payment, user):
     user.save()
 
     return True
+
+
+def club_invite_activator(product, payment, user):
+    friend_email = payment.invited_user_email()
+    if not friend_email:
+        log.error(f"Friend email not set in payment: {payment.id}")
+        return club_subscription_activator(product, payment, user)
+
+    friend = User.objects.filter(email=friend_email).first()
+    if not friend:
+        log.error(f"Friend not found: {friend_email}")
+        return club_subscription_activator(product, payment, user)
+
+    async_task(send_invited_email, user, friend)
+    async_task(send_invite_confirmation, user, friend)
+
+    return club_subscription_activator(product, payment, friend)
 
 
 PRODUCTS = {
@@ -126,9 +145,20 @@ PRODUCTS = {
             "timedelta": timedelta(days=365 * 50),
         },
     },
+    "club1_invite": {
+        "code": "club1_invite",
+        "stripe_id": "price_1IXA3fKgJMaF2rHtq37jPrym" if not IS_TEST_STRIPE else "price_1IX9QuKgJMaF2rHtJnrSs0Ud",
+        "description": "Пригласить друга в Клуб",
+        "amount": 15,
+        "recurrent": False,
+        "activator": club_invite_activator,
+        "data": {
+            "timedelta": timedelta(days=365),
+        },
+    },
 }
 
-TAX_RATE_VAT = "txr_1I82AfKgJMaF2rHtoUStb1cL"
+TAX_RATE_VAT = "txr_1I82AfKgJMaF2rHtoUStb1cL" if not IS_TEST_STRIPE else None
 
 
 def find_by_price_id(price_id):
