@@ -109,13 +109,16 @@ def edit_payments(request, user_slug):
 
     subscriptions = []
     if user.stripe_id:
-        stripe_subscriptions = stripe.Subscription.list(customer=user.stripe_id, limit=100)
-        subscriptions = [dict(
-            id=s["id"],
-            next_charge_at=datetime.utcfromtimestamp(s["current_period_end"]),
-            amount=int(s["plan"]["amount"] / 100),
-            interval=s["plan"]["interval"],
-        ) for s in stripe_subscriptions["data"]]
+        try:
+            stripe_subscriptions = stripe.Subscription.list(customer=user.stripe_id, limit=100)
+            subscriptions = [dict(
+                id=s["id"],
+                next_charge_at=datetime.utcfromtimestamp(s["current_period_end"]),
+                amount=int(s["plan"]["amount"] / 100),
+                interval=s["plan"]["interval"],
+            ) for s in stripe_subscriptions["data"]]
+        except stripe.error.InvalidRequestError:
+            subscriptions = []
 
     return render(request, "users/edit/payments.html", {
         "user": user,

@@ -3,7 +3,21 @@
 {% block message %}
     <h2>Успех 🤘</h2>
 
-    {% if payment.user.is_club_member %}
+    {% if "invite" in payment.product_code %}
+        <p>
+            Вы успешно пригласили друга <strong>{{ payment.invited_user_email }}</strong>
+        </p>
+
+        <p>
+            Сейчас ему и вам упадут на почту все нужные подтверждения и инструкции что делать дальше.
+        </p>
+
+        <br>
+
+        <p>
+            <a href="{% url "profile" payment.user.slug %}" class="button">Вернуться в свой профиль</a>
+        </p>
+    {% elif payment.user.is_club_member %}
         <p>
             Ваша клубная карта продлена!
         </p>

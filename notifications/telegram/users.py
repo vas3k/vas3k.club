@@ -90,5 +90,5 @@ def notify_user_auth(user, code):
     if user.telegram_id:
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
-            text=f"<b>{code.code}</b> — ваш одноразовый код для входа в Клуб"
+            text=f"<pre>{code.code}</pre> — ваш одноразовый код для входа в Клуб"
         )

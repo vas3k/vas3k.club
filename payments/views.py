@@ -33,32 +33,36 @@ def done(request):
 
 def pay(request):
     product_code = request.GET.get("product_code")
+    is_invite = request.GET.get("is_invite")
     is_recurrent = request.GET.get("is_recurrent")
     if is_recurrent:
         interval = request.GET.get("recurrent_interval") or "yearly"
         product_code = f"{product_code}_recurrent_{interval}"
 
+    # find product by code
     product = PRODUCTS.get(product_code)
-
     if not product:
         return render(request, "error.html", {
             "title": "Не выбран пакет 😣",
             "message": "Выберите что вы хотите купить или насколько пополнить свою карту"
         })
 
-    # user authorized or we need to create a new one?
-    if request.me:
-        user = request.me
-    else:
-        email = request.GET.get("email") or ""
+    payment_data = {}
+    now = datetime.utcnow()
+
+    # parse email
+    email = request.GET.get("email") or ""
+    if email:
+        email = email.lower()
+
+    # who's paying?
+    if not request.me:  # scenario 1: new user
         if not email or "@" not in email:
             return render(request, "error.html", {
                 "title": "Плохой e-mail адрес 😣",
-                "message": "Нам ведь нужно будет как-то привязать ваш аккаунт к платежу"
+                "message": "Нам ведь нужно будет как-то привязать аккаунт к платежу"
             })
 
-        email = email.lower()
-        now = datetime.utcnow()
         user, _ = User.objects.get_or_create(
             email=email,
             defaults=dict(
@@ -71,26 +75,67 @@ def pay(request):
                 moderation_status=User.MODERATION_STATUS_INTRO,
             ),
         )
+    elif is_invite:  # scenario 2: invite a friend
+        if not email or "@" not in email:
+            return render(request, "error.html", {
+                "title": "Плохой e-mail адрес друга 😣",
+                "message": "Нам ведь нужно будет куда-то выслать инвайт"
+            })
 
+        friend, is_created = User.objects.get_or_create(
+            email=email,
+            defaults=dict(
+                membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
+                full_name=email[:email.find("@")],
+                membership_started_at=now,
+                membership_expires_at=now + timedelta(days=1),
+                created_at=now,
+                updated_at=now,
+                moderation_status=User.MODERATION_STATUS_INTRO,
+            ),
+        )
+
+        if not is_created:
+            return render(request, "error.html", {
+                "title": "Пользователь уже существует ✋",
+                "message": "Юзер с таким имейлом уже есть в Клубе, "
+                           "нельзя высылать ему инвайт еще раз, может он правда не хочет."
+            })
+
+        user = request.me
+        payment_data = {
+            "invite": email
+        }
+    else:  # scenario 3: account renewal
+        user = request.me
+
+    # reuse stripe customer ID if user already has it
     if user.stripe_id:
         customer_data = dict(customer=user.stripe_id)
     else:
         customer_data = dict(customer_email=user.email)
 
+    # create stripe session and payment (to keep track of history)
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[{
             "price": product["stripe_id"],
             "quantity": 1,
-            "tax_rates": [TAX_RATE_VAT],
+            "tax_rates": [TAX_RATE_VAT] if TAX_RATE_VAT else [],
         }],
         **customer_data,
         mode="subscription" if is_recurrent else "payment",
+        metadata=payment_data,
         success_url=settings.STRIPE_SUCCESS_URL,
         cancel_url=settings.STRIPE_CANCEL_URL,
     )
 
-    payment = Payment.create(session.id, user, product)
+    payment = Payment.create(
+        reference=session.id,
+        user=user,
+        product=product,
+        data=payment_data,
+    )
 
     return render(request, "payments/pay.html", {
         "session": session,
