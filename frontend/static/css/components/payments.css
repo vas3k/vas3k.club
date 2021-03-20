@@ -120,6 +120,17 @@
             height: 60px;
         }
 
+.invite-friend {
+    max-width: 450px;
+    font-size: 140%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+    .invite-friend input {
+        margin: 20px 0;
+    }
+
 .membership-expired {
     max-width: 600px;
     font-size: 140%;

@@ -32,15 +32,17 @@ def club_invite_activator(product, payment, user):
     friend_email = payment.invited_user_email()
     if not friend_email:
         log.error(f"Friend email not set in payment: {payment.id}")
+        return club_subscription_activator(product, payment, user)
 
     friend = User.objects.filter(email=friend_email).first()
     if not friend:
         log.error(f"Friend not found: {friend_email}")
+        return club_subscription_activator(product, payment, user)
 
     async_task(send_invited_email, user, friend)
     async_task(send_invite_confirmation, user, friend)
 
-    return club_subscription_activator(product, payment, friend or user)
+    return club_subscription_activator(product, payment, friend)
 
 
 PRODUCTS = {

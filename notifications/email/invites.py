@@ -5,20 +5,20 @@ from users.models.user import User
 
 
 def send_invited_email(from_user: User, to_user: User):
-    rejected_template = loader.get_template("emails/invited.html")
+    invite_template = loader.get_template("emails/invited.html")
     send_club_email(
         recipient=to_user.email,
         subject=f"🚀 Вас пригласили в Клуб",
-        html=rejected_template.render({"from_user": from_user, "to_user": to_user}),
+        html=invite_template.render({"from_user": from_user, "to_user": to_user}),
         tags=["invited"]
     )
 
 
 def send_invite_confirmation(from_user: User, to_user: User):
-    rejected_template = loader.get_template("emails/invite_confirm.html")
+    invite_template = loader.get_template("emails/invite_confirm.html")
     send_club_email(
         recipient=from_user.email,
         subject=f"👍 Вы пригласили '{to_user.email}' в Клуб",
-        html=rejected_template.render({"from_user": from_user, "to_user": to_user}),
+        html=invite_template.render({"from_user": from_user, "to_user": to_user}),
         tags=["invited"]
     )
