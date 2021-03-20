@@ -1044,6 +1044,14 @@
                 background-color: var(--opposite-bg-color);
             }
 
+            .feed-sidebar-menu-small {
+                font-size: 90%;
+            }
+
+                .feed-sidebar-menu-small li {
+                    padding-bottom: 5px;
+                }
+
         .feed-sidebar-topics {
             max-width: 100%;
         }

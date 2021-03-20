@@ -26,6 +26,9 @@
                         💬 Сеть
                     </a>
                 </li>
+            </ul>
+
+            <ul class="feed-sidebar-list feed-sidebar-menu feed-sidebar-menu-small">
                 <li>
                     <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
                         🤔 Вопросы Клубу
@@ -34,6 +37,11 @@
                 <li>
                     <a href="{% url "feed_type" "idea" %}" class="{% if post_type == "idea" %}feed-sidebar-menu-selected{% endif %}">
                         💡 Идеи
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
+                        🏗 Проекты
                     </a>
                 </li>
                 <li>
