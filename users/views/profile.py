@@ -75,7 +75,9 @@ def profile_comments(request, user_slug):
 
     user = get_object_or_404(User, slug=user_slug)
 
-    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")
+    comments = Comment.visible_objects()\
+        .filter(author=user, post__is_visible=True)\
+        .order_by("-created_at")
 
     return render(request, "users/profile/comments.html", {
         "user": user,
