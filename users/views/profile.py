@@ -48,7 +48,10 @@ def profile(request, user_slug):
 
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
-    comments = Comment.visible_objects().filter(author=user, post__is_visible=True).order_by("-created_at")
+    comments = Comment.visible_objects()\
+        .filter(author=user, post__is_visible=True)\
+        .order_by("-created_at")\
+        .select_related("post")
     posts = Post.objects_for_user(request.me)\
         .filter(author=user, is_visible=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
@@ -62,8 +65,10 @@ def profile(request, user_slug):
         "active_tags": active_tags,
         "achievements": [ua.achievement for ua in achievements],
         "expertises": expertises,
-        "comments": comments,
-        "posts": posts,
+        "comments": comments[:3],
+        "comments_total": comments.count(),
+        "posts": posts[:15],
+        "posts_total": posts.count(),
         "similarity": similarity,
     })
 
@@ -77,7 +82,8 @@ def profile_comments(request, user_slug):
 
     comments = Comment.visible_objects()\
         .filter(author=user, post__is_visible=True)\
-        .order_by("-created_at")
+        .order_by("-created_at")\
+        .select_related("post")
 
     return render(request, "users/profile/comments.html", {
         "user": user,

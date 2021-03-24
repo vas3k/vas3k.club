@@ -232,11 +232,11 @@
 
         {% if comments %}
             <div class="profile-header">
-                <a href="{% url "profile_comments" user.slug  %}">Комментарии ({{ comments.count }}) &rarr;</a>
+                <a href="{% url "profile_comments" user.slug  %}">Комментарии ({{ comments_total }}) &rarr;</a>
             </div>
 
             <div class="profile-comments">
-                {% for comment in comments|slice:"0:3" %}
+                {% for comment in comments %}
                     {% include "comments/types/snippet.html" with comment=comment %}
                 {% endfor %}
             </div>
@@ -244,11 +244,11 @@
 
         {% if posts %}
             <div class="profile-header">
-                <a href="{% url "profile_posts" user.slug  %}">Посты ({{ posts.count }}) &rarr;</a>
+                <a href="{% url "profile_posts" user.slug  %}">Посты ({{ posts_total }}) &rarr;</a>
             </div>
 
             <div class="profile-posts">
-                {% for post in posts|slice:"0:15" %}
+                {% for post in posts %}
                     {% include "posts/items/items.html" %}
                 {% endfor %}
             </div>

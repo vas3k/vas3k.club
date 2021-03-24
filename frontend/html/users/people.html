@@ -39,7 +39,7 @@
             <div class="people-wrapper">
                 <div class="people-title">
                     {% if users %}
-                        <strong>{{ users | length }}</strong> {{ users|length|rupluralize:"человек,человека,человек" }}
+                        <strong>{{ users_total }}</strong> {{ users_total|rupluralize:"человек,человека,человек" }}
                     {% else %}
                         Никого 😢
                     {% endif %}

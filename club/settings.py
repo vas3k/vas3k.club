@@ -54,7 +54,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "notifications/telegram/templates"),
             os.path.join(BASE_DIR, "frontend/html"),
         ],
-        "APP_DIRS": False,
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -279,6 +279,6 @@ if SENTRY_DSN and not DEBUG:
         }
     }
 
-# if DEBUG:
-#     INSTALLED_APPS += ["debug_toolbar"]
-#     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE

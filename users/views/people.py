@@ -63,10 +63,17 @@ def people(request):
         .annotate(country_count=Count("country"))\
         .order_by("-country_count")
 
+    users_total = users.count()
+
+    if users_total < 200:
+        user_expertise = UserExpertise.objects.filter(user_id__in=[u.id for u in users])
+    else:
+        user_expertise = UserExpertise.objects.all()
+
     map_stat_groups = {
         "💼 Топ компаний": top(users, "company", skip={"-"})[:5],
         "🏰 Города": top(users, "city")[:5],
-        "🎬 Экспертиза": top(UserExpertise.objects.filter(user_id__in=[u.id for u in users]), "name")[:5],
+        "🎬 Экспертиза": top(user_expertise, "name")[:5],
     }
 
     return render(request, "users/people.html", {
@@ -77,6 +84,7 @@ def people(request):
             "filters": filters,
         },
         "users": users,
+        "users_total": users_total,
         "users_paginated": paginate(request, users, page_size=settings.PEOPLE_PAGE_SIZE),
         "tag_stat_groups": tag_stat_groups,
         "max_tag_user_count": max(tag.user_count for tag in tags_with_stats),
