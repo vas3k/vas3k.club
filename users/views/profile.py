@@ -13,17 +13,7 @@ from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
 from users.models.tags import Tag, UserTag
 from users.models.user import User
-
-def calculate_similarity(my, theirs, tags):
-    similarity = {}
-    for group in ('personal', 'hobbies'):
-        all_names = {tag.code for tag in tags if tag.group == group}
-        my_names = all_names & my
-        their_names = all_names & theirs
-        both = my_names | their_names
-        same = my_names & their_names
-        similarity[group] = len(same) * 100 / len(both) if both else 0
-    return similarity
+from users.utils import calculate_similarity
 
 
 @auth_required
@@ -48,17 +38,21 @@ def profile(request, user_slug):
 
     intro = Post.get_user_intro(user)
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
+
+    # select user tags and calculate similarity with me
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
     similarity = {}
     if user.id != request.me.id:
         my_tags = {t.tag_id for t in UserTag.objects.filter(user=request.me).all()}
         similarity = calculate_similarity(my_tags, active_tags, tags)
+
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
-    comments = Comment.visible_objects().filter(author=user, post__is_visible=True).order_by("-created_at")[:3]
+    comments = Comment.visible_objects().filter(author=user, post__is_visible=True).order_by("-created_at")
     posts = Post.objects_for_user(request.me)\
         .filter(author=user, is_visible=True)\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT])
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
+        .order_by("-published_at")
 
     return render(request, "users/profile.html", {
         "user": user,
@@ -69,8 +63,41 @@ def profile(request, user_slug):
         "achievements": [ua.achievement for ua in achievements],
         "expertises": expertises,
         "comments": comments,
-        "posts": paginate(request, posts),
+        "posts": posts,
         "similarity": similarity,
+    })
+
+
+@auth_required
+def profile_comments(request, user_slug):
+    if user_slug == "me":
+        return redirect("profile_comments", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+
+    comments = Comment.visible_objects().filter(author=user).order_by("-created_at")
+
+    return render(request, "users/profile/comments.html", {
+        "user": user,
+        "comments": paginate(request, comments, settings.PROFILE_COMMENTS_PAGE_SIZE),
+    })
+
+
+@auth_required
+def profile_posts(request, user_slug):
+    if user_slug == "me":
+        return redirect("profile_posts", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+
+    posts = Post.objects_for_user(request.me) \
+        .filter(author=user, is_visible=True) \
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST]) \
+        .order_by("-published_at")
+
+    return render(request, "users/profile/posts.html", {
+        "user": user,
+        "posts": paginate(request, posts, settings.PROFILE_POSTS_PAGE_SIZE),
     })
 
 

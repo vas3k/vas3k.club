@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load comments %}
+{% load posts %}
+{% load text_filters %}
+{% load paginator %}
+
+{% block title %}
+    Комментарии от {{ user.full_name }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content profile">
+        {% include "users/widgets/card.html" with user=user %}
+
+        <div class="profile-header">
+            {{ comments.paginator.count }} {{ comments.paginator.count|rupluralize:"комментарий,комментария,комментариев" }}
+        </div>
+
+        <div class="profile-comment-list">
+            {% if comments %}
+                {% for comment in comments %}
+                    {% include "comments/types/snippet.html" with comment=comment %}
+                {% endfor %}
+            {% else %}
+                <div class="profile-comments-list-placeholder">
+                    Пользователь пока не оставил комментариев...
+                </div>
+            {% endif %}
+
+            <div class="feed-paginator">
+                {% paginator comments %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

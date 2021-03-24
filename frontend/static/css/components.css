@@ -478,6 +478,10 @@
         padding-top: 40px;
     }
 
+        .profile-header a {
+            text-decoration: none;
+        }
+
     .profile-user-edit {
         display: block;
         text-align: right;
@@ -643,6 +647,17 @@
                 .user-achievement:hover .user-achievement-popup {
                     display: block;
                 }
+
+    .profile-comment-list {
+        padding-top: 30px;
+    }
+
+        .profile-comments-list-placeholder {
+            text-align: center;
+            padding: 100px 0;
+            font-size: 160%;
+            opacity: 0.6;
+        }
 
 
     .profile-expertise {
@@ -827,6 +842,12 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
+   .profile-comments,
+   .profile-posts,
+   .user-projects {
+        margin: 20px 0 30px;
+   }
 
 .achievements {
 

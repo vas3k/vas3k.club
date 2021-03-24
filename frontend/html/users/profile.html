@@ -97,7 +97,7 @@
         {% if intro %}
             <div class="block profile-intro">
                 <div class="profile-header">
-                    <a href="{% url "show_post" "intro" intro.slug %}">#intro &rarr;</a>
+                    <a href="{% url "show_post" "intro" intro.slug %}">Интро &rarr;</a>
                     {% if me.id == user.id %}
                         <a href="{% url "edit_post" intro.slug  %}" class="button post-edit-button profile-intro-edit">
                             <i class="fas fa-edit"></i>
@@ -188,7 +188,7 @@
         {% endif %}
 
         {% if expertises or me.id == user.id %}
-            <div class="profile-header">Экспертиза</div>
+            <div class="profile-header">Я шарю в...</div>
             <div class="block profile-expertise">
                 {% if expertises %}
                     <div class="profile-expertise-rows" id="expertises">
@@ -231,24 +231,26 @@
         {% endif %}
 
         {% if comments %}
+            <div class="profile-header">
+                <a href="{% url "profile_comments" user.slug  %}">Комментарии ({{ comments.count }}) &rarr;</a>
+            </div>
+
             <div class="profile-comments">
-                <div class="profile-header">Последние комментарии</div>
-                {% for comment in comments %}
+                {% for comment in comments|slice:"0:3" %}
                     {% include "comments/types/snippet.html" with comment=comment %}
                 {% endfor %}
             </div>
         {% endif %}
 
         {% if posts %}
+            <div class="profile-header">
+                <a href="{% url "profile_posts" user.slug  %}">Посты ({{ posts.count }}) &rarr;</a>
+            </div>
+
             <div class="profile-posts">
-                <div class="profile-header">Посты</div>
-                {% for post in posts %}
+                {% for post in posts|slice:"0:15" %}
                     {% include "posts/items/items.html" %}
                 {% endfor %}
-
-                <div class="feed-paginator">
-                    {% paginator posts %}
-                </div>
             </div>
         {% endif %}
     </div>

@@ -56,7 +56,7 @@ class Post(models.Model, ModelDiffMixin):
 
     TYPE_TO_PREFIX = {
         TYPE_POST: "",
-        TYPE_INTRO: "#intro",
+        TYPE_INTRO: "Интро",
         TYPE_LINK: "➜",
         TYPE_PAIN: "Боль:",
         TYPE_IDEA: "Идея:",

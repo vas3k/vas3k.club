@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load comments %}
+{% load posts %}
+{% load text_filters %}
+{% load paginator %}
+
+{% block title %}
+    Посты от {{ user.full_name }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content profile">
+        {% include "users/widgets/card.html" with user=user %}
+
+        <div class="profile-header">
+            {{ posts.paginator.count }} {{ posts.paginator.count|rupluralize:"пост,поста,постов" }}
+        </div>
+
+        <div class="profile-comment-list">
+            {% if posts %}
+                {% for post in posts %}
+                    {% include "posts/items/items.html" with post=post upvote_disabled=True %}
+                {% endfor %}
+            {% else %}
+                <div class="profile-comments-list-placeholder">
+                    Пользователь пока не написал ни одного поста...
+                </div>
+            {% endif %}
+
+            <div class="feed-paginator">
+                {% paginator posts %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
