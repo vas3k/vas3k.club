@@ -143,8 +143,7 @@ class TestPayView(TestCase):
         self.assertEqual(created_user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
         self.assertEqual(created_user.full_name, email.replace("@email.com", ""))
         self.assertAlmostEquals(created_user.membership_started_at, datetime.utcnow(), delta=timedelta(seconds=5))
-        self.assertAlmostEquals(created_user.membership_expires_at, datetime.utcnow() + timedelta(days=1),
-                                delta=timedelta(seconds=5))
+        self.assertAlmostEquals(created_user.membership_expires_at, datetime.utcnow(), delta=timedelta(seconds=5))
         self.assertEqual(created_user.moderation_status, User.MODERATION_STATUS_INTRO)
 
         self.assertTrue(Payment.get(reference=session.id))
