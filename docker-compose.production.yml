@@ -28,7 +28,7 @@ services:
       - redis
       - queue
     ports:
-      - "8814:8814"
+      - "127.0.0.1:8814:8814"
 
   queue:
     <<: *app
@@ -60,6 +60,8 @@ services:
       POSTGRES_DB: vas3k_club
     volumes:
       - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
+    ports:
+      - "127.0.0.1:5432:5432"
 
   redis:
     image: redis:alpine
