@@ -9,6 +9,8 @@ jobs:
   build:
     name: Deploy
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
     steps:
       - name: Pull new code and restart server
         uses: appleboy/ssh-action@master
