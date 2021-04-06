@@ -9,12 +9,12 @@ jobs:
   build:
     name: Deploy
     runs-on: ubuntu-latest
-    env:
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      MEDIA_UPLOAD_URL: "https://i.vas3k.club/upload/"
     steps:
       - name: Pull new code and restart server
         uses: appleboy/ssh-action@e59c0ee97a7e5240ed9eb489791adbb9c9ac7f6b
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          MEDIA_UPLOAD_URL: "https://i.vas3k.club/upload/"
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
