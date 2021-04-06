@@ -13,6 +13,9 @@ def external_login(request):
     goto = request.GET.get("redirect")
     if not goto:
         return render(request, "error.html", {"message": "Нужен параметр ?redirect"})
+    
+    if not any(goto.startswith(x) for x in settings.AUTH_EXTERNAL_LOGIN_REDIRECT_WHITELIST):
+        return render(request, "error.html", {"message": "Invalid redirect value"})
 
     me = authorized_user(request)
     if not me:
