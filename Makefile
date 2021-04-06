@@ -12,22 +12,22 @@ run-queue:  ## Runs task broker
 	pipenv run python manage.py qcluster
 
 docker-run-queue:
-	python manage.py qcluster
+	python3 manage.py qcluster
 
 run-bot:  ## Runs telegram bot
 	pipenv run python bot/main.py
 
 docker-run-bot:
-	python bot/main.py
+	python3 bot/main.py
 
 run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
 
 docker-run-dev:  ## Runs dev server in docker
-	python ./utils/wait_for_postgres.py
-	python manage.py migrate
-	python manage.py update_tags
-	python manage.py runserver 0.0.0.0:8000
+	python3 ./utils/wait_for_postgres.py
+	python3 manage.py migrate
+	python3 manage.py update_tags
+	python3 manage.py runserver 0.0.0.0:8000
 
 docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate

@@ -3,11 +3,12 @@ version: "3.7"
 services:
   club_app: &app
     build:
-      dockerfile: production.dockerfile
+      dockerfile: Dockerfile
       context: .
     command: make docker-run-production
     container_name: club_app
     environment:
+      - MODE=production
       - PYTHONUNBUFFERED=1
       - DEBUG=false
       - APP_HOST=https://vas3k.club

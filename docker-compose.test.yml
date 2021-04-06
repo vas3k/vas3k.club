@@ -3,11 +3,12 @@ version: "3.7"
 services:
   tests:
     build:
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile
       context: .
     command: make test-ci
     container_name: tests
     environment:
+      - MODE=dev
       - DEBUG=true  # regardless of this value django will override it on false
       - TESTS_RUN=da
       - PYTHONUNBUFFERED=1
@@ -43,8 +44,8 @@ services:
 
   webpack:
     build:
-      dockerfile: dev.frontend.dockerfile
-      context: .
+      context: ./frontend
+      dockerfile: Dockerfile
     command: npm run watch
     restart: "no"
     volumes:

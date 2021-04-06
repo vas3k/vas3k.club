@@ -3,11 +3,12 @@ version: "3.7"
 services:
   club_app: &app
     build:
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile
       context: .
     command: make docker-run-dev
     container_name: club_app
     environment:
+      - MODE=dev
       - DEBUG=true
       - PYTHONUNBUFFERED=1
       - POSTGRES_DB=vas3k_club
@@ -29,10 +30,11 @@ services:
 
   queue:
     build:
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile
       context: .
     command: make docker-run-queue
     environment:
+      - MODE=dev
       - DEBUG=true
       - PYTHONUNBUFFERED=1
       - POSTGRES_DB=vas3k_club
@@ -50,10 +52,11 @@ services:
 
   bot:
     build:
-      dockerfile: dev.dockerfile
+      dockerfile: Dockerfile
       context: .
     command: make docker-run-bot
     environment:
+      - MODE=dev
       - DEBUG=true
       - PYTHONUNBUFFERED=1
       - POSTGRES_DB=vas3k_club

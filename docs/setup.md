@@ -17,32 +17,11 @@ Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/mast
 
 Once you decided to code something in the project you'll need to setup your environment. Here's how you can make it.
 
-### Setup venv
+### Setup pipenv
 
-Through `pipenv` // todo: (у меня с ним было 2 проблемы)
- - сходу не получилось выпилить установку gdal либы (удаление из pipfile и pipfile.locka не помогло), чтобы оно не фейлило установку остальных пакетов
- - не получилось указать папку созданного из консоли pipenv'а в pycharm'е
-
-To mitigate gdal build failure (tested on ArchLinux):
-1. Install gdal on your computer. Version must be same as one in `Pipfile.lock`.
-   Probably you should compile it from sources.
-2. Run `export CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal`
-   (I am not sure if this is neccessary)
-3. Then run regular `pipenv install --dev`, it should work fine
-
-Through old fashion `virtualenv`:
- - setup your Python Interpreter at PyCharm with `virtualenv`
- - install deps from [requirements.txt](requirements.txt) and [dev_requirements.txt](dev_requirements.txt)
-  ```sh
-  (venv) $ pip install --upgrade -r requirements.txt  
-  (venv) $ pip install --upgrade -r dev_requirements.txt 
-  ```
-
-If you don't need to work with Geo Data and installation of `gdal` package is failed so skip it with next workaround:
-```sh
-# run each line of reqs independently
-(venv) $ cat requirements.txt | xargs -n 1 pip install
-```
+1. Get pipenv: `pip3 install --user pipenv`
+2. Install packages and activate virtual environment: `pipenv install --dev`
+3. Check that it was installed correctly: `pipenv shell`
 
 ### Setup postgres
 
@@ -100,11 +79,11 @@ After you have setup postgres, venv and build frontend (look this steps above) c
 $ docker-compose -f docker-compose.yml up redis
 
 # run queue
-(venv) $ ./manage.py qcluster
+$ pipenv run python manage.py qcluster
 
 # run db migration
-(venv) $ ./manage.py migrate
+$ pipenv run python manage.py migrate
 
 # run dev server
-(venv) $ ./manage.py runserver 0.0.0.0:8000
+$ pipenv run python manage.py runserver 0.0.0.0:8000
 ```
