@@ -41,12 +41,6 @@ help:  ## Display this help
 lint:  ## Lint code with flake8
 	@pipenv run flake8 $(PROJECT_NAME)
 
-requirements:  ## Generate requirements.txt for production
-	pipenv lock --requirements > requirements.txt
-
-dev_requirements:  ## Generate dev_requirements.txt for development
-	pipenv lock --dev-only --requirements > dev_requirements.txt
-
 migrate:  ## Migrate database to the latest version
 	pipenv run python3 manage.py migrate
 

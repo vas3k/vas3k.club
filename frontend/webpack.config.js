@@ -18,7 +18,10 @@ module.exports = {
         library: "Club",
     },
     plugins: [
-        new BundleTracker(),
+        new BundleTracker({
+            path: __dirname,
+            filename: "webpack-stats.json",
+        }),
         new MiniCssExtractPlugin({
             filename: mode === "production" ? "[name]-[hash].css": "[name].css",
             chunkFilename: "[id].css",
