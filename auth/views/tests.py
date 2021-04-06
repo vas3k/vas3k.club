@@ -308,12 +308,16 @@ class ViewExternalLoginTests(TestCase):
         self.assertContains(response=response, text="Нужен параметр ?redirect", status_code=200)
 
     def test_user_is_unauthorised(self):
-        response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+        response = self.client.get(reverse('external_login'), data={'redirect': 'https://vas3k.ru/'})
         self.assertRedirects(response=response,
-                             expected_url='/auth/login/?goto=%2Fauth%2Fexternal%2F%3Fredirect%3Dsome-page',
+                             expected_url='/auth/login/?goto=%2Fauth%2Fexternal%2F%3Fredirect%3Dhttps%3A%2F%2Fvas3k.ru%2F',
                              fetch_redirect_response=False)
 
         self.assertFalse(self.client.is_authorised())
+    
+    def test_redirect_not_in_whitelist(self):
+        response = self.client.get(reverse('external_login'), data={'redirect': 'https://bad.vas3k.ru/'})
+        self.assertContains(response=response, text="Invalid redirect value", status_code=200)
 
 
 class ViewPatreonLoginTests(TestCase):
