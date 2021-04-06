@@ -2,10 +2,6 @@ FROM python:3.8-slim-buster
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# required to build gdal (geo library)
-ENV CPLUS_INCLUDE_PATH /usr/include/gdal
-ENV C_INCLUDE_PATH /usr/include/gdal
-
 RUN apt-get update \
     && apt-get dist-upgrade -y \
     && apt-get install --no-install-recommends -yq \
@@ -26,7 +22,6 @@ RUN pip install -r requirements.txt
 
 COPY ./dev_requirements.txt /app/dev_requirements.txt
 RUN pip install -r dev_requirements.txt
-
 RUN python -c "import nltk; nltk.download('punkt')"
 
 # copy the code
