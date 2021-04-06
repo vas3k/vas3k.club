@@ -8,14 +8,14 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^9.7.6",
+    "autoprefixer": "^10.2.5",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.5.3",
     "cssnano": "^4.1.10",
     "file-loader": "^6.0.0",
-    "husky": "^4.2.5",
+    "husky": "^6.0.0",
     "lint-staged": "^10.2.2",
-    "mini-css-extract-plugin": "^0.9.0",
+    "mini-css-extract-plugin": "^1.4.0",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
@@ -23,9 +23,9 @@
     "vue-hot-reload-api": "^2.3.4",
     "vue-loader": "^15.9.2",
     "vue-template-compiler": "^2.6.11",
-    "webpack": "^4.43.0",
-    "webpack-bundle-tracker": "^0.4.3",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^5.30.0",
+    "webpack-bundle-tracker": "^1.0.0-alpha.1",
+    "webpack-cli": "^4.6.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
@@ -35,7 +35,7 @@
     "lightense-images": "^1.0.9",
     "mapbox-gl": "^1.10.1",
     "normalize.css": "^8.0.1",
-    "twemoji": "^12.1.6",
+    "twemoji": "^13.0.2",
     "vue": "^2.6.11",
     "vue-mapbox": "^0.4.1"
   },
