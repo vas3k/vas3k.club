@@ -9,7 +9,7 @@ from bookmarks.models import PostBookmark
 @api_required
 def toggle_post_bookmark(request, post_slug):
     if request.method != "POST":
-        raise HttpResponseNotAllowed(["POST"])
+        return HttpResponseNotAllowed(["POST"])
 
     post = get_object_or_404(Post, slug=post_slug)
 
