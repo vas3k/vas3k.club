@@ -13,6 +13,7 @@ from landing.views import landing, docs, god_settings
 from misc.views import achievements, network, robots, generate_ical_invite, generate_google_invite
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch, \
     link_telegram
+from notifications.webhooks import webhook_event
 from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
 from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
@@ -118,6 +119,7 @@ urlpatterns = [
          name="email_digest_switch"),
     path("notifications/renderer/digest/weekly/", weekly_digest, name="render_weekly_digest"),
     path("notifications/renderer/digest/daily/<slug:user_slug>/", daily_digest, name="render_daily_digest"),
+    path("notifications/webhook/<slug:event_type>", webhook_event, name="webhook_event"),
 
     path("docs/<slug:doc_slug>/", docs, name="docs"),
 

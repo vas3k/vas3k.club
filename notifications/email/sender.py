@@ -1,22 +1,22 @@
 import logging
+import re
 
-import requests
 from django.conf import settings
+from django.core.mail import send_mail
 from premailer import Premailer
 
+log = logging.getLogger(__name__)
 
-def send_club_email(recipient, subject, html, tags):
-    return requests.post(
-        settings.MAILGUN_API_URI + "/messages",
-        auth=("api", settings.MAILGUN_API_KEY),
-        data={
-            "from": settings.MAILGUN_EMAIL_FROM,
-            "to": [recipient],
-            "subject": subject,
-            "html": prepare_letter(html, base_url=settings.APP_HOST),
-            "tags": tags,
-            "text": "",
-        }
+
+def send_club_email(recipient, subject, html, tags=None):
+    log.info(f"Sending email to {recipient}")
+    prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
+    return send_mail(
+        subject=subject,
+        html_message=prepared_html,
+        message=re.sub(r"<[^>]+>", "", prepared_html),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[recipient],
     )
 
 

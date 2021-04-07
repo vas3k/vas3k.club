@@ -18,6 +18,10 @@ TESTS_RUN = True if os.getenv("TESTS_RUN") else False
 ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club"]
 INTERNAL_IPS = ["127.0.0.1"]
 
+ADMINS = [
+    ("Admin", "club@vas3k.club"),
+]
+
 INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
@@ -150,6 +154,16 @@ CACHES = {
 
 LANDING_CACHE_TIMEOUT = 60 * 60 * 24
 
+# Email
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "email-smtp.eu-central-1.amazonaws.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "Вастрик.Клуб <club@vas3k.club>"
+
 # App
 
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
@@ -208,10 +222,6 @@ c+Ha7cw3U+n6KI4idHLiwa0CAwEAAQ==
 JWT_ALGORITHM = "RS256"
 JWT_EXP_TIMEDELTA = timedelta(days=120)
 
-MAILGUN_API_URI = "https://api.eu.mailgun.net/v3/mailgun.vas3k.club"
-MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
-MAILGUN_EMAIL_FROM = "Вастрик.Клуб <club@vas3k.club>"
-
 MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
@@ -255,6 +265,8 @@ CLEARED_POST_TEXT = "```\n" \
 
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
+
+WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 WEBPACK_LOADER = {
     "DEFAULT": {
