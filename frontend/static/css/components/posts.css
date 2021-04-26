@@ -803,7 +803,7 @@
         overflow-y: auto;
         width: 100%;
         max-height: 520px;
-        padding: 30px 30px 10px 5px;
+        padding: 30px 30px 0 5px;
         box-sizing: border-box;
         font-size: 90%;
     }
