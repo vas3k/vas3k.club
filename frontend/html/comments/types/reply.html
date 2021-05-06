@@ -1,7 +1,6 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div class="scroll-to" id="scroll-to-comment-{{ comment.id }}"></div>
 <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
     <div class="reply-side" @click.prevent="toggleCommentThread">
         <a class="avatar reply-side-avatar" href="{% url "profile" comment.author.slug %}">

@@ -1,6 +1,5 @@
 {% load text_filters %}
 {% load comments %}
-<div class="scroll-to" id="scroll-to-comment-{{ comment.id }}"></div>
 <div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %}">
     <div class="comment-side">
         <a class="avatar comment-side-avatar" href="{% url "profile" comment.author.slug %}">

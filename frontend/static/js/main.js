@@ -59,7 +59,7 @@ new Vue({
             // scroll back to comment if it's outside of the screen
             const commentPosition = comment.getBoundingClientRect();
             if (commentPosition.top < 0) {
-                location.hash = `#scroll-to-${comment.id}`;
+                window.scrollBy(0, commentPosition.top);
             }
         },
         deleteExpertise(event) {
