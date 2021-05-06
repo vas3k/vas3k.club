@@ -1,32 +1,11 @@
 {% load comments %}
 {% for tree in comments|comment_tree %}
     {% if tree.comment.is_pinned %}
-        {% include "comments/types/bold.html" with comment=tree.comment %}
+        {% include "comments/types/bold.html" with comment=tree.comment replies=tree.replies %}
     {% elif type == "battle" %}
-        {% include "comments/types/battle.html" with comment=tree.comment %}
+        {% include "comments/types/battle.html" with comment=tree.comment replies=tree.replies %}
     {% else %}
-        {% include "comments/types/normal.html" with comment=tree.comment %}
-    {% endif %}
-
-    {% if tree.replies %}
-        <div class="comment-replies">
-            {% for reply_tree in tree.replies %}
-                {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment %}
-
-                {% if reply_tree.replies %}
-                    <div class="comment-replies">
-                        {% for reply_reply in reply_tree.replies %}
-                            {% include "comments/types/reply.html" with comment=reply_reply reply_to=reply_tree.comment %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                {% if post.is_commentable and me %}
-                    {% include "comments/forms/reply.html" with comment=reply_tree.comment reply_form=reply_form %}
-                {% endif %}
-            {% endfor %}
-        </div>
-        <div class="clearfix20"></div>
+        {% include "comments/types/normal.html" with comment=tree.comment replies=tree.replies %}
     {% endif %}
 
     {% if post.is_commentable and me %}

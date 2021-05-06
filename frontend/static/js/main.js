@@ -3,7 +3,8 @@ import Vue from "vue";
 import "../css/index.css";
 
 import App from "./App.js";
-import ClubApi from "./common/api.service";
+import ClubApi from "./common/api.service.js";
+import { pluralize } from "./common/utils.js";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
@@ -35,6 +36,32 @@ new Vue({
         shownWindow: null,
     },
     methods: {
+        toggleCommentThread(event) {
+            const comment = event.target.closest(".reply") || event.target.closest(".comment");
+            if (comment === null) {
+                return;
+            }
+
+            // toggle thread visibility
+            const collapseItems = comment.querySelectorAll(".thread-collapse-toggle");
+            for (let i = 0; i < collapseItems.length; i++) {
+                const isVisible = window.getComputedStyle(collapseItems[i]).display !== "none";
+                collapseItems[i].style.display = isVisible ? "none" : null;
+            }
+
+            // show/hide placeholder with thread length
+            const collapseStub = comment.querySelector(".comment-collapse-stub") || comment.querySelector(".reply-collapse-stub");
+            collapseStub.style.display = collapseStub.style.display !== "block" ? "block" : "none";
+            const threadLength = comment.querySelectorAll(".reply").length + 1;
+            const pluralForm = pluralize(threadLength, ["комментарий", "комментария", "комментариев"]);
+            collapseStub.querySelector(".thread-collapse-length").innerHTML = `${threadLength} ${pluralForm}`;
+
+            // scroll back to comment if it's outside of the screen
+            const commentPosition = comment.getBoundingClientRect();
+            if (commentPosition.top < 0) {
+                location.hash = `#scroll-to-${comment.id}`;
+            }
+        },
         deleteExpertise(event) {
             // FIXME: please refactor this code to a proper list component with ajax CRUD actions
             const href = event.target.getAttribute("href");
