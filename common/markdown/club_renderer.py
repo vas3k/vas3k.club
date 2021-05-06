@@ -74,5 +74,6 @@ class ClubRenderer(mistune.HTMLRenderer):
     def tweet(self, src, alt="", title=None):
         tweet_match = TWITTER_RE.match(src)
         twitter_tag = f'<blockquote class="twitter-tweet" tw-align-center>' \
-                      f'<a href="{tweet_match.group(1)}"></a></blockquote>'
+                      f'<a href="{tweet_match.group(1)}"></a></blockquote><br>' \
+                      f'<a href="{src}" target="_blank">{src}</a>'
         return twitter_tag
