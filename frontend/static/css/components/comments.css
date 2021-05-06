@@ -111,12 +111,12 @@
         bottom: 0;
         border-left: dotted 3px rgba(128, 128, 128);
         margin-left: -2px;
-        opacity: 0.3;
+        opacity: 0.2;
         transition: opacity .3s;
     }
 
         .comment:hover .thread-ruler {
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .comment-side:hover .thread-ruler,
