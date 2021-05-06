@@ -456,3 +456,7 @@
 .comment-is-new {
     background-color: rgba(104, 118, 128, 0.30);
 }
+
+    .comment-is-new .comment-is-new {
+        background-color: transparent;
+    }
