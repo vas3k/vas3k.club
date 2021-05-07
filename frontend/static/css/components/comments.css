@@ -117,13 +117,17 @@
         transition: opacity .3s;
     }
 
-        .comment:hover .thread-ruler {
-            opacity: 0.3;
-        }
+        @media (hover: hover) and (pointer: fine) {
+            /* disable hover effects on mobile */
 
-        .comment-side:hover .thread-ruler,
-        .reply-side:hover .thread-ruler {
-            opacity: 1;
+            .comment:hover .thread-ruler {
+                opacity: 0.3;
+            }
+
+            .comment-side:hover .thread-ruler,
+            .reply-side:hover .thread-ruler {
+                opacity: 1;
+            }
         }
 
         .thread-ruler-icons {
