@@ -269,7 +269,7 @@
             }
 
     .comment-body {
-        padding-top: 15px;
+        padding-top: 10px;
         text-overflow: ellipsis;
         box-sizing: border-box;
         max-width: 100%;
@@ -419,6 +419,7 @@
         height: 26px;
         top: -2px;
         position: relative;
+        margin-right: 5px;
     }
 
     .reply-header {
