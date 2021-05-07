@@ -385,7 +385,7 @@
 
 .reply {
     display: grid;
-    grid-template-columns: 40px minmax(auto, 1fr) 50px;
+    grid-template-columns: 35px minmax(auto, 1fr) 50px;
     grid-template-rows: auto auto min-content auto;
     justify-content: start;
 }
@@ -393,14 +393,14 @@
     .reply-side {
         grid-column-start: 1;
         grid-column-end: 2;
-        grid-row-start: 1;
+        grid-row-start: 3;
         grid-row-end: 5;
         justify-self: start;
         align-self: stretch;
     }
 
     .reply-header {
-        grid-column-start: 2;
+        grid-column-start: 1;
         grid-column-end: 3;
         grid-row-start: 1;
         grid-row-end: 2;
@@ -410,7 +410,7 @@
 
     .reply-body,
     .reply-collapse-stub {
-        grid-column-start: 2;
+        grid-column-start: 1;
         grid-column-end: 4;
         grid-row-start: 2;
         grid-row-end: 3;
@@ -506,7 +506,7 @@
 
     @media only screen and (max-width : 570px) {
         .comment-layout-normal {
-            grid-template-columns: 45px minmax(auto, 1fr) 60px;
+            grid-template-columns: 35px minmax(auto, 1fr) 60px;
         }
     }
 

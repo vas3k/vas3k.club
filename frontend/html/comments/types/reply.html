@@ -2,13 +2,16 @@
 {% load posts %}
 {% load comments %}
 <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
+    {% if replies %}
     <div class="reply-side" @click.prevent="toggleCommentThread">
-        <a class="avatar reply-side-avatar" href="{% url "profile" comment.author.slug %}">
-            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
-        </a>
         <div class="thread-ruler"></div>
     </div>
+    {% endif %}
     <div class="reply-header">
+        <a class="avatar reply-avatar" href="{% url "profile" comment.author.slug %}">
+            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
+        </a>
+
         <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">
             {{ comment.author.full_name }}
         </a>

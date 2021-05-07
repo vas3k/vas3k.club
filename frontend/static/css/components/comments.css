@@ -8,15 +8,7 @@
         padding-left: 70px;
     }
 
-    .replies .replies {
-        padding-left: 20px;
-    }
-
     @media only screen and (max-width : 570px) {
-        .replies .replies {
-            padding-left: 0;
-        }
-
         .replies-indent-normal {
             padding-left: 5px;
         }
@@ -119,14 +111,14 @@
         top: 0;
         left: 50%;
         bottom: 0;
-        border-left: dotted 3px rgba(128, 128, 128);
-        margin-left: -2px;
-        opacity: 0.2;
+        border-left: dotted 2px rgb(128, 128, 128);
+        margin-left: -1px;
+        opacity: 0.15;
         transition: opacity .3s;
     }
 
         .comment:hover .thread-ruler {
-            opacity: 0.4;
+            opacity: 0.3;
         }
 
         .comment-side:hover .thread-ruler,
@@ -228,8 +220,12 @@
 
         @media only screen and (max-width : 570px) {
             .comment-side-avatar {
-                width: 36px;
-                height: 36px;
+                width: 30px;
+                height: 30px;
+            }
+
+            .comment-side .thread-ruler {
+                top: 37px;
             }
         }
 
@@ -280,9 +276,17 @@
         display: none;
         cursor: pointer;
         opacity: 0.6;
-        padding-top: 20px;
         font-size: 110%;
     }
+
+        .comment-collapse-stub {
+            padding-top: 20px;
+        }
+
+        .reply-collapse-stub {
+            padding-top: 14px;
+            padding-left: 7px;
+        }
 
         .comment-collapse-stub:hover,
         .reply-collapse-stub:hover {
@@ -384,29 +388,36 @@
 
 .reply {
     margin: 10px 0 15px 0;
-    padding: 10px 5px 10px 0;
+    padding: 10px 0 10px 10px;
     scroll-margin-top: 20px;
 }
 
+    @media only screen and (max-width : 570px) {
+        .reply {
+            padding-left: 0;
+        }
+    }
+
     .reply-side {
         position: relative;
-        padding-top: 5px;
+        width: 25px;
         cursor: pointer;
     }
 
-        .reply-side-avatar {
-            width: 30px;
-            height: 30px;
-        }
-
         .reply-side .thread-ruler {
-            top: 42px;
-            bottom: -33px;
+            top: 7px;
+            bottom: -25px;
             height: auto;
         }
 
+    .reply-avatar {
+        width: 26px;
+        height: 26px;
+        top: -2px;
+        position: relative;
+    }
+
     .reply-header {
-        padding-top: 7px;
         padding-bottom: 10px;
         font-size: 110%;
     }
@@ -428,6 +439,7 @@
 
     .reply-body {
         font-size: 90%;
+        padding-left: 5px;
         padding-bottom: 5px;
         text-overflow: ellipsis;
         word-break: break-word;
