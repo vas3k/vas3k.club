@@ -1199,16 +1199,16 @@
         text-decoration: none;
     }
 
-    .post-comments-list,
-    .post-answers-list {
+    .post-comments-list {
         padding-top: 25px;
         padding-bottom: 40px;
     }
 
-        .post-answers-list .comment-replies,
-        .post-answers-list .reply-form {
-            padding-left: 40px;
-            padding-bottom: 0;
+        @media only screen and (max-width : 570px) {
+            .post-comments-list {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
         }
 
     .post-comments-form {

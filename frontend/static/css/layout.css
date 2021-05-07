@@ -411,7 +411,7 @@
     .reply-body,
     .reply-collapse-stub {
         grid-column-start: 2;
-        grid-column-end: 3;
+        grid-column-end: 4;
         grid-row-start: 2;
         grid-row-end: 3;
         justify-self: stretch;
@@ -473,7 +473,7 @@
     .comment-layout-normal .comment-body,
     .comment-layout-normal .comment-collapse-stub {
         grid-column-start: 2;
-        grid-column-end: 3;
+        grid-column-end: 4;
         grid-row-start: 2;
         grid-row-end: 3;
         justify-self: stretch;
@@ -502,6 +502,12 @@
         grid-row-start: 4;
         grid-row-end: 5;
         justify-self: stretch;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .comment-layout-normal {
+            grid-template-columns: 45px minmax(auto, 1fr) 60px;
+        }
     }
 
 .comment-layout-block {
