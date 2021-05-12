@@ -47,7 +47,7 @@ The first time you start it up, you'll probably need a test account to get right
 
 Auto-reloading for backend and frontend is performed automatically on every code change. If everything is broken and not working (it happens), you can always rebuild the world from scratch using `docker-compose up --build`.
 
-## 🧑‍💻 Advanced setup for pro
+## 🧑‍💻 Advanced setup for devs
 
 For more information on how to test the telegram bot, run project without docker and other useful notes, read [docs/setup.md](docs/setup.md).
 

@@ -1,18 +1,5 @@
 # Advanced Setup
 
-## Telegram bot
-
-To run telegram bot you have to:
-  1. Copy env.exmaple file: `cp ./club/.env.example ./club/.env`
-  2. Fill all the requirement fields in `./club/env`, such as `TELEGRAM_TOKEN` etc.
-      - `TELEGRAM_TOKEN` you can get from [@BotFather](https://t.me/BotFather)
-      - To get `TELEGRAM_CLUB_CHANNEL_URL`, `TELEGRAM_ADMIN_CHAT_ID` etc Just Simply Forward a message from your group/channel to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
-  3. Rebuild application: `docker-compose up --build`
-
-## Docker-compose
-
-Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
-
 ## Local development
 
 Once you decided to code something in the project you'll need to setup your environment. Here's how you can make it.
@@ -87,3 +74,16 @@ $ pipenv run python manage.py migrate
 # run dev server
 $ pipenv run python manage.py runserver 0.0.0.0:8000
 ```
+
+## Telegram bot
+
+To run telegram bot you have to:
+  1. Copy env.exmaple file: `cp ./club/.env.example ./club/.env`
+  2. Fill all the requirement fields in `./club/env`, such as `TELEGRAM_TOKEN` etc.
+      - `TELEGRAM_TOKEN` you can get from [@BotFather](https://t.me/BotFather)
+      - To get `TELEGRAM_CLUB_CHANNEL_URL`, `TELEGRAM_ADMIN_CHAT_ID` etc Just Simply Forward a message from your group/channel to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
+  3. Rebuild application: `docker-compose up --build`
+
+## Docker-compose
+
+Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
