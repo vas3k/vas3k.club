@@ -9,6 +9,11 @@ LABELS = {
         "emoji": "💪",
         "color": "#229954"
     },
+    "thread": {
+        "title": "Тред",
+        "emoji": "🗄",
+        "color": "#F39C12"
+    },
     "inside": {
         "title": "Инсайды",
         "emoji": "💎️",
@@ -33,11 +38,6 @@ LABELS = {
         "title": "Драма",
         "emoji": "🍿",
         "color": "#0E2F44"
-    },
-    "comments": {
-        "title": "Топ комменты",
-        "emoji": "💭",
-        "color": "#F39C12"
     },
     "war": {
         "title": "Холивар",

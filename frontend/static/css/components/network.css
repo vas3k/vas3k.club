@@ -85,6 +85,26 @@
                 opacity: 0.8;
             }
 
+        @media only screen and (max-width : 570px) {
+            .network-block {
+                padding: 10px;
+            }
+
+            .network-channels {
+                justify-content: center;
+            }
+
+                .network-channel {
+                    max-width: 160px;
+                    padding: 10px;
+                }
+
+                    .network-channel-icon {
+                        width: 120px;
+                        height: 120px;
+                    }
+        }
+
         .network-channel-footer {
             font-size: 90%;
             padding-top: 40px;
