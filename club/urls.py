@@ -28,6 +28,7 @@ from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
 from users.views.delete_account import request_delete_account, confirm_delete_account
+from users.views.friends import toggle_friend
 from users.views.messages import on_review, rejected, banned
 from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise, profile_comments, profile_posts
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
@@ -61,6 +62,7 @@ urlpatterns = [
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
     path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
     path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
+    path("user/<slug:user_slug>/friend/", toggle_friend, name="toggle_friend"),
     path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
     path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/account/", edit_account, name="edit_account"),

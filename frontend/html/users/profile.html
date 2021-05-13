@@ -92,6 +92,15 @@
                     </span>
                 </a>
             </div>
+        {% elif me.is_moderator %}
+            <div class="block profile-statuses">
+                <div class="profile-status">
+                    <friend-button
+                        url="{% url "toggle_friend" user.slug %}"
+                        is-friend="{% if friend %}true{% else %}false{% endif %}">
+                    </friend-button>
+                </div>
+            </div>
         {% endif %}
 
         {% if intro %}
@@ -154,6 +163,7 @@
                             {% endfor %}
                         </div>
                     </div>
+
                     {% if similarity %}
                         {% if tag_group.list.0.group == "personal" %}
                         <div class="profile-tags-footer">
@@ -165,6 +175,7 @@
                         </div>
                         {% endif %}
                     {% endif %}
+
                     {% if tag_group.list.0.group == "club" %}
                         <div class="profile-tags-footer">
                             {% if user.contact %}

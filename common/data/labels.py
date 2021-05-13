@@ -12,12 +12,17 @@ LABELS = {
     "thread": {
         "title": "Тред",
         "emoji": "🗄",
-        "color": "#F39C12"
+        "color": "#6950c3"
     },
     "inside": {
         "title": "Инсайды",
         "emoji": "💎️",
         "color": "#3498DB"
+    },
+    "event": {
+        "title": "Движ",
+        "emoji": "🔥",
+        "color": "#A7226E"
     },
     "top_week": {
         "title": "Тема недели",

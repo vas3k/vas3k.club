@@ -7,13 +7,14 @@ from notifications.telegram.common import Chat, send_telegram_message, render_ht
 from comments.models import Comment
 from common.regexp import USERNAME_RE
 from posts.models.subscriptions import PostSubscription
+from users.models.friends import Friend
 from users.models.user import User
 
 
 @receiver(post_save, sender=Comment)
 def create_or_update_comment(sender, instance, created, **kwargs):
     if not created:
-        return None  # we're not interested in updates
+        return None  # we're not interested in comment updates
 
     async_task(async_create_or_update_comment, instance)
 
@@ -25,14 +26,15 @@ def async_create_or_update_comment(comment):
     post_subscribers = PostSubscription.post_subscribers(comment.post)
     for post_subscriber in post_subscribers:
         if post_subscriber.user.telegram_id and comment.author != post_subscriber.user:
-            template = "comment_to_post.html" if post_subscriber.user == comment.post.author else "comment_to_post_announce.html"
+            template = "comment_to_post.html" if post_subscriber.user == comment.post.author \
+                else "comment_to_post_announce.html"
             send_telegram_message(
                 chat=Chat(id=post_subscriber.user.telegram_id),
                 text=render_html_message(template, comment=comment),
             )
             notified_user_ids.add(post_subscriber.user.id)
 
-    # on reply — notify thread author (do not notify yourself)
+    # notify thread author on reply (note: do not notify yourself)
     if comment.reply_to:
         thread_author = comment.reply_to.author
         if thread_author.telegram_id and comment.author != thread_author and thread_author.id not in notified_user_ids:
@@ -48,6 +50,19 @@ def async_create_or_update_comment(comment):
             chat=CLUB_ONLINE,
             text=render_html_message("comment_to_post_announce.html", comment=comment),
         )
+
+    # notify friends about top level comments
+    if not comment.reply_to:
+        friends = Friend.friends_for_user(comment.author)
+        for friend in friends:
+            if friend.user_from.telegram_id \
+                    and friend.is_subscribed_to_comments \
+                    and friend.user_from.id not in notified_user_ids:
+                send_telegram_message(
+                    chat=Chat(id=friend.user_from.telegram_id),
+                    text=render_html_message("friend_comment.html", comment=comment),
+                )
+                notified_user_ids.add(friend.user_from.id)
 
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):

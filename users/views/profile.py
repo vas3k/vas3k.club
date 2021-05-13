@@ -11,6 +11,7 @@ from search.models import SearchIndex
 from users.forms.profile import ExpertiseForm
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
+from users.models.friends import Friend
 from users.models.tags import Tag, UserTag
 from users.models.user import User
 from users.utils import calculate_similarity
@@ -34,18 +35,17 @@ def profile(request, user_slug):
         if goto and goto.startswith(settings.APP_HOST):
             return redirect(goto)
 
-    tags = Tag.objects.filter(is_visible=True).all()
-
-    intro = Post.get_user_intro(user)
-    projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
-
     # select user tags and calculate similarity with me
+    tags = Tag.objects.filter(is_visible=True).all()
     active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
     similarity = {}
     if user.id != request.me.id:
         my_tags = {t.tag_id for t in UserTag.objects.filter(user=request.me).all()}
         similarity = calculate_similarity(my_tags, active_tags, tags)
 
+    # select other stuff from this user
+    intro = Post.get_user_intro(user)
+    projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
     comments = Comment.visible_objects()\
@@ -56,6 +56,7 @@ def profile(request, user_slug):
         .filter(author=user, is_visible=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
+    friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
 
     return render(request, "users/profile.html", {
         "user": user,
@@ -70,6 +71,7 @@ def profile(request, user_slug):
         "posts": posts[:15],
         "posts_total": posts.count(),
         "similarity": similarity,
+        "friend": friend,
     })
 
 
@@ -144,6 +146,7 @@ def add_expertise(request):
                 user=request.me, expertise=user_expertise.expertise
             ).delete()
             user_expertise.save()
+
             return {
                 "status": "created",
                 "expertise": {
@@ -161,6 +164,7 @@ def add_expertise(request):
 def delete_expertise(request, expertise):
     if request.method == "POST":
         UserExpertise.objects.filter(user=request.me, expertise=expertise).delete()
+
         return {
             "status": "deleted",
             "expertise": {
