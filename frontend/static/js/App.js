@@ -5,7 +5,7 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
-import { findParentForm, isCommunicationForm } from "./common/domUtils";
+import { findParentForm, isCommunicationForm } from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
 

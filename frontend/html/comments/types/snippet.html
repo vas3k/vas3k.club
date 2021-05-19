@@ -1,20 +1,19 @@
 {% load text_filters %}
 {% load comments %}
 <div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %}">
+    <div class="comment-side">
+        <a class="avatar comment-side-avatar" href="{% url "profile" comment.author.slug %}">
+            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
+        </a>
+    </div>
     <div class="comment-header">
-        <div class="user user-small">
-            <span class="avatar user-avatar">
-                <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
-            </span>
-            <span class="user-info">
-                <span>
-                    <a href="{% url "profile" comment.author.slug %}" class="user-name">{{ comment.author.full_name }}</a>
-                    на пост
-                    <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="user-name-post">{{ comment.post.title }}</a>
-                </span>
-            </span>
-            <span class="user-footer">{{ comment.created_at | cool_date }}</span>
-        </div>
+        <span class="comment-header-author">
+            <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a>
+            {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+            на пост <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-post">{{ comment.post.title }}</a>
+        </span>
+
+        <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-date">{{ comment.created_at | cool_date }}</a>
     </div>
     <div class="comment-rating">
         <span class="upvote upvote-disabled upvote-type-small">{{ comment.upvotes }}</span>

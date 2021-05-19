@@ -2,23 +2,24 @@
 {% load posts %}
 {% load comments %}
 <div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %} {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
-    <div class="comment-header">
-        <div class="user user-small">
-            <span class="user-avatar">
-                <a class="avatar" href="{% url "profile" comment.author.slug %}">
-                    <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
-                </a>
-            </span>
-            <span class="user-info">
-                <a href="{% url "profile" comment.author.slug %}">
-                    <span class="user-name">{{ comment.author.full_name }}</span><span class="user-position">, {{ comment.author.position }}</span>
-                    {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
-                </a>
-            </span>
-            <span class="user-footer">
-                <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.created_at | cool_date }}</a>
-            </span>
+    <div class="comment-side" @click.prevent="toggleCommentThread">
+        <a class="avatar comment-side-avatar" href="{% url "profile" comment.author.slug %}">
+            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
+        </a>
+        <div class="thread-ruler">
+            <div class="thread-ruler-icons">
+                <i class="fas fa-angle-up"></i>
+                <i class="fas fa-angle-down"></i>
+            </div>
         </div>
+    </div>
+    <div class="comment-header">
+        <span class="comment-header-author">
+            <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a><span class="comment-header-author-position">, {{ comment.author.position }}</span>
+            {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+            {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
+        </span>
+        <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-date">{{ comment.created_at | cool_date }}</a>
     </div>
     <div class="comment-rating">
         <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
@@ -37,26 +38,43 @@
             <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
         {% endif %}
     </div>
-    <div class="comment-body">
+    <div class="comment-body thread-collapse-toggle">
         <div class="text-body text-body-type-comment">
             {% render_comment comment %}
         </div>
     </div>
-    <div class="comment-footer">
-        {% if me == comment.post.author or me.is_moderator %}
+    <div class="comment-collapse-stub" @click.prevent="toggleCommentThread">
+        <i class="fas fa-angle-double-down"></i>&nbsp;&nbsp;Развернуть <span class="thread-collapse-length">1 комментарий</span>
+    </div>
+    <div class="comment-footer thread-collapse-toggle">
+        {% if me.id == comment.post.author_id or me.is_moderator %}
             <a href="{% url "pin_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-thumbtack"></i></a>
         {% endif %}
 
-        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
+        {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
             <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
         {% endif %}
 
-        {% if me == comment.author or me.is_moderator %}
+        {% if me.id == comment.author_id or me.is_moderator %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
         {% if me and comment.post.is_commentable %}
             <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+        {% endif %}
+    </div>
+    <div class="comment-replies thread-collapse-toggle">
+        {% if replies %}
+            <div class="replies">
+                {% for reply_tree in replies %}
+                    {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
+
+                    {% if post.is_commentable and me %}
+                        {% include "comments/forms/reply.html" with comment=reply_tree.comment reply_form=reply_form %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="clearfix20"></div>
         {% endif %}
     </div>
 </div>

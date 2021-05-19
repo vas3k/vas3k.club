@@ -146,6 +146,18 @@ select {
     background-color: var(--select-bg-color);
 }
 
+h1, h2, h3, h4, h5 {
+    scroll-margin-top: 30px;
+}
+
+h1 > a,
+h2 > a,
+h3 > a,
+h4 > a,
+h5 > a {
+    text-decoration: none;
+}
+
 input[type=text],
 input[type=number],
 input[type=file],

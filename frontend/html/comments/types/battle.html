@@ -26,17 +26,17 @@
             <div class="comment-pinned-icon"><i class="fas fa-thumbtack"></i></div>
         {% endif %}
     </div>
-    <div class="comment-body">
+    <div class="comment-body thread-collapse-toggle">
         <div class="text-body text-body-type-comment">
             {% render_comment comment %}
         </div>
     </div>
-    <div class="comment-footer">
-        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
+    <div class="comment-footer thread-collapse-toggle">
+        {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
             <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
         {% endif %}
 
-        {% if me == comment.author or me.is_moderator %}
+        {% if me.id == comment.author_id or me.is_moderator %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
@@ -45,4 +45,18 @@
         {% endif %}
     </div>
 </div>
+
 <div class="clearfix"></div>
+
+{% if replies %}
+    <div class="replies replies-indent-normal">
+        {% for reply_tree in replies %}
+            {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
+
+            {% if post.is_commentable and me %}
+                {% include "comments/forms/reply.html" with comment=reply_tree.comment reply_form=reply_form %}
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="clearfix20"></div>
+{% endif %}

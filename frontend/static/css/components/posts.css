@@ -478,12 +478,30 @@
 
         .text-body-type-comment h1,
         .text-body-type-comment h2 {
-            margin-top: 50px;
+            margin-top: 2em;
+            margin-bottom: 0.8em;
         }
 
         .text-body-type-comment h3,
         .text-body-type-comment h3 {
             margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .text-body-type-comment h1 {
+            font-size: 180%;
+        }
+
+        .text-body-type-comment h2 {
+            font-size: 160%;
+        }
+
+        .text-body-type-comment h3 {
+            font-size: 130%;
+        }
+
+        .text-body-type-comment h4 {
+            font-size: 110%;
         }
 
     .text-body > *:first-child {

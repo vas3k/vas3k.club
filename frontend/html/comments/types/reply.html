@@ -2,15 +2,25 @@
 {% load posts %}
 {% load comments %}
 <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
-    <div class="reply-author">
-        <a class="avatar user-avatar" href="{% url "profile" comment.author.slug %}">
+    {% if replies %}
+    <div class="reply-side" @click.prevent="toggleCommentThread">
+        <div class="thread-ruler"></div>
+    </div>
+    {% endif %}
+    <div class="reply-header">
+        <a class="avatar reply-avatar" href="{% url "profile" comment.author.slug %}">
             <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
         </a>
-    </div>
-    <div class="reply-body">
-        <div class="text-body text-body-type-comment">
-            {% render_comment comment %}
-        </div>
+
+        <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">
+            {{ comment.author.full_name }}
+        </a>
+
+        <a href="#comment-{{ comment.id }}" class="reply-date">
+            {{ comment.created_at | cool_date }}
+        </a>
+
+        {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
     </div>
     <div class="reply-rating">
         <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
@@ -25,20 +35,34 @@
                          is-inline>
         </comment-upvote>
     </div>
-    <div class="reply-footer">
-        <span class="comment-reply-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
-            —&nbsp;&nbsp;{{ comment.author.slug }}&nbsp;&nbsp;<i class="fas fa-reply"></i>
-        </span>
-
-        <a href="#comment-{{ comment.id }}" class="comment-reply-date">
-            {{ comment.created_at | cool_date }}
-        </a>
-
-        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
-            <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
-            {% if not comment.is_deleted %}
+    <div class="reply-body thread-collapse-toggle">
+        <div class="text-body text-body-type-comment">
+            {% render_comment comment %}
+        </div>
+    </div>
+    <div class="reply-collapse-stub" @click.prevent="toggleCommentThread">
+        <i class="fas fa-angle-double-down"></i>&nbsp;&nbsp;Развернуть <span class="thread-collapse-length">1 комментарий</span>
+    </div>
+    <div class="reply-footer thread-collapse-toggle">
+        {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
+            {% if not comment.is_deleted or me.id == comment.deleted_by_id or me.is_moderator %}
                 <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
             {% endif %}
+
+            <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
+        {% endif %}
+
+        <span class="comment-reply-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
+            <i class="fas fa-reply"></i>&nbsp;ответить
+        </span>
+    </div>
+    <div class="reply-replies thread-collapse-toggle">
+        {% if replies %}
+            <div class="replies">
+                {% for reply_reply in replies %}
+                    {% include "comments/types/reply.html" with comment=reply_reply reply_to=comment replies=None %}
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 </div>

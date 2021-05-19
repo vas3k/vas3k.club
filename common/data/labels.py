@@ -9,10 +9,20 @@ LABELS = {
         "emoji": "💪",
         "color": "#229954"
     },
+    "thread": {
+        "title": "Тред",
+        "emoji": "🗄",
+        "color": "#6950c3"
+    },
     "inside": {
         "title": "Инсайды",
         "emoji": "💎️",
         "color": "#3498DB"
+    },
+    "event": {
+        "title": "Движ",
+        "emoji": "🔥",
+        "color": "#A7226E"
     },
     "top_week": {
         "title": "Тема недели",
@@ -33,11 +43,6 @@ LABELS = {
         "title": "Драма",
         "emoji": "🍿",
         "color": "#0E2F44"
-    },
-    "comments": {
-        "title": "Топ комменты",
-        "emoji": "💭",
-        "color": "#F39C12"
     },
     "war": {
         "title": "Холивар",

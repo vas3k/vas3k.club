@@ -2,23 +2,18 @@
 {% load posts %}
 {% load comments %}
 <div class="block comment comment-layout-block" id="comment-{{ comment.id }}">
+    <div class="comment-side">
+        <a class="avatar comment-side-avatar" href="{% url "profile" comment.author.slug %}">
+            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
+        </a>
+    </div>
     <div class="comment-header">
-        <div class="user user-small">
-            <span class="user-avatar">
-                <a class="avatar" href="{% url "profile" comment.author.slug %}">
-                    <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
-                </a>
-            </span>
-            <span class="user-info">
-                <a href="{% url "profile" comment.author.slug %}">
-                    <span class="user-name">{{ comment.author.full_name }}</span><span class="user-position">, {{ comment.author.position }}</span>
-                    {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
-                </a>
-            </span>
-            <span class="user-footer">
-                <a href="#comment-{{ comment.id }}">{{ comment.created_at | cool_date }}</a>
-            </span>
-        </div>
+        <span class="comment-header-author">
+            <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a><span class="comment-header-author-position">, {{ comment.author.position }}</span>
+            {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+            {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
+        </span>
+        <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-date">{{ comment.created_at | cool_date }}</a>
     </div>
     <div class="comment-rating">
         <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
@@ -42,15 +37,15 @@
         </div>
     </div>
     <div class="comment-footer">
-        {% if me == comment.post.author or me.is_moderator %}
+        {% if me.id == comment.post.author_id or me.is_moderator %}
             <a href="{% url "pin_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-thumbtack"></i></a>
         {% endif %}
 
-        {% if me == comment.author or me == comment.post.author or me.is_moderator %}
+        {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
             <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
         {% endif %}
 
-        {% if me == comment.author or me.is_moderator %}
+        {% if me.id == comment.author_id or me.is_moderator %}
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
@@ -59,3 +54,18 @@
         {% endif %}
     </div>
 </div>
+
+<div class="clearfix"></div>
+
+{% if replies %}
+<div class="replies replies-indent-normal">
+    {% for reply_tree in replies %}
+        {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
+
+        {% if post.is_commentable and me %}
+            {% include "comments/forms/reply.html" with comment=reply_tree.comment reply_form=reply_form %}
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="clearfix20"></div>
+{% endif %}

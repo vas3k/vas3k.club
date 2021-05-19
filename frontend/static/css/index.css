@@ -17,8 +17,10 @@
 @import "./components/landing.css";
 @import "./components/auth.css";
 @import "./components/payments.css";
+@import "./components/profile.css";
 @import "./components/people.css";
 @import "./components/network.css";
 @import "./components/posts.css";
+@import "./components/comments.css";
 @import "./components/compose.css";
 

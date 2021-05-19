@@ -112,7 +112,7 @@ class Comment(models.Model):
     def visible_objects(cls, show_deleted=False):
         comments = cls.objects\
             .filter(is_visible=True)\
-            .select_related("author", "reply_to")
+            .select_related("author", "post", "reply_to")
 
         if not show_deleted:
             comments = comments.filter(deleted_by__isnull=True)
