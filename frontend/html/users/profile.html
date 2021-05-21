@@ -92,13 +92,16 @@
                     </span>
                 </a>
             </div>
-        {% elif me.is_moderator %}
-            <div class="block profile-statuses">
-                <div class="profile-status">
+        {% else %}
+            <div class="profile-statuses">
+                <div class="profile-friend-button">
                     <friend-button
                         url="{% url "toggle_friend" user.slug %}"
                         is-friend="{% if friend %}true{% else %}false{% endif %}">
                     </friend-button>
+                </div>
+                <div class="profile-friend-button-comment">
+                    &larr; тестируем бета-версию подписки на все посты и комменты юзера через бота
                 </div>
             </div>
         {% endif %}

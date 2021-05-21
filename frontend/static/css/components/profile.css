@@ -110,20 +110,36 @@
 
     .profile-statuses {
         display: flex;
+        flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        align-content: center;
+        justify-content: center;
+        align-items: stretch;
+        align-content: stretch;
         text-align: center;
         font-size: 120%;
-        padding: 10px 30px 10px;
+        padding: 0;
+        margin-bottom: 30px;
+        overflow: hidden;
     }
 
+        .profile-friend-button {
+
+        }
+
+        .profile-friend-button-comment {
+            font-size: 90%;
+            opacity: 0.8;
+            max-width: 50%;
+        }
+
         .profile-status {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-decoration: none;
-            display: block;
+            width: 25%;
             min-width: 120px;
-            max-width: 25%;
             padding: 20px;
             box-sizing: border-box;
         }

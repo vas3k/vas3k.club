@@ -1,7 +1,7 @@
 <template>
     <span>
         <button class="button friend-button" @click="toggle">
-            <span v-if="isFriend" class="friend-button-text">🤝 Не бро</span>
+            <span v-if="isFriend" class="friend-button-text">✅ Мой бро</span>
             <span v-else class="friend-button-text">🤝 Добавить в бро</span>
         </button>
     </span>
