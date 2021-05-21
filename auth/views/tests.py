@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import json
 from urllib.parse import urljoin
 import uuid
 
@@ -15,10 +14,10 @@ from unittest.mock import patch
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
-from auth.models import Code, Session
+from auth.models import Code
 from auth.providers.common import Membership, Platform
 from auth.exceptions import PatreonException
-from tests.helpers import HelperClient, JWT_STUB_VALUES
+from debug.helpers import HelperClient, JWT_STUB_VALUES
 from users.models.user import User
 
 

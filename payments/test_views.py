@@ -5,8 +5,7 @@ import uuid
 
 import django
 from django.urls import reverse
-from django.conf import settings
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 import json
 import time
 import yaml
@@ -19,7 +18,7 @@ django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
 from payments.products import PRODUCTS
-from tests.helpers import HelperClient
+from debug.helpers import HelperClient
 from users.models.user import User
 
 

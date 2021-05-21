@@ -764,67 +764,6 @@
                 color: #53AA68;
             }
 
-        .user-edit-digest {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            padding: 20px 0;
-            font-size: 17px;
-        }
-
-            .user-edit-digest-item input {
-                visibility: hidden;
-                position: absolute;
-            }
-
-            .user-edit-digest-label {
-                display: block;
-                position: relative;
-                cursor: pointer;
-                width: 220px;
-                min-height: 250px;
-                margin: 10px;
-                box-sizing: border-box;
-                text-decoration: none;
-                box-shadow: var(--block-shadow);
-                background-color: var(--block-bg-color);
-                border-radius: 10px;
-                border: var(--block-border);
-                text-align: center;
-            }
-
-            .user-edit-digest-item input:checked + .user-edit-digest-label {
-                background-color: var(--opposite-block-bg-color);
-                color: var(--opposite-text-color);
-            }
-
-            .user-edit-digest-item input:checked + .user-edit-digest-label a {
-                color: var(--opposite-text-color);
-            }
-
-            .user-edit-digest-label:hover {
-                box-shadow: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
-            }
-
-                .user-edit-digest-label i {
-                    display: block;
-                    font-size: 60px;
-                    padding-top: 20px;
-                }
-
-                .user-edit-digest-name {
-                    display: block;
-                    padding: 20px 10px 10px;
-                    font-weight: 500;
-                    font-size: 120%;
-                    line-height: 1.3em;
-                }
-
-                .user-edit-digest-description {
-                    display: block;
-                    padding: 20px 10px 10px;
-                }
-
 .feed-post {
     position: relative;
     padding-left: 40px;
@@ -1168,6 +1107,17 @@
         font-size: 120%;
         font-weight: bold;
         padding-top: 5px;
+    }
+
+.compose-visibility {
+    padding-top: 20px;
+    padding-bottom: 80px;
+}
+
+    .compose-visibility .big-radio-item {
+        width: 45%;
+        min-height: 280px;
+        max-width: none;
     }
 
 .post-join {

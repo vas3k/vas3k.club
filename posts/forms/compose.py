@@ -17,10 +17,11 @@ class PostForm(forms.ModelForm):
         empty_label="Для всех",
         queryset=Topic.objects.filter(is_visible=True).all(),
     )
-    is_public = forms.BooleanField(
+    is_public = forms.ChoiceField(
         label="Виден ли в большой интернет?",
-        initial=False,
-        required=False
+        choices=((True, "Публичный пост"), (False, "Только для своих")),
+        widget=forms.RadioSelect,
+        required=True
     )
 
     class Meta:

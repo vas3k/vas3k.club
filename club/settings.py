@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
+    # "badges.apps.BadgesConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -183,7 +184,7 @@ PEOPLE_PAGE_SIZE = 18
 PROFILE_COMMENTS_PAGE_SIZE = 100
 PROFILE_POSTS_PAGE_SIZE = 30
 
-COMMUNITY_APPROVE_UPVOTES = 20
+COMMUNITY_APPROVE_UPVOTES = 35
 
 GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(BASE_DIR, "gdpr/downloads")
 GDPR_ARCHIVE_URL = "/downloads/"

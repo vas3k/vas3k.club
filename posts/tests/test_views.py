@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.urls import reverse
 from django.test import TestCase
 
-from tests.helpers import HelperClient
+from debug.helpers import HelperClient
 from users.models.user import User
 from posts.models.post import Post
 

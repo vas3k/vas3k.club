@@ -700,3 +700,76 @@ img.emoji {
 .text-200 {
     font-size: 200%;
 }
+
+.big-radio {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px 0;
+    font-size: 17px;
+}
+
+    .big-radio-item {
+        display: block;
+        position: relative;
+        cursor: pointer;
+        width: 50%;
+        max-width: 220px;
+        min-height: 250px;
+    }
+
+    .big-radio-label {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        margin: 10px;
+        box-sizing: border-box;
+        text-decoration: none;
+        box-shadow: var(--block-shadow);
+        background-color: var(--block-bg-color);
+        border-radius: 10px;
+        border: var(--block-border);
+        text-align: center;
+    }
+
+    .big-radio-item input {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        opacity: 0.01;
+    }
+
+    .big-radio-item input:checked + .big-radio-label {
+        background-color: var(--opposite-block-bg-color);
+        color: var(--opposite-text-color);
+    }
+
+    .big-radio-item input:checked + .big-radio-label a {
+        color: var(--opposite-text-color);
+    }
+
+    .big-radio-label:hover {
+        box-shadow: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
+    }
+
+        .big-radio-label i {
+            display: block;
+            font-size: 60px;
+            padding-top: 20px;
+        }
+
+        .big-radio-title {
+            display: block;
+            padding: 20px 10px 10px;
+            font-weight: 500;
+            font-size: 120%;
+            line-height: 1.3em;
+        }
+
+        .big-radio-description {
+            display: block;
+            padding: 10px;
+        }

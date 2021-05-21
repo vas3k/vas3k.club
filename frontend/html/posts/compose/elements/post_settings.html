@@ -1,10 +1,28 @@
 {% if mode == "create" or form.instance.is_public or form.instance.comment_count < 10 or form.instance.published_at is None or me.is_moderator %}
-<div class="form-row form-row-checkbox">
-    {{ form.is_public }}
-    <label for="{{ form.is_public.id_for_label }}">Пост виден в Большой Интернет?</label>
-    <span class="form-row-help form-row-help-wide">
-        ☝️ Голосовать и комментировать могут только члены Клуба, но с этой галочкой пост будет доступен для чтения извне.
-        Ссылку на него можно будет пошарить с друзьями, в соцсетях и собрать больше просмотров.
-    </span>
+<div class="big-radio compose-visibility">
+    <div class="big-radio-item">
+        {{ form.is_public.0.tag }}
+        <label for="{{ form.is_public.0.id_for_label }}" class="big-radio-label">
+            <i class="fas fa-globe-americas"></i>
+            <span class="big-radio-title">{{ form.is_public.0.choice_label }}</span>
+            <span class="big-radio-description">
+                Пост виден снаружи, его можно пошарить в соцсеточки.
+                Такие посты развивают Клуб и чаще попадают в дайджесты.
+            </span>
+        </label>
+    </div>
+
+    <div class="big-radio-item">
+        {{ form.is_public.1.tag }}
+        <label for="{{ form.is_public.1.id_for_label }}" class="big-radio-label">
+            <i class="fas fa-lock"></i>
+            <span class="big-radio-title">{{ form.is_public.1.choice_label }}</span>
+            <span class="big-radio-description">
+                Пост для членов Клуба.
+                Для обсуждения чувствительных тем и организации внутренних движух.
+                Сменить тип потом нельзя.
+            </span>
+        </label>
+    </div>
 </div>
 {% endif %}

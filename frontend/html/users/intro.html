@@ -192,29 +192,29 @@
             </div>
 
             <div class="form-row">
-                <div class="user-edit-digest">
-                    <div class="user-edit-digest-item">
+                <div class="big-radio">
+                    <div class="big-radio-item">
                         {{ form.email_digest_type.1.tag }}
-                        <label for="{{ form.email_digest_type.1.id_for_label }}" class="user-edit-digest-label">
+                        <label for="{{ form.email_digest_type.1.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-envelope-open"></i>
-                            <span class="user-edit-digest-name">Ежедневные<br> обновления + журнал</span>
-                            <span class="user-edit-digest-description">Шлите мне всё!</span>
+                            <span class="big-radio-title">Ежедневные<br> обновления + журнал</span>
+                            <span class="big-radio-description">Шлите мне всё!</span>
                         </label>
                     </div>
-                    <div class="user-edit-digest-item">
+                    <div class="big-radio-item">
                         {{ form.email_digest_type.2.tag }}
-                        <label for="{{ form.email_digest_type.2.id_for_label }}" class="user-edit-digest-label">
+                        <label for="{{ form.email_digest_type.2.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-calendar-week"></i>
-                            <span class="user-edit-digest-name">Журнал раз в неделю</span>
-                            <span class="user-edit-digest-description">Подборка отборного контента за неделю</span>
+                            <span class="big-radio-title">Журнал раз в неделю</span>
+                            <span class="big-radio-description">Подборка отборного контента за неделю</span>
                         </label>
                     </div>
-                    <div class="user-edit-digest-item">
+                    <div class="big-radio-item">
                         {{ form.email_digest_type.0.tag }}
-                        <label for="{{ form.email_digest_type.0.id_for_label }}" class="user-edit-digest-label">
+                        <label for="{{ form.email_digest_type.0.id_for_label }}" class="big-radio-label">
                             <i class="fab fa-telegram"></i>
-                            <span class="user-edit-digest-name">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
-                            <span class="user-edit-digest-description">Не хочу никаких писем, сам подпишусь</span>
+                            <span class="big-radio-title">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
+                            <span class="big-radio-description">Не хочу никаких писем, сам подпишусь</span>
                         </label>
                     </div>
                 </div>
