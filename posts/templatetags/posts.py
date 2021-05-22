@@ -94,8 +94,8 @@ def can_upvote(user, post_or_comment):
 
 
 @register.filter
-def any_image(post, default="/static/images/share.png"):
-    return extract_any_image(post) or default
+def any_image(post):
+    return extract_any_image(post) or settings.OG_IMAGE_DEFAULT
 
 
 @register.simple_tag()
