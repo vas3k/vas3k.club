@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django import template
 from django.conf import settings
 from django.template import loader
@@ -94,3 +96,19 @@ def can_upvote(user, post_or_comment):
 @register.filter
 def any_image(post, default="/static/images/share.png"):
     return extract_any_image(post) or default
+
+
+@register.simple_tag()
+def og_image(post):
+    if not settings.OG_IMAGE_GENERATOR_URL:
+        return any_image(post)
+
+    params = urlencode({
+        **settings.OG_IMAGE_GENERATOR_DEFAULTS,
+        "title": f"{post.prefix} {post.title}" if post.prefix else post.title,
+        "author": post.author.slug,
+        "ava": post.author.get_avatar(),
+        "bg": extract_any_image(post) or "https://vas3k.club/static/images/white.png",  # TODO: use bg color
+    })
+
+    return f"{settings.OG_IMAGE_GENERATOR_URL}?{params}"

@@ -228,6 +228,14 @@ MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 
+OG_IMAGE_GENERATOR_URL = "https://og.vas3k.club/preview"
+OG_IMAGE_GENERATOR_DEFAULTS = {
+    "icon": "https://vas3k.club/static/images/logo/logo-white-256.png",
+    "op": 0.5,
+    "label_l": "Вастрик",
+    "label_r": "Клуб",
+}
+
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL")
 TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
