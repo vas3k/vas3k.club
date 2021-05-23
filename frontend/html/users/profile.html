@@ -97,7 +97,7 @@
                 <div class="profile-friend-button">
                     <friend-button
                         url="{% url "toggle_friend" user.slug %}"
-                        is-friend="{% if friend %}true{% else %}false{% endif %}">
+                        {% if friend %}is-friend-by-default{% endif %}>
                     </friend-button>
                 </div>
                 <div class="profile-friend-button-comment">
