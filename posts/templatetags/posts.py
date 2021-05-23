@@ -108,7 +108,7 @@ def og_image(post):
         "title": f"{post.prefix} {post.title}" if post.prefix else post.title,
         "author": post.author.slug,
         "ava": post.author.get_avatar(),
-        "bg": extract_any_image(post) or "https://vas3k.club/static/images/white.png",  # TODO: use bg color
+        "bg": extract_any_image(post) or "#FFFFFF"
     })
 
     return f"{settings.OG_IMAGE_GENERATOR_URL}?{params}"

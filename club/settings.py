@@ -231,10 +231,9 @@ IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 OG_IMAGE_GENERATOR_URL = "https://og.vas3k.club/preview"
 OG_IMAGE_DEFAULT = "https://vas3k.club/static/images/share.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
-    "icon": "https://vas3k.club/static/images/logo/logo-white-256.png",
-    "op": 0.5,
-    "label_l": "Вастрик",
-    "label_r": "Клуб",
+    "logo": "https://vas3k.club/static/images/logo/logo-white-256.png",
+    "op": 0.6,
+    "bg": "#FFFFFF",
 }
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
