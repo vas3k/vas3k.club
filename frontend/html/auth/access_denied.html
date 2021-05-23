@@ -12,15 +12,15 @@
     {% if post %}
         <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
         <meta property="og:site_name" content="{{ settings.APP_NAME }}">
-        <meta property="og:url" content="{{ settings.APP_HOST }}">
-        <meta property="og:type" content="website" />
+        <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
+        <meta property="og:type" content="article" />
         <meta property="og:description" content="{{ post.description | truncatechars:100 }}">
-        <meta property="og:image" content="{{ post | any_image }}">
+        <meta property="og:image" content="{% og_image post %}">
 
-        <meta name="twitter:card" content="summary">
+        <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
         <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
-        <meta name="twitter:image" content="{{ post | any_image }}">
+        <meta name="twitter:image" content="{% og_image post %}">
     {% endif %}
 {% endblock %}
 
