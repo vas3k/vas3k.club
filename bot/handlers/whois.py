@@ -17,14 +17,14 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         return None
 
     from_user = update.message.reply_to_message.from_user
-    if update.message.forward_date:
-        if not update.message.forward_from:
+    if update.message.reply_to_message.forward_date:
+        if not update.message.reply_to_message.forward_from:
             update.effective_chat.send_message(
-                f"🤨 Кажется, {update.message.forward_sender_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
+                f"🤨 Кажется, {update.message.reply_to_message.forward_sender_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
                 quote=True
             )
             return None
-        from_user = update.message.forward_from
+        from_user = update.message.reply_to_message.forward_from
 
     if from_user.is_bot:
         update.message.reply_text(
