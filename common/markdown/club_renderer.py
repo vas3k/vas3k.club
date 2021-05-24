@@ -64,7 +64,9 @@ class ClubRenderer(mistune.HTMLRenderer):
         video_tag = (
             f'<span class="ratio-16-9">'
             f'<iframe loading="lazy" src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1))}'
-            f'?autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080" frameborder="0"></iframe>'
+            f'?autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
+            f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"'
+            f'allowfullscreen></iframe>'
             f"</span>"
         )
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
