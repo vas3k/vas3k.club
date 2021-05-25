@@ -21,7 +21,7 @@ class PostForm(forms.ModelForm):
         label="Виден ли в большой интернет?",
         choices=((True, "Публичный пост"), (False, "Только для своих")),
         widget=forms.RadioSelect,
-        required=True
+        required=False
     )
 
     class Meta:
