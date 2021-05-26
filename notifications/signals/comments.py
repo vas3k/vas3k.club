@@ -52,7 +52,7 @@ def async_create_or_update_comment(comment):
         )
 
     # notify friends about top level comments
-    if not comment.reply_to:
+    if len(comment.text) >= settings.MIN_FRIEND_COMMENT_LENGTH and not comment.reply_to:
         friends = Friend.friends_for_user(comment.author)
         for friend in friends:
             if friend.user_from.telegram_id \

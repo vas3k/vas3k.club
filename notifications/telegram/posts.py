@@ -29,7 +29,7 @@ def announce_in_club_chats(post):
             chat=Chat(id=post.topic.chat_id),
             text=render_html_message("channel_post_announce.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
-            disable_preview=True,
+            disable_preview=False,
         )
     else:
         # announce to public chat
@@ -37,7 +37,7 @@ def announce_in_club_chats(post):
             chat=CLUB_CHAT,
             text=render_html_message("channel_post_announce.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
-            disable_preview=True,
+            disable_preview=False,
         )
 
 
