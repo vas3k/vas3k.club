@@ -262,11 +262,10 @@ RETRACT_VOTE_IN_HOURS = 3
 RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
 RATE_LIMIT_POSTS_PER_DAY = 10
 RATE_LIMIT_COMMENTS_PER_DAY = 200
-
-POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)
-POST_HOTNESS_PERIOD = timedelta(days=5)
-
-MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10
+POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
+POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
+MIN_FRIEND_COMMENT_LENGTH = 250  # notify comments only from a certain length
+MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \

@@ -45,14 +45,14 @@ def async_create_or_update_comment(comment):
             notified_user_ids.add(thread_author.id)
 
     # post top level comments to online channel
-    if not comment.reply_to:
+    if not comment.reply_to and comment.post.is_visible and comment.post.is_visible_on_main_page:
         send_telegram_message(
             chat=CLUB_ONLINE,
             text=render_html_message("comment_to_post_announce.html", comment=comment),
         )
 
     # notify friends about top level comments
-    if not comment.reply_to:
+    if len(comment.text) >= settings.MIN_FRIEND_COMMENT_LENGTH and not comment.reply_to:
         friends = Friend.friends_for_user(comment.author)
         for friend in friends:
             if friend.user_from.telegram_id \
