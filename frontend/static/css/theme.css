@@ -150,6 +150,10 @@ h1, h2, h3, h4, h5 {
     scroll-margin-top: 30px;
 }
 
+li {
+    margin-bottom: 0.8em;
+}
+
 h1 > a,
 h2 > a,
 h3 > a,

@@ -20,6 +20,10 @@
         margin: 0 auto;
     }
 
+    .content-description-left {
+        text-align: left;
+    }
+
     @media only screen and (max-width : 570px) {
         .content {
             padding-left: 10px;

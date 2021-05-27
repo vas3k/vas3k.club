@@ -18,14 +18,20 @@
             <div class="content-header">Ссылка</div>
         {% endif %}
 
-        {% if mode == "create" %}
-            <div class="content-description">
-                <p>
-                    Все любят ссылки. Приносите сюда всё, что показалось вам интересным.
-                    Говно, спам и теории заговора не приносите. Модераторы бдят и вычищают такие непотребства.
-                </p>
-            </div>
-        {% endif %}
+        <div class="content-description content-description-left">
+            <p>
+                Приносите сюда всё, что интересно показать или обсудить вместе!
+            </p>
+
+            <p>
+                🚨 Основные правила:
+            </p>
+
+            <ol>
+                <li><strong>Напишите развёрнутый TL;DR</strong> чтобы всем было понятно стоил ли кликать. Ссылки с описанием из одного предлождения будут удаляться</li>
+                <li><strong>Нельзя: новости, рекламу, политоту и срачи.</strong></li>
+            </ol>
+        </div>
 
         <div class="block compose-text">
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">
@@ -51,12 +57,6 @@
                     {{ form.text }}
                     {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
                     <span class="form-row-help form-row-help-wide">Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></span>
-
-                    <input-length-counter
-                        element="#{{ form.text.id_for_label }}"
-                        class="intro-form-counter"
-                        :min-length="{{ form.text.field.widget.attrs.minlength }}"
-                    />
                 </div>
 
                 {% include "posts/compose/elements/post_settings.html" %}
