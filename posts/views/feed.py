@@ -50,9 +50,9 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         else:
             posts = posts.exclude(is_shadow_banned=True)
 
-    # no type and topic? probably it's the main page, let's apply some more filters
-    if not topic and post_type == POST_TYPE_ALL:
-        posts = posts.filter(is_visible_on_main_page=True)
+    # hide no-feed posts
+    if not topic:
+        posts = posts.filter(is_visible_in_feeds=True)
 
     # order posts by some metric
     if ordering:

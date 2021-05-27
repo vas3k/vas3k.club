@@ -30,9 +30,9 @@ class PostForm(forms.ModelForm):
     def clean_topic(self):
         topic = self.cleaned_data["topic"]
 
-        if topic and not topic.is_visible_on_main_page:
+        if topic and not topic.is_visible_in_feeds:
             # topic settings are more important
-            self.instance.is_visible_on_main_page = False
+            self.instance.is_visible_in_feeds = False
 
         return topic
 

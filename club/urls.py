@@ -19,7 +19,7 @@ from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
 from posts.rss import NewPostsRss
 from posts.sitemaps import sitemaps
-from posts.views.admin import admin_post, announce_post
+from posts.views.admin import admin_post, announce_post, curate_post
 from posts.views.api import toggle_post_bookmark
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
@@ -96,6 +96,7 @@ urlpatterns = [
     path("post/<slug:post_slug>/retract_vote/", retract_post_vote, name="retract_post_vote"),
     path("post/<slug:post_slug>/subscription/", toggle_post_subscription, name="toggle_post_subscription"),
     path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
+    path("post/<slug:post_slug>/curate/", curate_post, name="curate_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment", ),
