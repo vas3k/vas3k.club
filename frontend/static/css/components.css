@@ -573,6 +573,7 @@
 
             .feed-sidebar-list li {
                 padding-bottom: 15px;
+                margin-bottom: 0;
             }
 
         .feed-sidebar-menu {
