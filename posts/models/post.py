@@ -74,6 +74,7 @@ class Post(models.Model, ModelDiffMixin):
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
     label = models.JSONField(null=True)
+    label_code = models.CharField(max_length=16, null=True, db_index=True)
 
     title = models.TextField(null=False)
     text = models.TextField(null=False)
@@ -87,7 +88,7 @@ class Post(models.Model, ModelDiffMixin):
     updated_at = models.DateTimeField(auto_now=True)
     last_activity_at = models.DateTimeField(auto_now_add=True, db_index=True)
     published_at = models.DateTimeField(null=True, db_index=True)
-    deleted_at = models.DateTimeField(null=True, db_index=True)
+    deleted_at = models.DateTimeField(null=True)
 
     comment_count = models.IntegerField(default=0)
     view_count = models.IntegerField(default=0)

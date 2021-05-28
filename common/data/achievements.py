@@ -13,9 +13,9 @@ ACHIEVEMENTS = [
     }),
     ("parliament_member", {
         "name": "Член Парламента",
-        "description": "Входит в Парламент Клуба, может непосредственно влиять на решения и содержание главной",
+        "description": "Входит в Парламент Клуба, может влиять на новые решения, фичи и содержание главной",
         "image": "https://i.vas3k.club/2582c2df41eb67114307e22ffee862fe923ab1843ce47781aee577cc3f2abb5f.jpg",
-        "style": "background-color: #000000;",
+        "style": "background-color: #000000; font-size: 130%;",
     }),
     ("contributor", {
         "name": "Контри-бьютор",

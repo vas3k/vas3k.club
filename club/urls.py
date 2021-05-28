@@ -106,6 +106,8 @@ urlpatterns = [
     path("search/", search, name="search"),
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
     path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
+    path("label/<slug:label_code>/", feed, name="feed_label"),
+    path("label/<slug:label_code>/<slug:ordering>/", feed, name="feed_label_ordering"),
 
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
     path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),

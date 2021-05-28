@@ -11,50 +11,7 @@ def do_post_admin_actions(request, post, data):
     if not request.me.is_moderator:
         raise AccessDenied()
 
-    # Change type
-    if data["change_type"]:
-        post.type = data["change_type"]
-        post.save()
-
-    # Labels
-    if data["new_label"]:
-        label = LABELS.get(data["new_label"])
-        if label:
-            post.label = {"code": data["new_label"], **label}
-            post.save()
-
-    if data["remove_label"]:
-        post.label = None
-        post.save()
-
-    # Pins
-    if data["add_pin"]:
-        post.is_pinned_until = datetime.utcnow() + timedelta(days=data["pin_days"])
-        post.save()
-
-    if data["remove_pin"]:
-        post.is_pinned_until = None
-        post.save()
-
-    # Moving up
-    if data["move_up"]:
-        post.last_activity_at = datetime.utcnow()
-        post.save()
-
-    # Moving down
-    if data["move_down"]:
-        post.last_activity_at -= timedelta(days=3)
-        post.save()
-
-    # Shadow banning
-    if data["shadow_ban"]:
-        post.is_shadow_banned = True
-        post.save()
-
-    # Hide from feeds
-    if data["hide_from_feeds"]:
-        post.is_visible_in_feeds = False
-        post.save()
+    do_common_admin_and_curator_actions(request, post, data)
 
     # Close comments
     if data["close_comments"]:
@@ -75,6 +32,12 @@ def do_post_curator_actions(request, post, data):
     if not request.me.is_curator:
         raise AccessDenied()
 
+    do_common_admin_and_curator_actions(request, post, data)
+
+    return redirect("show_post", post.type, post.slug)
+
+
+def do_common_admin_and_curator_actions(request, post, data):
     # Change type
     if data["change_type"]:
         post.type = data["change_type"]
@@ -84,10 +47,12 @@ def do_post_curator_actions(request, post, data):
     if data["new_label"]:
         label = LABELS.get(data["new_label"])
         if label:
+            post.label_code = data["new_label"]
             post.label = {"code": data["new_label"], **label}
             post.save()
 
     if data["remove_label"]:
+        post.label_code = None
         post.label = None
         post.save()
 
@@ -119,5 +84,3 @@ def do_post_curator_actions(request, post, data):
     if data["hide_from_feeds"]:
         post.is_visible_in_feeds = False
         post.save()
-
-    return redirect("show_post", post.type, post.slug)

@@ -42,7 +42,9 @@
 
                 {% if post.image %}
                     <div class="post-image">
-                        <img src="{{ post.image }}" alt="{{ post.title }}">
+                        <a href="{{ post.url }}" target="_blank" rel="noopener">
+                            <img src="{{ post.image }}" alt="{{ post.title }}">
+                        </a>
                     </div>
                 {% endif %}
             </div>
