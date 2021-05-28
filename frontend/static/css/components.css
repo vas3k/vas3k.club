@@ -185,20 +185,21 @@
     padding: 0 0.5em;
 }
 
-    .hat-icon {
+    .hat > * {
         display: inline-block;
+        vertical-align: middle;
+    }
+
+    .hat-icon {
         line-height: 1em;
         color: #FFFFFF;
     }
 
     .hat-icon img {
-        width: 100%;
-        height: 100%;
         object-fit: cover;
     }
 
     .hat-title {
-        display: inline-block;
         color: #FFFFFF;
         font-weight: 500;
         line-height: 1.6em;
