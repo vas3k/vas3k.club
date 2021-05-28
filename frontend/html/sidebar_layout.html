@@ -30,13 +30,13 @@
 
             <ul class="feed-sidebar-list feed-sidebar-menu feed-sidebar-menu-small">
                 <li>
-                    <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
-                        🤔 Вопросы Клубу
+                    <a href="{% url "feed_type" "post" %}" class="{% if post_type == "post" %}feed-sidebar-menu-selected{% endif %}">
+                        📝 Посты
                     </a>
                 </li>
                 <li>
-                    <a href="{% url "feed_type" "idea" %}" class="{% if post_type == "idea" %}feed-sidebar-menu-selected{% endif %}">
-                        💡 Идеи
+                    <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
+                        🤔 Вопросы
                     </a>
                 </li>
                 <li>
@@ -45,8 +45,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url "feed_type" "post" %}" class="{% if post_type == "post" %}feed-sidebar-menu-selected{% endif %}">
-                        📝 Посты
+                    <a href="{% url "feed_type" "idea" %}" class="{% if post_type == "idea" %}feed-sidebar-menu-selected{% endif %}">
+                        💡 Идеи
                     </a>
                 </li>
                 <li>

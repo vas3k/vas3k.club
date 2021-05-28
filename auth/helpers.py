@@ -111,6 +111,19 @@ def moderator_role_required(view):
     return wrapper
 
 
+def curator_role_required(view):
+    def wrapper(request, *args, **kwargs):
+        if not request.me:
+            return redirect("login")
+
+        if not request.me.is_curator:
+            raise AccessDenied()
+
+        return view(request, *args, **kwargs)
+
+    return wrapper
+
+
 def api_required(view):
     def wrapper(request, *args, **kwargs):
         if not request.me:

@@ -30,9 +30,9 @@ class PostForm(forms.ModelForm):
     def clean_topic(self):
         topic = self.cleaned_data["topic"]
 
-        if topic and not topic.is_visible_on_main_page:
+        if topic and not topic.is_visible_in_feeds:
             # topic settings are more important
-            self.instance.is_visible_on_main_page = False
+            self.instance.is_visible_in_feeds = False
 
         return topic
 
@@ -78,7 +78,6 @@ class PostLinkForm(PostForm):
         label="TL;DR",
         required=True,
         max_length=50000,
-        min_length=350,
         widget=forms.Textarea(
             attrs={
                 "minlength": 350,
@@ -87,7 +86,8 @@ class PostLinkForm(PostForm):
                 "data-listen": "keyup",
                 "placeholder": "Напишите TL;DR чтобы сэкономить другим время."
                                "\n\nКоротко расскажите о чем ссылка, перечислите основные моменты, "
-                               "которые вас зацепили, и почему каждый из нас должен пойти её прочитать.",
+                               "которые вас зацепили, и почему каждый из нас должен пойти её прочитать."
+                               "\n\nЕсли тема подразумевает дискуссию — задайте пару вопросов от себя.",
             }
         ),
     )

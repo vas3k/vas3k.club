@@ -19,7 +19,7 @@ class Topic(models.Model):
     last_activity_at = models.DateTimeField(auto_now_add=True, null=False)
 
     is_visible = models.BooleanField(default=True)
-    is_visible_on_main_page = models.BooleanField(default=True)
+    is_visible_in_feeds = models.BooleanField(default=True)
 
     class Meta:
         db_table = "topics"

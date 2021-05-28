@@ -95,12 +95,12 @@ class Post(models.Model, ModelDiffMixin):
     hotness = models.IntegerField(default=0, db_index=True)
 
     is_visible = models.BooleanField(default=False)  # published or draft
-    is_visible_on_main_page = models.BooleanField(default=True)  # main page or room-only post
+    is_visible_in_feeds = models.BooleanField(default=True)  # hide post from main feeds (still visible in rooms)
     is_commentable = models.BooleanField(default=True)  # allow comments
-    is_approved_by_moderator = models.BooleanField(default=False)  # expose in newsletters, rss, etc
-    is_public = models.BooleanField(default=False)  # visible for the outside world
-    is_pinned_until = models.DateTimeField(null=True)  # pin on top of the main feed
-    is_shadow_banned = models.BooleanField(default=False)  # hide from main page
+    is_approved_by_moderator = models.BooleanField(default=False)  # post is exposed in newsletters, rss, etc
+    is_public = models.BooleanField(default=False)  # post is visible for the outside world
+    is_pinned_until = models.DateTimeField(null=True)  # pin on top on the main page
+    is_shadow_banned = models.BooleanField(default=False)  # hide from feeds but not for author
 
     history = HistoricalRecords(
         user_model=User,

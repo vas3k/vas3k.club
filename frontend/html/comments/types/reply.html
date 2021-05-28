@@ -20,7 +20,13 @@
             {{ comment.created_at | cool_date }}
         </a>
 
-        {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
+        {% if comment.author == post.author %}
+            {% include "users/widgets/hat_author.html" %}
+        {% endif %}
+
+        {% if comment.author.hat %}
+            {% include "users/widgets/hat.html" with hat=comment.author.hat %}
+        {% endif %}
     </div>
     <div class="reply-rating">
         <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
