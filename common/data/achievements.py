@@ -11,18 +11,17 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/3a1.png",
         "style": "background-color: #FFBE00;",
     }),
+    ("parliament_member", {
+        "name": "Член Парламента",
+        "description": "Входит в Парламент Клуба, может влиять на новые решения, фичи и содержание главной",
+        "image": "https://i.vas3k.club/2582c2df41eb67114307e22ffee862fe923ab1843ce47781aee577cc3f2abb5f.jpg",
+        "style": "background-color: #000000; font-size: 130%;",
+    }),
     ("contributor", {
         "name": "Контри-бьютор",
         "description": "За значительный вклад в разработку Клуба",
         "image": "https://i.vas3k.club/3ah.png",
         "style": "background-color: #205072;",
-    }),
-    ("team", {
-        "name": "Команда Клуба",
-        "description": "Входит в команду модераторов, кураторов контента или других людей, "
-                       "следящих чтобы Клуб жил и процветал",
-        "image": "https://i.vas3k.club/3bb.png",
-        "style": "background-color: #FE676E;",
     }),
     ("oscar", {
         "name": "Оскар за посты",

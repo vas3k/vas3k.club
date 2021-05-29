@@ -18,11 +18,11 @@
         position: relative;
     }
 
-    .post-date {
+    .post-actions-line {
         opacity: 0.6;
     }
 
-        .post-date a {
+        .post-actions-line a {
             display: inline-block;
             text-decoration: none;
         }
@@ -83,7 +83,7 @@
             padding-bottom: 20px;
         }
 
-        .post-type-post .post-date {
+        .post-type-post .post-actions-line {
             display: block;
             padding-bottom: 20px;
         }
@@ -534,7 +534,7 @@
 .battle-title-main{
 }
 
-    .battle-title-main .post-date {
+    .battle-title-main .post-actions-line {
         text-align: center;
     }
 

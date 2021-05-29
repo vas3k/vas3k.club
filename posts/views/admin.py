@@ -1,12 +1,31 @@
 from django.shortcuts import get_object_or_404, render
 
-from auth.helpers import auth_required, moderator_role_required
+from auth.helpers import auth_required, moderator_role_required, curator_role_required
 from notifications.telegram.common import render_html_message
 from notifications.telegram.posts import announce_in_club_channel
-from posts.admin import do_post_admin_actions
-from posts.forms.admin import PostAdminForm, PostAnnounceForm
+from posts.admin import do_post_admin_actions, do_post_curator_actions
+from posts.forms.admin import PostAdminForm, PostAnnounceForm, PostCuratorForm
 from posts.helpers import extract_any_image
 from posts.models.post import Post
+
+
+@auth_required
+@curator_role_required
+def curate_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+
+    if request.method == "POST":
+        form = PostCuratorForm(request.POST)
+        if form.is_valid():
+            return do_post_curator_actions(request, post, form.cleaned_data)
+    else:
+        form = PostCuratorForm()
+
+    return render(request, "admin/simple_form.html", {
+        "title": "Курирование поста",
+        "post": post,
+        "form": form
+    })
 
 
 @auth_required

@@ -1,6 +1,12 @@
 <span class="hat" style="background-color: {{ hat.color }};">
     {% if hat.icon %}
-        <span class="hat-icon"><img src="{{ hat.icon }}" alt="Иконка шляпы {{ hat.title }}" loading="lazy" /></span>
+        <span class="hat-icon">
+            {% if "http" in hat.icon %}
+                <img src="{{ hat.icon }}" alt="Иконка шляпы {{ hat.title }}" loading="lazy" />
+            {% else %}
+                {{ hat.icon }}
+            {% endif %}
+        </span>
     {% endif %}
     <span class="hat-title">{{ hat.title }}</span>
 </span>

@@ -9,7 +9,6 @@
     <div class="comment-header">
         <span class="comment-header-author">
             <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a>
-            {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
             на пост <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-post">{{ comment.post.title }}</a>
         </span>
 

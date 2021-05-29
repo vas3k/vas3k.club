@@ -11,6 +11,33 @@ def do_post_admin_actions(request, post, data):
     if not request.me.is_moderator:
         raise AccessDenied()
 
+    do_common_admin_and_curator_actions(request, post, data)
+
+    # Close comments
+    if data["close_comments"]:
+        post.is_commentable = False
+        post.save()
+
+    # Transfer ownership to the given username
+    if data["transfer_ownership"]:
+        user = User.objects.filter(slug=data["transfer_ownership"].strip()).first()
+        if user:
+            post.author = user
+            post.save()
+
+    return redirect("show_post", post.type, post.slug)
+
+
+def do_post_curator_actions(request, post, data):
+    if not request.me.is_curator:
+        raise AccessDenied()
+
+    do_common_admin_and_curator_actions(request, post, data)
+
+    return redirect("show_post", post.type, post.slug)
+
+
+def do_common_admin_and_curator_actions(request, post, data):
     # Change type
     if data["change_type"]:
         post.type = data["change_type"]
@@ -20,10 +47,12 @@ def do_post_admin_actions(request, post, data):
     if data["new_label"]:
         label = LABELS.get(data["new_label"])
         if label:
+            post.label_code = data["new_label"]
             post.label = {"code": data["new_label"], **label}
             post.save()
 
     if data["remove_label"]:
+        post.label_code = None
         post.label = None
         post.save()
 
@@ -41,26 +70,17 @@ def do_post_admin_actions(request, post, data):
         post.last_activity_at = datetime.utcnow()
         post.save()
 
+    # Moving down
+    if data["move_down"]:
+        post.last_activity_at -= timedelta(days=3)
+        post.save()
+
     # Shadow banning
     if data["shadow_ban"]:
         post.is_shadow_banned = True
         post.save()
 
-    # Hide from main page
-    if data["hide_on_main"]:
-        post.is_visible_on_main_page = False
+    # Hide from feeds
+    if data["hide_from_feeds"]:
+        post.is_visible_in_feeds = False
         post.save()
-
-    # Close comments
-    if data["close_comments"]:
-        post.is_commentable = False
-        post.save()
-
-    # Transfer ownership to the given username
-    if data["transfer_ownership"]:
-        user = User.objects.filter(slug=data["transfer_ownership"].strip()).first()
-        if user:
-            post.author = user
-            post.save()
-
-    return redirect("show_post", post.type, post.slug)

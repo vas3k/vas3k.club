@@ -1,7 +1,7 @@
 HATS = {
-    "moderator": {
-        "title": "Модератор",
-        "icon": None,
+    "team": {
+        "title": "Команда Клуба",
+        "icon": "✖",
         "color": "#000000"
     }
 }

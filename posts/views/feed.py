@@ -20,7 +20,7 @@ ORDERING_TOP_MONTH = "top_month"
 
 
 @auth_required
-def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_ACTIVITY):
+def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
     post_type = post_type or Post
 
     if request.me:
@@ -39,6 +39,10 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         topic = get_object_or_404(Topic, slug=topic_slug)
         posts = posts.filter(topic=topic)
 
+    # filter by label
+    if label_code:
+        posts = posts.filter(label_code=label_code)
+
     # hide non-public posts and intros from unauthorized users
     if not request.me:
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
@@ -50,9 +54,9 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         else:
             posts = posts.exclude(is_shadow_banned=True)
 
-    # no type and topic? probably it's the main page, let's apply some more filters
-    if not topic and post_type == POST_TYPE_ALL:
-        posts = posts.filter(is_visible_on_main_page=True)
+    # hide no-feed posts (show only inside rooms and topics)
+    if not topic and not label_code:
+        posts = posts.filter(is_visible_in_feeds=True)
 
     # order posts by some metric
     if ordering:
@@ -85,6 +89,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         "post_type": post_type or POST_TYPE_ALL,
         "ordering": ordering,
         "topic": topic,
+        "label_code": label_code,
         "posts": paginate(request, posts),
         "pinned_posts": pinned_posts,
         "date_month_ago": datetime.utcnow() - timedelta(days=30),
