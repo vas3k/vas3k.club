@@ -180,6 +180,7 @@ def daily_digest(request, user_slug):
     posts = Post.visible_objects()\
         .filter(**published_at_condition)\
         .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(is_visible_in_feeds=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")[:100]
@@ -239,6 +240,7 @@ def weekly_digest(request):
     posts = Post.visible_objects()\
         .filter(**published_at_condition)\
         .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(is_visible_in_feeds=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
         .exclude(label__isnull=False, label__code="ad")\
@@ -272,6 +274,7 @@ def weekly_digest(request):
         .filter(is_deleted=False)\
         .exclude(post__type=Post.TYPE_BATTLE)\
         .exclude(post__is_visible=False)\
+        .exclude(post__is_visible_in_feeds=False)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
