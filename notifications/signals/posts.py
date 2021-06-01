@@ -1,5 +1,4 @@
 import telegram
-from datetime import date
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -79,9 +78,8 @@ def async_create_or_update_post(post, is_created):
             if friend.user_from.telegram_id \
                     and friend.is_subscribed_to_posts \
                     and friend.user_from.id not in notified_user_ids:
-                is_wednesday = date.today().weekday() == 2
                 send_telegram_message(
                     chat=Chat(id=friend.user_from.telegram_id),
-                    text=render_html_message("friend_post.html", post=post, is_wednesday=is_wednesday),
+                    text=render_html_message("friend_post.html", post=post),
                 )
                 notified_user_ids.add(friend.user_from.id)
