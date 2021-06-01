@@ -1,2 +1,2 @@
-💬 <b>Ваш друг {{ comment.author.full_name }} оставил коммент к посту «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b>
+💬 <b>Ваш {% if is_wednesday %}чувак{% else %}друг{% endif %} {{ comment.author.full_name }} оставил коммент к посту «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b>
 {% load posts %}<b>{{ comment.author.slug }}:</b> {% render_plain comment %}
