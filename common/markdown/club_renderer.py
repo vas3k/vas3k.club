@@ -1,4 +1,6 @@
+import html
 import mistune
+from urllib.parse import unquote
 from mistune import escape_html
 from slugify import slugify
 
@@ -26,8 +28,15 @@ class ClubRenderer(mistune.HTMLRenderer):
             embed = self.embed(link, text or "", title or "")
             if embed:
                 return embed
+        # the code below is mostly copy-paste from mistune's implementation
+        # with a small magic of unescape->unquote->escape
+        if text is None:
+            text = link
 
-        return super().link(link, text, title)
+        s = '<a href="' + self._safe_url(link) + '"'
+        if title:
+            s += ' title="' + escape_html(title) + '"'
+        return s + '>' + html.escape(unquote(html.unescape(text or link))) + '</a>'
 
     def image(self, src, alt="", title=None):
         embed = self.embed(src, alt, title)
