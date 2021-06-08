@@ -20,7 +20,7 @@ class PostForm(forms.ModelForm):
     is_public = forms.ChoiceField(
         label="Виден ли в большой интернет?",
         choices=((True, "Публичный пост"), (False, "Только для своих")),
-        widget=forms.RadioSelect,
+        widget=forms.RadioSelect(attrs={"required": "required"}),
         required=False
     )
 
@@ -119,7 +119,7 @@ class PostQuestionForm(PostForm):
         label="Заголовок",
         required=True,
         max_length=128,
-        widget=forms.TextInput(attrs={"placeholder": "Вопрос коротко 🤔"}),
+        widget=forms.TextInput(attrs={"placeholder": "Вопрос кратко и четко 🤔"}),
     )
     text = forms.CharField(
         label="Развернутая версия",

@@ -1,25 +1,20 @@
 {% load text_filters %}
-<div class="block post-metadata post-metadata-type-link">
-    <div class="post-metadata-title">
-        🤖 Саммари от Глупой Бездушной Машины
-    </div>
-
+<div class="block post-link post-metadata-type-link">
     {% if embed %}
         {{ embed | safe }}
     {% else %}
+        <a href="{{ post.url }}" target="_blank" rel="noopener" class="post-link-a">
+            {% if post.metadata.image %}
+                <img src="{{ post.metadata.image }}" alt="{{ post.title }}" class="post-link-image">
+            {% endif %}
 
-        {% if post.metadata.image %}
-            <a href="{{ post.url }}" target="_blank" rel="noopener">
-                <img src="{{ post.metadata.image }}" alt="{{ post.title }}">
-            </a>
-        {% endif %}
+            <span class="post-link-title">
+                {{  post.metadata.title }}
+            </span>
 
-        <h3>
-            <a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.metadata.title }}</a>
-        </h3>
-
-        <p>
-            {{ post.metadata.summary | nl_to_p }}
-        </p>
+            <span class="post-link-url">
+                {{ post.metadata.url|truncatechars:"80" }}
+            </span>
+        </a>
     {% endif %}
 </div>

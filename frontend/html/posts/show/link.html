@@ -22,8 +22,8 @@
             <header class="post-header">
                 <div class="post-title">
                     {% link_icon post %}
-
-                    &rarr; <a href="{{ post.url }}" target="_blank" class="p-name" rel="noopener">{{ post.title | rutypography }}</a>
+                    &rarr;
+                    <span class="p-name">{{ post.title | rutypography }}</span>
 
                     <span class="post-is-public">
                         {% if post.is_public %}
@@ -59,16 +59,18 @@
                 </div>
             </header>
             <section class="text-body text-body-type-post e-content">
+                {% if post.metadata %}
+                    {% link_summary post %}
+                {% else %}
+                    &rarr;&nbsp;<a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.url }}</a>
+                {% endif %}
+
                 {% render_post post %}
             </section>
             <footer class="post-footer p-author">
                 {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
             </footer>
         </article>
-
-        {% if post.metadata %}
-            {% link_summary post %}
-        {% endif %}
     </section>
     {% if linked_posts %}
         {% include "posts/widgets/linked_posts.html" %}

@@ -1,4 +1,3 @@
-import io
 import logging
 from collections import namedtuple
 from typing import Optional
@@ -43,7 +42,7 @@ def parse_url_preview(url: str) -> Optional[ParsedURL]:
         domain=urlparse(canonical_url).netloc,
         title=strip_tags(article.title),
         favicon=strip_tags(urljoin(article.url, article.meta_favicon)),
-        summary=strip_tags(article.summary),
+        summary="",
         image=article.top_image,
     )
 
@@ -86,6 +85,7 @@ def load_page_safe(url: str) -> str:
     # https://stackoverflow.com/a/23514616
     return response.raw.read(MAX_PARSABLE_CONTENT_LENGTH, decode_content=True)
 
+
 def load_and_parse_full_article_text_and_image(url: str) -> Article:
     config = Config()
     config.MAX_SUMMARY_SENT = 8
@@ -93,6 +93,5 @@ def load_and_parse_full_article_text_and_image(url: str) -> Article:
     article = Article(url, config=config)
     article.set_html(load_page_safe(url))  # safer than article.download()
     article.parse()
-    article.nlp()
 
     return article

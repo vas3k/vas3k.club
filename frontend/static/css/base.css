@@ -711,8 +711,8 @@ img.emoji {
 
     .big-radio-item {
         display: block;
-        position: relative;
         cursor: pointer;
+        position: relative;
         width: 50%;
         max-width: 220px;
         min-height: 250px;
@@ -720,6 +720,10 @@ img.emoji {
 
     .big-radio-label {
         display: block;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         margin: 10px;

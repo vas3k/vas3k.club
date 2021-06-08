@@ -235,7 +235,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.html = None  # flush cache
         post.save()
 
-        if mode == "create":
+        if mode == "create" or not post.is_visible:
             PostSubscription.subscribe(request.me, post)
 
         if post.is_visible:
@@ -248,6 +248,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         action = request.POST.get("action")
         if action == "publish":
             post.publish()
+            LinkedPost.create_links_from_text(post, post.text)
 
         if post.is_visible or action == "preview":
             return redirect("show_post", post.type, post.slug)

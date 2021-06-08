@@ -22,12 +22,6 @@ CUSTOM_PARSERS = {
             "src": YOUTUBE_RE.match(post.url).group(1) if YOUTUBE_RE.match(post.url) else None
         }
     },
-    "github.com": {
-        "template": loader.get_template("posts/embeds/github.html"),
-        "data": lambda post: {
-            "metadata": post.metadata
-        }
-    },
     "www.patreon.com": {
         "do_not_parse": True
     },
