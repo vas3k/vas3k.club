@@ -23,7 +23,7 @@ class PostSubscription(models.Model):
 
     @classmethod
     def subscribe(cls, user, post):
-        return cls.objects.create(user=user, post=post)
+        return cls.objects.get_or_create(user=user, post=post)
 
     @classmethod
     def post_subscribers(cls, post):
