@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from club.exceptions import RateLimitException, InvalidCode
@@ -12,10 +13,10 @@ from utils.strings import random_string, random_number
 class Apps(models.Model):
     id = models.CharField(max_length=16, primary_key=True)
     name = models.CharField(max_length=64, unique=True)
-    jwt_secret = models.CharField(max_length=256, unique=True)
+    jwt_secret = models.TextField()
     jwt_algorithm = models.CharField(max_length=16)
     jwt_expire_hours = models.IntegerField(default=240)
-    redirect_urls = models.TextField()
+    redirect_urls = ArrayField(models.CharField(max_length=256), default=list, null=False)
 
     class Meta:
         db_table = "apps"
