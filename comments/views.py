@@ -99,9 +99,10 @@ def edit_comment(request, comment_id):
             raise AccessDenied()
 
         if not comment.is_editable:
+            hours = int(settings.COMMENT_EDITABLE_TIMEDELTA.total_seconds() // 3600)
             raise AccessDenied(
                 title="Время вышло",
-                message="Комментарий можно редактировать только в первые 3 часа после создания"
+                message=f"Комментарий можно редактировать только в течение {hours} часов после создания"
             )
 
         if not comment.post.is_visible or not comment.post.is_commentable:
