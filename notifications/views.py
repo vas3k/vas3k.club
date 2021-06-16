@@ -322,7 +322,7 @@ def link_telegram(request):
             return render(request, "error.html", {
                 "title": "Что-то пошло не так",
                 "message": "Попробуйте авторизоваться снова.",
-            })
+            }, status=400)
 
         if not is_valid_telegram_data(data, settings.TELEGRAM_TOKEN):
             raise AccessDenied(title="Подпись сообщения не совпадает")

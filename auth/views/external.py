@@ -12,7 +12,7 @@ from auth.models import Apps
 def external_login(request):
     goto = request.GET.get("redirect")
     if not goto:
-        return render(request, "error.html", {"message": "Нужен параметр ?redirect"})
+        return render(request, "error.html", {"message": "Нужен параметр ?redirect"}, status=400)
 
     # check if user is logged in or redirect to login screen
     me = authorized_user(request)
@@ -26,7 +26,8 @@ def external_login(request):
     if not app:
         return render(
             request, "error.html",
-            {"message": "Неизвестное приложение, проверьте параметр ?app_id"}
+            {"message": "Неизвестное приложение, проверьте параметр ?app_id"},
+            status=400
         )
 
     # check if redirect_url is in the list of allowed urls
@@ -35,7 +36,8 @@ def external_login(request):
     if goto_path_without_params not in app.redirect_urls:
         return render(
             request, "error.html",
-            {"message": f"'{goto}' не находится в списке разрешеных redirect_urls для этого приложения"}
+            {"message": f"'{goto}' не находится в списке разрешеных redirect_urls для этого приложения"},
+            status=400
         )
 
     # TODO: show "authorize" window and ask for user's consent here

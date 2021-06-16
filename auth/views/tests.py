@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
-from auth.models import Code
+from auth.models import Code, Apps
 from auth.providers.common import Membership, Platform
 from auth.exceptions import PatreonException
 from debug.helpers import HelperClient, JWT_STUB_VALUES
@@ -264,6 +264,15 @@ class ViewExternalLoginTests(TestCase):
             slug="ujlbu4"
         )
 
+        cls.app: Apps = Apps.objects.create(
+            id="test",
+            name="test",
+            jwt_secret=JWT_STUB_VALUES.JWT_PRIVATE_KEY,
+            jwt_algorithm="RS256",
+            jwt_expire_hours=1,
+            redirect_urls=["https://some-page"],
+        )
+
     def setUp(self):
         self.client = HelperClient()
 
@@ -273,12 +282,17 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        with self.settings(JWT_PRIVATE_KEY=JWT_STUB_VALUES.JWT_PRIVATE_KEY):
-            response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+        response = self.client.get(
+            reverse('external_login'),
+            data={
+                'redirect': 'https://some-page',
+                'app_id': 'test'
+            }
+        )
 
         # then
         self.assertRegex(text=urljoin(response.request['PATH_INFO'], response.url),
-                         expected_regex='\/auth\/external\/some-page\?jwt=.*')
+                         expected_regex='https://some-page\?jwt=.*')
 
         # check jwt
         url_params = response.url.split("?")[1]
@@ -295,19 +309,32 @@ class ViewExternalLoginTests(TestCase):
         self.client.authorise()
 
         # when
-        with self.settings(JWT_PRIVATE_KEY=JWT_STUB_VALUES.JWT_PRIVATE_KEY):
-            response = self.client.get(reverse('external_login'), data={'redirect': 'some-page?param1=value1'})
+        response = self.client.get(
+            reverse('external_login'),
+            data={
+                'redirect': 'https://some-page?param1=value1',
+                'app_id': 'test'
+            }
+        )
 
         # then
         self.assertRegex(text=urljoin(response.request['PATH_INFO'], response.url),
-                         expected_regex='\/auth\/external\/some-page\?param1=value1&jwt=.*')
+                         expected_regex='https://some-page\?param1=value1&jwt=.*')
+
+    def test_param_wrong_app_id(self):
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
+        response = self.client.get(reverse('external_login'), data={'app_id': 'UNKNOWN', 'redirect': 'https://some-page'})
+        self.assertContains(response=response, text="Неизвестное приложение, проверьте параметр ?app_id", status_code=400)
 
     def test_param_redirect_absent(self):
-        response = self.client.get(reverse('external_login'))
-        self.assertContains(response=response, text="Нужен параметр ?redirect", status_code=200)
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
+        response = self.client.get(reverse('external_login'), data={'app_id': 'test'})
+        self.assertContains(response=response, text="Нужен параметр ?redirect", status_code=400)
 
     def test_user_is_unauthorised(self):
-        response = self.client.get(reverse('external_login'), data={'redirect': 'some-page'})
+        response = self.client.get(reverse('external_login'), data={'redirect': 'some-page', 'app_id': 'test'})
         self.assertRedirects(response=response,
                              expected_url='/auth/login/?goto=%2Fauth%2Fexternal%2F%3Fredirect%3Dsome-page',
                              fetch_redirect_response=False)

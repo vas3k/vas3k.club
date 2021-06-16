@@ -12,7 +12,7 @@ from posts.models.post import Post
 
 log = logging.getLogger(__name__)
 
-MIN_COMMENT_LEN = 200
+MIN_COMMENT_LEN = 140
 
 
 def comment(update: Update, context: CallbackContext) -> None:

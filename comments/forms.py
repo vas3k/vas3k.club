@@ -8,10 +8,10 @@ class CommentForm(forms.ModelForm):
     text = forms.CharField(
         label="Текст комментария",
         required=True,
-        max_length=10000,
+        max_length=20000,
         widget=forms.Textarea(
             attrs={
-                "maxlength": 10000,
+                "maxlength": 20000,
                 "placeholder": "Напишите комментарий...",
                 "class": "markdown-editor-invisible",
             }
@@ -27,10 +27,10 @@ class ReplyForm(forms.ModelForm):
     text = forms.CharField(
         label="Ответ",
         required=True,
-        max_length=10000,
+        max_length=20000,
         widget=forms.Textarea(
             attrs={
-                "maxlength": 10000,
+                "maxlength": 20000,
                 "placeholder": "Напишите ответ...",
                 "class": "markdown-editor-invisible",
             }
@@ -74,10 +74,10 @@ class BattleCommentForm(forms.ModelForm):
     text = forms.CharField(
         label="Развернутая мысль",
         required=True,
-        max_length=10000,
+        max_length=20000,
         widget=forms.Textarea(
             attrs={
-                "maxlength": 10000,
+                "maxlength": 20000,
                 "placeholder": "Развернутый ответ...",
                 "class": "markdown-editor-invisible",
             }
