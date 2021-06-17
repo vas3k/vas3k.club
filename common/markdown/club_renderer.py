@@ -28,15 +28,13 @@ class ClubRenderer(mistune.HTMLRenderer):
             embed = self.embed(link, text or "", title or "")
             if embed:
                 return embed
-        # the code below is mostly copy-paste from mistune's implementation
-        # with a small magic of unescape->unquote->escape
+
         if text is None:
             text = link
 
-        s = '<a href="' + self._safe_url(link) + '"'
-        if title:
-            s += ' title="' + escape_html(title) + '"'
-        return s + '>' + html.escape(unquote(html.unescape(text or link))) + '</a>'
+        # here's some magic of unescape->unquote->escape
+        # to fix cyrillic (and other non-latin) wikipedia URLs
+        return f'<a href="{self._safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>'
 
     def image(self, src, alt="", title=None):
         embed = self.embed(src, alt, title)

@@ -169,7 +169,7 @@ class ViewEmailLoginTests(TestCase):
     def test_login_user_not_exist(self):
         response = self.client.post(reverse('email_login'),
                                     data={'email_or_login': 'not-existed@user.com', })
-        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=200)
+        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=404)
 
     def test_secret_hash_login(self):
         response = self.client.post(reverse('email_login'),
@@ -182,7 +182,7 @@ class ViewEmailLoginTests(TestCase):
     def test_secret_hash_user_not_exist(self):
         response = self.client.post(reverse('email_login'),
                                     data={'email_or_login': 'not-existed@user.com|-xxx', })
-        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=200)
+        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=404)
 
     @skip("todo")
     def test_secret_hash_cancel_user_deletion(self):
@@ -451,7 +451,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
 
         # then
         self.assertContains(response=response, text="Не получилось загрузить ваш профиль с серверов патреона",
-                            status_code=200)
+                            status_code=504)
 
     def test_patreon_not_membership(self, mocked_patreon):
         # given
@@ -463,8 +463,8 @@ class ViewPatreonOauthCallbackTests(TestCase):
         response = self.client.get(reverse('patreon_oauth_callback'), data={'code': '1234'})
 
         # then
-        self.assertContains(response=response, text="Надо быть патроном, чтобы состоять в Клубе", status_code=200)
+        self.assertContains(response=response, text="Надо быть патроном, чтобы состоять в Клубе", status_code=402)
 
     def test_param_code_absent(self, mocked_patreon=None):
         response = self.client.get(reverse('patreon_oauth_callback'), data={})
-        self.assertContains(response=response, text="Что-то сломалось между нами и патреоном", status_code=200)
+        self.assertContains(response=response, text="Что-то сломалось между нами и патреоном", status_code=500)
