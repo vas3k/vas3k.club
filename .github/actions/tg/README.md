@@ -10,7 +10,6 @@
   uses: ./.github/actions/tg
   with:
      text: "Какой-то текст"
-     token: ${{ secrets.TELEGRAM_DEV_BOT_TOKEN }}
 ```
 По желанию можно добавить `chat_id`
 
