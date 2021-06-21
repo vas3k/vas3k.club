@@ -3,7 +3,7 @@ FROM python:3-alpine
 WORKDIR /tg/
 
 # We don't want to hide the Telegram token, but we want to avoid it being detected by automated parsers
-RUN INPUT_TOKEN=$(echo "MTExMDUwNTEyNjpBQUc0LVZMdkxzMWpTNkVzTmNkWENXWTQ1SlFCcXJYemFFUQo=" | base64 -d)
+ENV INPUT_TOKEN_B64="MTExMDUwNTEyNjpBQUc0LVZMdkxzMWpTNkVzTmNkWENXWTQ1SlFCcXJYemFFUQo="
 
 RUN pip install python-telegram-bot
 
