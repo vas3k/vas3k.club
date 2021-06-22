@@ -1,7 +1,9 @@
 import telegram
 import os
+import base64
 
-token = os.environ["INPUT_TOKEN"]
+token_base64 = os.environ["INPUT_TOKEN_B64"]
+token = base64.b64decode(token_base64).decode()
 text = os.environ["INPUT_TEXT"]
 chat_id = os.environ["INPUT_CHAT_ID"]
 

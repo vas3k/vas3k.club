@@ -1,9 +1,6 @@
 name: 'Send message to Telegram'
 description: 'Action for send message in Telegram'
 inputs:
-  token:
-    description: "Token bot"
-    required: true
   text:
     description: 'The message that will be sent to telegram.'
     required: true
