@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -8,7 +9,7 @@ from django.db.models import F
 from users.models.geo import Geo
 from common.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
-from utils.strings import random_hash
+from utils.strings import random_string
 
 
 class User(models.Model, ModelDiffMixin):
@@ -58,7 +59,7 @@ class User(models.Model, ModelDiffMixin):
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=128, null=False)
     avatar = models.URLField(null=True, blank=True)
-    secret_hash = models.CharField(max_length=16, db_index=True)
+    secret_hash = models.CharField(max_length=24, unique=True)
 
     company = models.TextField(null=True)
     position = models.TextField(null=True)
@@ -113,11 +114,11 @@ class User(models.Model, ModelDiffMixin):
         db_table = "users"
 
     def save(self, *args, **kwargs):
-        if not self.secret_hash:
-            self.secret_hash = random_hash(length=16)
-
         if not self.slug:
             self.slug = generate_unique_slug(User, self.full_name, separator="")
+
+        if not self.secret_hash:
+            self.secret_hash = self.slug[:6] + random_string(length=18)
 
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
