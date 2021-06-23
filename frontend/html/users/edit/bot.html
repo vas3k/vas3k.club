@@ -20,44 +20,21 @@
                     На него завязано много фич и мы очень рекомендуем его подключить.
                 </p>
 
-                <p id="telegram-auth-data" style="font-weight: bold;">
+                <p>
                     {% if user.telegram_id %}
-                       Сейчас привязан аккаунт: {{ user.telegram_data.username }} ✅
+                        <strong>Сейчас привязан аккаунт: {{ user.telegram_data.username }} ✅</strong>
                     {% endif %}
                 </p>
 
                 <p>
-                    <script src="https://telegram.org/js/telegram-widget.js?8" data-telegram-login="vas3k_club_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
-                    <script type="text/javascript">
-                        function onTelegramAuth(user) {
-                            fetch('{% url "link_telegram" %}?is_ajax=true', {
-                                method: 'POST',
-                                headers: {
-                                    'Accept': 'application/json, text/plain, */*',
-                                    'Content-Type': 'application/json'
-                                },
-                                credentials: "include",
-                                body: JSON.stringify(user)
-                            })
-                            .then((response) => {
-                                return response.json();
-                            })
-                            .then((data) => {
-                              if (data.status === "success") {
-                                  document.getElementById("telegram-auth-data").innerHTML = "😎 Вы авторизованы как: " + data.telegram.username;
-                                  document.getElementById("telegram-auth-button").style.display = "none";
-                              } else {
-                                  document.getElementById("telegram-auth-data").innerHTML = "Что-то пошло не так. Попробуйте снова.";
-                              }
-                              document.getElementById("telegram-auth-data").style.display = "block";
-                            });
-                        }
-                    </script>
+                    <a href="{{ settings.TELEGRAM_BOT_URL }}?start={{ me.secret_hash }}" target="_blank" class="button button-blue">
+                        Привязать бота
+                    </a>
                 </p>
-
-                <p style="font-size: 90%;">
-                    ☝️ Если кнопки сверху не видно, значит какой-то AdBlock её заблокировал. Придётся его обмануть.
-                    Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" rel="noreferrer" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ user.secret_hash }}</strong>
+                <p style="font-size: 80%; opacity: 0.8; padding-top: 80px;">
+                    🥶️ Если совсем ничего не помогает, откройте бота и скопируйте ему команду:<br>
+                    <strong>/auth {{ user.secret_hash }}</strong><br><br>
+                    Только никому не говорите этот код!
                 </p>
             </div>
         </div>

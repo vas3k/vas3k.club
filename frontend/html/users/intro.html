@@ -214,7 +214,7 @@
                         <label for="{{ form.email_digest_type.0.id_for_label }}" class="big-radio-label">
                             <i class="fab fa-telegram"></i>
                             <span class="big-radio-title">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
-                            <span class="big-radio-description">Не хочу никаких писем, сам подпишусь</span>
+                            <span class="big-radio-description">Не хочу никаких писем, сам разберусь (нет)</span>
                         </label>
                     </div>
                 </div>
@@ -258,60 +258,26 @@
 
             <div class="block-description">
                 <p>
-                    Наша фишка. На него завязана много фич сайта.
-                    Бот присылает ответы на ваши комментарии, через него можно отвечать и даже писать посты.
+                    Наша фишка. На него завязано много фич сайта.
+                    Бот присылает ответы на ваши комментарии, через него можно реплаить и получать статистику.
                     Не беспокойтесь, другие пользователи не узнают ваш аккаунт.
                 </p>
 
-                <p id="telegram-auth-button" style="padding-top: 30px; padding-bottom: 30px;">
-                    <script src="https://telegram.org/js/telegram-widget.js?8" data-telegram-login="vas3k_club_bot" data-size="large" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
-                    <script type="text/javascript">
-                        function onTelegramAuth(user) {
-                            console.info(user);
-                            fetch('{% url "link_telegram" %}?is_ajax=true', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Accept': 'application/json, text/plain, */*',
-                                        'Content-Type': 'application/json'
-                                    },
-                                    credentials: "include",
-                                    body: JSON.stringify(user)
-                                })
-                              .then((response) => {
-                                  return response.json();
-                              })
-                              .then((data) => {
-                                  if (data.status === "success") {
-                                      document.getElementById("telegram-auth-data").innerHTML = "😎 Вы авторизованы как: " + data.telegram.username;
-                                      document.getElementById("telegram-auth-button").style.display = "none";
-                                  } else {
-                                      document.getElementById("telegram-auth-data").innerHTML = "Что-то пошло не так. Попробуйте снова.";
-                                  }
-                                  document.getElementById("telegram-auth-data").style.display = "block";
-                              });
-                        }
-                    </script>
-                </p>
-
-                <p class="text-80">
-                    ☝️ Если кнопки сверху не видно, значит какой-то AdBlock её заблокировал. Придётся пойти другим путём.
-                    Запустите нашего <a href="{{ settings.TELEGRAM_BOT_URL }}" rel="noreferrer" target="_blank">бота</a> и скажите ему вот этот секретный код: <strong>{{ form.instance.secret_hash }}</strong>
-                </p>
-
-                <p class="user-telegram-auth-data" id="telegram-auth-data" style="display: none;"></p>
+                <a href="{{ settings.TELEGRAM_BOT_URL }}?start={{ me.secret_hash }}" target="_blank" class="button button-blue">
+                    Привязать бота
+                </a>
             </div>
 
-            <div class="clearfix50"></div>
+            <div class="clearfix100"></div>
+            <div class="clearfix100"></div>
 
-            <div class="form-row form-row-checkbox">
+            <div class="form-row form-row-checkbox" style="padding-bottom: 0;">
                 <label for="{{ form.privacy_policy_accepted.id_for_label }}" class="form-label">
                     {{ form.privacy_policy_accepted }}
                       &larr; я даю согласие на обработку моих персональных данных, использование куков и других вещей, без которых современный интернет вообще не будет работать
                 </label>
                 {% if form.privacy_policy_accepted.errors %}<span class="form-row-errors">{{ form.privacy_policy_accepted.errors }}</span>{% endif %}
             </div>
-
-            <div class="clearfix50"></div>
 
             <button type="submit" class="button button-red button-big">Отправить на ревью</button>
         </form>
