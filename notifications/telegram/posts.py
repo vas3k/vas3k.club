@@ -5,7 +5,7 @@ from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_mess
 
 def announce_in_club_channel(post, announce_text=None, image=None):
     if not announce_text:
-        announce_text = render_html_message("channel_post_announce.html", post=post)
+        announce_text = render_html_message("channel_post_announce.md", post=post)
 
     if image:
         send_telegram_image(
@@ -27,16 +27,16 @@ def announce_in_club_chats(post):
         # announce to the topic chat
         send_telegram_message(
             chat=Chat(id=post.topic.chat_id),
-            text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=telegram.ParseMode.HTML,
+            text=render_html_message("channel_post_announce.md", post=post),
+            parse_mode=telegram.ParseMode.MARKDOWN_V2,
             disable_preview=True,
         )
     else:
         # announce to public chat
         send_telegram_message(
             chat=CLUB_CHAT,
-            text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=telegram.ParseMode.HTML,
+            text=render_html_message("channel_post_announce.md", post=post),
+            parse_mode=telegram.ParseMode.MARKDOWN_V2,
             disable_preview=True,
         )
 

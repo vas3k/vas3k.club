@@ -53,7 +53,7 @@ def announce_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
     initial = {
-        "text": render_html_message("channel_post_announce.html", post=post),
+        "text": render_html_message("channel_post_announce.md", post=post),
         "image": extract_any_image(post),
     }
 

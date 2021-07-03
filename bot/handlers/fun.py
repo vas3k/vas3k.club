@@ -35,8 +35,8 @@ def command_random(update: Update, context: CallbackContext) -> None:
             .first()
 
     update.effective_chat.send_message(
-        render_html_message("channel_post_announce.html", post=post),
-        parse_mode=ParseMode.HTML,
+        render_html_message("channel_post_announce.md", post=post),
+        parse_mode=ParseMode.MARKDOWN_V2,
         disable_web_page_preview=True,
     )
 

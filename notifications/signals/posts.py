@@ -53,8 +53,8 @@ def async_create_or_update_post(post, is_created):
     # post to online channel
     send_telegram_message(
         chat=CLUB_ONLINE,
-        text=render_html_message("channel_post_announce.html", post=post),
-        parse_mode=telegram.ParseMode.HTML,
+        text=render_html_message("channel_post_announce.md", post=post),
+        parse_mode=telegram.ParseMode.MARKDOWN_V2,
         disable_preview=True,
     )
 
