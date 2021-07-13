@@ -6,13 +6,13 @@
             <div class="edit-expertise">
                 <div class="edit-expertise-select">
                     <select name="expertise" id="id_expertise" @change="onSelectionChange">
-                        <optgroup v-for="group in expertiseList" :label="group[0]">
-                            <option v-for="option in group[1]" :value="option[0]">{{ option[1] }}</option>
+                        <optgroup v-for="group in expertiseList" :key="group[0]" :label="group[0]">
+                            <option v-for="option in group[1]" :key="option[0]" :value="option[0]">{{ option[1] }}</option>
                         </optgroup>
                         <option value="custom">[добавить своё]</option>
                     </select>
                 </div>
-                <div id="edit-expertise-custom" class="edit-expertise-custom" v-show="isCustom">
+                <div id="edit-expertise-custom" class="edit-expertise-custom" v-if="isCustom">
                     <input type="text" name="expertise_custom" maxlength="32" />
                 </div>
                 <div class="edit-expertise-value">
