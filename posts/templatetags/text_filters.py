@@ -35,6 +35,11 @@ def ceil(value):
 
 
 @register.filter
+def floor(value):
+    return math.floor(value or 0)
+
+
+@register.filter
 def cool_number(value, num_decimals=1):
     """
     11500 -> 11.5K, etc
