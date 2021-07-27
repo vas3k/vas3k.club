@@ -9,6 +9,7 @@ from bot.decorators import is_club_member
 from club import settings
 from comments.models import Comment
 from posts.models.post import Post
+from posts.models.linked import LinkedPost
 
 log = logging.getLogger(__name__)
 
@@ -123,6 +124,8 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
             "telegram": update.to_dict()
         }
     )
+    LinkedPost.create_links_from_text(post, text)
+
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
         "comment_id": reply.id
