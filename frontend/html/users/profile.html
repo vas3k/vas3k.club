@@ -56,11 +56,11 @@
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
                     {% elif user.membership_days_left < 700 %}
-                        <span class="profile-status-number">😎 {{ user.membership_months_left | ceil | cool_number  }}</span>
-                        <span class="profile-status-text">{{ user.membership_months_left | ceil | rupluralize:"месяц,месяца,месяцев" }}</span>
+                        <span class="profile-status-number">😎 {{ user.membership_months_left | floor | cool_number  }}</span>
+                        <span class="profile-status-text">{{ user.membership_months_left | floor | rupluralize:"месяц,месяца,месяцев" }}</span>
                     {% else %}
-                        <span class="profile-status-number">💎 {{ user.membership_years_left | ceil | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_years_left | ceil | rupluralize:"год,года,лет" }}</span>
+                        <span class="profile-status-number">💎 {{ user.membership_years_left | floor | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_years_left | floor | rupluralize:"год,года,лет" }}</span>
                     {% endif %}
                 </a>
                 <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
