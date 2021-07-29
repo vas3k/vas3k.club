@@ -19,6 +19,9 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+      - EMAIL_HOST
+      - EMAIL_PORT
+      - DEFAULT_FROM_EMAIL
     restart: always
     volumes:
       - ./frontend/static:/app/frontend/static
