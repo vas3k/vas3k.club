@@ -1,5 +1,6 @@
 import json
 import os
+import random
 import shutil
 import tempfile
 from datetime import datetime
@@ -29,7 +30,7 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         dump_user_bookmarks(user_dir, user)
 
         # save zip archive
-        archive_name = f"{user.slug}-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}"
+        archive_name = f"{user.slug}-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}-{random.randint(1000000, 9999998)}"
         archive_path = shutil.make_archive(os.path.join(save_path, archive_name), "zip", tmp_dir)
 
         # schedule a task to remove archive after timeout
