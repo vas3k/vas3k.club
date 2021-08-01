@@ -22,6 +22,8 @@ services:
       - EMAIL_HOST
       - EMAIL_PORT
       - DEFAULT_FROM_EMAIL
+    env_file:
+      - .env
     restart: always
     volumes:
       - ./frontend/static:/app/frontend/static
