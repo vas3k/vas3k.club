@@ -3,7 +3,7 @@ name: Deploy master to production
 on:
   push:
     branches:
-      - master
+      - 4aff
 
 jobs:
   build:
@@ -14,10 +14,10 @@ jobs:
         uses: appleboy/ssh-action@e59c0ee97a7e5240ed9eb489791adbb9c9ac7f6b
         env:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          MEDIA_UPLOAD_URL: "https://i.vas3k.club/upload/"
+          MEDIA_UPLOAD_URL: "https://i.4aff.club/upload/"
         with:
           host: ${{ secrets.PRODUCTION_SSH_HOST }}
           username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           envs: POSTGRES_PASSWORD,MEDIA_UPLOAD_URL
-          script: cd vas3k.club && git pull && make redeploy
+          script: cd /var/www/4aff.club && git pull && make redeploy
