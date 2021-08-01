@@ -12,8 +12,8 @@ from users.models.user import User
 COMMENT_REPLY_RE = re.compile(r"^💬.*")
 POST_COMMENT_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🔥🙋‍♀️].*")
 
-COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
-POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
+COMMENT_URL_RE = re.compile(r"https?://4aff.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
+POST_URL_RE = re.compile(r"https?://4aff.club/[a-zA-Z]+/(.+?)/")
 
 log = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ def get_club_user(update: Update):
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
         update.message.reply_text(
-            f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
+            f"😐 Привяжи <a href=\"https://4aff.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
             parse_mode=ParseMode.HTML
         )
         return None

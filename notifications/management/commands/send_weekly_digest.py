@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # render digest using a special html endpoint
-        digest_url = "https://vas3k.club" + reverse("render_weekly_digest")
+        digest_url = "https://4aff.club" + reverse("render_weekly_digest")
         self.stdout.write(f"Generating digest: {digest_url}")
 
         digest_html_response = requests.get(digest_url)
