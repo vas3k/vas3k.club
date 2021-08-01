@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 
 def command_help(update: Update, context: CallbackContext) -> None:
     update.effective_chat.send_message(
-        "✖️ <b>Я — твой личный бот для Вастрик.Клуба</b>\n\n"
+        "✖️ <b>Я — твой личный бот для 4aff.Клуба</b>\n\n"
         "Через меня можно отвечать на комменты и посты — просто напиши "
         "ответ реплаем на сообщение и я перепостю его в Клуб. "
         "Так можно общаться в комментах даже не открывая сайт.\n\n"
