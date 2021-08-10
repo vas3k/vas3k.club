@@ -71,3 +71,5 @@ LABELS = {
         "color": "#F7DC6F"
     },
 }
+
+NOTIFY_LABELS = ["approved", "inside", "thread", "comments", "top_week", "wow", "drama", "essential"]
