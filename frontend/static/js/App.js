@@ -86,6 +86,7 @@ const App = {
     onMount() {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
+        this.initializeCommentScroll();
         this.blockCommunicationFormsResubmit();
 
         const registeredEditors = this.initializeMarkdownEditor();
@@ -264,6 +265,62 @@ const App = {
             cubicBezier: "cubic-bezier(.2, 0, .1, 1)",
             background: "rgba(0, 0, 0, .4)",
             zIndex: 1e6,
+        });
+    },
+    initializeCommentScroll() {
+        const scrollExtreme = (direction) => {
+            if (direction === "Down") {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+            } else {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        };
+
+        document.addEventListener('keyup', (e) => {
+            // ctrl-up/down для всех, а в macos - ⇧⌃↑/↓
+            if (!e.ctrlKey || ["ArrowDown", "ArrowUp", "Down", "Up"].indexOf(e.key) < 0) {
+                return;
+            }
+
+            e.preventDefault();
+            const direction = e.key.replace(/^Arrow/, "");
+
+            let comments = document.querySelectorAll(".comment-is-new");
+            if (comments.length < 1) {
+                comments = document.querySelectorAll(".comment");
+            }
+            if (comments.length < 1) {
+                // Без комментариев
+                return scrollExtreme(direction);
+            }
+
+            const position = window.scrollY + window.innerHeight / 2;
+            const bodyTop = document.body.getBoundingClientRect().top;
+
+            // Убираем комментарии ниже или выше направления поиска
+            const filteredComments = [...comments].filter((el) => {
+                const elBCR = el.getBoundingClientRect();
+                const eltop = elBCR.top - bodyTop;
+                return (direction === "Down") ?
+                    eltop - elBCR.height / 2 > position
+                    : eltop + elBCR.height / 2 < position;
+            });
+            if (filteredComments.length < 1) {
+                return scrollExtreme(direction);
+            }
+
+            // Находим ближайший к середине экрана комментарий
+            const nearest = [...filteredComments].reduce((a, b) => {
+                const atop = a.getBoundingClientRect().top - bodyTop;
+                const btop = b.getBoundingClientRect().top - bodyTop;
+                return Math.abs(btop - position) < Math.abs(atop - position) ? b : a;
+            });
+            window.scrollTo({
+                top: nearest.getBoundingClientRect().top - bodyTop - window.innerHeight / 2,
+                behavior: "smooth" // Safari работает без анимации
+            });
+            nearest.classList.add("comment-scroll-selected");
+            window.setTimeout(() => { nearest.classList.remove("comment-scroll-selected"); }, 500);
         });
     },
     blockCommunicationFormsResubmit() {
