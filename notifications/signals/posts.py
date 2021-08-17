@@ -5,7 +5,6 @@ from django.dispatch import receiver
 from django_q.tasks import async_task
 
 from notifications.telegram.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE, Chat
-from common.data.labels import NOTIFY_LABELS
 from common.regexp import USERNAME_RE
 from posts.models.post import Post
 from users.models.friends import Friend
@@ -94,7 +93,7 @@ def async_label_changed(post):
         text=render_html_message("moderator_label.html", post=post),
         parse_mode=telegram.ParseMode.HTML,
     )
-    if post.label_code in NOTIFY_LABELS and post.author.telegram_id:
+    if post.label['notify'] and post.author.telegram_id:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_label.html", post=post),

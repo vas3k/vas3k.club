@@ -170,7 +170,9 @@ class Post(models.Model, ModelDiffMixin):
 
     @property
     def label(self):
-        return LABELS.get(self.label_code)
+        l = LABELS.get(self.label_code)
+        l['code'] = self.label_code
+        return l
 
     @property
     def is_pinned(self):
