@@ -1125,9 +1125,27 @@
         max-width: none;
     }
 
+    @media only screen and (max-width : 668px) {
+        .compose-visibility .big-radio-item {
+            font-size: 80%;
+        }
+    }
+
     @media only screen and (max-width : 570px) {
         .compose-visibility .big-radio-item {
-            min-height: 166px;
+            font-size: 70%;
+        }
+        .compose-visibility .big-radio-item .fas {
+            font-size: 40px;
+        }
+    }
+
+    @media only screen and (max-width : 350px) {
+        .compose-visibility .big-radio-item {
+            font-size: 60%;
+        }
+        .compose-visibility .big-radio-item .fas {
+            font-size: 30px;
         }
     }
 
