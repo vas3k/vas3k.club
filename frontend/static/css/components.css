@@ -1125,6 +1125,14 @@
         max-width: none;
     }
 
+    @media only screen and (max-width : 570px) {
+        .compose-visibility .big-radio-item {
+            width: 45%;
+            min-height: 166px;
+            max-width: none;
+        }
+    }
+
 .post-join {
     margin-top: 30px;
     font-size: 120%;
