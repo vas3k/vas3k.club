@@ -1127,9 +1127,7 @@
 
     @media only screen and (max-width : 570px) {
         .compose-visibility .big-radio-item {
-            width: 45%;
             min-height: 166px;
-            max-width: none;
         }
     }
 
