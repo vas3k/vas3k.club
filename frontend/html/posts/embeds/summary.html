@@ -8,9 +8,11 @@
                 <img src="{{ post.metadata.image }}" alt="{{ post.title }}" class="post-link-image">
             {% endif %}
 
+            {% if post.metadata.title or post.metadata.description %}
             <span class="post-link-title">
-                {{  post.metadata.title }}
+                {{  post.metadata.title|default:post.metadata.description }}
             </span>
+            {% endif %}
 
             <span class="post-link-url">
                 {{ post.metadata.url|truncatechars:"80" }}
