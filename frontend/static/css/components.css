@@ -1121,8 +1121,16 @@
 
     .compose-visibility .big-radio-item {
         width: 45%;
-        min-height: 280px;
         max-width: none;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .compose-visibility .big-radio-item {
+            font-size: 75%;
+        }
+        .compose-visibility .big-radio-item .fas {
+            font-size: 46px;
+        }
     }
 
 .post-join {
