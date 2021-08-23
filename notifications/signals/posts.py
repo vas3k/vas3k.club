@@ -88,12 +88,13 @@ def async_create_or_update_post(post, is_created):
                 notified_user_ids.add(friend.user_from.id)
 
 def async_label_changed(post):
+    moderator_template = "moderator_label_removed.html" if post.label_code is None else "moderator_label_set.html"
     send_telegram_message(
         chat=ADMIN_CHAT,
-        text=render_html_message("moderator_label.html", post=post),
+        text=render_html_message(moderator_template, post=post),
         parse_mode=telegram.ParseMode.HTML,
     )
-    if post.label['notify'] and post.author.telegram_id:
+    if post.label_code is not None and post.label['notify'] and post.author.telegram_id:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_label.html", post=post),
