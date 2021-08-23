@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from simple_history.models import HistoricalRecords
 
+from common.data.labels import LABELS
 from common.models import ModelDiffMixin
 from posts.models.topics import Topic
 from users.models.user import User
@@ -73,7 +74,6 @@ class Post(models.Model, ModelDiffMixin):
     author = models.ForeignKey(User, related_name="posts", db_index=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
-    label = models.JSONField(null=True)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
 
     title = models.TextField(null=False)
@@ -167,6 +167,13 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def prefix(self):
         return self.TYPE_TO_PREFIX.get(self.type) or ""
+
+    @property
+    def label(self):
+        lbl = LABELS.get(self.label_code)
+        if lbl is not None:
+            lbl['code'] = self.label_code
+        return lbl
 
     @property
     def is_pinned(self):

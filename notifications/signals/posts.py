@@ -22,6 +22,9 @@ def create_or_update_post(sender, instance, created, **kwargs):
         )
         return None
 
+    if "label_code" in instance.changed_fields:
+        async_task(async_label_changed, instance)
+
     if not created and "is_visible" not in instance.changed_fields:
         return None  # we're not interested in updates, only if they change visibility
 
@@ -83,3 +86,16 @@ def async_create_or_update_post(post, is_created):
                     text=render_html_message("friend_post.html", post=post),
                 )
                 notified_user_ids.add(friend.user_from.id)
+
+def async_label_changed(post):
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=render_html_message("moderator_label.html", post=post),
+        parse_mode=telegram.ParseMode.HTML,
+    )
+    if post.label['notify'] and post.author.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=post.author.telegram_id),
+            text=render_html_message("post_label.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+        )
