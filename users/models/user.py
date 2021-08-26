@@ -13,9 +13,11 @@ from utils.strings import random_string
 
 
 class User(models.Model, ModelDiffMixin):
+    MEMBERSHIP_PLATFORM_FREE = "free"
     MEMBERSHIP_PLATFORM_DIRECT = "direct"
     MEMBERSHIP_PLATFORM_PATREON = "patreon"
     MEMBERSHIP_PLATFORMS = [
+        (MEMBERSHIP_PLATFORM_FREE, "Free"),
         (MEMBERSHIP_PLATFORM_DIRECT, "Direct"),
         (MEMBERSHIP_PLATFORM_PATREON, "Patreon"),
     ]
@@ -81,7 +83,7 @@ class User(models.Model, ModelDiffMixin):
     membership_expires_at = models.DateTimeField(null=False)
     membership_platform_type = models.CharField(
         max_length=128, choices=MEMBERSHIP_PLATFORMS,
-        default=MEMBERSHIP_PLATFORM_PATREON, null=False
+        default=MEMBERSHIP_PLATFORM_FREE, null=False
     )
     patreon_id = models.CharField(max_length=128, null=True, unique=True)
     membership_platform_data = models.JSONField(null=True)

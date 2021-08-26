@@ -1,4 +1,7 @@
+from datetime import datetime, timedelta
+
 from django.conf import settings
+from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -17,6 +20,7 @@ def email_login(request):
 
     goto = request.POST.get("goto")
     email_or_login = request.POST.get("email_or_login")
+
     if not email_or_login:
         return redirect("login")
 
@@ -30,7 +34,7 @@ def email_login(request):
             return render(request, "error.html", {
                 "title": "Такого юзера нет 🤔",
                 "message": "Пользователь с таким кодом не найден. "
-                           "Попробуйте авторизоваться по обычной почте или юзернейму.",
+                           "Попробуйте авторизоваться по обычной почте.",
             }, status=404)
 
         if user.deleted_at:
@@ -43,15 +47,39 @@ def email_login(request):
         response = redirect(redirect_to)
         return set_session_cookie(response, user, session)
     else:
-        # email/nickname login
-        user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
-        if not user:
-            return render(request, "error.html", {
-                "title": "Такого юзера нет 🤔",
-                "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
-                           "Попробуйте другую почту или никнейм. "
-                           "Если совсем ничего не выйдет, напишите нам, попробуем помочь.",
-            }, status=404)
+        if True:
+            # email login or sign up
+            now = datetime.utcnow()
+
+            try:
+                user, _ = User.objects.get_or_create(
+                    email=email_or_login.lower(),
+                    defaults=dict(
+                        membership_platform_type=User.MEMBERSHIP_PLATFORM_FREE,
+                        full_name=email_or_login[:email_or_login.find("@")],
+                        membership_started_at=now,
+                        membership_expires_at=now + timedelta(days=100 * 365),
+                        created_at=now,
+                        updated_at=now,
+                        moderation_status=User.MODERATION_STATUS_INTRO,
+                    ),
+                )
+            except IntegrityError:
+                return render(request, "error.html", {
+                    "title": "Что-то пошло не так 🤔",
+                    "message": "Напишите нам, и мы всё починим. Или попробуйте ещё раз.",
+                }, status=404)
+        else:
+            # email/nickname login
+            user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
+
+            if not user:
+                return render(request, "error.html", {
+                    "title": "Такого юзера нет 🤔",
+                    "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
+                            "Попробуйте другую почту или никнейм. "
+                            "Если совсем ничего не выйдет, напишите нам, попробуем помочь.",
+                }, status=404)
 
         code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
         async_task(send_auth_email, user, code)
@@ -62,7 +90,6 @@ def email_login(request):
             "goto": goto,
             "restore": user.deleted_at is not None,
         })
-
 
 def email_login_code(request):
     email = request.GET.get("email")
@@ -88,5 +115,9 @@ def email_login_code(request):
         user.save()
 
     redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
+
+    if user.moderation_status == user.MODERATION_STATUS_INTRO:
+        redirect_to = reverse("intro")
+
     response = redirect(redirect_to)
     return set_session_cookie(response, user, session)

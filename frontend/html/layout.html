@@ -64,8 +64,13 @@
             {% if me %}
                 <form method="POST" action="{% url "logout" %}">
                     {% csrf_token %}
-                    <button type="submit" class="footer-logout">Выйти&nbsp;<i class="fas fa-sign-out-alt"></i></button>
+                    <button type="submit" class="footer-logout">Выйти<i class="fas fa-sign-out-alt"></i></button>
                 </form>
+            {% else %}
+            <br />
+            <a class="footer-login" href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}">
+                Войти<i class="fas fa-sign-in-alt"></i>
+            </a>
             {% endif %}
         </div>
     </footer>

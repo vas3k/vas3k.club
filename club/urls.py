@@ -41,7 +41,7 @@ POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys(
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|hot))"
 
 urlpatterns = [
-    path("", auth_switch(landing, feed), name="index"),
+    path("", feed, name="index"),
 
     path("join/", join, name="join"),
     path("auth/login/", login, name="login"),
