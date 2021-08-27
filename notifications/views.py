@@ -231,7 +231,8 @@ def weekly_digest(request):
     featured_post = Post.visible_objects()\
         .exclude(type=Post.TYPE_INTRO)\
         .filter(
-            label__code="top_week",
+            label_code___isnull=False,
+            label_code="top_week",
             **published_at_condition
          )\
         .order_by("-upvotes")\
