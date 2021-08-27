@@ -14,6 +14,22 @@ from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
 
+CACHED_POSTS = {}
+
+
+def get_cached_post(user_id, post_type):
+    """Workaround, which allows to have temporary posts with valid unique ids"""
+    key = f"{user_id}:{post_type}"
+    if not CACHED_POSTS.get(key):
+        CACHED_POSTS[key] = Post(type=post_type)
+    return CACHED_POSTS[key]
+
+
+def remove_post_from_cache(user_id, post_type):
+    key = f"{user_id}:{post_type}"
+    if key in CACHED_POSTS:
+        del CACHED_POSTS[key]
+
 
 def show_post(request, post_type, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
@@ -202,6 +218,10 @@ def edit_post(request, post_slug):
 def create_or_edit(request, post_type, post=None, mode="create"):
     FormClass = POST_TYPE_MAP.get(post_type) or PostTextForm
 
+    user_id = request.me.id
+    # Get a temporary cached Post instance with an unique id
+    if not post:
+        post = get_cached_post(user_id, post_type)
     # show blank form on GET
     if request.method != "POST":
         form = FormClass(instance=post)
@@ -219,10 +239,12 @@ def create_or_edit(request, post_type, post=None, mode="create"):
                 title=form.cleaned_data["title"],
                 ignore_post_id=post.id if post else None
             ):
+                remove_post_from_cache(user_id, post_type)
                 raise ContentDuplicated()
 
             is_ok = Post.check_rate_limits(request.me)
             if not is_ok:
+                remove_post_from_cache(user_id, post_type)
                 raise RateLimitException(
                     title="🙅‍♂️ Слишком много постов",
                     message="В последнее время вы создали слишком много постов. Потерпите, пожалуйста."
@@ -234,6 +256,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.type = post_type
         post.html = None  # flush cache
         post.save()
+        remove_post_from_cache(user_id, post_type)
 
         if mode == "create" or not post.is_visible:
             PostSubscription.subscribe(request.me, post)

@@ -148,7 +148,10 @@ const App = {
             (editors, element) => {
                 const editor = createMarkdownEditor(element, {
                     autosave: {
-                        enabled: false,
+                        enabled: true,
+                        delay: 1000, // 1s
+                        uniqueId: element.id,
+                        text: element.text,
                     },
                     hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
                     showIcons: ["heading-2", "code"],
