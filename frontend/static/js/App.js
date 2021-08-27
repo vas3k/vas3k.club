@@ -150,7 +150,7 @@ const App = {
                     autosave: {
                         enabled: true,
                         delay: 1000, // 1s
-                        uniqueId: element.id,
+                        uniqueId: window.location.pathname,
                         text: element.text,
                     },
                     hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
@@ -216,6 +216,12 @@ const App = {
         const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
             (editors, element) => {
                 const editor = createMarkdownEditor(element, {
+                    autosave: {
+                        enabled: true,
+                        delay: 1000, // 1s
+                        uniqueId: window.location.pathname,
+                        text: element.text,
+                    },
                     toolbar: false,
                 });
 
