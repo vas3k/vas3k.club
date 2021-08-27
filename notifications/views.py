@@ -231,7 +231,7 @@ def weekly_digest(request):
     featured_post = Post.visible_objects()\
         .exclude(type=Post.TYPE_INTRO)\
         .filter(
-            label_code___isnull=False,
+            label_code__isnull=False,
             label_code="top_week",
             **published_at_condition
          )\
@@ -244,7 +244,7 @@ def weekly_digest(request):
         .filter(is_visible_in_feeds=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
-        .exclude(label_code___isnull=False, label_code="ad")\
+        .exclude(label_code__isnull=False, label_code="ad")\
         .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")
 
