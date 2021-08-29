@@ -2,27 +2,22 @@
 {% load static %}
 
 {% block title %}
-    Режим Бога — {{ block.super }}
+    {{ title | default:"Админим" }} — {{ block.super }}
 {% endblock %}
 
 {% block content %}
-    <div class="content">
-        <div class="profile-header">Режим Бога</div>
 
-        <div class="block">
-            <form action="." method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                {% for row in form %}
-                    <div class="form-row">
-                        {{ row.label_tag }}
-                        {{ row }}
-                        {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
-                    </div>
-                {% endfor %}
-
-                <button type="submit" class="button">Обновить настройки</button>
-            </form>
-        </div>
+<div class="content compose">
+    <div class="content-header">Админим</div>
+    <div class="block compose-types">
+        <a href="{% url "godmode_network_settings" %}" class="compose-type">
+            <span class="compose-type-icon">💬</span>
+            <span class="compose-type-name">Нетворк</span>
+        </a>
+        <a href="{% url "godmode_digest_settings" %}" class="compose-type">
+            <span class="compose-type-icon">📰</span>
+            <span class="compose-type-name">Дайджест</span>
+        </a>
     </div>
+</div>
 {% endblock %}

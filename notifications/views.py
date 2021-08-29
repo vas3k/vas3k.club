@@ -279,10 +279,12 @@ def weekly_digest(request):
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
-    # Intro from author
-    author_intro = GodSettings.objects.first().digest_intro
+    # Get intro and title
+    god_settings = GodSettings.objects.first()
+    digest_title = god_settings.digest_title
+    digest_intro = god_settings.digest_intro
 
-    if not author_intro and not posts and not comments:
+    if not digest_intro and not posts and not comments:
         raise Http404()
 
     # New achievements
@@ -304,7 +306,8 @@ def weekly_digest(request):
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
         "featured_post": featured_post,
-        "author_intro": author_intro,
+        "digest_title": digest_title,
+        "digest_intro": digest_intro,
         "issue_number": (end_date - settings.LAUNCH_DATE).days // 7,
         "is_footer_excluded": is_footer_excluded
     })
