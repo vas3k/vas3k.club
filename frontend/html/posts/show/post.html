@@ -13,7 +13,7 @@
                 {% endif %}
             </div>
             <div class="post-title">
-                {{ post.title | rutypography }}
+                {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title | rutypography }}
             </div>
             <span class="post-is-public">
                 {% if post.is_public %}
