@@ -29,6 +29,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_BATTLE = "battle"
     TYPE_WEEKLY_DIGEST = "weekly_digest"
     TYPE_GUIDE = "guide"
+    TYPE_THREAD = "thread"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
@@ -42,6 +43,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_BATTLE, "Батл"),
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
         (TYPE_GUIDE, "Путеводитель"),
+        (TYPE_THREAD, "Тред"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -56,6 +58,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_REFERRAL: "🏢",
         TYPE_BATTLE: "🤜🤛",
         TYPE_GUIDE: "🗺",
+        TYPE_THREAD: "🗄",
     }
 
     TYPE_TO_PREFIX = {
@@ -70,6 +73,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_REFERRAL: "Рефералка:",
         TYPE_BATTLE: "Батл:",
         TYPE_GUIDE: "🗺",
+        TYPE_THREAD: "Тред:",
     }
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -87,6 +91,7 @@ class Post(models.Model, ModelDiffMixin):
     image = models.URLField(max_length=1024, null=True)
 
     metadata = models.JSONField(null=True)
+    comment_template = models.TextField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
