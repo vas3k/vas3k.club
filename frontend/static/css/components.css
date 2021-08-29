@@ -1179,6 +1179,23 @@
         padding-left: 10px;
     }
 
+    .post-comments-rules {
+        padding-top: 50px;
+        padding-left: 60px;
+        padding-right: 30px;
+    }
+
+        .post-comments-rules ul {
+            list-style: none;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .post-comments-rules {
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
     .post-comments-order {
         display: inline-block;
         margin-left: 10px;
