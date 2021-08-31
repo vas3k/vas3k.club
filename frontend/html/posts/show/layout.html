@@ -28,6 +28,12 @@
         </div>
     {% endblock %}
 
+    {% block pre_comments %}
+        {% if linked_posts %}
+            {% include "posts/widgets/linked_posts.html" %}
+        {% endif %}
+    {% endblock %}
+
     <div class="content">
         {% block comments %}
             <div class="post-comments" id="comments">
