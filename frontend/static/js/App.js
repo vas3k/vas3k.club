@@ -63,12 +63,16 @@ function createMarkdownEditor(element, options) {
         End: "goLineRight", // move the cursor to the right side of the visual line it is on
     });
 
+    console.log("rrr", element, element.dataset);
+
     // adding ability to fire events on the hidden element
     if (element.dataset.listen) {
         const events = element.dataset.listen.split(" ");
-        events.forEach((event) => {
+        events.forEach((event_type) => {
             try {
-                editor.codemirror.on(event, (e) => e.getTextArea().dispatchEvent(new Event(event)));
+                // editor dispatches two object on "keyup" - [CodeMirror.doc, KeyboardEvent]
+                editor.codemirror.on(event_type, (e, ...args) =>
+                    e.getTextArea().dispatchEvent(new CustomEvent(event_type, {detail: [e, ...args]})));
             } catch (e) {
                 console.warn("Invalid event provided", event);
             }
@@ -223,21 +227,26 @@ const App = {
 
         const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
 
+        function submitFormOnEnter(e) {
+            const form = findParentForm(e.target);
+            if (!form || !isCommunicationForm(form)) {
+                return;
+            }
+
+            form.submit();
+        }
+
         allEditors.forEach((editor) => {
             editor.element.form.addEventListener("keydown", (e) => {
                 const isEnter = event.key === "Enter";
                 const isCtrlOrCmd = event.ctrlKey || event.metaKey;
                 const isEnterAndCmd = isEnter && isCtrlOrCmd;
-                if (!isEnterAndCmd) {
+                if (isEnterAndCmd) {
+                    submitFormOnEnter(e);
                     return;
                 }
 
-                const form = findParentForm(e.target);
-                if (!form || !isCommunicationForm(form)) {
-                    return;
-                }
-
-                form.submit();
+                // console.log("ASDBG", event);
             });
 
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);

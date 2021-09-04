@@ -14,6 +14,8 @@ class CommentForm(forms.ModelForm):
                 "maxlength": 20000,
                 "placeholder": "Напишите комментарий...",
                 "class": "markdown-editor-invisible",
+                "data-listen": "cursorActivity",
+                "id": "new-comment-form",
             }
         ),
     )
@@ -33,6 +35,7 @@ class ReplyForm(forms.ModelForm):
                 "maxlength": 20000,
                 "placeholder": "Напишите ответ...",
                 "class": "markdown-editor-invisible",
+                "data-listen": "keyup",
             }
         ),
     )

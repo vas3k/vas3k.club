@@ -494,3 +494,12 @@
     .comment-is-new .comment-is-new {
         background-color: transparent;
     }
+
+.mention-suggest {
+    position: absolute;
+
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 0 4px 4px #ddd;
+}
