@@ -4,7 +4,7 @@ import "../css/index.css";
 
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
-import { pluralize } from "./common/utils.js";
+import { findCodeMirrorEditorByTextarea, pluralize } from "./common/utils.js";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
@@ -94,9 +94,7 @@ new Vue({
 
                 // On mobile the next element sibling is undefined
                 if (textarea.nextElementSibling) {
-                    const codeMirrorEditor =
-                        textarea.nextElementSibling.CodeMirror ||
-                        textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
+                    const codeMirrorEditor = findCodeMirrorEditorByTextarea(textarea);
                     if (codeMirrorEditor !== undefined) {
                         codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
                         codeMirrorEditor.focus();

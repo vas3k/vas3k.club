@@ -1,10 +1,15 @@
 <template>
     <div class="mention-suggest" id="asdbg" v-show="isActive">
-        {{ users }}
+        <div v-for="user in users" v-on:click="insertSuggestion(user)">
+            @{{ user }}
+        </div>
     </div>
 </template>
 
 <script>
+import ClubApi from "../common/api.service";
+import { findCodeMirrorEditorByTextarea } from "../common/utils";
+
 export default {
     name: "MentionSuggest",
     props: {
@@ -19,7 +24,30 @@ export default {
             users: [],
         };
     },
-    methods: {},
+    methods: {
+        insertSuggestion: function (suggestion) {
+            const editor = findCodeMirrorEditorByTextarea(this.$target);
+            const { line: currentLineIdx, ch: cursorPosition } = editor.getCursor();
+            const currentLineValue = editor.getLine(currentLineIdx);
+
+            const {word: currentWord, wordPosition: currentWordPosition} =
+                extractWordByCursorPosition(currentLineValue, cursorPosition);
+
+            // console.log({line: currentLineIdx, ch: currentWordPosition});
+            // console.log({line: currentLineIdx, ch: currentWordPosition + currentWord.length});
+            // console.log(editor);
+            editor.replaceRange(
+                "@" + suggestion,
+                {line: currentLineIdx, ch: currentWordPosition},  // from
+                {line: currentLineIdx, ch: currentWordPosition + currentWord.length},  // to
+            );
+            editor.focus();
+        },
+        // getAttachedEditor: function () {
+        //     return this.$target.nextElementSibling.CodeMirror ||
+        //            this.$target.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
+        // },
+    },
     created() {
         console.log("ASDBG created");
     },
@@ -34,22 +62,28 @@ export default {
         }
 
         this.throttledCursorActivityHandler = throttle((e) => {
-            const editor = e.detail[0];
-            const { line: cursorLine, ch: cursorPosition } = editor.getCursor();
-            const currentLine = editor.getLine(cursorLine);
+            const editor = findCodeMirrorEditorByTextarea(this.$target);
+            const { line: currentLineIdx, ch: cursorPosition } = editor.getCursor();
+            const currentLineValue = editor.getLine(currentLineIdx);
 
-            const {word: currentWord, wordPosition: currentWordPosition} = extractWordByCursorPosition(currentLine, cursorPosition);
-
-            console.log("ASDBG handle", currentWord, editor.getCursor(), e);
+            const { word: currentWord, wordPosition: currentWordPosition } =
+                extractWordByCursorPosition(currentLineValue, cursorPosition);
 
             if (!currentWord || currentWord[0] !== "@") {
                 this.isActive = false;
                 return;
             }
 
-            editor.addWidget({line: cursorLine, ch: currentWordPosition}, document.getElementById("asdbg"));
+            editor.addWidget({line: currentLineIdx, ch: currentWordPosition}, document.getElementById("asdbg"));
             this.isActive = true;
-            this.users = [currentWord];
+
+            if (currentWord.length <= 1) {
+                return;
+            }
+
+            fetch(`/users/suggest/?is_ajax=true&sample=${currentWord.substr(1)}`)
+                .then(res => res.json())
+                .then((data) => this.users = data.suggested_users);
         }, 300);
 
 

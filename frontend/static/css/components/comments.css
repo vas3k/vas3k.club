@@ -500,6 +500,12 @@
 
     background: white;
     border: 1px solid #ddd;
-    padding: 10px;
-    box-shadow: 0 0 4px 4px #ddd;
+    box-shadow: 0 0 2px 2px #ddd;
+
+    display: flex;
+    flex-direction: column;
 }
+
+    .mention-suggest > div {
+        padding: 2px;
+    }
