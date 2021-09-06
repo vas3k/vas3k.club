@@ -69,7 +69,7 @@
             </div>
 
             <div class="post-event-title">
-                {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} по {% if post.metadata.event.timezone == "UTC" %}UTC{% else %}Москве{% endif %}
+                {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} по {% if post.metadata.event.timezone == "UTC" %}UTC{% else %}{% if post.metadata.event.timezone == "Europe/Kiev" %}Киеву{% else %}Москве{% endif %}{% endif %}
             </div>
 
             <div class="post-event-location">
