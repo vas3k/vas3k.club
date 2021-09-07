@@ -39,13 +39,18 @@
 
 {% block title %}
     Журнал 4aff.Клуба<br>
-    <span class="issue">Итоги недели. Выпуск #{{ issue_number }}</span>
+
+    {% if not digest_title %}
+        <span class="issue">Итоги недели. Выпуск #{{ issue_number }}</span>
+    {% else %}
+        <span class="issue">{{ digest_title }}. Выпуск #{{ issue_number }}</span>
+    {% endif %}
 {% endblock %}
 
 {% block body %}
-    {% if author_intro %}
+    {% if digest_intro %}
         <div class="editorial">
-            {{ author_intro | email_markdown }}
+            {{ digest_intro | email_markdown }}
         </div>
     {% endif %}
 

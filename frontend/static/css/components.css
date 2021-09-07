@@ -1121,8 +1121,16 @@
 
     .compose-visibility .big-radio-item {
         width: 45%;
-        min-height: 280px;
         max-width: none;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .compose-visibility .big-radio-item {
+            font-size: 75%;
+        }
+        .compose-visibility .big-radio-item .fas {
+            font-size: 46px;
+        }
     }
 
 .post-join {
@@ -1170,6 +1178,23 @@
         padding-top: 30px;
         padding-left: 10px;
     }
+
+    .post-comments-rules {
+        padding-top: 50px;
+        padding-left: 60px;
+        padding-right: 30px;
+    }
+
+        .post-comments-rules ul {
+            list-style: none;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .post-comments-rules {
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
 
     .post-comments-order {
         display: inline-block;

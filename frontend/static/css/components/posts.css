@@ -857,3 +857,23 @@
                 padding-right: 10px;
             }
         }
+
+.post-guide-rules {
+    max-width: var(--normal-content-width);
+    margin: 50px auto 0;
+}
+
+    .post-guide-rules-header {
+        font-size: 170%;
+        line-height: 140%;
+        font-weight: 500;
+        padding-bottom: 10px;
+    }
+
+    .post-guide-rules-description {
+        font-size: 120%;
+    }
+
+        .post-guide-rules-description ul {
+            padding-left: 20px;
+        }

@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from simple_history.models import HistoricalRecords
 
+from common.data.labels import LABELS
 from common.models import ModelDiffMixin
 from posts.models.topics import Topic
 from users.models.user import User
@@ -27,6 +28,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
     TYPE_WEEKLY_DIGEST = "weekly_digest"
+    TYPE_GUIDE = "guide"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
@@ -39,6 +41,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
+        (TYPE_GUIDE, "Путеводитель"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -51,7 +54,8 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_PROJECT: "🏗",
         TYPE_EVENT: "📅",
         TYPE_REFERRAL: "🏢",
-        TYPE_BATTLE: "🤜🤛"
+        TYPE_BATTLE: "🤜🤛",
+        TYPE_GUIDE: "🗺",
     }
 
     TYPE_TO_PREFIX = {
@@ -64,7 +68,8 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_PROJECT: "Проект:",
         TYPE_EVENT: "Событие:",
         TYPE_REFERRAL: "Рефералка:",
-        TYPE_BATTLE: "Батл:"
+        TYPE_BATTLE: "Батл:",
+        TYPE_GUIDE: "🗺",
     }
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -73,7 +78,6 @@ class Post(models.Model, ModelDiffMixin):
     author = models.ForeignKey(User, related_name="posts", db_index=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
-    label = models.JSONField(null=True)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
 
     title = models.TextField(null=False)
@@ -167,6 +171,13 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def prefix(self):
         return self.TYPE_TO_PREFIX.get(self.type) or ""
+
+    @property
+    def label(self):
+        lbl = LABELS.get(self.label_code)
+        if lbl is not None:
+            lbl['code'] = self.label_code
+        return lbl
 
     @property
     def is_pinned(self):

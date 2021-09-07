@@ -21,7 +21,7 @@ requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 log = logging.getLogger(__name__)
 
 
-ParsedURL = namedtuple("ParsedURL", ["url", "domain", "title", "favicon", "summary", "image"])
+ParsedURL = namedtuple("ParsedURL", ["url", "domain", "title", "favicon", "summary", "image", "description"])
 
 
 def parse_url_preview(url: str) -> Optional[ParsedURL]:
@@ -44,6 +44,7 @@ def parse_url_preview(url: str) -> Optional[ParsedURL]:
         favicon=strip_tags(urljoin(article.url, article.meta_favicon)),
         summary="",
         image=article.top_image,
+        description=article.meta_description,
     )
 
 

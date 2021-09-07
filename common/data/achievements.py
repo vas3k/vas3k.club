@@ -97,6 +97,12 @@ ACHIEVEMENTS = [
         "image": "https://4aff.club/static/images/achievements/2020.png",
         "style": "background-color: #FC913A; font-size: 190%;",
     }),
+    ("mic", {
+        "name": "Золотой микрофон",
+        "description": "За выступление на АМА  и митапах в качестве оратора",
+        "image": "https://vas3k.club/static/images/achievements/mic.png",
+        "style": "background-color: #9370D8; font-size: 130%;",
+    })
 ]
 
 # VIP: https://i.4aff.club/3cb.png
