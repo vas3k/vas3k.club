@@ -11,12 +11,14 @@ class Tag(models.Model):
     GROUP_PERSONAL = "personal"
     GROUP_TECH = "tech"
     GROUP_CLUB = "club"
+    GROUP_MONEY = "money"
     GROUP_OTHER = "other"
     GROUPS = [
         (GROUP_PERSONAL, "О себе"),
         (GROUP_TECH, "Технологии"),
         (GROUP_CLUB, "Для других членов Клуба я..."),
         (GROUP_HOBBIES, "Хобби"),
+        (GROUP_MONEY, "Зарабатываю"),
         (GROUP_OTHER, "Остальное"),
     ]
 
