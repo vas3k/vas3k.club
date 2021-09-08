@@ -102,7 +102,31 @@ ACHIEVEMENTS = [
         "description": "За выступление на АМА  и митапах в качестве оратора",
         "image": "https://vas3k.club/static/images/achievements/mic.png",
         "style": "background-color: #9370D8; font-size: 130%;",
-    })
+    }),
+    ("hacker_1", {
+        "name": "Хакер LVL 1",
+        "description": "Выдаётся за участие в одном клубном хакатоне, хактоберфесте или геймджеме",
+        "image": "https://vas3k.club/static/images/achievements/hack_1.png",
+        "style": "background-color: #50c878; font-size: 120%;",
+    }),
+    ("hacker_2", {
+        "name": "Хакер LVL 2",
+        "description": "Выдаётся за участие в 3 клубных хакатонах, хактоберфестах или геймджемах",
+        "image": "https://vas3k.club/static/images/achievements/hack_2.png",
+        "style": "background-color: #50c878; font-size: 120%;",
+    }),
+    ("hacker_3", {
+        "name": "Хакер LVL 3",
+        "description": "Выдаётся за участие в 5 клубных хакатонах, хактоберфестах или геймджемах",
+        "image": "https://vas3k.club/static/images/achievements/hack_3.png",
+        "style": "background-color: #00a550; font-size: 120%;",
+    }),
+    ("hacker_4", {
+        "name": "Хакер LVL 4",
+        "description": "Выдаётся за участие в 10 клубных хакатонах, хактоберфестах или геймджемах",
+        "image": "https://vas3k.club/static/images/achievements/hack_4.png",
+        "style": "background-color: #00a550; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
