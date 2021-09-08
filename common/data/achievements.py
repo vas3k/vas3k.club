@@ -119,10 +119,10 @@ ACHIEVEMENTS = [
         "name": "Хакер LVL 3",
         "description": "Выдаётся за участие в 5 клубных хакатонах, хактоберфестах или геймджемах",
         "image": "https://vas3k.club/static/images/achievements/hack_3.png",
-        "style": "background-color: #00a550; font-size: 120%;",
+        "style": "background-color: #50c878; font-size: 120%;",
     }),
     ("hacker_4", {
-        "name": "Хакер LVL 4",
+        "name": "Хакер PRO",
         "description": "Выдаётся за участие в 10 клубных хакатонах, хактоберфестах или геймджемах",
         "image": "https://vas3k.club/static/images/achievements/hack_4.png",
         "style": "background-color: #00a550; font-size: 120%;",
