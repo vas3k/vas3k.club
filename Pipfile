@@ -9,7 +9,7 @@ pytest = "*"
 django-debug-toolbar = "*"
 
 [packages]
-django = "==3.2"
+django = "==3.2.4"
 requests = "==2.23.0"
 pyjwt = "==1.7.1"
 cryptography = ">=3.3.2"
