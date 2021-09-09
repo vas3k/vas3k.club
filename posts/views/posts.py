@@ -250,10 +250,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
             post.publish()
             LinkedPost.create_links_from_text(post, post.text)
 
-        if post.is_visible or action == "preview":
-            return redirect("show_post", post.type, post.slug)
-        else:
-            return redirect("compose")
+        return redirect("show_post", post.type, post.slug)
 
     return render(request, f"posts/compose/{post_type}.html", {
         "mode": mode,
