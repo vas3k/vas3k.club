@@ -2,12 +2,14 @@ from datetime import datetime
 
 import pytz
 from django import forms
+from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
 
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
 from posts.models.topics import Topic
 from common.forms import ImageUploadField
+from users.models.user import User
 
 
 class PostForm(forms.ModelForm):
@@ -36,6 +38,14 @@ class PostForm(forms.ModelForm):
 
         return topic
 
+    def validate_coauthors(self, cleaned_data):
+        non_existing_coauthors = [coauthor for coauthor in cleaned_data["coauthors"]
+                                  if not User.objects.filter(slug=coauthor).exists()]
+        if non_existing_coauthors:
+            raise ValidationError({"coauthors": "Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors))})
+        self.instance.coauthors = cleaned_data["coauthors"]
+
+
 
 class PostTextForm(PostForm):
     title = forms.CharField(
@@ -56,10 +66,20 @@ class PostTextForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public"]
+        fields = ["title", "text", "topic", "is_public", "coauthors"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_coauthors(cleaned_data)
+        return cleaned_data
 
 
 class PostLinkForm(PostForm):
@@ -506,10 +526,20 @@ class PostGuideForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public"]
+        fields = ["title", "text", "topic", "is_public", "coauthors"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_coauthors(cleaned_data)
+        return cleaned_data
 
 
 POST_TYPE_MAP = {

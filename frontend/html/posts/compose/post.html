@@ -60,6 +60,8 @@
                     </span>
                 </div>
 
+                {% include "posts/widgets/advanced_details.html" with form=form %}
+
                 {% include "posts/compose/elements/post_settings.html" %}
 
                 {% if form.non_field_errors %}

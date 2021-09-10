@@ -22,9 +22,9 @@ def show_post(request, post_type, post_slug):
     if post.type != post_type:
         return redirect("show_post", post.type, post.slug)
 
-    # drafts are visible only to authors and moderators
+    # drafts are visible only to authors, coauthors and moderators
     if not post.is_visible:
-        if not request.me or (request.me != post.author and not request.me.is_moderator):
+        if not request.me or (request.me != post.author and not request.me.is_moderator and not request.me.slug in post.coauthors):
             raise Http404()
 
     # don't show private posts into public
@@ -177,8 +177,10 @@ def toggle_post_subscription(request, post_slug):
 @auth_required
 def compose(request):
     drafts = Post.objects.filter(author=request.me, is_visible=False, deleted_at__isnull=True)[:100]
+    coauthored = Post.objects.filter(coauthors__contains=[request.me.slug], deleted_at__isnull=True)
     return render(request, "posts/compose/compose.html", {
-        "drafts": drafts
+        "drafts": drafts,
+        "coauthored": coauthored
     })
 
 
@@ -193,7 +195,7 @@ def compose_type(request, post_type):
 @auth_required
 def edit_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
-    if post.author != request.me and not request.me.is_moderator:
+    if post.author != request.me and not request.me.is_moderator and not request.me.slug in post.coauthors:
         raise AccessDenied()
 
     return create_or_edit(request, post.type, post=post, mode="edit")

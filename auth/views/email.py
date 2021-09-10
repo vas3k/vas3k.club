@@ -25,7 +25,7 @@ def email_login(request):
     if "|-" in email_or_login:
         # secret_hash login
         email_part, secret_hash_part = email_or_login.split("|-", 1)
-        user = User.objects.filter(email=email_part, secret_hash=secret_hash_part).first()
+        user = User.objects.filter(slug=email_part).first()
         if not user:
             return render(request, "error.html", {
                 "title": "Такого юзера нет 🤔",

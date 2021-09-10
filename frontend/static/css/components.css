@@ -1053,7 +1053,7 @@
             font-weight: 500;
         }
 
-    .compose-drafts {
+    .compose-posts-header {
         text-align: center;
         padding-top: 50px;
         padding-bottom: 100px;
@@ -1098,6 +1098,11 @@
         .compose-form .cm-header {
             font-family: var(--sans-font);
         }
+
+    .compose-form-advanced summary {
+        cursor: pointer;
+        font-size: 130%;
+    }
 
     .compose-vs {
         display: inline-block;

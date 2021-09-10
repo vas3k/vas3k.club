@@ -42,7 +42,7 @@
                 <span class="compose-type-name">Путеводитель</span>
             </a>
         </div>
-        <div class="compose-drafts" id="compose-drafts">
+        <div class="compose-posts-header" id="compose-drafts">
             <h2>Черновики 🙇‍♂️ </h2>
             {% if drafts %}
                 {% for draft in drafts %}
@@ -52,5 +52,13 @@
                 <div class="compose-drafts-none">Нет сохраненных черновиков</div>
             {% endif %}
         </div>
+        {% if coauthored %}
+            <div class="compose-posts-header" id="compose-coauthored">
+                <h2>Совместные посты 🤝</h2>
+                {% for post in coauthored %}
+                    {% include "posts/items/items.html" with post=post %}
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
