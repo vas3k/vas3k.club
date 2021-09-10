@@ -93,6 +93,10 @@
             padding-bottom: 40px;
         }
 
+            .post-type-post .post-author .post {
+                padding-bottom: 5px;
+            }
+
             .post-type-post .post-author .avatar {
                 width: 30px;
                 height: 30px;
@@ -859,8 +863,8 @@
         }
 
 .post-guide-rules {
-    max-width: var(--normal-content-width);
-    margin: 50px auto 0;
+    max-width: var(--post-width);
+    margin: 0 auto;
 }
 
     .post-guide-rules-header {
