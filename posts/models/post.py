@@ -80,7 +80,7 @@ class Post(models.Model, ModelDiffMixin):
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
-    coauthors = ArrayField(models.CharField(max_length=32), default=list, null=False)
+    coauthors = ArrayField(models.CharField(max_length=32), default=list, null=False, db_index=True)
 
     title = models.TextField(null=False)
     text = models.TextField(null=False)
@@ -166,6 +166,9 @@ class Post(models.Model, ModelDiffMixin):
     def decrement_vote_count(self):
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
 
+    def can_edit(self, user):
+        return self.author == user or user.is_moderator or user.slug in self.coauthors
+
     @property
     def emoji(self):
         return self.TYPE_TO_EMOJI.get(self.type) or ""
@@ -183,7 +186,7 @@ class Post(models.Model, ModelDiffMixin):
 
     @property
     def coauthors_with_details(self):
-        return [User.objects.get(slug=coauthor) for coauthor in self.coauthors]
+        return User.objects.filter(slug__in=self.coauthors).all()
 
     @property
     def is_pinned(self):
