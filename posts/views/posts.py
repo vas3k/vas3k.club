@@ -211,7 +211,8 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         form = FormClass(instance=post)
         return render(request, f"posts/compose/{post_type}.html", {
             "mode": mode,
-            "form": form
+            "post_type": post_type,
+            "form": form,
         })
 
     # validate form on POST
@@ -258,5 +259,6 @@ def create_or_edit(request, post_type, post=None, mode="create"):
 
     return render(request, f"posts/compose/{post_type}.html", {
         "mode": mode,
-        "form": form
+        "post_type": post_type,
+        "form": form,
     })

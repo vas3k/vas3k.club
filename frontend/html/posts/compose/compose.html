@@ -52,13 +52,5 @@
                 <div class="compose-drafts-none">Нет сохраненных черновиков</div>
             {% endif %}
         </div>
-        {% if coauthored %}
-            <div class="compose-posts-header" id="compose-coauthored">
-                <h2>Совместные посты 🤝</h2>
-                {% for post in coauthored %}
-                    {% include "posts/items/items.html" with post=post %}
-                {% endfor %}
-            </div>
-        {% endif %}
     </div>
 {% endblock %}

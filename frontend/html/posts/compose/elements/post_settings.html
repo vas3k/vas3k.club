@@ -1,3 +1,4 @@
+{% if post_type == "post" or post_type == "guide" %}
 <details class="block compose-form-advanced" {% if form.instance.coauthors %}open{% endif %}>
     <summary class="compose-form-advanced-summary">Продвинутые настройки</summary>
 
@@ -13,6 +14,7 @@
         </span>
     </div>
 </details>
+{% endif %}
 
 {% if mode == "create" or form.instance.is_public or form.instance.comment_count < 10 or form.instance.published_at is None or me.is_moderator %}
 <div class="big-radio compose-visibility">
