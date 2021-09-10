@@ -66,9 +66,10 @@ class PostTextForm(PostForm):
             }
         ),
     )
-    coauthors = SimpleArrayField(forms.CharField(max_length=32),
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
         max_length=10,
-        label="Соавторы",
+        label="Соавторы поста",
         required=False,
     )
 
@@ -526,9 +527,10 @@ class PostGuideForm(PostForm):
             }
         ),
     )
-    coauthors = SimpleArrayField(forms.CharField(max_length=32),
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
         max_length=10,
-        label="Соавторы",
+        label="Соавторы поста",
         required=False,
     )
 

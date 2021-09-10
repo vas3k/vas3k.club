@@ -4,10 +4,6 @@
 {% load text_filters %}
 
 {% block pre_comments %}
-    {% if linked_posts %}
-        {% include "posts/widgets/linked_posts.html" %}
-    {% endif %}
-
     <div class="block post-guide-rules">
         <div class="post-guide-rules-header">
             🌍 Это — <a href="https://vas3k.club/guide/11625/">Клубный Путеводитель</a>. Коллективный пост, где мы собираем туристические гайды по своим городам для соклубников
@@ -21,4 +17,8 @@
             </ul>
         </div>
     </div>
+
+    {% if linked_posts %}
+        {% include "posts/widgets/linked_posts.html" %}
+    {% endif %}
 {% endblock %}

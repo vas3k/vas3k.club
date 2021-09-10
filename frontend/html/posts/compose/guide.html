@@ -46,9 +46,7 @@
                     </span>
                 </div>
 
-                {% include "posts/widgets/advanced_details.html" with form=form %}
-
-                {% include "posts/compose/elements/post_settings.html" %}
+                {% include "posts/compose/elements/post_settings.html" with form=form %}
 
                 {% if form.non_field_errors %}
                     <div class="form-row form-row-center">

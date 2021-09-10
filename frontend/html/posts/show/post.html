@@ -92,11 +92,9 @@
             <footer class="post-footer p-author">
                 {% include "users/widgets/card.html" with user=post.author %}
 
-                <div>При поддержке:</div>
-
                 {% if post.coauthors %}
                     {% for coauthor in post.coauthors_with_details %}
-                        {% include "users/widgets/small.html" with user=coauthor %}
+                        {% include "users/widgets/card.html" with user=coauthor %}
                     {% endfor %}
                 {% endif %}
             </footer>
