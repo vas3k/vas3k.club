@@ -19,6 +19,9 @@ class Achievement(models.Model):
         db_table = "achievements"
         ordering = ["index"]
 
+    def achievement_users(self):
+        return User.objects.filter(achievements__achievement_id=self.code)
+
 
 class UserAchievement(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

@@ -122,6 +122,13 @@ class Post(models.Model, ModelDiffMixin):
             "view_count",
             "upvotes",
             "hotness",
+            "label_code",
+            "is_approved_by_moderator",
+            "is_commentable",
+            "is_visible_in_feeds",
+            "is_pinned_until",
+            "is_shadow_banned",
+            "topic",
         ],
     )
 
