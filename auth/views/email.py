@@ -47,7 +47,7 @@ def email_login(request):
         response = redirect(redirect_to)
         return set_session_cookie(response, user, session)
     else:
-        if True:
+        if not settings.STRIPE_ACTIVE:
             # email login or sign up
             now = datetime.utcnow()
 
