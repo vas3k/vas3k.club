@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% load static %}
 {% load users %}
+{% load text_filters %}
 
 {% block title %}
     Статистика — {{ block.super }}
@@ -123,6 +124,9 @@
                             <span class="top-user-name">{{ user.full_name }}</span>
                         </a>
                     {% endfor %}
+                    {% if achievement.user_count > 25 %}
+                       <span class="top-user-name">..и ещё {{ achievement.user_count|add:-25 }} {{ achievement.user_count|add:-25|rupluralize:"пользователь,пользователя,пользователей" }}</span>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}

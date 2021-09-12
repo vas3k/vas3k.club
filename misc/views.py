@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
 import pytz
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
@@ -17,8 +17,10 @@ from users.models.user import User
 @auth_required
 def stats(request):
     achievements = Achievement.objects\
+        .annotate(user_count=Count('users'))\
         .filter(is_visible=True)\
-        .exclude(code__in=["old", "parliament_member"])
+        .exclude(code__in=["old", "parliament_member"])\
+        .order_by('-user_count')
 
     moderators = User.objects\
         .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
