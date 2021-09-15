@@ -207,7 +207,7 @@ def daily_digest(request, user_slug):
 
 def weekly_digest(request):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=7)
+    start_date = end_date - timedelta(days=8)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
