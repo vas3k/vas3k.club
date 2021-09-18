@@ -57,6 +57,7 @@ def robots(request):
         "Disallow: /intro/"
         "Disallow: /user/"
         "Disallow: /people/"
+        "Clean-param: comment_order&goto /"
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
