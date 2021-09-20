@@ -80,6 +80,12 @@
             opacity: 0.8;
         }
 
+        .top-user-more {
+            display: block;
+            font-size: 120%;
+            align-self: center;
+        }
+
     .top-user-big {
         max-width: 160px;
         margin: 10px;

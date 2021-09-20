@@ -20,7 +20,9 @@ class Achievement(models.Model):
         ordering = ["index"]
 
     def achievement_users(self):
-        return User.objects.filter(achievements__achievement_id=self.code)
+        return User.objects\
+            .filter(achievements__achievement_id=self.code)\
+            .order_by("-achievements__created_at")
 
 
 class UserAchievement(models.Model):
