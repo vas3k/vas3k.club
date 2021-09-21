@@ -51,7 +51,7 @@
     </div>
     <div class="reply-footer thread-collapse-toggle">
         {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
-            {% if not comment.is_deleted or me.id == comment.deleted_by_id or me.is_moderator %}
+            {% if not comment.is_deleted or me.id == comment.deleted_by or me.is_moderator %}
                 <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
             {% endif %}
 
