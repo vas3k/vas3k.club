@@ -56,10 +56,10 @@ def robots(request):
         "User-agent: *",
         "Sitemap: https://vas3k.club/sitemap.xml",
         "Host: https://vas3k.club",
-        "Disallow: /intro/"
-        "Disallow: /user/"
-        "Disallow: /people/"
-        "Clean-param: comment_order&goto /"
+        "Disallow: /intro/",
+        "Disallow: /user/",
+        "Disallow: /people/",
+        "Clean-param: comment_order&goto /",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
