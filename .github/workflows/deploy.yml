@@ -20,4 +20,4 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           envs: POSTGRES_PASSWORD,MEDIA_UPLOAD_URL
-          script: cd /var/www/4aff.club && git pull && make redeploy
+          script: cd /var/www/4aff.club && git pull && git checkout 4aff && make redeploy
