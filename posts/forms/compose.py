@@ -2,12 +2,14 @@ from datetime import datetime
 
 import pytz
 from django import forms
+from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
 
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
 from posts.models.topics import Topic
 from common.forms import ImageUploadField
+from users.models.user import User
 
 
 class PostForm(forms.ModelForm):
@@ -36,6 +38,14 @@ class PostForm(forms.ModelForm):
 
         return topic
 
+    def validate_coauthors(self, cleaned_data):
+        non_existing_coauthors = [coauthor for coauthor in cleaned_data["coauthors"]
+                                  if not User.objects.filter(slug=coauthor).exists()]
+        if non_existing_coauthors:
+            raise ValidationError({"coauthors": "Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors))})
+        self.instance.coauthors = cleaned_data["coauthors"]
+
+
 
 class PostTextForm(PostForm):
     title = forms.CharField(
@@ -56,10 +66,21 @@ class PostTextForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public"]
+        fields = ["title", "text", "topic", "is_public", "coauthors"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_coauthors(cleaned_data)
+        return cleaned_data
 
 
 class PostLinkForm(PostForm):
@@ -249,9 +270,24 @@ class PostEventForm(PostForm):
             attrs={
                 "maxlength": 500000,
                 "class": "markdown-editor-full",
-                "placeholder": "Расскажите что, где и когда произойдёт. "
-                               "Не забудьте оставить контакты для связи с организаторами "
-                               "и приложить все необходимые ссылочки.",
+                "placeholder": "Расскажите кратко, что за мероприятие и зачем туда идти: "
+                               "какой формат, какие активности планируются. "
+                               "Если это серия ивентов, дайте ссылку на предыдущее или расскажите, как прошло.\n\n"
+                               "# Для кого мероприятие\n\n"
+                               "Если мероприятие тематическое (например, киноклуб или хакатон), "
+                               "расскажите какой минимальный порог вхождения или как нужно подготовиться.\n"
+                               "Зовёте в бар? Расскажите, чем он знаменит и что в меню.\n\n"
+                               "# Регистрация\n\n"
+                               "Если требуется регистрация, то как это сделать, например, "
+                               "заполнить форму или отметиться в комментариях.\n\n"
+                               "# Где и когда\n\n"
+                               "Во сколько запланирован сбор и до скольких примерно продлится мероприятие. "
+                               "Как найти вход, приложите ссылку на карту или нарисуйте маршрут.\n\n"
+                               "# Ограничения\n\n"
+                               "Есть ограничения по вместимости? Не пускают с собаками? Нельзя алкоголь?\n"
+                               "# Контакты\n\n"
+                               "Контакты организаторов или чатик, "
+                               "куда можно присылать вопросы и обсуждать организацию.",
             }
         ),
     )
@@ -442,8 +478,8 @@ class PostGuideForm(PostForm):
         label="Текст путеводителя",
         required=True,
         max_length=500000,
-        initial="Ниже приведён шаблон, который вы можете редактировать как вам будет удобнее. "
-                "Начните с общего рассказа о городе, его культуре и конечно же карте...\n\n"
+        initial="Ниже приведён шаблон, который вы можете редактировать как вам будет удобнее.\b\b"
+                "Напишите пару предложений введения: чем славится ваш город, как он появился и зачем в него ехать?\n\n"
                 "# Карта города\n\n"
                 "Обведите на ней все главные места — где центр, где тусить, где жить, где есть, где ходить. "
                 "Можете использовать скриншоты с сервиса hoodmaps.com, можете нарисовать свою карту, как удобнее. "
@@ -454,15 +490,15 @@ class PostGuideForm(PostForm):
                 "- **Население**\n"
                 "   - [количество человек]\n"
                 "- **Визы**\n"
-                "   - [нужна ли соклубникам виза и какая]\n"
+                "   - [нужна ли соклубникам виза, паспорт и какой]\n"
                 "- **Когда лучше всего приезжать?**\n"
                 "   - [месяц или сезон]\n"
                 "- **Что обязательно взять с собой?**\n"
                 "   - [переходник для розеток, крем от солнца, или просто ничего]\n"
                 "- **Как лучше добраться из аэропорта?**\n"
-                "   - [можно несколько вариантов]\n"
+                "   - [можно несколько вариантов, укажите примерные цены]\n"
                 "- **Как лучше перемещаться по городу?**\n"
-                "   - [взять билет на несколько дней или пользоваться такси?]\n"
+                "   - [взять билет на транспорт или пользоваться такси?]\n"
                 "- **Как вызывать такси?**\n"
                 "   - [название приложения или телефон]\n"
                 "- **Есть ли доставка еды?**\n"
@@ -485,7 +521,7 @@ class PostGuideForm(PostForm):
                 "   - [в местной валюте]\n\n"
                 "# Основной маршрут туриста\n\n"
                 "...\n\n"
-                "# «Нетуристический» гайд\n\n"
+                "# «Нетуристические» маршруты\n\n"
                 "...\n\n"
                 "# Где жить?\n\n"
                 "...\n\n"
@@ -506,10 +542,21 @@ class PostGuideForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public"]
+        fields = ["title", "text", "topic", "is_public", "coauthors"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_coauthors(cleaned_data)
+        return cleaned_data
 
 
 class PostThreadForm(PostForm):

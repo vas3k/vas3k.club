@@ -1,3 +1,129 @@
+
+.compose {
+    max-width: var(--normal-content-width);
+    margin-top: 100px;
+}
+
+    @media only screen and (max-width : 570px) {
+        .compose {
+            font-size: 80%;
+        }
+
+        .compose-btn-text {
+            display: none;
+        }
+    }
+
+    .compose-types {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .compose-type {
+        width: 220px;
+        height: 220px;
+        text-decoration: none;
+        text-align: center;
+    }
+
+        .compose-type-icon {
+            display: block;
+            font-size: 70px;
+            padding-bottom: 10px;
+            padding-top: 20px;
+        }
+
+        .compose-type-name {
+            display: block;
+            font-size: 120%;
+            font-weight: 500;
+        }
+
+    .compose-posts-header {
+        text-align: center;
+        padding-top: 50px;
+        padding-bottom: 100px;
+    }
+
+.compose-form {
+
+}
+
+    .compose-form-title input {
+        text-align: center;
+        font-size: 150%;
+        font-weight: 600;
+        padding: 15px;
+    }
+
+    .compose-form-text textarea.markdown-editor-full {
+        padding: 20px;
+        min-height: 500px;
+        font-family: var(--serif-font);
+        line-height: 1.4em;
+    }
+
+        .compose-form-text .CodeMirror,
+        .compose-form-text .CodeMirror-focused,
+        .compose-form-text .CodeMirror-scroll {
+            min-height: 400px !important;
+            transform: scale(1);
+        }
+
+    /* Markdown editor styles */
+    .compose-form .CodeMirror-code {
+        position: relative;
+        font-style: normal;
+        font-size: 19px;
+        line-height: 1.67;
+        color: #333;
+        font-family: var(--serif-font);
+        font-weight: 400;
+    }
+
+        .compose-form .cm-header {
+            font-family: var(--sans-font);
+        }
+
+    .compose-form-advanced summary {
+        cursor: pointer;
+        font-size: 130%;
+    }
+
+    .compose-vs {
+        display: inline-block;
+        padding: 5px 10px;
+        font-size: 130%;
+        font-weight: 600;
+    }
+
+    .compose-form-counter {
+        display: block;
+        text-align: right;
+        font-size: 120%;
+        font-weight: bold;
+        padding-top: 5px;
+    }
+
+.compose-visibility {
+    padding-top: 20px;
+    padding-bottom: 80px;
+}
+
+    @media only screen and (max-width : 570px) {
+        .compose-visibility .big-radio-item {
+            font-size: 75%;
+        }
+        .compose-visibility .big-radio-item .fas {
+            font-size: 46px;
+        }
+    }
+
+.compose-form-text {
+    padding-bottom: 50px;
+}
+
 .compose-form-datetime {
     display: flex;
     flex-wrap: wrap;
@@ -25,4 +151,13 @@
     .compose-form-location input {
         min-width: 580px;
         text-align: left !important;
+    }
+
+.compose-form-advanced {
+    padding: 20px;
+    margin-bottom: 50px;
+}
+
+    .compose-form-coauthors {
+        padding-top: 40px;
     }

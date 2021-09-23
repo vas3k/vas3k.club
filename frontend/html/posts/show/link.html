@@ -1,78 +1,23 @@
-{% extends "posts/show/layout.html" %}
+{% extends "posts/show/question.html" %}
 {% load static %}
 {% load posts %}
 {% load text_filters %}
 
-{% block post %}
-    <section class="content">
-        <article class="post block post-layout-block">
-            <div class="post-upvote">
-                <post-upvote :initial-upvotes="{{ post.upvotes }}"
-                             :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
-                             upvote-url="{% url "upvote_post" post.slug %}"
-                             retract-vote-url="{% url "retract_post_vote" post.slug %}"
-                             {% if is_voted %}
-                                initial-is-voted
-                                initial-upvote-timestamp={{upvoted_at}}
-                             {% endif %}
-                             {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
-                </post-upvote>
-            </div>
+{# this type in inherited from "question" #}
+{% block post_title %}
+    {% link_icon post %}
+    &rarr;
+    <span class="p-name">{{ post.title | rutypography }}</span>
+{% endblock %}
 
-            <header class="post-header">
-                <div class="post-title">
-                    {% link_icon post %}
-                    &rarr;
-                    <span class="p-name">{{ post.title | rutypography }}</span>
+{% block post_text %}
+    <section class="text-body text-body-type-post e-content">
+        {% if post.metadata %}
+            {% link_summary post %}
+        {% else %}
+            &rarr;&nbsp;<a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.url }}</a>
+        {% endif %}
 
-                    <span class="post-is-public">
-                        {% if post.is_public %}
-                            <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
-                        {% else %}
-                            <i class="fas fa-lock"></i>&nbsp;Только для своих
-                        {% endif %}
-                    </span>
-
-                    {% if post.label %}
-                        {% include "posts/widgets/label.html" with label=post.label %}
-                    {% endif %}
-
-                    {% if post.deleted_at %}
-                        <div class="post-label">
-                            <span class="label label-type-deleted">
-                                <span class="label-title">Удалённый пост</span>
-                            </span>
-                        </div>
-                    {% elif not post.is_visible %}
-                        <div class="post-label">
-                            {% include "posts/widgets/draft_label.html" %}
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="post-info">
-                    {% if post.topic %}
-                        {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
-                    {% endif %}
-                    <div class="post-actions-line">
-                        {% include "posts/widgets/post_actions_line.html" %}
-                    </div>
-                </div>
-            </header>
-            <section class="text-body text-body-type-post e-content">
-                {% if post.metadata %}
-                    {% link_summary post %}
-                {% else %}
-                    &rarr;&nbsp;<a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.url }}</a>
-                {% endif %}
-
-                {% render_post post %}
-            </section>
-            <footer class="post-footer p-author">
-                {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
-            </footer>
-        </article>
+        {% render_post post %}
     </section>
-    {% if linked_posts %}
-        {% include "posts/widgets/linked_posts.html" %}
-    {% endif %}
 {% endblock %}

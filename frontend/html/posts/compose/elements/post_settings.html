@@ -1,3 +1,21 @@
+{% if post_type == "post" or post_type == "guide" %}
+<details class="block compose-form-advanced" {% if form.instance.coauthors %}open{% endif %}>
+    <summary class="compose-form-advanced-summary">Продвинутые настройки</summary>
+
+    <div class="form-row compose-form-coauthors">
+        <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
+        {{ form.coauthors }}
+        {% if form.coauthors.errors %}
+            <span class="form-row-errors">{{ form.coauthors.errors }}</span>
+        {% endif %}
+        <span class="form-row-help form-row-help-wide">
+            Список никнеймов через запятую. Они смогут тоже редактировать пост.
+            Лучше не делать этого одновременно, ведь изменения одного автора перетирают другого.
+        </span>
+    </div>
+</details>
+{% endif %}
+
 {% if mode == "create" or form.instance.is_public or form.instance.comment_count < 10 or form.instance.published_at is None or me.is_moderator %}
 <div class="big-radio compose-visibility">
     <div class="big-radio-item">
