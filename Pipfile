@@ -38,6 +38,7 @@ stripe = "==2.55.0"
 icalendar = "*"
 httptools = "*"
 croniter = "*"
+pydantic = "*"
 
 [requires]
 python_version = "3.8"
