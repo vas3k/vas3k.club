@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 4aff
+      - feature/wayforpay2
 
 jobs:
   build:

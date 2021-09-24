@@ -14,7 +14,7 @@ from misc.views import achievements, network, robots, generate_ical_invite, gene
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch, \
     link_telegram
 from notifications.webhooks import webhook_event
-from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
+from payments.views import membership_expired, pay, done, stripe_webhook, wayforpay_webhook, stop_subscription
 from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
 from posts.rss import NewPostsRss
@@ -56,6 +56,7 @@ urlpatterns = [
     path("monies/done/", done, name="done"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
     path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
+    path("monies/wayforpay/webhook/", wayforpay_webhook, name="wayforpay_webhook"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),

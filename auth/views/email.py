@@ -91,6 +91,7 @@ def email_login(request):
             "restore": user.deleted_at is not None,
         })
 
+
 def email_login_code(request):
     email = request.GET.get("email")
     code = request.GET.get("code")

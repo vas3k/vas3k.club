@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime
 
@@ -7,8 +8,9 @@ from django.shortcuts import render, redirect
 
 from auth.helpers import auth_required
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_price_id, TAX_RATE_VAT
+from payments.products import PRODUCTS, find_by_price_id
 from payments.service import stripe
+from payments.wayforpay import WAYFORPAY_PRODUCTS, WayForPayService, TransactionStatus
 from users.models.user import User
 
 log = logging.getLogger()
@@ -34,13 +36,9 @@ def done(request):
 def pay(request):
     product_code = request.GET.get("product_code")
     is_invite = request.GET.get("is_invite")
-    is_recurrent = request.GET.get("is_recurrent")
-    if is_recurrent:
-        interval = request.GET.get("recurrent_interval") or "yearly"
-        product_code = f"{product_code}_recurrent_{interval}"
 
     # find product by code
-    product = PRODUCTS.get(product_code)
+    product = WAYFORPAY_PRODUCTS.get(product_code)
     if not product:
         return render(request, "error.html", {
             "title": "Не выбран пакет 😣",
@@ -109,36 +107,19 @@ def pay(request):
     else:  # scenario 3: account renewal
         user = request.me
 
-    # reuse stripe customer ID if user already has it
-    if user.stripe_id:
-        customer_data = dict(customer=user.stripe_id)
-    else:
-        customer_data = dict(customer_email=user.email)
-
     # create stripe session and payment (to keep track of history)
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[{
-            "price": product["stripe_id"],
-            "quantity": 1,
-            "tax_rates": [TAX_RATE_VAT] if TAX_RATE_VAT else [],
-        }],
-        **customer_data,
-        mode="subscription" if is_recurrent else "payment",
-        metadata=payment_data,
-        success_url=settings.STRIPE_SUCCESS_URL,
-        cancel_url=settings.STRIPE_CANCEL_URL,
-    )
+    pay_service = WayForPayService()
+    invoice = pay_service.create_invoice(product_code)
 
     payment = Payment.create(
-        reference=session.id,
+        reference=invoice.id,
         user=user,
         product=product,
         data=payment_data,
     )
 
     return render(request, "payments/pay.html", {
-        "session": session,
+        "invoice": invoice,
         "product": product,
         "payment": payment,
         "user": user,
@@ -218,3 +199,22 @@ def stripe_webhook(request):
         return HttpResponse("[ok]", status=200)
 
     return HttpResponse("[unknown event]", status=400)
+
+
+def wayforpay_webhook(request):
+    payload = json.loads(request.body)
+
+    pay_service = WayForPayService()
+    status, answer = pay_service.accept_invoice(payload)
+
+    if status == TransactionStatus.APPROVED:
+        payment = Payment.finish(
+            reference=payload["orderReference"],
+            status=Payment.STATUS_SUCCESS,
+            data=payload,
+        )
+
+        product = WAYFORPAY_PRODUCTS[payment.product_code]
+        product["activator"](product, payment, payment.user)
+
+    return HttpResponse(json.dumps(answer))
