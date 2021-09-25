@@ -3,7 +3,7 @@
 # Makes shell non-interactive and exit on any error
 .SHELLFLAGS = -ec
 
-PROJECT_NAME=vas3k_club
+PROJECT_NAME=4aff_club
 
 run-dev:  ## Runs dev server
 	pipenv run python manage.py runserver 0.0.0.0:8000
