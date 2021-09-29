@@ -40,7 +40,7 @@ def render_post(request, post, context=None):
     if post.type == Post.TYPE_BATTLE:
         comments = comments.filter(is_deleted=False)
 
-    comment_form = CommentForm(initial={'text': post.comment_template}) if post.comment_template
+    comment_form = CommentForm(initial={'text': post.comment_template}) if post.comment_template else CommentForm()
     context = {
         **(context or {}),
         "post": post,
