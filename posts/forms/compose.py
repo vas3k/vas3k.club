@@ -559,6 +559,43 @@ class PostGuideForm(PostForm):
         return cleaned_data
 
 
+class PostThreadForm(PostForm):
+    title = forms.CharField(
+        label="Заголовок",
+        required=True,
+        max_length=128,
+        widget=forms.TextInput(attrs={"placeholder": "Заголовок 🤙"}),
+    )
+    text = forms.CharField(
+        label="Текст треда",
+        required=True,
+        max_length=500000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 500000,
+                "class": "markdown-editor-full",
+                "placeholder": "Дорогой Мартин Алексеевич…"
+            }
+        ),
+    )
+    comment_template = forms.CharField(
+        label="Шаблон комментария",
+        required=True,
+        max_length=5000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 5000,
+                "class": "markdown-editor-full",
+                "placeholder": "Здесь тоже поддерживается и рекомендуется Markdown"
+            }
+        ),
+    )
+
+    class Meta:
+        model = Post
+        fields = ["title", "text", "comment_template", "topic", "is_public"]
+
+
 POST_TYPE_MAP = {
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
@@ -568,4 +605,5 @@ POST_TYPE_MAP = {
     Post.TYPE_BATTLE: PostBattleForm,
     Post.TYPE_EVENT: PostEventForm,
     Post.TYPE_GUIDE: PostGuideForm,
+    Post.TYPE_THREAD: PostThreadForm,
 }
