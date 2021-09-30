@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -22,9 +23,9 @@ def show_post(request, post_type, post_slug):
     if post.type != post_type:
         return redirect("show_post", post.type, post.slug)
 
-    # drafts are visible only to authors and moderators
+    # drafts are visible only to authors, coauthors and moderators
     if not post.is_visible:
-        if not request.me or (request.me != post.author and not request.me.is_moderator):
+        if not request.me or not post.can_edit(request.me):
             raise Http404()
 
     # don't show private posts into public
@@ -176,7 +177,10 @@ def toggle_post_subscription(request, post_slug):
 
 @auth_required
 def compose(request):
-    drafts = Post.objects.filter(author=request.me, is_visible=False, deleted_at__isnull=True)[:100]
+    drafts = Post.objects\
+        .filter(is_visible=False, deleted_at__isnull=True)\
+        .filter(Q(author=request.me) | Q(coauthors__contains=[request.me.slug]))[:100]
+
     return render(request, "posts/compose/compose.html", {
         "drafts": drafts
     })
@@ -193,7 +197,7 @@ def compose_type(request, post_type):
 @auth_required
 def edit_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
-    if post.author != request.me and not request.me.is_moderator:
+    if not post.can_edit(request.me):
         raise AccessDenied()
 
     return create_or_edit(request, post.type, post=post, mode="edit")
@@ -207,7 +211,8 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         form = FormClass(instance=post)
         return render(request, f"posts/compose/{post_type}.html", {
             "mode": mode,
-            "form": form
+            "post_type": post_type,
+            "form": form,
         })
 
     # validate form on POST
@@ -250,12 +255,10 @@ def create_or_edit(request, post_type, post=None, mode="create"):
             post.publish()
             LinkedPost.create_links_from_text(post, post.text)
 
-        if post.is_visible or action == "preview":
-            return redirect("show_post", post.type, post.slug)
-        else:
-            return redirect("compose")
+        return redirect("show_post", post.type, post.slug)
 
     return render(request, f"posts/compose/{post_type}.html", {
         "mode": mode,
-        "form": form
+        "post_type": post_type,
+        "form": form,
     })

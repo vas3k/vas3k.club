@@ -48,12 +48,10 @@ def do_common_admin_and_curator_actions(request, post, data):
         label = LABELS.get(data["new_label"])
         if label:
             post.label_code = data["new_label"]
-            post.label = {"code": data["new_label"], **label}
             post.save()
 
     if data["remove_label"]:
         post.label_code = None
-        post.label = None
         post.save()
 
     # Pins

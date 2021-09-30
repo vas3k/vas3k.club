@@ -715,8 +715,9 @@ img.emoji {
 
 .big-radio {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 30px;
     padding: 20px 0;
     font-size: 17px;
 }
@@ -725,20 +726,15 @@ img.emoji {
         display: block;
         cursor: pointer;
         position: relative;
-        width: 50%;
-        max-width: 220px;
         min-height: 250px;
     }
 
     .big-radio-label {
         display: block;
         cursor: pointer;
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        margin: 10px;
+        padding: 10px;
         box-sizing: border-box;
         text-decoration: none;
         box-shadow: var(--block-shadow);

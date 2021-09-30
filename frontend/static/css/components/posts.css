@@ -93,6 +93,10 @@
             padding-bottom: 40px;
         }
 
+            .post-type-post .post-author .post {
+                padding-bottom: 5px;
+            }
+
             .post-type-post .post-author .avatar {
                 width: 30px;
                 height: 30px;
@@ -400,6 +404,15 @@
 
     .text-body img {
         max-width: 100%;
+    }
+
+    @media only screen and (min-width : 1100px) {
+        .text-body-image-full {
+            max-width: none !important;
+            width: 160% !important;
+            position: relative;
+            left: -30%;
+        }
     }
 
     .text-body big {
@@ -856,4 +869,24 @@
             .linked-posts-scroll {
                 padding-right: 10px;
             }
+        }
+
+.post-guide-rules {
+    max-width: var(--post-width);
+    margin: 0 auto;
+}
+
+    .post-guide-rules-header {
+        font-size: 170%;
+        line-height: 140%;
+        font-weight: 500;
+        padding-bottom: 10px;
+    }
+
+    .post-guide-rules-description {
+        font-size: 120%;
+    }
+
+        .post-guide-rules-description ul {
+            padding-left: 20px;
         }

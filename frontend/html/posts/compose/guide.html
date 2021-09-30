@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {% if mode == "edit" %}
+        Редактируем пост — {{ block.super }}
+    {% else %}
+        Новый пост — {{ block.super }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="content compose">
+        <div class="content-header">Путеводитель</div>
+
+        <div class="content-description content-description-left">
+            <p>
+                🗺 <strong>Клубный Путеводитель — авторский гайд по вашему городе.</strong> Для тех, кто поедет в него впервые.
+            </p>
+
+            <p>
+                💡 <strong>Подробнее <a href="https://vas3k.club/post/11625/" target="_blank">здесь</a></strong>.
+            </p>
+        </div>
+
+        <div class="block compose-text">
+            <form action="." method="post" class="compose-form" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row form-row-center">
+                    {{ form.topic }}
+                    {% if form.topic.errors %}<span class="form-row-errors">{{ form.topic.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row compose-form-title">
+                    {{ form.title }}
+                    {% if form.title.errors %}<span class="form-row-errors">{{ form.title.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row compose-form-text">
+                    <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
+                    {{ form.text }}
+                    {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
+                    <span class="form-row-help form-row-help-wide">
+                        Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a>.
+                        Для загрузки картинок просто перетащите их в редактор.
+                    </span>
+                </div>
+
+                {% include "posts/compose/elements/post_settings.html" with form=form %}
+
+                {% if form.non_field_errors %}
+                    <div class="form-row form-row-center">
+                        {% for error in form.non_field_errors %}
+                            <span class="form-row-errors">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% include "posts/compose/elements/save_buttons.html" %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

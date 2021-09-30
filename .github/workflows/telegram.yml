@@ -53,7 +53,7 @@ jobs:
         with:
           text: "❗️Требуется ревью для PR: [${{ github.event.pull_request.title}}](${{ github.event.pull_request.html_url}})"
       - name: Notify about push in master
-        if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/master'}}
+        if: ${{ github.event_name == 'push' && github.event.ref == 'refs/heads/master' && github.repository_owner == 'vas3k' }}
         uses: ./.github/actions/tg
         with:
           text: "💚 Пуш в мастере от @${{ github.event.head_commit.author.username}}: [${{ github.event.head_commit.message}}](${{ github.event.head_commit.url}}"

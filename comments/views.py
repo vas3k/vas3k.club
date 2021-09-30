@@ -98,6 +98,12 @@ def edit_comment(request, comment_id):
         if comment.author != request.me:
             raise AccessDenied()
 
+        if comment.is_deleted:
+            raise AccessDenied(
+                title="Нельзя редактировать удаленный комментарий",
+                message="Сначала тот, кто его удалил, должен его восстановить"
+            )
+
         if not comment.is_editable:
             hours = int(settings.COMMENT_EDITABLE_TIMEDELTA.total_seconds() // 3600)
             raise AccessDenied(
@@ -164,7 +170,7 @@ def delete_comment(request, comment_id):
         PostView.decrement_unread_comments(comment)
     else:
         # undelete comment
-        if comment.deleted_by == request.me or request.me.is_moderator:
+        if comment.deleted_by == request.me.id or request.me.is_moderator:
             comment.undelete()
             PostView.increment_unread_comments(comment)
         else:

@@ -4,11 +4,11 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Count
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from auth.helpers import auth_required
 from club.exceptions import AccessDenied
-from landing.forms import GodSettingsEditForm
+from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm
 from landing.models import GodSettings
 from users.models.user import User
 
@@ -42,17 +42,44 @@ def docs(request, doc_slug):
 
 
 @auth_required
-def god_settings(request):
+def godmode_settings(request):
+    if not request.me.is_god:
+        raise AccessDenied()
+
+    return render(request, "admin/godmode.html")
+
+
+@auth_required
+def godmode_network_settings(request):
     if not request.me.is_god:
         raise AccessDenied()
 
     god_settings = GodSettings.objects.first()
 
     if request.method == "POST":
-        form = GodSettingsEditForm(request.POST, request.FILES, instance=god_settings)
+        form = GodmodeNetworkSettingsEditForm(request.POST, request.FILES, instance=god_settings)
         if form.is_valid():
             form.save()
+            return redirect("godmode_settings")
     else:
-        form = GodSettingsEditForm(instance=god_settings)
+        form = GodmodeNetworkSettingsEditForm(instance=god_settings)
 
-    return render(request, "admin/godmode.html", {"form": form})
+    return render(request, "admin/simple_form.html", {"form": form})
+
+
+@auth_required
+def godmode_digest_settings(request):
+    if not request.me.is_god:
+        raise AccessDenied()
+
+    god_settings = GodSettings.objects.first()
+
+    if request.method == "POST":
+        form = GodmodeDigestEditForm(request.POST, request.FILES, instance=god_settings)
+        if form.is_valid():
+            form.save()
+            return redirect("godmode_settings")
+    else:
+        form = GodmodeDigestEditForm(instance=god_settings)
+
+    return render(request, "admin/simple_form.html", {"form": form})

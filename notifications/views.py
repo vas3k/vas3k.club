@@ -207,7 +207,7 @@ def daily_digest(request, user_slug):
 
 def weekly_digest(request):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=7)
+    start_date = end_date - timedelta(days=8)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
@@ -231,8 +231,8 @@ def weekly_digest(request):
     featured_post = Post.visible_objects()\
         .exclude(type=Post.TYPE_INTRO)\
         .filter(
-            label__isnull=False,
-            label__code="top_week",
+            label_code__isnull=False,
+            label_code="top_week",
             **published_at_condition
          )\
         .order_by("-upvotes")\
@@ -244,7 +244,7 @@ def weekly_digest(request):
         .filter(is_visible_in_feeds=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
-        .exclude(label__isnull=False, label__code="ad")\
+        .exclude(label_code__isnull=False, label_code="ad")\
         .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")
 
@@ -279,10 +279,12 @@ def weekly_digest(request):
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
-    # Intro from author
-    author_intro = GodSettings.objects.first().digest_intro
+    # Get intro and title
+    god_settings = GodSettings.objects.first()
+    digest_title = god_settings.digest_title
+    digest_intro = god_settings.digest_intro
 
-    if not author_intro and not posts and not comments:
+    if not digest_intro and not posts and not comments:
         raise Http404()
 
     # New achievements
@@ -304,7 +306,8 @@ def weekly_digest(request):
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
         "featured_post": featured_post,
-        "author_intro": author_intro,
+        "digest_title": digest_title,
+        "digest_intro": digest_intro,
         "issue_number": (end_date - settings.LAUNCH_DATE).days // 7,
         "is_footer_excluded": is_footer_excluded
     })

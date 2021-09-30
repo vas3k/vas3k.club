@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import F
 from django.template.defaultfilters import truncatechars
@@ -9,6 +10,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from simple_history.models import HistoricalRecords
 
+from common.data.labels import LABELS
 from common.models import ModelDiffMixin
 from posts.models.topics import Topic
 from users.models.user import User
@@ -27,6 +29,8 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
     TYPE_WEEKLY_DIGEST = "weekly_digest"
+    TYPE_GUIDE = "guide"
+    TYPE_THREAD = "thread"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
@@ -39,6 +43,8 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
+        (TYPE_GUIDE, "Путеводитель"),
+        (TYPE_THREAD, "Тред"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -51,7 +57,9 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_PROJECT: "🏗",
         TYPE_EVENT: "📅",
         TYPE_REFERRAL: "🏢",
-        TYPE_BATTLE: "🤜🤛"
+        TYPE_BATTLE: "🤜🤛",
+        TYPE_GUIDE: "🗺",
+        TYPE_THREAD: "🗄",
     }
 
     TYPE_TO_PREFIX = {
@@ -64,7 +72,9 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_PROJECT: "Проект:",
         TYPE_EVENT: "Событие:",
         TYPE_REFERRAL: "Рефералка:",
-        TYPE_BATTLE: "Батл:"
+        TYPE_BATTLE: "Батл:",
+        TYPE_GUIDE: "🗺",
+        TYPE_THREAD: "Тред:",
     }
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -73,8 +83,8 @@ class Post(models.Model, ModelDiffMixin):
     author = models.ForeignKey(User, related_name="posts", db_index=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
-    label = models.JSONField(null=True)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
+    coauthors = ArrayField(models.CharField(max_length=32), default=list, null=False, db_index=True)
 
     title = models.TextField(null=False)
     text = models.TextField(null=False)
@@ -83,6 +93,7 @@ class Post(models.Model, ModelDiffMixin):
     image = models.URLField(max_length=1024, null=True)
 
     metadata = models.JSONField(null=True)
+    comment_template = models.TextField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -116,6 +127,13 @@ class Post(models.Model, ModelDiffMixin):
             "view_count",
             "upvotes",
             "hotness",
+            "label_code",
+            "is_approved_by_moderator",
+            "is_commentable",
+            "is_visible_in_feeds",
+            "is_pinned_until",
+            "is_shadow_banned",
+            "topic",
         ],
     )
 
@@ -160,6 +178,9 @@ class Post(models.Model, ModelDiffMixin):
     def decrement_vote_count(self):
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
 
+    def can_edit(self, user):
+        return self.author == user or user.is_moderator or user.slug in self.coauthors
+
     @property
     def emoji(self):
         return self.TYPE_TO_EMOJI.get(self.type) or ""
@@ -167,6 +188,17 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def prefix(self):
         return self.TYPE_TO_PREFIX.get(self.type) or ""
+
+    @property
+    def label(self):
+        lbl = LABELS.get(self.label_code)
+        if lbl is not None:
+            lbl['code'] = self.label_code
+        return lbl
+
+    @property
+    def coauthors_with_details(self):
+        return User.objects.filter(slug__in=self.coauthors).all()
 
     @property
     def is_pinned(self):

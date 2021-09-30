@@ -9,7 +9,13 @@
             {% endif %}
 
             <span class="post-link-title">
+            {% if post.metadata.title %}
                 {{  post.metadata.title }}
+            {% elif post.metadata.description %}
+                {{  post.metadata.description }}
+            {% else %}
+                {{ post.title }}
+            {% endif %}
             </span>
 
             <span class="post-link-url">

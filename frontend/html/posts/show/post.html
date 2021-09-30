@@ -6,77 +6,99 @@
 {% block post %}
 <section class="content">
     <article class="post post-type-post">
-        <header class="post-header">
-            <div class="post-info">
-                {% if post.topic %}
-                    {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
-                {% endif %}
-            </div>
-            <div class="post-title">
-                {{ post.title | rutypography }}
-            </div>
-            <span class="post-is-public">
-                {% if post.is_public %}
-                    <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
-                {% else %}
-                    <i class="fas fa-lock"></i>&nbsp;Только для своих
-                {% endif %}
-            </span>
-            <div class="post-data">
-                {% if post.deleted_at %}
-                    <div class="post-label">
-                        <span class="label label-type-deleted">
-                            <span class="label-title">Удалённый пост</span>
-                        </span>
-                    </div>
-                {% elif not post.is_visible %}
-                    <div class="post-label">
-                        {% include "posts/widgets/draft_label.html" %}
-                    </div>
-                {% endif %}
-
-                <div class="post-actions-line">
-                    {% include "posts/widgets/post_actions_line.html" %}
+        {% block post_header %}
+            <header class="post-header">
+                <div class="post-info">
+                    {% if post.topic %}
+                        {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
+                    {% endif %}
                 </div>
-
-                <div class="post-author">
-                    {% include "users/widgets/tiny.html" with user=post.author %}
+                <div class="post-title">
+                    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title | rutypography }}
                 </div>
+                <span class="post-is-public">
+                    {% if post.is_public %}
+                        <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
+                    {% else %}
+                        <i class="fas fa-lock"></i>&nbsp;Только для своих
+                    {% endif %}
+                </span>
+                <div class="post-data">
+                    {% if post.deleted_at %}
+                        <div class="post-label">
+                            <span class="label label-type-deleted">
+                                <span class="label-title">Удалённый пост</span>
+                            </span>
+                        </div>
+                    {% elif not post.is_visible %}
+                        <div class="post-label">
+                            {% include "posts/widgets/draft_label.html" %}
+                        </div>
+                    {% endif %}
 
-                {% if post.label %}
-                    <div class="post-label">
-                        {% include "posts/widgets/label.html" with label=post.label %}
+                    <div class="post-actions-line">
+                        {% include "posts/widgets/post_actions_line.html" %}
                     </div>
-                {% endif %}
 
-                {% if post.image %}
-                    <div class="post-image">
-                        <img src="{{ post.image }}" alt="{{ post.title }}">
+                    <div class="post-author">
+                        {% include "users/widgets/tiny.html" with user=post.author %}
+
+                        {% if post.coauthors %}
+                            {% for coauthor in post.coauthors_with_details %}
+                                &nbsp;&nbsp;
+                                {% include "users/widgets/tiny.html" with user=coauthor %}
+                            {% endfor %}
+                        {% endif %}
+
                     </div>
+
+                    {% if post.label %}
+                        <div class="post-label">
+                            {% include "posts/widgets/label.html" with label=post.label %}
+                        </div>
+                    {% endif %}
+
+                    {% if post.image %}
+                        <div class="post-image">
+                            <img src="{{ post.image }}" alt="{{ post.title }}">
+                        </div>
+                    {% endif %}
+                </div>
+            </header>
+        {% endblock %}
+
+        {% block post_text %}
+            <section class="post-text">
+                {% block post_upvote %}
+                    <post-upvote :initial-upvotes="{{ post.upvotes }}"
+                                 :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
+                                 upvote-url="{% url "upvote_post" post.slug %}"
+                                 retract-vote-url="{% url "retract_post_vote" post.slug %}"
+                                 {% if is_voted %}
+                                    initial-is-voted
+                                    initial-upvote-timestamp={{upvoted_at}}
+                                 {% endif %}
+                                 {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
+                    </post-upvote>
+                {% endblock %}
+
+                <div class="text-body text-body-type-post e-content">
+                    {% render_post post %}
+                </div>
+            </section>
+        {% endblock %}
+
+        {% block post_footer %}
+            <footer class="post-footer p-author">
+                {% include "users/widgets/card.html" with user=post.author %}
+
+                {% if post.coauthors %}
+                    {% for coauthor in post.coauthors_with_details %}
+                        {% include "users/widgets/card.html" with user=coauthor %}
+                    {% endfor %}
                 {% endif %}
-            </div>
-        </header>
-        <section class="post-text">
-            <post-upvote :initial-upvotes="{{ post.upvotes }}"
-                         :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
-                         upvote-url="{% url "upvote_post" post.slug %}"
-                         retract-vote-url="{% url "retract_post_vote" post.slug %}"
-                         {% if is_voted %}
-                            initial-is-voted
-                            initial-upvote-timestamp={{upvoted_at}}
-                         {% endif %}
-                         {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
-            </post-upvote>
-            <div class="text-body text-body-type-post e-content">
-                {% render_post post %}
-            </div>
-        </section>
-        <footer class="post-footer p-author">
-            {% include "users/widgets/card.html" with user=post.author %}
-        </footer>
+            </footer>
+        {% endblock %}
     </article>
-    {% if linked_posts %}
-        {% include "posts/widgets/linked_posts.html" %}
-    {% endif %}
 </section>
 {% endblock %}

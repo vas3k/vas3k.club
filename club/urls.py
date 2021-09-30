@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include, re_path
+from django.views.generic import RedirectView
 
 from auth.helpers import auth_switch
 from auth.views.auth import login, logout, debug_dev_login, debug_random_login, join
@@ -9,8 +10,8 @@ from auth.views.external import external_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment
-from landing.views import landing, docs, god_settings
-from misc.views import achievements, network, robots, generate_ical_invite, generate_google_invite
+from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings
+from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
 from notifications.views import weekly_digest, email_unsubscribe, email_confirm, daily_digest, email_digest_switch, \
     link_telegram
 from notifications.webhooks import webhook_event
@@ -77,7 +78,9 @@ urlpatterns = [
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
-    path("achievements/", achievements, name="achievements"),
+    path("achievements/", RedirectView.as_view(url="/stats", permanent=True), name="achievements"),
+    path("stats/", stats, name="stats"),
+
     path("profile/tag/<slug:tag_code>/toggle/", toggle_tag, name="toggle_tag"),
     path("profile/expertise/add/", add_expertise, name="add_expertise"),
     path("profile/expertise/<slug:expertise>/delete/", delete_expertise, name="delete_expertise"),
@@ -131,7 +134,9 @@ urlpatterns = [
     path("network/", network, name="network"),
 
     # admin features
-    path("godmode/", god_settings, name="god_settings"),
+    path("godmode/", godmode_settings, name="godmode_settings"),
+    path("godmode/network/", godmode_network_settings, name="godmode_network_settings"),
+    path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
 
