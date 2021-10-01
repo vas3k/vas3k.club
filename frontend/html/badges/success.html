@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="message">
+        <h2>УСПЕХ</h2>
+
+        <p>
+            Вы успешно подарили бейджик юзеру {{ user_badge.to_user.full_name }}
+        </p>
+    </div>
+{% endblock %}

@@ -174,8 +174,7 @@
     }
 
     .comment-date,
-    .comment-reply-button,
-    .comment-edit-button {
+    .comment-footer-button {
         padding: 4px 10px 5px;
         text-decoration: none;
         cursor: pointer;
@@ -184,8 +183,7 @@
     }
 
         .comment-date:hover,
-        .comment-edit-button:hover,
-        .comment-reply-button:hover {
+        .comment-footer-button:hover {
             background-color: var(--opposite-bg-color);
             color: var(--opposite-text-color);
         }
@@ -198,12 +196,26 @@
             float: left;
         }
 
-    .comment-button-hidden {
+    .comment-footer-button-hidden {
         visibility: hidden;
     }
 
-        .comment:hover .comment-button-hidden {
+        .comment:hover .comment-footer-button-hidden {
             visibility: visible;
+        }
+
+    .comment-badge-button {
+        opacity: 0.5;
+        font-size: 90%;
+        text-decoration: none;
+        margin-left: 10px;
+        padding: 3px 4px;
+    }
+
+        .comment-badge-button:hover {
+            opacity: 1;
+            background-color: var(--opposite-bg-color);
+            color: var(--opposite-text-color);
         }
 
     .comment-side {

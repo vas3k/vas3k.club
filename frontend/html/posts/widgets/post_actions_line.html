@@ -8,6 +8,12 @@
             initial-is-bookmarked
         {% endif %}>
     </post-bookmark>
+
+    {% if post.author_id != me.id %}
+        <a href="{% url "give_badge_for_post" post.slug %}">
+            <i class="fas fa-gift"></i>&nbsp;Наградить
+        </a>
+    {% endif %}
 {% endif %}
 
 {% if post.author == me or me.is_moderator or me.slug in post.coauthors %}

@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
-    # "badges.apps.BadgesConfig",
+    "badges.apps.BadgesConfig",
     "simple_history",
     "django_q",
     "webpack_loader",

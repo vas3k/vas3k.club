@@ -4,6 +4,7 @@ from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
 from auth.helpers import auth_required
+from badges.models import UserBadge
 from comments.models import Comment
 from common.pagination import paginate
 from common.request import ajax_request
@@ -47,6 +48,7 @@ def profile(request, user_slug):
     # select other stuff from this user
     intro = Post.get_user_intro(user)
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
+    badges = UserBadge.objects.filter(to_user=user).select_related("badge").all()
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
     comments = Comment.visible_objects()\
@@ -64,6 +66,7 @@ def profile(request, user_slug):
         "user": user,
         "intro": intro,
         "projects": projects,
+        "badges": badges,
         "tags": tags,
         "active_tags": active_tags,
         "achievements": [ua.achievement for ua in achievements],

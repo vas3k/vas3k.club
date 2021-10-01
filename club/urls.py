@@ -8,6 +8,7 @@ from auth.views.auth import login, logout, debug_dev_login, debug_random_login, 
 from auth.views.email import email_login, email_login_code
 from auth.views.external import external_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
+from badges.views import give_badge_for_post, give_badge_for_comment
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings
@@ -102,7 +103,8 @@ urlpatterns = [
     path("post/<slug:post_slug>/curate/", curate_post, name="curate_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
-    path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment", ),
+    path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment"),
+    path("post/<slug:post_slug>/badge/", give_badge_for_post, name="give_badge_for_post"),
 
     path("bookmarks/", bookmarks, name="bookmarks"),
 
@@ -117,6 +119,8 @@ urlpatterns = [
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
     path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete/", delete_comment, name="delete_comment"),
+    path("comment/<uuid:comment_id>/badge/", give_badge_for_comment,
+         name="give_badge_for_comment"),
 
     path("telegram/link/", link_telegram, name="link_telegram"),
 

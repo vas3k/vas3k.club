@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% load text_filters %}
+
+{% block content %}
+    <div class="content">
+        <div class="block">
+            <div class="block-header">🏆 Наградить пост</div>
+
+            <div>
+                {% include "posts/items/items.html" with post=post %}
+            </div>
+
+            <div class="block-description block-description-center">
+                Награды выражают особую благодарность автору. Ваша награда будет висеть рядом с постом и в профиле автора.
+                Каждая награда стоит денег (точнее <a href="{% url "edit_payments" me.slug %}">дней вашего членства</a>), потому они такие ценные и приятные.
+            </div>
+
+            <div class="block-subheader">Выберите награду 👇</div>
+
+            <div class="block-description">
+                Бейджи: {{ badges }} за пост: {{ post }}
+            </div>
+
+            <div>
+                Ваш баланс: {{ me.membership_days_left|floor }} {{ me.membership_days_left|floor|rupluralize:"день,дня,дней" }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
