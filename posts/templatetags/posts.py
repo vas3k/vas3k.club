@@ -4,6 +4,7 @@ from django import template
 from django.conf import settings
 from django.template import loader
 from django.template.defaultfilters import truncatechars
+from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
@@ -52,6 +53,16 @@ def render_plain(context, post, truncate=None):
     if truncate:
         result = truncatechars(result, truncate)
     return result
+
+
+@register.simple_tag()
+def feed_ordering_url(topic, label_code, post_type, ordering_type):
+    if topic:
+        return reverse("feed_topic_ordering", args=[topic.slug, ordering_type])
+    elif label_code:
+        return reverse("feed_label_ordering", args=[label_code, ordering_type])
+    else:
+        return reverse("feed_ordering", args=[post_type, ordering_type])
 
 
 @register.simple_tag()

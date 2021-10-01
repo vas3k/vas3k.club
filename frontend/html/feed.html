@@ -2,6 +2,7 @@
 {% load text_filters %}
 {% load static %}
 {% load paginator %}
+{% load posts %}
 
 {% block title %}
     {% if topic %}{{ topic.name }} — {% endif %}{{ block.super }}
@@ -38,32 +39,32 @@
     {% endif %}
 
     <div class="feed-ordering">
-        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "activity" %}{% else %}{% url "feed_ordering" post_type "activity" %}{% endif %}"
+        <a href="{% feed_ordering_url topic label_code post_type "activity" %}"
         class="feed-ordering-item {% if ordering == "activity" %}feed-ordering-item-is-active{% endif %}"
         >
             Фид
         </a>
 
-        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "new" %}{% else %}{% url "feed_ordering" post_type "new" %}{% endif %}"
+        <a href="{% feed_ordering_url topic label_code post_type "new" %}"
         class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}"
         >
             Новое
         </a>
 
-        <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "hot" %}{% else %}{% url "feed_ordering" post_type "hot" %}{% endif %}"
+        <a href="{% feed_ordering_url topic label_code post_type "hot" %}"
         class="feed-ordering-item {% if ordering == "hot" %}feed-ordering-item-is-active{% endif %}"
         >
             Обсуждаемое
         </a>
 
         {% if me and me.created_at < date_month_ago %}
-            <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top_month" %}{% else %}{% url "feed_ordering" post_type "top_month" %}{% endif %}"
+            <a href="{% feed_ordering_url topic label_code post_type "top_month" %}"
             class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
             >
                 Лучшее
             </a>
         {% else %}
-            <a href="{% if topic %}{% url "feed_topic_ordering" topic.slug "top" %}{% else %}{% url "feed_ordering" post_type "top" %}{% endif %}"
+            <a href="{% feed_ordering_url topic label_code post_type "top" %}"
             class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
             >
                 Лучшее
