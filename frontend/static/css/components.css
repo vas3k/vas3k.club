@@ -106,13 +106,21 @@
     .doc h1,
     .doc h2,
     .doc h3 {
-        margin-top: 60px;
+        margin-top: 80px;
     }
 
     .doc h1 a,
     .doc h2 a,
     .doc h3 a {
         text-decoration: none;
+    }
+
+    .doc h1 {
+        font-size: 230%;
+    }
+
+    .doc h2 {
+        font-size: 180%;
     }
 
     .doc li {
