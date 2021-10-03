@@ -18,6 +18,7 @@ export default {
         return {
             arrowDirection: "Down",
             scrollThrottleDelay: 150,
+            commentMargin: 20,
         };
     },
     methods: {
@@ -48,7 +49,7 @@ export default {
 
             if (direction === "Down") {
                 this.arrowDirection = "Up";
-                this.scrollTo(downTarget.getBoundingClientRect().top - bodyTop - window.innerHeight / 2);
+                this.scrollTo(downTarget.getBoundingClientRect().top - bodyTop - this.commentMargin);
             } else {
                 this.arrowDirection = "Down";
                 this.scrollTo(0);
@@ -69,7 +70,7 @@ export default {
                 return this.scrollExtreme(direction);
             }
 
-            const position = window.scrollY + window.innerHeight / 2;
+            const position = window.scrollY + this.commentMargin;
 
             // Убираем комментарии ниже или выше направления поиска
             const filteredComments = [...comments].filter((el) => {
@@ -95,7 +96,7 @@ export default {
                 window.setTimeout(() => { nearest.classList.remove("comment-scroll-selected"); }, 500);
             };
 
-            this.scrollTo(nearest.getBoundingClientRect().top - bodyTop - window.innerHeight / 2, highlightComment);
+            this.scrollTo(nearest.getBoundingClientRect().top - bodyTop - this.commentMargin, highlightComment);
         },
         onArrowClickHandler() {
             if (this.arrowDirection == "Up") {
