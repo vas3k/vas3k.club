@@ -29,7 +29,9 @@ export default {
             const onScroll = () => {
                 if (window.pageYOffset.toFixed() === fixedOffset) {
                     window.removeEventListener('scroll', onScroll);
-                    callback();
+                    if (callback) {
+                        callback();
+                    }
                 }
             };
 
@@ -55,6 +57,12 @@ export default {
         scrollToComment(direction) {
             let comments = document.querySelectorAll(".comment-is-new");
             const bodyTop = this.getBodyTop();
+
+            if (comments.length < 1) {
+                // take only the first comment
+                const fistComment = document.querySelector(".comment");
+                comments = fistComment ? [fistComment] : [];
+            }
 
             if (comments.length < 1) {
                 // Без комментариев
