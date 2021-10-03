@@ -37,6 +37,10 @@
     <div class="content">
         {% block comments %}
             <div class="post-comments" id="comments">
+                <div class="comment-scroll-arrow-wrapper">
+                    <comment-scroll-arrow />
+                </div>
+
                 <div class="post-comments-title">
                     <div class="post-comments-title-left">
                         {% if post.comment_count > 0 %}
