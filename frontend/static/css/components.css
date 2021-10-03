@@ -1044,6 +1044,9 @@
     .post-comments-title {
         font-size: 110%;
         font-weight: 500;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     .post-comments-count {
@@ -1070,12 +1073,13 @@
 
     .post-comments-rules {
         padding-top: 50px;
-        padding-left: 60px;
+        padding-left: 90px;
         padding-right: 30px;
     }
 
         .post-comments-rules ul {
             list-style: none;
+            padding: 0;
         }
 
         @media only screen and (max-width : 570px) {
@@ -1100,10 +1104,26 @@
     .post-comments-subscription {
         display: inline-block;
         position: relative;
-        top: -4px;
-        margin-left: 15px;
-        opacity: 0.8;
+        top: -3px;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: var(--button-border-radius);
+        border: var(--button-border);
     }
+
+        .post-comments-subscription.is-subscribed {
+            background-color: var(--button-bg-color);
+            border: var(--button-border);
+            color: var(--button-color);
+        }
+
+        .post-comments-subscription > * {
+            cursor: pointer;
+        }
+
+        .post-comments-subscription > input {
+            margin-right: 5px;
+        }
 
 .user-telegram-auth-data {
     padding: 20px 40px;

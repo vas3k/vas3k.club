@@ -162,9 +162,10 @@ def toggle_post_subscription(request, post_slug):
 
     post = get_object_or_404(Post, slug=post_slug)
 
-    subscription, is_created = PostSubscription.objects.get_or_create(
+    subscription, is_created = PostSubscription.subscribe(
         user=request.me,
         post=post,
+        type=PostSubscription.TYPE_TOP_LEVEL_ONLY,
     )
 
     if not is_created:
@@ -241,7 +242,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.save()
 
         if mode == "create" or not post.is_visible:
-            PostSubscription.subscribe(request.me, post)
+            PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
         if post.is_visible:
             if post.topic:

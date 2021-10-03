@@ -656,20 +656,6 @@
                 font-weight: 700;
             }
 
-    .battle-etiquette {
-        font-size: 120%;
-        margin-top: 50px;
-    }
-
-        .battle-etiquette strong {
-            font-size: 110%;
-        }
-
-        .battle-etiquette li {
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-
 .post-event {
     display: grid;
     grid-template-columns: min-content auto min-content;

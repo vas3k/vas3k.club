@@ -1,9 +1,11 @@
 <template>
-    <span>
+    <div :class="{ 'is-subscribed': isActive }" @click.prevent="toggle">
         <span v-if="isLoading">🤔</span>
         <input v-else type="checkbox" id="post-subscribed" v-model="isActive" @change.prevent="toggle" />
-        <label for="post-subscribed">подписка</label>
-    </span>
+        <label for="post-subscribed">
+            <slot></slot>
+        </label>
+    </div>
 </template>
 
 <script>
