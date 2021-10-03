@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import redirect
 
 from club.exceptions import AccessDenied
+from comments.models import Comment
 from common.data.labels import LABELS
 from posts.models.linked import LinkedPost
 from users.models.user import User
