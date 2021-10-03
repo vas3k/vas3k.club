@@ -1,0 +1,75 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    h1, h2, h3, header {
+        text-align: left;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 17px 30px;
+        box-sizing: border-box;
+        text-decoration: none;
+        border-radius: 20px;
+        background-color: #000;
+        border: solid 2px #000;
+        color: #FFF;
+        text-align: center;
+        cursor: pointer;
+        line-height: 1em;
+        font-size: 25px;
+        margin: 20px 0 30px;
+    }
+
+        .button:hover {
+            color: #000 !important;
+            background-color: #FFF !important;
+            border-color: #000 !important;
+        }
+
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    Оплата прошла
+{% endblock %}
+
+{% block body %}
+    <p>
+        Ваш долор успешно поступил на счет  <a href="{{ settings.APP_HOST }}">клуба</a>!
+    </p>
+
+    <p>
+        Ваш юзернейм в Клубе: <b>@{{ user.slug }}</b><br>
+        Почта для входа: <b>{{ user.email }}</b>
+    </p>
+
+    <p style="font-size: 14px;">
+        Теперь вам нужно  <a href="{{ settings.APP_HOST }}{% url "intro" %}">заполнить профиль</a>, чтобы другие участники понимали, с кем общаются.
+        После заполнения профиль будет проверен нашими модераторами. Дайте им немного времени на это.
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

@@ -6,6 +6,16 @@ from notifications.email.sender import send_club_email
 from users.models.user import User
 
 
+def send_payed_email(user: User):
+    payment_template = loader.get_template("emails/payment_done.html")
+    send_club_email(
+        recipient=user.email,
+        subject=f"Оплата прошла",
+        html=payment_template.render({"user": user}),
+        tags=["payment"]
+    )
+
+
 def send_welcome_drink(user: User):
     welcome_drink_template = loader.get_template("emails/welcome.html")
     send_club_email(
