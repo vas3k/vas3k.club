@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 
 from club.exceptions import AccessDenied
 from common.data.labels import LABELS
+from posts.models.linked import LinkedPost
 from users.models.user import User
 
 
@@ -24,6 +25,12 @@ def do_post_admin_actions(request, post, data):
         if user:
             post.author = user
             post.save()
+
+    if data["refresh_linked"]:
+        LinkedPost.create_links_from_text(post, post.text)
+        post_comments = Comment.visible_objects().filter(post=post, is_deleted=False)
+        for comment in post_comments:
+            LinkedPost.create_links_from_text(comment.post, comment.text)
 
     return redirect("show_post", post.type, post.slug)
 

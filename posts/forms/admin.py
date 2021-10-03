@@ -70,6 +70,11 @@ class PostAdminForm(PostCuratorForm):
         required=False,
     )
 
+    refresh_linked = forms.BooleanField(
+        label="Обновить связанные посты",
+        required=False,
+    )
+
 
 class PostAnnounceForm(forms.Form):
     text = forms.CharField(
