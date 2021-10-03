@@ -1,11 +1,11 @@
 🏆 <b>Лучшие посты последних дней</b>
 {% for post in top_posts %}
-{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.template_prefix }}{{ post.title }}</a> (+{{ post.upvotes }})
 {% endfor %}
 
 🔥 <b>Обсуждаемые темы</b>
 {% for post in hot_posts %}
-{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> ({{ post.comment_count }} комментариев)
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.template_prefix }}{{ post.title }}</a> ({{ post.comment_count }} комментариев)
 {% endfor %}
 
 😎 <b>Лучшие интро</b>

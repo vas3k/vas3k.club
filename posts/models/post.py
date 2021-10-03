@@ -190,6 +190,14 @@ class Post(models.Model, ModelDiffMixin):
         return self.TYPE_TO_PREFIX.get(self.type) or ""
 
     @property
+    def template_prefix(self):
+        prefix_gen = (self.emoji, self.prefix)
+        # Guide has two equal emojis as `emoji` and `prefix`, so need to get only one
+        if self.type == self.TYPE_GUIDE:
+            prefix_gen = (self.prefix,)
+        return " ".join((*filter(None, prefix_gen), ""))
+
+    @property
     def label(self):
         lbl = LABELS.get(self.label_code)
         if lbl is not None:
