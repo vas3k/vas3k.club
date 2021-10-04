@@ -95,7 +95,7 @@
                 </span>
 
                 <h3>
-                    {% if post.type != "post" %}
+                    {% if post.type not in ("post", "guide") %}
                         {{ post.emoji }}
                     {% endif %}
 
