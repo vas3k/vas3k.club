@@ -3,9 +3,9 @@
 {% load comments %}
 <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
     {% if replies %}
-    <div class="reply-side" @click.prevent="toggleCommentThread">
-        <div class="thread-ruler"></div>
-    </div>
+        <div class="reply-side" @click.prevent="toggleCommentThread">
+            <div class="thread-ruler"></div>
+        </div>
     {% endif %}
     <div class="reply-header">
         <a class="avatar reply-avatar" href="{% url "profile" comment.author.slug %}">
@@ -59,7 +59,11 @@
                 {% endif %}
             {% endif %}
 
-            <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
+            {% if not comment.is_deleted %}
+                {% if me.id == comment.author_id or me.is_moderator %}
+                    <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button reply-button-hidden"><i class="fas fa-edit"></i></a>
+                {% endif %}
+            {% endif %}
         {% endif %}
 
         <span class="comment-reply-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
