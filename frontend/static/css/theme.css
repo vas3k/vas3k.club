@@ -178,6 +178,8 @@ select,
     resize: vertical;
     box-sizing: border-box;
     line-height: 1.4em;
+    background: var(--bg-color);
+    color: var(--text-color);
 }
 
     input:focus,
