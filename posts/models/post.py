@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -191,11 +192,8 @@ class Post(models.Model, ModelDiffMixin):
 
     @property
     def template_prefix(self):
-        prefix_gen = (self.emoji, self.prefix)
         # Guide has two equal emojis as `emoji` and `prefix`, so need to get only one
-        if self.type == self.TYPE_GUIDE:
-            prefix_gen = (self.prefix,)
-        return " ".join((*filter(None, prefix_gen), ""))
+        return " ".join((*OrderedDict.fromkeys((self.emoji, self.prefix)), ""))
 
     @property
     def label(self):
