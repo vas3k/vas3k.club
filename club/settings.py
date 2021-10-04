@@ -19,7 +19,7 @@ ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "4aff.club"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
-    ("admin", "glader.ru@gmail.com"),
+    ("admin", "club@4aff.club"),
 ]
 
 INSTALLED_APPS = [
