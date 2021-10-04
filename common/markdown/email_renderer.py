@@ -10,7 +10,7 @@ class EmailRenderer(ClubRenderer):
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
-        youtube_id = escape_html(youtube_match.group(1))
+        youtube_id = escape_html(youtube_match.group(1) or "")
         return f'<a href="{escape_html(src)}"><span class="ratio-16-9 video-preview" ' \
                f'style="background-image: url(\'https://img.youtube.com/vi/{escape_html(youtube_id)}/0.jpg\');">' \
                f'</span></a><br>{escape_html(title) or ""}'
