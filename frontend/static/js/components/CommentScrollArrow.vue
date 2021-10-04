@@ -36,7 +36,7 @@ export default {
                 document.location.hash = '';
             }
 
-            // document.documentElement.style.scrollBehavior = "smooth";
+            document.documentElement.style.scrollBehavior = "smooth";
 
             const offset = el.getBoundingClientRect().top - this.getBodyTop() - this.getElementMargin(el);
 
@@ -44,7 +44,7 @@ export default {
                 if (Math.abs(offset - window.pageYOffset) < 1) {
                     window.removeEventListener('scroll', onScroll);
 
-                    // document.documentElement.style.scrollBehavior = "auto";
+                    document.documentElement.style.scrollBehavior = "auto";
 
                     if (callback) {
                         callback();
