@@ -1047,6 +1047,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        scroll-margin-top: 20px;
     }
 
     .post-comments-count {
@@ -1167,7 +1168,7 @@
     }
 }
 
-.comment-scroll-selected {
+.comment-scroll-animation {
     animation: commentHighlight 0.3s ease-in-out forwards;
 }
 

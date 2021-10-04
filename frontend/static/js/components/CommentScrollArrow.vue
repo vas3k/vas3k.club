@@ -29,11 +29,23 @@ export default {
              return parseInt(style.marginTop, 10);
          },
         scrollToElement(el, callback) {
+            const oldHash = document.location.hash;
+            const newHash = `#${el.id}`;
+            if (oldHash === newHash) {
+                // zero the hash so that there is no sticking if we are already on this element
+                document.location.hash = '';
+            }
+
+            // document.documentElement.style.scrollBehavior = "smooth";
+
             const offset = el.getBoundingClientRect().top - this.getBodyTop() - this.getElementMargin(el);
 
             const onScroll = () => {
                 if (Math.abs(offset - window.pageYOffset) < 1) {
                     window.removeEventListener('scroll', onScroll);
+
+                    // document.documentElement.style.scrollBehavior = "auto";
+
                     if (callback) {
                         callback();
                     }
@@ -64,7 +76,6 @@ export default {
             }
         },
         scrollToComment(direction) {
-            // let comments = document.querySelectorAll(".comment");
             let comments = document.querySelectorAll(
                  [
                      // Просто новые комментарии
@@ -83,8 +94,12 @@ export default {
             const bodyTop = this.getBodyTop();
 
             if (comments.length < 1) {
-                // take only the first comment
-                const commentBlock = document.getElementById("comments");
+                /**
+                 * take comments header, do not use the #comments id
+                 * because it will not work in filteredComments because of the height
+                 * also be careful to change scroll-margin-top css of .post-comments-title class (same reason)
+                 */
+                const commentBlock = document.getElementById("post-comments-title");
                 const commentBlockArray = commentBlock ? [commentBlock] : [];
 
                 // Новых нет, перебираем прочтённые комментарии
@@ -106,6 +121,7 @@ export default {
                     eltop - elBCR.height / 2 > position
                     : eltop + elBCR.height / 2 < position;
             });
+
             if (filteredComments.length < 1) {
                 return this.scrollExtreme(direction);
             }
@@ -117,10 +133,21 @@ export default {
                 return Math.abs(btop - position) < Math.abs(atop - position) ? b : a;
             });
 
+            /**
+             * remove selected class from previous selected comment
+             * do not delete immediately comment-scroll-selected class for override the target comment style
+             */
+            const alreadySelected = document.querySelector(".comment-scroll-selected");
+            if (alreadySelected) {
+                alreadySelected.classList.remove("comment-scroll-selected");
+            }
+            nearest.classList.add("comment-scroll-selected");
+
             const highlightComment = () => {
-                nearest.classList.add("comment-scroll-selected");
+                nearest.classList.add("comment-scroll-animation");
+
                 window.setTimeout(() => {
-                     nearest.classList.remove("comment-scroll-selected");
+                     nearest.classList.remove("comment-scroll-animation");
                 }, 500);
             };
 
