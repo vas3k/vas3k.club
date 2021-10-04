@@ -9,6 +9,7 @@ from django_q.tasks import async_task
 from auth.helpers import auth_required
 from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
+from notifications.email.users import send_data_archive_ready_email
 from search.models import SearchIndex
 from users.forms.profile import ProfileEditForm, NotificationsEditForm
 from users.models.geo import Geo
@@ -166,5 +167,11 @@ def request_data(request, user_slug):
         generate_data_archive(user)
     else:
         async_task(generate_data_archive, user=user)
+
+        # notify the user
+        send_data_archive_ready_email(
+            user=user,
+            url=settings.GDPR_ARCHIVE_URL + os.path.basename(archive_path),
+        )
 
     return render(request, "users/messages/data_requested.html")
