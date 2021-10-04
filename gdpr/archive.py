@@ -11,9 +11,10 @@ from django_q.tasks import schedule
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from gdpr.serializers import post_to_json, post_to_md, user_to_json, comments_to_json, user_tags_to_json, \
-    user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json
+    user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json, upvotes_to_json
 from notifications.email.users import send_data_archive_ready_email
 from posts.models.post import Post
+from posts.models.votes import PostVote
 from users.models.expertise import UserExpertise
 from users.models.tags import UserTag
 
@@ -28,6 +29,7 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         dump_user_posts(user_dir, user)
         dump_user_comments(user_dir, user)
         dump_user_bookmarks(user_dir, user)
+        dump_user_upvotes(user_dir, user)
 
         # save zip archive
         archive_name = f"{user.slug}-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}-{random.randint(1000000, 9999998)}"
@@ -107,3 +109,10 @@ def dump_user_bookmarks(user_dir, user):
 
     with open(os.path.join(user_dir, "bookmarks.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(bookmarks_to_json(bookmarks), ensure_ascii=False))
+
+
+def dump_user_upvotes(user_dir, user):
+    upvotes = PostVote.objects.filter(user=user).select_related("post")
+
+    with open(os.path.join(user_dir, "upvotes.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(upvotes_to_json(upvotes), ensure_ascii=False))
