@@ -12,6 +12,7 @@ from bookmarks.models import PostBookmark
 from comments.models import Comment
 from gdpr.serializers import post_to_json, post_to_md, user_to_json, comments_to_json, user_tags_to_json, \
     user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json, upvotes_to_json
+from notifications.email.users import send_data_archive_ready_email
 from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.expertise import UserExpertise
@@ -39,6 +40,12 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
             "gdpr.archive.delete_data_archive",
             archive_path,
             next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA
+        )
+
+        # notify the user
+        send_data_archive_ready_email(
+            user=user,
+            url=settings.GDPR_ARCHIVE_URL + os.path.basename(archive_path),
         )
 
 
