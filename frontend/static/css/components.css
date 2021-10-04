@@ -1168,7 +1168,8 @@
     }
 }
 
-.comment-scroll-animation {
+.comment.comment-scroll-animation,
+.reply.comment-scroll-animation {
     animation: commentHighlight 0.3s ease-in-out forwards;
 }
 

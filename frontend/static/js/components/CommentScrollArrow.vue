@@ -64,7 +64,10 @@ export default {
             if (direction === "Down") {
                 this.arrowDirection = "Up";
 
-                const downTarget = document.getElementById("post-comments-form");
+                const postCommentsForm = document.getElementById("post-comments-form");
+                const footer = document.getElementById("footer");
+
+                const downTarget = postCommentsForm || footer;
                 this.scrollToElement(downTarget);
             } else {
                 this.arrowDirection = "Down";
@@ -94,16 +97,14 @@ export default {
             const bodyTop = this.getBodyTop();
 
             if (comments.length < 1) {
-                /**
-                 * take comments header, do not use the #comments id
-                 * because it will not work in filteredComments because of the height
-                 * also be careful to change scroll-margin-top css of .post-comments-title class (same reason)
-                 */
-                const commentBlock = document.getElementById("post-comments-title");
+                // take comments header
+                const commentBlock = document.getElementById("comments");
                 const commentBlockArray = commentBlock ? [commentBlock] : [];
 
                 // Новых нет, перебираем прочтённые комментарии
-                comments = [...commentBlockArray, ...document.querySelectorAll(".comment")];
+                const oldComments = document.querySelectorAll(".comment");
+
+                comments = oldComments.length > 0 ? [...commentBlockArray, ...document.querySelectorAll(".comment")] : [];
             }
 
             if (comments.length < 1) {
