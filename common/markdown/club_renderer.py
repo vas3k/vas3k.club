@@ -76,10 +76,13 @@ class ClubRenderer(mistune.HTMLRenderer):
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
+        playlist = ""
+        if youtube_match.group(2):
+            playlist = f"list={escape_html(youtube_match.group(2))}&listType=playlist&"
         video_tag = (
             f'<span class="ratio-16-9">'
             f'<iframe loading="lazy" src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1))}'
-            f'?autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
+            f'?{playlist}autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
             f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"'
             f'allowfullscreen></iframe>'
             f"</span>"
