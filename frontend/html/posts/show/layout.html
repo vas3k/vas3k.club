@@ -82,7 +82,7 @@
                 {% endif %}
 
                 {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
-                    <div class="post-comments-form">
+                    <div class="post-comments-form" id="post-comments-form">
                         {% include "comments/forms/comment.html" with post=post form=comment_form %}
                     </div>
 

@@ -25,48 +25,43 @@ export default {
         getBodyTop() {
             return document.body.getBoundingClientRect().top;
         },
-        scrollTo(offset, callback) {
-            const fixedOffset = offset.toFixed();
-            const onScroll = () => {
-                if (window.pageYOffset.toFixed() === fixedOffset) {
-                    window.removeEventListener('scroll', onScroll);
-                    if (callback) {
-                        callback();
-                    }
-                }
-            };
+        scrollTo(elementId, callback) {
+            document.location.hash = `#${elementId}`;
 
-            window.addEventListener('scroll', onScroll);
-            onScroll();
-            window.scrollTo({
-                top: offset,
-                behavior: 'smooth'
-            });
+            // TODO: callback call after document.location scroll end
+            if (callback) {
+                callback();
+            }
         },
         scrollExtreme(direction) {
-            const downTarget = document.querySelector(".comment-form");
-            const bodyTop = this.getBodyTop();
+            document.location.hash = '';
 
             if (direction === "Down") {
                 this.arrowDirection = "Up";
-                this.scrollTo(downTarget.getBoundingClientRect().top - bodyTop - this.commentMargin);
+
+                document.location.hash = '#post-comments-form';
             } else {
                 this.arrowDirection = "Down";
-                this.scrollTo(0);
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
         },
         scrollToComment(direction) {
             let comments = document.querySelectorAll(".comment-is-new");
+
             const bodyTop = this.getBodyTop();
 
             if (comments.length < 1) {
                 // take only the first comment
-                const fistComment = document.querySelector(".comment");
-                comments = fistComment ? [fistComment] : [];
+                const commentBlock = document.getElementById("comments");
+                comments = commentBlock ? [commentBlock] : [];
             }
 
             if (comments.length < 1) {
-                // Без комментариев
+                // Then post without comments
                 return this.scrollExtreme(direction);
             }
 
@@ -96,7 +91,7 @@ export default {
                 window.setTimeout(() => { nearest.classList.remove("comment-scroll-selected"); }, 500);
             };
 
-            this.scrollTo(nearest.getBoundingClientRect().top - bodyTop - this.commentMargin, highlightComment);
+            this.scrollTo(nearest.id, highlightComment);
         },
         onArrowClickHandler() {
             if (this.arrowDirection == "Up") {

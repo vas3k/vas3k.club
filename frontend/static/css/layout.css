@@ -4,6 +4,10 @@
     --normal-content-width: 800px;
 }
 
+html {
+    scroll-behavior: smooth; 
+}
+
 .menu {
     display: grid;
     max-width: var(--max-content-width);
