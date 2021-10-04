@@ -70,7 +70,7 @@ class ClubRenderer(mistune.HTMLRenderer):
         if title in IMAGE_CSS_CLASSES:
             css_classes = IMAGE_CSS_CLASSES[title]
 
-        image_tag = f'<img loading="lazy" src="{escape_html(src)}" alt="{escape_html(title)}">'
+        image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f'<figure class="{css_classes}">{image_tag}{caption}</figure>'
 

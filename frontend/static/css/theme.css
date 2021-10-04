@@ -40,6 +40,8 @@ html, html[theme="light"] {
 
     --select-color: #333;
     --select-bg-color: #FFF;
+
+    scroll-behavior: smooth !important;
 }
 
 html[theme="dark"] {

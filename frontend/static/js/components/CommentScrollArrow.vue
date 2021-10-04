@@ -18,51 +18,68 @@ export default {
         return {
             arrowDirection: "Down",
             scrollThrottleDelay: 150,
-            commentMargin: 20,
         };
     },
     methods: {
         getBodyTop() {
             return document.body.getBoundingClientRect().top;
         },
-        scrollTo(offset, callback) {
-            const fixedOffset = offset.toFixed();
+        getElementMargin(el) {
+            const style = window.getComputedStyle(el);
+            return parseInt(style.marginTop, 10);
+        },
+        scrollToElement(el, callback) {
+            const offset = el.getBoundingClientRect().top - this.getBodyTop() - this.getElementMargin(el);
             const onScroll = () => {
-                if (window.pageYOffset.toFixed() === fixedOffset) {
+                if (Math.abs(offset - window.pageYOffset) < 1) {
                     window.removeEventListener('scroll', onScroll);
                     if (callback) {
                         callback();
                     }
                 }
             };
-
             window.addEventListener('scroll', onScroll);
             onScroll();
-            window.scrollTo({
-                top: offset,
-                behavior: 'smooth'
-            });
+            if (el.id.length < 1) {
+                window.scrollTo({
+                    top: offset,
+                    behavior: 'smooth'
+                });
+            } else {
+                location.replace("#" + el.id);
+            }
         },
         scrollExtreme(direction) {
-            const downTarget = document.querySelector(".comment-form");
-            const bodyTop = this.getBodyTop();
-
             if (direction === "Down") {
                 this.arrowDirection = "Up";
-                this.scrollTo(downTarget.getBoundingClientRect().top - bodyTop - this.commentMargin);
+                const downTarget = document.querySelector(".post-comments-form");
+                this.scrollToElement(downTarget);
             } else {
                 this.arrowDirection = "Down";
-                this.scrollTo(0);
+                const upTarget = document.querySelector(".content");
+                this.scrollToElement(upTarget);
             }
         },
         scrollToComment(direction) {
-            let comments = document.querySelectorAll(".comment-is-new");
+            let comments = document.querySelectorAll(
+                [
+                    // Просто новые комментарии
+                    ".comment.comment-is-new",
+                    // Новые реплаи к старым комментариям
+                    ".comment:not(.comment-is-new) > .comment-replies > .replies > .reply.comment-is-new",
+                    // Новые реплаи на втором уровне к старым реплаям старых комментариев
+                    ".comment:not(.comment-is-new) > .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies > .replies > .reply.comment-is-new",
+                    // Новые реплаи без родительского комментария
+                    ".post-comments-list > .replies > .reply.comment-is-new",
+                    // Новые реплаи на втором уровне к старым реплаям без родительского комментария
+                    ".post-comments-list > .replies > .reply:not(.comment-is-new) > .reply.comment-is-new",
+                ].join()
+            );
             const bodyTop = this.getBodyTop();
 
             if (comments.length < 1) {
-                // take only the first comment
-                const fistComment = document.querySelector(".comment");
-                comments = fistComment ? [fistComment] : [];
+                // Новых нет, перебираем прочтённые комментарии
+                comments = document.querySelectorAll(".comment");
             }
 
             if (comments.length < 1) {
@@ -70,7 +87,7 @@ export default {
                 return this.scrollExtreme(direction);
             }
 
-            const position = window.scrollY + this.commentMargin;
+            const position = window.scrollY + this.getElementMargin(comments[0]);
 
             // Убираем комментарии ниже или выше направления поиска
             const filteredComments = [...comments].filter((el) => {
@@ -84,7 +101,7 @@ export default {
                 return this.scrollExtreme(direction);
             }
 
-            // Находим ближайший к середине экрана комментарий
+            // Находим ближайший комментарий
             const nearest = [...filteredComments].reduce((a, b) => {
                 const atop = a.getBoundingClientRect().top - bodyTop;
                 const btop = b.getBoundingClientRect().top - bodyTop;
@@ -93,10 +110,12 @@ export default {
 
             const highlightComment = () => {
                 nearest.classList.add("comment-scroll-selected");
-                window.setTimeout(() => { nearest.classList.remove("comment-scroll-selected"); }, 500);
+                window.setTimeout(() => {
+                    nearest.classList.remove("comment-scroll-selected");
+                }, 500);
             };
 
-            this.scrollTo(nearest.getBoundingClientRect().top - bodyTop - this.commentMargin, highlightComment);
+            this.scrollToElement(nearest, highlightComment);
         },
         onArrowClickHandler() {
             if (this.arrowDirection == "Up") {
@@ -134,13 +153,9 @@ export default {
                 }
 
                 e.preventDefault();
-                const direction = e.key.replace(/^Arrow/, "");
-
-                this.arrowDirection = direction;
-
-                this.scrollToComment(direction);
+                this.arrowDirection = e.key.replace(/^Arrow/, "");
+                this.scrollToComment(this.arrowDirection);
             };
-
             document.addEventListener("keyup", this.keyUpHandler);
         },
         init() {
