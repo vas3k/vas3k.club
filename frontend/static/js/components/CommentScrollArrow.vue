@@ -41,7 +41,9 @@ export default {
             const offset = el.getBoundingClientRect().top - this.getBodyTop() - this.getElementMargin(el);
 
             const onScroll = () => {
-                if (Math.abs(offset - window.pageYOffset) < 1) {
+                const scrolledToElement = Math.abs(offset - window.pageYOffset) < 1;
+                const scrolledToBottom = Math.abs(document.body.getBoundingClientRect().height - window.pageYOffset - window.innerHeight) < 1;
+                if (scrolledToElement || (this.arrowDirection === "Down" && scrolledToBottom)) {
                     window.removeEventListener('scroll', onScroll);
 
                     document.documentElement.style.scrollBehavior = "auto";
@@ -52,7 +54,7 @@ export default {
                 }
             };
 
-            window.addEventListener('scroll', onScroll);
+            window.addEventListener("scroll", onScroll);
             onScroll();
 
             document.location.hash = `#${el.id}`;
@@ -62,20 +64,18 @@ export default {
             document.location.hash = '';
 
             if (direction === "Down") {
-                this.arrowDirection = "Up";
-
                 const postCommentsForm = document.getElementById("post-comments-form");
                 const footer = document.getElementById("footer");
 
                 const downTarget = postCommentsForm || footer;
                 this.scrollToElement(downTarget);
-            } else {
-                this.arrowDirection = "Down";
 
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                this.arrowDirection = "Up";
+            } else {
+                const topTarget = document.getElementById("app");
+                this.scrollToElement(topTarget);
+
+                this.arrowDirection = "Down";
             }
         },
         scrollToComment(direction) {
@@ -97,14 +97,8 @@ export default {
             const bodyTop = this.getBodyTop();
 
             if (comments.length < 1) {
-                // take comments header
-                const commentBlock = document.getElementById("comments");
-                const commentBlockArray = commentBlock ? [commentBlock] : [];
-
-                // Новых нет, перебираем прочтённые комментарии
-                const oldComments = document.querySelectorAll(".comment");
-
-                comments = oldComments.length > 0 ? [...commentBlockArray, ...document.querySelectorAll(".comment")] : [];
+                // Новых нет, ищем начало блока комментариев и перебираем прочтённые комментарии
+                comments = document.querySelectorAll("#comments, .comment");
             }
 
             if (comments.length < 1) {
@@ -163,13 +157,8 @@ export default {
         },
         initOnPageScroll() {
             this.onPageScrollHandler = throttle(() => {
-                const scrollPosition = Math.max(
-                    window.pageYOffset,
-                    document.documentElement.scrollTop,
-                    document.body.scrollTop
-                );
-                const bottomOfWindow = scrollPosition + window.innerHeight === document.documentElement.offsetHeight;
-                const topOfWindow = scrollPosition === 0;
+                const bottomOfWindow = Math.abs(document.body.getBoundingClientRect().height - window.pageYOffset - window.innerHeight) < 1;
+                const topOfWindow = window.pageYOffset === 0;
 
                 if (bottomOfWindow) {
                     this.arrowDirection = "Up";
@@ -196,9 +185,20 @@ export default {
 
             document.addEventListener("keyup", this.keyUpHandler);
         },
+        initSelectedClassCleanerListener() {
+            document.querySelector('#comments').addEventListener("click", (event) => {
+                if (event.target.classList.contains("comment-header-date")) {
+                    const selectedComment = event.target.closest(".comment-scroll-selected");
+                    if (selectedComment) {
+                        selectedComment.classList.remove("comment-scroll-selected");
+                    }
+                }
+            }, false);
+        },
         init() {
             this.initOnKeyUp();
             this.initOnPageScroll();
+            this.initSelectedClassCleanerListener();
         }
     },
     mounted() {
