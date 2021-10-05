@@ -22,23 +22,27 @@ def announce_in_club_channel(post, announce_text=None, image=None):
         )
 
 
+def send_post_message(post, chat_id):
+    send_telegram_message(
+        chat=Chat(id=chat_id),
+        text=render_html_message("channel_post_announce.html", post=post),
+        parse_mode=telegram.ParseMode.HTML,
+        disable_preview=True,
+    )
+
+
 def announce_in_club_chats(post):
-    if post.topic and post.topic.chat_id:
-        # announce to the topic chat
-        send_telegram_message(
-            chat=Chat(id=post.topic.chat_id),
-            text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=telegram.ParseMode.HTML,
-            disable_preview=True,
-        )
+    if post.topic:
+        if post.topic.chat_id:
+            # announce to the topic chat
+            send_post_message(post, post.topic.chat_id)
+        if post.topic.additional_chat_ids:
+            # announce to the topic additional chats
+            for additional_chat_id in post.topic.additional_chat_ids:
+                send_post_message(post, additional_chat_id)
     else:
         # announce to public chat
-        send_telegram_message(
-            chat=CLUB_CHAT,
-            text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=telegram.ParseMode.HTML,
-            disable_preview=True,
-        )
+        send_post_message(post, CLUB_CHAT)
 
 
 def notify_post_author_approved(post):

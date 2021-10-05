@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 
@@ -15,6 +16,7 @@ class Topic(models.Model):
     chat_name = models.CharField(max_length=128, null=True)
     chat_url = models.URLField(null=True)
     chat_id = models.CharField(max_length=64, null=True)
+    additional_chat_ids = ArrayField(models.CharField(max_length=64), default=list, null=True)
 
     last_activity_at = models.DateTimeField(auto_now_add=True, null=False)
 
