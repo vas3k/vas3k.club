@@ -37,6 +37,11 @@ def done(request):
 def pay(request):
     product_code = request.GET.get("product_code")
     is_invite = request.GET.get("is_invite")
+    is_recurrent = request.GET.get("is_recurrent")
+    if is_recurrent:
+        # брать из продукта, а не из введенного
+        interval = request.GET.get("recurrent_interval") or "yearly"
+        product_code = f"{product_code}_recurrent_{interval}"
 
     # find product by code
     product = WAYFORPAY_PRODUCTS.get(product_code)
