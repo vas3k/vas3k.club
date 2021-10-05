@@ -110,7 +110,7 @@ export default {
                 const elTop = el.getBoundingClientRect().top;
                 const elTopMargin = this.getElementMargin(el);
 
-                return (direction === "Down") ? elTop - elTopMargin > 1 : elTop < 0;
+                return (direction === "Down") ? elTop - elTopMargin > 2 : elTop < 0;
             });
 
             if (filteredComments.length < 1) {
