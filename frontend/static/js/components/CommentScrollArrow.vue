@@ -26,14 +26,14 @@ export default {
         },
         getElementMargin(el) {
              const style = window.getComputedStyle(el);
-             return parseInt(style.marginTop, 10);
+             return parseInt(style.scrollMarginTop, 10);
          },
         scrollToElement(el, callback) {
             const oldHash = document.location.hash;
             const newHash = `#${el.id}`;
             if (oldHash === newHash) {
                 // zero the hash so that there is no sticking if we are already on this element
-                document.location.hash = '';
+                history.pushState(null, null, '');
             }
 
             document.documentElement.style.scrollBehavior = "smooth";
@@ -60,9 +60,6 @@ export default {
             document.location.hash = `#${el.id}`;
         },
         scrollExtreme(direction) {
-            // zero the hash so that there is no sticking if we are already on this element
-            document.location.hash = '';
-
             if (direction === "Down") {
                 const postCommentsForm = document.getElementById("post-comments-form");
                 const footer = document.getElementById("footer");
@@ -98,7 +95,7 @@ export default {
 
             if (comments.length < 1) {
                 // Новых нет, ищем начало блока комментариев и перебираем прочтённые комментарии
-                comments = document.querySelectorAll("#comments, .comment");
+                comments = document.querySelectorAll("#post-comments-title, .comment");
             }
 
             if (comments.length < 1) {
@@ -110,11 +107,10 @@ export default {
 
             // Убираем комментарии ниже или выше направления поиска
             const filteredComments = [...comments].filter((el) => {
-                const elBCR = el.getBoundingClientRect();
-                const eltop = elBCR.top - bodyTop;
-                return (direction === "Down") ?
-                    eltop - elBCR.height / 2 > position
-                    : eltop + elBCR.height / 2 < position;
+                const elTop = el.getBoundingClientRect().top;
+                const elTopMargin = this.getElementMargin(el);
+
+                return (direction === "Down") ? elTop - elTopMargin > 1 : elTop < 0;
             });
 
             if (filteredComments.length < 1) {
@@ -149,7 +145,10 @@ export default {
             this.scrollToElement(nearest, highlightComment);
         },
         onArrowClickHandler() {
-            if (this.arrowDirection == "Up") {
+            if (event.shiftKey) {
+                const direction = this.arrowDirection == "Up" ? "Down" : "Up";
+                this.scrollToComment(direction);
+            } else if (this.arrowDirection == "Up") {
                 this.scrollExtreme(this.arrowDirection);
             } else {
                 this.scrollToComment(this.arrowDirection);
@@ -173,8 +172,10 @@ export default {
         },
         initOnKeyUp() {
              this.keyUpHandler = (e) => {
-                // ctrl-up/down для всех, а в macos - ⇧⌃↑/↓
-                if (!e.ctrlKey || ["ArrowDown", "ArrowUp", "Down", "Up"].indexOf(e.key) < 0) {
+                // ctrl-up/down для всех, а в macos и FF - ⇧⌃↑/↓
+                const isFirefox = ("netscape" in window) && / rv:/.test(navigator.userAgent);
+                if (!e.ctrlKey || (isFirefox && !e.shiftKey)
+                    || ["ArrowDown", "ArrowUp", "Down", "Up"].indexOf(e.key) < 0) {
                     return;
                 }
 
