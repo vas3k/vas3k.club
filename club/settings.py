@@ -229,6 +229,7 @@ IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.vas3k.club/preview"
 OG_IMAGE_DEFAULT = "https://vas3k.club/static/images/share.png"
+OG_MACHINE_AUTHOR_LOGO = "https://vas3k.club/static/images/the_machine_logo.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
     "logo": "https://vas3k.club/static/images/logo/logo-white-text.png",
     "op": 0.6,
