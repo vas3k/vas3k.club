@@ -37,7 +37,11 @@
     <div class="content">
         {% block comments %}
             <div class="post-comments" id="comments">
-                <div class="post-comments-title">
+                <div class="comment-scroll-arrow-wrapper">
+                    <comment-scroll-arrow />
+                </div>
+
+                <div class="post-comments-title" id="post-comments-title">
                     <div class="post-comments-title-left">
                         {% if post.comment_count > 0 %}
                             <a href="#comments" class="post-comments-count">
@@ -78,7 +82,7 @@
                 {% endif %}
 
                 {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
-                    <div class="post-comments-form">
+                    <div class="post-comments-form" id="post-comments-form">
                         {% include "comments/forms/comment.html" with post=post form=comment_form %}
                     </div>
 
