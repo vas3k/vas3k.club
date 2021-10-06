@@ -1187,6 +1187,7 @@
     font-family: var(--sans-font);
     color: var(--text-color);
     border: var(--button-border);
+    background-color: var(--bg-color);
     border-radius: 50%;
     cursor: pointer;
     z-index: 5;
