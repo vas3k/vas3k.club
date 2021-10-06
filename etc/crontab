@@ -6,3 +6,4 @@
 0 5 * * 7 cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py rebuild_search_index >>/home/vas3k/crons.log 2>&1
 0 8 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py replay_stuck_reviews >>/home/vas3k/crons.log 2>&1
 13 */3 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py update_hotness >>/home/vas3k/crons.log 2>&1
+14 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py send_subscribe_expired_event_daily >>/home/vas3k/crons.log 2>&1
