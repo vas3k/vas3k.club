@@ -1187,7 +1187,7 @@
     font-family: var(--sans-font);
     color: var(--text-color);
     border: var(--button-border);
-    border-radius: var(--button-border-radius);
+    border-radius: 50%;
     cursor: pointer;
     z-index: 5;
 }
@@ -1203,7 +1203,7 @@
         font-size: 18px;
         top: 50%;
         left: 50%;
-        transform: translateX(-50%) translateY(-50%) rotate(180deg);
+        transform: translateX(-50%) translateY(-43%) rotate(180deg);
         transition: transform .2s;
     }
 
