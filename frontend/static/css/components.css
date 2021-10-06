@@ -1160,20 +1160,6 @@
         height: 80px;
     }
 
-@keyframes commentHighlight {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.comment.comment-scroll-animation,
-.reply.comment-scroll-animation {
-    animation: commentHighlight 0.3s ease-in-out forwards;
-}
-
 .comment-scroll-arrow {
     position: fixed;
     left: 20px;
