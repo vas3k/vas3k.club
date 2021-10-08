@@ -73,7 +73,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_EVENT: "Событие:",
         TYPE_REFERRAL: "Рефералка:",
         TYPE_BATTLE: "Батл:",
-        TYPE_GUIDE: "",
+        TYPE_GUIDE: "🗺",
         TYPE_THREAD: "Тред:",
     }
 
