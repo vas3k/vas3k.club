@@ -4,7 +4,7 @@ import hashlib
 import hmac
 import logging
 import time
-from datetime import timedelta
+from datetime import date, timedelta
 from enum import Enum
 from uuid import uuid4
 
@@ -30,12 +30,34 @@ WAYFORPAY_PRODUCTS = {
     "club12": {
         "code": "club12",
         "description": "Год членства в Клубе",
-        "amount": 2,
+        "amount": 10,
         "recurrent": False,
         "activator": club_subscription_activator,
         "data": {
             "timedelta": timedelta(days=365),
         },
+    },
+    "club1_recurrent": {
+        "code": "club1",
+        "description": "Месяц членства в Клубе",
+        "amount": 1,
+        "recurrent": False,
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=31),
+        },
+        "regular": "monthly",
+    },
+    "club12_recurrent": {
+        "code": "club12",
+        "description": "Год членства в Клубе",
+        "amount": 10,
+        "recurrent": False,
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=365),
+        },
+        "regular": "yearly",
     },
 }
 
@@ -53,6 +75,63 @@ class Invoice:
 
 
 class WayForPayService:
+    @classmethod
+    def create_payment(cls, product_code: str) -> Invoice:
+        product_data = WAYFORPAY_PRODUCTS[product_code]
+
+        order_id = uuid4().hex
+
+        log.info("Try to create payment %s %s", product_code, order_id)
+
+        payload = {
+            "merchantAccount": "4aff_club",
+            "merchantDomainName": "4aff.club",
+            "returnUrl": "https://4aff.club/",
+            "serviceUrl": "https://4aff.club/monies/wayforpay/webhook/",
+            "orderReference": order_id,
+            "orderDate": int(time.time()),
+            "amount": product_data["amount"],
+            "currency": "USD",
+            "productName": [product_data["description"]],
+            "productPrice": [product_data["amount"]],
+            "productCount": [1],
+        }
+
+        if "regular" in product_data:
+            payload.update({
+                "regularMode": product_data["regular"],
+                "regularOn": 1,
+                "dateNext": (date.today() + product_data["data"]["timedelta"]).strftime("%d.%m.%Y"),
+                "dateEnd": "01.01.2100",
+            })
+        else:
+            payload.update({
+                "regularMode": "client",
+            })
+
+        fields = (
+            "merchantAccount", "merchantDomainName", "orderReference", "orderDate", "amount", "currency",
+            "productName", "productCount", "productPrice",
+        )
+
+        string = ";".join([
+            str(payload[field][0] if isinstance(payload[field], list) else payload[field])
+            for field in fields
+        ])
+        signature = hmac.new(settings.WAYFORPAY_SECRET.encode("utf-8"), string.encode("utf-8"), hashlib.md5).hexdigest()
+        payload["merchantSignature"] = signature
+
+        response = requests.post("https://secure.wayforpay.com/pay?behavior=offline", json=payload)
+        log.info("Payment answer %s %s", response.status_code, response.text)
+
+        response.raise_for_status()
+
+        invoice = Invoice(
+            id=order_id,
+            url=response.json()["url"],
+        )
+        return invoice
+
     @classmethod
     def create_invoice(cls, product_code: str) -> Invoice:
         invoice_id = uuid4().hex

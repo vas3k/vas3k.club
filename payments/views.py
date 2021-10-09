@@ -39,9 +39,7 @@ def pay(request):
     is_invite = request.GET.get("is_invite")
     is_recurrent = request.GET.get("is_recurrent")
     if is_recurrent:
-        # брать из продукта, а не из введенного
-        interval = request.GET.get("recurrent_interval") or "yearly"
-        product_code = f"{product_code}_recurrent_{interval}"
+        product_code = f"{product_code}_recurrent"
 
     # find product by code
     product = WAYFORPAY_PRODUCTS.get(product_code)
@@ -115,7 +113,7 @@ def pay(request):
 
     # create stripe session and payment (to keep track of history)
     pay_service = WayForPayService()
-    invoice = pay_service.create_invoice(product_code)
+    invoice = pay_service.create_payment(product_code)
 
     payment = Payment.create(
         reference=invoice.id,

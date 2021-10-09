@@ -53,3 +53,5 @@ db.sqlite3
 venv/
 
 gdpr/downloads/*.zip
+
+.env
