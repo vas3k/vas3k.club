@@ -8,6 +8,7 @@ from comments.models import Comment
 from common.pagination import paginate
 from common.request import ajax_request
 from posts.models.post import Post
+from posts.renderers import POSSIBLE_COMMENT_ORDERS
 from search.models import SearchIndex
 from users.forms.profile import ExpertiseForm
 from users.models.achievements import UserAchievement
@@ -84,14 +85,20 @@ def profile_comments(request, user_slug):
 
     user = get_object_or_404(User, slug=user_slug)
 
+    # order comments
+    comment_order = request.GET.get("comment_order") or "-created_at"
+    if comment_order not in POSSIBLE_COMMENT_ORDERS:
+        comment_order = "-created_at"
+
     comments = Comment.visible_objects()\
         .filter(author=user, post__is_visible=True)\
-        .order_by("-created_at")\
+        .order_by(comment_order)\
         .select_related("post")
 
     return render(request, "users/profile/comments.html", {
         "user": user,
         "comments": paginate(request, comments, settings.PROFILE_COMMENTS_PAGE_SIZE),
+        "comment_order": comment_order
     })
 
 

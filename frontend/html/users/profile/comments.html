@@ -13,8 +13,19 @@
     <div class="content profile">
         {% include "users/widgets/card.html" with user=user %}
 
-        <div class="profile-header">
+        <div class="profile-header" id="comments">
             {{ comments.paginator.count }} {{ comments.paginator.count|rupluralize:"комментарий,комментария,комментариев" }}
+
+            {% if comments %}
+                <form action=".#comments" method="get" class="post-comments-order">
+                    <select name="comment_order" onchange="this.form.submit()">
+                        <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
+                        <option value="-created_at" {% if comment_order == "-created_at" %}selected{% endif %}>по свежести</option>
+                        <option value="created_at" {% if comment_order == "created_at" %}selected{% endif %}>по порядку</option>
+                    </select>
+                </form>
+            {% endif %}
+
         </div>
 
         <div class="profile-comment-list">
