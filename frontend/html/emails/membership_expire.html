@@ -46,29 +46,14 @@
     </style>
 {% endblock %}
 
-{% block logo %}
-    <a href="https://vas3k.club">
-        <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80"
-             style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
-    </a>
-{% endblock %}
-
 {% block title %}
     <span style="letter-spacing: 5px;">Пссссс</span>
 {% endblock %}
 
 {% block body %}
-    {% if days.days == 1 %}
+    {% if days.days%}
         <p>
-            Вы остаетесь членом Клуба ещё {{ days.days }} день :(
-        </p>
-    {% elif days.days > 1 and days.days < 5 %}
-         <p>
-            Вы остаетесь членом Клуба ещё {{ days.days }} дня :(
-        </p>
-    {% else %}
-        <p>
-            Вы остаетесь членом Клуба ещё {{ days.days }} дней :(
+            Вы остаетесь членом Клуба ещё {{ days.days }} {{ days.days | rupluralize:"день,дня,дней" }} 😔
         </p>
     {% endif %}
 
@@ -82,7 +67,5 @@
 
     <br><br><br>
 {% endblock %}
-
-{% block footer %}{% endblock %}
-
-{% block unsubscribe %}{% endblock %}
+{% block unsubscribe %}
+{% endblock %}

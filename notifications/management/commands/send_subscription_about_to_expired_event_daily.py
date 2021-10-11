@@ -18,11 +18,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for days in self.days_set:
-            # select expired subscribers
+            # select users to notify
             expired_users = User.objects\
                 .filter(
                     is_email_verified=True,
-                    membership_expires_at__gte=datetime.utcnow() - timedelta(days=days),
+                    membership_expires_at__gte=datetime.utcnow() + timedelta(days=days),
                     moderation_status=User.MODERATION_STATUS_APPROVED
                 )\
                 .exclude(is_email_unsubscribed=True)
@@ -37,15 +37,15 @@ class Command(BaseCommand):
                         tags=["membership_expired"]
                     )
                 except Exception as ex:
-                    self.stdout.write(f"Sending to {user.email} failed: {ex}")
+                    log.error(f"Sending to {user.email} failed: {ex}")
                     continue
                 self.stdout.write(f"Sending telegram message for {user.telegram_id}...")
                 try:
-                	send_telegram_message(
-                    	chat=Chat(id=user.telegram_id),
-                    	text=render_html_message("membership_expired.html", days=days),
-                	)
+                    send_telegram_message(
+                        chat=Chat(id=user.telegram_id),
+                        text=render_html_message("membership_expire.html", days=days),
+                    )
                 except Exception as ex:
-                    self.stdout.write(f"Sending to {user.telegram_id} failed: {ex}")
+                    log.error(f"Sending to {user.telegram_id} failed: {ex}")
                     continue
             self.stdout.write("Done 🥙")
