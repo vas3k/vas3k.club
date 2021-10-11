@@ -40,6 +40,12 @@
         {% include "users/widgets/card.html" with user=user %}
 
         {% if me.id == user.id %}
+         <div class="block profile-statuses">
+                <a href="{% url "friends" user.slug %}" class="profile-status">
+                   <span class="profile-status-icon">🤝</span>
+                    <span class="profile-status-text">Мои чуваки</span>
+                </a>
+            </div>
             <div class="block profile-statuses">
                 <div class="profile-status profile-respect">
                     <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
@@ -93,17 +99,12 @@
                 </a>
             </div>
         {% else %}
-            <div class="profile-statuses">
-                <div class="profile-friend-button">
-                    <friend-button
-                        url="{% url "toggle_friend" user.slug %}"
-                        {% if friend %}is-friend-by-default{% endif %}>
-                    </friend-button>
-                </div>
-                <div class="profile-friend-button-comment">
-                    &larr; тестируем бета-версию подписки на все посты и комменты юзера через бота
-                </div>
-            </div>
+        <div class="block profile-statuses">
+            <friend-button
+                url="{% url "toggle_friend" user.slug %}"
+                {% if friend %}is-friend-by-default{% endif %}>
+            </friend-button>
+        </div>
         {% endif %}
 
         {% if intro %}

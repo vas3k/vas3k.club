@@ -1,8 +1,10 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
+from django.conf import settings
 
 from auth.helpers import auth_required
 from common.request import ajax_request
+from common.pagination import paginate
 from users.models.friends import Friend
 from users.models.user import User
 
@@ -29,3 +31,17 @@ def toggle_friend(request, user_slug):
     return {
         "status": "created" if is_created else "deleted",
     }
+
+
+@auth_required
+def friends(request, user_slug):
+    # TODO: what to do if user tries to see someones friends
+
+    user = get_object_or_404(User, slug=user_slug)
+
+    user_friends = Friend.user_friends(user_from=user)
+
+    return render(request, "users/friends/index.html", {
+        "user": user,
+        "friends_paginated": paginate(request, user_friends, page_size=settings.FRIENDS_PAGE_SIZE)
+    })
