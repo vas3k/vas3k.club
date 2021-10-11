@@ -20,3 +20,7 @@ class EmailRenderer(ClubRenderer):
 
     def tweet(self, src, alt="", title=None):
         return f'<a href="{escape_html(src)}">{escape_html(src)}</a><br>{escape_html(title) or ""}'
+
+    def heading(self, text, level):
+        tag = f"h{level}"
+        return f"<{tag}>{text}</{tag}>\n"
