@@ -162,6 +162,18 @@ class User(models.Model, ModelDiffMixin):
     def get_avatar(self):
         return self.avatar or self.DEFAULT_AVATAR
 
+    def membership_created_days(self):
+        return (datetime.utcnow() - self.created_at).days
+
+    def membership_created_weeks(self):
+        return round(self.membership_created_days() / 7)
+
+    def membership_created_months(self):
+        return round(self.membership_created_days() / 30)
+
+    def gmembership_created_years(self):
+        return round(self.membership_created_days() / 365)
+
     @property
     def is_banned(self):
         if self.is_god:

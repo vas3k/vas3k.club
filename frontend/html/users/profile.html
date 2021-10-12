@@ -41,6 +41,23 @@
 
         {% if me.id == user.id %}
          <div class="block profile-statuses">
+                <div class="profile-status">
+                    <span class="profile-status-number">⏳</span>
+                    <span class="profile-status-text">
+                        {% if user.membership_created_days == 0 %}
+                            1 день
+                        {% elif user.membership_created_days < 7 %}
+                            {{ user.membership_created_days }} {{user.membership_created_days | rupluralize:"день,дня,дней"}}
+                        {% elif user.membership_created_weeks < 4 %}
+                            {{ user.membership_created_weeks }} {{user.membership_created_weeks | rupluralize:"неделю,недели,недель"}}
+                        {% elif user.membership_created_months < 12 %}
+                            {{ user.membership_created_months }} {{user.membership_created_months | rupluralize:"месяц,месяца,месяцев"}}
+                        {% else %}
+                            {{ user.membership_created_years }} {{user.membership_created_years | rupluralize:"год,года,лет"}}
+                        {% endif %}
+                        в клубе
+                    </span>
+                </div>
                 <a href="{% url "friends" user.slug %}" class="profile-status">
                    <span class="profile-status-icon">🤝</span>
                     <span class="profile-status-text">Мои чуваки</span>
@@ -100,6 +117,23 @@
             </div>
         {% else %}
         <div class="block profile-statuses">
+            <div class="profile-status">
+                <span class="profile-status-number">⏳</span>
+                <span class="profile-status-text">
+                    {% if user.membership_created_days == 0 %}
+                        1 день
+                    {% elif user.membership_created_days < 7 %}
+                        {{ user.membership_created_days }} {{user.membership_created_days | rupluralize:"день,дня,дней"}}
+                    {% elif user.membership_created_weeks < 4 %}
+                        {{ user.membership_created_weeks }} {{user.membership_created_weeks | rupluralize:"неделю,недели,недель"}}
+                    {% elif user.membership_created_months < 12 %}
+                        {{ user.membership_created_months }} {{user.membership_created_months | rupluralize:"месяц,месяца,месяцев"}}
+                    {% else %}
+                        {{ user.membership_created_years }} {{user.membership_created_years | rupluralize:"год,года,лет"}}
+                    {% endif %}
+                    в клубе
+                </span>
+            </div>
             <friend-button
                 url="{% url "toggle_friend" user.slug %}"
                 {% if friend %}is-friend-by-default{% endif %}>
