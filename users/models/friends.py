@@ -36,3 +36,7 @@ class Friend(models.Model):
     @classmethod
     def friends_for_user(cls, user_to):
         return cls.objects.filter(user_to=user_to).select_related("user_from")
+
+    @classmethod
+    def user_friends(cls, user_from):
+        return cls.objects.filter(user_from=user_from).select_related("user_to")
