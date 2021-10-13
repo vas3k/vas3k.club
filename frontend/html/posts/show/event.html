@@ -68,7 +68,16 @@
         </div>
 
         <div class="post-event-title">
-            {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} по {% if post.metadata.event.timezone == "UTC" %}UTC{% else %}{% if post.metadata.event.timezone == "Europe/Kiev" %}Киеву{% else %}Москве{% endif %}{% endif %}
+            {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} по
+            {% if post.metadata.event.timezone == "UTC" %}
+                UTC
+            {% else %}
+                {% if post.metadata.event.timezone == "Europe/Kiev" %}
+                    Киеву
+                {% else %}
+                    Москве
+                {% endif %}
+            {% endif %}
         </div>
 
         <div class="post-event-location">
@@ -92,12 +101,5 @@
                 </post-rsvp>
             {% endif %}
         </div>
-        <div class="post-footer p-author">
-            {% include "users/widgets/card.html" with user=post.author %}
-        </div>
     </div>
-    {% if linked_posts %}
-        {% include "posts/widgets/linked_posts.html" %}
-    {% endif %}
-</div>
 {% endblock %}
