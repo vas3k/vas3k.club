@@ -56,6 +56,7 @@ def people(request):
         "work": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
             "can_refer", "search_employees", "search_job", "search_remote", "search_relocate"
         }],
+        "money": tag_stat_groups.get(Tag.GROUP_MONEY, []),
     })
 
     active_countries = User.registered_members().filter(country__isnull=False)\

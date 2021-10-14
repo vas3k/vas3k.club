@@ -74,6 +74,17 @@
                         {% endif %}
                     </div>
 
+                    <div class="people-filters-header">Зарабатываю</div>
+
+                    {% for tag in tag_stat_groups.money %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
+                            <label for="tag_{{ tag.code }}">{{ tag.name }}</label>
+                        </div>
+                    {% endfor %}
+
+                    <div class="people-filters-header">Общение</div>
+
                     <div class="people-filters-tag">
                         <input type="checkbox" name="filters" value="same_city" id="filter_same_city" {% if "same_city" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
                         <label for="filter_same_city">📍 В моем городе</label>
