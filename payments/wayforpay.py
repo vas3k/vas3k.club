@@ -87,6 +87,7 @@ class WayForPayService:
             "merchantAccount": "4aff_club",
             "merchantDomainName": "4aff.club",
             "serviceUrl": "https://4aff.club/monies/wayforpay/webhook/",
+            "returnUrl": "https://4aff.club/intro/",
             "orderReference": order_id,
             "orderDate": int(time.time()),
             "amount": product_data["amount"],
