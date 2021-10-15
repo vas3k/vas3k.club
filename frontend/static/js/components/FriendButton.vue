@@ -5,7 +5,7 @@
     </a>
     <a v-else class="profile-status" @click="toggle">
         <span class="profile-status-icon">🤝</span>
-        <span class="profile-status-status">Сделать чуваком</span>
+        <span class="profile-status-status">Добавить в мои чуваки</span>
     </a>
 </template>
 
