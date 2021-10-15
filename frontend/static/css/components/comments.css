@@ -162,8 +162,8 @@
     scroll-margin-top: 20px;
 }
 
-    .comment:target,
-    .reply:target {
+    .comment:not(.comment-scroll-selected):target,
+    .reply:not(.comment-scroll-selected):target {
         background-color: rgba(125, 232, 125, 0.3);
     }
 

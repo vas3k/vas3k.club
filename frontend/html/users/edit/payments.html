@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <div class="block block-top-users">
+    <div class="block stats-top-users">
         <div class="top-users">
             {% for user in top_users|slice:"0:5" %}
                 <a href="{% url "profile" user.slug %}" class="top-user top-user-big">

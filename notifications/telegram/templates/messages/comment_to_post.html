@@ -1,4 +1,4 @@
-💬 <b>Новый коммент к вашему посту «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b>
+💬 <b>Новый коммент к посту «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b>
 {% if comment.post.type == "battle" and comment.battle_side %}
 <b>за «{{ comment.battle_side }}»</b>
 {% endif %}{% if comment.title %}

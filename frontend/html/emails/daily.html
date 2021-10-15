@@ -4,6 +4,14 @@
 {% load users %}
 {% load emails %}
 
+{% block og_meta %}
+    <meta property="og:site_name" content="Вастрик.Клуб" />
+    <meta property="og:title" content="Ежедневный дайджест" />
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="Подборка событий в Клубе за день, составленная нашей бездушной, но очень вежливой машиной специально для вас." />
+    <meta property="og:image" content="{{ og_image_url }}" />
+{% endblock %}
+
 {% block css %}
 <style>
     h2 {

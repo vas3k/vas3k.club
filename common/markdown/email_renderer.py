@@ -10,7 +10,7 @@ class EmailRenderer(ClubRenderer):
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
-        youtube_id = escape_html(youtube_match.group(1))
+        youtube_id = escape_html(youtube_match.group(1) or "")
         return f'<a href="{escape_html(src)}"><span class="ratio-16-9 video-preview" ' \
                f'style="background-image: url(\'https://img.youtube.com/vi/{escape_html(youtube_id)}/0.jpg\');">' \
                f'</span></a><br>{escape_html(title) or ""}'
@@ -20,3 +20,7 @@ class EmailRenderer(ClubRenderer):
 
     def tweet(self, src, alt="", title=None):
         return f'<a href="{escape_html(src)}">{escape_html(src)}</a><br>{escape_html(title) or ""}'
+
+    def heading(self, text, level):
+        tag = f"h{level}"
+        return f"<{tag}>{text}</{tag}>\n"

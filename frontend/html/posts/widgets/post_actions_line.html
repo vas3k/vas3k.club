@@ -10,7 +10,7 @@
     </post-bookmark>
 {% endif %}
 
-{% if post.author == me or me.is_moderator %}
+{% if post.author == me or me.is_moderator or me.slug in post.coauthors %}
     <a href="{% url "edit_post" post.slug %}"><i class="fas fa-edit"></i>&nbsp;Править&nbsp;&nbsp;&nbsp;</a>
 {% endif %}
 

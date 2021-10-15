@@ -99,12 +99,12 @@ class Command(BaseCommand):
 
         if options.get("production"):
             # flush digest intro for next time
-            GodSettings.objects.update(digest_intro=None)
+            GodSettings.objects.update(digest_intro=None, digest_title=None)
 
         send_telegram_message(
             chat=CLUB_CHANNEL,
             text=render_html_message("weekly_digest_announce.html", post=post),
-            disable_preview=True,
+            disable_preview=False,
             parse_mode=telegram.ParseMode.HTML,
         )
 

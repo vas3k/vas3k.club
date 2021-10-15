@@ -28,15 +28,13 @@ def parse_horoscope():
 
         moon_phase = {}
 
-        horoscope = soup.select("body > section > section > article > div:nth-child(6) > p:nth-child(3)")
+        horoscope = soup.select("body > section > section > article > div.l-box > p:nth-child(3)")
         moon_phase["phase_description"] = strip_tags(horoscope[0])[:-18] if horoscope else ""
 
-        phase_num = soup.select("body > section > section > article > div:nth-child(3) > div.text-center > "
-                                "table > tbody > tr:nth-child(1) > td.text-left > ul > li:nth-child(1)")
+        phase_num = soup.select("table.moon-events-table td.text-left > ul > li:nth-child(1)")
         moon_phase["phase_num"] = strip_tags(phase_num[0]) if phase_num else ""
 
-        phase_sign = soup.select("body > section > section > article > div:nth-child(3) > div.text-center > "
-                                 "table > tbody > tr:nth-child(1) > td.text-left > ul > li:nth-child(2) > a")
+        phase_sign = soup.select("table.moon-events-table tr:nth-child(2) > td.text-left > ul > li > a")
         moon_phase["phase_sign"] = strip_tags(phase_sign[0]) if phase_sign else ""
         cache.set("moon_phase", moon_phase, timeout=60 * 60)
 
