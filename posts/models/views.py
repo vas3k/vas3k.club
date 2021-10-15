@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import F
 
-from common.request import parse_ip_address, parse_useragent
+from common.request import parse_ip_address
 from posts.models.post import Post
 from users.models.user import User
 
@@ -17,7 +17,6 @@ class PostView(models.Model):
     post = models.ForeignKey(Post, related_name="viewers", db_index=True, on_delete=models.CASCADE)
 
     ipaddress = models.GenericIPAddressField(null=True)
-    useragent = models.CharField(max_length=512, null=True)
 
     first_view_at = models.DateTimeField(auto_now_add=True)
     registered_view_at = models.DateTimeField(auto_now_add=True)
@@ -34,10 +33,6 @@ class PostView(models.Model):
         post_view, is_view_created = PostView.objects.get_or_create(
             user=user,
             post=post,
-            defaults=dict(
-                ipaddress=parse_ip_address(request),
-                useragent=parse_useragent(request),
-            )
         )
 
         # save last view timestamp to highlight comments
@@ -69,7 +64,6 @@ class PostView(models.Model):
             post_view = PostView.objects.create(
                 post=post,
                 ipaddress=parse_ip_address(request),
-                useragent=parse_useragent(request),
             )
             is_view_created = True
 

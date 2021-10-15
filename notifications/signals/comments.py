@@ -26,13 +26,14 @@ def async_create_or_update_comment(comment):
     post_subscribers = PostSubscription.post_subscribers(comment.post)
     for post_subscriber in post_subscribers:
         if post_subscriber.user.telegram_id and comment.author != post_subscriber.user:
-            template = "comment_to_post.html" if post_subscriber.user == comment.post.author \
-                else "comment_to_post_announce.html"
-            send_telegram_message(
-                chat=Chat(id=post_subscriber.user.telegram_id),
-                text=render_html_message(template, comment=comment),
-            )
-            notified_user_ids.add(post_subscriber.user.id)
+            # respect subscription type (i.e. all comments vs top level only)
+            if post_subscriber.type == PostSubscription.TYPE_ALL_COMMENTS \
+                    or (post_subscriber.type == PostSubscription.TYPE_TOP_LEVEL_ONLY and not comment.reply_to_id):
+                send_telegram_message(
+                    chat=Chat(id=post_subscriber.user.telegram_id),
+                    text=render_html_message("comment_to_post.html", comment=comment),
+                )
+                notified_user_ids.add(post_subscriber.user.id)
 
     # notify thread author on reply (note: do not notify yourself)
     if comment.reply_to:
@@ -48,7 +49,7 @@ def async_create_or_update_comment(comment):
     if not comment.reply_to and comment.post.is_visible and comment.post.is_visible_in_feeds:
         send_telegram_message(
             chat=CLUB_ONLINE,
-            text=render_html_message("comment_to_post_announce.html", comment=comment),
+            text=render_html_message("comment_to_post.html", comment=comment),
         )
 
     # notify friends about top level comments

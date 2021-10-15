@@ -229,6 +229,7 @@ IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.4aff.club/preview"
 OG_IMAGE_DEFAULT = "https://4aff.club/static/images/share.png"
+OG_MACHINE_AUTHOR_LOGO = "https://vas3k.club/static/images/the_machine_logo.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
     "logo": "https://4aff.club/static/images/logo/logo-white-text.png",
     "op": 0.6,
@@ -244,7 +245,7 @@ TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
-TELEGRAM_BOT_WEBHOOK_URL = "https://4aff.club/telegram/webhook/"
+TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
 
@@ -275,6 +276,10 @@ CLEARED_POST_TEXT = "```\n" \
 
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
+
+POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
+CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
+PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 

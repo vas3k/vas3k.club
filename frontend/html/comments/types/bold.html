@@ -42,7 +42,11 @@
         {% endif %}
 
         {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
-            <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+            {% if comment.is_deleted %}
+                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+            {% else %}
+                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+            {% endif %}
         {% endif %}
 
         {% if me.id == comment.author_id or me.is_moderator %}

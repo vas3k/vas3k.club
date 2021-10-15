@@ -42,6 +42,14 @@
 
                     <div class="post-author">
                         {% include "users/widgets/tiny.html" with user=post.author %}
+
+                        {% if post.coauthors %}
+                            {% for coauthor in post.coauthors_with_details %}
+                                &nbsp;&nbsp;
+                                {% include "users/widgets/tiny.html" with user=coauthor %}
+                            {% endfor %}
+                        {% endif %}
+
                     </div>
 
                     {% if post.label %}
@@ -83,6 +91,12 @@
         {% block post_footer %}
             <footer class="post-footer p-author">
                 {% include "users/widgets/card.html" with user=post.author %}
+
+                {% if post.coauthors %}
+                    {% for coauthor in post.coauthors_with_details %}
+                        {% include "users/widgets/card.html" with user=coauthor %}
+                    {% endfor %}
+                {% endif %}
             </footer>
         {% endblock %}
     </article>

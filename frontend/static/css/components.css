@@ -84,7 +84,8 @@
 
     .paginator-page {
         display: inline-block;
-        width: 30px;
+        min-width: 30px;
+        width: auto;
         height: 30px;
         text-align: center;
         line-height: 30px;
@@ -106,13 +107,21 @@
     .doc h1,
     .doc h2,
     .doc h3 {
-        margin-top: 60px;
+        margin-top: 80px;
     }
 
     .doc h1 a,
     .doc h2 a,
     .doc h3 a {
         text-decoration: none;
+    }
+
+    .doc h1 {
+        font-size: 230%;
+    }
+
+    .doc h2 {
+        font-size: 180%;
     }
 
     .doc li {
@@ -838,24 +847,33 @@
     }
 
     .feed-post-image {
-        width: calc(100% - 50px);
+        width: 38px;
     }
-
-        .feed-post-image img {
-            max-width: 90px;
-            max-height: 60px;
+        .feed-post-image-link {
+            display: flex;
+            width: 72px;
+            height: 72px;
             position: relative;
-            left: -46px;
-            top: 7px;
-            transform: scale(1.7);
+            left: -72px;
+            top: -7px;
+            border: solid 3px var(--block-bg-color);
+            border-radius: 100%;
+            overflow: hidden;
         }
 
-        @media only screen and (max-width : 570px) {
-            .feed-post-image img {
-                max-width: 70px;
-                max-height: 40px;
-                left: -30px;
+        @media only screen and (max-width: 570px) {
+            .feed-post-image-link {
+                width: 48px;
+                height: 48px;
+                left: -48px;
+                top: 7px;
             }
+        }
+
+        .feed-post-image img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
         }
 
     .feed-post-topic {
@@ -1012,127 +1030,6 @@
         opacity: 1.0;
     }
 
-.compose {
-    max-width: var(--normal-content-width);
-    margin-top: 100px;
-}
-
-    @media only screen and (max-width : 570px) {
-        .compose {
-            font-size: 80%;
-        }
-
-        .compose-btn-text {
-            display: none;
-        }
-    }
-
-    .compose-types {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .compose-type {
-        width: 220px;
-        height: 220px;
-        text-decoration: none;
-        text-align: center;
-    }
-
-        .compose-type-icon {
-            display: block;
-            font-size: 70px;
-            padding-bottom: 10px;
-            padding-top: 20px;
-        }
-
-        .compose-type-name {
-            display: block;
-            font-size: 120%;
-            font-weight: 500;
-        }
-
-    .compose-drafts {
-        text-align: center;
-        padding-top: 50px;
-        padding-bottom: 100px;
-    }
-
-.compose-form {
-
-}
-
-    .compose-form-title input {
-        text-align: center;
-        font-size: 150%;
-        font-weight: 600;
-        padding: 15px;
-    }
-
-    .compose-form-text textarea.markdown-editor-full {
-        padding: 20px;
-        min-height: 500px;
-        font-family: var(--serif-font);
-        line-height: 1.4em;
-    }
-
-        .compose-form-text .CodeMirror,
-        .compose-form-text .CodeMirror-focused,
-        .compose-form-text .CodeMirror-scroll {
-            min-height: 400px !important;
-            transform: scale(1);
-        }
-
-    /* Markdown editor styles */
-    .compose-form .CodeMirror-code {
-        position: relative;
-        font-style: normal;
-        font-size: 19px;
-        line-height: 1.67;
-        color: #333;
-        font-family: var(--serif-font);
-        font-weight: 400;
-    }
-
-        .compose-form .cm-header {
-            font-family: var(--sans-font);
-        }
-
-    .compose-vs {
-        display: inline-block;
-        padding: 5px 10px;
-        font-size: 130%;
-        font-weight: 600;
-    }
-
-    .compose-form-counter {
-        display: block;
-        text-align: right;
-        font-size: 120%;
-        font-weight: bold;
-        padding-top: 5px;
-    }
-
-.compose-visibility {
-    padding-top: 20px;
-    padding-bottom: 80px;
-}
-
-    .compose-visibility .big-radio-item {
-        width: 45%;
-        max-width: none;
-    }
-
-    @media only screen and (max-width : 570px) {
-        .compose-visibility .big-radio-item {
-            font-size: 75%;
-        }
-        .compose-visibility .big-radio-item .fas {
-            font-size: 46px;
-        }
-    }
-
 .post-join {
     margin-top: 30px;
     font-size: 120%;
@@ -1155,10 +1052,16 @@
 }
 
     .post-comments-title {
+        font-size: 110%;
+        font-weight: 500;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        scroll-margin-top: 20px;
     }
 
     .post-comments-count {
-        font-size: 180%;
+        font-size: 160%;
         text-decoration: none;
     }
 
@@ -1181,12 +1084,13 @@
 
     .post-comments-rules {
         padding-top: 50px;
-        padding-left: 60px;
+        padding-left: 90px;
         padding-right: 30px;
     }
 
         .post-comments-rules ul {
             list-style: none;
+            padding: 0;
         }
 
         @media only screen and (max-width : 570px) {
@@ -1211,10 +1115,26 @@
     .post-comments-subscription {
         display: inline-block;
         position: relative;
-        top: -4px;
-        margin-left: 15px;
-        opacity: 0.7;
+        top: -3px;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: var(--button-border-radius);
+        border: var(--button-border);
     }
+
+        .post-comments-subscription.is-subscribed {
+            background-color: var(--button-bg-color);
+            border: var(--button-border);
+            color: var(--button-color);
+        }
+
+        .post-comments-subscription > * {
+            cursor: pointer;
+        }
+
+        .post-comments-subscription > input {
+            margin-right: 5px;
+        }
 
 .user-telegram-auth-data {
     padding: 20px 40px;
@@ -1247,4 +1167,42 @@
     .license img {
         width: 80px;
         height: 80px;
+    }
+
+.comment-scroll-arrow {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    display: inline-block;
+    text-decoration: none;
+    width: 48px;
+    height: 48px;
+    font-size: 140%;
+    font-weight: 600;
+    font-family: var(--sans-font);
+    color: var(--text-color);
+    border: var(--button-border);
+    background-color: var(--bg-color);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+}
+
+    .comment-scroll-arrow:hover {
+        background-color: var(--opposite-bg-color);
+        color: var(--opposite-text-color);
+    }
+
+    .comment-scroll-arrow::before {
+        content: "▲";
+        position: absolute;
+        font-size: 18px;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-43%) rotate(180deg);
+        transition: transform .2s;
+    }
+
+    .comment-scroll-arrow.arrow-up::before {
+        transform: translateX(-50%) translateY(-50%) rotate(0);
     }

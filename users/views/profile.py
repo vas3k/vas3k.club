@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
@@ -53,7 +54,8 @@ def profile(request, user_slug):
         .order_by("-created_at")\
         .select_related("post")
     posts = Post.objects_for_user(request.me)\
-        .filter(author=user, is_visible=True)\
+        .filter(is_visible=True)\
+        .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
     friend = Friend.objects.filter(user_from=request.me, user_to=user).first()

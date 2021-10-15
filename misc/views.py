@@ -2,21 +2,43 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
 import pytz
+from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
-from icalendar import Calendar, Event, Timezone
+from icalendar import Calendar, Event
 
 from auth.helpers import auth_required
 from landing.models import GodSettings
 from users.models.achievements import Achievement
+from users.models.user import User
 
 
 @auth_required
-def achievements(request):
-    achievements = Achievement.objects.filter(is_visible=True)
-    return render(request, "pages/achievements.html", {
-        "achievements": achievements
+def stats(request):
+    achievements = Achievement.objects\
+        .annotate(user_count=Count('users'))\
+        .filter(is_visible=True)\
+        .exclude(code__in=["old", "parliament_member"])\
+        .order_by('-user_count')
+
+    moderators = User.objects\
+        .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
+
+    parliament = User.objects.filter(achievements__achievement_id="parliament_member")
+
+    top_users = User.objects\
+        .filter(
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+            membership_expires_at__gte=datetime.utcnow() + timedelta(days=70)
+        )\
+        .order_by("-membership_expires_at")[:64]
+
+    return render(request, "pages/stats.html", {
+        "achievements": achievements,
+        "top_users": top_users,
+        "moderators": moderators,
+        "parliament": parliament,
     })
 
 
@@ -37,6 +59,7 @@ def robots(request):
         "Disallow: /intro/"
         "Disallow: /user/"
         "Disallow: /people/"
+        "Clean-param: comment_order&goto /",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
