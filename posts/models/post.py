@@ -21,7 +21,6 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_INTRO = "intro"
     TYPE_LINK = "link"
     TYPE_QUESTION = "question"
-    TYPE_PAIN = "pain"
     TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
     TYPE_EVENT = "event"
@@ -34,7 +33,6 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_INTRO, "#intro"),
         (TYPE_LINK, "Ссылка"),
         (TYPE_QUESTION, "Вопрос"),
-        (TYPE_PAIN, "Боль"),
         (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
         (TYPE_EVENT, "Событие"),
@@ -49,7 +47,6 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_INTRO: "🙋‍♀️",
         TYPE_LINK: "🔗",
         TYPE_QUESTION: "❓",
-        TYPE_PAIN: "😭",
         TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
         TYPE_EVENT: "📅",
@@ -62,7 +59,6 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_POST: "",
         TYPE_INTRO: "Интро",
         TYPE_LINK: "➜",
-        TYPE_PAIN: "Боль:",
         TYPE_IDEA: "Идея:",
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
