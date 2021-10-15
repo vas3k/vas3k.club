@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import json
 from datetime import timedelta, datetime
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.core.cache import cache
@@ -194,6 +195,13 @@ def daily_digest(request, user_slug):
     if not posts and not mentions and not intros:
         raise Http404()
 
+    og_params = urlencode({
+        **settings.OG_IMAGE_GENERATOR_DEFAULTS,
+        "title": f"Ежедневный дайджест пользователя {user.slug}",
+        "author": "THE MACHINE",
+        "ava": settings.OG_MACHINE_AUTHOR_LOGO
+    })
+
     return render(request, "emails/daily.html", {
         "user": user,
         "events": new_events,
@@ -202,12 +210,13 @@ def daily_digest(request, user_slug):
         "mentions": mentions,
         "date": end_date,
         "moon_phase": moon_phase,
+        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}"
     })
 
 
 def weekly_digest(request):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=7)
+    start_date = end_date - timedelta(days=8)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
@@ -296,6 +305,15 @@ def weekly_digest(request):
     # Exclude footer for archive
     is_footer_excluded = "no_footer" in request.GET
 
+    issue_number = (end_date - settings.LAUNCH_DATE).days // 7
+
+    og_params = urlencode({
+        **settings.OG_IMAGE_GENERATOR_DEFAULTS,
+        "title": f"Клубный журнал. Итоги недели. Выпуск #{issue_number}.",
+        "author": "THE MACHINE",
+        "ava": settings.OG_MACHINE_AUTHOR_LOGO
+    })
+
     return render(request, "emails/weekly.html", {
         "posts": posts,
         "comments": comments,
@@ -308,8 +326,9 @@ def weekly_digest(request):
         "featured_post": featured_post,
         "digest_title": digest_title,
         "digest_intro": digest_intro,
-        "issue_number": (end_date - settings.LAUNCH_DATE).days // 7,
-        "is_footer_excluded": is_footer_excluded
+        "issue_number": issue_number,
+        "is_footer_excluded": is_footer_excluded,
+        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}"
     })
 
 

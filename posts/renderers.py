@@ -40,11 +40,12 @@ def render_post(request, post, context=None):
     if post.type == Post.TYPE_BATTLE:
         comments = comments.filter(is_deleted=False)
 
+    comment_form = CommentForm(initial={'text': post.comment_template}) if post.comment_template else CommentForm()
     context = {
         **(context or {}),
         "post": post,
         "comments": comments,
-        "comment_form": CommentForm(),
+        "comment_form": comment_form,
         "comment_order": comment_order,
         "reply_form": ReplyForm(),
         "is_bookmark": is_bookmark,

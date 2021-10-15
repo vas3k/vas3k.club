@@ -93,6 +93,10 @@
             padding-bottom: 40px;
         }
 
+            .post-type-post .post-author .post {
+                padding-bottom: 5px;
+            }
+
             .post-type-post .post-author .avatar {
                 width: 30px;
                 height: 30px;
@@ -402,6 +406,15 @@
         max-width: 100%;
     }
 
+    @media only screen and (min-width : 1100px) {
+        .text-body-image-full {
+            max-width: none !important;
+            width: 160% !important;
+            position: relative;
+            left: -30%;
+        }
+    }
+
     .text-body big {
         font-size: 120%;
     }
@@ -643,20 +656,6 @@
                 font-weight: 700;
             }
 
-    .battle-etiquette {
-        font-size: 120%;
-        margin-top: 50px;
-    }
-
-        .battle-etiquette strong {
-            font-size: 110%;
-        }
-
-        .battle-etiquette li {
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-
 .post-event {
     display: grid;
     grid-template-columns: min-content auto min-content;
@@ -859,8 +858,8 @@
         }
 
 .post-guide-rules {
-    max-width: var(--normal-content-width);
-    margin: 50px auto 0;
+    max-width: var(--post-width);
+    margin: 0 auto;
 }
 
     .post-guide-rules-header {

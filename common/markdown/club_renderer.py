@@ -6,6 +6,10 @@ from slugify import slugify
 
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
+IMAGE_CSS_CLASSES = {
+    "-": "text-body-image-full"
+}
+
 
 class ClubRenderer(mistune.HTMLRenderer):
     def text(self, text):
@@ -61,17 +65,24 @@ class ClubRenderer(mistune.HTMLRenderer):
         return None
 
     def simple_image(self, src, alt="", title=None):
+        css_classes = ""
         title = title or alt
-        image_tag = f'<img loading="lazy" src="{escape_html(src)}" alt="{escape_html(title)}">'
+        if title in IMAGE_CSS_CLASSES:
+            css_classes = IMAGE_CSS_CLASSES[title]
+
+        image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
-        return f"<figure>{image_tag}{caption}</figure>"
+        return f'<figure class="{css_classes}">{image_tag}{caption}</figure>'
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
+        playlist = ""
+        if youtube_match.group(2):
+            playlist = f"list={escape_html(youtube_match.group(2))}&listType=playlist&"
         video_tag = (
             f'<span class="ratio-16-9">'
-            f'<iframe loading="lazy" src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1))}'
-            f'?autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
+            f'<iframe loading="lazy" src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1) or "")}'
+            f'?{playlist}autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
             f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"'
             f'allowfullscreen></iframe>'
             f"</span>"

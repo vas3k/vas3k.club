@@ -2,12 +2,14 @@ from datetime import datetime
 
 import pytz
 from django import forms
+from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
 
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
 from posts.models.topics import Topic
 from common.forms import ImageUploadField
+from users.models.user import User
 
 
 class PostForm(forms.ModelForm):
@@ -36,6 +38,14 @@ class PostForm(forms.ModelForm):
 
         return topic
 
+    def validate_coauthors(self, cleaned_data):
+        non_existing_coauthors = [coauthor for coauthor in cleaned_data["coauthors"]
+                                  if not User.objects.filter(slug=coauthor).exists()]
+        if non_existing_coauthors:
+            raise ValidationError({"coauthors": "Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors))})
+        self.instance.coauthors = cleaned_data["coauthors"]
+
+
 
 class PostTextForm(PostForm):
     title = forms.CharField(
@@ -56,10 +66,21 @@ class PostTextForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public"]
+        fields = ["title", "text", "topic", "is_public", "coauthors"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_coauthors(cleaned_data)
+        return cleaned_data
 
 
 class PostLinkForm(PostForm):
@@ -245,13 +266,28 @@ class PostEventForm(PostForm):
         label="Развернутое описание",
         required=True,
         max_length=500000,
+        initial="Расскажите кратко, что за мероприятие и зачем туда идти: "
+                "какой формат, какие активности планируются. "
+                "Если это серия ивентов, дайте ссылку на предыдущее или расскажите, как прошло.\n\n"
+                "# Для кого мероприятие\n\n"
+                "Если мероприятие тематическое (например, киноклуб или хакатон), "
+                "расскажите какой минимальный порог вхождения или как нужно подготовиться.\n"
+                "Зовёте в бар? Расскажите, чем он знаменит и что в меню.\n\n"
+                "# Регистрация\n\n"
+                "Если требуется регистрация, то как это сделать, например, "
+                "заполнить форму или отметиться в комментариях.\n\n"
+                "# Где и когда\n\n"
+                "Во сколько запланирован сбор и до скольких примерно продлится мероприятие. "
+                "Как найти вход, приложите ссылку на карту или нарисуйте маршрут.\n\n"
+                "# Ограничения\n\n"
+                "Есть ограничения по вместимости? Не пускают с собаками? Нельзя алкоголь?\n"
+                "# Контакты\n\n"
+                "Контакты организаторов или чатик, "
+                "куда можно присылать вопросы и обсуждать организацию.",
         widget=forms.Textarea(
             attrs={
                 "maxlength": 500000,
                 "class": "markdown-editor-full",
-                "placeholder": "Расскажите что, где и когда произойдёт. "
-                               "Не забудьте оставить контакты для связи с организаторами "
-                               "и приложить все необходимые ссылочки.",
             }
         ),
     )
@@ -506,10 +542,58 @@ class PostGuideForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public"]
+        fields = ["title", "text", "topic", "is_public", "coauthors"]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        self.validate_coauthors(cleaned_data)
+        return cleaned_data
+
+
+class PostThreadForm(PostForm):
+    title = forms.CharField(
+        label="Заголовок",
+        required=True,
+        max_length=128,
+        widget=forms.TextInput(attrs={"placeholder": "Заголовок 🤙"}),
+    )
+    text = forms.CharField(
+        label="Текст треда",
+        required=True,
+        max_length=500000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 500000,
+                "class": "markdown-editor-full",
+                "placeholder": "Дорогой Мартин Алексеевич…"
+            }
+        ),
+    )
+    comment_template = forms.CharField(
+        label="Шаблон комментария",
+        required=True,
+        max_length=5000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 5000,
+                "class": "markdown-editor-full",
+                "placeholder": "Здесь тоже поддерживается и рекомендуется Markdown"
+            }
+        ),
+    )
+
+    class Meta:
+        model = Post
+        fields = ["title", "text", "comment_template", "topic", "is_public"]
 
 
 POST_TYPE_MAP = {
@@ -521,4 +605,5 @@ POST_TYPE_MAP = {
     Post.TYPE_BATTLE: PostBattleForm,
     Post.TYPE_EVENT: PostEventForm,
     Post.TYPE_GUIDE: PostGuideForm,
+    Post.TYPE_THREAD: PostThreadForm,
 }

@@ -19,6 +19,7 @@ Vue.component("sidebar-toggler", () => import("./components/SidebarToggler.vue")
 Vue.component("stripe-checkout-button", () => import("./components/StripeCheckoutButton.vue"));
 Vue.component("input-length-counter", () => import("./components/InputLengthCounter.vue"));
 Vue.component("friend-button", () => import("./components/FriendButton.vue"));
+Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from django.conf import settings
 from django.http import Http404
@@ -13,6 +12,7 @@ from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
+from posts.models.subscriptions import PostSubscription
 from posts.models.views import PostView
 from search.models import SearchIndex
 
@@ -66,10 +66,19 @@ def create_comment(request, post_slug):
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
 
-            # return redirect("show_comment", post.slug, comment.id)
+            # auto-subscribe user to top level comments (if not reply)
+            if not comment.reply_to_id:
+                PostSubscription.subscribe(
+                    user=request.me,
+                    post=post,
+                    type=PostSubscription.TYPE_TOP_LEVEL_ONLY,
+                )
+
             return redirect(
-                reverse("show_post", kwargs={"post_type": post.type,
-                                             "post_slug": post.slug}) + f"?comment_order={comment_order}#comment-{comment.id}"
+                reverse("show_post", kwargs={
+                    "post_type": post.type,
+                    "post_slug": post.slug
+                }) + f"?comment_order={comment_order}#comment-{comment.id}"
             )
         else:
             log.error(f"Comment form error: {form.errors}")
@@ -97,6 +106,12 @@ def edit_comment(request, comment_id):
     if not request.me.is_moderator:
         if comment.author != request.me:
             raise AccessDenied()
+
+        if comment.is_deleted:
+            raise AccessDenied(
+                title="Нельзя редактировать удаленный комментарий",
+                message="Сначала тот, кто его удалил, должен его восстановить"
+            )
 
         if not comment.is_editable:
             hours = int(settings.COMMENT_EDITABLE_TIMEDELTA.total_seconds() // 3600)
@@ -164,7 +179,7 @@ def delete_comment(request, comment_id):
         PostView.decrement_unread_comments(comment)
     else:
         # undelete comment
-        if comment.deleted_by == request.me or request.me.is_moderator:
+        if comment.deleted_by == request.me.id or request.me.is_moderator:
             comment.undelete()
             PostView.increment_unread_comments(comment)
         else:

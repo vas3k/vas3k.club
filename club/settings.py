@@ -229,6 +229,7 @@ IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.vas3k.club/preview"
 OG_IMAGE_DEFAULT = "https://vas3k.club/static/images/share.png"
+OG_MACHINE_AUTHOR_LOGO = "https://vas3k.club/static/images/the_machine_logo.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
     "logo": "https://vas3k.club/static/images/logo/logo-white-text.png",
     "op": 0.6,
@@ -272,6 +273,10 @@ CLEARED_POST_TEXT = "```\n" \
 
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
+
+POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
+CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
+PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 

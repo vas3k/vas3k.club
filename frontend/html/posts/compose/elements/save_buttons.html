@@ -9,7 +9,9 @@
 
 <div class="form-row form-row-space-between">
     {% if not form.instance.is_visible %}
-        <button type="submit" class="button button-inverted">Сохранить черновик</button>
+        <button type="submit" class="button button-inverted">
+            Сохранить черновик
+        </button>
 
         {% if form.instance.slug %}
             <button type="submit" name="action" value="publish" class="button button-inverted" onclick="return confirm('Публикуем? Пост увидят все и он попадет на модерацию')">
