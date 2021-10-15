@@ -104,7 +104,7 @@ class Command(BaseCommand):
         send_telegram_message(
             chat=CLUB_CHANNEL,
             text=render_html_message("weekly_digest_announce.html", post=post),
-            disable_preview=True,
+            disable_preview=False,
             parse_mode=telegram.ParseMode.HTML,
         )
 

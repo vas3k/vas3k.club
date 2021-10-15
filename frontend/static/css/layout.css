@@ -445,21 +445,6 @@
         align-self: start;
     }
 
-
-@keyframes commentHighlight {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.comment-scroll-selected {
-    animation: commentHighlight 0.3s ease-in-out forwards;
-}
-
-
 .comment-layout-normal {
     display: grid;
     grid-template-columns: 60px minmax(auto, 1fr) 60px;

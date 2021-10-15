@@ -6,6 +6,7 @@ from django.urls import reverse
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models.post import Post
+from posts.models.votes import PostVote
 from users.models.expertise import UserExpertise
 from users.models.tags import UserTag
 from users.models.user import User
@@ -150,4 +151,22 @@ def bookmark_to_json(bookmark: PostBookmark) -> dict:
             "post_type": bookmark.post.type, "post_slug": bookmark.post.slug
         }),
         "created_at": bookmark.created_at.isoformat() if bookmark.created_at else None,
+    }
+
+
+def upvotes_to_json(upvotes: List[PostVote]) -> dict:
+    return {
+        "upvotes": [
+            upvote_to_json(upvote) for upvote in upvotes
+        ]
+    }
+
+
+def upvote_to_json(upvote: PostVote) -> dict:
+    return {
+        "url": settings.APP_HOST + reverse("show_post", kwargs={
+            "post_type": upvote.post.type, "post_slug": upvote.post.slug
+        }),
+        "created_at": upvote.created_at.isoformat() if upvote.created_at else None,
+        "title": upvote.post.title,
     }

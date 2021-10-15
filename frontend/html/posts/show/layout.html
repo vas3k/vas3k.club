@@ -37,33 +37,42 @@
     <div class="content">
         {% block comments %}
             <div class="post-comments" id="comments">
-                <div class="post-comments-title">
-                    {% if post.comment_count > 0 %}
-                        <a href="#comments" class="post-comments-count">
-                            {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
-                        </a>
+                <div class="comment-scroll-arrow-wrapper">
+                    <comment-scroll-arrow />
+                </div>
 
-                        <form action=".#comments" method="get" class="post-comments-order">
-                            <select name="comment_order" onchange="this.form.submit()">
-                                <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
-                                <option value="-created_at" {% if comment_order == "-created_at" %}selected{% endif %}>по свежести</option>
-                                <option value="created_at" {% if comment_order == "created_at" %}selected{% endif %}>по порядку</option>
-                            </select>
-                        </form>
-                    {% elif post.is_commentable %}
-                        <a href="#comments" class="post-comments-count">
-                            Откомментируйте первым 👇
-                        </a>
-                    {% endif %}
+                <div class="post-comments-title" id="post-comments-title">
+                    <div class="post-comments-title-left">
+                        {% if post.comment_count > 0 %}
+                            <a href="#comments" class="post-comments-count">
+                                {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                            </a>
 
-                    {% if me %}
-                        <post-subscription
-                            url="{% url "toggle_post_subscription" post.slug %}"
-                            {% if subscription %}is-active-by-default{% endif %}
-                            class="post-comments-subscription"
-                        >
-                        </post-subscription>
-                    {% endif %}
+                            <form action=".#comments" method="get" class="post-comments-order">
+                                <select name="comment_order" onchange="this.form.submit()">
+                                    <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
+                                    <option value="-created_at" {% if comment_order == "-created_at" %}selected{% endif %}>по свежести</option>
+                                    <option value="created_at" {% if comment_order == "created_at" %}selected{% endif %}>по порядку</option>
+                                </select>
+                            </form>
+                        {% elif post.is_commentable %}
+                            <a href="#comments" class="post-comments-count">
+                                Откомментируйте первым 👇
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="post-comments-title-left">
+                        {% if me %}
+                            <post-subscription
+                                url="{% url "toggle_post_subscription" post.slug %}"
+                                {% if subscription %}is-active-by-default{% endif %}
+                                class="post-comments-subscription"
+                            >
+                                подписка на комментарии
+                            </post-subscription>
+                        {% endif %}
+                    </div>
                 </div>
 
                 {% if comments %}
@@ -73,7 +82,7 @@
                 {% endif %}
 
                 {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
-                    <div class="post-comments-form">
+                    <div class="post-comments-form" id="post-comments-form">
                         {% include "comments/forms/comment.html" with post=post form=comment_form %}
                     </div>
 
