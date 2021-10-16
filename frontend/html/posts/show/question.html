@@ -52,6 +52,7 @@
                         </div>
                     {% endif %}
                 </div>
+
                 <div class="post-info">
                     {% if post.topic %}
                         {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
@@ -60,6 +61,12 @@
                         {% include "posts/widgets/post_actions_line.html" %}
                     </div>
                 </div>
+
+                {% if post.metadata.badges %}
+                    <div class="post-badges">
+                        {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
+                    </div>
+                {% endif %}
             </header>
         {% endblock %}
 

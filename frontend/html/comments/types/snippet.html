@@ -7,12 +7,24 @@
         </a>
     </div>
     <div class="comment-header">
-        <span class="comment-header-author">
-            <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a>
-            на пост <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-post">{{ comment.post.title }}</a>
+        <span class="comment-header-author-and-date">
+            <span class="comment-header-author">
+                <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a>
+                на пост <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-post">{{ comment.post.title }}</a>
+            </span>
+
+            <a class="comment-header-date" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">
+                {{ comment.created_at | cool_date }}
+            </a>
         </span>
 
-        <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-date">{{ comment.created_at | cool_date }}</a>
+        <div class="comment-header-badges">
+            {% if comment.metadata.badges %}
+                <div class="comment-badges">
+                    {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
+                </div>
+            {% endif %}
+        </div>
     </div>
     <div class="comment-rating">
         <span class="upvote upvote-disabled upvote-type-small">{{ comment.upvotes }}</span>

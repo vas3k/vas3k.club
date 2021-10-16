@@ -1,0 +1,16 @@
+{% extends "message.html" %}
+{% load text_filters %}
+
+{% block message %}
+    <h2>✋ У вас осталось только {{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }} членства</h2>
+
+    <p>
+        Это слишком мало.
+        Награды в Клубе оплачиваются днями вашего членства, так что нужно докупить их еще,
+        чтобы получить возможность выдавать награды.
+    </p>
+
+    <p>
+        <br><a href="{% url "edit_payments" me.slug %}" class="button">Пополнить баланс</a>
+    </p>
+{% endblock %}

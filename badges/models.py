@@ -2,7 +2,7 @@ from datetime import timedelta
 from uuid import uuid4
 
 from django.db import models, transaction
-from django.db.models import F
+from django.db.models import F, Count
 
 from club.exceptions import ApiInsufficientFunds, BadRequest
 from comments.models import Comment
@@ -16,10 +16,7 @@ class Badge(models.Model):
 
     title = models.CharField(max_length=64, null=False)
     description = models.CharField(max_length=256, null=True)
-    image = models.URLField(null=False)
-
     price_days = models.IntegerField(default=10)
-
     is_visible = models.BooleanField(default=True)
 
     class Meta:
@@ -41,6 +38,8 @@ class UserBadge(models.Model):
     post = models.ForeignKey(Post, related_name="post_badges", null=True, on_delete=models.SET_NULL)
     comment = models.ForeignKey(Comment, related_name="comment_badges", null=True, on_delete=models.SET_NULL)
 
+    note = models.TextField(null=True)
+
     class Meta:
         db_table = "user_badges"
         unique_together = [
@@ -48,11 +47,11 @@ class UserBadge(models.Model):
         ]
 
     @classmethod
-    def create_user_badge(cls, badge, from_user, to_user, post, comment=None):
+    def create_user_badge(cls, badge, from_user, to_user, post, comment=None, note=None):
         if from_user == to_user:
             raise BadRequest(
-                title="Нельзя дарить бейджик самому себе",
-                message="А то чо это будет-то вообще!"
+                title="Нельзя дарить награды самому себе",
+                message="Это что такое-то вообще!"
             )
 
         if badge.price_days >= from_user.membership_days_left():
@@ -72,6 +71,7 @@ class UserBadge(models.Model):
                 to_user=to_user,
                 post=post,
                 comment=comment,
+                note=note,
             )
 
             # deduct days balance from profile
@@ -90,7 +90,6 @@ class UserBadge(models.Model):
                 badges[badge.code] = {
                     "title": badge.title,
                     "description": badge.description,
-                    "image": badge.image,
                     "count": 1,
                 }
             else:
@@ -102,3 +101,27 @@ class UserBadge(models.Model):
             type(comment_or_post).objects.filter(id=comment_or_post.id).update(metadata=metadata)
 
         return user_badge
+
+    @classmethod
+    def user_badges(cls, user):
+        return UserBadge.objects.filter(to_user=user).select_related("badge").order_by("-created_at")
+
+    @classmethod
+    def user_badges_grouped(cls, user):
+        badges = {
+            badge.code: badge for badge in Badge.visible_objects()
+        }
+
+        badge_groups = UserBadge.objects\
+            .filter(to_user=user)\
+            .order_by("badge_id")\
+            .values("badge_id")\
+            .annotate(count=Count("badge_id"))
+
+        return {
+            badge_group["badge_id"]: {
+                "title": badges[badge_group["badge_id"]].title,
+                "description": badges[badge_group["badge_id"]].description,
+                "count": badge_group["count"],
+            } for badge_group in badge_groups
+        }

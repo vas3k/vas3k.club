@@ -48,7 +48,7 @@ def profile(request, user_slug):
     # select other stuff from this user
     intro = Post.get_user_intro(user)
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
-    badges = UserBadge.objects.filter(to_user=user).select_related("badge").all()
+    badges = UserBadge.user_badges_grouped(user=user)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
     comments = Comment.visible_objects()\
@@ -113,6 +113,21 @@ def profile_posts(request, user_slug):
     return render(request, "users/profile/posts.html", {
         "user": user,
         "posts": paginate(request, posts, settings.PROFILE_POSTS_PAGE_SIZE),
+    })
+
+
+@auth_required
+def profile_badges(request, user_slug):
+    if user_slug == "me":
+        return redirect("profile_badges", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+
+    badges = UserBadge.user_badges(user)
+
+    return render(request, "users/profile/badges.html", {
+        "user": user,
+        "badges": paginate(request, badges, settings.PROFILE_BADGES_PAGE_SIZE),
     })
 
 

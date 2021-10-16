@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load comments %}
+{% load posts %}
+{% load text_filters %}
+{% load paginator %}
+
+{% block title %}
+    Бейджи юзера {{ user.full_name }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content profile">
+        {% include "users/widgets/card.html" with user=user %}
+
+        <div class="profile-header">
+            {{ badges.paginator.count }} {{ badges.paginator.count|rupluralize:"награда,награды,наград" }}
+        </div>
+
+        <div class="profile-list">
+            {% if badges %}
+                {% for user_badge in badges %}
+                    <div class="pain">
+                        <div class="badge">
+                            <img
+                                src="{% static "images/badges" %}/big/{{ user_badge.badge.code }}.png"
+                                alt="{{ user_badge.badge.title }}"
+                                class="badge-image">
+                        </div>
+                        <div>
+                            {{ user_badge.post }} {{ user_badge.comment }}
+                        </div>
+                        <div>
+                            {{ user_badge.note }}
+                        </div>
+                    </div>
+                    {{ badge }}
+                {% endfor %}
+            {% else %}
+                <div class="profile-list-placeholder">
+                    У пользователя нет наград...
+                </div>
+            {% endif %}
+
+            <div class="feed-paginator">
+                {% paginator badges %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

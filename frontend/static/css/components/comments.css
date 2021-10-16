@@ -205,17 +205,20 @@
         }
 
     .comment-badge-button {
-        opacity: 0.5;
+        opacity: 0.4;
         font-size: 90%;
         text-decoration: none;
         margin-left: 10px;
         padding: 3px 4px;
+        border-radius: 50%;
+        position: relative;
+        top: -2px;
     }
 
         .comment-badge-button:hover {
             opacity: 1;
-            background-color: var(--opposite-bg-color);
-            color: var(--opposite-text-color);
+            background-color: #ffc455;
+            color: #FFFFFF;
         }
 
     .comment-side {
@@ -246,7 +249,11 @@
         }
 
     .comment-header {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: stretch;
+        align-items: stretch;
         padding-bottom: 5px;
     }
 
@@ -279,6 +286,13 @@
             .comment-header .hat {
                 margin-left: 10px;
             }
+
+        .comment-header-badges {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: center;
+        }
 
     .comment-body {
         padding-top: 10px;
@@ -435,6 +449,11 @@
     }
 
     .reply-header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: stretch;
+        align-items: stretch;
         padding-bottom: 10px;
         font-size: 110%;
     }
@@ -452,6 +471,7 @@
             opacity: 0.6;
             font-size: 85%;
             padding-left: 10px;
+            line-height: 24px;
         }
 
     .reply-body {

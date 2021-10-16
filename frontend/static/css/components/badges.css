@@ -1,0 +1,126 @@
+.create-badge {}
+
+.create-badge-comment-snippet {
+    position: relative;
+    max-height: 280px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+    .create-badge-comment-snippet:after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
+        width: 100%;
+        height: 6em;
+    }
+
+
+.create-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+}
+
+    .create-badge-list-item {
+        position: relative;
+        max-width: 170px;
+        max-height: 250px;
+        cursor: pointer;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .create-badge-list-item input {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .create-badge-list-item-title {
+            font-size: 130%;
+            font-weight: 600;
+        }
+
+        .create-badge-list-item-price {
+            font-size: 100%;
+        }
+
+    .create-badge-note {
+        display: block;
+        margin: 50px auto;
+        width: 80%;
+        height: 150px;
+        font-size: 120%;
+    }
+
+    .create-badge-button {
+        text-align: center;
+    }
+
+.badge {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    cursor: default;
+    text-decoration: none;
+}
+
+    .badge:hover {
+        transform: scale(1.2);
+        opacity: 0.7;
+        transition: 0.3s;
+    }
+
+    .badge-image {
+        max-width: 2em;
+        max-height: 2em;
+    }
+
+    .badge-count {
+        font-weight: 700;
+        line-height: 1.8em;
+    }
+
+
+.post-badges, .comment-badges, .reply-badges, .user-badges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 15px;
+    text-decoration: none;
+}
+
+.post-badges {
+    padding-bottom: 10px;
+    font-size: 24px;
+}
+
+    .post-badges-center {
+        justify-content: center;
+    }
+
+.comment-badges {
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+.reply-badges {
+    font-size: 13px;
+    padding-left: 10px;
+}
+
+.user-badges {
+    padding-bottom: 30px;
+    font-size: 45px;
+    justify-content: center;
+}

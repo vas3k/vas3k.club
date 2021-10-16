@@ -15,19 +15,31 @@
     </div>
 
     <div class="comment-header">
-        <span class="comment-header-author">
-            <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a><span class="comment-header-author-position">, {{ comment.author.position }}</span>
-            {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
-            {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
+        <span class="comment-header-author-and-date">
+            <span class="comment-header-author">
+                <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a><span class="comment-header-author-position">, {{ comment.author.position }}</span>
+                {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
+                {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
+            </span>
+
+            <a class="comment-header-date" href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">
+                {{ comment.created_at | cool_date }}
+            </a>
+        </span>
+
+        <div class="comment-header-badges">
+            {% if comment.metadata.badges %}
+                <div class="comment-badges">
+                    {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
+                </div>
+            {% endif %}
 
             {% if me and comment.author_id != me.id %}
-                <a href="{% url "give_badge_for_comment" comment.id %}">
+                <a href="{% url "create_badge_for_comment" comment.id %}">
                     <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
                 </a>
             {% endif %}
-        </span>
-
-        <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-date">{{ comment.created_at | cool_date }}</a>
+        </div>
     </div>
 
     <div class="comment-rating">

@@ -10,7 +10,8 @@
         <div class="form-title">🎩<br>Клубные взносы</div>
 
         <div class="block-subheader">
-            Клубная карта активна до: <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong>
+            Ваш баланс <strong>{{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }}</strong>.
+            Клубная карта активна до <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong>
         </div>
 
         {% if me.membership_platform_type == "patreon" %}

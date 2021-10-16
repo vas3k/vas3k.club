@@ -28,11 +28,19 @@
             {% include "users/widgets/hat.html" with hat=comment.author.hat %}
         {% endif %}
 
-        {% if me and comment.author_id != me.id %}
-            <a href="{% url "give_badge_for_comment" comment.id %}">
-                <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
-            </a>
-        {% endif %}
+        <div class="comment-header-badges">
+            {% if comment.metadata.badges %}
+                <div class="reply-badges">
+                    {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
+                </div>
+            {% endif %}
+
+            {% if me and comment.author_id != me.id %}
+                <a href="{% url "create_badge_for_comment" comment.id %}">
+                    <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
+                </a>
+            {% endif %}
+        </div>
     </div>
     <div class="reply-rating">
         <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
