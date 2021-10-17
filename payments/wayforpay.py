@@ -37,6 +37,16 @@ WAYFORPAY_PRODUCTS = {
             "timedelta": timedelta(days=365),
         },
     },
+    "club180": {
+        "code": "club180",
+        "description": "15 лет членства в Клубе",
+        "amount": 100,
+        "recurrent": False,
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=15 * 365),
+        },
+    },
     "club1_recurrent": {
         "code": "club1",
         "description": "Месяц членства в Клубе",
