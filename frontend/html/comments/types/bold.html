@@ -33,8 +33,8 @@
                 </div>
 
                 {% if me and comment.author_id != me.id %}
-                    <a href="{% url "create_badge_for_comment" comment.id %}">
-                        <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
+                    <a class="comment-badge-button" href="{% url "create_badge_for_comment" comment.id %}">
+                        <i class="fas fa-gift"></i>
                     </a>
                 {% endif %}
             {% endif %}
@@ -63,19 +63,19 @@
     </div>
     <div class="comment-footer">
         {% if me.id == comment.post.author_id or me.is_moderator %}
-            <a href="{% url "pin_comment" comment.id %}" class="comment-footer-button comment-footer-button-hidden"><i class="fas fa-thumbtack"></i></a>
+            <a href="{% url "pin_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-thumbtack"></i></a>
         {% endif %}
 
         {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
             {% if comment.is_deleted %}
-                <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-footer-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+                <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
             {% else %}
-                <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-footer-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+                <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
             {% endif %}
         {% endif %}
 
         {% if me.id == comment.author_id or me.is_moderator %}
-            <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button comment-footer-button-hidden"><i class="fas fa-edit"></i></a>
+            <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-edit"></i></a>
         {% endif %}
 
         {% if me and comment.post.is_commentable %}

@@ -30,8 +30,8 @@
 
         <div class="comment-header-badges">
             {% if me and comment.author_id != me.id %}
-                <a href="{% url "create_badge_for_comment" comment.id %}">
-                    <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
+                <a class="comment-badge-button comment-button-visible-on-hover" href="{% url "create_badge_for_comment" comment.id %}">
+                    <i class="fas fa-gift"></i>
                 </a>
             {% endif %}
 

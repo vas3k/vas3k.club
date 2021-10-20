@@ -196,25 +196,31 @@
             float: left;
         }
 
-    .comment-footer-button-hidden {
+    .comment-button-visible-on-hover {
         visibility: hidden;
     }
 
-        .comment:hover .comment-footer-button-hidden {
+        .comment:hover .comment-button-visible-on-hover {
             visibility: visible;
         }
 
     .comment-badge-button {
+        display: inline-block;
+        border-radius: 50%;
+        width: 1.7em;
+        height: 1.7em;
+        box-sizing: border-box;
+        text-align: center;
+        line-height: 1.65em;
         opacity: 0.4;
         font-size: 90%;
         text-decoration: none;
         margin-left: 10px;
-        padding: 3px 4px;
-        border-radius: 50%;
     }
 
         .comment-badge-button:hover {
             opacity: 1;
+            transition: opacity 0.3s;
             background-color: var(--badge-color);
             color: #FFFFFF;
         }
@@ -359,6 +365,10 @@
     }
 
     .comment-type-battle {}
+
+        .comment-type-battle .comment-header {
+            flex-direction: column;
+        }
 
         .comment-type-battle .comment-header .user-avatar {
             width: 20px;

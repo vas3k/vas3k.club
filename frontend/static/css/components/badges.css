@@ -162,6 +162,7 @@
     padding-bottom: 30px;
     font-size: 45px;
     justify-content: center;
+    gap: 25px;
 }
 
 .profile-badge {

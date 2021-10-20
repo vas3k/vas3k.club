@@ -35,7 +35,7 @@
                                 {% elif user_badge.post %}
                                     За пост <strong>«<a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a>»</strong>
                                 {% else %}
-                                    Выдан за контент, который был удалён
+                                    За контент, который был удалён
                                 {% endif %}
                             </div>
 
