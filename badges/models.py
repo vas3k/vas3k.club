@@ -1,10 +1,10 @@
 from datetime import timedelta
 from uuid import uuid4
 
-from django.db import models, transaction
+from django.db import models, transaction, IntegrityError
 from django.db.models import F, Count
 
-from club.exceptions import ApiInsufficientFunds, BadRequest
+from club.exceptions import InsufficientFunds, BadRequest, ContentDuplicated
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
@@ -43,19 +43,20 @@ class UserBadge(models.Model):
     class Meta:
         db_table = "user_badges"
         unique_together = [
-            ("from_user", "to_user", "post_id", "comment_id"),
+            ("from_user", "to_user", "badge", "post_id"),
+            ("from_user", "to_user", "badge", "comment_id"),
         ]
 
     @classmethod
-    def create_user_badge(cls, badge, from_user, to_user, post, comment=None, note=None):
+    def create_user_badge(cls, badge, from_user, to_user, post=None, comment=None, note=None):
         if from_user == to_user:
             raise BadRequest(
-                title="Нельзя дарить награды самому себе",
+                title="🛑 Нельзя дарить награды самому себе",
                 message="Это что такое-то вообще!"
             )
 
         if badge.price_days >= from_user.membership_days_left():
-            raise ApiInsufficientFunds(
+            raise InsufficientFunds(
                 title="💸 Недостаточно средств",
                 message=f"Вы не можете подарить юзеру этот бейджик, "
                         f"так как у вас осталось {from_user.membership_days_left()} дней членства, "
@@ -65,14 +66,20 @@ class UserBadge(models.Model):
 
         with transaction.atomic():
             # store user badge
-            user_badge = UserBadge.objects.create(
-                badge=badge,
-                from_user=from_user,
-                to_user=to_user,
-                post=post,
-                comment=comment,
-                note=note,
-            )
+            try:
+                user_badge = UserBadge.objects.create(
+                    badge=badge,
+                    from_user=from_user,
+                    to_user=to_user,
+                    post=post,
+                    comment=comment,
+                    note=note,
+                )
+            except IntegrityError:
+                raise ContentDuplicated(
+                    title="🛑 Вы уже дарили награду за этот пост или комментарий",
+                    message="Повторно награды дарить нельзя. Но вы можете подарить другую награду."
+                )
 
             # deduct days balance from profile
             User.objects\

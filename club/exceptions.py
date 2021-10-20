@@ -41,6 +41,11 @@ class ContentDuplicated(ClubException):
                       "Проверьте всё ли в порядке."
 
 
+class InsufficientFunds(ClubException):
+    default_code = "insufficient-funds"
+    default_title = "Недостаточно средств"
+
+
 class URLParsingException(ClubException):
     default_code = "url-parser-exception"
     default_title = "Не удалось распарсить URL"

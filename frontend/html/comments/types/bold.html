@@ -31,12 +31,12 @@
                 <div class="comment-badges">
                     {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
                 </div>
-            {% endif %}
 
-            {% if me and comment.author_id != me.id %}
-                <a href="{% url "create_badge_for_comment" comment.id %}">
-                    <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
-                </a>
+                {% if me and comment.author_id != me.id %}
+                    <a href="{% url "create_badge_for_comment" comment.id %}">
+                        <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
+                    </a>
+                {% endif %}
             {% endif %}
         </div>
     </div>
@@ -68,7 +68,7 @@
 
         {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
             {% if comment.is_deleted %}
-                <a href="{% url "delete_comment" comment.id %}" class="comment-edit-button comment-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+                <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-footer-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
             {% else %}
                 <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-footer-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
             {% endif %}

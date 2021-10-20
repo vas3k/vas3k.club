@@ -43,7 +43,7 @@ def create_badge_for_post(request, post_slug):
         note=note,
     )
 
-    return render(request, "badges/success.html", {
+    return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
     })
 
@@ -79,11 +79,10 @@ def create_badge_for_comment(request, comment_id):
         badge=badge,
         from_user=request.me,
         to_user=comment.author,
-        post=comment.post,
         comment=comment,
         note=note,
     )
 
-    return render(request, "badges/success.html", {
+    return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
     })

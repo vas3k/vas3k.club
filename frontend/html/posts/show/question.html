@@ -63,9 +63,9 @@
                 </div>
 
                 {% if post.metadata.badges %}
-                    <div class="post-badges">
+                    <a class="post-badges" href="{% url "profile_badges" post.author.slug %}">
                         {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
-                    </div>
+                    </a>
                 {% endif %}
             </header>
         {% endblock %}

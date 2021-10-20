@@ -211,13 +211,11 @@
         margin-left: 10px;
         padding: 3px 4px;
         border-radius: 50%;
-        position: relative;
-        top: -2px;
     }
 
         .comment-badge-button:hover {
             opacity: 1;
-            background-color: #ffc455;
+            background-color: var(--badge-color);
             color: #FFFFFF;
         }
 

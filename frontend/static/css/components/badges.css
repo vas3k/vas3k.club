@@ -26,36 +26,63 @@
     align-items: flex-start;
     justify-content: center;
     gap: 20px;
+    padding-bottom: 50px;
 }
 
     .create-badge-list-item {
         position: relative;
-        max-width: 170px;
-        max-height: 250px;
+        max-width: 200px;
+        max-height: 320px;
         cursor: pointer;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
     }
+
+        .create-badge-list-item-label {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+            gap: 5px;
+        }
+
+        .create-badge-list-item input:checked + .create-badge-list-item-label {
+            background-color: var(--opposite-block-bg-color);
+            color: var(--opposite-text-color);
+        }
 
         .create-badge-list-item input {
             position: absolute;
             top: 0;
-            left: 0;
+            left: -1000px;
+            opacity: 0;
+        }
+
+        .create-badge-list-item-image {
+            width: 100%;
         }
 
         .create-badge-list-item-title {
-            font-size: 130%;
+            width: 100%;
+            padding-top: 10px;
+            font-size: 140%;
+            line-height: 1.2em;
             font-weight: 600;
         }
 
+        .create-badge-list-item-description {
+            width: 100%;
+        }
+
         .create-badge-list-item-price {
-            font-size: 100%;
+            margin-top: 5px;
+            display: block;
+            font-size: 120%;
         }
 
     .create-badge-note {
         display: block;
-        margin: 50px auto;
+        margin: 40px auto;
         width: 80%;
         height: 150px;
         font-size: 120%;
@@ -69,7 +96,6 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    cursor: default;
     text-decoration: none;
 }
 
@@ -88,6 +114,19 @@
         font-weight: 700;
         line-height: 1.8em;
     }
+
+    .badge-price {
+        display: inline-block;
+        background-color: var(--badge-color);
+        color: #FFFFFF;
+        border-radius: 10px;
+        font-weight: 500;
+        padding: 3px 7px;
+    }
+
+        .badge-price a {
+            color: #FFFFFF;
+        }
 
 
 .post-badges, .comment-badges, .reply-badges, .user-badges {
@@ -124,3 +163,57 @@
     font-size: 45px;
     justify-content: center;
 }
+
+.profile-badge {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+    .profile-badge-side {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 130px;
+        min-width: 130px;
+    }
+
+    .profile-badge-main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .profile-badge-image {
+        width: 100%;
+        max-width: none;
+        max-height: none;
+    }
+
+    .profile-badge-title {
+        font-size: 130%;
+        font-weight: 500;
+    }
+
+    .profile-badge-note {
+        opacity: 0.5;
+        font-size: 110%;
+        margin-left: 20px;
+    }
+
+    .profile-badge-from {
+        margin-left: 10px;
+        display: inline-block;
+        font-size: 90%;
+    }
+
+        .profile-badge-from .avatar {
+            width: 20px;
+            height: 20px;
+        }
+

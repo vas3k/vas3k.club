@@ -20,9 +20,9 @@
 
         <div class="comment-header-badges">
             {% if comment.metadata.badges %}
-                <div class="comment-badges">
+                <a class="comment-badges" href="{% url "profile_badges" comment.author.slug %}">
                     {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
-                </div>
+                </a>
             {% endif %}
         </div>
     </div>

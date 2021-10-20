@@ -1,0 +1,68 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    h1, h2, h3, header {
+        text-align: left;
+    }
+
+    .badge {
+        display: block;
+        text-align: center;
+    }
+
+        .badge-image {
+            width: 200px;
+            padding-bottom: 20px;
+        }
+
+        .badge-title {
+            font-size: 200%;
+            font-weight: bold;
+        }
+</style>
+{% endblock %}
+
+{% block logo %}
+<a href="https://vas3k.club">
+    <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
+</a>
+{% endblock %}
+
+{% block title %}
+    🎖 Вас наградили
+{% endblock %}
+
+{% block body %}
+    <p>
+        Пользователь <a href="{% url "profile" user_badge.from_user.slug %}">{{ user_badge.from_user.full_name }}</a> подарил вам награду за
+        {% if user_badge.comment %}
+            за комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
+        {% else %}
+            за пост <strong>«<a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a>»</strong>.
+        {% endif %}
+    </p>
+
+    {% if user_badge.note %}
+        <p>
+            <strong>Вот что он написал:</strong> {{ user_badge.note }}
+        </p>
+    {% endif %}
+
+    <a href="{% url "profile_badges" user_badge.to_user.slug %}" style="text-decoration: none;">
+        <div class="badge">
+            <img class="badge-image" src="{{ user_badge.badge.code }}" height="200" width="200" alt="{{ user_badge.badge.code }}"><br>
+            <span class="badge-title">{{ user_badge.badge.title }}</span>
+        </div>
+    </a>
+
+    <p>
+        Поздравляем! Награда будет висеть <a href="{% url "profile" user_badge.to_user.slug %}">у вас в профиле</a> и каждый будет знать какой вы крутой.
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

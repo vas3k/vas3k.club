@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="message message-center">
+        <h1>🥇 УРА!</h1>
+
+        <p style="font-size: 120%;">
+            Вы подарили награду <strong>«{{ user_badge.badge.title }}»</strong>
+            юзеру <strong><a href="{% url "profile" user_badge.to_user.slug %}">{{ user_badge.to_user.full_name }}</a></strong>
+            {% if user_badge.comment %}
+                за комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
+            {% else %}
+                за пост <strong>«<a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a>»</strong>.
+            {% endif %}
+
+            Отныне она будет украшать {% if user_badge.comment %}его комментарий{% else %}сам пост{% endif %} и профиль.
+        </p>
+
+        <p>&nbsp;</p>
+
+        <p>
+            <a href="{% url "profile_badges" user_badge.to_user.slug %}">
+                <img
+                    src="{% static "images/badges" %}/big/{{ user_badge.badge.code }}.png"
+                    alt="{{ user_badge.badge.title }}"
+                    style="max-width: 200px; width: 90%;">
+            </a>
+        </p>
+
+        {% include "users/widgets/card.html" with user=user_badge.to_user %}
+    </div>
+{% endblock %}

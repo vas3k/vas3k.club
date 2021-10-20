@@ -26,7 +26,7 @@
                     {% endif %}
                 </span>
 
-                <div class="post-data">
+                <a class="post-data">
                     {% if post.deleted_at %}
                         <div class="post-label">
                             <span class="label label-type-deleted">
@@ -44,9 +44,9 @@
                     </div>
 
                     {% if post.metadata.badges %}
-                        <div class="post-badges post-badges-center">
+                        <a class="post-badges post-badges-center" href="{% url "profile_badges" post.author.slug %}">
                             {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
-                        </div>
+                        </a>
                     {% endif %}
 
                     <div class="post-author">

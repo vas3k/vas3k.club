@@ -39,12 +39,6 @@
 
         {% include "users/widgets/card.html" with user=user %}
 
-        {% if badges %}
-            <a class="user-badges" href="{% url "profile_badges" user.slug  %}">
-                {% include "badges/widgets/badges.html" with badges=badges badge_size="big" %}
-            </a>
-        {% endif %}
-
         {% if me.id == user.id %}
             <div class="block profile-statuses">
                 <div class="profile-status profile-respect">
@@ -110,6 +104,12 @@
                     &larr; тестируем бета-версию подписки на все посты и комменты юзера через бота
                 </div>
             </div>
+        {% endif %}
+
+        {% if badges %}
+            <a class="user-badges" href="{% url "profile_badges" user.slug  %}">
+                {% include "badges/widgets/badges.html" with badges=badges badge_size="big" %}
+            </a>
         {% endif %}
 
         {% if intro %}
