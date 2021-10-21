@@ -45,6 +45,7 @@ def create_badge_for_post(request, post_slug):
 
     return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
+        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.BADGES_MIN_DAYS,
     })
 
 
@@ -85,4 +86,5 @@ def create_badge_for_comment(request, comment_id):
 
     return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
+        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.BADGES_MIN_DAYS,
     })

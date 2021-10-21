@@ -1,3 +1,4 @@
+import math
 from datetime import timedelta
 from uuid import uuid4
 
@@ -21,6 +22,7 @@ class Badge(models.Model):
 
     class Meta:
         db_table = "badges"
+        ordering = ["price_days", "code"]
 
     @classmethod
     def visible_objects(cls):
@@ -57,11 +59,11 @@ class UserBadge(models.Model):
 
         if badge.price_days >= from_user.membership_days_left():
             raise InsufficientFunds(
-                title="💸 Недостаточно средств",
-                message=f"Вы не можете подарить юзеру этот бейджик, "
-                        f"так как у вас осталось {from_user.membership_days_left()} дней членства, "
-                        f"а он стоит {badge.price_days}. "
-                        f"Купите больше дней в настройках профиля."
+                title="💸 Недостаточно средств :(",
+                message=f"Вы не можете подарить юзеру эту награду, "
+                        f"так как у вас осталось {math.floor(from_user.membership_days_left())} дней членства, "
+                        f"а награда стоит {badge.price_days}. "
+                        f"Продлите членство в настройках своего профиля."
             )
 
         with transaction.atomic():

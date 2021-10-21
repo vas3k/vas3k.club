@@ -10,7 +10,6 @@
 
     .badge {
         display: block;
-        text-align: center;
     }
 
         .badge-image {
@@ -19,7 +18,7 @@
         }
 
         .badge-title {
-            font-size: 200%;
+            font-size: 150%;
             font-weight: bold;
         }
 </style>
@@ -37,7 +36,7 @@
 
 {% block body %}
     <p>
-        Пользователь <a href="{% url "profile" user_badge.from_user.slug %}">{{ user_badge.from_user.full_name }}</a> подарил вам награду за
+        {{ user_badge.from_user.full_name }} подарил вам награду
         {% if user_badge.comment %}
             за комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
         {% else %}
@@ -46,16 +45,16 @@
     </p>
 
     {% if user_badge.note %}
-        <p>
-            <strong>Вот что он написал:</strong> {{ user_badge.note }}
+        <p style="font-size: 140%; color: #666666; padding-left: 30px;">
+            — {{ user_badge.note }}
         </p>
     {% endif %}
 
     <a href="{% url "profile_badges" user_badge.to_user.slug %}" style="text-decoration: none;">
-        <div class="badge">
-            <img class="badge-image" src="{{ user_badge.badge.code }}" height="200" width="200" alt="{{ user_badge.badge.code }}"><br>
+        <span class="badge">
+            <img class="badge-image" src="{% static "images/badges" %}/big/{{ user_badge.badge.code }}" height="200" width="200" alt="{{ user_badge.badge.code }}"><br>
             <span class="badge-title">{{ user_badge.badge.title }}</span>
-        </div>
+        </span>
     </a>
 
     <p>

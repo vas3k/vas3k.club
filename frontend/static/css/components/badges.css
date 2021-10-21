@@ -32,23 +32,36 @@
     .create-badge-list-item {
         position: relative;
         max-width: 200px;
-        max-height: 320px;
         cursor: pointer;
     }
 
+        .create-badge-list-item:hover {
+            transform: scale(1.05);
+            transition: transform .2s;
+        }
+
         .create-badge-list-item-label {
             padding: 15px 20px;
+            margin: 0;
             cursor: pointer;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             text-align: center;
-            gap: 5px;
+            gap: 7px;
+        }
+
+        .create-badge-list-item-disabled .create-badge-list-item-label {
+            opacity: 0.2;
+            cursor: not-allowed;
+            filter: blur(2px);
+            user-select: none;
         }
 
         .create-badge-list-item input:checked + .create-badge-list-item-label {
             background-color: var(--opposite-block-bg-color);
             color: var(--opposite-text-color);
+            filter: blur(0);
         }
 
         .create-badge-list-item input {
@@ -72,6 +85,8 @@
 
         .create-badge-list-item-description {
             width: 100%;
+            font-size: 90%;
+            line-height: 1.3em;
         }
 
         .create-badge-list-item-price {
@@ -182,6 +197,13 @@
         width: 130px;
         min-width: 130px;
     }
+
+        @media only screen and (max-width : 570px) {
+            .profile-badge-side {
+                width: 50px;
+                min-width: 50px;
+            }
+        }
 
     .profile-badge-main {
         display: flex;
