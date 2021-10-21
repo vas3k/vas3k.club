@@ -171,7 +171,7 @@ class User(models.Model, ModelDiffMixin):
     def membership_created_months(self):
         return round(self.membership_created_days() / 30)
 
-    def gmembership_created_years(self):
+    def membership_created_years(self):
         return round(self.membership_created_days() / 365)
 
     @property
