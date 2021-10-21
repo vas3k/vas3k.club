@@ -18,7 +18,7 @@ def create_badge_for_post(request, post_slug):
         )
 
     if request.method != "POST":
-        if request.me.membership_days_left() < settings.BADGES_MIN_DAYS:
+        if request.me.membership_days_left() < settings.MIN_DAYS_TO_GIVE_BADGES:
             return render(request, "badges/messages/insufficient_funds.html")
 
         return render(request, "badges/create.html", {
@@ -45,7 +45,7 @@ def create_badge_for_post(request, post_slug):
 
     return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
-        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.BADGES_MIN_DAYS,
+        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.MIN_DAYS_TO_GIVE_BADGES,
     })
 
 
@@ -59,7 +59,7 @@ def create_badge_for_comment(request, comment_id):
         )
 
     if request.method != "POST":
-        if request.me.membership_days_left() < settings.BADGES_MIN_DAYS:
+        if request.me.membership_days_left() < settings.MIN_DAYS_TO_GIVE_BADGES:
             return render(request, "badges/messages/insufficient_funds.html")
 
         return render(request, "badges/create.html", {
@@ -86,5 +86,5 @@ def create_badge_for_comment(request, comment_id):
 
     return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
-        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.BADGES_MIN_DAYS,
+        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.MIN_DAYS_TO_GIVE_BADGES,
     })
