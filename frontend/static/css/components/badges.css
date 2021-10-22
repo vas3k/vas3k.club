@@ -164,7 +164,7 @@
     }
 
 .comment-badges {
-    font-size: 18px;
+    font-size: 16px;
     padding-left: 10px;
 }
 
@@ -223,16 +223,21 @@
         font-weight: 500;
     }
 
+    .profile-badge-body {
+        display: block;
+    }
+
     .profile-badge-note {
+        display: inline-block;
         opacity: 0.5;
         font-size: 110%;
-        margin-left: 20px;
+        padding-left: 20px;
+        padding-right: 10px;
+        padding-bottom: 10px;
     }
 
     .profile-badge-from {
-        margin-left: 10px;
         display: inline-block;
-        font-size: 90%;
     }
 
         .profile-badge-from .avatar {

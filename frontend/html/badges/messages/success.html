@@ -10,9 +10,9 @@
             Вы подарили награду <strong>«{{ user_badge.badge.title }}»</strong>
             юзеру <strong><a href="{% url "profile" user_badge.to_user.slug %}">{{ user_badge.to_user.full_name }}</a></strong>
             {% if user_badge.comment %}
-                за комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
+                за комментарий к посту <strong><a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a></strong>.
             {% else %}
-                за пост <strong>«<a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a>»</strong>.
+                за пост <strong><a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a></strong>.
             {% endif %}
 
             Отныне она будет украшать {% if user_badge.comment %}его комментарий{% else %}сам пост{% endif %} и профиль.

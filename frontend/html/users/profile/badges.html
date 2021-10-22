@@ -30,25 +30,30 @@
 
                         <div class="profile-badge-main">
                             <div class="profile-badge-title">
+                                «{{ user_badge.badge.title }}»
+
                                 {% if user_badge.comment %}
-                                    За комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
+                                    за комментарий к посту <strong><a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a></strong>.
                                 {% elif user_badge.post %}
-                                    За пост <strong>«<a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a>»</strong>
+                                    за пост <strong><a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a></strong>
                                 {% else %}
-                                    За контент, который был удалён
+                                    за контент, который был удалён
                                 {% endif %}
                             </div>
 
-                            {% if user_badge.note %}
-                                <div class="profile-badge-note">
-                                    — {{ user_badge.note }}
+                            <div class="profile-badge-body">
+                                {% if user_badge.note %}
+                                    <span class="profile-badge-note">
+                                        — {{ user_badge.note }}
+                                    </span>
+                                {% endif %}
 
-                                    <div class="profile-badge-from">
-                                        {{ user_badge.created_at|date:"j E Y" }} ·
-                                        {% include "users/widgets/tiny.html" with user=user_badge.from_user %}
-                                    </div>
-                                </div>
-                            {% endif %}
+                                <span class="profile-badge-from">
+                                    {{ user_badge.created_at|date:"j E Y" }}
+                                    &nbsp;·&nbsp;
+                                    {% include "users/widgets/tiny.html" with user=user_badge.from_user %}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
