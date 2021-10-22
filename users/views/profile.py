@@ -4,11 +4,11 @@ from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
 from auth.helpers import auth_required
+from club.settings import POSSIBLE_COMMENTS_ORDERS
 from comments.models import Comment
 from common.pagination import paginate
 from common.request import ajax_request
 from posts.models.post import Post
-from posts.renderers import POSSIBLE_COMMENT_ORDERS
 from search.models import SearchIndex
 from users.forms.profile import ExpertiseForm
 from users.models.achievements import UserAchievement

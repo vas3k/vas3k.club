@@ -278,6 +278,8 @@ POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
 
+POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
+
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 WEBPACK_LOADER = {
