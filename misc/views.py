@@ -19,6 +19,7 @@ def stats(request):
     achievements = Achievement.objects\
         .annotate(user_count=Count('users'))\
         .filter(is_visible=True)\
+        .filter(user_count__gt=0)\
         .exclude(code__in=["old", "parliament_member"])\
         .order_by('-user_count')
 
