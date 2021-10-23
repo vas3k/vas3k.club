@@ -5,7 +5,7 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
-import { findParentForm, isCommunicationForm } from "./common/utils.js";
+import { findParentForm, isCommunicationForm, getCollapsedCommentThreadsSet } from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
 
@@ -87,6 +87,7 @@ const App = {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
         this.blockCommunicationFormsResubmit();
+        this.restoreCommentThreadsState();
 
         const registeredEditors = this.initializeMarkdownEditor();
 
@@ -297,6 +298,15 @@ const App = {
         }
 
         return false;
+    },
+    restoreCommentThreadsState() {
+        const comments = document.querySelectorAll(".reply, .comment");
+        const collapsedSet = getCollapsedCommentThreadsSet();
+        for (const comment of comments) {
+            if (collapsedSet.has(comment.id)) {
+                comment.querySelector(".comment-collapse-stub, .reply-collapse-stub").click();
+            }
+        }
     },
 };
 
