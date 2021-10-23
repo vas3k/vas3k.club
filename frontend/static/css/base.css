@@ -146,6 +146,10 @@
     clear: both;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .button {
     display: inline-block;
     padding: 15px 18px;
@@ -782,3 +786,9 @@ img.emoji {
             display: block;
             padding: 10px;
         }
+
+
+.zoom-on-hover:hover {
+    transform: scale(1.05);
+    transition: transform .2s;
+}

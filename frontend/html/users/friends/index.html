@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load paginator %}
+
+{% block title %}
+    Мои чуваки
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Мои чуваки — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="🤝">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Мои чуваки — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="🤝">
+
+    <!-- Exclude friends from search engines -->
+    <meta name="robots" content="noindex">
+{% endblock %}
+
+
+{% block content %}
+    <div class="friends">
+        <div class="friends-title">🤝<br>Мои чуваки</div>
+
+        <div class="friends-description">
+            Это твои чуваки. Их новые посты и комментарии будут приходить тебе уведомлениями в боте.
+        </div>
+
+        {% if friends_paginated %}
+            <div class="">
+                {% for user in friends_paginated %}
+                    {% include "users/widgets/card.html" with user=user.user_to %}
+                {% endfor %}
+
+                {% paginator friends_paginated %}
+            </div>
+        {% else %}
+            <div class="friends-results-placeholder">😖 Никого не найдено...</div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -34,7 +34,7 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
         email_template = loader.get_template("emails/achievement.html")
         send_club_email(
             recipient=user.email,
-            subject=f"🎖 Вас наградили бейджиком «{achievement.name}»",
+            subject=f"🏆 Вы получили ачивку «{achievement.name}»",
             html=email_template.render({"user": user, "achievement": achievement}),
             tags=["achievement"]
         )

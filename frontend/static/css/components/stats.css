@@ -26,6 +26,18 @@
         margin: 0 auto;
     }
 
+    .stats-subheader {
+        display: block;
+        font-size: 180%;
+        text-align: center;
+        font-weight: 500;
+        padding-top: 60px;
+        padding-bottom: 50px;
+        text-decoration: none;
+        max-width: var(--post-width);
+        margin: 0 auto;
+    }
+
     .stats-description {
         display: block;
         font-size: 130%;
@@ -75,7 +87,7 @@
             line-height: 1.2em;
         }
 
-        .top-user-membership {
+        .top-user-info {
             display: block;
             opacity: 0.8;
         }
@@ -105,7 +117,7 @@
             font-size: 110%;
         }
 
-        .top-user-medium .top-user-membership {
+        .top-user-medium .top-user-info {
             font-size: 80%;
         }
 
@@ -145,3 +157,50 @@
             flex-direction: column;
         }
     }
+
+.stats-badges-latest {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+    .stats-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 100px;
+        text-align: center;
+        gap: 3px;
+        text-decoration: none;
+    }
+
+        .stats-badge-image {
+            width: 80px;
+            height: 80px;
+        }
+
+            .stats-badge-image-tiny {
+                width: 25px;
+                height: 25px;
+            }
+
+        .stats-badge-title {
+            font-size: 120%;
+            font-weight: 500;
+        }
+
+        .stats-badge-info {
+            font-size: 80%;
+        }
+
+.stats-badges-top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: var(--max-content-width);
+}
