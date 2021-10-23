@@ -35,11 +35,6 @@
         cursor: pointer;
     }
 
-        .create-badge-list-item:hover {
-            transform: scale(1.05);
-            transition: transform .2s;
-        }
-
         .create-badge-list-item-label {
             padding: 15px 20px;
             margin: 0;
