@@ -170,6 +170,7 @@
     .stats-badge {
         display: flex;
         flex-direction: column;
+        align-items: center;
         max-width: 100px;
         text-align: center;
         gap: 3px;
