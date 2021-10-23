@@ -2,6 +2,7 @@
 {% load static %}
 {% load comments %}
 {% load posts %}
+{% load users %}
 {% load text_filters %}
 {% load paginator %}
 
@@ -12,7 +13,7 @@
 {% block og_tags %}
     <meta property="og:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
-    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}{% url "profile" user.slug %}">
     <meta property="og:type" content="website" />
     <meta property="og:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta property="og:image" content="{{ user.get_avatar }}">
@@ -40,12 +41,6 @@
         {% include "users/widgets/card.html" with user=user %}
 
         {% if me.id == user.id %}
-         <div class="block profile-statuses">
-                <a href="{% url "friends" user.slug %}" class="profile-status">
-                   <span class="profile-status-icon">🤝</span>
-                    <span class="profile-status-text">Мои чуваки</span>
-                </a>
-            </div>
             <div class="block profile-statuses">
                 <div class="profile-status profile-respect">
                     <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
@@ -62,11 +57,11 @@
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
                     {% elif user.membership_days_left < 700 %}
-                        <span class="profile-status-number">😎 {{ user.membership_months_left | floor | cool_number  }}</span>
-                        <span class="profile-status-text">{{ user.membership_months_left | floor | rupluralize:"месяц,месяца,месяцев" }}</span>
+                        <span class="profile-status-number">😎 {{ user.membership_days_left | days_to_months | cool_number  }}</span>
+                        <span class="profile-status-text">{{ user.membership_days_left | days_to_months | rupluralize:"месяц,месяца,месяцев" }}</span>
                     {% else %}
-                        <span class="profile-status-number">💎 {{ user.membership_years_left | floor | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_years_left | floor | rupluralize:"год,года,лет" }}</span>
+                        <span class="profile-status-number">💎 {{ user.membership_days_left | days_to_years | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_days_left | days_to_years | rupluralize:"год,года,лет" }}</span>
                     {% endif %}
                 </a>
                 <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
@@ -99,12 +94,40 @@
                 </a>
             </div>
         {% else %}
-        <div class="block profile-statuses">
-            <friend-button
-                url="{% url "toggle_friend" user.slug %}"
-                {% if friend %}is-friend-by-default{% endif %}>
-            </friend-button>
-        </div>
+            <div class="block profile-statuses">
+                <div class="profile-status profile-respect">
+                    <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
+                    <span class="profile-status-text">
+                        {% if user.upvotes > 1000 %}
+                            плюсиков
+                        {% else %}
+                            {{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="profile-status">
+                    {% if user.membership_created_days < 150 %}
+                        <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
+                    {% elif user.membership_created_days < 700 %}
+                        <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
+                        <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
+                    {% else %}
+                        <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_years | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
+                    {% endif %}
+                </div>
+                <friend-button
+                    url="{% url "toggle_friend" user.slug %}"
+                    {% if friend %}is-friend-by-default{% endif %}>
+                </friend-button>
+            </div>
+        {% endif %}
+
+        {% if badges %}
+            <a class="user-badges" href="{% url "profile_badges" user.slug  %}">
+                {% include "badges/widgets/badges.html" with badges=badges badge_size="big" %}
+            </a>
         {% endif %}
 
         {% if intro %}

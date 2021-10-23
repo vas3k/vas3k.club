@@ -101,6 +101,7 @@ def rupluralize(value, arg="дурак,дурака,дураков"):
 def rutypography(value):
     return ru_typus(value)
 
+
 @register.filter
 def uncapitalize(value):
     if value and isinstance(value, str) and value[0].isupper():
@@ -141,3 +142,18 @@ def youtube_id(value):
 @register.filter()
 def jsonify(value):
     return json.dumps(value)
+
+
+@register.filter()
+def days_to_weeks(days):
+    return days // 7
+
+
+@register.filter()
+def days_to_months(days):
+    return days // 30.5
+
+
+@register.filter()
+def days_to_years(days):
+    return days // 365

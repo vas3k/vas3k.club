@@ -36,16 +36,10 @@
                     {% include "posts/widgets/post_actions_line.html" %}
                 </div>
 
-                {% if post.label %}
-                    <div class="post-label">
-                        {% include "posts/widgets/label.html" with label=post.label %}
-                    </div>
-                {% endif %}
-
-                {% if post.image %}
-                    <div class="post-image">
-                        <img src="{{ post.image }}" alt="{{ post.title }}">
-                    </div>
+                {% if post.metadata.badges %}
+                    <a class="post-badges post-badges-center" href="{% url "profile_badges" post.author.slug %}">
+                        {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
+                    </a>
                 {% endif %}
             </div>
         </header>

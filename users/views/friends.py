@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 
@@ -35,7 +35,8 @@ def toggle_friend(request, user_slug):
 
 @auth_required
 def friends(request, user_slug):
-    # TODO: what to do if user tries to see someones friends
+    if request.me.slug != user_slug:
+        return HttpResponseForbidden()
 
     user = get_object_or_404(User, slug=user_slug)
 
