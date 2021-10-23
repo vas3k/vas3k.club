@@ -26,7 +26,7 @@ def stats(request):
 
     latest_badges = UserBadge.objects\
         .select_related("badge", "to_user")\
-        .order_by('-created_at')[:16]
+        .order_by('-created_at')[:20]
 
     top_badges = list(filter(None.__ne__, [
         User.registered_members().filter(id=to_user).first() for to_user, _ in UserBadge.objects
