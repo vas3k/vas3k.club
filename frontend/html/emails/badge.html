@@ -44,6 +44,8 @@
         {% endif %}
     </p>
 
+    <p>&nbsp;</p>
+
     {% if user_badge.note %}
         <p style="font-size: 140%; color: #666666; padding-left: 30px;">
             — {{ user_badge.note }}
@@ -52,7 +54,7 @@
 
     <a href="{% url "profile_badges" user_badge.to_user.slug %}" style="text-decoration: none;">
         <span class="badge">
-            <img class="badge-image" src="{% static "images/badges" %}/big/{{ user_badge.badge.code }}" height="200" width="200" alt="{{ user_badge.badge.code }}"><br>
+            <img class="badge-image" src="{{ settings.APP_HOST }}{% static "images/badges" %}/big/{{ user_badge.badge.code }}" height="200" width="200" alt="{{ user_badge.badge.code }}"><br>
             <span class="badge-title">{{ user_badge.badge.title }}</span>
         </span>
     </a>

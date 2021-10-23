@@ -67,7 +67,7 @@ class UserBadge(models.Model):
             )
 
         with transaction.atomic():
-            # store user badge
+            # save user badge into the database
             try:
                 user_badge = UserBadge.objects.create(
                     badge=badge,
@@ -90,7 +90,7 @@ class UserBadge(models.Model):
                     membership_expires_at=F("membership_expires_at") - timedelta(days=badge.price_days)
                 )
 
-            # add badge to post/comment metadata (just for caching)
+            # add badge to post/comment metadata (for caching purposes)
             comment_or_post = comment or post
             metadata = comment_or_post.metadata or {}
             badges = metadata.get("badges") or {}
@@ -102,10 +102,10 @@ class UserBadge(models.Model):
                     "count": 1,
                 }
             else:
-                # increment badge count for this post
+                # if badge exists, increment badge count
                 badges[badge.code]["count"] += 1
 
-            # update only that metadata (do not use .save(), it saves all fields and can cause side-effects)
+            # update metadata only (do not use .save(), it saves all fields and can cause side-effects)
             metadata["badges"] = badges
             type(comment_or_post).objects.filter(id=comment_or_post.id).update(metadata=metadata)
 
