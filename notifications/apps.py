@@ -10,3 +10,4 @@ class NotificationsConfig(AppConfig):
         from notifications.signals.posts import create_or_update_post  # NOQA
         from notifications.signals.comments import create_or_update_comment  # NOQA
         from notifications.signals.users import create_or_update_user  # NOQA
+        from notifications.signals.badges import create_or_update_badge  # NOQA

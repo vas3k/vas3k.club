@@ -1,5 +1,5 @@
 <template>
-    <a :href="bookmarkUrl" class="bookmark-button" @click.prevent="toggle">
+    <a :href="bookmarkUrl" @click.prevent="toggle">
         <span v-if="isLoading">🤔</span>
         <span v-if="isBookmarked"><i class="fas fa-bookmark"></i>&nbsp;Убрать из закладок</span>
         <span v-else><i class="far fa-bookmark"></i>&nbsp;В закладки</span>

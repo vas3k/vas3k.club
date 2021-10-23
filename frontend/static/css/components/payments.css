@@ -88,11 +88,11 @@
         text-align: center;
         font-size: 140%;
         cursor: pointer;
-        transition: transform .2s;
     }
 
         .pay-package:hover {
             transform: scale(1.05);
+            transition: transform .2s;
         }
 
         .pay-packages input[type=radio]:checked + .pay-package {

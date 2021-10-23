@@ -117,7 +117,7 @@ def edit_payments(request, user_slug):
                 amount=int(s["plan"]["amount"] / 100),
                 interval=s["plan"]["interval"],
             ) for s in stripe_subscriptions["data"]]
-        except stripe.error.InvalidRequestError:
+        except (stripe.error.InvalidRequestError, stripe.error.AuthenticationError):
             subscriptions = []
 
     return render(request, "users/edit/payments.html", {

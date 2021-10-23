@@ -52,8 +52,9 @@ class UserAdminForm(forms.Form):
     )
     ban_reason = forms.CharField(
         label="Причина бана",
-        max_length=128,
-        required=False
+        max_length=5000,
+        required=False,
+        widget=forms.Textarea(attrs={"maxlength": 5000}),
     )
 
     is_unbanned = forms.BooleanField(
