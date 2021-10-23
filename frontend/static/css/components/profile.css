@@ -284,11 +284,11 @@
                     display: block;
                 }
 
-    .profile-comment-list {
+    .profile-list {
         padding-top: 30px;
     }
 
-        .profile-comments-list-placeholder {
+        .profile-list-placeholder {
             text-align: center;
             padding: 100px 0;
             font-size: 160%;
