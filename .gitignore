@@ -47,6 +47,7 @@ local_settings.py
 media/images
 media/i
 
+.env
 club/.env
 db.sqlite3
 *.session
