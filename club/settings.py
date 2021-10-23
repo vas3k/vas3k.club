@@ -269,7 +269,6 @@ RATE_LIMIT_POSTS_PER_DAY = 10
 RATE_LIMIT_COMMENTS_PER_DAY = 200
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
-MIN_FRIEND_COMMENT_LENGTH = 250  # notify comments only from a certain length
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
 CLEARED_POST_TEXT = "```\n" \
