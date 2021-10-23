@@ -30,7 +30,7 @@
 
                         <div class="profile-badge-main">
                             <div class="profile-badge-title">
-                                «{{ user_badge.badge.title }}»
+                                <strong>«{{ user_badge.badge.title }}»</strong>
 
                                 {% if user_badge.comment %}
                                     за комментарий к посту <strong><a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a></strong>.

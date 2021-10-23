@@ -84,7 +84,7 @@
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
                     <span class="top-user-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
-                    <span class="top-user-membership">до {{ user.membership_expires_at | date:"E Y" }} года</span>
+                    <span class="top-user-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
                 </a>
             {% endfor %}
         </div>
@@ -96,7 +96,7 @@
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
                     <span class="top-user-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
-                    <span class="top-user-membership">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
+                    <span class="top-user-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
                 </a>
             {% endfor %}
         </div>
