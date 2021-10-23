@@ -1,9 +1,9 @@
 <template>
-    <a v-if="isFriend" class="profile-status" @click="toggle">
+    <a v-if="isFriend" class="profile-status clickable" @click="toggle">
         <span class="profile-status-icon">✅</span>
         <span class="profile-status-status">Мой чувак</span>
     </a>
-    <a v-else class="profile-status" @click="toggle">
+    <a v-else class="profile-status clickable" @click="toggle">
         <span class="profile-status-icon">🤝</span>
         <span class="profile-status-status">Добавить в мои чуваки</span>
     </a>
