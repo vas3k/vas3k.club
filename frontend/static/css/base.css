@@ -146,6 +146,10 @@
     clear: both;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .button {
     display: inline-block;
     padding: 15px 18px;

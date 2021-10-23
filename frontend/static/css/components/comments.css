@@ -174,8 +174,7 @@
     }
 
     .comment-date,
-    .comment-reply-button,
-    .comment-edit-button {
+    .comment-footer-button {
         padding: 4px 10px 5px;
         text-decoration: none;
         cursor: pointer;
@@ -184,8 +183,7 @@
     }
 
         .comment-date:hover,
-        .comment-edit-button:hover,
-        .comment-reply-button:hover {
+        .comment-footer-button:hover {
             background-color: var(--opposite-bg-color);
             color: var(--opposite-text-color);
         }
@@ -198,12 +196,33 @@
             float: left;
         }
 
-    .comment-button-hidden {
+    .comment-button-visible-on-hover {
         visibility: hidden;
     }
 
-        .comment:hover .comment-button-hidden {
+        .comment:hover .comment-button-visible-on-hover {
             visibility: visible;
+        }
+
+    .comment-badge-button {
+        display: inline-block;
+        border-radius: 50%;
+        width: 1.7em;
+        height: 1.7em;
+        box-sizing: border-box;
+        text-align: center;
+        line-height: 1.65em;
+        opacity: 0.4;
+        font-size: 90%;
+        text-decoration: none;
+        margin-left: 10px;
+    }
+
+        .comment-badge-button:hover {
+            opacity: 1;
+            transition: opacity 0.3s;
+            background-color: var(--badge-color);
+            color: #FFFFFF;
         }
 
     .comment-side {
@@ -234,7 +253,11 @@
         }
 
     .comment-header {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: stretch;
+        align-items: stretch;
         padding-bottom: 5px;
     }
 
@@ -267,6 +290,13 @@
             .comment-header .hat {
                 margin-left: 10px;
             }
+
+        .comment-header-badges {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: center;
+        }
 
     .comment-body {
         padding-top: 10px;
@@ -335,6 +365,10 @@
     }
 
     .comment-type-battle {}
+
+        .comment-type-battle .comment-header {
+            flex-direction: column;
+        }
 
         .comment-type-battle .comment-header .user-avatar {
             width: 20px;
@@ -423,6 +457,11 @@
     }
 
     .reply-header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: stretch;
+        align-items: stretch;
         padding-bottom: 10px;
         font-size: 110%;
     }
@@ -440,6 +479,7 @@
             opacity: 0.6;
             font-size: 85%;
             padding-left: 10px;
+            line-height: 24px;
         }
 
     .reply-body {

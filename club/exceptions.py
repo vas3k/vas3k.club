@@ -41,6 +41,11 @@ class ContentDuplicated(ClubException):
                       "Проверьте всё ли в порядке."
 
 
+class InsufficientFunds(ClubException):
+    default_code = "insufficient-funds"
+    default_title = "Недостаточно средств"
+
+
 class URLParsingException(ClubException):
     default_code = "url-parser-exception"
     default_title = "Не удалось распарсить URL"
@@ -51,6 +56,11 @@ class InvalidCode(ClubException):
     default_code = "invalid-code"
     default_title = "Вы ввели неправильный код"
     default_message = "Введите или запросите его еще раз. Через несколько неправильных попыток коды удаляются"
+
+
+class ApiInsufficientFunds(ClubException):
+    default_code = "api-insufficient-funds"
+    default_title = "Недостаточно средств"
 
 
 class ApiException(ClubException):
@@ -65,3 +75,4 @@ class ApiAuthRequired(ApiException):
 class ApiAccessDenied(ApiException):
     default_code = "api-access-denied"
     default_title = "Access Denied"
+

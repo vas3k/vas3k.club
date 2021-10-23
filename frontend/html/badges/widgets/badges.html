@@ -1,0 +1,13 @@
+{% load static %}
+{% for badge_code, badge in badges.items %}
+    <span class="badge" title="Награда «{{ badge.title }}»{% if badge.description %}. {{ badge.description }}{% endif %}">
+        <img
+            src="{% static "images/badges" %}/{{ badge_size|default:"small" }}/{{ badge_code }}.png"
+            alt="{{ badge.title }}"
+            class="badge-image">
+
+        {% if badge.count > 1 %}
+            <span class="badge-count">⨯{{ badge.count }}</span>
+        {% endif %}
+    </span>
+{% endfor %}
