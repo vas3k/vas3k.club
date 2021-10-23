@@ -17,13 +17,13 @@
             {{ comments.paginator.count }} {{ comments.paginator.count|rupluralize:"комментарий,комментария,комментариев" }}
         </div>
 
-        <div class="profile-comment-list">
+        <div class="profile-list">
             {% if comments %}
                 {% for comment in comments %}
                     {% include "comments/types/snippet.html" with comment=comment %}
                 {% endfor %}
             {% else %}
-                <div class="profile-comments-list-placeholder">
+                <div class="profile-list-placeholder">
                     Пользователь пока не оставил комментариев...
                 </div>
             {% endif %}

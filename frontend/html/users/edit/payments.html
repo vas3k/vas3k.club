@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load static %}
+{% load text_filters %}
 
 {% block title %}
     Клубные взносы — {{ block.super }}
@@ -10,7 +11,7 @@
         <div class="form-title">🎩<br>Клубные взносы</div>
 
         <div class="block-subheader">
-            Клубная карта активна до: <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong>
+            Клубная карта активна до <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong> — это <span class="badge-price">💎 {{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }}</span>
         </div>
 
         {% if me.membership_platform_type == "patreon" %}

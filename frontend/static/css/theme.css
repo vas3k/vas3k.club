@@ -11,6 +11,8 @@
     --button-hover-color: #333;
     --button-hover-bg-color: #FFF;
     --button-hover-border: solid 2px #333;
+
+    --badge-color: #ffc455;
 }
 
 html, html[theme="light"] {

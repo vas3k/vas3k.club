@@ -27,6 +27,14 @@
             text-decoration: none;
         }
 
+        .post-actions-line-item {
+            padding-right: 15px;
+        }
+
+    .post-image {
+        padding-bottom: 50px;
+    }
+
     .post-text {
         position: relative;
     }
@@ -70,22 +78,17 @@
                 top: -5px;
             }
 
-        .post-type-post .post-data {
-            padding-top: 20px;
-            padding-bottom: 0;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .post-type-post .post-label {
             font-size: 180%;
             padding-bottom: 20px;
         }
 
         .post-type-post .post-actions-line {
-            display: block;
+            padding-top: 20px;
             padding-bottom: 20px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .post-type-post .post-author {
@@ -151,6 +154,11 @@
 
         .post-layout-block .post-info {
             padding-top: 7px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .post-layout-block .post-footer {
@@ -163,8 +171,10 @@
                 padding-top: 10px;
             }
 
-        .post-layout-block .topic {
-            margin-bottom: 5px;
+        .post-layout-block .post-badges {
+            padding-top: 10px;
+            padding-bottom: 0;
+            font-size: 120%;
         }
 
     .post-type-battle {

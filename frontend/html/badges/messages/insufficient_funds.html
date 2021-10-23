@@ -1,0 +1,22 @@
+{% extends "message.html" %}
+{% load text_filters %}
+
+{% block message %}
+    <h2>
+        ✋ У вас {{ me.membership_days_left|rupluralize:"остался,осталось,осталось" }}
+        всего {{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }} членства
+    </h2>
+
+    <p>
+        Чтобы не вводить новые способы оплаты, награды в Клубе оплачиваются днями членства в нём.
+    </p>
+
+    <p>
+        У вас их осталось слишком мало, чтобы дарить награды.
+        Рекомендуем продлить аккаунт.
+    </p>
+
+    <p>
+        <br><a href="{% url "edit_payments" me.slug %}" class="button">Пополнить баланс</a>
+    </p>
+{% endblock %}

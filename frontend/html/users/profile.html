@@ -12,7 +12,7 @@
 {% block og_tags %}
     <meta property="og:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
-    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}{% url "profile" user.slug %}">
     <meta property="og:type" content="website" />
     <meta property="og:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta property="og:image" content="{{ user.get_avatar }}">
@@ -104,6 +104,12 @@
                     &larr; тестируем бета-версию подписки на все посты и комменты юзера через бота
                 </div>
             </div>
+        {% endif %}
+
+        {% if badges %}
+            <a class="user-badges" href="{% url "profile_badges" user.slug  %}">
+                {% include "badges/widgets/badges.html" with badges=badges badge_size="big" %}
+            </a>
         {% endif %}
 
         {% if intro %}
