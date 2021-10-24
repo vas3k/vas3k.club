@@ -22,7 +22,7 @@ class Command(BaseCommand):
             expired_users = User.objects\
                 .filter(
                     is_email_verified=True,
-                    membership_expires_at__gte=datetime.utcnow() + timedelta(days=days),
+                    membership_expires_at=datetime.utcnow() + timedelta(days=days),
                     moderation_status=User.MODERATION_STATUS_APPROVED
                 )\
                 .exclude(is_email_unsubscribed=True)
