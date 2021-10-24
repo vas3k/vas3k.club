@@ -152,10 +152,10 @@ ACHIEVEMENTS = [
         "style": "background-color: #ffa089; font-size: 120%;",
     }),
     ("pastry_cook_2", {
-        "name": "Кондитер сына маминой подруги",
+        "name": "Кондитер",
         "description": "Выдаётся за участие в 5 пекарских или кондитерских челленджах",
         "image": "https://vas3k.club/static/images/achievements/pastry_cook_2.png",
-        "style": "background-color: #ffa089; font-size: 100%;",
+        "style": "background-color: #ffa089; font-size: 120%;",
     }),
     ("pastry_cook_3", {
         "name": "Шеф-кондитер",
