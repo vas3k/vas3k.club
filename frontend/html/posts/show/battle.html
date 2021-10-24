@@ -64,9 +64,11 @@
                 </post-upvote>
                 <div class="clearfix20"></div>
             </div>
+
             <div class="text-body text-body-layout-notitle text-body-type-post e-content">
                 {% render_post post %}
             </div>
+
             <div class="post-footer">
                 <div class="p-author">
                     {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
@@ -74,6 +76,13 @@
             </div>
         </div>
     </div>
+
+    {% if post.metadata.badges %}
+        <div class="clearfix20"></div>
+        <a class="post-badges post-badges-center" href="{% url "profile_badges" post.author.slug %}">
+            {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block comments %}

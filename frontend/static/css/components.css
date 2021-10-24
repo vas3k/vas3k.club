@@ -66,11 +66,22 @@
     font-size: 120%;
 }
 
+    .error h1, .message h1, .access-denied h1 {
+        display: block;
+        font-size: 230%;
+        margin-top: 0;
+        margin-bottom: 30px;
+    }
+
     .error h2, .message h2, .access-denied h2 {
         display: block;
         font-size: 150%;
         margin-top: 0;
         margin-bottom: 30px;
+    }
+
+    .message-center {
+        text-align: center;
     }
 
 .paginator {
@@ -1150,10 +1161,6 @@
 .post-bookmarks-placeholder {
     font-weight: bolder;
     opacity: 0.6;
-}
-
-.bookmark-button {
-    padding-right: 10px;
 }
 
 .license {
