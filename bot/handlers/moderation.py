@@ -1,13 +1,13 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.urls import reverse
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from bot.handlers.common import RejectReason
 from bot.decorators import is_moderator
+from bot.handlers.common import RejectReason
 from notifications.email.users import send_welcome_drink, send_rejected_email
 from notifications.telegram.posts import notify_post_author_approved, announce_in_club_chats, \
     notify_post_author_rejected
@@ -189,3 +189,24 @@ def reject_user_profile(update: Update, context: CallbackContext):
     update.callback_query.edit_message_reply_markup(reply_markup=None)
 
     return None
+
+
+@is_moderator
+def command_promote_user(update: Update, context: CallbackContext) -> None:
+    if not update.message or not update.message.text or " " not in update.message.text:
+        update.effective_chat.send_message(
+            "☝️ Нужно прислать мне email пользователя, аккаунт которого надо продлить. "
+        )
+        return
+
+    email = update.message.text.split(" ", 1)[1].strip()
+    user = User.objects.filter(email=email).first()
+
+    if not user:
+        update.effective_chat.send_message("Пользователь с таким email не найден")
+        return
+
+    user.membership_expires_at += timedelta(days=365)
+    user.save()
+
+    update.effective_chat.send_message(f"Пользователь {user.full_name} продлен на год.")

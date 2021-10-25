@@ -68,6 +68,7 @@ def main() -> None:
     dispatcher.add_handler(CallbackQueryHandler(moderation.unpublish_post, pattern=r"^delete_post:.+"))
     dispatcher.add_handler(CallbackQueryHandler(moderation.approve_user_profile, pattern=r"^approve_user:.+"))
     dispatcher.add_handler(CallbackQueryHandler(moderation.reject_user_profile, pattern=r"^reject_user.+"))
+    dispatcher.add_handler(CommandHandler("promote", moderation.command_promote_user))
 
     # Public + private chats
     dispatcher.add_handler(CommandHandler("help", command_help))
