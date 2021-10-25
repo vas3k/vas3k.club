@@ -210,5 +210,5 @@ def command_promote_user(update: Update, context: CallbackContext) -> None:
     user.save()
 
     update.effective_chat.send_message(
-        f"Пользователь { user.full_name } продлен до { user.membership_expires_at.stftime('%Y-%m-%d') }."
+        f"Пользователь { user.full_name } продлен до { user.membership_expires_at.strftime('%Y-%m-%d') }."
     )
