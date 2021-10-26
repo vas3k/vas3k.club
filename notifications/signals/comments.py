@@ -52,17 +52,18 @@ def async_create_or_update_comment(comment):
             text=render_html_message("comment_to_post.html", comment=comment),
         )
 
-    # notify friends about your comments
-    friends = Friend.friends_for_user(comment.author)
-    for friend in friends:
-        if friend.user_from.telegram_id \
-                and friend.is_subscribed_to_comments \
-                and friend.user_from.id not in notified_user_ids:
-            send_telegram_message(
-                chat=Chat(id=friend.user_from.telegram_id),
-                text=render_html_message("friend_comment.html", comment=comment),
-            )
-            notified_user_ids.add(friend.user_from.id)
+    # notify friends about your comments (not replies)
+    if not comment.reply_to:
+        friends = Friend.friends_for_user(comment.author)
+        for friend in friends:
+            if friend.user_from.telegram_id \
+                    and friend.is_subscribed_to_comments \
+                    and friend.user_from.id not in notified_user_ids:
+                send_telegram_message(
+                    chat=Chat(id=friend.user_from.telegram_id),
+                    text=render_html_message("friend_comment.html", comment=comment),
+                )
+                notified_user_ids.add(friend.user_from.id)
 
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):
