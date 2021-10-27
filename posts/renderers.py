@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import TemplateDoesNotExist
 
-from club.settings import POSSIBLE_COMMENTS_ORDERS
+from club.settings import POSSIBLE_COMMENT_ORDERS
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment
 from posts.models.post import Post
