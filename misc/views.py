@@ -9,6 +9,7 @@ from django.views.decorators.http import require_GET
 from icalendar import Calendar, Event
 
 from auth.helpers import auth_required
+from badges.models import UserBadge
 from landing.models import GodSettings
 from users.models.achievements import Achievement
 from users.models.user import User
@@ -19,8 +20,21 @@ def stats(request):
     achievements = Achievement.objects\
         .annotate(user_count=Count('users'))\
         .filter(is_visible=True)\
+        .filter(user_count__gt=0)\
         .exclude(code__in=["old", "parliament_member"])\
         .order_by('-user_count')
+
+    latest_badges = UserBadge.objects\
+        .select_related("badge", "to_user")\
+        .order_by('-created_at')[:20]
+
+    top_badges = list(filter(None.__ne__, [
+        User.registered_members().filter(id=to_user).first() for to_user, _ in UserBadge.objects
+        .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))
+        .values_list("to_user")
+        .annotate(count=Count("to_user"))
+        .order_by("-count")[:10]
+    ]))[:5]  # filter None
 
     moderators = User.objects\
         .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
@@ -36,6 +50,8 @@ def stats(request):
 
     return render(request, "pages/stats.html", {
         "achievements": achievements,
+        "latest_badges": latest_badges,
+        "top_badges": top_badges,
         "top_users": top_users,
         "moderators": moderators,
         "parliament": parliament,
