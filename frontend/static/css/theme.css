@@ -12,7 +12,7 @@
     --button-hover-bg-color: #FFF;
     --button-hover-border: solid 2px #333;
 
-    --badge-color: #ffc455;
+    --badge-color: rgba(255, 196, 85, 0.91);
 }
 
 html, html[theme="light"] {
