@@ -5,6 +5,7 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
+import ClubApi from "./common/api.service";
 import { findParentForm, isCommunicationForm } from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
@@ -241,29 +242,35 @@ const App = {
                     }
                 }
 
+                const getHint = () => document.querySelector('.comment-form-body-text-autocomplete')
+
                 const createOrUpdateHint = () => {
-                    let $autocompleteHint = document.querySelector('.comment-form-body-text-autocomplete')
-                    if (!$autocompleteHint) {
-                        $autocompleteHint = document.createElement('div')
-                        $autocompleteHint.className = 'comment-form-body-text-autocomplete'
-                        editor.element.appendChild($autocompleteHint)
+                    if (!getHint()) {
+                        const hintDiv = document.createElement('div')
+                        hintDiv.className = 'comment-form-body-text-autocomplete'
+                        editor.element.appendChild(hintDiv)
                     }
 
-                    $autocompleteHint.innerHTML = 'vadik49b' + '<br>' + 'vastrik'
                     editor.codemirror.addWidget({
                         ...autocompletion,
                         ch: autocompletion.ch + 1
-                    }, $autocompleteHint)
+                    }, getHint())
                 }
 
                 if (autocompletion) {
-                    const range = cm.getRange(autocompletion, event.from) + event.text.join('')
+                    const sample = cm.getRange(autocompletion, event.from) + event.text.join('')
 
-                    const $autocompleteHint = document.querySelector('.comment-form-body-text-autocomplete')
-                    if (range[0] === '@') {
+                    if (sample[0] === '@') {
                         createOrUpdateHint()
-                    } else if ($autocompleteHint) {
-                        $autocompleteHint.remove()
+                        fetch(`/users/suggest/?is_ajax=true&sample=${sample.substr(1)}`)
+                            .then((res) => res.json())
+                            .then((data) => {
+                                const users = data.suggested_users
+                                getHint().innerHTML = users.join('<br>')
+                            });
+
+                    } else if (getHint()) {
+                        getHint().remove()
                     }
 
                 }
