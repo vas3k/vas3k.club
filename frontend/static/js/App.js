@@ -220,6 +220,59 @@ const App = {
             []
         );
 
+        invisibleMarkdownEditors.forEach((editor) => {
+            console.log('init events handling', editor.element);
+
+            let autocompletion = null
+
+            editor.codemirror.on("change", (cm, event) => {
+                console.log('cm', cm, event, autocompletion);
+
+                window.CM = cm
+
+                if (event.origin === '+input' && event.text.join('') === '@') {
+                    const prevSymbol = cm.getRange({
+                        line: event.from.line,
+                        ch: event.from.ch - 1
+                    }, event.from)
+
+                    if (prevSymbol.trim() === '') {
+                        autocompletion = event.from
+                    }
+                }
+
+                const createOrUpdateHint = () => {
+                    let $autocompleteHint = document.querySelector('.comment-form-body-text-autocomplete')
+                    if (!$autocompleteHint) {
+                        $autocompleteHint = document.createElement('div')
+                        $autocompleteHint.className = 'comment-form-body-text-autocomplete'
+                        editor.element.appendChild($autocompleteHint)
+                    }
+
+                    $autocompleteHint.innerHTML = 'vadik49b' + '<br>' + 'vastrik'
+                    editor.codemirror.addWidget({
+                        ...autocompletion,
+                        ch: autocompletion.ch + 1
+                    }, $autocompleteHint)
+                }
+
+                if (autocompletion) {
+                    const range = cm.getRange(autocompletion, event.from) + event.text.join('')
+
+                    const $autocompleteHint = document.querySelector('.comment-form-body-text-autocomplete')
+                    if (range[0] === '@') {
+                        createOrUpdateHint()
+                    } else if ($autocompleteHint) {
+                        $autocompleteHint.remove()
+                    }
+
+                }
+
+
+                // doc.replaceRange('test', {line: 0, ch: 1})
+            });
+        })
+
         const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
 
         allEditors.forEach((editor) => {
