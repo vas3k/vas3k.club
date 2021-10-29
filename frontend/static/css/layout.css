@@ -63,6 +63,8 @@
     .menu-simplified {
         grid-template-columns: auto;
         justify-content: center;
+        display: flex;
+        flex-direction: row;
     }
 
 .content {
