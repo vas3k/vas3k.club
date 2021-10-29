@@ -534,3 +534,7 @@
     .comment-is-new .comment-is-new {
         background-color: transparent;
     }
+
+.comment-is-badged {
+    border: solid 3px var(--badge-color);
+}

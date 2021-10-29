@@ -1,7 +1,7 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
+<div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} {% if comment.metadata.badges %}comment-is-badged{% endif %}" id="comment-{{ comment.id }}">
     {% if replies %}
     <div class="reply-side" @click.prevent="toggleCommentThread">
         <div class="thread-ruler"></div>
@@ -29,15 +29,15 @@
         {% endif %}
 
         <div class="comment-header-badges">
-            {% if me and comment.author_id != me.id %}
-                <a class="comment-badge-button comment-button-visible-on-hover" href="{% url "create_badge_for_comment" comment.id %}">
-                    <i class="fas fa-gift"></i>
-                </a>
-            {% endif %}
-
             {% if comment.metadata.badges %}
                 <a class="reply-badges" href="{% url "profile_badges" comment.author.slug %}">
                     {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
+                </a>
+            {% endif %}
+
+            {% if me and comment.author_id != me.id %}
+                <a class="comment-badge-button comment-button-visible-on-hover" href="{% url "create_badge_for_comment" comment.id %}">
+                    <i class="fas fa-gift"></i>
                 </a>
             {% endif %}
         </div>

@@ -1,7 +1,7 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %} {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}" id="comment-{{ comment.id }}">
+<div class="comment comment-layout-normal {% if comment.is_pinned %}comment-is-pinned{% endif %} {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} {% if comment.metadata.badges %}comment-is-badged{% endif %}" id="comment-{{ comment.id }}">
     <div class="comment-side" @click.prevent="toggleCommentThread">
         <a class="avatar comment-side-avatar" href="{% url "profile" comment.author.slug %}">
             <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
