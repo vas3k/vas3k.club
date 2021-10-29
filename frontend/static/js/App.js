@@ -222,15 +222,9 @@ const App = {
         );
 
         invisibleMarkdownEditors.forEach((editor) => {
-            console.log('init events handling', editor.element);
-
             let autocompletion = null
 
             editor.codemirror.on("change", (cm, event) => {
-                console.log('cm', cm, event, autocompletion);
-
-                window.CM = cm
-
                 if (event.origin === '+input' && event.text.join('') === '@') {
                     const prevSymbol = cm.getRange({
                         line: event.from.line,
