@@ -4,7 +4,8 @@ import "../css/index.css";
 
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
-import { pluralize, handleCommentThreadCollapseToggle } from "./common/utils.js";
+import { pluralize } from "./common/utils.js";
+import { handleCommentThreadCollapseToggle } from "./common/comments.js";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
