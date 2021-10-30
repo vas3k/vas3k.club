@@ -3,7 +3,7 @@
         <div
             v-for="(user, index) in users"
             v-bind:class="{ 'mention-autocomplete-hint__option--suggested': index === 0 }"
-            v-on:click="onClick(user)"
+            @click="onClick(user)"
             class="mention-autocomplete-hint__option"
         >
            {{ user.slug }}<span class="mention-autocomplete-hint__option-fullName">{{ user.fullName }}</span>
