@@ -10,9 +10,7 @@ jobs:
     name: Build image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: 'feature/docker-deploy'
+      - uses: actions/checkout@master
       - run: docker login ghcr.io -u vas3k -p ${{ secrets.TOKEN }}
       - run: docker build -t ghcr.io/vas3k/vas3k.club:latest .
       - run: docker image push ghcr.io/vas3k/vas3k.club:latest
@@ -25,9 +23,7 @@ jobs:
       SSH_KEY: /tmp/ssh_key
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: 'master'
+        uses: actions/checkout@master
       - name: Make envfile
         run: export | grep "env_" | sed "s/declare -x env_//" > .env
         env:
