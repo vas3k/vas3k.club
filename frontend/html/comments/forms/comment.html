@@ -5,8 +5,10 @@
             <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" loading="lazy" /></div>
         </div>
         <div class="comment-form-body">
-            <div class="comment-form-body-text">{{ form.text }}</div>
-            <mention-autocomplete-hint ref="test"/>
+            <div class="comment-form-body-text" data-autocomplete-hint-ref="{{ post.id }}">
+                {{ form.text }}
+                <mention-autocomplete-hint ref="{{ post.id }}"/>
+            </div>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
         <div class="comment-form-button">
