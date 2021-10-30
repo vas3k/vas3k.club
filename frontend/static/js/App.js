@@ -5,7 +5,7 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
-import { findParentForm, isCommunicationForm } from "./common/utils.js";
+import { findParentForm, isCommunicationForm, throttle } from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
 
@@ -244,6 +244,24 @@ const App = {
 
             let autocomplete = null
 
+            const fetchAutocompleteSuggestions = throttle((sample, hintVue) => {
+                fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
+                    .then((res) => {
+                        if (!res.url.includes(`sample=${sample}`)) {
+                            return
+                        }
+
+                        return res.json()
+                    })
+                    .then((data) => {
+                        if (!autocomplete) {
+                            return
+                        }
+
+                        hintVue.$data.users = data.suggested_users
+                    });
+            }, 600)
+
             editor.codemirror.on("change", (cm, event) => {
                 // TODO: Find better way to pass vm here
                 const hintVue = window.vm.$refs[autocompleteHintRef]
@@ -288,24 +306,7 @@ const App = {
                     return
                 }
 
-                sample = sample.substr(1)
-
-                fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
-                    .then((res) => {
-                        if (!res.url.includes(`sample=${sample}`)) {
-                            return
-                        }
-
-                        return res.json()
-                    })
-                    .then((data) => {
-                        if (!autocomplete) {
-                            return
-                        }
-
-                        hintVue.$data.users = data.suggested_users
-                    });
-
+                fetchAutocompleteSuggestions(sample.substr(1), hintVue)
             });
         })
 
