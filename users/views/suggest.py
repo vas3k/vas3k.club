@@ -20,8 +20,8 @@ def suggest_users(request):
     suggested_users = User.registered_members().filter(slug__startswith=sample)[:5]
 
     return {
-        "suggested_users": [
-            user.slug
-            for user in suggested_users.all()
-        ],
+        "suggested_users": [{
+            "slug": user.slug,
+            "fullName": user.full_name
+        } for user in suggested_users.all()],
     }
