@@ -248,6 +248,26 @@ const App = {
                 // TODO: Find better way to pass vm here
                 const hintVue = window.vm.$refs[autocompleteHintRef]
 
+                // TODO: How the fuck is to listen Vue events from here properly!?
+                hintVue.$data.onClick = (user) => {
+                    if (!autocomplete) {
+                        return
+                    }
+
+                    cm.replaceRange(`${user.slug} `, {
+                        line: autocomplete.line,
+                        ch: autocomplete.ch + 1
+                    }, {
+                        line: autocomplete.line,
+                        ch: autocomplete.ch + user.slug.length + 1
+                    })
+
+                    editor.codemirror.focus()
+
+                    hintVue.$data.users = []
+                    autocomplete = null
+                }
+
                 if (!autocomplete && event.origin === '+input' && triggersAutocomplete(cm, event)) {
                     autocomplete = event.from
                     editor.codemirror.addWidget({
@@ -284,12 +304,6 @@ const App = {
                         }
 
                         hintVue.$data.users = data.suggested_users
-
-                        // TODO: Append first suggestion
-                        // cm.replaceRange('test', {
-                        //     line: autocomplete.line,
-                        //     ch: autocomplete.ch + 1
-                        // })
                     });
 
             });
