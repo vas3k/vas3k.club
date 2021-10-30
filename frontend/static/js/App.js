@@ -221,55 +221,69 @@ const App = {
             []
         );
 
+        const triggersAutocomplete = (cm, event) => {
+            const eventText = event.text.join('')
+            if (eventText !== '@') {
+                return false
+            }
+
+            const prevSymbol = cm.getRange({
+                line: event.from.line,
+                ch: event.from.ch - 1
+            }, event.from)
+
+            return prevSymbol.trim() === ''
+        }
+
         invisibleMarkdownEditors.forEach((editor) => {
-            let autocompletion = null
+            let autocomplete = null
 
             editor.codemirror.on("change", (cm, event) => {
-                if (event.origin === '+input' && event.text.join('') === '@') {
-                    const prevSymbol = cm.getRange({
-                        line: event.from.line,
-                        ch: event.from.ch - 1
-                    }, event.from)
+                if (!autocomplete && event.origin === '+input' && triggersAutocomplete(cm, event)) {
+                    console.log('start autocomplete');
 
-                    if (prevSymbol.trim() === '') {
-                        autocompletion = event.from
-                    }
-                }
+                    const hintDivEl = document.createElement('div')
+                    hintDivEl.innerHTML = 'TEST'
+                    editor.element.appendChild(hintDivEl)
 
-                const getHint = () => document.querySelector('.comment-form-body-text-autocomplete')
-
-                const createOrUpdateHint = () => {
-                    if (!getHint()) {
-                        const hintDiv = document.createElement('div')
-                        hintDiv.className = 'comment-form-body-text-autocomplete'
-                        editor.element.appendChild(hintDiv)
+                    autocomplete = {
+                        ...event.from,
+                        hintDivEl: hintDivEl
                     }
 
                     editor.codemirror.addWidget({
-                        ...autocompletion,
-                        ch: autocompletion.ch + 1
-                    }, getHint())
+                        ...autocomplete,
+                        ch: autocomplete.ch + 1
+                    }, hintDivEl)
                 }
 
-                if (autocompletion) {
-                    const sample = cm.getRange(autocompletion, event.from) + event.text.join('')
-
-                    if (sample[0] === '@') {
-                        createOrUpdateHint()
-                        fetch(`/users/suggest/?is_ajax=true&sample=${sample.substr(1)}`)
-                            .then((res) => res.json())
-                            .then((data) => {
-                                const users = data.suggested_users
-                                getHint().innerHTML = users.join('<br>')
-                            });
-
-                    } else if (getHint()) {
-                        getHint().remove()
-                    }
-
+                if (!autocomplete) {
+                    console.log('autocomplete is not active');
+                    return
                 }
 
+                const sample = cm.getRange(autocomplete, event.from) + event.text.join('')
+                if (sample[0] !== '@') {
+                    autocomplete.hintDivEl.remove()
+                    autocomplete = null
 
+                    return
+                }
+
+                console.log('sample', sample);
+
+                // if (sample[0] === '@') {
+                //     createOrUpdateHint()
+                //     fetch(`/users/suggest/?is_ajax=true&sample=${sample.substr(1)}`)
+                //         .then((res) => res.json())
+                //         .then((data) => {
+                //             const users = data.suggested_users
+                //             getHint().innerHTML = users.join('<br>')
+                //         });
+
+                // } else if (getHint()) {
+                //     getHint().remove()
+                // }
                 // doc.replaceRange('test', {line: 0, ch: 1})
             });
         })
