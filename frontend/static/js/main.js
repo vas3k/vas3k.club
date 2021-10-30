@@ -26,7 +26,7 @@ Vue.component("mention-autocomplete-hint", () => import("./components/MentionAut
 // We have no other choice but to completely turn off template matching and leave it on only for components.
 const noDelimiter = { replace: function () {} };
 
-new Vue({
+window.vm = new Vue({
     el: "#app",
     delimiters: [noDelimiter, noDelimiter], // disable templates
     created() {

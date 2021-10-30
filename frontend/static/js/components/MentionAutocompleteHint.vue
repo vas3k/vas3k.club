@@ -9,14 +9,10 @@
 <script>
 
 export default {
-    name: "MentionAutocompleteHint",
     data: function () {
         return {
             users: []
         }
-    },
-    mounted() {
-        console.log('mounted');
     }
 };
 </script>

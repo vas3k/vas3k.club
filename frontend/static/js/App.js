@@ -237,13 +237,13 @@ const App = {
         }
 
         invisibleMarkdownEditors.forEach((editor) => {
-            const hintVue = vm.$refs.test
-
             let autocomplete = null
 
             editor.codemirror.on("change", (cm, event) => {
+                // TODO: Find better way to pass vm here
+                const hintVue = window.vm.$refs.test
+
                 if (!autocomplete && event.origin === '+input' && triggersAutocomplete(cm, event)) {
-                    console.log('start autocomplete');
                     autocomplete = event.from
                     editor.codemirror.addWidget({
                         ...autocomplete,
