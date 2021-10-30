@@ -271,9 +271,9 @@
                 {% endfor %}
             </div>
 
-            {% if posts_total > comments|length %}
+            {% if posts_total > posts|length %}
                 <div class="profile-more">
-                    <a href="{% url "profile_comments" user.slug  %}" class="button button-inverted">Все {{ comments_total }} {{ comments_total|rupluralize:"пост,поста,постов" }}...</a>
+                    <a href="{% url "profile_posts" user.slug  %}" class="button button-inverted">Все {{ posts_total }} {{ posts_total|rupluralize:"пост,поста,постов" }}...</a>
                 </div>
             {% endif %}
         {% endif %}
