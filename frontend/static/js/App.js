@@ -5,7 +5,6 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
-import ClubApi from "./common/api.service";
 import { findParentForm, isCommunicationForm } from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
@@ -238,23 +237,18 @@ const App = {
         }
 
         invisibleMarkdownEditors.forEach((editor) => {
+            const hintVue = vm.$refs.test
+
             let autocomplete = null
 
             editor.codemirror.on("change", (cm, event) => {
                 if (!autocomplete && event.origin === '+input' && triggersAutocomplete(cm, event)) {
-
-                    const hintDivEl = document.createElement('div')
-                    editor.element.appendChild(hintDivEl)
-
-                    autocomplete = {
-                        ...event.from,
-                        hintDivEl: hintDivEl
-                    }
-
+                    console.log('start autocomplete');
+                    autocomplete = event.from
                     editor.codemirror.addWidget({
                         ...autocomplete,
                         ch: autocomplete.ch + 1
-                    }, hintDivEl)
+                    }, hintVue.$el)
                 }
 
                 if (!autocomplete) {
@@ -263,7 +257,7 @@ const App = {
 
                 let sample = cm.getRange(autocomplete, event.from) + event.text.join('')
                 if (sample[0] !== '@') {
-                    autocomplete.hintDivEl.remove()
+                    hintVue.$data.users = []
                     autocomplete = null
 
                     return
@@ -284,8 +278,7 @@ const App = {
                             return
                         }
 
-                        const users = data.suggested_users
-                        autocomplete.hintDivEl.innerHTML = users.join('<br>')
+                        hintVue.$data.users = data.suggested_users
 
                         // TODO: Append first suggestion
                         // cm.replaceRange('test', {

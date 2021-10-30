@@ -6,6 +6,7 @@
         </div>
         <div class="comment-form-body">
             <div class="comment-form-body-text">{{ form.text }}</div>
+            <mention-autocomplete-hint ref="test"/>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
         <div class="comment-form-button">
