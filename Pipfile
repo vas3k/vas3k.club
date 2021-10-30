@@ -28,7 +28,6 @@ redis = ">=3.4.1"
 python-dotenv = ">=0.12"
 newspaper3k = ">=0.2.8"
 django-redis = "==4.11.0"
-nltk = "==3.4.5"
 gunicorn = "==20.0.4"
 uvicorn = "*"
 uvloop = "*"
@@ -41,6 +40,3 @@ croniter = "*"
 
 [requires]
 python_version = "3.8"
-
-[scripts]
-nltk_download = "python -m nltk.downloader all"
