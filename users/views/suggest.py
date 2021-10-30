@@ -13,9 +13,11 @@ def suggest_users(request):
     sample = request.GET.get('sample', '')
 
     if len(sample) < 1:
-        return {"suggested_users": []}
+        return {
+            "suggested_users": []
+        }
 
-    suggested_users = User.registered_members().filter(slug__startswith=sample)[:10]
+    suggested_users = User.registered_members().filter(slug__startswith=sample)[:5]
 
     return {
         "suggested_users": [

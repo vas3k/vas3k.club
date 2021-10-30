@@ -232,6 +232,8 @@ const App = {
                 ch: event.from.ch - 1
             }, event.from)
 
+            // TODO: Check if next symbol is empty as well
+
             return prevSymbol.trim() === ''
         }
 
@@ -240,10 +242,8 @@ const App = {
 
             editor.codemirror.on("change", (cm, event) => {
                 if (!autocomplete && event.origin === '+input' && triggersAutocomplete(cm, event)) {
-                    console.log('start autocomplete');
 
                     const hintDivEl = document.createElement('div')
-                    hintDivEl.innerHTML = 'TEST'
                     editor.element.appendChild(hintDivEl)
 
                     autocomplete = {
@@ -258,11 +258,10 @@ const App = {
                 }
 
                 if (!autocomplete) {
-                    console.log('autocomplete is not active');
                     return
                 }
 
-                const sample = cm.getRange(autocomplete, event.from) + event.text.join('')
+                let sample = cm.getRange(autocomplete, event.from) + event.text.join('')
                 if (sample[0] !== '@') {
                     autocomplete.hintDivEl.remove()
                     autocomplete = null
@@ -270,21 +269,31 @@ const App = {
                     return
                 }
 
-                console.log('sample', sample);
+                sample = sample.substr(1)
 
-                // if (sample[0] === '@') {
-                //     createOrUpdateHint()
-                //     fetch(`/users/suggest/?is_ajax=true&sample=${sample.substr(1)}`)
-                //         .then((res) => res.json())
-                //         .then((data) => {
-                //             const users = data.suggested_users
-                //             getHint().innerHTML = users.join('<br>')
-                //         });
+                fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
+                    .then((res) => {
+                        if (!res.url.includes(`sample=${sample}`)) {
+                            return
+                        }
 
-                // } else if (getHint()) {
-                //     getHint().remove()
-                // }
-                // doc.replaceRange('test', {line: 0, ch: 1})
+                        return res.json()
+                    })
+                    .then((data) => {
+                        if (!autocomplete) {
+                            return
+                        }
+
+                        const users = data.suggested_users
+                        autocomplete.hintDivEl.innerHTML = users.join('<br>')
+
+                        // TODO: Append first suggestion
+                        // cm.replaceRange('test', {
+                        //     line: autocomplete.line,
+                        //     ch: autocomplete.ch + 1
+                        // })
+                    });
+
             });
         })
 
