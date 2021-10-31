@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   club_app: &app
     image: ghcr.io/glader/4aff.club:latest
@@ -61,6 +59,7 @@ services:
       - club_app
       - postgres
       - redis
+    ports:
 
   postgres:
     image: postgres:12
