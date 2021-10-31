@@ -59,7 +59,7 @@ services:
       - club_app
       - postgres
       - redis
-    ports:
+    ports: []
 
   postgres:
     image: postgres:12
