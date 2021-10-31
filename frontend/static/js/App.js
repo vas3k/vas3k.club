@@ -221,94 +221,104 @@ const App = {
         );
 
         const triggersAutocomplete = (cm, event) => {
-            const eventText = event.text.join('')
-            if (eventText !== '@') {
-                return false
+            const eventText = event.text.join("");
+            if (eventText !== "@") {
+                return false;
             }
 
-            const prevSymbol = cm.getRange({
-                line: event.from.line,
-                ch: event.from.ch - 1
-            }, event.from)
+            const prevSymbol = cm.getRange(
+                {
+                    line: event.from.line,
+                    ch: event.from.ch - 1,
+                },
+                event.from
+            );
 
             // TODO: Check if next symbol is empty as well
 
-            return prevSymbol.trim() === ''
-        }
+            return prevSymbol.trim() === "";
+        };
 
         invisibleMarkdownEditors.forEach((editor) => {
-            const { autocompleteHintRef } = editor.element.parentElement.dataset
+            const { autocompleteHintRef } = editor.element.parentElement.dataset;
             if (!autocompleteHintRef) {
-                return
+                return;
             }
 
-            let autocomplete = null
+            let autocomplete = null;
 
-            const fetchAutocompleteSuggestions = throttle((sample, hintVue) => {
+            const fetchAutocompleteSuggestions = throttle((sample, $hintVue) => {
                 fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
                     .then((res) => {
                         if (!res.url.includes(`sample=${sample}`)) {
-                            return
+                            return;
                         }
 
-                        return res.json()
+                        return res.json();
                     })
                     .then((data) => {
                         if (!autocomplete) {
-                            return
+                            return;
                         }
 
-                        hintVue.$data.users = data.suggested_users
+                        $hintVue.$data.users = data.suggested_users;
                     });
-            }, 600)
+            }, 600);
 
             editor.codemirror.on("change", (cm, event) => {
                 // TODO: Find better way to pass vm here
-                const hintVue = window.vm.$refs[autocompleteHintRef]
+                const $hintVue = window.vm.$refs[autocompleteHintRef];
 
                 // TODO: How the fuck is to listen Vue events from here properly!?
-                hintVue.$data.onClick = (user) => {
+                $hintVue.$data.onClick = (user) => {
                     if (!autocomplete) {
-                        return
+                        return;
                     }
 
-                    cm.replaceRange(`${user.slug} `, {
-                        line: autocomplete.line,
-                        ch: autocomplete.ch + 1
-                    }, {
-                        line: autocomplete.line,
-                        ch: autocomplete.ch + user.slug.length + 1
-                    })
+                    cm.replaceRange(
+                        `${user.slug} `,
+                        {
+                            line: autocomplete.line,
+                            ch: autocomplete.ch + 1,
+                        },
+                        {
+                            line: autocomplete.line,
+                            ch: autocomplete.ch + user.slug.length + 1,
+                        }
+                    );
 
-                    editor.codemirror.focus()
+                    editor.codemirror.focus();
 
-                    hintVue.$data.users = []
-                    autocomplete = null
-                }
+                    $hintVue.$data.users = [];
+                    autocomplete = null;
+                };
 
-                if (!autocomplete && event.origin === '+input' && triggersAutocomplete(cm, event)) {
-                    autocomplete = event.from
-                    editor.codemirror.addWidget({
-                        ...autocomplete,
-                        ch: autocomplete.ch + 1
-                    }, hintVue.$el)
+                if (!autocomplete && event.origin === "+input" && triggersAutocomplete(cm, event)) {
+                    autocomplete = event.from;
+                    editor.codemirror.addWidget(
+                        {
+                            ...autocomplete,
+                            ch: autocomplete.ch + 1,
+                        },
+                        $hintVue.$el
+                    );
                 }
 
                 if (!autocomplete) {
-                    return
+                    return;
                 }
 
-                let sample = cm.getRange(autocomplete, event.from) + event.text.join('')
-                if (sample[0] !== '@') {
-                    hintVue.$data.users = []
-                    autocomplete = null
+                let sample = cm.getRange(autocomplete, event.from) + event.text.join("");
+                if (sample[0] !== "@") {
+                    $hintVue.$data.users = [];
+                    autocomplete = null;
 
-                    return
+                    return;
                 }
 
-                fetchAutocompleteSuggestions(sample.substr(1), hintVue)
+                fetchAutocompleteSuggestions(sample.substr(1), $hintVue);
             });
-        })
+        });
 
         const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
 
