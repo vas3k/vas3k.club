@@ -21,7 +21,7 @@ docker-run-bot:
 	python3 bot/main.py
 
 docker-run-cron:
-    cp /app/etc/crontab /etc/cron.d/crontab
+	cp /app/etc/crontab /etc/cron.d/crontab
 	cron -f
 
 run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
