@@ -11,6 +11,7 @@ RUN apt-get update \
       libgdal-dev \
       make \
       npm \
+      cron \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

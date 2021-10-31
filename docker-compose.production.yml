@@ -53,6 +53,15 @@ services:
     ports:
       - "8816:8816"
 
+  cron:
+    <<: *app
+    command: make docker-run-cron
+    container_name: club_cron
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+
   postgres:
     image: postgres:12
     container_name: club_postgres
