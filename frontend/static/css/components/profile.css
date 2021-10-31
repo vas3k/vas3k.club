@@ -280,6 +280,19 @@
                 font-size: 80% !important;
             }
 
+            @media only screen and (max-width : 570px) {
+                .user-achievement:hover .user-achievement-wrapper {
+                    display: none;
+                }
+                .user-achievement:hover .user-achievement-popup {
+                    position: relative;
+                    top: 0
+                }
+                .user-achievement {
+                    padding: 10px 20px;
+                }
+            }
+
                 .user-achievement:hover .user-achievement-popup {
                     display: block;
                 }
