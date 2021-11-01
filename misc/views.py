@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
 import pytz
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
@@ -32,8 +32,8 @@ def stats(request):
         User.registered_members().filter(id=to_user).first() for to_user, _ in UserBadge.objects
         .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))
         .values_list("to_user")
-        .annotate(count=Count("to_user"))
-        .order_by("-count")[:10]
+        .annotate(sum_price=Sum("badge__price_days"))
+        .order_by("-sum_price")[:7]  # select more in case someone gets deleted
     ]))[:5]  # filter None
 
     moderators = User.objects\
