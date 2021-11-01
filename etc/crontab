@@ -4,5 +4,5 @@
 0 11 * * 1 root cd /app && python3 manage.py send_weekly_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
 0 5 * * 7 root cd /app && python3 manage.py rebuild_search_index  >/proc/1/fd/1 2>/proc/1/fd/2
 0 8 * * * root cd /app && python3 manage.py replay_stuck_reviews  >/proc/1/fd/1 2>/proc/1/fd/2
-0 * * * * root cd /app && python3 manage.py update_hotness  >/proc/1/fd/1 2>/proc/1/fd/2
+*/10 * * * * root cd /app && python3 manage.py update_hotness  >/proc/1/fd/1 2>/proc/1/fd/2
 */5 * * * * root echo "Crontab is working - watchdog `date`"  >/proc/1/fd/1 2>/proc/1/fd/2
