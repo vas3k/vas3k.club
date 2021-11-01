@@ -65,9 +65,13 @@ psql:
 	psql -h localhost -p 5433 -d vas3k_club -U vas3k
 
 redeploy:
-	cd /var/www/4aff.club
-	docker pull ghcr.io/glader/4aff.club:latest
-	docker-compose -f docker-compose.production.yml --env-file=.env up -d
+	npm run --prefix frontend build
+	docker-compose -f docker-compose.production.yml build club_app
+	docker-compose -f docker-compose.production.yml --env-file=.env up --no-deps -d club_app
+	docker-compose -f docker-compose.production.yml build queue
+	docker-compose -f docker-compose.production.yml --env-file=.env up --no-deps -d queue
+	docker-compose -f docker-compose.production.yml build bot
+	docker-compose -f docker-compose.production.yml --env-file=.env up --no-deps -d bot
 	docker image prune --force
 
 .PHONY: \
