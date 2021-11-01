@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from django.core.management import BaseCommand
@@ -6,11 +7,15 @@ from django.db import connection
 from club.settings import POST_HOTNESS_PERIOD
 from posts.models.post import Post
 
+log = logging.getLogger(__name__)
+
 
 class Command(BaseCommand):
     help = "Updates hotness rank"
 
     def handle(self, *args, **options):
+        log.info("Start updating hotness in posts")
+
         Post.objects.exclude(hotness=0).update(hotness=0)
 
         with connection.cursor() as cursor:
@@ -41,3 +46,5 @@ class Command(BaseCommand):
                 datetime.utcnow() - POST_HOTNESS_PERIOD,
                 datetime.utcnow() - POST_HOTNESS_PERIOD,
             ])
+
+            log.info("Finish updating hotness in posts")
