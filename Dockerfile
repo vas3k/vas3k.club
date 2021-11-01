@@ -17,6 +17,7 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY . /app
+COPY etc/crontab /etc/crontab
 
 RUN cd frontend && npm install && npm run build && cd ..
 
