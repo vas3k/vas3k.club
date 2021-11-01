@@ -7,20 +7,34 @@
 p {
     font-size: 19px;
 }
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
 </style>
 {% endblock %}
 
 {% block title %}
-    💽 Архив с данными
+    💾 Ваш архив с данными готов
 {% endblock %}
 
 {% block body %}
     <p>
-        Мы собрали ваши данные и запаковали в архив. Ссылка для скачивания действительна 24 часа 👇
+        Вот кнопочка чтобы нажимать 👇
     </p>
 
     <p>
-        <a href="{{ url }}" class="button">Скачать</a>
+        <a href="{{ settings.APP_HOST }}{{ url }}" class="button">Скачать архив</a>
     </p>
 
     <br><br><br>
