@@ -95,6 +95,19 @@
             border-radius: var(--block-border-radius);
         }
 
+        .EasyMDEContainer .CodeMirror {
+            border-color: var(--input-border-color);
+        }
+
+        .CodeMirror-line::selection, .CodeMirror-line > span::selection,
+        .CodeMirror-line > span > span::selection {
+            background: var(--input-selection-color);
+        }
+
+        .cm-s-easymde .cm-link {
+            color: var(--input-link);
+        }
+
     .reply-form .button {
         margin-top: 10px;
     }

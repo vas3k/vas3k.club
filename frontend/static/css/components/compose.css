@@ -77,7 +77,7 @@
         font-style: normal;
         font-size: 19px;
         line-height: 1.67;
-        color: #333;
+        color: var(--input-color);
         font-family: var(--serif-font);
         font-weight: 400;
     }
