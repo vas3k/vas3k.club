@@ -2,7 +2,7 @@
     <div class="mention-autocomplete-hint" v-show="users.length > 0">
         <div
             v-for="(user, index) in users"
-            v-bind:class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
+            :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
             @click="onClick(user)"
             class="mention-autocomplete-hint__option"
         >
@@ -70,6 +70,12 @@ export default {
     },
     methods: {
         handleKeydown(event) {
+            if (event.code !== "ArrowDown" && event.code !== "ArrowUp") {
+                return;
+            }
+
+            event.preventDefault();
+
             if (event.code === "ArrowDown" && this.selectedUserIndex + 1 < this.users.length) {
                 this.selectedUserIndex += 1;
             }
