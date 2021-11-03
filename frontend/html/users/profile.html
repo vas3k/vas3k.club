@@ -144,7 +144,7 @@
                     {% render_post intro %}
                 </div>
                 <div class="profile-intro-footer">
-                    <a href="{% url "show_post" intro.type intro.slug %}">
+                    <a href="{% url "show_post" intro.type intro.slug %}#comments">
                         {{ intro.comment_count }} {{ intro.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
                     </a>
                 </div>
