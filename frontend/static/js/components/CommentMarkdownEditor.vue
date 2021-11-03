@@ -62,38 +62,24 @@ export default {
         }
 
         const $markdownElementDiv = this.$el.children[0];
-        const $hintElementDiv = this.$refs["mention-autocomplete-hint"];
-
         this.editor = createMarkdownEditor($markdownElementDiv, {
             toolbar: false,
         });
 
+        this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
+
         this.editor.codemirror.on("change", (cm, event) => {
-            if (!this.autocomplete && event.origin === "+input" && this.triggersAutocomplete(cm, event)) {
-                this.autocomplete = event.from;
-
-                this.editor.codemirror.addWidget(
-                    {
-                        ...this.autocomplete,
-                        ch: this.autocomplete.ch + 1,
-                    },
-                    $hintElementDiv
-                );
-            }
-
             if (!this.autocomplete) {
                 return;
             }
 
-            let sample = cm.getRange(this.autocomplete, event.from) + event.text.join("");
-            if (sample[0] !== "@") {
-                this.users = [];
-                this.autocomplete = null;
+            const value = this.editor.value();
+            const line = value.split("\n")[this.autocomplete.line];
 
-                return;
-            }
+            const cursor = this.editor.codemirror.getCursor();
+            const sample = line.substring(this.autocomplete.ch, cursor.ch);
 
-            this.fetchAutocompleteSuggestions(sample.substr(1));
+            this.fetchAutocompleteSuggestions(sample.substring(1));
         });
     },
     watch: {
@@ -154,6 +140,8 @@ export default {
                 return;
             }
 
+            const cursor = this.editor.codemirror.getCursor();
+
             this.editor.codemirror.replaceRange(
                 `${user.slug} `,
                 {
@@ -161,15 +149,12 @@ export default {
                     ch: this.autocomplete.ch + 1,
                 },
                 {
-                    line: this.autocomplete.line,
-                    ch: this.autocomplete.ch + user.slug.length + 1,
+                    line: cursor.line,
+                    ch: cursor.ch,
                 }
             );
 
-            this.editor.codemirror.focus();
-
-            this.users = [];
-            this.autocomplete = null;
+            this.resetAutocomplete();
         },
         fetchAutocompleteSuggestions: throttle(function (sample) {
             fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
@@ -181,7 +166,6 @@ export default {
                     return res.json();
                 })
                 .then((data) => {
-                    console.log("data", data);
                     if (!this.autocomplete) {
                         return;
                     }
@@ -189,6 +173,33 @@ export default {
                     this.users = data.suggested_users;
                 });
         }, 600),
+        handleAutocompleteHintTrigger(cm, event) {
+            if (this.autocomplete) {
+                const eventText = event.text.join("");
+                if (event.origin === "+input" && [" ", "@"].includes(eventText)) {
+                    this.resetAutocomplete();
+                }
+
+                return;
+            }
+
+            if (event.origin === "+input" && this.triggersAutocomplete(cm, event)) {
+                this.autocomplete = event.from;
+
+                this.editor.codemirror.addWidget(
+                    {
+                        ...this.autocomplete,
+                        ch: this.autocomplete.ch + 1,
+                    },
+                    this.$refs["mention-autocomplete-hint"]
+                );
+            }
+        },
+        resetAutocomplete() {
+            this.autocomplete = null;
+            this.users = [];
+            this.editor.codemirror.focus();
+        },
     },
 };
 </script>
