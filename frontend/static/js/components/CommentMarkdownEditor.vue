@@ -53,7 +53,7 @@
 </style>
 
 <script>
-import { createMarkdownEditor, isMobile } from "../common/utils.js";
+import { createMarkdownEditor, isMobile, throttle } from "../common/utils.js";
 
 export default {
     mounted() {
@@ -171,7 +171,7 @@ export default {
             this.users = [];
             this.autocomplete = null;
         },
-        fetchAutocompleteSuggestions(sample) {
+        fetchAutocompleteSuggestions: throttle(function (sample) {
             fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
                 .then((res) => {
                     if (!res.url.includes(`sample=${sample}`)) {
@@ -187,7 +187,7 @@ export default {
 
                     this.users = data.suggested_users;
                 });
-        },
+        }, 600),
     },
 };
 </script>
