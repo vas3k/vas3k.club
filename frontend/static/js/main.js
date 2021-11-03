@@ -20,13 +20,13 @@ Vue.component("stripe-checkout-button", () => import("./components/StripeCheckou
 Vue.component("input-length-counter", () => import("./components/InputLengthCounter.vue"));
 Vue.component("friend-button", () => import("./components/FriendButton.vue"));
 Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
-Vue.component("mention-autocomplete-hint", () => import("./components/MentionAutocompleteHint.vue"));
+Vue.component("comment-markdown-editor", () => import("./components/CommentMarkdownEditor.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.
 const noDelimiter = { replace: function () {} };
 
-window.vm = new Vue({
+new Vue({
     el: "#app",
     delimiters: [noDelimiter, noDelimiter], // disable templates
     created() {
@@ -53,7 +53,8 @@ window.vm = new Vue({
             }
 
             // show/hide placeholder with thread length
-            const collapseStub = comment.querySelector(".comment-collapse-stub") || comment.querySelector(".reply-collapse-stub");
+            const collapseStub =
+                comment.querySelector(".comment-collapse-stub") || comment.querySelector(".reply-collapse-stub");
             collapseStub.style.display = collapseStub.style.display !== "block" ? "block" : "none";
             const threadLength = comment.querySelectorAll(".reply").length + 1;
             const pluralForm = pluralize(threadLength, ["комментарий", "комментария", "комментариев"]);

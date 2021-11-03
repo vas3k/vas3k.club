@@ -5,7 +5,7 @@ import Lightense from "lightense-images";
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
 
-import { findParentForm, isCommunicationForm, throttle } from "./common/utils.js";
+import { findParentForm, isCommunicationForm, throttle, createMarkdownEditor, isMobile } from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
 
@@ -32,51 +32,6 @@ const imageUploadOptions = {
         code: imageUploadCode,
     },
 };
-
-const defaultMarkdownEditorOptions = {
-    autoDownloadFontAwesome: false,
-    spellChecker: false,
-    nativeSpellcheck: true,
-    forceSync: true,
-    status: false,
-    inputStyle: "contenteditable",
-    tabSize: 4,
-};
-
-/**
- * Initialize EasyMDE editor
- *
- * @param {Element} element
- * @param {EasyMDE.Options} options
- * @return {EasyMDE}
- */
-function createMarkdownEditor(element, options) {
-    const editor = new EasyMDE({
-        element,
-        ...defaultMarkdownEditorOptions,
-        ...options,
-    });
-
-    // overriding default CodeMirror shortcuts
-    editor.codemirror.addKeyMap({
-        Home: "goLineLeft", // move the cursor to the left side of the visual line it is on
-        End: "goLineRight", // move the cursor to the right side of the visual line it is on
-    });
-
-    // adding ability to fire events on the hidden element
-    if (element.dataset.listen) {
-        const events = element.dataset.listen.split(" ");
-        events.forEach((event) => {
-            try {
-                editor.codemirror.on(event, (e) => e.getTextArea().dispatchEvent(new Event(event)));
-            } catch (e) {
-                console.warn("Invalid event provided", event);
-            }
-        });
-    }
-
-    return editor;
-}
 
 const App = {
     onCreate() {
@@ -141,7 +96,7 @@ const App = {
     },
 
     initializeMarkdownEditor() {
-        if (this.isMobile()) return []; // we don't need fancy features on mobiles
+        if (isMobile()) return []; // we don't need fancy features on mobiles
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
@@ -209,118 +164,7 @@ const App = {
             []
         );
 
-        const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
-            (editors, element) => {
-                const editor = createMarkdownEditor(element, {
-                    toolbar: false,
-                });
-
-                return [...editors, editor];
-            },
-            []
-        );
-
-        const triggersAutocomplete = (cm, event) => {
-            const eventText = event.text.join("");
-            if (eventText !== "@") {
-                return false;
-            }
-
-            const prevSymbol = cm.getRange(
-                {
-                    line: event.from.line,
-                    ch: event.from.ch - 1,
-                },
-                event.from
-            );
-
-            // TODO: Check if next symbol is empty as well
-
-            return prevSymbol.trim() === "";
-        };
-
-        invisibleMarkdownEditors.forEach((editor) => {
-            const { autocompleteHintRef } = editor.element.parentElement.dataset;
-            if (!autocompleteHintRef) {
-                return;
-            }
-
-            let autocomplete = null;
-
-            const fetchAutocompleteSuggestions = throttle((sample, $hintVue) => {
-                fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
-                    .then((res) => {
-                        if (!res.url.includes(`sample=${sample}`)) {
-                            return;
-                        }
-
-                        return res.json();
-                    })
-                    .then((data) => {
-                        if (!autocomplete) {
-                            return;
-                        }
-
-                        $hintVue.$data.users = data.suggested_users;
-                    });
-            }, 600);
-
-            editor.codemirror.on("change", (cm, event) => {
-                // TODO: Find better way to pass vm here
-                const $hintVue = window.vm.$refs[autocompleteHintRef];
-
-                // TODO: How the fuck is to listen Vue events from here properly!?
-                $hintVue.$data.onAutocomplete = (user) => {
-                    if (!autocomplete) {
-                        return;
-                    }
-
-                    cm.replaceRange(
-                        `${user.slug} `,
-                        {
-                            line: autocomplete.line,
-                            ch: autocomplete.ch + 1,
-                        },
-                        {
-                            line: autocomplete.line,
-                            ch: autocomplete.ch + user.slug.length + 1,
-                        }
-                    );
-
-                    editor.codemirror.focus();
-
-                    $hintVue.$data.users = [];
-                    autocomplete = null;
-                };
-
-                if (!autocomplete && event.origin === "+input" && triggersAutocomplete(cm, event)) {
-                    autocomplete = event.from;
-                    editor.codemirror.addWidget(
-                        {
-                            ...autocomplete,
-                            ch: autocomplete.ch + 1,
-                        },
-                        $hintVue.$el
-                    );
-                }
-
-                if (!autocomplete) {
-                    return;
-                }
-
-                let sample = cm.getRange(autocomplete, event.from) + event.text.join("");
-                if (sample[0] !== "@") {
-                    $hintVue.$data.users = [];
-                    autocomplete = null;
-
-                    return;
-                }
-
-                fetchAutocompleteSuggestions(sample.substr(1), $hintVue);
-            });
-        });
-
-        const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
+        const allEditors = fullMarkdownEditors;
 
         allEditors.forEach((editor) => {
             editor.element.form.addEventListener("keydown", (e) => {
@@ -378,25 +222,6 @@ const App = {
                 submitButton.setAttribute("disabled", true);
             });
         });
-    },
-    isMobile() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        // Windows Phone must come first because its UA also contains "Android"
-        if (/windows phone/i.test(userAgent)) {
-            return true;
-        }
-
-        if (/android/i.test(userAgent)) {
-            return true;
-        }
-
-        // iOS detection from: http://stackoverflow.com/a/9039885/177710
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-            return true;
-        }
-
-        return false;
     },
 };
 
