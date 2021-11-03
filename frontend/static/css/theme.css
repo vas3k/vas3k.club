@@ -12,7 +12,7 @@
     --button-hover-bg-color: #FFF;
     --button-hover-border: solid 2px #333;
 
-    --badge-color: #ffc455;
+    --badge-color: rgba(255, 196, 85, 0.91);
 }
 
 html, html[theme="light"] {
@@ -42,6 +42,14 @@ html, html[theme="light"] {
 
     --select-color: #333;
     --select-bg-color: #FFF;
+
+    --input-color: #000;
+    --input-bg-color: #fff;
+    --input-border-color: #ddd;
+    --input-toolbar-bg: #fff;
+    --input-toolbar-button-color: #000;
+    --input-link: #7f8c8d;
+    --input-selection-color: #d7d4f0;
 }
 
 html[theme="dark"] {
@@ -71,6 +79,14 @@ html[theme="dark"] {
 
     --select-color: #333;
     --select-bg-color: #FFF;
+
+    --input-color: #fff;
+    --input-bg-color: #373c48;
+    --input-border-color: #333;
+    --input-toolbar-bg: #252a35;
+    --input-toolbar-button-color: #fff;
+    --input-link: #b3b6ff;
+    --input-selection-color: #978fd8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -180,6 +196,9 @@ select,
     resize: vertical;
     box-sizing: border-box;
     line-height: 1.4em;
+    background: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--input-color);
 }
 
     input:focus,
@@ -191,7 +210,15 @@ select,
         .editor-toolbar {
             border: none;
             box-shadow: 0 4px 8px -2px rgba(9,30,66,.25), 0 0 0 1px rgba(9,30,66,.08);
-            background-color: #fff;
+            background: var(--input-toolbar-bg);
+        }
+
+        .editor-toolbar button {
+            color: var(--input-toolbar-button-color);
+        }
+
+        .editor-toolbar button:hover {
+            background: var(--input-bg-color);
         }
 
     input:hover,

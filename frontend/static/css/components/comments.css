@@ -95,6 +95,19 @@
             border-radius: var(--block-border-radius);
         }
 
+        .EasyMDEContainer .CodeMirror {
+            border-color: var(--input-border-color);
+        }
+
+        .CodeMirror-line::selection, .CodeMirror-line > span::selection,
+        .CodeMirror-line > span > span::selection {
+            background: var(--input-selection-color);
+        }
+
+        .cm-s-easymde .cm-link {
+            color: var(--input-link);
+        }
+
     .reply-form .button {
         margin-top: 10px;
     }
@@ -202,6 +215,12 @@
 
         .comment:hover .comment-button-visible-on-hover {
             visibility: visible;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .comment-button-visible-on-hover {
+                visibility: visible;
+            }
         }
 
     .comment-badge-button {
@@ -534,3 +553,7 @@
     .comment-is-new .comment-is-new {
         background-color: transparent;
     }
+
+.comment-is-badged {
+    border: solid 3px var(--badge-color);
+}

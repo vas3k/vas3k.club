@@ -434,6 +434,11 @@ input[type=range]:focus::-ms-fill-upper {
             margin: 0 auto;
         }
 
+        .form-row input::selection,
+        .form-row textarea::selection {
+            background: var(--input-selection-color);
+        }
+
             .form-row textarea {
                 padding: 10px;
             }

@@ -144,25 +144,9 @@
                     {% render_post intro %}
                 </div>
                 <div class="profile-intro-footer">
-                    <a href="{% url "show_post" intro.type intro.slug %}">
+                    <a href="{% url "show_post" intro.type intro.slug %}#comments">
                         {{ intro.comment_count }} {{ intro.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
                     </a>
-                </div>
-            </div>
-        {% endif %}
-
-        {% if achievements %}
-            <div class="profile-achievements">
-                <div class="user-achievements">
-                    {% for achievement in achievements %}
-                        <span class="user-achievement" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
-                            <span class="user-achievement-wrapper">
-                                <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
-                                <span class="user-achievement-name">{{ achievement.name }}</span>
-                            </span>
-                            <span class="user-achievement-popup" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>{{ achievement.description }}</span>
-                        </span>
-                    {% endfor %}
                 </div>
             </div>
         {% endif %}
@@ -225,31 +209,21 @@
             {% endfor %}
         {% endif %}
 
-        {% if expertises or me.id == user.id %}
-            <div class="profile-header">Я шарю в...</div>
-            <div class="block profile-expertise">
-                {% if expertises %}
-                    <div class="profile-expertise-rows" id="expertises">
-                        {% for expertise in expertises %}
-                            <div class="user-expertise-row" id="expertise-{{ expertise.expertise }}">
-                                <div class="user-expertise-row-name">
-                                    {{ expertise.name }}
-                                    {% if me.id == user.id %}
-                                        <a href="{% url "delete_expertise" expertise.expertise %}" class="user-expertise-delete" @click.prevent="deleteExpertise">[x]</a>
-                                    {% endif %}
-                                </div>
-                                <div class="user-expertise-row-bar">
-                                    <div class="user-expertise-row-bar-inner" style="width: {{ expertise.value }}%;"></div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% if me.id == user.id %}
-                    <span class="button profile-expertise-add-button" @click="shownWindow = 'add-expertise'">
-                        Расскажи что умеешь
-                    </span>
-                {% endif %}
+        {% if achievements %}
+            <div class="profile-header">Награды</div>
+
+            <div class="profile-achievements">
+                <div class="user-achievements">
+                    {% for achievement in achievements %}
+                        <span class="user-achievement" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+                            <span class="user-achievement-wrapper">
+                                <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
+                                <span class="user-achievement-name">{{ achievement.name }}</span>
+                            </span>
+                            <span class="user-achievement-popup" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>{{ achievement.description }}</span>
+                        </span>
+                    {% endfor %}
+                </div>
             </div>
         {% endif %}
 
@@ -278,6 +252,12 @@
                     {% include "comments/types/snippet.html" with comment=comment %}
                 {% endfor %}
             </div>
+
+            {% if comments_total > comments|length %}
+                <div class="profile-more">
+                    <a href="{% url "profile_comments" user.slug  %}" class="button button-inverted">Все {{ comments_total }} {{ comments_total|rupluralize:"комментарий,комментария,комментариев" }}...</a>
+                </div>
+            {% endif %}
         {% endif %}
 
         {% if posts %}
@@ -290,6 +270,12 @@
                     {% include "posts/items/items.html" %}
                 {% endfor %}
             </div>
+
+            {% if posts_total > posts|length %}
+                <div class="profile-more">
+                    <a href="{% url "profile_posts" user.slug  %}" class="button button-inverted">Все {{ posts_total }} {{ posts_total|rupluralize:"пост,поста,постов" }}...</a>
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 

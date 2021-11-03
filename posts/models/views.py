@@ -77,10 +77,10 @@ class PostView(models.Model):
 
     @classmethod
     def increment_unread_comments(cls, comment):
-        PostView.objects.filter(post=comment.post, last_view_at__lt = comment.created_at, user__isnull=False)\
+        PostView.objects.filter(post=comment.post, last_view_at__lt=comment.created_at, user__isnull=False)\
             .update(unread_comments=F("unread_comments") + 1)
 
     @classmethod
     def decrement_unread_comments(cls, comment):
-        PostView.objects.filter(post=comment.post, last_view_at__lt = comment.created_at, user__isnull=False)\
+        PostView.objects.filter(post=comment.post, last_view_at__lt=comment.created_at, user__isnull=False)\
             .update(unread_comments=F("unread_comments") - 1)

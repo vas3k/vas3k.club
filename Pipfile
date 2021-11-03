@@ -9,7 +9,8 @@ pytest = "*"
 django-debug-toolbar = "*"
 
 [packages]
-django = "==3.2.5"
+django = "==3.2.8"
+django-webpack-loader = "1.4.1"
 requests = "==2.23.0"
 pyjwt = "==1.7.1"
 cryptography = ">=3.3.2"
@@ -27,12 +28,10 @@ redis = ">=3.4.1"
 python-dotenv = ">=0.12"
 newspaper3k = ">=0.2.8"
 django-redis = "==4.11.0"
-nltk = "==3.4.5"
 gunicorn = "==20.0.4"
 uvicorn = "*"
 uvloop = "*"
 premailer = "==3.6.1"
-django-webpack-loader = "*"
 typus = "*"
 stripe = "==2.55.0"
 icalendar = "*"
@@ -41,6 +40,3 @@ croniter = "*"
 
 [requires]
 python_version = "3.8"
-
-[scripts]
-nltk_download = "python -m nltk.downloader all"

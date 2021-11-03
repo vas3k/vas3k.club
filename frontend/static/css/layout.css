@@ -62,7 +62,9 @@
 
     .menu-simplified {
         grid-template-columns: auto;
-        justify-content: center;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: row;
     }
 
 .content {
@@ -117,7 +119,8 @@
         grid-row-start: 1;
         grid-row-end: 3;
         justify-self: start;
-        align-items: flex-start;
+        display: flex;
+        align-items: center;
     }
 
     .feed-post-votes {
@@ -126,7 +129,8 @@
         grid-row-start: 1;
         grid-row-end: 3;
         justify-self: end;
-        align-items: flex-start;
+        display: flex;
+        align-items: center;
     }
 
     .feed-post-header {

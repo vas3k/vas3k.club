@@ -102,6 +102,12 @@
             text-decoration: none;
         }
 
+    .profile-more {
+        text-align: center;
+        font-size: 90%;
+        padding-bottom: 50px;
+    }
+
     .profile-user-edit {
         display: block;
         text-align: right;
