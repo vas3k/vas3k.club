@@ -46,7 +46,7 @@ export default {
                 this.selectedUserIndex = 0;
                 document.addEventListener("keydown", this.handleKeydown, true);
             } else {
-                document.removeEventListener("keydown", this.handleKeydown);
+                document.removeEventListener("keydown", this.handleKeydown, true);
             }
         },
     },
@@ -167,8 +167,6 @@ export default {
 
             const cursor = this.editor.codemirror.getCursor();
             const sample = line.substring(this.autocomplete.ch, cursor.ch).substring(1);
-
-            console.log("sample", sample, this.autocompleteCache);
 
             if (sample.length < 3 || this.autocompleteCache[sample]) {
                 // TODO: Populate autocompleteCache with post users
