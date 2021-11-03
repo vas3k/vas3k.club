@@ -2,29 +2,24 @@ version: "3.7"
 
 services:
   club_app: &app
-    build:
-      dockerfile: Dockerfile
-      context: .
+        image: ghcr.io/vas3k/vas3k.club:latest
     command: make docker-run-production
     container_name: club_app
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
       - DEBUG=false
-      - APP_HOST=https://vas3k.club
-      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
       - POSTGRES_PASSWORD=vas3k
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
-      - EMAIL_HOST
-      - EMAIL_PORT
-      - DEFAULT_FROM_EMAIL
+    env_file:
+      - .env
     restart: always
     volumes:
-      - ./frontend/static:/app/frontend/static
+      - ./frontend/static:/tmp/static
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres

@@ -31,6 +31,7 @@ docker-run-dev:  ## Runs dev server in docker
 
 docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate
+	cp -r /app/frontend/static /tmp/
 	gunicorn club.asgi:application -w 7 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8814 --capture-output --log-level debug --access-logfile - --error-logfile -
 
 help:  ## Display this help
