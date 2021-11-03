@@ -175,12 +175,13 @@ export default {
             fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
                 .then((res) => {
                     if (!res.url.includes(`sample=${sample}`)) {
-                        return;
+                        return { suggested_users: [] };
                     }
 
                     return res.json();
                 })
                 .then((data) => {
+                    console.log("data", data);
                     if (!this.autocomplete) {
                         return;
                     }
