@@ -3,7 +3,7 @@
 # Makes shell non-interactive and exit on any error
 .SHELLFLAGS = -ec
 
-PROJECT_NAME=vas3k_club
+PROJECT_NAME=4aff_club
 
 run-dev:  ## Runs dev server
 	pipenv run python manage.py runserver 0.0.0.0:8000
@@ -19,6 +19,10 @@ run-bot:  ## Runs telegram bot
 
 docker-run-bot:
 	python3 bot/main.py
+
+docker-run-cron:
+	env >> /etc/environment
+	cron -f -l 2
 
 run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application

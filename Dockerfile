@@ -11,11 +11,13 @@ RUN apt-get update \
       libgdal-dev \
       make \
       npm \
+      cron \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY . /app
+COPY etc/crontab /etc/crontab
 
 RUN cd frontend && npm install && npm run build && cd ..
 

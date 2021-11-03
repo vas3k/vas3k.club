@@ -1,9 +1,7 @@
-30 2 * * *  /home/vas3k/backup.sh >> /home/vas3k/backup.log 2>&1
-0 1 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py delete_users >>/home/vas3k/crons.log 2>&1
-0 3 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py renew_subscriptions >>/home/vas3k/crons.log 2>&1
-0 9 * * 2-6 cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py send_daily_digest --production true >>/home/vas3k/crons.log 2>&1
-0 11 * * 1 cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py send_weekly_digest --production true >>/home/vas3k/crons.log 2>&1
-0 5 * * 7 cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py rebuild_search_index >>/home/vas3k/crons.log 2>&1
-0 8 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py replay_stuck_reviews >>/home/vas3k/crons.log 2>&1
-0 8 * * * find /home/vas3k/vas3k.club/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete >>/home/vas3k/crons.log 2>&1
-13 */3 * * * cd /home/vas3k/vas3k.club && /usr/local/bin/pipenv run python manage.py update_hotness >>/home/vas3k/crons.log 2>&1
+0 1 * * * root cd /app && python3 manage.py delete_users  >/proc/1/fd/1 2>/proc/1/fd/2
+0 3 * * * root cd /app && python3 manage.py renew_subscriptions  >/proc/1/fd/1 2>/proc/1/fd/2
+0 9 * * 2-6 root cd /app && python3 manage.py send_daily_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
+0 11 * * 1 root cd /app && python3 manage.py send_weekly_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
+0 5 * * 7 root cd /app && python3 manage.py rebuild_search_index  >/proc/1/fd/1 2>/proc/1/fd/2
+0 8 * * * root cd /app && python3 manage.py replay_stuck_reviews  >/proc/1/fd/1 2>/proc/1/fd/2
+13 */3 * * * root cd /app && python3 manage.py update_hotness  >/proc/1/fd/1 2>/proc/1/fd/2
