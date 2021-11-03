@@ -15,7 +15,13 @@
 </template>
 
 <script>
-import { createMarkdownEditor, isMobile, throttle } from "../common/utils.js";
+import {
+    createMarkdownEditor,
+    isMobile,
+    throttle,
+    handleFormSubmissionShortcuts,
+    imageUploadOptions,
+} from "../common/utils.js";
 
 export default {
     mounted() {
@@ -28,21 +34,11 @@ export default {
             toolbar: false,
         });
 
+        this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
+        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, imageUploadOptions);
+
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
-
-        this.editor.codemirror.on("change", (cm, event) => {
-            if (!this.autocomplete) {
-                return;
-            }
-
-            const value = this.editor.value();
-            const line = value.split("\n")[this.autocomplete.line];
-
-            const cursor = this.editor.codemirror.getCursor();
-            const sample = line.substring(this.autocomplete.ch, cursor.ch);
-
-            this.fetchAutocompleteSuggestions(sample.substring(1));
-        });
+        this.editor.codemirror.on("change", this.handleSuggest);
     },
     watch: {
         users: function (val, oldVal) {
@@ -156,6 +152,19 @@ export default {
                     this.$refs["mention-autocomplete-hint"]
                 );
             }
+        },
+        handleSuggest(cm, event) {
+            if (!this.autocomplete) {
+                return;
+            }
+
+            const value = this.editor.value();
+            const line = value.split("\n")[this.autocomplete.line];
+
+            const cursor = this.editor.codemirror.getCursor();
+            const sample = line.substring(this.autocomplete.ch, cursor.ch);
+
+            this.fetchAutocompleteSuggestions(sample.substring(1));
         },
         resetAutocomplete() {
             this.autocomplete = null;

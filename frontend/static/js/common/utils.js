@@ -87,6 +87,46 @@ export function createMarkdownEditor(element, options) {
     return editor;
 }
 
+export const imageUploadOptions = {
+    uploadUrl: imageUploadUrl,
+    uploadMethod: "POST",
+    uploadFieldName: "media",
+    jsonFieldName: "uploaded",
+    progressText: "![Загружаю файл...]()",
+    urlText: "![]({filename})",
+    errorText: "Ошибка при загрузке файла :(",
+    allowedTypes: [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/gif",
+        "video/mp4",
+        "video/quicktime", // .mov (macOS' default record format)
+    ],
+    extraHeaders: {
+        Accept: "application/json",
+    },
+    extraParams: {
+        code: imageUploadCode,
+    },
+};
+
+export function handleFormSubmissionShortcuts(event) {
+    const isEnter = event.key === "Enter";
+    const isCtrlOrCmd = event.ctrlKey || event.metaKey;
+    const isEnterAndCmd = isEnter && isCtrlOrCmd;
+    if (!isEnterAndCmd) {
+        return;
+    }
+
+    const form = findParentForm(e.target);
+    if (!form || !isCommunicationForm(form)) {
+        return;
+    }
+
+    form.submit();
+}
+
 export function isMobile() {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 

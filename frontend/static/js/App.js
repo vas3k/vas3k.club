@@ -2,36 +2,15 @@ import twemoji from "twemoji";
 import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
-import "./inline-attachment";
-import "./codemirror-4.inline-attachment";
-
-import { findParentForm, isCommunicationForm, throttle, createMarkdownEditor, isMobile } from "./common/utils.js";
+import {
+    isCommunicationForm,
+    imageUploadOptions,
+    createMarkdownEditor,
+    isMobile,
+    handleFormSubmissionShortcuts,
+} from "./common/utils.js";
 
 const INITIAL_SYNC_DELAY = 50;
-
-const imageUploadOptions = {
-    uploadUrl: imageUploadUrl,
-    uploadMethod: "POST",
-    uploadFieldName: "media",
-    jsonFieldName: "uploaded",
-    progressText: "![Загружаю файл...]()",
-    urlText: "![]({filename})",
-    errorText: "Ошибка при загрузке файла :(",
-    allowedTypes: [
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-        "image/gif",
-        "video/mp4",
-        "video/quicktime", // .mov (macOS' default record format)
-    ],
-    extraHeaders: {
-        Accept: "application/json",
-    },
-    extraParams: {
-        code: imageUploadCode,
-    },
-};
 
 const App = {
     onCreate() {
@@ -167,21 +146,7 @@ const App = {
         const allEditors = fullMarkdownEditors;
 
         allEditors.forEach((editor) => {
-            editor.element.form.addEventListener("keydown", (e) => {
-                const isEnter = event.key === "Enter";
-                const isCtrlOrCmd = event.ctrlKey || event.metaKey;
-                const isEnterAndCmd = isEnter && isCtrlOrCmd;
-                if (!isEnterAndCmd) {
-                    return;
-                }
-
-                const form = findParentForm(e.target);
-                if (!form || !isCommunicationForm(form)) {
-                    return;
-                }
-
-                form.submit();
-            });
+            editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
 
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
         });

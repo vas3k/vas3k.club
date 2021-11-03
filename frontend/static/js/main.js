@@ -2,6 +2,9 @@ import Vue from "vue";
 
 import "../css/index.css";
 
+import "./inline-attachment";
+import "./codemirror-4.inline-attachment";
+
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
 import { pluralize } from "./common/utils.js";
