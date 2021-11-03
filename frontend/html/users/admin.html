@@ -31,6 +31,12 @@
                     {% if info_form.email.errors %}<span class="form-row-errors">{{ info_form.email.errors }}</span>{% endif %}
                 </div>
 
+                <div class="form-row">
+                    {{ info_form.moderation_notes.label_tag }}
+                    {{ info_form.moderation_notes }}
+                    {% if info_form.moderation_notes.errors %}<span class="form-row-errors">{{ info_form.moderation_notes.errors }}</span>{% endif %}
+                </div>
+
                 <button type="submit" class="button">Сохранить</button>
             </form>
         </div>

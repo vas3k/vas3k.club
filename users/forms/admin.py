@@ -100,6 +100,12 @@ class UserInfoAdminForm(ModelForm):
         label="E-mail",
         required=True
     )
+    moderation_notes = forms.CharField(
+        label="Заметки модератора",
+        max_length=5000,
+        widget=forms.Textarea(),
+        required=False,
+    )
 
     class Meta:
         model = User
@@ -107,4 +113,5 @@ class UserInfoAdminForm(ModelForm):
             "slug",
             "full_name",
             "email",
+            "moderation_notes",
         ]

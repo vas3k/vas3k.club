@@ -103,6 +103,7 @@ class User(models.Model, ModelDiffMixin):
         default=MODERATION_STATUS_INTRO, null=False,
         db_index=True
     )
+    moderation_notes = models.TextField(null=True)
 
     roles = ArrayField(models.CharField(max_length=32, choices=ROLES), default=list, null=False)
 
