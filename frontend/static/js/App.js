@@ -270,7 +270,7 @@ const App = {
                 const $hintVue = window.vm.$refs[autocompleteHintRef];
 
                 // TODO: How the fuck is to listen Vue events from here properly!?
-                $hintVue.$data.onClick = (user) => {
+                $hintVue.$data.onAutocomplete = (user) => {
                     if (!autocomplete) {
                         return;
                     }

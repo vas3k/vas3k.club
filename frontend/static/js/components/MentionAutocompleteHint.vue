@@ -3,7 +3,7 @@
         <div
             v-for="(user, index) in users"
             :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
-            @click="onClick(user)"
+            @click="onAutocomplete(user)"
             class="mention-autocomplete-hint__option"
         >
             {{ user.slug }}<span class="mention-autocomplete-hint__option-fullName">{{ user.fullName }}</span>
@@ -55,7 +55,7 @@ export default {
         users: function (val, oldVal) {
             if (val.length > 0) {
                 this.selectedUserIndex = 0;
-                document.addEventListener("keydown", this.handleKeydown);
+                document.addEventListener("keydown", this.handleKeydown, true);
             } else {
                 document.removeEventListener("keydown", this.handleKeydown);
             }
@@ -65,22 +65,27 @@ export default {
         return {
             selectedUserIndex: null,
             users: [],
-            onClick: () => {},
+            onAutocomplete: () => {},
         };
     },
     methods: {
         handleKeydown(event) {
-            if (event.code !== "ArrowDown" && event.code !== "ArrowUp") {
+            if (
+                event.code !== "ArrowDown" &&
+                event.code !== "ArrowUp" &&
+                event.code !== "Tab" &&
+                event.code !== "Enter"
+            ) {
                 return;
             }
 
             event.preventDefault();
 
-            if (event.code === "ArrowDown" && this.selectedUserIndex + 1 < this.users.length) {
+            if (event.code === "Enter" || event.code === "Tab") {
+                this.onAutocomplete(this.users[this.selectedUserIndex]);
+            } else if (event.code === "ArrowDown" && this.selectedUserIndex + 1 < this.users.length) {
                 this.selectedUserIndex += 1;
-            }
-
-            if (event.code === "ArrowUp" && this.selectedUserIndex - 1 >= 0) {
+            } else if (event.code === "ArrowUp" && this.selectedUserIndex - 1 >= 0) {
                 this.selectedUserIndex -= 1;
             }
         },
