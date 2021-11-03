@@ -54,6 +54,7 @@ export default {
         return {
             selectedUserIndex: null,
             users: [],
+            autocompleteCache: {},
         };
     },
     methods: {
@@ -129,12 +130,14 @@ export default {
                     }
 
                     this.users = data.suggested_users;
+                    this.autocompleteCache[sample] = this.users;
                 });
         }, 600),
         handleAutocompleteHintTrigger(cm, event) {
             if (this.autocomplete) {
                 const eventText = event.text.join("");
-                if (event.origin === "+input" && [" ", "@"].includes(eventText)) {
+                const eventRemoved = event.removed.join("");
+                if ([" ", "@"].includes(eventText) || eventRemoved.includes("@")) {
                     this.resetAutocomplete();
                 }
 
@@ -159,12 +162,22 @@ export default {
             }
 
             const value = this.editor.value();
+
             const line = value.split("\n")[this.autocomplete.line];
 
             const cursor = this.editor.codemirror.getCursor();
-            const sample = line.substring(this.autocomplete.ch, cursor.ch);
+            const sample = line.substring(this.autocomplete.ch, cursor.ch).substring(1);
 
-            this.fetchAutocompleteSuggestions(sample.substring(1));
+            console.log("sample", sample, this.autocompleteCache);
+
+            if (sample.length < 3 || this.autocompleteCache[sample]) {
+                // TODO: Populate autocompleteCache with post users
+                this.users = this.autocompleteCache[sample] || [];
+
+                return;
+            }
+
+            this.fetchAutocompleteSuggestions(sample);
         },
         resetAutocomplete() {
             this.autocomplete = null;
