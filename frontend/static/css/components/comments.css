@@ -204,6 +204,12 @@
             visibility: visible;
         }
 
+        @media only screen and (max-width : 570px) {
+            .comment-button-visible-on-hover {
+                visibility: visible;
+            }
+        }
+
     .comment-badge-button {
         display: inline-block;
         border-radius: 50%;
@@ -534,3 +540,7 @@
     .comment-is-new .comment-is-new {
         background-color: transparent;
     }
+
+.comment-is-badged {
+    border: solid 3px var(--badge-color);
+}

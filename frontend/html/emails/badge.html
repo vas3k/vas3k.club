@@ -50,6 +50,8 @@
         <p style="font-size: 140%; color: #666666; padding-left: 30px;">
             — {{ user_badge.note }}
         </p>
+
+        <p>&nbsp;</p>
     {% endif %}
 
     <a href="{% url "profile_badges" user_badge.to_user.slug %}" style="text-decoration: none;">
