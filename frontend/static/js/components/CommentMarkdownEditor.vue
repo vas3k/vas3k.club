@@ -130,7 +130,10 @@ export default {
                     }
 
                     this.users = data.suggested_users;
-                    this.autocompleteCache[sample] = this.users;
+
+                    this.users.forEach((user) => {
+                        this.autocompleteCache[user.slug] = user;
+                    });
                 });
         }, 600),
         handleAutocompleteHintTrigger(cm, event) {
@@ -170,7 +173,10 @@ export default {
 
             if (sample.length < 3 || this.autocompleteCache[sample]) {
                 // TODO: Populate autocompleteCache with post users
-                this.users = this.autocompleteCache[sample] || [];
+                const cacheKeys = Object.keys(this.autocompleteCache).filter((k) => k.includes(sample));
+                if (cacheKeys) {
+                    this.users = cacheKeys.map((k) => this.autocompleteCache[k]).slice(0, 5);
+                }
 
                 return;
             }
