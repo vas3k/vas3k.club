@@ -6,15 +6,6 @@ on:
       - 4aff
 
 jobs:
-  test_docker_build:
-    name: Test build docker image (remove before merging "feature/docker-deploy")
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - run: docker login ghcr.io -u vas3k -p ${{ secrets.TOKEN }}
-      - run: docker build -t ghcr.io/vas3k/vas3k.club:latest .
-      - run: docker image push ghcr.io/vas3k/vas3k.club:latest
-
   build:
     name: Build image
     runs-on: ubuntu-latest
@@ -22,9 +13,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: '4aff'
-      - run: docker login ghcr.io -u glader -p ${{ secrets.TOKEN }}
-      - run: docker build -t ghcr.io/glader/4aff.club:latest .
-      - run: docker image push ghcr.io/glader/4aff.club:latest
+      - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
+      - run: docker build -t ghcr.io/$GITHUB_ACTOR/club:latest .
+      - run: docker image push ghcr.io/$GITHUB_ACTOR/club:latest
 
   deploy:
     name: Deploy
@@ -69,4 +60,4 @@ jobs:
       - run: echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ${{ env.SSH_KEY }} && chmod 600 ${{ env.SSH_KEY }}
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/4aff.club/.env
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/4aff.club/docker-compose.production.yml
-      - run: ssh -i ${{ env.SSH_KEY }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /var/www/4aff.club && docker login ghcr.io -u glader -p ${{ secrets.TOKEN }} && docker pull ghcr.io/glader/4aff.club:latest && docker-compose -f docker-compose.production.yml --env-file=.env up -d && docker image prune --force"
+      - run: ssh -i ${{ env.SSH_KEY }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /var/www/4aff.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/$GITHUB_ACTOR/club:latest && docker-compose -f docker-compose.production.yml --env-file=.env up -d && docker image prune --force"
