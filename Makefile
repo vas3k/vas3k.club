@@ -20,6 +20,10 @@ run-bot:  ## Runs telegram bot
 docker-run-bot:
 	python3 bot/main.py
 
+docker-run-cron:
+	env >> /etc/environment
+	cron -f -l 2
+
 run-uvicorn:  ## Runs uvicorn (ASGI) server in managed mode
 	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
 
@@ -31,6 +35,7 @@ docker-run-dev:  ## Runs dev server in docker
 
 docker-run-production:  ## Runs production server in docker
 	python3 manage.py migrate
+	cp -r /app/frontend/static /tmp/
 	gunicorn club.asgi:application -w 7 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8814 --capture-output --log-level debug --access-logfile - --error-logfile -
 
 help:  ## Display this help
