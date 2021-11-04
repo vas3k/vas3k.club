@@ -4,8 +4,8 @@ import Lightense from "lightense-images";
 
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
-
-import { findParentForm, isCommunicationForm, getCollapsedCommentThreadsSet } from "./common/comments.js";
+import { findParentForm, isCommunicationForm } from "./common/utils";
+import { getCollapsedCommentThreadsSet } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
 
