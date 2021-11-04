@@ -17,13 +17,13 @@
             {{ posts.paginator.count }} {{ posts.paginator.count|rupluralize:"пост,поста,постов" }}
         </div>
 
-        <div class="profile-comment-list">
+        <div class="profile-list">
             {% if posts %}
                 {% for post in posts %}
                     {% include "posts/items/items.html" with post=post upvote_disabled=True %}
                 {% endfor %}
             {% else %}
-                <div class="profile-comments-list-placeholder">
+                <div class="profile-list-placeholder">
                     Пользователь пока не написал ни одного поста...
                 </div>
             {% endif %}

@@ -1,7 +1,7 @@
-import base64
 from datetime import datetime, timedelta
 from uuid import uuid4
 
+from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import F
@@ -149,11 +149,8 @@ class User(models.Model, ModelDiffMixin):
     def membership_days_left(self):
         return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
 
-    def membership_months_left(self):
-        return self.membership_days_left() / 30
-
-    def membership_years_left(self):
-        return self.membership_days_left() / 365
+    def membership_created_days(self):
+        return (datetime.utcnow() - self.created_at).days
 
     def increment_vote_count(self):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
@@ -162,7 +159,7 @@ class User(models.Model, ModelDiffMixin):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
 
     def get_avatar(self):
-        return self.avatar or self.DEFAULT_AVATAR
+        return self.avatar or settings.DEFAULT_AVATAR
 
     @property
     def is_banned(self):

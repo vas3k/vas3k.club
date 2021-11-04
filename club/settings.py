@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
-    # "badges.apps.BadgesConfig",
+    "badges.apps.BadgesConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -183,6 +183,8 @@ SEARCH_PAGE_SIZE = 25
 PEOPLE_PAGE_SIZE = 18
 PROFILE_COMMENTS_PAGE_SIZE = 100
 PROFILE_POSTS_PAGE_SIZE = 30
+FRIENDS_PAGE_SIZE = 30
+PROFILE_BADGES_PAGE_SIZE = 50
 
 COMMUNITY_APPROVE_UPVOTES = 35
 
@@ -256,6 +258,9 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET") or ""
 STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
+WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
+
+DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
 WAYFORPAY_SECRET = os.getenv("WAYFORPAY_SECRET") or ""
 
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
@@ -267,8 +272,8 @@ RATE_LIMIT_POSTS_PER_DAY = 10
 RATE_LIMIT_COMMENTS_PER_DAY = 200
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
-MIN_FRIEND_COMMENT_LENGTH = 250  # notify comments only from a certain length
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
+MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@4aff.club." \
@@ -280,8 +285,6 @@ DELETED_USERNAME = "deleted"
 POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
-
-WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 WEBPACK_LOADER = {
     "DEFAULT": {

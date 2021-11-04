@@ -102,6 +102,12 @@
             text-decoration: none;
         }
 
+    .profile-more {
+        text-align: center;
+        font-size: 90%;
+        padding-bottom: 50px;
+    }
+
     .profile-user-edit {
         display: block;
         text-align: right;
@@ -154,7 +160,7 @@
             display: block;
             font-size: 180%;
             font-weight: 500;
-            padding: 10px 0 0;
+            padding: 0;
         }
 
         .profile-status-icon {
@@ -284,11 +290,11 @@
                     display: block;
                 }
 
-    .profile-comment-list {
+    .profile-list {
         padding-top: 30px;
     }
 
-        .profile-comments-list-placeholder {
+        .profile-list-placeholder {
             text-align: center;
             padding: 100px 0;
             font-size: 160%;

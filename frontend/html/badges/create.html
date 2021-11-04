@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block content %}
+    <div class="content">
+        <div class="block">
+            {% if comment %}
+                <div class="block-header">🏆 Наградить комментарий</div>
+
+                <div class="clearfix20"></div>
+
+                <div class="block create-badge-comment-snippet">
+                    {% include "comments/types/snippet.html" with comment=comment %}
+                </div>
+            {% elif post %}
+                <div class="block-header">🏆 Наградить пост</div>
+
+                <div class="clearfix20"></div>
+
+                <div>
+                    {% include "posts/items/items.html" with post=post %}
+                </div>
+            {% endif %}
+
+            <div class="block-description block-description-center">
+                <p>
+                    Когда плюсиков уже недостаточно, используйте награды, чтобы выразить особую благодарность автору.
+                    Ваша награда будет висеть рядом с {% if comment %}комментарием{% else %}постом{% endif %} и в его профиле.
+                    Это почётно.
+                </p>
+
+                <p>
+                    Награды стоят денег, ведь иначе они теряют всякую ценность.
+                    Для простоты расчётов мы используем дни оставшегося членства в Клубе.
+                </p>
+
+                <p>
+                    <strong>Ваш баланс:</strong> <span class="badge-price">💎 <a href="{% url "edit_payments" me.slug %}">{{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }}</a></span>
+                </p>
+            </div>
+
+            <form action="." method="post">
+                {% csrf_token %}
+
+                <div class="create-badge-list">
+                    {% for badge in badges %}
+                        <div class="create-badge-list-item zoom-on-hover {% if me.membership_days_left < badge.price_days %}create-badge-list-item-disabled{% endif %}">
+                            <input id="badge_{{ badge.code }}" type="radio" name="badge_code" value="{{ badge.code }}" required {% if forloop.first %}checked{% endif %}>
+                            <label for="badge_{{ badge.code }}" class="block create-badge-list-item-label">
+                                <img class="create-badge-list-item-image" src="{% static "images/badges/big" %}/{{ badge.code }}.png" alt="{{ badge.title }}">
+                                <span class="create-badge-list-item-title">{{ badge.title }}</span>
+                                {% if badge.description %}
+                                    <span class="create-badge-list-item-description">{{ badge.description }}</span>
+                                {% endif %}
+                                <span class="badge-price create-badge-list-item-price">💎 {{ badge.price_days }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <textarea
+                        name="note"
+                        maxlength="1000"
+                        placeholder="Здесь можно добавить сообщение или написать слова благодарности..."
+                        class="create-badge-note">
+                    </textarea>
+                </div>
+
+                <div class="create-badge-button">
+                    <button type="submit" class="button button-big">Выдать награду</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

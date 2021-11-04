@@ -146,6 +146,10 @@
     clear: both;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .button {
     display: inline-block;
     padding: 15px 18px;
@@ -428,6 +432,11 @@ input[type=range]:focus::-ms-fill-upper {
             display: block;
             width: 100%;
             margin: 0 auto;
+        }
+
+        .form-row input::selection,
+        .form-row textarea::selection {
+            background: var(--input-selection-color);
         }
 
             .form-row textarea {
@@ -782,3 +791,9 @@ img.emoji {
             display: block;
             padding: 10px;
         }
+
+
+.zoom-on-hover:hover {
+    transform: scale(1.05);
+    transition: transform .2s;
+}

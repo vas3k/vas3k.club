@@ -66,14 +66,6 @@ def create_comment(request, post_slug):
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
 
-            # auto-subscribe user to top level comments (if not reply)
-            if not comment.reply_to_id:
-                PostSubscription.subscribe(
-                    user=request.me,
-                    post=post,
-                    type=PostSubscription.TYPE_TOP_LEVEL_ONLY,
-                )
-
             return redirect(
                 reverse("show_post", kwargs={
                     "post_type": post.type,
