@@ -3,7 +3,7 @@
         <slot></slot>
         <div class="mention-autocomplete-hint" v-show="users.length > 0" ref="mention-autocomplete-hint">
             <div
-                v-for="(user, index) in users"
+                v-for="(user, index) in users.slice(0, 5)"
                 :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
                 @click="insertSuggestion(user)"
                 class="mention-autocomplete-hint__option"
@@ -57,7 +57,10 @@ export default {
             selectedUserIndex: null,
             postSlug: null,
             users: [],
-            autocompleteCache: {},
+            autocompleteCache: {
+                samples: {},
+                users: {},
+            },
         };
     },
     methods: {
@@ -119,11 +122,11 @@ export default {
             this.resetAutocomplete();
         },
         populateCacheWithPostCommenters: function () {
-            fetch(`/post/${this.$attrs['post-slug']}/commenters?is_ajax=true`)
+            fetch(`/post/${this.$attrs["post-slug"]}/commenters?is_ajax=true`)
                 .then((res) => res.json())
                 .then((data) => {
                     data.post_commenters.forEach((user) => {
-                        this.autocompleteCache[user.slug] = user;
+                        this.autocompleteCache.users[user.slug] = user;
                     });
                 });
         },
@@ -143,8 +146,10 @@ export default {
 
                     this.users = data.suggested_users;
 
+                    this.autocompleteCache.samples[sample] = this.users;
+
                     this.users.forEach((user) => {
-                        this.autocompleteCache[user.slug] = user;
+                        this.autocompleteCache.users[user.slug] = user;
                     });
                 });
         }, 600),
@@ -183,12 +188,20 @@ export default {
             const cursor = this.editor.codemirror.getCursor();
             const sample = line.substring(this.autocomplete.ch, cursor.ch).substring(1);
 
-            if (sample.length < 3 || this.autocompleteCache[sample]) {
-                // TODO: Populate autocompleteCache with post users
-                const cacheKeys = Object.keys(this.autocompleteCache).filter((k) => k.includes(sample));
+            // For short samples lookup users directly
+            if (sample.length < 3) {
+                const cacheKeys = Object.keys(this.autocompleteCache.users).filter((k) => k.includes(sample));
                 if (cacheKeys) {
-                    this.users = cacheKeys.map((k) => this.autocompleteCache[k]).slice(0, 5);
+                    this.users = cacheKeys.map((k) => this.autocompleteCache.users[k]);
                 }
+
+                return;
+            }
+
+            // For longer samples lookup a whole cached sample
+            const cachedSample = this.autocompleteCache.samples[sample];
+            if (cachedSample) {
+                this.users = cachedSample;
 
                 return;
             }
