@@ -105,21 +105,22 @@ export default {
                 return;
             }
 
+            const autocomplete = this.autocomplete
             const cursor = this.editor.codemirror.getCursor();
+
+            this.resetAutocomplete();
 
             this.editor.codemirror.replaceRange(
                 `${user.slug} `,
                 {
-                    line: this.autocomplete.line,
-                    ch: this.autocomplete.ch + 1,
+                    line: autocomplete.line,
+                    ch: autocomplete.ch + 1,
                 },
                 {
                     line: cursor.line,
                     ch: cursor.ch,
                 }
             );
-
-            this.resetAutocomplete();
         },
         populateCacheWithPostCommenters: function () {
             fetch(`/post/${this.$attrs["post-slug"]}/commenters?is_ajax=true`)
