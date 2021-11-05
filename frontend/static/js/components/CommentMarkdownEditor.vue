@@ -39,6 +39,8 @@ export default {
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
+
+        this.populateCacheWithPostCommenters();
     },
     watch: {
         users: function (val, oldVal) {
@@ -53,6 +55,7 @@ export default {
     data() {
         return {
             selectedUserIndex: null,
+            postSlug: null,
             users: [],
             autocompleteCache: {},
         };
@@ -114,6 +117,15 @@ export default {
             );
 
             this.resetAutocomplete();
+        },
+        populateCacheWithPostCommenters: function () {
+            fetch(`/post/${this.$attrs['post-slug']}/commenters?is_ajax=true`)
+                .then((res) => res.json())
+                .then((data) => {
+                    data.post_commenters.forEach((user) => {
+                        this.autocompleteCache[user.slug] = user;
+                    });
+                });
         },
         fetchAutocompleteSuggestions: throttle(function (sample) {
             fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)

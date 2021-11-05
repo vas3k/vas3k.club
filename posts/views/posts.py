@@ -14,6 +14,7 @@ from posts.models.views import PostView
 from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
+from comments.models import Comment
 
 
 def show_post(request, post_type, post_slug):
@@ -263,3 +264,21 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         "post_type": post_type,
         "form": form,
     })
+
+@auth_required
+@ajax_request
+def post_commenters(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+
+    comment_authors = set([
+        comment.author
+        for comment in Comment.objects_for_user(request.me).filter(post=post).all()
+    ])
+
+    return {
+        "post_commenters": [{
+            "slug": author.slug,
+            "fullName": author.full_name
+        } for author in comment_authors],
+    }
+
