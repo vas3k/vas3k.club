@@ -58,7 +58,8 @@ jobs:
           secret_WAYFORPAY_SECRET: ${{ secrets.WAYFORPAY_SECRET }}
           secret_JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
           secret_WEBHOOK_SECRETS: ${{ secrets.WEBHOOK_SECRETS }}
+      - run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - run: echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ${{ env.SSH_KEY }} && chmod 600 ${{ env.SSH_KEY }}
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/4aff.club/.env
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/4aff.club/docker-compose.production.yml
-      - run: ssh -i ${{ env.SSH_KEY }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /var/www/4aff.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA && docker-compose -f docker-compose.production.yml -e GITHUB_SHA=$GITHUB_SHA --env-file=.env up -d && docker image prune --force"
+      - run: ssh -i ${{ env.SSH_KEY }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /var/www/4aff.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA && docker-compose -f docker-compose.production.yml --env-file=.env up -d && docker image prune --force"
