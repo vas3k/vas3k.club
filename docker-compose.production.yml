@@ -1,6 +1,6 @@
 services:
   club_app: &app
-    image: ghcr.io/glader/4aff.club:latest
+    image: ghcr.io/glader/4aff.club:${GITHUB_SHA}
     command: make docker-run-production
     container_name: club_app
     environment:
