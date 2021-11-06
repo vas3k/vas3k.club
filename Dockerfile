@@ -21,7 +21,7 @@ COPY etc/crontab /etc/crontab
 
 RUN cd frontend && npm install && npm run build && cd ..
 
-RUN pip3 install pipenv
+RUN pip3 install pipenv==2021.5.29
 RUN sh -c 'if [ "$MODE" = 'production' ]; then pipenv lock --keep-outdated --requirements > requirements.txt; fi'
 RUN sh -c 'if [ "$MODE" = 'dev' ]; then pipenv lock --dev --requirements > requirements.txt; fi'
 RUN pip3 install -r requirements.txt
