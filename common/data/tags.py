@@ -87,6 +87,7 @@ PERSONAL = [
     ("android", "📱 Android"),
     ("ps", "🎮 PlayStation"),
     ("xbox", "🕹 Xbox"),
+    ("nintendo", "🔴 Nintendo"),
     ("pc", "🖥 Пэка"),
     ("conservative", "📜 Консерватизм"),
     ("centrism", "🎯 Центризм"),
