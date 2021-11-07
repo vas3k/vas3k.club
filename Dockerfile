@@ -18,6 +18,7 @@ WORKDIR /app
 
 COPY . /app
 COPY etc/crontab /etc/crontab
+RUN chmod 600 /etc/crontab
 
 RUN cd frontend && npm install && npm run build && cd ..
 
