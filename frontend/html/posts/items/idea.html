@@ -1,6 +1,20 @@
 {% load posts %}
 {% load text_filters %}
 <article class="block feed-post h-entry {% css_classes post %}">
+    <div class="feed-post-header">
+        <div class="feed-post-title">
+            {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
+
+            <span class="p-name">
+                💡 Идея: <a href="{% url "show_post" post.type post.slug %}" class="post-title-link">{{ post.title | rutypography }}</a>
+            </span>
+
+            {% if post.label %}
+                {% include "posts/widgets/label.html" with label=post.label %}
+            {% endif %}
+        </div>
+    </div>
+
     <div class="feed-post-author">
         <a href="{% url "profile" post.author.slug %}" class="avatar"><img src="{{ post.author.get_avatar }}" alt="Аватар {{ post.author.full_name }}" loading="lazy" /></a>
     </div>
@@ -16,20 +30,6 @@
                      {% endif %}
                      {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
         </post-upvote>
-    </div>
-
-    <div class="feed-post-header">
-        <div class="feed-post-title">
-            {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
-
-            <span class="p-name">
-                💡 Идея: <a href="{% url "show_post" post.type post.slug %}">{{ post.title | rutypography }}</a>
-            </span>
-
-            {% if post.label %}
-                {% include "posts/widgets/label.html" with label=post.label %}
-            {% endif %}
-        </div>
     </div>
 
     <div class="feed-post-footer">
@@ -52,5 +52,4 @@
         {% include "posts/widgets/bookmark_controls.html" %}
 
     </div>
-    <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </article>

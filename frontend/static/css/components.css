@@ -817,7 +817,7 @@
 
     .feed-post-votes {
         padding-left: 10px;
-        z-index: 1;
+        z-index: 2;
     }
 
     .feed-post-header {
@@ -847,7 +847,7 @@
         height: 52px;
         border: solid 3px var(--block-bg-color);
         text-align: left;
-        z-index: 1;
+        z-index: 2;
     }
 
     .feed-post-author .avatar img {
