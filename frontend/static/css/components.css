@@ -802,6 +802,10 @@
         min-height: 20px;
     }
 
+    .feed-post-type-intro .post-title-link:focus {
+        outline: auto;
+    }
+
     .feed-post a {
         z-index: 1;
     }

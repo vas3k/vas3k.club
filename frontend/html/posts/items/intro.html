@@ -1,6 +1,10 @@
 {% load text_filters %}
 {% load posts %}
 <article class="feed-post feed-post-type-{{ post.type }} h-entry">
+    <div class="feed-post-author">
+        <a href="{% url "profile" post.author.slug %}" class="avatar" tabindex="-1"><img src="{{ post.author.get_avatar }}" alt="Аватар {{ post.author.full_name }}" loading="lazy" /></a>
+    </div>
+
     <div class="feed-post-header">
         <div class="feed-post-title">
             <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
@@ -30,9 +34,5 @@
                 </a>
             {% endif %}
         </div>
-    </div>
-
-    <div class="feed-post-author">
-        <a href="{% url "profile" post.author.slug %}" class="avatar"><img src="{{ post.author.get_avatar }}" alt="Аватар {{ post.author.full_name }}" loading="lazy" /></a>
     </div>
 </article>

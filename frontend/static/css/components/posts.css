@@ -94,7 +94,7 @@
             outline: none;
         }
 
-        .post-title-link:focus::before {
+        .block .post-title-link:focus::before {
             box-shadow: 0 0 20px 0 var(--input-selection-color);
         }
 
