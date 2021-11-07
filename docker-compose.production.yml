@@ -1,10 +1,6 @@
-version: "3.7"
-
 services:
   club_app: &app
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
     command: make docker-run-production
     container_name: club_app
     environment:
@@ -22,9 +18,11 @@ services:
       - EMAIL_HOST
       - EMAIL_PORT
       - DEFAULT_FROM_EMAIL
+    env_file:
+      - .env
     restart: always
     volumes:
-      - ./frontend/static:/app/frontend/static
+      - ./frontend/static:/tmp/static
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres
@@ -52,6 +50,16 @@ services:
       - redis
     ports:
       - "8816:8816"
+
+  cron:
+    <<: *app
+    command: make docker-run-cron
+    container_name: club_cron
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+    ports: []
 
   postgres:
     image: postgres:12
