@@ -1,4 +1,4 @@
-<form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
+<form-wrapper action="{% url "create_comment" post.slug %}"method="post" class="form comment-form-form">
     <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
     <div class="comment-form">
         <div class="comment-form-avatar">
@@ -20,4 +20,4 @@
             <button type="submit" class="button">Отправить</button>
         </div>
     </div>
-</form>
+</form-wrapper>
