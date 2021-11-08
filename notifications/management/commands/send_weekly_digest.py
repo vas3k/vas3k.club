@@ -1,6 +1,7 @@
 import base64
 import logging
 from datetime import datetime, timedelta
+from time import sleep
 
 import telegram
 from django.conf import settings
@@ -87,7 +88,8 @@ class Command(BaseCommand):
             except Exception as ex:
                 self.stdout.write(f"Sending to {user.email} failed: {ex}")
                 log.exception(f"Error while sending an email to {user.email}")
-                continue
+
+            sleep(5)
 
         if options.get("production"):
             # flush digest intro and title for next time
