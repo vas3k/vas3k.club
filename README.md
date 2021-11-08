@@ -63,11 +63,25 @@ See [docs/test.md](docs/test.md) for more insights.
 
 No k8s, no AWS, we ship dockers directly via ssh and it's beautiful!
 
-Our CI/CD pipelines have to take all the dirty work. They build, test and deploy changes to production on every merge to master (only official maintainers can do it).
+The entire production configuration is described in the [docker-compose.production.yml](docker-compose.production.yml) file. 
 
-These pipelines are implemented as Github Actions. Explore the [.github](.github) folder for more insights.
+Then, [Github Actions](.github/workflows/deploy.yml) have to take all the dirty work. They build, test and deploy changes to production on every merge to master (only official maintainers can do it).
+
+Explore the whole [.github](.github) folder for more insights.
 
 We're open for proposals on how to improve our deployments without overcomplicating it with modern devops bullshit.
+
+## 🛤 Forking and tweaking
+
+Forks are welcome. We're small and our engine is not universal like Wordpress, but with sufficient programming skills (and using grep), you can launch your own Club website in a couple of weeks. 
+
+Three huge requests for everyone:
+
+- Please give kudos the original authors. "Works on vas3k.club engine" in the footer of your site will be enough.
+- Please share new features you implement with us, so other folks can also benefit from them, and your own codebase minimally diverges from the original one (so you can sync updates and security fixes) . Use our [feature-flags](club/features.py).
+- Do not use our issues and other official channels as a support desk. Use [chats](https://t.me/joinchat/T5DDOpAVcZwzODg0).
+
+> ♥️ [Feature-flags](club/features.py) are great. Use them to tweak your fork. Create new flags to upstream your new features or disable existing ones.
 
 ## 🙋‍♂️ How to report a bug or propose a feature?
 
