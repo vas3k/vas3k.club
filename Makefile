@@ -64,16 +64,6 @@ test-ci:   ## Run tests (intended for CI usage)
 psql:
 	psql -h localhost -p 5433 -d vas3k_club -U vas3k
 
-redeploy:
-	npm run --prefix frontend build
-	docker-compose -f docker-compose.production.yml build club_app
-	docker-compose -f docker-compose.production.yml up --no-deps -d club_app
-	docker-compose -f docker-compose.production.yml build queue
-	docker-compose -f docker-compose.production.yml up --no-deps -d queue
-	docker-compose -f docker-compose.production.yml build bot
-	docker-compose -f docker-compose.production.yml up --no-deps -d bot
-	docker image prune --force
-
 .PHONY: \
   docker-run-dev \
   docker-run-production \
@@ -87,5 +77,4 @@ redeploy:
   lint \
   migrate \
   build-frontend \
-  test-ci \
-  redeploy-production
+  test-ci
