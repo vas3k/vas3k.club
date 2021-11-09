@@ -6,7 +6,7 @@
         <div class="membership-expired-title">Ваша клубная карта истекла 💩</div>
 
 
-        {% if me.membership_platform_type == "patreon" %}
+        {% if features.PATREON_AUTH_ENABLED and me.membership_platform_type == "patreon" %}
             <div class="membership-expired-description">
                 <p>
                     Нужно обновить данные подписки на Патреоне.
@@ -20,7 +20,6 @@
                     Либо перейдите на прямую оплату, тогда всё будет надолго и автоматически 👇
                 </p>
             </div>
-
         {% else %}
             <div class="membership-expired-description">
                 <p>

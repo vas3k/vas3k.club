@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
@@ -43,9 +45,16 @@ def create_badge_for_post(request, post_slug):
         note=note,
     )
 
+    # bump post on home page by updating its last_activity_at
+    Post.objects.filter(id=post.id).update(last_activity_at=datetime.utcnow())
+
+    # show insufficient funds warning if < 3 months
+    show_funds_warning = request.me.membership_days_left() - \
+        user_badge.badge.price_days < settings.MIN_DAYS_TO_GIVE_BADGES * 3
+
     return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
-        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.MIN_DAYS_TO_GIVE_BADGES,
+        "show_funds_warning": show_funds_warning,
     })
 
 
@@ -84,7 +93,14 @@ def create_badge_for_comment(request, comment_id):
         note=note,
     )
 
+    # bump post on home page by updating its last_activity_at
+    Post.objects.filter(id=comment.post_id).update(last_activity_at=datetime.utcnow())
+
+    # show insufficient funds warning if < 3 months
+    show_funds_warning = request.me.membership_days_left() - \
+        user_badge.badge.price_days < settings.MIN_DAYS_TO_GIVE_BADGES * 3
+
     return render(request, "badges/messages/success.html", {
         "user_badge": user_badge,
-        "show_funds_warning": request.me.membership_days_left() - user_badge.badge.price_days < settings.MIN_DAYS_TO_GIVE_BADGES,
+        "show_funds_warning": show_funds_warning,
     })

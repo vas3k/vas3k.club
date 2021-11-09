@@ -3,5 +3,12 @@
     <a href="{% url "index" %}" class="menu-logo">
         Вастрик<img src="{% static "images/logo/logo-128.png" %}" alt=" x " width="26" height="26">Клуб
     </a>
-    <a href="{% url "login" %}" class="button button-black">Войти</a>
+
+    <span class="menu-simplified-right">
+        {% if not me %}
+            <a href="{% url "landing" %}" class="hide-on-iphone">Что за Клуб?</a>
+        {% endif %}
+
+        <a href="{% url "login" %}" class="button button-black">Войти</a>
+    </span>
 </nav>

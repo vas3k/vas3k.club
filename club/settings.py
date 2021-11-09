@@ -67,6 +67,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "club.context_processors.settings_processor",
                 "club.context_processors.data_processor",
+                "club.context_processors.features_processor",
                 "auth.context_processors.users.me",
                 "posts.context_processors.topics.topics",
             ]

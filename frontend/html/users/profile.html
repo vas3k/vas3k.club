@@ -144,7 +144,7 @@
                     {% render_post intro %}
                 </div>
                 <div class="profile-intro-footer">
-                    <a href="{% url "show_post" intro.type intro.slug %}">
+                    <a href="{% url "show_post" intro.type intro.slug %}#comments">
                         {{ intro.comment_count }} {{ intro.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
                     </a>
                 </div>
@@ -201,7 +201,7 @@
                             {% endif %}
 
                             {% if user.id == me.id %}
-                                <small><br>Для абстрактных тегов типа «ищу работу» или «могу научить» не забудьте рассказать подробности в интро и указать свою экспертизу ниже. Это поможет другим вас найти!</small>
+                                <small><br>Для абстрактных тегов типа «ищу работу» или «могу научить» не забудьте рассказать подробности в интро. Это поможет другим вас найти!</small>
                             {% endif %}
                         </div>
                     {% endif %}
@@ -210,7 +210,7 @@
         {% endif %}
 
         {% if achievements %}
-            <div class="profile-header">Награды</div>
+            <div class="profile-header">Ачивки от Клуба</div>
 
             <div class="profile-achievements">
                 <div class="user-achievements">

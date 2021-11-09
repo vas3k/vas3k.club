@@ -5,6 +5,8 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from auth.helpers import auth_required
+from club import features
+from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
 from posts.models.post import Post
 from posts.models.topics import Topic
@@ -19,7 +21,7 @@ ORDERING_TOP_WEEK = "top_week"
 ORDERING_TOP_MONTH = "top_month"
 
 
-@auth_required
+@feature_switch(features.PRIVATE_FEED, yes=auth_required, no=noop)
 def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
     post_type = post_type or Post
 

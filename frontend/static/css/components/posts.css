@@ -47,6 +47,12 @@
         vertical-align: middle;
     }
 
+    .post-inline-title {
+        margin: 0;
+        font-size: 26px;
+        display: inline-block;
+    }
+
     .post-type-post {
 
     }
@@ -68,6 +74,28 @@
             text-overflow: ellipsis;
             line-height: 1.3em;
             font-weight: 700;
+            margin: 0;
+        }
+
+        .post-title-link::before {
+            bottom: 0;
+            content: "";
+            left: 0;
+            overflow: hidden;
+            position: absolute;
+            right: 0;
+            top: 0;
+            white-space: nowrap;
+            z-index: 1;
+            border-radius: var(--block-border-radius);
+        }
+
+        .post-title-link:focus {
+            outline: none;
+        }
+
+        .block .post-title-link:focus::before {
+            box-shadow: 0 0 20px 0 var(--input-selection-color);
         }
 
             .post-type-post .post-edit-button {

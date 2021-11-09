@@ -8,6 +8,7 @@ import "./codemirror-4.inline-attachment";
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
 import { pluralize } from "./common/utils.js";
+import { handleCommentThreadCollapseToggle } from "./common/comments.js";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
@@ -58,11 +59,13 @@ new Vue({
             // show/hide placeholder with thread length
             const collapseStub =
                 comment.querySelector(".comment-collapse-stub") || comment.querySelector(".reply-collapse-stub");
-            collapseStub.style.display = collapseStub.style.display !== "block" ? "block" : "none";
+            const wasCollapsed = collapseStub.style.display !== "block";
+            collapseStub.style.display = wasCollapsed ? "block" : "none";
             const threadLength = comment.querySelectorAll(".reply").length + 1;
             const pluralForm = pluralize(threadLength, ["комментарий", "комментария", "комментариев"]);
             collapseStub.querySelector(".thread-collapse-length").innerHTML = `${threadLength} ${pluralForm}`;
 
+            handleCommentThreadCollapseToggle(wasCollapsed, comment.id);
             // scroll back to comment if it's outside of the screen
             const commentPosition = comment.getBoundingClientRect();
             if (commentPosition.top < 0) {
