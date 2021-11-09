@@ -95,7 +95,7 @@ def async_create_or_update_post(post, is_created):
             reply_markup=telegram.InlineKeyboardMarkup([
                 *[
                     [telegram.InlineKeyboardButton(f"❌ {title}", callback_data=f"reject_post_{reason}:{post.id}")]
-                    for title, reason in REJECT_POST_REASONS.get(post.type) or []
+                    for reason, title in REJECT_POST_REASONS.get(post.type) or []
                 ],
                 [
                     telegram.InlineKeyboardButton("❌ В черновики", callback_data=f"reject_post:{post.id}"),
