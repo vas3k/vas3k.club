@@ -1,11 +1,12 @@
 <template>
     <div class="comment-markdown-editor">
         <slot></slot>
-        <div class="mention-autocomplete-hint"
+        <div
+            class="mention-autocomplete-hint"
             v-show="users.length > 0"
             :style="{
                 top: autocomplete ? autocomplete.top + 'px' : 0,
-                left: autocomplete ? autocomplete.left + 'px' : 0
+                left: autocomplete ? autocomplete.left + 'px' : 0,
             }"
         >
             <div
@@ -173,13 +174,13 @@ export default {
             }
 
             if (event.origin === "+input" && this.triggersAutocomplete(cm, event)) {
-                const cursorCoords = this.editor.codemirror.cursorCoords(false, 'local')
+                const cursorCoords = this.editor.codemirror.cursorCoords(false, "local");
 
                 this.autocomplete = {
                     ...event.from,
                     top: cursorCoords.top + 36, // first line offset
-                    left: Math.floor(cursorCoords.left)
-                }
+                    left: Math.floor(cursorCoords.left),
+                };
             }
         },
         handleSuggest(cm, event) {
