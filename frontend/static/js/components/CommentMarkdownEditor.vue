@@ -1,7 +1,13 @@
 <template>
-    <div>
+    <div class="comment-markdown-editor">
         <slot></slot>
-        <div class="mention-autocomplete-hint" v-show="users.length > 0" ref="mention-autocomplete-hint">
+        <div class="mention-autocomplete-hint"
+            v-show="users.length > 0"
+            :style="{
+                top: autocomplete ? autocomplete.top + 'px' : 0,
+                left: autocomplete ? autocomplete.left + 'px' : 0
+            }"
+        >
             <div
                 v-for="(user, index) in users.slice(0, 5)"
                 :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
@@ -57,6 +63,7 @@ export default {
             selectedUserIndex: null,
             postSlug: null,
             users: [],
+            autocomplete: null,
             autocompleteCache: {
                 samples: {},
                 users: {},
@@ -105,7 +112,7 @@ export default {
                 return;
             }
 
-            const autocomplete = this.autocomplete
+            const { line, ch } = this.autocomplete;
             const cursor = this.editor.codemirror.getCursor();
 
             this.resetAutocomplete();
@@ -113,8 +120,8 @@ export default {
             this.editor.codemirror.replaceRange(
                 `${user.slug} `,
                 {
-                    line: autocomplete.line,
-                    ch: autocomplete.ch + 1,
+                    line,
+                    ch: ch + 1,
                 },
                 {
                     line: cursor.line,
@@ -166,15 +173,13 @@ export default {
             }
 
             if (event.origin === "+input" && this.triggersAutocomplete(cm, event)) {
-                this.autocomplete = event.from;
+                const cursorCoords = this.editor.codemirror.cursorCoords(false, 'local')
 
-                this.editor.codemirror.addWidget(
-                    {
-                        ...this.autocomplete,
-                        ch: this.autocomplete.ch + 1,
-                    },
-                    this.$refs["mention-autocomplete-hint"]
-                );
+                this.autocomplete = {
+                    ...event.from,
+                    top: cursorCoords.top + 36, // first line offset
+                    left: Math.floor(cursorCoords.left)
+                }
             }
         },
         handleSuggest(cm, event) {
@@ -218,10 +223,16 @@ export default {
 };
 </script>
 <style>
+.comment-markdown-editor {
+    position: relative;
+}
+
 .mention-autocomplete-hint {
+    position: absolute;
     min-width: 100px;
     box-shadow: 0 4px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
     border-radius: 3px;
+    background: #fff;
 }
 
 .mention-autocomplete-hint__option {
