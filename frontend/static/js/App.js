@@ -8,7 +8,6 @@ import {
     createMarkdownEditor,
     isMobile,
     handleFormSubmissionShortcuts,
-    isCommunicationForm
 } from "./common/utils.js";
 import { getCollapsedCommentThreadsSet } from "./common/comments";
 
