@@ -1,7 +1,7 @@
 from django.template import loader, TemplateDoesNotExist
 
 from auth.models import Code
-from bot.handlers.common import RejectReason
+from bot.handlers.common import UserRejectReason
 from notifications.email.sender import send_club_email
 from users.models.user import User
 
@@ -16,7 +16,7 @@ def send_welcome_drink(user: User):
     )
 
 
-def send_rejected_email(user: User, reason: RejectReason):
+def send_user_rejected_email(user: User, reason: UserRejectReason):
     try:
         rejected_template = loader.get_template(f"emails/rejected/{reason.value}.html")
     except TemplateDoesNotExist:

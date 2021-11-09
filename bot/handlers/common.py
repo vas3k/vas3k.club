@@ -10,7 +10,7 @@ from posts.models.post import Post
 from users.models.user import User
 
 COMMENT_REPLY_RE = re.compile(r"^💬.*")
-POST_COMMENT_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🔥🙋‍♀️].*")
+POST_COMMENT_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🙋‍♀️].*")
 
 COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
 POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
@@ -18,11 +18,28 @@ POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
 log = logging.getLogger(__name__)
 
 
-class RejectReason(Enum):
+class UserRejectReason(Enum):
     intro = "intro"
     data = "data"
     aggression = "aggression"
     general = "general"
+    name = "name"
+
+
+class PostRejectReason(Enum):
+    title = "title"
+    design = "design"
+    dyor = "dyor"
+    duplicate = "duplicate"
+    chat = "chat"
+    tldr = "tldr"
+    github = "github"
+    bias = "bias"
+    hot = "hot"
+    ad = "ad"
+    inside = "inside"
+    value = "value"
+    draft = "draft"
 
 
 def get_club_user(update: Update):

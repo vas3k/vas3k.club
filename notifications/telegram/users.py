@@ -4,7 +4,7 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from notifications.telegram.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message
-from bot.handlers.common import RejectReason
+from bot.handlers.common import UserRejectReason
 from users.models.user import User
 
 
@@ -31,6 +31,9 @@ def notify_profile_needs_review(user, intro):
                 telegram.InlineKeyboardButton("❌️ Слишком общее", callback_data=f"reject_user_general:{user.id}"),
             ],
             [
+                telegram.InlineKeyboardButton("❌️ Плохое имя", callback_data=f"reject_user_name:{user.id}"),
+            ],
+            [
                 telegram.InlineKeyboardButton("✏️ Написать юзеру", url=admin_profile_url),
             ]
         ])
@@ -49,7 +52,7 @@ def notify_user_profile_approved(user):
         )
 
 
-def notify_user_profile_rejected(user: User, reason: RejectReason):
+def notify_user_profile_rejected(user: User, reason: UserRejectReason):
     try:
         text = render_html_message(f"rejected/{reason.value}.html", user=user)
     except TemplateDoesNotExist:
