@@ -94,7 +94,7 @@ def async_create_or_update_post(post, is_created):
             text=render_html_message("moderator_new_post_review.html", post=post),
             reply_markup=telegram.InlineKeyboardMarkup([
                 *[
-                    telegram.InlineKeyboardButton(f"❌ {title}", callback_data=f"reject_post_{reason}:{post.id}")
+                    [telegram.InlineKeyboardButton(f"❌ {title}", callback_data=f"reject_post_{reason}:{post.id}")]
                     for title, reason in REJECT_POST_REASONS.get(post.type) or []
                 ],
                 [
