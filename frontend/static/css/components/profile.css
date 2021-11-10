@@ -238,7 +238,6 @@
             font-weight: bold;
             text-align: center;
             text-decoration: none;
-            box-shadow: var(--block-shadow);
             color: #FFF;
             height: 210px;
             perspective: 1000px;
@@ -279,6 +278,7 @@
                 height: calc(100% - 30px);
                 -webkit-backface-visibility: hidden;
                 border-radius: var(--block-border-radius);
+                box-shadow: var(--block-shadow);
             }
 
             .user-achievement-front {
