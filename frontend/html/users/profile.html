@@ -121,7 +121,25 @@
                     url="{% url "toggle_friend" user.slug %}"
                     {% if friend %}is-friend-by-default{% endif %}>
                 </friend-button>
+                <friend-notes
+                    url="{% url "toggle_notes" user.slug %}"
+                    {% if notes %}is-notes-by-default{% endif %}>
+                </friend-notes>
             </div>
+
+            {% if notes %}
+                <div class="block profile-intro">
+                    <div class="profile-header">
+                        <a >Заметки </a>
+                            <a href="{% url "edit_post" intro.slug  %}" class="button post-edit-button profile-intro-edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                    </div>
+                    <div class="text-body profile-intro-text">
+                        {% render_post notes %}
+                    </div>
+                </div>
+            {% endif %}
         {% endif %}
 
         {% if badges %}

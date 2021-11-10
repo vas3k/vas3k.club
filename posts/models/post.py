@@ -30,6 +30,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_WEEKLY_DIGEST = "weekly_digest"
     TYPE_GUIDE = "guide"
     TYPE_THREAD = "thread"
+    TYPE_NOTES = "notes"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
@@ -43,6 +44,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
         (TYPE_GUIDE, "Путеводитель"),
         (TYPE_THREAD, "Тред"),
+        (TYPE_NOTES, "Заметки"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -265,6 +267,27 @@ class Post(models.Model, ModelDiffMixin):
             .count()
 
         return day_post_count < settings.RATE_LIMIT_POSTS_PER_DAY
+
+    @classmethod
+    def get_user_notes(cls, user):
+        return cls.objects.filter(author=user, type=Post.TYPE_NOTES).first()
+
+    @classmethod
+    def upsert_user_notes(cls, user, text, is_visible=True):
+        notes, is_created = cls.objects.update_or_create(
+            author=user,
+            type=cls.TYPE_NOTES,
+            defaults=dict(
+                text=text,
+                is_visible=is_visible,
+                is_public=False,
+            ),
+        )
+        if not is_created:
+            notes.html = None
+            notes.save()
+
+        return notes
 
     @classmethod
     def get_user_intro(cls, user):

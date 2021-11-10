@@ -61,6 +61,7 @@ def profile(request, user_slug):
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
     friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
+    notes = Post.get_user_notes(user)
 
     return render(request, "users/profile.html", {
         "user": user,
@@ -77,6 +78,7 @@ def profile(request, user_slug):
         "posts_total": posts.count(),
         "similarity": similarity,
         "friend": friend,
+        "notes": notes,
     })
 
 

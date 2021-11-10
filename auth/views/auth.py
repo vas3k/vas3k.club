@@ -99,6 +99,7 @@ def debug_random_login(request):
 
     if is_created:
         Post.upsert_user_intro(user, "Интро как интро, аппрув прошло :Р", is_visible=True)
+        Post.upsert_user_notes(user, "Работали на одной галере, про линукс не говорить", is_visible=True)
 
     session = Session.create_for_user(user)
 
