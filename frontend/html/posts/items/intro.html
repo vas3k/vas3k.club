@@ -2,12 +2,12 @@
 {% load posts %}
 <article class="feed-post feed-post-type-{{ post.type }} h-entry">
     <div class="feed-post-author">
-        <a href="{% url "profile" post.author.slug %}" class="avatar"><img src="{{ post.author.get_avatar }}" alt="Аватар {{ post.author.full_name }}" loading="lazy" /></a>
+        <a href="{% url "profile" post.author.slug %}" class="avatar" tabindex="-1"><img src="{{ post.author.get_avatar }}" alt="Аватар {{ post.author.full_name }}" loading="lazy" /></a>
     </div>
 
     <div class="feed-post-header">
         <div class="feed-post-title">
-            <a href="{% url "show_post" post.type post.slug %}" class="p-name">
+            <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
                 <span>{{ post.prefix }}:</span>
                 <span class="user-name {% if user.is_banned %}user-name-is-banned{% endif %}">{{ post.author.full_name }}</span>{% if me %}<span class="user-position">, {{ post.author.position }}</span>{% endif %}
             </a>
@@ -35,5 +35,4 @@
             {% endif %}
         </div>
     </div>
-    <a class="block-link u-url" href="{% url "show_post" post.type post.slug %}"></a>
 </article>

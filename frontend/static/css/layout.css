@@ -67,6 +67,13 @@
         flex-direction: row;
     }
 
+        .menu-simplified-right {
+            display: flex;
+            justify-items: flex-end;
+            align-items: center;
+            gap: 20px;
+        }
+
 .content {
     margin: 0 auto;
     max-width: var(--normal-content-width);

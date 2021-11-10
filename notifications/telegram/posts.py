@@ -1,4 +1,5 @@
 import telegram
+from django.template import TemplateDoesNotExist
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
 
@@ -41,7 +42,7 @@ def announce_in_club_chats(post):
         )
 
 
-def notify_post_author_approved(post):
+def notify_post_approved(post):
     if post.author.telegram_id:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
@@ -50,10 +51,15 @@ def notify_post_author_approved(post):
         )
 
 
-def notify_post_author_rejected(post):
+def notify_post_rejected(post, reason):
+    try:
+        text = render_html_message(f"post_rejected/{reason.value}.html", post=post)
+    except TemplateDoesNotExist:
+        text = render_html_message(f"post_rejected/draft.html", post=post)
+
     if post.author.telegram_id:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
-            text=render_html_message("post_rejected.html", post=post),
+            text=text,
             parse_mode=telegram.ParseMode.HTML,
         )

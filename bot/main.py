@@ -65,7 +65,7 @@ def main() -> None:
     # Admin callbacks
     dispatcher.add_handler(CallbackQueryHandler(moderation.approve_post, pattern=r"^approve_post:.+"))
     dispatcher.add_handler(CallbackQueryHandler(moderation.forgive_post, pattern=r"^forgive_post:.+"))
-    dispatcher.add_handler(CallbackQueryHandler(moderation.unpublish_post, pattern=r"^delete_post:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(moderation.reject_post, pattern=r"^reject_post.+"))
     dispatcher.add_handler(CallbackQueryHandler(moderation.approve_user_profile, pattern=r"^approve_user:.+"))
     dispatcher.add_handler(CallbackQueryHandler(moderation.reject_user_profile, pattern=r"^reject_user.+"))
 
@@ -90,7 +90,7 @@ def main() -> None:
     # Start the bot
     if settings.DEBUG:
         updater.start_polling()
-        # ^ polling is useful for development since you don't need to expose endpoints
+        # ^ polling is useful for development since you don't need to expose webhook endpoints
     else:
         updater.start_webhook(
             listen=settings.TELEGRAM_BOT_WEBHOOK_HOST,
