@@ -22,13 +22,8 @@
 </template>
 
 <script>
-import {
-    createMarkdownEditor,
-    isMobile,
-    throttle,
-    handleFormSubmissionShortcuts,
-    imageUploadOptions,
-} from "../common/utils.js";
+import { isMobile, throttle } from "../common/utils";
+import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../common/markdown-editor";
 
 export default {
     mounted() {

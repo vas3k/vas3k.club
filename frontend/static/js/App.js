@@ -2,13 +2,8 @@ import twemoji from "twemoji";
 import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
-import {
-    isCommunicationForm,
-    imageUploadOptions,
-    createMarkdownEditor,
-    isMobile,
-    handleFormSubmissionShortcuts,
-} from "./common/utils.js";
+import { isCommunicationForm, isMobile } from "./common/utils";
+import { imageUploadOptions, createMarkdownEditor, handleFormSubmissionShortcuts } from "./common/markdown-editor";
 import { getCollapsedCommentThreadsSet } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
