@@ -12,7 +12,11 @@
             <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
         </a>
 
-        <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">
+        <a
+            href="{% url "profile" comment.author.slug %}"
+            data-author-slug="{{ comment.author.slug }}"
+            class="comment-header-author-name"
+        >
             {{ comment.author.full_name }}
         </a>
 

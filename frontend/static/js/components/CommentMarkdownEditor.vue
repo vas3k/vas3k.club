@@ -42,7 +42,7 @@ export default {
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
 
-        this.populateCacheWithPostCommenters();
+        this.populateCacheWithCommentAuthors();
     },
     watch: {
         users: function (val, oldVal) {
@@ -125,14 +125,20 @@ export default {
                 }
             );
         },
-        populateCacheWithPostCommenters: function () {
-            fetch(`/post/${this.$attrs["post-slug"]}/commenters?is_ajax=true`)
-                .then((res) => res.json())
-                .then((data) => {
-                    data.post_commenters.forEach((user) => {
-                        this.autocompleteCache.users[user.slug] = user;
-                    });
-                });
+        populateCacheWithCommentAuthors: function () {
+            document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
+                const slug = linkEl.dataset.authorSlug;
+                const fullName = linkEl.innerText;
+
+                if (!slug || !fullName) {
+                    return;
+                }
+
+                this.autocompleteCache.users[slug] = {
+                    slug,
+                    fullName,
+                };
+            });
         },
         fetchAutocompleteSuggestions: throttle(function (sample) {
             fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
