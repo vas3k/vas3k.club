@@ -1,5 +1,6 @@
 import logging
 import re
+from time import sleep
 
 import sentry_sdk
 from django.conf import settings
@@ -25,6 +26,8 @@ def send_club_email(recipient, subject, html, tags=None):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             log.warning("Cannot send email: %s", e)
+
+        sleep(2)
 
     raise
 
