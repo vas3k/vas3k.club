@@ -3,9 +3,9 @@
 {% block content %}
     <div class="content pay">
         <div class="block pay-description">
-            <div class="pay-title">Платим 💰<br><small>аккаунт: {{ user.email }}</small></div>
+            <div class="pay-title">Платим 💰<br><small>аккаунт: {{ user.email }}</small><br /></div>
 
-            <a href="{{ invoice.url }}">
+            <a href="{{ invoice.url }}" class="button button-big join-button">
                 Перейти к оплате
             </a>
 
