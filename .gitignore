@@ -55,3 +55,4 @@ venv/
 gdpr/downloads/*.zip
 
 .env
+.env.prod
