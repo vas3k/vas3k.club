@@ -95,6 +95,15 @@
                 {% endfor %}
             </div>
         </div>
+
+        <div class="feed-sidebar-block">
+            <div class="feed-sidebar-header">Барахолка</div>
+            <div class="feed-sidebar-topics">
+                {% for topic in paid_topics %}
+                    {% include "posts/widgets/topic.html" with topic=topic type="card" %}
+                {% endfor %}
+            </div>
+        </div>
     </aside>
     <div class="feed-main">
         {% block feed_content %}
