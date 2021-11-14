@@ -99,7 +99,7 @@
         <div class="feed-sidebar-block">
             <div class="feed-sidebar-header">Барахолка</div>
             <div class="feed-sidebar-topics">
-                {% for topic in paid_topics %}
+                {% for topic in topics_paid %}
                     {% include "posts/widgets/topic.html" with topic=topic type="card" %}
                 {% endfor %}
             </div>
