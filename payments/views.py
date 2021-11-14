@@ -212,9 +212,10 @@ def wayforpay_webhook(request):
     status, answer = pay_service.accept_invoice(payload)
 
     if status == TransactionStatus.APPROVED:
-        if "WFPREG" in payload["orderReference"]:
+        if "_WFPREG" in payload["orderReference"]:
             # регулярный платеж
-            original_payment = Payment.objects.get(reference=payload["orderReference"])
+            original_reference = payload["orderReference"].split("_WFPREG")[0]
+            original_payment = Payment.objects.get(reference=original_reference)
             log.info("Recurrent payment %r", original_payment)
 
             payment = Payment.objects.create(
