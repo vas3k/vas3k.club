@@ -69,3 +69,6 @@ class Payment(models.Model):
             except (KeyError, AttributeError):
                 return None
         return None
+
+    def __repr__(self):
+        return f"Payment {self.id} (user {self.user}, ref {self.reference})"
