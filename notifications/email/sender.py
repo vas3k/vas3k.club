@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 
 def send_club_email(recipient, subject, html, tags=None):
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
+    e = None
 
     for _ in range(5):
         log.info(f"Sending email to {recipient}")
@@ -27,9 +28,9 @@ def send_club_email(recipient, subject, html, tags=None):
             sentry_sdk.capture_exception(e)
             log.warning("Cannot send email: %s", e)
 
-        sleep(2)
+        sleep(10)
 
-    raise
+    log.error("Cannot send email: %s", e)
 
 
 def prepare_letter(html, base_url):
