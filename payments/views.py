@@ -221,7 +221,7 @@ def wayforpay_webhook(request):
             payment = Payment.objects.create(
                 reference=payload["orderReference"],
                 user=original_payment.user,
-                product=original_payment.product,
+                product_code=original_payment.product_code,
                 status=Payment.STATUS_SUCCESS,
                 data=payload,
             )
