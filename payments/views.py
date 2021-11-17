@@ -38,6 +38,8 @@ def pay(request):
     product_code = request.GET.get("product_code")
     is_invite = request.GET.get("is_invite")
     is_recurrent = request.GET.get("is_recurrent")
+    if product_code == "club180":
+        is_recurrent = False
     if is_recurrent:
         product_code = f"{product_code}_recurrent"
 
