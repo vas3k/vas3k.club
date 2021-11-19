@@ -2,7 +2,7 @@ from posts.models.topics import Topic
 
 
 def topics(request):
-    PAID_TOPICS = ("partners", "service", "tools")
+    PAID_TOPICS = ("partners", "service", "tools", "learn")
 
     topics = Topic.objects.filter(is_visible=True).all()
     return {
