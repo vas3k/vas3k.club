@@ -225,7 +225,7 @@ def upvote_comment(request, comment_id):
         "comment": {
             "upvotes": comment.upvotes + (1 if is_created else 0)
         },
-        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
+        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000) if post_vote else 0
     }
 
 

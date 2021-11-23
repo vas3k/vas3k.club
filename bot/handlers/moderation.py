@@ -31,8 +31,7 @@ def approve_post(update: Update, context: CallbackContext) -> None:
 
     post.is_approved_by_moderator = True
     post.last_activity_at = datetime.utcnow()
-    if not post.published_at:
-        post.published_at = datetime.utcnow()
+    post.published_at = datetime.utcnow()
     post.save()
 
     notify_post_approved(post)
@@ -60,8 +59,7 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     post.is_approved_by_moderator = False
-    if not post.published_at:
-        post.published_at = datetime.utcnow()
+    post.published_at = datetime.utcnow()
     post.save()
 
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
