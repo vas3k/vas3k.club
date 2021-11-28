@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load users %}
+
+{% block title %}
+    404 — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+
+        <div class="content-header">Нет такой страницы</div>
+
+        <div class="block">
+            <p>Вы забрели на несуществующую страницу. Начните с <a href="/">главной</a>.</p>
+        </div>
+
+    </div>
+{% endblock %}
