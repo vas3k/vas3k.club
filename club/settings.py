@@ -175,9 +175,9 @@ APP_DESCRIPTION = "Всё интересное происходит за зак�
 LAUNCH_DATE = datetime(2020, 4, 13)
 
 AUTH_CODE_LENGTH = 6
-AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=15)
-AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=1)
-AUTH_MAX_CODE_COUNT = 5
+AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=10)
+AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=3)
+AUTH_MAX_CODE_COUNT = 3
 AUTH_MAX_CODE_ATTEMPTS = 3
 
 DEFAULT_PAGE_SIZE = 70
