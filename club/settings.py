@@ -227,7 +227,7 @@ JWT_ALGORITHM = "RS256"
 MEDIA_UPLOAD_URL = "https://i.4aff.club/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
-IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
+IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif", "jpe"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.4aff.club/preview"
 OG_IMAGE_DEFAULT = "https://4aff.club/static/images/share.png"
