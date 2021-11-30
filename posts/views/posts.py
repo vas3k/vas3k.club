@@ -23,9 +23,9 @@ def show_post(request, post_type, post_slug):
     if post.type != post_type:
         return redirect("show_post", post.type, post.slug)
 
-    # drafts are visible only to authors, coauthors and moderators
+    # drafts are visible only to authors, coauthors, curators and moderators
     if not post.is_visible:
-        if not request.me or not post.can_edit(request.me):
+        if not request.me or not post.can_edit(request.me) or not request.me.is_curator:
             raise Http404()
 
     # don't show private posts into public
