@@ -46,6 +46,15 @@
             height: 50px;
         }
 
+        .people-map-user-content,
+        .people-map-user-content a {
+            font-family: var(--sans-font);
+            color: black;
+            font-size: 16px;
+            line-height: 20px;
+            outline: none;
+        }
+
     .people-map-user-cluster {
         display: block;
         cursor: pointer;

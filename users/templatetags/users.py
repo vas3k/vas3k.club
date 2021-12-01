@@ -24,6 +24,9 @@ def users_geo_json(users):
                 "id": user.slug,
                 "url": f"/user/{user.slug}/",
                 "avatar": user.avatar,
+                "full_name": user.full_name,
+                "company": user.company,
+                "position": user.position,
             },
             "geometry": {
                 "type": "Point",

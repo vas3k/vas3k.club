@@ -92,12 +92,18 @@ export default {
                             });
                         } else {
                             // it's a normal marker
-                            let markerElement = document.createElement("a");
-                            markerElement.href = props.url;
-                            markerElement.target = "_blank";
+                            let markerElement = document.createElement("div");
+                            const popup = new mapbox.Popup({ offset: 25 }).setHTML(`
+                                <div class="people-map-user-content">
+                                    <b><a href="${props.url}" target="_blank">${props.full_name}</a></b>
+                                    <p>${props.position}  —  ${props.company}</p>
+                                </div>
+                            `);
                             markerElement.classList.add("people-map-user-marker");
                             markerElement.style.backgroundImage = "url('" + avatarOrDefault(props.avatar) + "')";
-                            marker = new mapbox.Marker({ element: markerElement }).setLngLat(coords);
+                            marker = new mapbox.Marker({ element: markerElement })
+                                .setLngLat(coords)
+                                .setPopup(popup);
                         }
                     }
                     newMarkers[id] = marker;
