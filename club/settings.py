@@ -284,6 +284,7 @@ DELETED_USERNAME = "deleted"
 POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
+PARLIAMENT_GUIDE_URL = "https://vas3k.club/post/12870/"
 
 WEBPACK_LOADER = {
     "DEFAULT": {
