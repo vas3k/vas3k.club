@@ -32,7 +32,7 @@
         }
 
     .post-image {
-        padding-bottom: 50px;
+        margin-bottom: 50px;
     }
 
     .post-text {
@@ -136,6 +136,7 @@
         .post-type-post .post-image {
             max-height: 800px;
             padding-top: 40px;
+            overflow: hidden;
         }
 
         .post-type-post .upvote {
