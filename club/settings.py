@@ -230,7 +230,7 @@ VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif", "jpe"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.4aff.club/preview"
-OG_IMAGE_DEFAULT = "https://4aff.club/static/images/share.png"
+OG_IMAGE_DEFAULT = "https://4aff.club/static/images/logo_square.jpg"
 OG_MACHINE_AUTHOR_LOGO = "https://vas3k.club/static/images/the_machine_logo.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
     "logo": "https://4aff.club/static/images/logo/logo-white-256.png",
