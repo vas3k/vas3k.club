@@ -89,7 +89,11 @@
         {% endif %}
 
         {% if me.id == comment.author_id or me.is_moderator %}
-            <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-edit"></i></a>
+            {% if comment.is_editable %}
+                <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-edit"></i></a>
+            {% else %}
+                <span title="Комментарий можно редактировать только в течение 3 часов после создания" class="comment-footer-button comment-button-visible-on-hover comment-footer-button-disabled"><i class="fas fa-edit"></i></span>
+            {% endif %}
         {% endif %}
 
         {% if me and comment.post.is_commentable %}

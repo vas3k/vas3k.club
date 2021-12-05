@@ -195,8 +195,17 @@
         max-width: 300px;
     }
 
+    .comment-footer-button-disabled {
+        color: var(--button-disabled-bg-color);
+    }
+
+    .comment-footer-button-disabled:hover {
+        background-color: var(--button-disabled-bg-color);
+        color: var(--opposite-bg-color);
+    }
+
         .comment-date:hover,
-        .comment-footer-button:hover {
+        .comment-footer-button:hover:not(.comment-footer-button-disabled) {
             background-color: var(--opposite-bg-color);
             color: var(--opposite-text-color);
         }
