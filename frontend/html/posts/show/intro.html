@@ -15,7 +15,7 @@
     <meta property="og:description" content="">
     <meta property="og:image" content="{{ user.get_avatar }}">
 
-    <meta property="twitter:card" content="{% og_image post %}">
+    <meta property="twitter:card" content="{{ user.get_avatar }}">
     <meta name="twitter:title" content="{{ post.prefix}}: {{ post.author.full_name | rutypography }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="{{ user.get_avatar }}">

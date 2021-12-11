@@ -18,7 +18,7 @@
     <meta property="og:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta property="og:image" content="{{ user.get_avatar }}">
 
-    <meta property="twitter:card" content="{% og_image post %}">
+    <meta property="twitter:card" content="{{ user.get_avatar }}">
     <meta name="twitter:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta name="twitter:image" content="{{ user.get_avatar }}">
