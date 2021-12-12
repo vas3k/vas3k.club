@@ -17,8 +17,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta property="og:image" content="{{ user.get_avatar }}">
-
-    <meta property="twitter:card" content="{{ user.get_avatar }}">
+    <meta property="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{{ user.position }}{% if user.company %}, {{ user.company }}{% endif %}">
     <meta name="twitter:image" content="{{ user.get_avatar }}">
