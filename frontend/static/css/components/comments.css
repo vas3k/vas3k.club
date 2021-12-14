@@ -200,8 +200,8 @@
     }
 
     .comment-footer-button-disabled:hover {
-        background-color: var(--button-disabled-bg-color);
-        color: var(--opposite-bg-color);
+        background-color: transparent;
+        cursor: default;
     }
 
         .comment-date:hover,
