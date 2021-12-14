@@ -41,7 +41,7 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.admin import admin_profile
 from users.views.people import people
-from users.views.suggest import suggest_users
+from search.api import api_search_users
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|hot))"
@@ -91,7 +91,6 @@ urlpatterns = [
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
     path("user/<slug:user_slug>/delete/", request_delete_account, name="request_delete_account"),
     path("user/<slug:user_slug>/delete/confirm/", confirm_delete_account, name="confirm_delete_account"),
-    path("users/suggest/", suggest_users, name="users_suggest"),
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
@@ -125,6 +124,8 @@ urlpatterns = [
     path("bookmarks/", bookmarks, name="bookmarks"),
 
     path("search/", search, name="search"),
+    path("search/users.json", api_search_users, name="api_search_users"),
+
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
     path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),

@@ -15,7 +15,7 @@
                 @click="insertSuggestion(user)"
                 class="mention-autocomplete-hint__option"
             >
-                {{ user.slug }}<span class="mention-autocomplete-hint__option-fullName">{{ user.fullName }}</span>
+                {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
             </div>
         </div>
     </div>
@@ -128,23 +128,23 @@ export default {
         populateCacheWithCommentAuthors: function () {
             document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
                 const slug = linkEl.dataset.authorSlug;
-                const fullName = linkEl.innerText;
+                const full_name = linkEl.innerText;
 
-                if (!slug || !fullName) {
+                if (!slug || !full_name) {
                     return;
                 }
 
                 this.autocompleteCache.users[slug] = {
                     slug,
-                    fullName,
+                    full_name,
                 };
             });
         },
         fetchAutocompleteSuggestions: throttle(function (sample) {
-            fetch(`/users/suggest/?is_ajax=true&sample=${sample}`)
+            fetch(`/search/users.json?prefix=${sample}`)
                 .then((res) => {
-                    if (!res.url.includes(`sample=${sample}`)) {
-                        return { suggested_users: [] };
+                    if (!res.url.includes(`prefix=${sample}`)) {
+                        return { users: [] };
                     }
 
                     return res.json();
@@ -154,7 +154,7 @@ export default {
                         return;
                     }
 
-                    this.users = data.suggested_users;
+                    this.users = data.users;
 
                     this.autocompleteCache.samples[sample] = this.users;
 
