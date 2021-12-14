@@ -13,7 +13,9 @@
                 </select>
             </div>
             <div class="comment-form-body-title">{{ form.title }}</div>
-            <div class="comment-form-body-text">{{ form.text }}</div>
+            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}">
+                {{ form.text }}
+            </comment-markdown-editor>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
         <div class="comment-form-button">

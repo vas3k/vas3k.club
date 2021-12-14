@@ -9,7 +9,13 @@
     <div class="comment-header">
         <span class="comment-header-author-and-date">
             <span class="comment-header-author">
-                <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a>
+                <a
+                    href="{% url "profile" comment.author.slug %}"
+                    data-author-slug="{{ comment.author.slug }}"
+                    class="comment-header-author-name"
+                >
+                    {{ comment.author.full_name }}
+                </a>
                 на пост <a href="{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}" class="comment-header-post">{{ comment.post.title }}</a>
             </span>
 

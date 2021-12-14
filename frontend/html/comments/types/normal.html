@@ -17,7 +17,14 @@
     <div class="comment-header">
         <span class="comment-header-author-and-date">
             <span class="comment-header-author">
-                <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">{{ comment.author.full_name }}</a><span class="comment-header-author-position">, {{ comment.author.position }}</span>
+                <a
+                    href="{% url "profile" comment.author.slug %}"
+                    data-author-slug="{{ comment.author.slug }}"
+                    class="comment-header-author-name"
+                >
+                    {{ comment.author.full_name }}
+                </a>
+                <span class="comment-header-author-position">, {{ comment.author.position }}</span>
                 {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
                 {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
                 {% if me and comment.author_id != me.id and not comment.metadata.badges %}
