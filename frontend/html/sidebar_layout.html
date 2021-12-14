@@ -50,8 +50,13 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{% url "feed_label" "thread" %}" class="{% if label_code == "thread" %}feed-sidebar-menu-selected{% endif %}">
+                        🗄 Треды
+                    </a>
+                </li>
+                <li>
                     <a href="{% url "feed_label" "service" %}" class="{% if label_code == "service" %}feed-sidebar-menu-selected{% endif %}">
-                        🗄 Сервисы Клуба
+                        🛠 Сервисы Клуба
                     </a>
                 </li>
                 <li>
