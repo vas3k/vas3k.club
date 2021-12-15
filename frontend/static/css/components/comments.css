@@ -603,13 +603,15 @@
 .mention-autocomplete-hint {
     position: absolute;
     min-width: 100px;
-    box-shadow: 0 4px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
-    border-radius: 3px;
-    background: #fff;
+    box-shadow: 0 0 4px 2px rgb(9 30 66 / 8%);
+    border: 1px solid var(--input-border-color);
+    overflow: hidden;
+    border-radius: 4px;
     font-size: 125%;
 }
 
     .mention-autocomplete-hint__option {
+        background: var(--input-bg-color);
         font-weight: 400;
         padding: 0 5px;
     }
