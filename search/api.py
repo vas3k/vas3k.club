@@ -4,7 +4,7 @@ from auth.helpers import api_required
 from users.models.user import User
 
 MIN_PREFIX_LENGTH = 3
-MAX_PREFIX_LENGTH = 20
+MAX_PREFIX_LENGTH = 15
 
 
 @api_required
@@ -15,9 +15,9 @@ def api_search_users(request):
     prefix = request.GET.get("prefix", "")
 
     if len(prefix) < MIN_PREFIX_LENGTH or len(prefix) > MAX_PREFIX_LENGTH:
-        return {
+        return JsonResponse({
             "users": []
-        }
+        })
 
     suggested_users = User.registered_members().filter(slug__startswith=prefix)[:5]
 
