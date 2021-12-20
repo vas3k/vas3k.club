@@ -188,12 +188,7 @@
 
                     {% if tag_group.list.0.group == "club" %}
                         <div class="profile-tags-footer">
-                            {% if user.contact %}
-                                <strong>Для связи:</strong> {{ user.contact | urlize }}<br>
-                                {% if user.id != me.id %}
-                                    <small>Не забудьте сказать, что вы из 4aff.Клуба</small>
-                                {% endif %}
-                            {% else %}
+                            {% if not user.contact %}
                                 {% if user.id == me.id %}
                                     <strong>⚠️ Вы не указали контакт для обратной связи.<br><a href="{% url "edit_profile" user.slug %}#id_contact">Сделайте это здесь</a></strong>
                                 {% endif %}
@@ -206,6 +201,18 @@
                     {% endif %}
                 </div>
             {% endfor %}
+        {% endif %}
+
+        {% if user.contact %}
+            <div class="profile-header">Контакт</div>
+            <div class="block profile-tags">
+                <div class="profile-tags-footer">
+                    <strong>Для связи:</strong> {{ user.contact | urlize }}<br>
+                    {% if user.id != me.id %}
+                        <small>Не забудьте сказать, что вы из 4aff.Клуба</small>
+                    {% endif %}
+                </div>
+            </div>
         {% endif %}
 
         {% if achievements %}
