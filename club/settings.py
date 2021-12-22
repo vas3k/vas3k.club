@@ -273,6 +273,7 @@ POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before 
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
+MAX_MUTE_COUNT = 30  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \

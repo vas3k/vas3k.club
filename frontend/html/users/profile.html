@@ -121,8 +121,8 @@
                     url="{% url "toggle_friend" user.slug %}"
                     {% if friend %}is-friend-by-default{% endif %}>
                 </friend-button>
-                {% if me.is_curator %}
-                    {% if not user.is_moderator %}
+                {% if me.is_curator or me.is_moderator %}
+                    {% if not user.is_curator and not user.is_moderator %}
                         {% if muted %}
                             <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
                                 <span class="profile-status-icon">❌</span>
