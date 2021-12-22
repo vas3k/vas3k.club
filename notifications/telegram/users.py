@@ -95,12 +95,13 @@ def notify_user_auth(user, code):
         )
 
 
-def notify_admin_user_too_many_mutes(user):
-    user_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user.slug})
+def notify_admin_user_on_mute(user_from, user_to, comment):
+    user_from_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_from.slug})
+    user_to_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_to.slug})
     send_telegram_message(
         chat=ADMIN_CHAT,
-        text=f"⚠️⚠️⚠️ <b>Токсик варнинг!</b>"
-             f"\n\nБольше {settings.NOTIFY_MODERATOR_AFTER_MUTE_COUNT} человек считают, что"
-             f"юзеру {user.slug} не место в Клубе. Возможно они заблуждаются, но стоит проверить и принять меры."
-             f"\n\nВот его профиль: {user_profile_url}"
+        text=f"<b>Кого-то замьютили</b> 🤕"
+             f"\n\n<a href=\"{user_from_profile_url}\">{user_from.full_name}</a> ({user_from.slug}) считает, "
+             f"что <a href=\"{user_to_profile_url}\">{user_to.full_name}</a> ({user_to.slug}) не место в Клубе "
+             f"и замьютил его. \n\nВот почему: <i>{comment}</i>"
     )

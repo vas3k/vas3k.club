@@ -12,15 +12,18 @@ class Muted(models.Model):
     user_from = models.ForeignKey(User, related_name="muted_from", db_index=True, on_delete=models.CASCADE)
     user_to = models.ForeignKey(User, related_name="muted_to", on_delete=models.CASCADE)
 
+    comment = models.TextField(null=True)
+
     class Meta:
         db_table = "muted"
         unique_together = [["user_from", "user_to"]]
 
     @classmethod
-    def mute(cls, user_from, user_to):
+    def mute(cls, user_from, user_to, comment=None):
         return cls.objects.get_or_create(
             user_from=user_from,
             user_to=user_to,
+            comment=comment,
         )
 
     @classmethod
