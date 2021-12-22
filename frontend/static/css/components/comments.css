@@ -548,10 +548,12 @@
 
 .comment-is-new {
     background-color: rgba(104, 118, 128, 0.30);
+    padding-right: 8px;
 }
 
     .comment-is-new .comment-is-new {
         background-color: transparent;
+        padding-right: 0;
     }
 
 .comment-is-badged {
