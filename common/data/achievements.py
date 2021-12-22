@@ -163,6 +163,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/pastry_cook_3.png",
         "style": "background-color: #ffa089; font-size: 120%;",
     }),
+    ("contest", {
+        "name": "Победитель конкурса",
+        "description": "За лучший пост в рамках статейных конкурсов",
+        "image": "https://i.4aff.club/435dd3d00260d3ab51c597c816cb727e7c9308fca0963e1f58ece9363895438c.png",
+        "style": "background-color: #6667ab; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.4aff.club/3cb.png
