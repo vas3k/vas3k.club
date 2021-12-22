@@ -121,6 +121,21 @@
                     url="{% url "toggle_friend" user.slug %}"
                     {% if friend %}is-friend-by-default{% endif %}>
                 </friend-button>
+                {% if me.is_curator %}
+                    {% if not user.is_moderator %}
+                        {% if muted %}
+                            <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
+                                <span class="profile-status-icon">❌</span>
+                                <span class="profile-status-status">Снять бан</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable" onclick="return confirm('Вы больше не будете видеть посты и комменты юзера, а модераторам поступит жалоба. Уверены?')">
+                                <span class="profile-status-icon">⛔️</span>
+                                <span class="profile-status-status">Я не хочу видеть его в Клубе</span>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
             </div>
         {% endif %}
 

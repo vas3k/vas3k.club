@@ -93,3 +93,14 @@ def notify_user_auth(user, code):
             chat=Chat(id=user.telegram_id),
             text=f"<pre>{code.code}</pre> — ваш одноразовый код для входа в Клуб",
         )
+
+
+def notify_admin_user_too_many_mutes(user):
+    user_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user.slug})
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=f"⚠️⚠️⚠️ <b>Токсик варнинг!</b>"
+             f"\n\nБольше {settings.NOTIFY_MODERATOR_AFTER_MUTE_COUNT} человек считают, что"
+             f"юзеру {user.slug} не место в Клубе. Возможно они заблуждаются, но стоит проверить и принять меры."
+             f"\n\nВот его профиль: {user_profile_url}"
+    )

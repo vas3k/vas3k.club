@@ -14,6 +14,7 @@ from users.forms.profile import ExpertiseForm
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
 from users.models.friends import Friend
+from users.models.mute import Muted
 from users.models.tags import Tag, UserTag
 from users.models.user import User
 from users.utils import calculate_similarity
@@ -61,6 +62,7 @@ def profile(request, user_slug):
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
     friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
+    muted = Muted.objects.filter(user_from=request.me, user_to=user).first()
 
     return render(request, "users/profile.html", {
         "user": user,
@@ -77,6 +79,7 @@ def profile(request, user_slug):
         "posts_total": posts.count(),
         "similarity": similarity,
         "friend": friend,
+        "muted": muted,
     })
 
 
