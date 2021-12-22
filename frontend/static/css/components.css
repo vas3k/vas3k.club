@@ -890,8 +890,15 @@
         }
 
     .feed-post-topic {
-        padding-right: 15px;
+        padding-right: 10px;
         display: inline-block;
+    }
+
+    .feed-post-badge {
+        width: 1.3em;
+        height: 1.3em;
+        margin-right: 5px;
+        vertical-align: middle;
     }
 
     .feed-post-comments {

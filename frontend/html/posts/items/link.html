@@ -1,4 +1,5 @@
 {% load posts %}
+{% load static %}
 {% load text_filters %}
 <article class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-header">
@@ -35,6 +36,15 @@
             <span class="feed-post-topic">
                 {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
             </span>
+        {% endif %}
+
+        {% if post.metadata.badges %}
+            {% for badge_code, badge in post.metadata.badges.items %}
+                <img
+                    src="{% static "images/badges" %}/{{ badge_size|default:"small" }}/{{ badge_code }}.png"
+                    alt="{{ badge.title }}"
+                    class="feed-post-badge">
+            {% endfor %}
         {% endif %}
 
         <a href="{% url "show_post" post.type post.slug %}?comment_order=created_at#comments" class="feed-post-comments">
