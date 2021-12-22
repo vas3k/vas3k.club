@@ -16,17 +16,28 @@ def toggle_mute(request, user_slug):
     if user_to.is_curator or user_to.is_moderator:
         raise AccessDenied(title="У этого юзера иммунитет от мьюта")
 
+    # show form on GET
+    if request.method != "POST":
+        is_muted = Muted.is_muted(
+            user_from=request.me,
+            user_to=user_to,
+        )
+        if is_muted:
+            return render(request, "users/mute/unmute.html", {
+                "user": user_to,
+            })
+        else:
+            return render(request, "users/mute/mute.html", {
+                "user": user_to,
+            })
+
+    # else — POST
     total_user_mute_count = Muted.objects.filter(user_from=request.me).count()
     if total_user_mute_count > settings.MAX_MUTE_COUNT:
         raise AccessDenied(
             title="Вы замьютили слишком много юзеров",
             message="Возможно, стоит притормозить и подумать..."
         )
-
-    if request.method != "POST":
-        return render(request, "users/mute.html", {
-            "user": user_to,
-        })
 
     comment = request.POST.get("comment") or ""
     mute, is_created = Muted.mute(
@@ -52,12 +63,13 @@ def toggle_mute(request, user_slug):
         return render(request, "users/messages/muted.html", {
             "user": user_to,
         })
+    else:
+        # unmute this user
+        Muted.unmute(
+            user_from=request.me,
+            user_to=user_to,
+        )
 
-    Muted.unmute(
-        user_from=request.me,
-        user_to=user_to,
-    )
-
-    return render(request, "users/messages/unmuted.html", {
-        "user": user_to,
-    })
+        return render(request, "users/messages/unmuted.html", {
+            "user": user_to,
+        })

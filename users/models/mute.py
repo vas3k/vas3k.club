@@ -23,7 +23,9 @@ class Muted(models.Model):
         return cls.objects.get_or_create(
             user_from=user_from,
             user_to=user_to,
-            comment=comment,
+            defaults=dict(
+                comment=comment,
+            )
         )
 
     @classmethod
@@ -32,3 +34,10 @@ class Muted(models.Model):
             user_from=user_from,
             user_to=user_to,
         ).delete()
+
+    @classmethod
+    def is_muted(cls, user_from, user_to):
+        return cls.objects.filter(
+            user_from=user_from,
+            user_to=user_to,
+        ).exists()
