@@ -1,11 +1,9 @@
 from django.conf import settings
-from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
 from auth.helpers import auth_required
 from club.exceptions import AccessDenied
 from notifications.telegram.users import notify_admin_user_on_mute
-from users.models.friends import Friend
 from users.models.mute import Muted
 from users.models.user import User
 
@@ -31,12 +29,12 @@ def toggle_mute(request, user_slug):
                 "user": user_to,
             })
 
-    # else — POST
+    # else — process POST
     total_user_mute_count = Muted.objects.filter(user_from=request.me).count()
     if total_user_mute_count > settings.MAX_MUTE_COUNT:
         raise AccessDenied(
-            title="Вы замьютили слишком много юзеров",
-            message="Возможно, стоит притормозить и подумать..."
+            title="Вы замьютили слишком много людей",
+            message="Рекомендуем притормозить и поговорить с кем-нибудь..."
         )
 
     comment = request.POST.get("comment") or ""
@@ -47,12 +45,6 @@ def toggle_mute(request, user_slug):
     )
 
     if is_created:
-        # delete user from friends
-        Friend.delete_friend(
-            user_from=request.me,
-            user_to=user_to,
-        )
-
         # notify admins
         notify_admin_user_on_mute(
             user_from=request.me,

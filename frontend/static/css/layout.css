@@ -489,6 +489,15 @@
         justify-self: stretch;
     }
 
+    .comment-body-muted {
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 4;
+        justify-self: stretch;
+        align-self: start;
+    }
+
     .comment-layout-normal .comment-rating {
         grid-column-start: 3;
         grid-column-end: 4;

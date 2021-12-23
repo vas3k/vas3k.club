@@ -356,6 +356,12 @@
         padding-top: 5px;
     }
 
+    .comment-body-muted {
+        font-size: 120%;
+        opacity: 0.5;
+        padding-bottom: 20px;
+    }
+
     .comment-layout-block {
         padding: 30px;
         margin: 0 auto 30px;

@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from django.db import models
 
+from users.models.friends import Friend
 from users.models.user import User
 
 
@@ -20,6 +21,11 @@ class Muted(models.Model):
 
     @classmethod
     def mute(cls, user_from, user_to, comment=None):
+        Friend.delete_friend(
+            user_from=user_from,
+            user_to=user_to,
+        )
+
         return cls.objects.get_or_create(
             user_from=user_from,
             user_to=user_to,
