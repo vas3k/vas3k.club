@@ -10,11 +10,12 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from typus import ru_typus
 
+from utils.strings import removesuffix
+
 from common.regexp import YOUTUBE_RE
 from common.markdown.markdown import markdown_text
 
 register = template.Library()
-
 
 @register.filter(is_safe=True)
 def nl_to_p(text):
@@ -49,9 +50,9 @@ def cool_number(value, num_decimals=1):
     if int_value < 1000:
         return str(int_value)
     elif int_value < 1000000:
-        return formatted_number.format(int_value / 1000.0).rstrip("0.") + "K"
+        return removesuffix(formatted_number.format(int_value / 1000.0), ".0") + "K"
     else:
-        return formatted_number.format(int_value / 1000000.0).rstrip("0.") + "M"
+        return removesuffix(formatted_number.format(int_value / 1000000.0), ".0") + "M"
 
 
 @register.filter
