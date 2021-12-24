@@ -41,12 +41,12 @@ def floor(value):
 
 
 @register.filter
-def cool_number(value, num_decimals=1):
+def cool_number(value):
     """
     11500 -> 11.5K, etc
     """
     int_value = int(value)
-    formatted_number = "{{:.{}f}}".format(num_decimals)
+    formatted_number = "{:.1f}"
     if int_value < 1000:
         return str(int_value)
     elif int_value < 1000000:
