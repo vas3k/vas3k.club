@@ -180,7 +180,7 @@ def delete_comment(request, comment_id):
                 message="Только тот, кто удалил комментарий, может его восстановить"
             )
 
-    Comment.update_post_counters(comment.post)
+    Comment.update_post_counters(comment.post, update_activity=False)
 
     return redirect("show_comment", comment.post.slug, comment.id)
 
