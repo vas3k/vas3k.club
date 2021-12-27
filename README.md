@@ -83,19 +83,21 @@ Three huge requests for everyone:
 
 > ♥️ [Feature-flags](club/features.py) are great. Use them to tweak your fork. Create new flags to upstream your new features or disable existing ones.
 
-## 🙋‍♂️ How to report a bug or propose a feature?
+## 🙋‍♂️ How to report a bug?
 
 - 🆕Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new). 
-  - 🔦 Please, **use a search**, to check, if there is already exied issue!
+- 🔦 Please, **use a search**, to check, if there is already existed issue!
 - Explain your idea or proposal in all the details: 
-  - If it's a **new feature**:
-    - 🖼 If it's **UI/UX** related: attach a screenshot or wireframe.
-    - Please mark this issues with prefix **"Фича:"**
-  - 🐞 If it's a **bug**:
-    - make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers. 
+    - Make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers. 
     - **For minor fixes** please just open a PR.
-    - *Please mark this issues with prefix **"Баг:"***
     
+## 💎 Now to propose a new feature?
+
+- Go to our [Discussions](https://github.com/vas3k/vas3k.club/discussions)
+- Check to see if someone else has already come up with the idea before
+- Create a new discussion
+- 🖼 If it's **UI/UX** related: attach a screenshot or wireframe
+
 ## 😍 Contributions
 
 Contributions are welcome.  
