@@ -34,7 +34,7 @@ from users.api import api_profile
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
-from users.views.muted import toggle_mute
+from users.views.muted import toggle_mute, muted
 from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise, profile_comments, profile_posts, \
     profile_badges
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
@@ -82,6 +82,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/friend/", toggle_friend, name="toggle_friend"),
     path("user/<slug:user_slug>/friends/", friends, name="friends"),
     path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
+    path("user/<slug:user_slug>/muted/", muted, name="muted"),
     path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
     path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/account/", edit_account, name="edit_account"),

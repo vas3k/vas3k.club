@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 
 from auth.helpers import auth_required
@@ -14,6 +15,8 @@ def toggle_mute(request, user_slug):
     if user_to.is_curator or user_to.is_moderator:
         raise AccessDenied(title="У этого юзера иммунитет от мьюта")
 
+    total_user_muted_count = Muted.objects.filter(user_from=request.me).count()
+
     # show form on GET
     if request.method != "POST":
         is_muted = Muted.is_muted(
@@ -27,11 +30,11 @@ def toggle_mute(request, user_slug):
         else:
             return render(request, "users/mute/mute.html", {
                 "user": user_to,
+                "mutes_left": settings.MAX_MUTE_COUNT - total_user_muted_count,
             })
 
     # else — process POST
-    total_user_mute_count = Muted.objects.filter(user_from=request.me).count()
-    if total_user_mute_count > settings.MAX_MUTE_COUNT:
+    if total_user_muted_count > settings.MAX_MUTE_COUNT:
         raise AccessDenied(
             title="Вы замьютили слишком много людей",
             message="Рекомендуем притормозить и поговорить с кем-нибудь..."
@@ -65,3 +68,17 @@ def toggle_mute(request, user_slug):
         return render(request, "users/messages/unmuted.html", {
             "user": user_to,
         })
+
+
+@auth_required
+def muted(request, user_slug):
+    if request.me.slug != user_slug:
+        return HttpResponseForbidden()
+
+    user = get_object_or_404(User, slug=user_slug)
+    muted_users = Muted.muted_by_user(user)
+
+    return render(request, "users/mute/index.html", {
+        "user": user,
+        "muted": muted_users,
+    })

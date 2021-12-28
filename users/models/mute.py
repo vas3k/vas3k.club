@@ -47,3 +47,7 @@ class Muted(models.Model):
             user_from=user_from,
             user_to=user_to,
         ).exists()
+
+    @classmethod
+    def muted_by_user(cls, user_from):
+        return cls.objects.filter(user_from=user_from).select_related("user_to")
