@@ -1,11 +1,11 @@
 import telegram
 import os
-import base64
 
-token_base64 = os.environ["INPUT_TOKEN_B64"]
-token = base64.b64decode(token_base64).decode()
+token = os.environ["INPUT_BOT_TOKEN"]
 text = os.environ["INPUT_TEXT"]
 chat_id = os.environ["INPUT_CHAT_ID"]
+
+print(token, chat_id, text)
 
 bot = telegram.Bot(token=token)
 

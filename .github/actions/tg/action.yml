@@ -7,7 +7,11 @@ inputs:
   chat_id:
     description: 'Chat id'
     required: false
-    default: "-1001287599988"
+    default: "{{ secrets.CI_CHAT_ID }}"
+  bot_token:
+    description: 'Bot token'
+    required: true
+    default: "{{ secrets.CI_BOT_TOKEN }}"
 runs:
   using: "docker"
   image: "Dockerfile"
