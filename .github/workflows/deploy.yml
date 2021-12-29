@@ -14,7 +14,8 @@ jobs:
         with:
           ref: '4aff'
       - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
-      - run: docker build -t ghcr.io/$GITHUB_ACTOR/club:latest -t ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA .
+      - run: docker pull ghcr.io/$GITHUB_ACTOR/club:latest || true
+      - run: docker build -t ghcr.io/$GITHUB_ACTOR/club:latest -t ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA --cache-from ghcr.io/$GITHUB_ACTOR/club:latest .
       - run: docker image push ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA
       - run: docker image push ghcr.io/$GITHUB_ACTOR/club:latest
 
@@ -60,6 +61,7 @@ jobs:
           secret_WEBHOOK_SECRETS: ${{ secrets.WEBHOOK_SECRETS }}
       - run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - run: echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ${{ env.SSH_KEY_PATH }} && chmod 600 ${{ env.SSH_KEY_PATH }}
+      - run: ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "mkdir -p /var/www/4aff.club"
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/4aff.club/.env
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/4aff.club/docker-compose.production.yml
       - run: ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /var/www/4aff.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA && docker-compose -f docker-compose.production.yml --env-file=.env up -d && docker image prune --force"
