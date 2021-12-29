@@ -143,6 +143,7 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
     intro.is_approved_by_moderator = True
     intro.is_visible = True
+    intro.last_activity_at = datetime.utcnow()
     if not intro.published_at:
         intro.published_at = datetime.utcnow()
     intro.save()
