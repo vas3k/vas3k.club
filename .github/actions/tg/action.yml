@@ -4,9 +4,12 @@ inputs:
   text:
     description: 'The message that will be sent to telegram.'
     required: true
+  chat_id:
+    description: 'Chat id'
+    required: true
+  bot_token:
+    description: 'Bot token'
+    required: true
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ secrets.CI_BOT_TOKEN }}
-    - ${{ secrets.CI_CHAT_ID }}
