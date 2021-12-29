@@ -1,0 +1,15 @@
+name: 'Send message to Telegram'
+description: 'Action for send message in Telegram'
+inputs:
+  text:
+    description: 'The message that will be sent to telegram.'
+    required: true
+  chat_id:
+    description: 'Chat id'
+    required: true
+  bot_token:
+    description: 'Bot token'
+    required: true
+runs:
+  using: "docker"
+  image: "Dockerfile"
