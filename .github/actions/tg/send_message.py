@@ -1,9 +1,10 @@
 import telegram
 import os
+import sys
 
-token = os.environ["INPUT_BOT_TOKEN"]
+token = sys.argv[1]
+chat_id = sys.argv[2]
 text = os.environ["INPUT_TEXT"]
-chat_id = os.environ["INPUT_CHAT_ID"]
 
 print(token, chat_id, text)
 
