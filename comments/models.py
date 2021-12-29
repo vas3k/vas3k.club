@@ -136,9 +136,10 @@ class Comment(models.Model):
         })
 
     @classmethod
-    def update_post_counters(cls, post):
+    def update_post_counters(cls, post, update_activity=True):
         post.comment_count = Comment.visible_objects().filter(post=post, is_deleted=False).count()
-        post.last_activity_at = datetime.utcnow()
+        if update_activity:
+            post.last_activity_at = datetime.utcnow()
         post.save()
 
     @classmethod

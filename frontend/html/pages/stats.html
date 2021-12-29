@@ -133,12 +133,16 @@
         {% for achievement in achievements %}
             <div class="stats-achievements">
                 <div class="stats-achievements-badge">
-                    <span class="user-achievement" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+                    <span class="user-achievement">
                         <span class="user-achievement-wrapper">
-                            <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
-                            <span class="user-achievement-name">{{ achievement.name }}</span>
+                            <div class="user-achievement-front" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+                                <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
+                                <span class="user-achievement-name">{{ achievement.name }}</span>
+                            </div>
+                            <div class="user-achievement-back" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+                                {{ achievement.description }}
+                            </div>
                         </span>
-                        <span class="user-achievement-popup" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>{{ achievement.description }}</span>
                     </span>
                 </div>
                 <div class="stats-achievements-users">
@@ -160,8 +164,8 @@
         <div class="stats-header">🏛 Парламент</div>
 
         <div class="stats-description">
-            В Парламент Клуба входят самые активные организаторы двужух, авторы постов и админы чатов.
-            Они определяют будущее Клуба: новые фичи, правила модерации и ценности.
+            Парламент — это совет активных членов Клуба. Они собирают фидбек и определяют каким мы хотим видеть Клуб.
+            Зачем он нужен и как попасть — читайте <a href="{{ settings.PARLIAMENT_GUIDE_URL }}">в нашем гайде</a>.
         </div>
 
         <div class="top-users">

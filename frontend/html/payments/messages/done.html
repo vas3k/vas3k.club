@@ -27,9 +27,11 @@
             У нас всё записано и в случае любых проблем, поддержка Клуба всегда поможет вам :)
         </p>
 
-        <p>
-            Не забудьте <a href="https://www.patreon.com/pledges" target="_blank" rel="nofollow">отписаться от патреона</a>, если переходили с него.
-        </p>
+        {% if features.PATREON_AUTH_ENABLED %}
+            <p>
+                Не забудьте <a href="https://www.patreon.com/pledges" target="_blank" rel="nofollow">отписаться от патреона</a>, если переходили с него.
+            </p>
+        {% endif %}
 
         <br>
 

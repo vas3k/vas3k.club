@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block content %}
+    <div class="content">
+        <div class="block">
+            <div class="block-header">🥰 Разбанить {{ user.full_name }}</div>
+
+            <div class="block-description">
+                <p>
+                    Вы снова сможете видеть посты и комменты этого юзера в Клубе.
+                </p>
+            </div>
+
+            <div class="block-description block-description-center">
+                <form action="." method="post">
+                    <button type="submit" class="button button-big">Да, я хочу!</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

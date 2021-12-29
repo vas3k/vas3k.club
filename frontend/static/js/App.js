@@ -2,81 +2,11 @@ import twemoji from "twemoji";
 import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
-import "./inline-attachment";
-import "./codemirror-4.inline-attachment";
-
-import { findParentForm, isCommunicationForm } from "./common/utils.js";
+import { isCommunicationForm, isMobile } from "./common/utils";
+import { imageUploadOptions, createMarkdownEditor, handleFormSubmissionShortcuts } from "./common/markdown-editor";
+import { getCollapsedCommentThreadsSet } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
-
-const imageUploadOptions = {
-    uploadUrl: imageUploadUrl,
-    uploadMethod: "POST",
-    uploadFieldName: "media",
-    jsonFieldName: "uploaded",
-    progressText: "![Загружаю файл...]()",
-    urlText: "![]({filename})",
-    errorText: "Ошибка при загрузке файла :(",
-    allowedTypes: [
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-        "image/gif",
-        "video/mp4",
-        "video/quicktime", // .mov (macOS' default record format)
-    ],
-    extraHeaders: {
-        Accept: "application/json",
-    },
-    extraParams: {
-        code: imageUploadCode,
-    },
-};
-
-const defaultMarkdownEditorOptions = {
-    autoDownloadFontAwesome: false,
-    spellChecker: false,
-    nativeSpellcheck: true,
-    forceSync: true,
-    status: false,
-    inputStyle: "contenteditable",
-    tabSize: 4,
-};
-
-/**
- * Initialize EasyMDE editor
- *
- * @param {Element} element
- * @param {EasyMDE.Options} options
- * @return {EasyMDE}
- */
-function createMarkdownEditor(element, options) {
-    const editor = new EasyMDE({
-        element,
-        ...defaultMarkdownEditorOptions,
-        ...options,
-    });
-
-    // overriding default CodeMirror shortcuts
-    editor.codemirror.addKeyMap({
-        Home: "goLineLeft", // move the cursor to the left side of the visual line it is on
-        End: "goLineRight", // move the cursor to the right side of the visual line it is on
-    });
-
-    // adding ability to fire events on the hidden element
-    if (element.dataset.listen) {
-        const events = element.dataset.listen.split(" ");
-        events.forEach((event) => {
-            try {
-                editor.codemirror.on(event, (e) => e.getTextArea().dispatchEvent(new Event(event)));
-            } catch (e) {
-                console.warn("Invalid event provided", event);
-            }
-        });
-    }
-
-    return editor;
-}
 
 const App = {
     onCreate() {
@@ -87,6 +17,7 @@ const App = {
         this.initializeImageZoom();
         this.initializeEmojiForPoorPeople();
         this.blockCommunicationFormsResubmit();
+        this.restoreCommentThreadsState();
 
         const registeredEditors = this.initializeMarkdownEditor();
 
@@ -141,7 +72,7 @@ const App = {
     },
 
     initializeMarkdownEditor() {
-        if (this.isMobile()) return []; // we don't need fancy features on mobiles
+        if (isMobile()) return []; // we don't need fancy features on mobiles
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
@@ -209,35 +140,10 @@ const App = {
             []
         );
 
-        const invisibleMarkdownEditors = [...document.querySelectorAll(".markdown-editor-invisible")].reduce(
-            (editors, element) => {
-                const editor = createMarkdownEditor(element, {
-                    toolbar: false,
-                });
-
-                return [...editors, editor];
-            },
-            []
-        );
-
-        const allEditors = fullMarkdownEditors.concat(invisibleMarkdownEditors);
+        const allEditors = fullMarkdownEditors;
 
         allEditors.forEach((editor) => {
-            editor.element.form.addEventListener("keydown", (e) => {
-                const isEnter = event.key === "Enter";
-                const isCtrlOrCmd = event.ctrlKey || event.metaKey;
-                const isEnterAndCmd = isEnter && isCtrlOrCmd;
-                if (!isEnterAndCmd) {
-                    return;
-                }
-
-                const form = findParentForm(e.target);
-                if (!form || !isCommunicationForm(form)) {
-                    return;
-                }
-
-                form.submit();
-            });
+            editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
 
             inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
         });
@@ -279,24 +185,14 @@ const App = {
             });
         });
     },
-    isMobile() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        // Windows Phone must come first because its UA also contains "Android"
-        if (/windows phone/i.test(userAgent)) {
-            return true;
+    restoreCommentThreadsState() {
+        const comments = document.querySelectorAll(".reply, .comment");
+        const collapsedSet = getCollapsedCommentThreadsSet();
+        for (const comment of comments) {
+            if (collapsedSet.has(comment.id)) {
+                comment.querySelector(".comment-collapse-stub, .reply-collapse-stub").click();
+            }
         }
-
-        if (/android/i.test(userAgent)) {
-            return true;
-        }
-
-        // iOS detection from: http://stackoverflow.com/a/9039885/177710
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-            return true;
-        }
-
-        return false;
     },
 };
 

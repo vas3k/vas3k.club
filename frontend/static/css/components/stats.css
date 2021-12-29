@@ -156,6 +156,14 @@
             flex-wrap: wrap;
             flex-direction: column;
         }
+        .stats-achievements-badge {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .stats-achievements-users {
+            justify-content: center;
+        }
     }
 
 .stats-badges-latest {

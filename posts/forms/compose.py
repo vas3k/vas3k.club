@@ -39,7 +39,7 @@ class PostForm(forms.ModelForm):
         return topic
 
     def validate_coauthors(self, cleaned_data):
-        non_existing_coauthors = [coauthor for coauthor in cleaned_data["coauthors"]
+        non_existing_coauthors = [coauthor for coauthor in cleaned_data.get("coauthors", [])
                                   if not User.objects.filter(slug=coauthor).exists()]
         if non_existing_coauthors:
             raise ValidationError({"coauthors": "Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors))})

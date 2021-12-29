@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 import jwt
 from django.shortcuts import redirect, render, get_object_or_404
 
-from auth.models import Session, Apps
+from auth.models import Session
 from club import settings
-from club.exceptions import AccessDenied, ApiAuthRequired, ApiAccessDenied
+from club.exceptions import AccessDenied, ApiAuthRequired
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -128,13 +128,11 @@ def api_required(view):
     def wrapper(request, *args, **kwargs):
         if not request.me:
             raise ApiAuthRequired()
-
         return view(request, *args, **kwargs)
-
     return wrapper
 
 
-def auth_switch(no, yes):
+def auth_switch(yes, no):
     def result(request, *args, **kwargs):
         is_authorized = request.me is not None
         if is_authorized:

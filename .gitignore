@@ -48,8 +48,10 @@ media/images
 media/i
 
 club/.env
+.env
 db.sqlite3
 *.session
 venv/
 
 gdpr/downloads/*.zip
+.history
