@@ -2,7 +2,7 @@ FROM python:3-alpine
 
 WORKDIR /tg/
 
-RUN pip install python-telegram-bot
+RUN pip install requests
 
 COPY send_message.py /tg/send_message.py
 
