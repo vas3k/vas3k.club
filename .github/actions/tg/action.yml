@@ -1,9 +1,0 @@
-name: 'Send message to Telegram'
-description: 'Action for send message in Telegram'
-inputs:
-  text:
-    description: 'The message that will be sent to telegram.'
-    required: true
-runs:
-  using: "docker"
-  image: "Dockerfile"
