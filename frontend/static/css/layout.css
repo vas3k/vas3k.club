@@ -504,6 +504,7 @@
         grid-row-start: 1;
         grid-row-end: 3;
         justify-self: end;
+        padding-right: 8px;
     }
 
     .comment-layout-normal .comment-footer {
