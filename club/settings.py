@@ -66,6 +66,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "club.context_processors.settings_processor",
                 "club.context_processors.data_processor",
+                "club.context_processors.features_processor",
                 "auth.context_processors.users.me",
                 "posts.context_processors.topics.topics",
             ]
@@ -173,9 +174,9 @@ APP_DESCRIPTION = "Всё интересное происходит за зак�
 LAUNCH_DATE = datetime(2021, 10, 25)
 
 AUTH_CODE_LENGTH = 6
-AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=15)
-AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=1)
-AUTH_MAX_CODE_COUNT = 5
+AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=10)
+AUTH_MAX_CODE_TIMEDELTA = timedelta(hours=3)
+AUTH_MAX_CODE_COUNT = 3
 AUTH_MAX_CODE_ATTEMPTS = 3
 
 DEFAULT_PAGE_SIZE = 70
@@ -274,6 +275,7 @@ POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before 
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
+MAX_MUTE_COUNT = 10  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@4aff.club." \
@@ -285,6 +287,7 @@ DELETED_USERNAME = "deleted"
 POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
+PARLIAMENT_GUIDE_URL = "https://vas3k.club/post/12870/"
 
 WEBPACK_LOADER = {
     "DEFAULT": {

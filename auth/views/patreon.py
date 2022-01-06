@@ -11,10 +11,13 @@ from auth.exceptions import PatreonException
 from auth.helpers import set_session_cookie
 from auth.models import Session
 from auth.providers import patreon
+from club import features
+from common.feature_flags import feature_required
 from users.models.user import User
 from common.images import upload_image_from_url
 
 
+@feature_required(features.PATREON_AUTH_ENABLED)
 def patreon_login(request):
     state = {}
     goto = request.GET.get("goto")
@@ -33,6 +36,7 @@ def patreon_login(request):
     return redirect(f"{settings.PATREON_AUTH_URL}?{query_string}")
 
 
+@feature_required(features.PATREON_AUTH_ENABLED)
 def patreon_oauth_callback(request):
     code = request.GET.get("code")
     if not code:

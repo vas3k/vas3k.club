@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Замьюченные юзеры
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Замьюченные — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="⛔️">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Замьюченные — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="⛔️">
+
+    <!-- Exclude friends from search engines -->
+    <meta name="robots" content="noindex">
+{% endblock %}
+
+
+{% block content %}
+    <div class="friends">
+        <div class="friends-title">⛔️<br>Замьюченные юзеры</div>
+
+        {% if muted %}
+            <div class="">
+                {% for user in muted %}
+                    {% include "users/widgets/card.html" with user=user.user_to %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="friends-results-placeholder">🥰 Пока никого...</div>
+        {% endif %}
+    </div>
+{% endblock %}

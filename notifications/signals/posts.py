@@ -10,6 +10,53 @@ from posts.models.post import Post
 from users.models.friends import Friend
 from users.models.user import User
 
+REJECT_POST_REASONS = {
+    "post": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+        ("value", "Нет пользы/абстрактно"),
+        ("inside", "Нет инсайдов и опыта"),
+    ],
+    "event": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+    ],
+    "guide": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+    ],
+    "thread": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+        ("duplicate", "Дубликат"),
+    ],
+    "question": [
+        ("title", "Плохой заголовок"),
+        ("dyor", "Нет рисёрча, коротко"),
+        ("hot", "Провокация/срач"),
+        ("chat", "Лучше в чат"),
+        ("duplicate", "Дубликат"),
+    ],
+    "link": [
+        ("tldr", "Мало описания"),
+        ("value", "Бесполезно/непонятно"),
+    ],
+    "idea": [
+        ("title", "Плохой заголовок"),
+        ("tldr", "Мало описания"),
+        ("github", "Фича, на гитхаб"),
+    ],
+    "battle": [
+        ("hot", "Срач"),
+        ("duplicate", "Дубликат"),
+        ("bias", "Предвзят к одному варианту"),
+    ],
+    "project": [
+        ("ad", "Похоже на рекламу"),
+        ("inside", "Нет инсайдов и опыта"),
+    ],
+}
+
 
 @receiver(post_save, sender=Post)
 def create_or_update_post(sender, instance, created, **kwargs):
@@ -46,13 +93,17 @@ def async_create_or_update_post(post, is_created):
             chat=ADMIN_CHAT,
             text=render_html_message("moderator_new_post_review.html", post=post),
             reply_markup=telegram.InlineKeyboardMarkup([
+                *[
+                    [telegram.InlineKeyboardButton(f"❌ {title}", callback_data=f"reject_post_{reason}:{post.id}")]
+                    for reason, title in REJECT_POST_REASONS.get(post.type) or []
+                ],
                 [
-                    telegram.InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),
+                    telegram.InlineKeyboardButton("❌ В черновики", callback_data=f"reject_post:{post.id}"),
                     telegram.InlineKeyboardButton("😕 Так себе", callback_data=f"forgive_post:{post.id}"),
                 ],
                 [
-                    telegram.InlineKeyboardButton("❌ В черновики", callback_data=f"delete_post:{post.id}"),
-                ]
+                    telegram.InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),
+                ],
             ])
         )
 

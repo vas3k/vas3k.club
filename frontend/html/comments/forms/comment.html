@@ -5,7 +5,9 @@
             <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" loading="lazy" /></div>
         </div>
         <div class="comment-form-body">
-            <div class="comment-form-body-text">{{ form.text }}</div>
+            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}">
+                {{ form.text }}
+            </comment-markdown-editor>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
         <div class="comment-form-button">

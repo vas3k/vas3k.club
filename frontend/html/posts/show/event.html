@@ -11,9 +11,9 @@
                 {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
             {% endif %}
         </div>
-        <div class="post-title">
+        <h1 class="post-title">
             📅 {{ post.title | rutypography }}
-        </div>
+        </h1>
         <span class="post-is-public">
             {% if post.is_public %}
                 <i class="fas fa-globe-americas"></i>&nbsp;Публичный ивент

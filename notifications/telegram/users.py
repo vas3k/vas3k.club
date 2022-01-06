@@ -4,7 +4,7 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from notifications.telegram.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message
-from bot.handlers.common import RejectReason
+from bot.handlers.common import UserRejectReason
 from users.models.user import User
 
 
@@ -31,6 +31,9 @@ def notify_profile_needs_review(user, intro):
                 telegram.InlineKeyboardButton("❌️ Слишком общее", callback_data=f"reject_user_general:{user.id}"),
             ],
             [
+                telegram.InlineKeyboardButton("❌️ Плохое имя", callback_data=f"reject_user_name:{user.id}"),
+            ],
+            [
                 telegram.InlineKeyboardButton("✏️ Написать юзеру", url=admin_profile_url),
             ]
         ])
@@ -49,7 +52,7 @@ def notify_user_profile_approved(user):
         )
 
 
-def notify_user_profile_rejected(user: User, reason: RejectReason):
+def notify_user_profile_rejected(user: User, reason: UserRejectReason):
     try:
         text = render_html_message(f"rejected/{reason.value}.html", user=user)
     except TemplateDoesNotExist:
@@ -90,3 +93,15 @@ def notify_user_auth(user, code):
             chat=Chat(id=user.telegram_id),
             text=f"<pre>{code.code}</pre> — ваш одноразовый код для входа в Клуб",
         )
+
+
+def notify_admin_user_on_mute(user_from, user_to, comment):
+    user_from_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_from.slug})
+    user_to_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_to.slug})
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=f"<b>Кого-то замьютили</b> 🤕"
+             f"\n\n<a href=\"{user_from_profile_url}\">{user_from.full_name}</a> ({user_from.slug}) считает, "
+             f"что <a href=\"{user_to_profile_url}\">{user_to.full_name}</a> ({user_to.slug}) не место в Клубе "
+             f"и замьютил его. \n\nВот почему: <i>{comment}</i>"
+    )
