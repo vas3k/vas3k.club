@@ -28,7 +28,7 @@ def send_club_email(recipient, subject, html, tags=None):
             sentry_sdk.capture_exception(e)
             log.warning("Cannot send email: %s", e)
 
-        sleep(10)
+            sleep(10)
 
     log.error("Cannot send email: %s", e)
 
