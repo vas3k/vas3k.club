@@ -10,7 +10,8 @@ from common.data.hats import HATS
 from notifications.email.users import send_unmoderated_email, send_banned_email, send_ping_email, \
     send_delete_account_confirm_email
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
-from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate
+from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate, \
+    notify_admin_user_on_ban
 from payments.helpers import cancel_all_stripe_subscriptions
 from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
@@ -56,6 +57,7 @@ def do_user_admin_actions(request, user, data):
             user.save()
             if data["ban_days"] > 0:
                 send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
+                notify_admin_user_on_ban(user, days=data["ban_days"], reason=data["ban_reason"])
 
     # Unban
     if data["is_unbanned"]:
