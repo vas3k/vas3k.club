@@ -96,7 +96,7 @@ def notify_user_auth(user, code):
 
 
 def notify_admin_user_on_ban(user, days, reason):
-    banned_user_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_to.slug})
+    banned_user_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user.slug})
     send_telegram_message(
         chat=ADMIN_CHAT,
         text=f"⛔️ <b>Юзер <a href=\"{banned_user_profile_url}\">{user.full_name}</a> "
