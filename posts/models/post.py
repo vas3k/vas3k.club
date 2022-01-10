@@ -30,6 +30,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_WEEKLY_DIGEST = "weekly_digest"
     TYPE_GUIDE = "guide"
     TYPE_THREAD = "thread"
+    TYPE_LIVE = "live"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
@@ -43,6 +44,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
         (TYPE_GUIDE, "Путеводитель"),
         (TYPE_THREAD, "Тред"),
+        (TYPE_LIVE, "Live"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -57,6 +59,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_BATTLE: "🤜🤛",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "🗄",
+        TYPE_LIVE: "✍️",
     }
 
     TYPE_TO_PREFIX = {
@@ -71,6 +74,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_BATTLE: "Батл:",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "Тред:",
+        TYPE_LIVE: "",
     }
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

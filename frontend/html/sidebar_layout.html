@@ -89,6 +89,11 @@
                         📅 События
                     </a>
                 </li>
+                <li>
+                    <a href="{% url "feed_type" "event" %}" class="{% if post_type == "live" %}feed-sidebar-menu-selected{% endif %}">
+                        ✍️ Live
+                    </a>
+                </li>
             </ul>
         </div>
 
