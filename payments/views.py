@@ -211,7 +211,7 @@ def wayforpay_webhook(request):
     payload = json.loads(request.body)
 
     pay_service = WayForPayService()
-    status, answer = pay_service.accept_invoice(payload)
+    status, answer = pay_service.accept_payment(payload)
 
     if status == TransactionStatus.APPROVED:
         if "_WFPREG" in payload["orderReference"]:
