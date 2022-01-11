@@ -1,0 +1,10 @@
+{% extends "posts/show/question.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{# this type in inherited from "question" #}
+{% block post_title %}
+    <h1 class="post-inline-title p-name">✍ ️Live: {{ post.title | rutypography }}</h1>
+{% endblock %}
+
