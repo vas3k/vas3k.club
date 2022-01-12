@@ -17,6 +17,8 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+    env_file:
+      - .env
     restart: always
     volumes:
       - .:/app:delegated # enable hot code reload in debug mode
