@@ -15,6 +15,10 @@ def toggle_mute(request, user_slug):
     if user_to.is_curator or user_to.is_moderator:
         raise AccessDenied(title="У этого юзера иммунитет от мьюта")
 
+    if user_to == request.me:
+        raise AccessDenied(title='Хорошая попытка, но мьютить себя нельзя. Кожаный мешок, ты прекрасен!',
+                           message='')
+
     total_user_muted_count = Muted.objects.filter(user_from=request.me).count()
 
     # show form on GET
