@@ -23,7 +23,10 @@ log = logging.getLogger(__name__)
 def create_comment(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if not post.is_commentable and not request.me.is_moderator:
-        raise AccessDenied(title="Комментарии к этому посту закрыты")
+        raise AccessDenied(
+            title="Комментарии к этому посту закрыты",
+            data={"saved_text": request.POST.get("text")},
+        )
 
     if request.POST.get("reply_to_id"):
         ProperCommentForm = ReplyForm
@@ -41,8 +44,8 @@ def create_comment(request, post_slug):
             if not is_ok:
                 raise RateLimitException(
                     title="🙅‍♂️ Вы комментируете слишком часто",
-                    message="Подождите немного, вы достигли нашего лимита на комментарии в день. "
-                            "Можете написать нам в саппорт, пожаловаться об этом."
+                    message="Подождите немного, вы достигли своего лимита на комментарии в день.",
+                    data={"saved_text": request.POST.get("text")},
                 )
 
             comment = form.save(commit=False)
@@ -78,7 +81,7 @@ def create_comment(request, post_slug):
                 "title": "Какая-то ошибка при публикации комментария 🤷‍♂️",
                 "message": f"Мы уже получили оповещение и скоро пофиксим. "
                            f"Ваш коммент мы сохранили чтобы вы могли скопировать его и запостить еще раз:",
-                "data": form.cleaned_data.get("text")
+                "data": {"saved_text": form.cleaned_data.get("text")}
             }, status=500)
 
     raise Http404()
