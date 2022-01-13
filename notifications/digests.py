@@ -6,6 +6,7 @@ from django.db.models import Count, Q
 from django.template.loader import render_to_string
 from django.urls import reverse
 
+from badges.models import UserBadge
 from club.exceptions import NotFound
 from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
@@ -216,6 +217,12 @@ def generate_weekly_digest(no_footer=False):
         .select_related("user", "achievement")\
         .order_by("achievement")  # required for grouping
 
+    # New badges
+    badges = UserBadge.objects\
+        .select_related("badge", "to_user")\
+        .filter(**created_at_condition)\
+        .order_by('-created_at')[:10]
+
     issue_number = (end_date - settings.LAUNCH_DATE).days // 7
 
     og_params = urlencode({
@@ -230,6 +237,7 @@ def generate_weekly_digest(no_footer=False):
         "comments": comments,
         "intros": intros,
         "achievements": achievements,
+        "badges": badges,
         "newbie_count": newbie_count,
         "post_count": post_count,
         "top_video_comment": top_video_comment,
