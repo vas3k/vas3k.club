@@ -169,6 +169,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/pastry_cook_3.png",
         "style": "background-color: #ffa089; font-size: 120%;",
     }),
+    ("diy_winner_1", {
+        "name": "Очумелые ручки",
+        "description": "Выдаётся за победу в DIY челлендже",
+        "image": "https://vas3k.club/static/images/achievements/diy_winner_1.png",
+        "style": "background-color: #E4DAE5; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
