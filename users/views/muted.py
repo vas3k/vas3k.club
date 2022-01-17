@@ -58,6 +58,11 @@ def toggle_mute(request, user_slug):
         return render(request, "users/messages/muted.html", {
             "user": user_to,
         })
+    elif comment:   
+        # propose to unmute this user 
+        return render(request, "users/mute/unmute.html", {
+            "user": user_to,
+        })
     else:
         # unmute this user
         Muted.unmute(
