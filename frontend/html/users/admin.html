@@ -31,6 +31,68 @@
                     {% if info_form.email.errors %}<span class="form-row-errors">{{ info_form.email.errors }}</span>{% endif %}
                 </div>
 
+                <div class="form-row form-row-right">
+                    {{ info_form.company.label_tag }}
+                    {{ info_form.company }}
+                    {% if info_form.company.errors %}<span class="form-row-errors">{{ info_form.company.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row form-row-right">
+                    {{ info_form.position.label_tag }}
+                    {{ info_form.position }}
+                    {% if info_form.position.errors %}<span class="form-row-errors">{{ info_form.position.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row form-row-right">
+                    {{ info_form.contact.label_tag }}
+                    {{ info_form.contact }}
+                    {% if info_form.contact.errors %}<span class="form-row-errors">{{ info_form.contact.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.membership_platform_type.label_tag }}
+                    {{ info_form.membership_platform_type }}
+                    {% if info_form.membership_platform_type.errors %}<span class="form-row-errors">{{ info_form.membership_platform_type.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.email_digest_type.label_tag }}
+                    {{ info_form.email_digest_type }}
+                    {% if info_form.email_digest_type.errors %}<span class="form-row-errors">{{ info_form.email_digest_type.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.telegram_id.label_tag }}
+                    {{ info_form.telegram_id }}
+                    {% if info_form.telegram_id.errors %}<span class="form-row-errors">{{ info_form.telegram_id.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.stripe_id.label_tag }}
+                    {{ info_form.stripe_id }}
+                    {% if info_form.stripe_id.errors %}<span class="form-row-errors">{{ info_form.stripe_id.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.is_email_verified.label_tag }}
+                    {{ info_form.is_email_verified }}
+                    {% if info_form.is_email_verified.errors %}<span class="form-row-errors">{{ info_form.is_email_verified.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.is_banned_until.label_tag }}
+                    {{ info_form.is_banned_until }}
+                    {{ info_form.is_banned_until.help_text }}
+                    {% if info_form.is_banned_until.errors %}<span class="form-row-errors">{{ info_form.is_banned_until.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ info_form.roles.label_tag }}
+                    {{ info_form.roles }}
+                    {{ info_form.roles.help_text }}
+                    {% if info_form.roles.errors %}<span class="form-row-errors">{{ info_form.roles.errors }}</span>{% endif %}
+                </div>
+
                 <button type="submit" class="button">Сохранить</button>
             </form>
         </div>

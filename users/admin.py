@@ -59,11 +59,6 @@ def do_user_admin_actions(request, user, data):
                 send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
                 notify_admin_user_on_ban(user, days=data["ban_days"], reason=data["ban_reason"])
 
-    # Unban
-    if data["is_unbanned"]:
-        user.is_banned_until = None
-        user.save()
-
     # Unmoderate
     if data["is_rejected"]:
         user.moderation_status = User.MODERATION_STATUS_REJECTED

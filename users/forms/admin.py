@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.postgres.forms import SimpleArrayField
 from django.forms import ModelForm
 
 from common.data.achievements import ACHIEVEMENTS
@@ -57,11 +58,6 @@ class UserAdminForm(forms.Form):
         widget=forms.Textarea(attrs={"maxlength": 5000}),
     )
 
-    is_unbanned = forms.BooleanField(
-        label="Разбанить",
-        required=False
-    )
-
     is_rejected = forms.BooleanField(
         label="Размодерирвать",
         required=False
@@ -100,6 +96,61 @@ class UserInfoAdminForm(ModelForm):
         label="E-mail",
         required=True
     )
+    company = forms.CharField(
+        label="Компания",
+        required=False,
+        max_length=128,
+    )
+    position = forms.CharField(
+        label="Должность",
+        required=False,
+        max_length=128,
+    )
+    contact = forms.CharField(
+        label="Контакт для связи",
+        required=False,
+        max_length=256,
+    )
+    membership_platform_type = forms.ChoiceField(
+        label="Тип платформы подписки",
+        choices=User.MEMBERSHIP_PLATFORMS,
+        required=True,
+    )
+    email_digest_type = forms.ChoiceField(
+        label="Тип email-дайджеста",
+        required=True,
+        choices=User.EMAIL_DIGEST_TYPES,
+    )
+    telegram_id = forms.CharField(
+        label="Телеграм",
+        required=False,
+        max_length=128
+    )
+    stripe_id = forms.CharField(
+        label="Страйп",
+        required=False,
+        max_length=128
+    )
+    is_email_verified = forms.BooleanField(
+        label="Статус активации email",
+        required=False
+    )
+    is_banned_until = forms.DateTimeField(
+        label="Бан истечет",
+        help_text="Например: 23.01.2022 01:09:31",
+        required=False,
+    )
+    roles = SimpleArrayField(
+        label="Роли",
+        help_text="Можно добавить несколько через запятую. Например: curator,moderator",
+        required=False,
+        base_field=forms.ChoiceField(
+            choices=[
+                (User.ROLE_CURATOR, User.ROLE_CURATOR),
+                (User.ROLE_MODERATOR, User.ROLE_MODERATOR),
+            ],
+        ),
+    )
 
     class Meta:
         model = User
@@ -107,4 +158,14 @@ class UserInfoAdminForm(ModelForm):
             "slug",
             "full_name",
             "email",
+            "company",
+            "position",
+            "contact",
+            "membership_platform_type",
+            "email_digest_type",
+            "telegram_id",
+            "stripe_id",
+            "is_email_verified",
+            "is_banned_until",
+            "roles",
         ]
