@@ -39,7 +39,7 @@ def stats(request):
     moderators = User.objects\
         .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
 
-    parliament = User.objects.filter(roles__contains=[User.ROLE_CURATOR])
+    parliament = User.objects.filter(achievements__achievement_id="parliament_member")
 
     top_users = User.objects\
         .filter(

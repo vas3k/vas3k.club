@@ -86,11 +86,26 @@
                     {% if info_form.is_banned_until.errors %}<span class="form-row-errors">{{ info_form.is_banned_until.errors }}</span>{% endif %}
                 </div>
 
+                <button type="submit" class="button">Сохранить</button>
+            </form>
+        </div>
+
+        <div class="profile-header">Роли</div>
+        <div class="block">
+            <div class="form-row">Роли пользователя: {{ user.get_roles_display }}</div>
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
                 <div class="form-row">
-                    {{ info_form.roles.label_tag }}
-                    {{ info_form.roles }}
-                    {{ info_form.roles.help_text }}
-                    {% if info_form.roles.errors %}<span class="form-row-errors">{{ info_form.roles.errors }}</span>{% endif %}
+                    {{ form.role_action.label_tag }}
+                    {{ form.role_action }}
+                    {% if form.role_action.errors %}<span class="form-row-errors">{{ form.role_action.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.role.label_tag }}
+                    {{ form.role }}
+                    {% if form.role.errors %}<span class="form-row-errors">{{ form.role.errors }}</span>{% endif %}
                 </div>
 
                 <button type="submit" class="button">Сохранить</button>

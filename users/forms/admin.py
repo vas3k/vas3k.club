@@ -9,6 +9,16 @@ from users.models.user import User
 
 
 class UserAdminForm(forms.Form):
+    role_action = forms.ChoiceField(
+        label="Выбрать действие",
+        choices=[(None, "---"), ("add", "Добавить роль"), ("delete", "Удалить роль")],
+        required=False,
+    )
+    role = forms.ChoiceField(
+        label="Выбрать роль",
+        choices=[(None, "---")] + User.ROLES,
+        required=False,
+    )
     add_hat = forms.BooleanField(label="Выдать новую шапку", required=False)
     new_hat = forms.ChoiceField(
         label="Выбрать из популярных",
@@ -140,17 +150,6 @@ class UserInfoAdminForm(ModelForm):
         help_text="Например: 23.01.2022 01:09:31",
         required=False,
     )
-    roles = SimpleArrayField(
-        label="Роли",
-        help_text="Можно добавить несколько через запятую. Например: curator,moderator",
-        required=False,
-        base_field=forms.ChoiceField(
-            choices=[
-                (User.ROLE_CURATOR, User.ROLE_CURATOR),
-                (User.ROLE_MODERATOR, User.ROLE_MODERATOR),
-            ],
-        ),
-    )
 
     class Meta:
         model = User
@@ -167,5 +166,4 @@ class UserInfoAdminForm(ModelForm):
             "stripe_id",
             "is_email_verified",
             "is_banned_until",
-            "roles",
         ]
