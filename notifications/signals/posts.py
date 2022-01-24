@@ -48,6 +48,7 @@ REJECT_POST_REASONS = {
     ],
     "battle": [
         ("hot", "Срач"),
+        ("false_dilemma", "Ложная дилемма"),
         ("duplicate", "Дубликат"),
         ("bias", "Предвзят к одному варианту"),
     ],
