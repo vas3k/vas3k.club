@@ -39,7 +39,7 @@
             </a>
         </span>
 
-       <div class="comment-header-badges">
+        <div class="comment-header-badges">
             {% if comment.metadata.badges %}
                 <a class="comment-badges" href="{% url "profile_badges" comment.author.slug %}">
                     {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
@@ -51,7 +51,7 @@
                     </a>
                 {% endif %}
             {% endif %}
-            </div>
+        </div>
     </div>
 
     <div class="comment-rating">
