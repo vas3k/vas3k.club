@@ -21,7 +21,7 @@
                 {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
                 {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
 
-                {% if me and comment.author_id != me.id %}
+                {% if me and comment.author_id != me.id and not comment.author.deleted_at %}
                     <a href="{% url "create_badge_for_comment" comment.id %}">
                         <span class="comment-badge-button"><i class="fas fa-gift"></i></span>
                     </a>
@@ -39,7 +39,7 @@
                     {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
                 </div>
 
-                {% if me and comment.author_id != me.id %}
+                {% if me and comment.author_id != me.id and not comment.author.deleted_at %}
                     <a class="comment-badge-button" href="{% url "create_badge_for_comment" comment.id %}">
                         <i class="fas fa-gift"></i>
                     </a>
