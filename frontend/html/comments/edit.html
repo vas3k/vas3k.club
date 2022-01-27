@@ -3,6 +3,12 @@
 
 {% block content %}
     <div class="content comment">
+        {% if not comment.is_editable %}
+            <div class="error">
+                <h2>Время вышло</h2>
+                <p>Комментарий можно редактировать только в течение {{ comment.editable_hours }} часов после создания.</p>
+            </div>
+        {% endif %}
         <form action="{% url "edit_comment" comment.id %}" method="post" class="form comment-form-form">
             <div class="comment-form">
                 <div class="comment-form-avatar">
@@ -14,9 +20,7 @@
                     </comment-markdown-editor>
                     {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
                 </div>
-                <div class="comment-form-button">
-                    <button type="submit" class="button">Сохранить</button>
-                </div>
+                {% if comment.is_editable %}<div class="comment-form-button"><button type="submit" class="button">Сохранить</button></div>{% endif %}
             </div>
         </form>
     </div>

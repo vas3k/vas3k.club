@@ -101,6 +101,10 @@ class Comment(models.Model):
         return None
 
     @property
+    def editable_hours(self):
+        return int(settings.COMMENT_EDITABLE_TIMEDELTA.total_seconds() // 3600)
+
+    @property
     def is_editable(self):
         return self.created_at >= datetime.utcnow() - settings.COMMENT_EDITABLE_TIMEDELTA
 

@@ -107,19 +107,18 @@ def edit_comment(request, comment_id):
                 message="Сначала тот, кто его удалил, должен его восстановить"
             )
 
-        if not comment.is_editable:
-            hours = int(settings.COMMENT_EDITABLE_TIMEDELTA.total_seconds() // 3600)
-            raise AccessDenied(
-                title="Время вышло",
-                message=f"Комментарий можно редактировать только в течение {hours} часов после создания"
-            )
-
         if not comment.post.is_visible or not comment.post.is_commentable:
             raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post
 
     if request.method == "POST":
+        if not comment.is_editable:
+            raise AccessDenied(
+                title="Время вышло",
+                message=f"Комментарий можно редактировать только в течение {comment.editable_hours} часов после создания"
+            )
+
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             comment = form.save(commit=False)
