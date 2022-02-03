@@ -12,6 +12,7 @@ from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
+from posts.models.subscriptions import PostSubscription
 from posts.models.views import PostView
 from search.models import SearchIndex
 
@@ -56,6 +57,10 @@ def create_comment(request, post_slug):
             comment.useragent = parse_useragent(request)
             comment.save()
 
+            # subscribe to top level comments (experimental)
+            if not comment.reply_to:
+                PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_TOP_LEVEL_ONLY)
+
             # update the shitload of counters :)
             request.me.update_last_activity()
             Comment.update_post_counters(post)
@@ -67,7 +72,6 @@ def create_comment(request, post_slug):
             )
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
-
             return redirect(
                 reverse("show_post", kwargs={
                     "post_type": post.type,
