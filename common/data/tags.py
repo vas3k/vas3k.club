@@ -88,6 +88,7 @@ PERSONAL = [
     ("ps", "🎮 PlayStation"),
     ("xbox", "🕹 Xbox"),
     ("pc", "🖥 Пэка"),
+    ("vr", "🥽 VR"),
     ("conservative", "📜 Консерватизм"),
     ("centrism", "🎯 Центризм"),
     ("socialism", "🚩 Социализм"),
