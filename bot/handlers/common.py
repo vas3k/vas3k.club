@@ -40,6 +40,7 @@ class PostRejectReason(Enum):
     inside = "inside"
     value = "value"
     draft = "draft"
+    false_dilemma = "false_dilemma"
 
 
 def get_club_user(update: Update):

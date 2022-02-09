@@ -8,3 +8,11 @@ def calculate_similarity(my, theirs, tags):
         same = my_names & their_names
         similarity[group] = len(same) * 100 / len(both) if both else 0
     return similarity
+
+
+def is_role_manageable_by_user(role, user):
+    if role in (user.ROLE_GOD, user.ROLE_MODERATOR):
+        return user.is_god
+    if role == user.ROLE_CURATOR:
+        return user.is_moderator
+    return False

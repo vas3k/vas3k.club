@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.shortcuts import redirect
-from django_q.tasks import async_task
 
 from auth.models import Session
 from club.exceptions import AccessDenied
@@ -15,11 +14,22 @@ from notifications.telegram.users import notify_user_ping, notify_admin_user_pin
 from payments.helpers import cancel_all_stripe_subscriptions
 from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
+from users.utils import is_role_manageable_by_user
 
 
 def do_user_admin_actions(request, user, data):
     if not request.me.is_moderator:
         raise AccessDenied()
+
+    # Roles
+    if data["role"] and is_role_manageable_by_user(data["role"], request.me):
+        role = data["role"]
+        if data["role_action"] == "add" and role not in user.roles:
+            user.roles.append(role)
+            user.save()
+        if data["role_action"] == "delete" and role in user.roles:
+            user.roles.remove(role)
+            user.save()
 
     # Hats
     if data["remove_hat"]:
@@ -58,11 +68,6 @@ def do_user_admin_actions(request, user, data):
             if data["ban_days"] > 0:
                 send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
                 notify_admin_user_on_ban(user, days=data["ban_days"], reason=data["ban_reason"])
-
-    # Unban
-    if data["is_unbanned"]:
-        user.is_banned_until = None
-        user.save()
 
     # Unmoderate
     if data["is_rejected"]:
