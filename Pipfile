@@ -20,7 +20,7 @@ psycopg2-binary = "==2.8.4"
 awesome-slugify = ">=1.6.5"
 mistune = "==2.0.0a4"
 click = "*"
-pillow = ">=7.1.1"
+pillow = ">=9.0.1"
 django-simple-history = ">=2.8.0"
 python-telegram-bot = "==12.5.1"
 django-q = {version = ">=1.3.5", extras = ["sentry"]}
