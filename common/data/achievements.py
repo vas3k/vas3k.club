@@ -175,6 +175,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/diy_winner_1.png",
         "style": "background-color: #A58679; font-size: 120%;",
     }),
+        ("photo_winner_1", {
+        "name": "Фотограф",
+        "description": "За победу на неделе фото. Выдается секретным чатом фотографов",
+        "image": "https://vas3k.club/static/images/achievements/photo_winner_1.png",
+        "style": "background-color: #a4d26f; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
