@@ -3,11 +3,13 @@ import re
 from django.db import models
 from django.db.models import Q
 
+from club import settings
 from posts.models.post import Post
 from users.models.user import User
 
 CLUB_POST_URL_RE = re.compile(r"https:\/\/vas3k.club\/[\S]+?\/([\S]+?)\/")
-
+if settings.DEBUG:
+    CLUB_POST_URL_RE = re.compile(r"http:\/\/127.0.0.1:8000\/[\S]+?\/([\S]+?)\/")
 
 class LinkedPost(models.Model):
     post_from = models.ForeignKey(Post, related_name="linked_posts_from", db_index=True, on_delete=models.CASCADE)
