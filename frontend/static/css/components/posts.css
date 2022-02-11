@@ -141,7 +141,7 @@
 
         .post-type-post .upvote {
             position: absolute;
-            top: 0;
+            top: 30px;
             left: -110px;
             padding-left: 20px;
             padding-right: 20px;
@@ -228,6 +228,7 @@
         font-size: 19px;
         line-height: 1.67;
         letter-spacing: 0.01rem;
+        padding-top: 30px;
     }
 
         .text-body-layout-notitle {
@@ -430,6 +431,13 @@
         margin: 1em auto;
         text-align: center;
     }
+
+        @media only screen and (min-width : 800px) {
+            .post-type-post .text-body figure {
+                width: 110%;
+                margin: 1em auto 1em -5%;
+            }
+        }
 
     .text-body figcaption {
         font-family: var(--sans-font);

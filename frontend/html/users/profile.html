@@ -105,35 +105,47 @@
                         {% endif %}
                     </span>
                 </div>
+
                 <div class="profile-status">
-                    {% if user.membership_created_days < 150 %}
-                        <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
-                    {% elif user.membership_created_days < 700 %}
-                        <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
-                        <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
+                    {% if user.is_banned %}
+                        <span class="profile-status-icon">👮‍♀️</span>
+                        <span class="profile-status-text">забанен</span>
+                    {% elif user.deleted_at %}
+                        <span class="profile-status-icon">🏃‍♀️</span>
+                        <span class="profile-status-text">удалился из Клуба</span>
+                    {% elif not user.is_paid_member %}
+                        <span class="profile-status-icon">️😴</span>
+                        <span class="profile-status-text">аккаунт неактивен</span>
                     {% else %}
-                        <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_years | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
+                        {% if user.membership_created_days < 150 %}
+                            <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
+                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
+                        {% elif user.membership_created_days < 700 %}
+                            <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
+                            <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
+                        {% else %}
+                            <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_years | cool_number }}</span>
+                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
+                        {% endif %}
                     {% endif %}
                 </div>
+
                 <friend-button
                     url="{% url "toggle_friend" user.slug %}"
                     {% if friend %}is-friend-by-default{% endif %}>
                 </friend-button>
-                {% if me.is_curator or me.is_moderator %}
-                    {% if not user.is_curator and not user.is_moderator %}
-                        {% if muted %}
-                            <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
-                                <span class="profile-status-icon">❌</span>
-                                <span class="profile-status-status">Снять бан</span>
-                            </a>
-                        {% else %}
-                            <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
-                                <span class="profile-status-icon">⛔️</span>
-                                <span class="profile-status-status">Я не хочу видеть его в Клубе</span>
-                            </a>
-                        {% endif %}
+
+                {% if not user.is_curator and not user.is_moderator %}
+                    {% if muted %}
+                        <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
+                            <span class="profile-status-icon">❌</span>
+                            <span class="profile-status-status">Снять бан</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
+                            <span class="profile-status-icon">⛔️</span>
+                            <span class="profile-status-status">Я не хочу видеть его в Клубе</span>
+                        </a>
                     {% endif %}
                 {% endif %}
             </div>

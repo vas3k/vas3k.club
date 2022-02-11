@@ -42,7 +42,7 @@
                     </a>
                 {% endif %}
 
-                {% if me and comment.author_id != me.id %}
+                {% if me and comment.author_id != me.id and not comment.author.deleted_at %}
                     <a class="comment-badge-button comment-button-visible-on-hover" href="{% url "create_badge_for_comment" comment.id %}">
                         <i class="fas fa-gift"></i>
                     </a>

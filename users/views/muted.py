@@ -12,7 +12,7 @@ from users.models.user import User
 @auth_required
 def toggle_mute(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
-    if user_to.is_curator or user_to.is_moderator:
+    if user_to.is_curator or user_to.is_moderator or user_to == request.me:
         raise AccessDenied(title="У этого юзера иммунитет от мьюта")
 
     total_user_muted_count = Muted.objects.filter(user_from=request.me).count()
@@ -37,7 +37,7 @@ def toggle_mute(request, user_slug):
     if total_user_muted_count > settings.MAX_MUTE_COUNT:
         raise AccessDenied(
             title="Вы замьютили слишком много людей",
-            message="Рекомендуем притормозить и поговорить с кем-нибудь..."
+            message="Рекомендуем притормозить и подумать о будущем..."
         )
 
     comment = request.POST.get("comment") or ""

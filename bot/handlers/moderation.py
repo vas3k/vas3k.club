@@ -96,6 +96,7 @@ def reject_post(update: Update, context: CallbackContext) -> None:
         "reject_post_inside": PostRejectReason.inside,
         "reject_post_value": PostRejectReason.value,
         "reject_post_draft": PostRejectReason.draft,
+        "reject_post_false_dilemma": PostRejectReason.false_dilemma,
     }.get(code) or PostRejectReason.draft
 
     post = Post.objects.get(id=post_id)

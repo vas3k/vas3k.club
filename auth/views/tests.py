@@ -389,7 +389,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
             currently_entitled_amount_cents=0
         )
 
-    def test_successful_login_new_member(self, mocked_patreon):
+    def test_patreon_new_member_error(self, mocked_patreon):
         # given
         mocked_patreon.fetch_auth_data.return_value = self.stub_patreon_response_oauth_token
         mocked_patreon.fetch_user_data.return_value = self.stub_patreon_response_oauth_identity
@@ -402,21 +402,10 @@ class ViewPatreonOauthCallbackTests(TestCase):
         response = self.client.get(reverse('patreon_oauth_callback'), data={'code': '1234'})
 
         # then
-        self.assertRedirects(response=response, expected_url=f'/user/PatreonMemberFullName/',
-                             fetch_redirect_response=False)
-        self.assertTrue(self.client.is_authorised())
-        # created user
-        created_user: User = User.objects.filter(email=membership.email).get()
-        self.assertIsNotNone(created_user)
-        self.assertEqual(created_user.patreon_id, membership.user_id)
-        self.assertEqual(created_user.full_name, "PatreonMember FullName")
-        self.assertEqual(created_user.membership_platform_type, "patreon")
-        self.assertEqual(created_user.membership_started_at, membership.started_at)
-        self.assertEqual(created_user.membership_expires_at, membership.expires_at)
-        self.assertEqual(created_user.balance, 4)  # 400 / 100
-        self.assertFalse(created_user.is_email_verified)
-        self.assertEqual(created_user.membership_platform_data, {'access_token': 'xxx-access-token',
-                                                                 'refresh_token': 'xxx-refresh-token'})
+        self.assertContains(response=response, text="Регистрироваться через Патреон больше нельзя",
+                            status_code=400)
+        created_user: User = User.objects.filter(email=membership.email).first()
+        self.assertIsNone(created_user)
 
     def test_successful_login_existed_member(self, mocked_patreon):
         # given
