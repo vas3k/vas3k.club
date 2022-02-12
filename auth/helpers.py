@@ -1,4 +1,5 @@
 import logging
+import random
 from datetime import datetime, timedelta
 
 import jwt
@@ -8,6 +9,7 @@ from auth.models import Session
 from club import settings
 from club.exceptions import AccessDenied, ApiAuthRequired
 from users.models.user import User
+from utils.strings import random_string
 
 log = logging.getLogger(__name__)
 
@@ -152,3 +154,29 @@ def set_session_cookie(response, user, session):
         secure=not settings.DEBUG,
     )
     return response
+
+
+def create_fake_user(avatar=None):
+    slug = "random_" + random_string()
+    while User.objects.filter(slug=slug).exists():
+        slug = "random_" + random_string()
+
+    user = User.objects.create(
+        slug=slug,
+        patreon_id=random_string(),
+        membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
+        email=slug + "@random.dev",
+        full_name="%s %d y.o. Developer" % (random.choice(["Максим", "Олег"]), random.randint(18, 101)),
+        avatar=avatar,
+        company="Acme Corp.",
+        position=random.choice(["Подниматель пингвинов", "Опускатель серверов", "Коллектор пивных бутылок"]),
+        balance=10000,
+        membership_started_at=datetime.utcnow(),
+        membership_expires_at=datetime.utcnow() + timedelta(days=365 * 100),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+        is_email_verified=True,
+        moderation_status=User.MODERATION_STATUS_APPROVED,
+    )
+
+    return user
