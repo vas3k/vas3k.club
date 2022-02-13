@@ -13,7 +13,7 @@ from comments.models import Comment
 from posts.models.post import Post
 
 AVATARS_POST = "https://vas3k.club/post/11666/"
-PICS_POST = "https://vas3k.club/post/12480/"
+PICS_POST = "https://vas3k.club/guide/11689/"
 WORDS_IN_PARAGRAPH = 100
 
 
@@ -21,10 +21,15 @@ class Command(BaseCommand):
     help = "Creates fake post with amount of comments"
 
     def add_arguments(self, parser):
-        parser.add_argument('--words', type=int, default=600, help="Amount of words in post")
-        parser.add_argument('--pics', type=int, default=0, help="Amount of pictures in post")
-        parser.add_argument('--comments', type=int, default=10, help="Amount of top comments in post")
-        parser.add_argument('--deep-comments', type=int, default=0, help="Amount of 2-nd level comments in every top level comment")
+        parser.add_argument('--words', type=int, default=600, help="Количество слов в посте")
+        parser.add_argument('--pics', type=int, default=0, help="Количество картинок в посте")
+        parser.add_argument('--comments', type=int, default=10, help="Количество комментариев первого уровня")
+        parser.add_argument(
+            '--deep-comments',
+            type=int,
+            default=0,
+            help="Количество комментариев второго уровня у каждого комментария первого уровня"
+        )
 
     def handle(self, *args, **options):
         if not (settings.DEBUG or settings.TESTS_RUN):
