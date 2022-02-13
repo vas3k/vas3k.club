@@ -1,4 +1,3 @@
-import string
 from datetime import datetime
 from random import choice, randint
 from typing import List
@@ -11,6 +10,7 @@ from django.core.management.base import BaseCommand
 from auth.helpers import create_fake_user
 from comments.models import Comment
 from posts.models.post import Post
+from utils.strings import random_lower_string
 
 AVATARS_POST = "https://vas3k.club/post/11666/"
 PICS_POST = "https://vas3k.club/guide/11689/"
@@ -124,7 +124,7 @@ class Command(BaseCommand):
             pic_links = self._get_pics()
 
         for _ in range(words):
-            word = "".join(choice(string.ascii_lowercase) for _ in range(randint(3, 10)))
+            word = random_lower_string(randint(3, 10))
             text += word + " "
             count += 1
 

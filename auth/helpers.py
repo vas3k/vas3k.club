@@ -157,9 +157,7 @@ def set_session_cookie(response, user, session):
 
 
 def create_fake_user(avatar=None):
-    slug = "random_" + random_string()
-    while User.objects.filter(slug=slug).exists():
-        slug = "random_" + random_string()
+    slug = _create_free_user_slug()
 
     user = User.objects.create(
         slug=slug,
@@ -180,3 +178,10 @@ def create_fake_user(avatar=None):
     )
 
     return user
+
+
+def _create_free_user_slug() -> str:
+    while True:
+        slug = "random_" + random_string()
+        if not User.objects.filter(slug=slug).exists():
+            return slug

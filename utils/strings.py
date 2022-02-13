@@ -12,6 +12,11 @@ def random_string(length: int = 10):
     return "".join(random.choice(letters) for _ in range(length))
 
 
+def random_lower_string(length: int = 10):
+    letters = string.ascii_lowercase
+    return "".join(random.choice(letters) for _ in range(length))
+
+
 def random_number(length: int = 10):
     letters = string.digits
     return "".join(random.choice(letters) for _ in range(length))
