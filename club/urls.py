@@ -4,7 +4,7 @@ from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
 from auth.helpers import auth_switch
-from auth.views.auth import login, logout, debug_dev_login, debug_random_login, join
+from auth.views.auth import login, logout, debug_dev_login, debug_random_login, debug_login, join
 from auth.views.email import email_login, email_login_code
 from auth.views.external import external_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
@@ -163,6 +163,7 @@ urlpatterns = [
     path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
+    path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
 
     # misc
     path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),
