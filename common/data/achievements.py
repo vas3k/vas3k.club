@@ -181,6 +181,24 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/photo_winner_1.png",
         "style": "background-color: #a4d26f; font-size: 120%;",
     }),
+    ("dota_winner_1", {
+        "name": "Дотер 2 уровня",
+        "description": "За взятие призового места в первом турнире игорей по Dota2",
+        "image": "https://vas3k.club/static/images/achievements/dota_winner_1.png",
+        "style": "background-color: #000000; font-size: 120%;",
+    }),
+    ("cs_winner_1", {
+        "name": "Pew-pew mfs",
+        "description": "За взятие призового места в первом турнире игорей по CS",
+        "image": "https://vas3k.club/static/images/achievements/cs_winner_1.png",
+        "style": "background-color: #FFA300; font-size: 120%;",
+    }),
+    ("game_tournament_org_1", {
+        "name": "Королевская клешня",
+        "description": "За организацию первого турнира игорей",
+        "image": "https://vas3k.club/static/images/achievements/game_tournament_org_1.png",
+        "style": "background-color: #929292; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
