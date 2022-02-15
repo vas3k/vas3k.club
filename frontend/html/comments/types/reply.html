@@ -80,7 +80,11 @@
                     {% endif %}
                 {% endif %}
 
-                <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button reply-button-hidden"><i class="fas fa-edit"></i></a>
+                {% if comment.is_editable %}
+                    <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button reply-button-hidden"><i class="fas fa-edit"></i></a>
+                {% else %}
+                    <span title="Комментарий можно редактировать только в течение 24 часов после создания" class="comment-footer-button reply-button-hidden comment-footer-button-disabled"><i class="fas fa-edit"></i></span>
+                {% endif %}
             {% endif %}
 
             <span class="comment-footer-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
