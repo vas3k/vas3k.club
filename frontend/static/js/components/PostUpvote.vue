@@ -68,7 +68,7 @@ export default {
     methods: {
         toggle() {
             if (!this.isVoted) {
-                return ClubApi.ajaxify(this.upvoteUrl, (data) => {
+                return ClubApi.ajaxify(this.upvoteUrl, {}, (data) => {
                     this.upvotes = parseInt(data.post.upvotes);
                     this.isVoted = true;
                     this.upvotedTimestamp = data.upvoted_timestamp;
@@ -76,7 +76,7 @@ export default {
             }
 
             if (this.isVoted && this.getHoursSinceVote() <= this.hoursToRetractVote) {
-                return ClubApi.ajaxify(this.retractVoteUrl, (data) => {
+                return ClubApi.ajaxify(this.retractVoteUrl, {}, (data) => {
                     this.upvotes = parseInt(data.post.upvotes);
                     if (data.success) {
                         this.isVoted = false;

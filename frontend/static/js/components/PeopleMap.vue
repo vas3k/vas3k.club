@@ -17,6 +17,8 @@
 import Mapbox from "mapbox-gl";
 
 import { MglMap, MglNavigationControl, MglGeolocateControl, MglMarker } from "vue-mapbox";
+import ClubApi from "../common/api.service";
+import GeoPopup from "./GeoPopup.vue";
 
 export default {
     name: "PeopleMap",
@@ -93,17 +95,19 @@ export default {
                         } else {
                             // it's a normal marker
                             let markerElement = document.createElement("div");
-                            const popup = new mapbox.Popup({ offset: 25 }).setHTML(`
-                                <div class="people-map-user-content">
-                                    <b><a href="${props.url}" target="_blank">${props.full_name}</a></b>
-                                    <p>${props.position}  —  ${props.company}</p>
-                                </div>
-                            `);
+                            const popup = new mapbox.Popup({ offset: 25 })
+                                .setHTML('<div id="vue-popup-content"></div>');
                             markerElement.classList.add("people-map-user-marker");
                             markerElement.style.backgroundImage = "url('" + avatarOrDefault(props.avatar) + "')";
                             marker = new mapbox.Marker({ element: markerElement })
                                 .setLngLat(coords)
                                 .setPopup(popup);
+
+                            markerElement.addEventListener("click", () => {
+                                ClubApi.ajaxify(`/geo_details/${props.id}`, { method: 'GET' },(userInfo) => {
+                                    new GeoPopup({ propsData: userInfo } ).$mount('#vue-popup-content');
+                                });
+                            });
                         }
                     }
                     newMarkers[id] = marker;

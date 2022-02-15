@@ -31,6 +31,7 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
 from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
+from users.api import users_geo_details
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
@@ -97,6 +98,7 @@ urlpatterns = [
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
+    path("geo_details/<slug:user_slug>", users_geo_details, name="users_geo_details"),
     path("achievements/", RedirectView.as_view(url="/stats", permanent=True), name="achievements"),
     path("stats/", stats, name="stats"),
 

@@ -18,6 +18,7 @@ Vue.component("comment-upvote", () => import("./components/CommentUpvote.vue"));
 Vue.component("user-expertise-window", () => import("./components/UserExpertiseWindow.vue"));
 Vue.component("user-tag", () => import("./components/UserTag.vue"));
 Vue.component("people-map", () => import("./components/PeopleMap.vue"));
+Vue.component("geo-popup", () => import("./components/GeoPopup.vue"));
 Vue.component("user-avatar-input", () => import("./components/UserAvatarInput.vue"));
 Vue.component("sidebar-toggler", () => import("./components/SidebarToggler.vue"));
 Vue.component("stripe-checkout-button", () => import("./components/StripeCheckoutButton.vue"));
@@ -76,7 +77,7 @@ new Vue({
             // FIXME: please refactor this code to a proper list component with ajax CRUD actions
             const href = event.target.getAttribute("href");
             if (href == null) return;
-            return ClubApi.ajaxify(href, (data) => {
+            return ClubApi.ajaxify(href, {}, (data) => {
                 if (data.status === "deleted") {
                     document.getElementById("expertise-" + data.expertise.expertise).outerHTML = "";
                 }
