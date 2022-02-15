@@ -356,6 +356,12 @@
         padding-top: 5px;
     }
 
+    .comment-body-muted {
+        font-size: 120%;
+        opacity: 0.5;
+        padding-bottom: 20px;
+    }
+
     .comment-layout-block {
         padding: 30px;
         margin: 0 auto 30px;
@@ -548,12 +554,97 @@
 
 .comment-is-new {
     background-color: rgba(104, 118, 128, 0.30);
+    padding-right: 8px;
 }
 
     .comment-is-new .comment-is-new {
         background-color: transparent;
+        padding-right: 0;
     }
 
 .comment-is-badged {
     border: solid 3px var(--badge-color);
 }
+
+.comment-scroll-arrow {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    display: inline-block;
+    text-decoration: none;
+    width: 48px;
+    height: 48px;
+    font-size: 140%;
+    font-weight: 600;
+    font-family: var(--sans-font);
+    color: var(--text-color);
+    border: var(--button-border);
+    background-color: var(--bg-color);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+}
+
+    .comment-scroll-arrow:hover {
+        background-color: var(--opposite-bg-color);
+        color: var(--opposite-text-color);
+    }
+
+    .comment-scroll-arrow::before {
+        content: "▲";
+        position: absolute;
+        font-size: 18px;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-43%) rotate(180deg);
+        transition: transform .2s;
+    }
+
+    .comment-scroll-arrow.arrow-up::before {
+        transform: translateX(-50%) translateY(-50%) rotate(0);
+    }
+
+.comment-markdown-editor {
+    position: relative;
+}
+
+.mention-autocomplete-hint {
+    position: absolute;
+    min-width: 100px;
+    box-shadow: 0 0 4px 2px rgb(9 30 66 / 8%);
+    border: 1px solid var(--input-border-color);
+    overflow: hidden;
+    border-radius: 4px;
+    font-size: 125%;
+}
+
+    .mention-autocomplete-hint__option {
+        background: var(--input-bg-color);
+        font-weight: 400;
+        padding: 0 5px;
+    }
+
+    .mention-autocomplete-hint__option span {
+        font-weight: 200;
+        color: #737373;
+        padding-left: 10px;
+    }
+
+    .mention-autocomplete-hint__option:hover {
+        cursor: pointer;
+        background: #4c98d5;
+        color: #fff;
+    }
+
+    .mention-autocomplete-hint__option:hover span {
+        color: #fff;
+    }
+
+    .mention-autocomplete-hint__option--suggested {
+        background: #4c98d5;
+        color: #fff;
+    }
+
+    .mention-autocomplete-hint__option--suggested span {
+        color: #fff;
+    }

@@ -16,8 +16,8 @@ export const isCommunicationForm = (form) =>
 
 export const pluralize = (count, words) => {
     const cases = [2, 0, 1, 1, 1, 2];
-    return words[ (count % 100 > 4 && count % 100 < 20) ? 2 : cases[ Math.min(count % 10, 5)] ];
-}
+    return words[count % 100 > 4 && count % 100 < 20 ? 2 : cases[Math.min(count % 10, 5)]];
+};
 
 export const throttle = (fn, wait) => {
     let inThrottle, lastFn, lastTime;
@@ -38,4 +38,24 @@ export const throttle = (fn, wait) => {
             }, Math.max(wait - (Date.now() - lastTime), 0));
         }
     };
+};
+
+export function isMobile() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // Windows Phone must come first because its UA also contains "Android"
+    if (/windows phone/i.test(userAgent)) {
+        return true;
+    }
+
+    if (/android/i.test(userAgent)) {
+        return true;
+    }
+
+    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return true;
+    }
+
+    return false;
 }

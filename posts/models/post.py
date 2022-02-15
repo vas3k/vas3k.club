@@ -177,6 +177,9 @@ class Post(models.Model, ModelDiffMixin):
     def can_edit(self, user):
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
+    def can_view_draft(self, user):
+        return self.can_edit(user) or user.is_curator
+
     @property
     def emoji(self):
         return self.TYPE_TO_EMOJI.get(self.type) or ""

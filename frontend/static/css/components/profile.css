@@ -258,8 +258,7 @@
             }
 
             .user-badge-image {
-                width: 90px;
-                height: 90px;
+                max-height: 100px;
                 margin: 0 auto;
             }
 

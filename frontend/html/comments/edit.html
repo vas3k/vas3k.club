@@ -9,7 +9,9 @@
                     <div class="avatar"><img src="{% if form.instance.author.avatar %}{{ form.instance.author.get_avatar }}{% else %}{{ me.get_avatar }}{% endif %}" alt="Аватар" /></div>
                 </div>
                 <div class="comment-form-body">
-                    {{ form.text }}
+                    <comment-markdown-editor post-slug="{{ post.slug }}">
+                        {{ form.text }}
+                    </comment-markdown-editor>
                     {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
                 </div>
                 <div class="comment-form-button">

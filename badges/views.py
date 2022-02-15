@@ -66,7 +66,16 @@ def create_badge_for_comment(request, comment_id):
             title="😵 Комментарий удалён",
             message="Нельзя выдавать награды за удалённые комменты"
         )
-
+    if comment.author.deleted_at:
+        raise BadRequest(
+            title="😵 Пользователь удалился",
+            message="Нельзя выдавать награды удалённым юзерам"
+        )
+    if comment.author == request.me:
+        raise BadRequest(
+            title="😵 Это же ты",
+            message="Нельзя выдавать награды самому себе"
+        )
     if request.method != "POST":
         if request.me.membership_days_left() < settings.MIN_DAYS_TO_GIVE_BADGES:
             return render(request, "badges/messages/insufficient_funds.html")

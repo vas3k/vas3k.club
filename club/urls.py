@@ -4,7 +4,7 @@ from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
 from auth.helpers import auth_switch
-from auth.views.auth import login, logout, debug_dev_login, debug_random_login, join
+from auth.views.auth import login, logout, debug_dev_login, debug_random_login, debug_login, join
 from auth.views.email import email_login, email_login_code
 from auth.views.external import external_login
 from auth.views.patreon import patreon_login, patreon_oauth_callback
@@ -34,6 +34,7 @@ from users.api import api_profile
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
+from users.views.muted import toggle_mute, muted
 from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise, profile_comments, profile_posts, \
     profile_badges
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
@@ -41,9 +42,10 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.admin import admin_profile
 from users.views.people import people
+from search.api import api_search_users
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
-ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|hot))"
+ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))"
 urlpatterns = [
     path("", feature_switch(
         features.PRIVATE_FEED,                  # if private feed is enabled
@@ -79,6 +81,8 @@ urlpatterns = [
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),
     path("user/<slug:user_slug>/friend/", toggle_friend, name="toggle_friend"),
     path("user/<slug:user_slug>/friends/", friends, name="friends"),
+    path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
+    path("user/<slug:user_slug>/muted/", muted, name="muted"),
     path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
     path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/account/", edit_account, name="edit_account"),
@@ -123,6 +127,8 @@ urlpatterns = [
     path("bookmarks/", bookmarks, name="bookmarks"),
 
     path("search/", search, name="search"),
+    path("search/users.json", api_search_users, name="api_search_users"),
+
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
     path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
@@ -157,6 +163,7 @@ urlpatterns = [
     path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
+    path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
 
     # misc
     path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),

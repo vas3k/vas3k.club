@@ -10,6 +10,7 @@ from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
 from posts.models.post import Post
 from posts.models.topics import Topic
+from users.models.mute import Muted
 
 POST_TYPE_ALL = "all"
 
@@ -19,6 +20,7 @@ ORDERING_HOT = "hot"
 ORDERING_TOP = "top"
 ORDERING_TOP_WEEK = "top_week"
 ORDERING_TOP_MONTH = "top_month"
+ORDERING_TOP_YEAR = "top_year"
 
 
 @feature_switch(features.PRIVATE_FEED, yes=auth_required, no=noop)
@@ -44,6 +46,12 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
     # filter by label
     if label_code:
         posts = posts.filter(label_code=label_code)
+
+    # hide muted users
+    if request.me:
+        muted = Muted.objects.filter(user_from=request.me).values_list("user_to_id").all()
+        if muted:
+            posts = posts.exclude(author_id__in=muted)
 
     # hide non-public posts and intros from unauthorized users
     if not request.me:
@@ -77,6 +85,10 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
         elif ordering == ORDERING_TOP_MONTH:
             posts = posts.filter(
                 published_at__gte=datetime.utcnow() - timedelta(days=31)
+            ).order_by("-upvotes")
+        elif ordering == ORDERING_TOP_YEAR:
+            posts = posts.filter(
+                published_at__gte=datetime.utcnow() - timedelta(days=365)
             ).order_by("-upvotes")
         else:
             raise Http404()

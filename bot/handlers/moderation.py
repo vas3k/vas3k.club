@@ -96,6 +96,7 @@ def reject_post(update: Update, context: CallbackContext) -> None:
         "reject_post_inside": PostRejectReason.inside,
         "reject_post_value": PostRejectReason.value,
         "reject_post_draft": PostRejectReason.draft,
+        "reject_post_false_dilemma": PostRejectReason.false_dilemma,
     }.get(code) or PostRejectReason.draft
 
     post = Post.objects.get(id=post_id)
@@ -143,6 +144,7 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
     intro.is_approved_by_moderator = True
     intro.is_visible = True
+    intro.last_activity_at = datetime.utcnow()
     if not intro.published_at:
         intro.published_at = datetime.utcnow()
     intro.save()

@@ -25,7 +25,7 @@ def show_post(request, post_type, post_slug):
 
     # drafts are visible only to authors, coauthors and moderators
     if not post.is_visible:
-        if not request.me or not post.can_edit(request.me):
+        if not request.me or not post.can_view_draft(request.me):
             raise Http404()
 
     # don't show private posts into public

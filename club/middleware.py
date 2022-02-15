@@ -29,14 +29,14 @@ class ExceptionMiddleware:
             return JsonResponse({
                 "error": {
                     "title": exception.title,
-                    "message": exception.message
+                    "message": exception.message,
+                    "data": exception.data,
                 }
             }, status=400)
 
         if isinstance(exception, ClubException):
-            return render(
-                request,
-                "error.html",
-                {"title": exception.title, "message": exception.message},
-                status=400,
-            )
+            return render(request, "error.html", {
+                "title": exception.title,
+                "message": exception.message,
+                "data": exception.data,
+            }, status=400)

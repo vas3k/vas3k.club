@@ -2,7 +2,6 @@ from datetime import datetime
 from urllib.parse import urlencode, parse_qsl
 
 from django.conf import settings
-from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -14,7 +13,6 @@ from auth.providers import patreon
 from club import features
 from common.feature_flags import feature_required
 from users.models.user import User
-from common.images import upload_image_from_url
 
 
 @feature_required(features.PATREON_AUTH_ENABLED)
@@ -81,28 +79,16 @@ def patreon_oauth_callback(request):
     # get user by patreon_id or email
     user = User.objects.filter(Q(patreon_id=membership.user_id) | Q(email=membership.email.lower())).first()
     if not user:
-        # user is new, create it
-        try:
-            user = User.objects.create(
-                patreon_id=membership.user_id,
-                email=membership.email.lower(),
-                full_name=membership.full_name[:120],
-                avatar=upload_image_from_url(membership.image) if membership.image else None,
-                membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON,
-                membership_started_at=membership.started_at,
-                membership_expires_at=membership.expires_at,
-                balance=membership.lifetime_support_cents / 100,
-                created_at=now,
-                updated_at=now,
-                is_email_verified=False,
-            )
-        except IntegrityError:
-            return render(request, "error.html", {
-                "title": "💌 Придётся войти через почту",
-                "message": "Пользователь с таким имейлом уже зарегистрирован, но не через патреон. "
-                           "Чтобы защититься от угона аккаунтов через подделку почты на патреоне, "
-                           "нам придётся сейчас попросить вас войти через почту."
-            }, status=400)
+        # user is new, do not allow patreon users to register
+        return render(request, "error.html", {
+            "title": "🤕 Регистрироваться через Патреон больше нельзя",
+            "message": "Возможность входа через Патреон осталась только для легаси-юзеров, "
+                       "но создавать новые аккаунты в Клубе через него больше нельзя. "
+                       "Через Патреон регистрируется очень много виртуалов и прочих анонимов, "
+                       "так как им это дешево. Мы же устали их ловить и выгонять, "
+                       "потому решили полностью прикрыть регистрацию."
+        }, status=400)
+
     else:
         # user exists
         if user.deleted_at:
@@ -112,7 +98,7 @@ def patreon_oauth_callback(request):
             }, status=404)
 
         # update membership dates
-        user.balance = membership.lifetime_support_cents / 100  # TODO: remove when the real money comes in
+        user.balance = membership.lifetime_support_cents / 100
         if membership.expires_at > user.membership_expires_at:
             user.membership_expires_at = membership.expires_at
 

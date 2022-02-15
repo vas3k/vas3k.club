@@ -36,6 +36,57 @@
             min-width: 35px;
             vertical-align: middle;
         }
+
+    .badges {
+        display: block;
+        overflow: hidden;
+    }
+
+        .badge {
+            display: block;
+            float: left;
+            width: 120px;
+            height: 200px;
+            text-align: center;
+            text-decoration: none;
+            margin: 20px 10px 0;
+            font-weight: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 90%;
+            line-height: 1.2em;
+        }
+
+            .badge-image {
+                display: inline-block;
+                width: 80px;
+                height: 80px;
+                min-width: auto;
+                min-height: auto;
+                margin-bottom: 10px;
+            }
+
+            .badge-title {
+                display: block;
+                font-size: 100%;
+                font-weight: 500;
+                margin-bottom: 3px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .badge-info {
+                display: block;
+                font-size: 80%;
+                line-height: 1.1em;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+    .zoom-on-hover:hover {
+        transform: scale(1.05);
+        transition: transform .2s;
+    }
 </style>
 {% endblock %}
 
@@ -188,17 +239,52 @@
         {% endfor %}
     {% endif %}
 
+    {% if badges %}
+        <br><br><br>
+
+        <h2>🥇 Награды</h2>
+
+        <p class="center">
+            Члены Клуба дарят их друг другу чтобы отметить посты и комментарии, которые им особенно понравились.
+            Топ можно смотреть на <a href="{% url "stats" %}">странице статистики</a>.
+        </p>
+
+        <div class="badges">
+            {% for badge in badges %}
+                {% if badge.comment %}
+                    <a href="{% url "show_comment" badge.comment.post.slug badge.comment.id %}" class="badge zoom-on-hover">
+                        <img
+                            src="{% static "images/badges" %}/big/{{ badge.badge.code }}.png"
+                            alt="{{ badge.badge.title }}"
+                            class="badge-image">
+                        <span class="badge-title">🎖&nbsp;{{ badge.to_user.full_name }}</span>
+                        <span class="badge-info">за комментарий</span>
+                    </a>
+                {% else %}
+                    <a href="{% url "show_post" badge.post.type badge.post.slug %}" class="badge zoom-on-hover">
+                        <img
+                            src="{% static "images/badges" %}/big/{{ badge.badge.code }}.png"
+                            alt="{{ badge.badge.title }}"
+                            class="badge-image">
+                        <span class="badge-title">🎖&nbsp;{{ badge.to_user.full_name }}</span>
+                        <span class="badge-info">за пост «{{ badge.post.title }}»</span>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {% if achievements %}
         <br><br><br>
 
-        <h2>🎖 Награды</h2>
+        <h2>🏆 Новые ачивки</h2>
 
         <div class="block comment" style="font-size: 20px; text-align: center;">
             {% regroup achievements by achievement as achievement_groups %}
             {% for achievement_group in achievement_groups %}
                 <p>
                     {% for achievement in achievement_group.list %}<img src="{{ achievement.user.get_avatar }}" alt="" width="24" height="24" class="avatar-small">&nbsp;<a href="{% url "profile" achievement.user.slug %}">{{ achievement.user.full_name }}</a>{% if forloop.revcounter0 == 1 %} и {% else %}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %}
-                    {% if achievement_group.list|length == 1 %}получил{% else %}получили{% endif %} ачивку <a href="{% url "achievements" %}" class="achievement" style="{{ achievement_group.grouper.style }}"><img src="{{ achievement_group.grouper.image }}" alt="" height="35" width="35" class="achievement-image">&nbsp;{{ achievement_group.grouper.name }}</a>
+                    {% if achievement_group.list|length == 1 %}получил{% else %}получили{% endif %} ачивку <a href="{% url "stats" %}" class="achievement" style="{{ achievement_group.grouper.style }}"><img src="{{ achievement_group.grouper.image }}" alt="" height="35" width="35" class="achievement-image">&nbsp;{{ achievement_group.grouper.name }}</a>
                 </p>
             {% endfor %}
         </div>
