@@ -1,92 +1,100 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} {% if comment.metadata.badges %}comment-is-badged{% endif %}" id="comment-{{ comment.id }}">
-    {% if replies %}
-    <div class="reply-side" @click.prevent="toggleCommentThread">
-        <div class="thread-ruler"></div>
-    </div>
-    {% endif %}
-    <div class="reply-header">
-        <a class="avatar reply-avatar" href="{% url "profile" comment.author.slug %}">
-            <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
-        </a>
 
-        <a href="{% url "profile" comment.author.slug %}" class="comment-header-author-name">
-            {{ comment.author.full_name }}
-        </a>
-
-        <a href="#comment-{{ comment.id }}" class="reply-date">
-            {{ comment.created_at | cool_date }}
-        </a>
-
-        {% if comment.author == post.author %}
-            {% include "users/widgets/hat_author.html" %}
-        {% endif %}
-
-        {% if comment.author.hat %}
-            {% include "users/widgets/hat.html" with hat=comment.author.hat %}
-        {% endif %}
-
-        <div class="comment-header-badges">
-            {% if comment.metadata.badges %}
-                <a class="reply-badges" href="{% url "profile_badges" comment.author.slug %}">
-                    {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
-                </a>
-            {% endif %}
-
-            {% if me and comment.author_id != me.id %}
-                <a class="comment-badge-button comment-button-visible-on-hover" href="{% url "create_badge_for_comment" comment.id %}">
-                    <i class="fas fa-gift"></i>
-                </a>
-            {% endif %}
-        </div>
-    </div>
-    <div class="reply-rating">
-        <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
-                         :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
-                         upvote-url="{% url "upvote_comment" comment.id %}"
-                         retract-vote-url="{% url "retract_comment_vote" comment.id %}"
-                         {% if comment.is_voted %}
-                            initial-is-voted
-                            initial-upvote-timestamp="{{comment.upvoted_at}}"
-                         {% endif %}
-                         {% if not me|can_upvote:comment or upvote_disabled %}is-disabled{% endif %}
-                         is-inline>
-        </comment-upvote>
-    </div>
-    <div class="reply-body thread-collapse-toggle">
-        <div class="text-body text-body-type-comment">
-            {% render_comment comment %}
-        </div>
-    </div>
-    <div class="reply-collapse-stub" @click.prevent="toggleCommentThread">
-        <i class="fas fa-angle-double-down"></i>&nbsp;&nbsp;Развернуть <span class="thread-collapse-length">1 комментарий</span>
-    </div>
-    <div class="reply-footer thread-collapse-toggle">
-        {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
-            {% if not comment.is_deleted or me.id == comment.deleted_by or me.is_moderator %}
-                {% if comment.is_deleted %}
-                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
-                {% else %}
-                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
-                {% endif %}
-            {% endif %}
-
-            <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button reply-button-hidden"><i class="fas fa-edit"></i></a>
-        {% endif %}
-
-        <span class="comment-footer-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
-            <i class="fas fa-reply"></i>&nbsp;ответить
-        </span>
-    </div>
-    <div class="reply-replies thread-collapse-toggle">
+{% if comment.author_id in muted_user_ids %}
+    {% include "comments/types/muted.html" with comment=comment replies=replies %}
+{% else %}
+    <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} {% if comment.metadata.badges %}comment-is-badged{% endif %}" id="comment-{{ comment.id }}">
         {% if replies %}
-            <div class="replies">
-                {% for reply_reply in replies %}
-                    {% include "comments/types/reply.html" with comment=reply_reply reply_to=comment replies=None %}
-                {% endfor %}
-            </div>
+        <div class="reply-side" @click.prevent="toggleCommentThread">
+            <div class="thread-ruler"></div>
+        </div>
         {% endif %}
+        <div class="reply-header">
+            <a class="avatar reply-avatar" href="{% url "profile" comment.author.slug %}">
+                <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
+            </a>
+
+            <a href="{% url "profile" comment.author.slug %}"
+               data-author-slug="{{ comment.author.slug }}"
+               class="comment-header-author-name"
+            >
+                {{ comment.author.full_name }}
+            </a>
+
+            <a href="#comment-{{ comment.id }}" class="reply-date">
+                {{ comment.created_at | cool_date }}
+            </a>
+
+            {% if comment.author == post.author %}
+                {% include "users/widgets/hat_author.html" %}
+            {% endif %}
+
+            {% if comment.author.hat %}
+                {% include "users/widgets/hat.html" with hat=comment.author.hat %}
+            {% endif %}
+
+            <div class="comment-header-badges">
+                {% if comment.metadata.badges %}
+                    <a class="reply-badges" href="{% url "profile_badges" comment.author.slug %}">
+                        {% include "badges/widgets/badges.html" with badges=comment.metadata.badges %}
+                    </a>
+                {% endif %}
+
+                {% if me and comment.author_id != me.id and not comment.author.deleted_at %}
+                    <a class="comment-badge-button comment-button-visible-on-hover" href="{% url "create_badge_for_comment" comment.id %}">
+                        <i class="fas fa-gift"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="reply-rating">
+            <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
+                             :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
+                             upvote-url="{% url "upvote_comment" comment.id %}"
+                             retract-vote-url="{% url "retract_comment_vote" comment.id %}"
+                             {% if comment.is_voted %}
+                                initial-is-voted
+                                initial-upvote-timestamp="{{comment.upvoted_at}}"
+                             {% endif %}
+                             {% if not me|can_upvote:comment or upvote_disabled %}is-disabled{% endif %}
+                             is-inline>
+            </comment-upvote>
+        </div>
+        <div class="reply-body thread-collapse-toggle">
+            <div class="text-body text-body-type-comment">
+                {% render_comment comment %}
+            </div>
+        </div>
+        <div class="reply-collapse-stub" @click.prevent="toggleCommentThread">
+            <i class="fas fa-angle-double-down"></i>&nbsp;&nbsp;Развернуть <span class="thread-collapse-length">1 комментарий</span>
+        </div>
+        <div class="reply-footer thread-collapse-toggle">
+            {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
+                {% if not comment.is_deleted or me.id == comment.deleted_by or me.is_moderator %}
+                    {% if comment.is_deleted %}
+                        <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+                    {% else %}
+                        <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+                    {% endif %}
+                {% endif %}
+
+                <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button reply-button-hidden"><i class="fas fa-edit"></i></a>
+            {% endif %}
+
+            <span class="comment-footer-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
+                <i class="fas fa-reply"></i>&nbsp;ответить
+            </span>
+        </div>
+        <div class="reply-replies thread-collapse-toggle">
+            {% if replies %}
+                <div class="replies">
+                    {% for reply_reply in replies %}
+                        {% include "comments/types/reply.html" with comment=reply_reply reply_to=comment replies=None %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
     </div>
-</div>
+{% endif %}

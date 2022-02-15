@@ -189,6 +189,15 @@ class User(models.Model, ModelDiffMixin):
     def secret_auth_code(self):
         return f"{self.email}|-{self.secret_hash}"
 
+    @property
+    def get_roles_display(self):
+        d = dict(User.ROLES)
+
+        roles = []
+        for role in self.roles:
+            roles.append(d[role])
+        return ", ".join(roles)
+
     @classmethod
     def registered_members(cls):
         return cls.objects.filter(

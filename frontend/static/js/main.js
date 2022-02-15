@@ -2,6 +2,9 @@ import Vue from "vue";
 
 import "../css/index.css";
 
+import "./inline-attachment";
+import "./codemirror-4.inline-attachment";
+
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
 import { pluralize } from "./common/utils.js";
@@ -21,6 +24,7 @@ Vue.component("stripe-checkout-button", () => import("./components/StripeCheckou
 Vue.component("input-length-counter", () => import("./components/InputLengthCounter.vue"));
 Vue.component("friend-button", () => import("./components/FriendButton.vue"));
 Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
+Vue.component("comment-markdown-editor", () => import("./components/CommentMarkdownEditor.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.

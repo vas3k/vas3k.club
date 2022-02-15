@@ -6,7 +6,9 @@
         </div>
 
         <div class="reply-form-body">
-            {{ reply_form.text }}
+            <comment-markdown-editor post-slug="{{ post.slug }}">
+                {{ reply_form.text }}
+            </comment-markdown-editor>
             {% if reply_form.text.errors %}<span class="form-errors">{{ reply_form.full_name.errors }}</span>{% endif %}
         </div>
 

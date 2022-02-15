@@ -8,6 +8,8 @@ from comments.models import Comment
 from posts.models.post import Post
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
+from users.models.friends import Friend
+from users.models.mute import Muted
 from users.models.tags import UserTag
 from users.models.user import User
 from utils.strings import random_string
@@ -68,3 +70,7 @@ def delete_user_data(user: User):
     Session.objects.filter(user=user).delete()
     Code.objects.filter(user=user).delete()
     PostBookmark.objects.filter(user=user).delete()
+    Friend.objects.filter(user_from=user).delete()
+    Friend.objects.filter(user_to=user).delete()
+    Muted.objects.filter(user_from=user).delete()
+    Muted.objects.filter(user_to=user).delete()

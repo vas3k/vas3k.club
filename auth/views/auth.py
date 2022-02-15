@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponseNotAllowed
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from auth.helpers import auth_required, set_session_cookie
 from auth.models import Session
@@ -100,6 +100,16 @@ def debug_random_login(request):
     if is_created:
         Post.upsert_user_intro(user, "Интро как интро, аппрув прошло :Р", is_visible=True)
 
+    session = Session.create_for_user(user)
+
+    return set_session_cookie(redirect("profile", user.slug), user, session)
+
+
+def debug_login(request, user_slug):
+    if not (settings.DEBUG or settings.TESTS_RUN):
+        raise AccessDenied(title="Эта фича доступна только при DEBUG=true")
+
+    user = get_object_or_404(User, slug=user_slug)
     session = Session.create_for_user(user)
 
     return set_session_cookie(redirect("profile", user.slug), user, session)

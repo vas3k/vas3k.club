@@ -8,6 +8,7 @@ from posts.models.post import Post
 from bookmarks.models import PostBookmark
 from posts.models.subscriptions import PostSubscription
 from posts.models.votes import PostVote
+from users.models.mute import Muted
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
@@ -24,12 +25,14 @@ def render_post(request, post, context=None):
         is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
         upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
         subscription = PostSubscription.get(request.me, post)
+        muted_user_ids = list(Muted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True).all())
     else:
         comments = Comment.visible_objects(show_deleted=True).filter(post=post).all()
         is_voted = False
         is_bookmark = False
         upvoted_at = None
         subscription = None
+        muted_user_ids = []
 
     # order comments
     comment_order = request.GET.get("comment_order") or "-upvotes"
@@ -52,9 +55,10 @@ def render_post(request, post, context=None):
         "is_voted": is_voted,
         "upvoted_at": upvoted_at,
         "subscription": subscription,
+        "muted_user_ids": muted_user_ids,
     }
 
-    # TODO: make a proper mapping here in future
+    # TODO: make a proper type->form mapping here in future
     if post.type == Post.TYPE_BATTLE:
         context["comment_form"] = BattleCommentForm()
 
