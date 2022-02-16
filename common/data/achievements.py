@@ -199,6 +199,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/game_tournament_org_1.png",
         "style": "background-color: #929292; font-size: 120%;",
     }),
+    ("uporot_1", {
+        "name": "СВСМ УПРЛС",
+        "description": "За победу в конкурсе упоротых видео",
+        "image": "https://vas3k.club/static/images/achievements/uporot_1.png",
+        "style": "background-color: #B38F7E; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
