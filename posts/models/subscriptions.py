@@ -31,7 +31,20 @@ class PostSubscription(models.Model):
 
     @classmethod
     def subscribe(cls, user, post, type=TYPE_TOP_LEVEL_ONLY):
-        return cls.objects.update_or_create(user=user, post=post, defaults=dict(type=type))
+        if cls.objects.filter(user=user, post=post).exists():
+            return
+
+        return cls.objects.create(user=user, post=post, type=type)
+
+    @classmethod
+    def toggle(cls, user, post, type=TYPE_TOP_LEVEL_ONLY) -> str:
+        if cls.objects.filter(user=user, post=post).exists():
+            cls.objects.filter(user=user, post=post).delete()
+            return "deleted"
+
+        else:
+            cls.objects.create(user=user, post=post, type=type)
+            return "created"
 
     @classmethod
     def post_subscribers(cls, post):
