@@ -1,4 +1,11 @@
 LABELS = {
+    "meta": {
+        "title": "Мета-пост",
+        "description": "Пост, собирающий полезную информацию из Клуба и Чатов",
+        "emoji": "📖",
+        "color": "#ED5F1E",
+        "notify": False
+    },
     "ama": {
         "title": "АМА",
         "description": "Ask Me Anything",
