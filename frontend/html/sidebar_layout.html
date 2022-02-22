@@ -40,6 +40,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{% url "feed_label" "meta" %}" class="{% if label_code == "meta" %}feed-sidebar-menu-selected{% endif %}">
+                        📖 Мета-посты
+                    </a>
+                </li>
+                <li>
                     <a href="{% url "feed_label" "ama" %}" class="{% if label_code == "ama" %}feed-sidebar-menu-selected{% endif %}">
                         ✋ AMA
                     </a>
