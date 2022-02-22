@@ -160,6 +160,10 @@
             <div class="form-row form-row-intro">
                 {{ form.intro }}
                 {% if form.intro.errors %}<span class="form-row-errors">{{ form.intro.errors }}</span>{% endif %}
+                <span class="form-row-help form-row-help-wide">
+                    Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a>.
+                    Для загрузки картинок просто перетащите их в редактор.
+                </span>
                 <input-length-counter
                     element="#{{ form.intro.id_for_label }}"
                     class="intro-form-counter"

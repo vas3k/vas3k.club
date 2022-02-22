@@ -763,6 +763,13 @@
             transform: scale(1);
         }
 
+        .intro-form .form-row-intro .CodeMirror,
+        .intro-form .form-row-intro .CodeMirror-focused,
+        .intro-form .form-row-intro .CodeMirror-scroll {
+            min-height: 700px !important;
+            transform: scale(1);
+        }
+
         .form-row #id_company {
             max-width: 400px;
             font-weight: 500;
