@@ -60,8 +60,8 @@ class PostCuratorForm(forms.Form):
 
 
 class PostAdminForm(PostCuratorForm):
-    close_comments = forms.BooleanField(
-        label="Закрыть комменты",
+    toggle_is_commentable = forms.BooleanField(
+        label="Закрыть комменты (повторный клик переоткроет заново)",
         required=False,
     )
 

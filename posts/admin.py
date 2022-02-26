@@ -16,8 +16,8 @@ def do_post_admin_actions(request, post, data):
     do_common_admin_and_curator_actions(request, post, data)
 
     # Close comments
-    if data["close_comments"]:
-        post.is_commentable = False
+    if data["toggle_is_commentable"]:
+        post.is_commentable = not post.is_commentable
         post.save()
 
     # Transfer ownership to the given username
