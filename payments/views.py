@@ -82,7 +82,7 @@ def pay(request):
                 "message": "Нам ведь нужно будет куда-то выслать инвайт"
             })
 
-        friend, is_created = User.objects.get_or_create(
+        _, is_created = User.objects.get_or_create(
             email=email,
             defaults=dict(
                 membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
@@ -95,16 +95,10 @@ def pay(request):
             ),
         )
 
-        if not is_created:
-            return render(request, "error.html", {
-                "title": "Пользователь уже существует ✋",
-                "message": "Юзер с таким имейлом уже есть в Клубе, "
-                           "нельзя высылать ему инвайт еще раз, может он правда не хочет."
-            })
-
         user = request.me
         payment_data = {
-            "invite": email
+            "invite": email,
+            "is_created": is_created,
         }
     else:  # scenario 3: account renewal
         user = request.me

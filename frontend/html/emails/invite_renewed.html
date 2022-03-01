@@ -1,0 +1,60 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    🚀 Вам оплатили аккаунт в Клубе
+{% endblock %}
+
+{% block body %}
+    <p>
+        👋 Привет!
+    </p>
+
+    <p>
+        Добрый человек <strong>{{ from_user.full_name }}</strong> только что продлил вам членство в Клубе на целый год.
+        Наверняка у него на это были какие-то основания.
+    </p>
+
+    <p>
+        Вы можете войти, используя свою почту: <strong>{{ to_user.email }}</strong>
+    </p>
+
+    <p>
+        Вот волшебная кнопка 👇
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "login" %}?email={{ to_user.email }}" class="button">Войти в Клуб</a>
+    </p>
+
+    <p>
+        Если вы не понимаете что происходит и зачем вам какой-то Клуб — удалите это сообщение и напишите нам в ответ.
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django_q.tasks import async_task
 
-from notifications.email.invites import send_invited_email, send_invite_confirmation
+from notifications.email.invites import send_invited_email, send_invite_confirmation, send_invite_renewed_email
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -39,7 +39,13 @@ def club_invite_activator(product, payment, user):
         log.error(f"Friend not found: {friend_email}")
         return club_subscription_activator(product, payment, user)
 
-    async_task(send_invited_email, user, friend)
+    # notify invited user
+    if friend.moderation_status == User.MODERATION_STATUS_INTRO:
+        async_task(send_invited_email, user, friend)
+    else:
+        async_task(send_invite_renewed_email, user, friend)
+
+    # send notification to author
     async_task(send_invite_confirmation, user, friend)
 
     return club_subscription_activator(product, payment, friend)
