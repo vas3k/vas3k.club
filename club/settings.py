@@ -196,7 +196,7 @@ GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
 GDPR_ARCHIVE_DELETE_TIMEDELTA = timedelta(hours=24)
 GDPR_DELETE_CODE_LENGTH = 14
 GDPR_DELETE_CONFIRMATION = "я готов удалиться навсегда"
-GDPR_DELETE_TIMEDELTA = timedelta(hours=5 * 24)
+GDPR_DELETE_TIMEDELTA = timedelta(hours=3 * 24)
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 

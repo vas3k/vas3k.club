@@ -21,6 +21,24 @@
             {% endif %}
 
             <div class="block">
+                <div class="block-description block-description-center">
+                    <p>
+                        E-mail для входа и уведомлений: <strong>{{ user.email }}</strong>
+                    </p>
+
+                    <p>
+                        Ваш юзернейм в Клубе: <strong>{{ user.slug }}</strong>
+                    </p>
+                </div>
+
+                <div class="block-description">
+                    Сменить их можно, только <a href="mailto:club@vas3k.club">написав нам</a> на почту.
+                    От частой смены этих настроек могут поломаться комментарии и уведомления у других пользователей,
+                    потому пока мы предпочитаем делать это руками.
+                </div>
+            </div>
+
+            <div class="block">
                 <div class="form-row">
                     <user-avatar-input
                         input-id="{{ form.avatar.id_for_label }}"
