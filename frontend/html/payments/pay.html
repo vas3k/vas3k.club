@@ -6,8 +6,8 @@
             <div class="pay-title">
                 Платим 💰<br>
                 <small>
-                    {% if payment.data.invite %}
-                        за друга: {{ payment.data.invite }}
+                    {% if payment.invited_user_email %}
+                        за друга: {{ payment.invited_user_email }}
                     {% else %}
                         за аккаунт: {{ user.email }}
                     {% endif %}
