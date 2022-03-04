@@ -5,16 +5,20 @@ import shutil
 import tempfile
 from datetime import datetime
 
+from checksumdir import dirhash
 from django.conf import settings
 from django_q.tasks import schedule
 
+from badges.models import UserBadge
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from gdpr.serializers import post_to_json, post_to_md, user_to_json, comments_to_json, user_tags_to_json, \
-    user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json, upvotes_to_json
+    user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json, upvotes_to_json, badges_to_json, \
+    achievements_to_json
 from notifications.email.users import send_data_archive_ready_email
 from posts.models.post import Post
 from posts.models.votes import PostVote
+from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
 from users.models.tags import UserTag
 
@@ -30,6 +34,8 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         dump_user_comments(user_dir, user)
         dump_user_bookmarks(user_dir, user)
         dump_user_upvotes(user_dir, user)
+        dump_user_badges(user_dir, user)
+        dump_user_achievements(user_dir, user)
 
         # save zip archive
         archive_name = f"{user.slug}-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}-{random.randint(1000000, 9999998)}"
@@ -116,3 +122,17 @@ def dump_user_upvotes(user_dir, user):
 
     with open(os.path.join(user_dir, "upvotes.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(upvotes_to_json(upvotes), ensure_ascii=False))
+
+
+def dump_user_badges(user_dir, user):
+    badges = UserBadge.objects.filter(to_user=user).select_related("badge", "from_user")
+
+    with open(os.path.join(user_dir, "badges.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(badges_to_json(badges), ensure_ascii=False))
+
+
+def dump_user_achievements(user_dir, user):
+    achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
+
+    with open(os.path.join(user_dir, "achievements.json"), "w", encoding="utf-8") as f:
+        f.write(json.dumps(achievements_to_json(achievements), ensure_ascii=False))
