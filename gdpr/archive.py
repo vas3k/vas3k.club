@@ -5,7 +5,6 @@ import shutil
 import tempfile
 from datetime import datetime
 
-from checksumdir import dirhash
 from django.conf import settings
 from django_q.tasks import schedule
 
