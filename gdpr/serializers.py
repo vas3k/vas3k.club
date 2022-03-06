@@ -152,7 +152,7 @@ def bookmark_to_json(bookmark: PostBookmark) -> dict:
         "url": settings.APP_HOST + reverse("show_post", kwargs={
             "post_type": bookmark.post.type, "post_slug": bookmark.post.slug
         }),
-        "post_id": bookmark.post_id,
+        "post_id": str(bookmark.post_id),
         "created_at": bookmark.created_at.isoformat() if bookmark.created_at else None,
     }
 
@@ -170,7 +170,7 @@ def upvote_to_json(upvote: PostVote) -> dict:
         "url": settings.APP_HOST + reverse("show_post", kwargs={
             "post_type": upvote.post.type, "post_slug": upvote.post.slug
         }),
-        "post_id": upvote.post_id,
+        "post_id": str(upvote.post_id),
         "created_at": upvote.created_at.isoformat() if upvote.created_at else None,
         "title": upvote.post.title,
     }
@@ -186,11 +186,11 @@ def badges_to_json(badges: List[UserBadge]) -> dict:
 
 def badge_to_json(badge: UserBadge) -> dict:
     return {
-        "badge_id": badge.badge_id,
-        "from_user_id": badge.from_user_id,
+        "badge_id": str(badge.badge_id),
+        "from_user_id": str(badge.from_user_id),
         "created_at": badge.created_at.isoformat() if badge.created_at else None,
-        "post_id": badge.post_id,
-        "comment_d": badge.comment_id,
+        "post_id": str(badge.post_id),
+        "comment_id": str(badge.comment_id),
         "note": badge.note,
     }
 
@@ -205,7 +205,7 @@ def achievements_to_json(achievements: List[UserAchievement]) -> dict:
 
 def achievement_to_json(achievement: UserAchievement) -> dict:
     return {
-        "achievement_id": achievement.achievement_id,
+        "achievement_id": str(achievement.achievement_id),
         "achievement_code": achievement.achievement.code,
         "achievement_name": achievement.achievement.name,
         "achievement_description": achievement.achievement.description,
