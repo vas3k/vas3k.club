@@ -42,6 +42,11 @@
         text-align: center;
     }
 
+    .pay-warning {
+        font-size: 90%;
+        background-color: #f5f497;
+    }
+
 .invite-friend {
     max-width: 450px;
     font-size: 140%;
