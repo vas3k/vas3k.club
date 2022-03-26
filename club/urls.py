@@ -32,6 +32,7 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
 from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile
+from users.api import api_telegram_exist
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
@@ -95,6 +96,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
     path("user/<slug:user_slug>/delete/", request_delete_account, name="request_delete_account"),
     path("user/<slug:user_slug>/delete/confirm/", confirm_delete_account, name="confirm_delete_account"),
+    path("user/telegram_exist", api_telegram_exist, name="api_telegram_exist"),
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
