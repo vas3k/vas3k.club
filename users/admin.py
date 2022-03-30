@@ -114,6 +114,7 @@ def do_user_admin_actions(request, user, data):
             user.membership_expires_at = datetime.utcnow()
 
         user.membership_expires_at += timedelta(days=data["add_membership_days"])
+        user.membership_platform_type = User.MEMBERSHIP_PLATFORM_DIRECT
         user.save()
 
         send_telegram_message(
