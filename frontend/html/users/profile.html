@@ -120,7 +120,7 @@
                         {% if user.membership_created_days < 150 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
-                        {% elif user.membership_created_days < 700 %}
+                        {% elif user.membership_created_days <= 730 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
                         {% else %}
