@@ -56,7 +56,7 @@
                     {% if user.membership_days_left < 150 %}
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
-                    {% elif user.membership_days_left < 700 %}
+                    {% elif user.membership_days_left <= 730 %}
                         <span class="profile-status-number">😎 {{ user.membership_days_left | days_to_months | cool_number  }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | days_to_months | rupluralize:"месяц,месяца,месяцев" }}</span>
                     {% else %}
@@ -120,7 +120,7 @@
                         {% if user.membership_created_days < 150 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
-                        {% elif user.membership_created_days < 700 %}
+                        {% elif user.membership_created_days <= 730 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
                         {% else %}
