@@ -50,6 +50,8 @@ html, html[theme="light"] {
     --input-toolbar-button-color: #000;
     --input-link: #7f8c8d;
     --input-selection-color: #d7d4f0;
+
+    --warning-bg-color: #f5f497;
 }
 
 html[theme="dark"] {
@@ -87,6 +89,8 @@ html[theme="dark"] {
     --input-toolbar-button-color: #fff;
     --input-link: #b3b6ff;
     --input-selection-color: #978fd8;
+
+    --warning-bg-color: #c47d0c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -113,6 +117,8 @@ html[theme="dark"] {
         --button-hover-color: #FFF;
         --button-hover-bg-color: #333;
         --button-hover-border: solid 2px #FFF;
+
+        --warning-bg-color: #c47d0c;
     }
 }
 
