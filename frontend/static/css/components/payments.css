@@ -44,7 +44,7 @@
 
     .pay-warning {
         font-size: 90%;
-        background-color: #f5f497;
+        background-color: var(--warning-bg-color);
     }
 
 .invite-friend {
