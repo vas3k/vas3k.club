@@ -16,10 +16,12 @@ from common.feature_flags import feature_switch
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
-from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, email_digest_switch, \
-    link_telegram
+from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
+    email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
-from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
+from payments.views.common import membership_expired
+from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
+from payments.views.crypto import crypto, coinbase_webhook
 from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
 from posts.rss import NewPostsRss
@@ -70,10 +72,12 @@ urlpatterns = [
     path("auth/external/", external_login, name="external_login"),
 
     path("monies/", pay, name="pay"),
+    path("monies/crypto/", crypto, name="crypto"),
     path("monies/done/", done, name="done"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
-    path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
+    path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
+    path("monies/coinbase/webhook/", coinbase_webhook, name="coinbase_webhook"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),

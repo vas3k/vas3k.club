@@ -31,6 +31,11 @@
         padding: 40px 20px;
     }
 
+    .pay-list {
+        text-align: left;
+        list-style: none;
+    }
+
     .pay-button {
         margin: 50px 0 0;
     }
@@ -43,8 +48,7 @@
     }
 
     .pay-warning {
-        font-size: 90%;
-        background-color: #f5f497;
+        background-color: rgba(255, 252, 103, 0.5);
     }
 
 .invite-friend {

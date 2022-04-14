@@ -3,25 +3,16 @@ from datetime import datetime
 
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 
 from auth.helpers import auth_required
+from payments.exceptions import PaymentException
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_price_id, TAX_RATE_VAT
+from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
 from payments.service import stripe
 from users.models.user import User
 
 log = logging.getLogger()
-
-
-def membership_expired(request):
-    if not request.me:
-        return redirect("index")
-
-    if request.me.membership_expires_at >= datetime.utcnow():
-        return redirect("profile", request.me.slug)
-
-    return render(request, "payments/membership_expired.html")
 
 
 def done(request):
@@ -177,12 +168,15 @@ def stripe_webhook(request):
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
-        payment = Payment.finish(
-            reference=session["id"],
-            status=Payment.STATUS_SUCCESS,
-            data=session,
-        )
-        # todo: do we need throw error in case payment not found?
+        try:
+            payment = Payment.finish(
+                reference=session["id"],
+                status=Payment.STATUS_SUCCESS,
+                data=session,
+            )
+        except PaymentException:
+            return HttpResponse("[payment not found]", status=400)
+
         product = PRODUCTS[payment.product_code]
         product["activator"](product, payment, payment.user)
         return HttpResponse("[ok]", status=200)
@@ -195,10 +189,11 @@ def stripe_webhook(request):
 
         user = User.objects.filter(stripe_id=invoice["customer"]).first()
         # todo: do we need throw error in case user not found?
+
         payment = Payment.create(
             reference=invoice["id"],
             user=user,
-            product=find_by_price_id(invoice["lines"]["data"][0]["plan"]["id"]),
+            product=find_by_stripe_id(invoice["lines"]["data"][0]["plan"]["id"]),
             data=invoice,
             status=Payment.STATUS_SUCCESS,
         )

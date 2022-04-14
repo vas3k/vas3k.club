@@ -135,12 +135,12 @@ class TestProducts(TestCase):
     def test_find_by_price_id_positive(self):
         product = PRODUCTS['club1_recurrent_yearly']
         price_id = product['stripe_id']
-        result = products.find_by_price_id(price_id=price_id)
+        result = products.find_by_stripe_id(price_id=price_id)
 
         self.assertIsNotNone(result)
         self.assertEqual(result, product)
 
     def test_find_by_price_id_not_existed(self):
-        result = products.find_by_price_id(price_id="not-existed-price-id")
+        result = products.find_by_stripe_id(price_id="not-existed-price-id")
 
         self.assertIsNone(result)
