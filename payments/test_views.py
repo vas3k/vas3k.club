@@ -105,7 +105,7 @@ class TestDoneView(TestCase):
         self.assertContains(response=response, text="Теперь у вас есть аккаунт в Клубе", status_code=200)
 
 
-@patch('payments.views.stripe')
+@patch('payments.views.stripe.stripe')
 class TestPayView(TestCase):
     @classmethod
     def setUpTestData(cls):

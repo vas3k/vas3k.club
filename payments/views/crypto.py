@@ -74,7 +74,7 @@ def coinbase_webhook(request):
     # find or create the user
     metadata_email = event_data.get("metadata", {}).get("email")
     if not metadata_email:
-        return HttpResponse("[user not found]", status=400)
+        return HttpResponse("[no email in payload]", status=400)
 
     now = datetime.utcnow()
     user, _ = User.objects.get_or_create(

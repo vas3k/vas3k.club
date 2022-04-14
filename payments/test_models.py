@@ -4,11 +4,10 @@ import django
 from django.conf import settings
 from django.test import TestCase
 
-from payments.exceptions import PaymentNotFound
-
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
+from payments.exceptions import PaymentNotFound
 from payments import products
 from payments.products import PRODUCTS
 from users.models.user import User
