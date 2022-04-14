@@ -38,7 +38,7 @@
                 Пробуйте разные карты, UnionPay и Apple/Google Pay.
             </p>
             <p>
-                Если ничего не помогает — попробуйте нашу экспериментальную <a href="{% url "crypto" %}?product_code={{ product.code }}"><strong>оплату криптой</strong></a>
+                Если ничего не помогает — попробуйте нашу экспериментальную <a href="{% url "crypto" %}?product_code={{ product.code }}&email={{ user.email }}"><strong>оплату криптой</strong></a>
             </p>
         </div>
     </div>

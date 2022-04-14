@@ -37,6 +37,7 @@ def crypto(request):
 
     return render(request, "payments/crypto.html", {
         "product": product,
+        "email": request.me.email if request.me else request.GET.get("email"),
         "user": request.me,
     })
 
