@@ -15,9 +15,11 @@ from utils.strings import random_string
 class User(models.Model, ModelDiffMixin):
     MEMBERSHIP_PLATFORM_DIRECT = "direct"
     MEMBERSHIP_PLATFORM_PATREON = "patreon"
+    MEMBERSHIP_PLATFORM_CRYPTO = "crypto"
     MEMBERSHIP_PLATFORMS = [
         (MEMBERSHIP_PLATFORM_DIRECT, "Direct"),
         (MEMBERSHIP_PLATFORM_PATREON, "Patreon"),
+        (MEMBERSHIP_PLATFORM_CRYPTO, "Crypto"),
     ]
 
     EMAIL_DIGEST_TYPE_NOPE = "nope"
