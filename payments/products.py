@@ -183,18 +183,6 @@ PRODUCTS = {
             "timedelta": timedelta(days=365),
         },
     },
-    "club_test": {
-        "code": "club_test",
-        "stripe_id": "price_1H5byfKgJMaF2rHtJHeirP4V" if not IS_TEST_STRIPE else "price_1H5cChKgJMaF2rHtugvlcjKR",
-        "coinbase_id": "20452caa-c11f-4004-88e6-37d94607f5f2",
-        "description": "Ноль лет членства в Клубе (тестовый режим)",
-        "amount": 0,
-        "recurrent": False,
-        "activator": club_subscription_activator,
-        "data": {
-            "timedelta": timedelta(minutes=1),
-        },
-    },
 }
 
 TAX_RATE_VAT = "txr_1I82AfKgJMaF2rHtoUStb1cL" if not IS_TEST_STRIPE else None
