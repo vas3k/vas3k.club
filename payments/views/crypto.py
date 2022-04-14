@@ -49,7 +49,7 @@ def coinbase_webhook(request):
 
     # verify webhook signature
     payload_signature = hmac.new(
-        key=bytes(settings.CRYPTO_WEBHOOK_SECRET, "utf-8"),
+        key=bytes(settings.COINBASE_WEBHOOK_SECRET, "utf-8"),
         msg=payload,  # it's already in bytes
         digestmod=hashlib.sha256
     ).hexdigest()

@@ -4,6 +4,8 @@ import django
 from django.conf import settings
 from django.test import TestCase
 
+from payments.exceptions import PaymentNotFound
+
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
@@ -69,11 +71,11 @@ class TestPaymentModel(TestCase):
         self.assertEqual(payment.status, Payment.STATUS_SUCCESS)
         self.assertEqual(payment.data, '{"some": "data"}')
 
-    def test_finis_payment_not_existed_payment(self):
-        result = Payment.finish(reference="wrong-not-existed-reference",
-                                status=Payment.STATUS_FAILED,
-                                data={"some": "data"})
-        self.assertIsNone(result)
+    def test_finish_non_existent_payment_exception(self):
+        with self.assertRaises(PaymentNotFound):
+            result = Payment.finish(reference="wrong-not-existed-reference",
+                                    status=Payment.STATUS_FAILED,
+                                    data={"some": "data"})
 
 
 class TestProducts(TestCase):

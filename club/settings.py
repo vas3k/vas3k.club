@@ -209,8 +209,8 @@ PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
 PATREON_GOD_IDS = ["8724543"]
 
-CRYPTO_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
-CRYPTO_WEBHOOK_SECRET = os.getenv("CRYPTO_WEBHOOK_SECRET")
+COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
+COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
 
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
