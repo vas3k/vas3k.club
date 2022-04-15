@@ -99,10 +99,12 @@ class SearchIndex(models.Model):
     def update_user_index(cls, user):
         vector = SearchVector("slug", weight="A", config="russian") \
                  + SearchVector("full_name", weight="A", config="russian") \
+                 + SearchVector("email", weight="A", config="russian") \
                  + SearchVector("bio", weight="B", config="russian") \
                  + SearchVector("company", weight="B", config="russian") \
                  + SearchVector("country", weight="C", config="russian") \
-                 + SearchVector("city", weight="C", config="russian")
+                 + SearchVector("city", weight="C", config="russian") \
+                 + SearchVector("contact", weight="C", config="russian")
 
         user_index = User.objects\
             .annotate(vector=vector)\
