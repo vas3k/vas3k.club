@@ -54,8 +54,8 @@
                 </div>
                 <a href="{% url "edit_payments" user.slug %}" class="profile-status">
                     {% if user.membership_days_left < 150 %}
-                        <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
+                        <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | floor | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_days_left | floor | rupluralize:"день,дня,дней" }}</span>
                     {% elif user.membership_days_left <= 730 %}
                         <span class="profile-status-number">😎 {{ user.membership_days_left | days_to_months | cool_number  }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | days_to_months | rupluralize:"месяц,месяца,месяцев" }}</span>
@@ -118,8 +118,8 @@
                         <span class="profile-status-text">аккаунт неактивен</span>
                     {% else %}
                         {% if user.membership_created_days < 150 %}
-                            <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
-                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
+                            <span class="profile-status-number">⏳ {{ user.membership_created_days | floor | cool_number }}</span>
+                            <span class="profile-status-text">{{ user.membership_created_days | floor | rupluralize:"день,дня,дней" }} в Клубе</span>
                         {% elif user.membership_created_days <= 730 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
