@@ -668,7 +668,6 @@ input[type=range]:focus::-ms-fill-upper {
             text-overflow: ellipsis;
             padding: 0;
             vertical-align: middle;
-            margin-bottom: 5px;
         }
 
         .topic-type-card .topic-icon {
