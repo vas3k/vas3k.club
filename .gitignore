@@ -52,6 +52,7 @@ club/.env
 db.sqlite3
 *.session
 venv/
+.venv/
 
 gdpr/downloads/*.zip
 .history
