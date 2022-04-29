@@ -40,18 +40,24 @@ def floor(value):
 
 
 @register.filter
-def cool_number(value, num_decimals=1):
+def cool_number(value):
     """
+    11000 -> 11K,
     11500 -> 11.5K, etc
     """
     int_value = int(value)
-    formatted_number = "{{:.{}f}}".format(num_decimals)
     if int_value < 1000:
-        return str(int_value)
+        return value
     elif int_value < 1000000:
-        return formatted_number.format(int_value / 1000.0).rstrip("0.") + "K"
+        quotient = value[:-3]
+        remainder = value[-3]
+        measure = "K"
     else:
-        return formatted_number.format(int_value / 1000000.0).rstrip("0.") + "M"
+        quotient = value[:-6]
+        remainder = value[-6]
+        measure = "M"
+    template = "{quotient}.{remainder}{measure}" if remainder != "0" else "{quotient}{measure}"
+    return template.format(quotient=quotient, remainder=remainder, measure=measure)
 
 
 @register.filter
