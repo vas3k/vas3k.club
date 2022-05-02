@@ -180,3 +180,6 @@ class UserInfoAdminForm(ModelForm):
             "is_email_verified",
             "is_banned_until",
         ]
+
+    def clean_email(self):
+        return self.cleaned_data["email"].lower()
