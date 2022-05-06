@@ -87,6 +87,8 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
     dispatcher.add_handler(MessageHandler(Filters.private, private_message))
 
+    dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, whois.command_whois))
+
     # Start the bot
     if settings.DEBUG:
         updater.start_polling()
