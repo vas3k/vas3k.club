@@ -723,6 +723,15 @@ img.emoji {
     font-size: 17px;
 }
 
+    @media only screen and (max-width : 620px) {
+        .big-radio {
+            flex-direction: column;
+        }
+        .big-radio .big-radio-item {
+            min-height: fit-content;
+        }
+    }
+
     .big-radio-item {
         display: block;
         cursor: pointer;
