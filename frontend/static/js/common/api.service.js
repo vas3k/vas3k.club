@@ -1,11 +1,11 @@
 const ClubApi = {
-    ajaxify(href, callback) {
+    ajaxify(href, { method = 'POST' }, callback) {
         const params = {
-            method: "POST",
+            method,
             credentials: "include",
         };
 
-        fetch(href + "?is_ajax=true", params)
+        fetch( `${href}?is_ajax=true`, params)
             .then((response) => response.json())
             .then((data) => callback(data));
     },

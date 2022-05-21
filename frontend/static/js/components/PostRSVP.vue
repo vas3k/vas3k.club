@@ -38,7 +38,7 @@ export default {
     methods: {
         toggle() {
             this.isLoading = true;
-            return ClubApi.ajaxify(this.url, (data) => {
+            return ClubApi.ajaxify(this.url, {}, (data) => {
                 this.isLoading = false;
 
                 if (data.status === "created") {
