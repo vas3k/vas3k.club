@@ -49,7 +49,7 @@ def external_login(request):
         "user_email": me.email,
         "exp": datetime.utcnow() + timedelta(hours=app.jwt_expire_hours),
     }
-    jwt_token = jwt.encode(payload, app.jwt_secret, app.jwt_algorithm).decode("utf-8")
+    jwt_token = jwt.encode(payload, app.jwt_secret, algorithm=app.jwt_algorithm)
 
     # add ?jwt= to redirect_url and activate the redirect
     goto_params = parse_qsl(goto_parsed.query)

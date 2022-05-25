@@ -297,7 +297,7 @@ class ViewExternalLoginTests(TestCase):
         # check jwt
         url_params = response.url.split("?")[1]
         jwt_str = url_params.split("=")[1]
-        payload = jwt.decode(jwt_str, verify=False)
+        payload = jwt.decode(jwt_str, algorithms=["RS256"], options={"verify_signature": False})
         self.assertIsNotNone(payload)
         self.assertEqual(payload['user_slug'], self.new_user.slug)
         self.assertEqual(payload['user_name'], self.new_user.full_name)
