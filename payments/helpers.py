@@ -30,7 +30,7 @@ def gift_membership_days(days, from_user, to_user, deduct_from_original_user=Tru
 
     amount = timedelta(days=days)
 
-    if from_user.membership_expires_at - amount <= datetime.utcnow():
+    if deduct_from_original_user and from_user.membership_expires_at - amount <= datetime.utcnow():
         raise InsufficientFunds()
 
     with transaction.atomic():
