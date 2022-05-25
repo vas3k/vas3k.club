@@ -56,7 +56,7 @@ def get_club_user(update: Update):
         update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
         return None
 
-    if not user.is_club_member:
+    if not user.is_member:
         update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
         return None
 

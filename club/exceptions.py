@@ -67,6 +67,11 @@ class ApiException(ClubException):
     default_message = None
 
 
+class ApiBadRequest(ClubException):
+    default_code = "bad-request"
+    default_title = "Неправильный параметр запроса"
+
+
 class ApiAuthRequired(ApiException):
     default_code = "api-auth-required"
     default_title = "Auth Required"
