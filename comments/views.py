@@ -57,10 +57,6 @@ def create_comment(request, post_slug):
             comment.useragent = parse_useragent(request)
             comment.save()
 
-            # subscribe to top level comments (experimental)
-            if not comment.reply_to:
-                PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_TOP_LEVEL_ONLY)
-
             # update the shitload of counters :)
             request.me.update_last_activity()
             Comment.update_post_counters(post)
