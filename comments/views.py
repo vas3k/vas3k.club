@@ -12,7 +12,6 @@ from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent, ajax_request
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
-from posts.models.subscriptions import PostSubscription
 from posts.models.views import PostView
 from search.models import SearchIndex
 
