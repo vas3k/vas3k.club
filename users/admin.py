@@ -11,7 +11,7 @@ from notifications.email.users import send_unmoderated_email, send_banned_email,
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate, \
     notify_admin_user_on_ban
-from payments.helpers import cancel_all_stripe_subscriptions
+from payments.helpers import cancel_all_stripe_subscriptions, gift_membership_days
 from users.models.achievements import UserAchievement, Achievement
 from users.models.user import User
 from users.utils import is_role_manageable_by_user
@@ -110,12 +110,12 @@ def do_user_admin_actions(request, user, data):
 
     # Add more days of membership
     if data["add_membership_days"] and int(data["add_membership_days"]) > 0:
-        if user.membership_expires_at < datetime.utcnow():
-            user.membership_expires_at = datetime.utcnow()
-
-        user.membership_expires_at += timedelta(days=data["add_membership_days"])
-        user.membership_platform_type = User.MEMBERSHIP_PLATFORM_DIRECT
-        user.save()
+        gift_membership_days(
+            days=data["add_membership_days"],
+            from_user=request.me,
+            to_user=user,
+            deduct_from_original_user=False,
+        )
 
         send_telegram_message(
             chat=ADMIN_CHAT,

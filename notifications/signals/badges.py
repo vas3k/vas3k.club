@@ -21,7 +21,7 @@ def async_create_or_update_badge(user_badge: UserBadge):
     to_user = user_badge.to_user
 
     # messages
-    if to_user.is_club_member and to_user.telegram_id:
+    if to_user.is_member and to_user.telegram_id:
         send_telegram_image(
             chat=Chat(id=to_user.telegram_id),
             image_url=f"{settings.APP_HOST}/static/images/badges/big/{user_badge.badge.code}.png",

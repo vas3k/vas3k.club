@@ -32,7 +32,7 @@ class SearchIndex(models.Model):
 
     tags = ArrayField(models.CharField(max_length=32), null=True, db_index=True)
 
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     index = SearchVectorField(null=False, editable=False)
@@ -88,7 +88,7 @@ class SearchIndex(models.Model):
                     .filter(id=post.id)
                     .values_list("vector", flat=True)
                     .first(),
-                    created_at=post.created_at,
+                    created_at=post.published_at or post.created_at,
                     updated_at=datetime.utcnow(),
                 )
             )

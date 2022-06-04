@@ -33,11 +33,13 @@ class User(models.Model, ModelDiffMixin):
 
     ROLE_CURATOR = "curator"
     ROLE_MODERATOR = "moderator"
+    ROLE_BANK = "bank"
     ROLE_GOD = "god"
     ROLES = [
         (ROLE_CURATOR, "Куратор"),
         (ROLE_MODERATOR, "Модератор"),
-        (ROLE_GOD, "Бог")
+        (ROLE_BANK, "Банк"),
+        (ROLE_GOD, "Бог"),
     ]
 
     MODERATION_STATUS_INTRO = "intro"
@@ -128,15 +130,18 @@ class User(models.Model, ModelDiffMixin):
             "slug": self.slug,
             "full_name": self.full_name,
             "avatar": self.avatar,
-            "moderation_status": self.moderation_status,
-            "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
+            "bio": self.bio,
+            "upvotes": self.upvotes,
+            "created_at": self.created_at.isoformat(),
             "membership_started_at": self.membership_started_at.isoformat(),
             "membership_expires_at": self.membership_expires_at.isoformat(),
+            "moderation_status": self.moderation_status,
+            "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
             "company": self.company,
             "position": self.position,
             "city": self.city,
             "country": self.country,
-            "created_at": self.created_at.isoformat(),
+            "is_active_member": self.is_active_member,
         }
 
     def update_last_activity(self):
@@ -178,14 +183,18 @@ class User(models.Model, ModelDiffMixin):
         return (self.roles and self.ROLE_CURATOR in self.roles) or self.is_god
 
     @property
-    def is_club_member(self):
+    def is_bank(self):
+        return (self.roles and self.ROLE_BANK in self.roles) or self.is_god
+
+    @property
+    def is_member(self):
         return self.moderation_status == User.MODERATION_STATUS_APPROVED \
                and not self.is_banned \
                and self.deleted_at is None
 
     @property
-    def is_paid_member(self):
-        return self.is_club_member and self.membership_expires_at >= datetime.utcnow()
+    def is_active_member(self):
+        return self.is_member and self.membership_expires_at >= datetime.utcnow()
 
     @property
     def secret_auth_code(self):

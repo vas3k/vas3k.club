@@ -8,7 +8,7 @@ from auth.models import Session
 
 
 class JWT_STUB_VALUES:
-    # using full generated RS256 JWT Private Token because python jwt.encode implementation throws exception
+    # using fully generated RS256 JWT Private Token because python jwt.encode implementation throws exception
     # with fake one or absent one
     JWT_PRIVATE_KEY_RS256 = """-----BEGIN RSA PRIVATE KEY-----
 MIIJKQIBAAKCAgEA36+Kp8n3xB+WwWyiiMpg7C92ddnWyr/eeSBAi/wjtDNJxu4a
@@ -60,8 +60,7 @@ wIHngsh+XHqqTxNeVBcvepB5N+PKhyYJqOpi/GQpz5VRy5RhmM9j9Ncdf9R2+V5h
 reGZnxnn8FFlFaIUpLFqY4JJwlhsB3PhnDHyptDz8K5VT6U83yGlZ9GV/7TQTVjn
 zvKvBYv/57afla/arufj76aFql3KQwGCTjt4CIuM8IyUZSYMYftYfpjSWLmUWEcz
 iTh86USxizTBlLwpMelQDbHXo9StEKIprYHGBZ9FK7gwkp33TAztw7CH+Mto
------END RSA PRIVATE KEY-----
-    """
+-----END RSA PRIVATE KEY-----"""
     JWT_PRIVATE_KEY = JWT_PRIVATE_KEY_RS256
 
 

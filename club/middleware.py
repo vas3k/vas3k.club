@@ -28,6 +28,7 @@ class ExceptionMiddleware:
         if isinstance(exception, ApiException):
             return JsonResponse({
                 "error": {
+                    "code": exception.code,
                     "title": exception.title,
                     "message": exception.message,
                     "data": exception.data,
@@ -36,6 +37,7 @@ class ExceptionMiddleware:
 
         if isinstance(exception, ClubException):
             return render(request, "error.html", {
+                "code": exception.code,
                 "title": exception.title,
                 "message": exception.message,
                 "data": exception.data,

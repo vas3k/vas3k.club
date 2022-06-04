@@ -13,10 +13,12 @@ from utils.strings import random_string, random_number
 class Apps(models.Model):
     id = models.CharField(max_length=16, primary_key=True)
     name = models.CharField(max_length=64, unique=True)
+    owner = models.ForeignKey(User, related_name="apps", null=True, on_delete=models.CASCADE)
     jwt_secret = models.TextField()
     jwt_algorithm = models.CharField(max_length=16)
     jwt_expire_hours = models.IntegerField(default=240)
     redirect_urls = ArrayField(models.CharField(max_length=256), default=list, null=False)
+    service_token = models.CharField(max_length=128, unique=True, db_index=True, null=True)
 
     class Meta:
         db_table = "apps"

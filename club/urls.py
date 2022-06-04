@@ -20,6 +20,7 @@ from notifications.views import render_weekly_digest, email_unsubscribe, email_c
     email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
+from payments.api import api_gift_days
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from payments.views.crypto import crypto, coinbase_webhook
 from posts.api import md_show_post, api_show_post
@@ -33,7 +34,7 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
     toggle_post_subscription, delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
-from users.api import api_profile
+from users.api import api_profile, api_profile_by_telegram_id
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
@@ -78,9 +79,11 @@ urlpatterns = [
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
     path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
     path("monies/coinbase/webhook/", coinbase_webhook, name="coinbase_webhook"),
+    path("monies/gift/<int:days>/<slug:user_slug>.json", api_gift_days, name="api_gift_days"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
+    path("user/by_telegram_id/<slug:telegram_id>.json", api_profile_by_telegram_id, name="api_profile_by_telegram_id"),
     path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
     path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),

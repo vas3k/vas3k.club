@@ -23,7 +23,7 @@
             <a href="{% url "profile" payment.user.slug %}" class="button">Вернуться в свой профиль</a>
         </p>
 
-    {% elif payment.user.is_club_member %}
+    {% elif payment.user.is_member %}
         <p>
             Ваша клубная карта продлена!
         </p>
