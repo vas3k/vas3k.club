@@ -1,6 +1,5 @@
 <div align="center">
   <br>
-  <img src="frontend/static/images/logo/logo-256.png" alt="">
   <img src="gitstatic/logo-pmi.png" alt="PMI Moscow club">
   <h1>PMI Moscow club</h1>
 </div>
