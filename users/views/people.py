@@ -9,7 +9,7 @@ from auth.helpers import auth_required
 from common.models import group_by, top
 from common.pagination import paginate
 from users.models.expertise import UserExpertise
-from users.models.tags import Tag
+from tags.models import Tag
 from users.models.user import User
 
 

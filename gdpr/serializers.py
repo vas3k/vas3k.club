@@ -10,7 +10,7 @@ from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
-from users.models.tags import UserTag
+from tags.models import UserTag
 from users.models.user import User
 
 

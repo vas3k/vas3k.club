@@ -15,7 +15,7 @@ from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
 from users.models.friends import Friend
 from users.models.mute import Muted
-from users.models.tags import Tag, UserTag
+from tags.models import Tag, UserTag
 from users.models.user import User
 from users.utils import calculate_similarity
 
@@ -38,8 +38,10 @@ def profile(request, user_slug):
             return redirect(goto)
 
     # select user tags and calculate similarity with me
-    tags = Tag.objects.filter(is_visible=True).all()
-    active_tags = {t.tag_id for t in UserTag.objects.filter(user=user).all()}
+    tags = Tag.objects.filter(is_visible=True).exclude(group=Tag.GROUP_COLLECTIBLE).all()
+    user_tags = UserTag.objects.filter(user=user).select_related("tag").all()
+    active_tags = {t.tag_id for t in user_tags if t.tag.group != Tag.GROUP_COLLECTIBLE}
+    collectible_tags = [t.tag for t in user_tags if t.tag.group == Tag.GROUP_COLLECTIBLE]
     similarity = {}
     if user.id != request.me.id:
         my_tags = {t.tag_id for t in UserTag.objects.filter(user=request.me).all()}
@@ -70,6 +72,7 @@ def profile(request, user_slug):
         "badges": badges,
         "tags": tags,
         "active_tags": active_tags,
+        "collectible_tags": collectible_tags,
         "achievements": [ua.achievement for ua in achievements],
         "expertises": expertises,
         "comments": comments[:3],
