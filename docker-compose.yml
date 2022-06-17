@@ -17,6 +17,9 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+      - EMAIL_HOST_USER=club@pmi.moscow
+      - EMAIL_HOST_PASSWORD=
+      - MEDIA_UPLOAD_CODE=
     restart: always
     volumes:
       - .:/app:delegated # enable hot code reload in debug mode
