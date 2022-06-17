@@ -17,7 +17,7 @@ from users.models.user import User
 
 class CollectibleTagField(forms.CharField):
     widget = forms.TextInput(attrs={
-        "pattern": r"\p{Emoji}\s.+",
+        "pattern": r"\p{Extended_Pictographic}+.+",
         "title": "Тег обязан начинаться с emoji, потом пробел, а потом название не длиннее 32 символов"
     })
 
