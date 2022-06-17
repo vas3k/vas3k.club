@@ -43,7 +43,7 @@ class CollectibleTagField(forms.CharField):
         if not tag_text:
             raise ValidationError("Название тега не может быть пустым")
 
-        tag_code = slugify_filename(tag_text).lower()
+        tag_code = slugify_filename(value).lower()
         if not tag_code:
             return None
 
