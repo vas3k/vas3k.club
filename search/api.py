@@ -33,9 +33,20 @@ def api_search_users(request):
 @api_required
 def api_search_tags(request):
     tags = Tag.objects.filter(is_visible=True)
+
     group = request.GET.get("group")
     if group:
         tags = tags.filter(group=group)
+
+    prefix = request.GET.get("prefix")
+
+    if prefix:
+        if len(prefix) < MIN_PREFIX_LENGTH or len(prefix) > MAX_PREFIX_LENGTH:
+            return JsonResponse({
+                "tags": []
+            })
+
+        tags = tags.filter(name__contains=prefix)
 
     return JsonResponse({
         "tags": [
