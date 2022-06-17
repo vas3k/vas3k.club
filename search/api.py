@@ -1,6 +1,7 @@
 from django.http import Http404, JsonResponse
 
 from auth.helpers import api_required
+from tags.models import Tag
 from users.models.user import User
 
 MIN_PREFIX_LENGTH = 3
@@ -26,4 +27,18 @@ def api_search_users(request):
             "slug": user.slug,
             "full_name": user.full_name
         } for user in suggested_users],
+    })
+
+
+@api_required
+def api_search_tags(request):
+    tags = Tag.objects.filter(is_visible=True)
+    group = request.GET.get("group")
+    if group:
+        tags = tags.filter(group=group)
+
+    return JsonResponse({
+        "tags": [
+            tag.to_dict() for tag in tags
+        ]
     })

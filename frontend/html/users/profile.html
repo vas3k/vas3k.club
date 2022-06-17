@@ -178,6 +178,52 @@
             </div>
         {% endif %}
 
+        {% if projects %}
+            <div class="profile-header">Проекты</div>
+
+            <div class="user-projects">
+                {% for project in projects %}
+                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
+                        {% if project.image %}
+                            <img src="{{ project.image }}" alt="{{ project.title }}">
+                        {% endif %}
+                        <span class="user-project-title">{{ project.title }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if collectible_tags %}
+            <div class="profile-header" id="tags_collectible">Коллекционные теги</div>
+            <div class="block profile-tags">
+                <div class="profile-tags-group collectible-tags-group">
+                    <div class="user-tags">
+                        {% for tag in collectible_tags %}
+                            {% if me.id == user.id  %}
+                                <user-tag tag-name="{{ tag.name }}"
+                                          tag-color="{{ tag.color }}"
+                                          class="user-tag"
+                                          url="{% url "toggle_tag" tag.code %}"
+                                          is-active-by-default
+                                ></user-tag>
+                            {% else %}
+                                {% if tag.code in active_tags %}
+                                    <span class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">{{ tag.name }}</span>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="profile-tags-footer">
+                    <small>
+                        Коллекционные теги можно найти только в специальных тематических постах и утащить к себе в профиль.
+                        Их наличие показывает особую увлечённость темой.
+                    </small>
+                </div>
+            </div>
+        {% endif %}
+
         {% if active_tags or me.id == user.id %}
             {% regroup tags by group_display as tag_groups %}
             {% for tag_group in tag_groups %}
@@ -255,21 +301,6 @@
                         </span>
                     {% endfor %}
                 </div>
-            </div>
-        {% endif %}
-
-        {% if projects %}
-            <div class="profile-header">Проекты</div>
-
-            <div class="user-projects">
-                {% for project in projects %}
-                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
-                        {% if project.image %}
-                            <img src="{{ project.image }}" alt="{{ project.title }}">
-                        {% endif %}
-                        <span class="user-project-title">{{ project.title }}</span>
-                    </a>
-                {% endfor %}
             </div>
         {% endif %}
 

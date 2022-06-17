@@ -410,6 +410,11 @@
             padding-bottom: 50px;
         }
 
+        .collectible-tags-group {
+            font-size: 130%;
+            padding-bottom: 10px;
+        }
+
         .user-tags {
             display: flex;
             flex-wrap: wrap;

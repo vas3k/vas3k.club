@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from club.exceptions import AccessDenied
 from comments.models import Comment
 from common.data.labels import LABELS
+from notifications.telegram.posts import notify_post_collectible_tag_owners
 from posts.models.linked import LinkedPost
 from users.models.user import User
 
@@ -90,3 +91,8 @@ def do_common_admin_and_curator_actions(request, post, data):
     if data["hide_from_feeds"]:
         post.is_visible_in_feeds = False
         post.save()
+
+    # Ping collectible tag owners again
+    if data["re_ping_collectible_tag_owners"]:
+        if post.collectible_tag_code:
+            notify_post_collectible_tag_owners(post)

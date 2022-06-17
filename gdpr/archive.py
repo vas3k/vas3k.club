@@ -19,7 +19,7 @@ from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
-from users.models.tags import UserTag
+from tags.models import UserTag
 
 
 def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):

@@ -10,7 +10,7 @@ from django.db.models import F
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
-from users.models.tags import UserTag
+from tags.models import UserTag
 
 
 class SearchIndex(models.Model):

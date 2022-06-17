@@ -3,7 +3,7 @@ import logging
 from django.core.management import BaseCommand
 
 from common.data.tags import HOBBIES, PERSONAL, TECH, CLUB
-from users.models.tags import Tag
+from tags.models import Tag
 
 log = logging.getLogger(__name__)
 
@@ -28,7 +28,10 @@ class Command(BaseCommand):
             + list(dict(PERSONAL).keys()) \
             + list(dict(TECH).keys()) \
             + list(dict(CLUB).keys())
-        Tag.objects.exclude(code__in=all_tag_keys).delete()
+        Tag.objects\
+            .filter(group__in=[Tag.GROUP_HOBBIES, Tag.GROUP_PERSONAL, Tag.GROUP_TECH, Tag.GROUP_CLUB])\
+            .exclude(code__in=all_tag_keys)\
+            .delete()
 
         self.stdout.write("Done 🥙")
 
