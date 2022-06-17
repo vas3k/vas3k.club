@@ -25,7 +25,6 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
     TYPE_EVENT = "event"
-    TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
     TYPE_WEEKLY_DIGEST = "weekly_digest"
     TYPE_GUIDE = "guide"
@@ -38,7 +37,6 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
         (TYPE_EVENT, "Событие"),
-        (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
         (TYPE_GUIDE, "Путеводитель"),
@@ -53,7 +51,6 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
         TYPE_EVENT: "📅",
-        TYPE_REFERRAL: "🏢",
         TYPE_BATTLE: "🤜🤛",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "🗄",
@@ -67,7 +64,6 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
         TYPE_EVENT: "Событие:",
-        TYPE_REFERRAL: "Рефералка:",
         TYPE_BATTLE: "Батл:",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "Тред:",
@@ -80,6 +76,7 @@ class Post(models.Model, ModelDiffMixin):
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
     topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
+    collectible_tag_code = models.CharField(max_length=32, null=True)
     coauthors = ArrayField(models.CharField(max_length=32), default=list, null=False, db_index=True)
 
     title = models.TextField(null=False)

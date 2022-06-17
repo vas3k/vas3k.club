@@ -10,7 +10,7 @@ from users.models.achievements import UserAchievement
 from users.models.expertise import UserExpertise
 from users.models.friends import Friend
 from users.models.mute import Muted
-from users.models.tags import UserTag
+from tags.models import UserTag
 from users.models.user import User
 from utils.strings import random_string
 

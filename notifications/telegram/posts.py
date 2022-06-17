@@ -2,6 +2,7 @@ import telegram
 from django.template import TemplateDoesNotExist
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
+from tags.models import Tag, UserTag
 
 
 def announce_in_club_channel(post, announce_text=None, image=None):
@@ -63,3 +64,17 @@ def notify_post_rejected(post, reason):
             text=text,
             parse_mode=telegram.ParseMode.HTML,
         )
+
+
+def notify_post_collectible_tag_owners(post):
+    if post.collectible_tag_code:
+        tag = Tag.objects.filter(code=post.collectible_tag_code, group=Tag.GROUP_COLLECTIBLE).first()
+        if tag:
+            tag_users = UserTag.objects.filter(tag=tag).select_related("user").all()
+            for tag_user in tag_users:
+                if tag_user.user.telegram_id:
+                    send_telegram_message(
+                        chat=Chat(id=tag_user.user.telegram_id),
+                        text=render_html_message("post_collectible_tag.html", post=post, tag=tag),
+                        parse_mode=telegram.ParseMode.HTML,
+                    )

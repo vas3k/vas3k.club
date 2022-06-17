@@ -11,13 +11,15 @@ class Tag(models.Model):
     GROUP_PERSONAL = "personal"
     GROUP_TECH = "tech"
     GROUP_CLUB = "club"
+    GROUP_COLLECTIBLE = "collectible"
     GROUP_OTHER = "other"
     GROUPS = [
-        (GROUP_PERSONAL, "О себе"),
+        (GROUP_PERSONAL, "Я"),
         (GROUP_TECH, "Технологии"),
         (GROUP_CLUB, "Для других членов Клуба я..."),
         (GROUP_HOBBIES, "Хобби"),
-        (GROUP_OTHER, "Остальное"),
+        (GROUP_COLLECTIBLE, "Коллекционные теги"),
+        (GROUP_OTHER, "Другие"),
     ]
 
     code = models.CharField(primary_key=True, max_length=32, null=False, unique=True)
@@ -48,6 +50,7 @@ class Tag(models.Model):
 
     @classmethod
     def tags_with_stats(cls):
+        # to show fancy charts on /people/ page
         return Tag.objects.filter(is_visible=True).extra({
             "user_count": "select count(*) from user_tags where user_tags.tag_id = tags.code"
         })
