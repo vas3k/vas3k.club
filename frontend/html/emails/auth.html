@@ -20,50 +20,43 @@
         margin: 20px 0 30px;
     }
 
-        .button:hover {
-            color: #000 !important;
-            background-color: #FFF !important;
-            border-color: #000 !important;
-        }
+    .button:hover {
+        color: #000 !important;
+        background-color: #FFF !important;
+        border-color: #000 !important;
+    }
 
-p {
-    font-size: 19px;
-}
+    p {
+        font-size: 19px;
+    }
 
-ul {
-    list-style: none;
-    font-size: 19px;
-    margin-left: 0;
-    padding-left: 0;
-}
+    ul {
+        list-style: none;
+        font-size: 19px;
+        margin-left: 0;
+        padding-left: 0;
+    }
 
     li {
         display: block;
         margin-top: 20px;
         padding-left: 15px;
     }
-
 </style>
 {% endblock %}
 
 {% block logo %}
-<a href="https://vas3k.club">
+<a href="https://pmi.moscow">
     <img src="{{ settings.APP_HOST }}{% static "images/logo/logo-256.png" %}" alt="" height="80" width="80" style="display:inline-block;width: 80px;height: 80px;min-width: 80px; margin-top: 30px;">
 </a>
 {% endblock %}
 
 {% block title %}
-    <span style="letter-spacing: 5px;">{{ code.code }}</span>
+    <span style="letter-spacing: 5px;">Ваш код для входа в PMI клуб: {{ code.code }}</span>
 {% endblock %}
 
 {% block body %}
-    <p>
-        Это ваш код для входа в Клуб.
-    </p>
-
-    <p>
-        Можете скопировать его или нажать на эту кнопку чтобы сразу войти на сайт 👇
-    </p>
+    <p>Можете скопировать его или нажать на эту кнопку чтобы сразу войти на сайт.</p>
 
     <p>
         <a href="{{ settings.APP_HOST }}{% url "email_login_code" %}?email={{ code.recipient | urlencode }}&code={{ code.code }}" class="button">Войти в Клуб</a>

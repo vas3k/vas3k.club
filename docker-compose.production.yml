@@ -1,24 +1,26 @@
 version: "3"
 services:
   club_app: &app
-    image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    #image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
     command: make docker-run-production
     container_name: club_app
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
       - DEBUG=false
-      - APP_HOST=https://vas3k.club
-      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
+      - APP_HOST=https://pmi.moscow
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
       - POSTGRES_PASSWORD=vas3k
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
-      - EMAIL_HOST
-      - EMAIL_PORT
-      - DEFAULT_FROM_EMAIL
+      - EMAIL_HOST=mail.pmi.moscow
+      - EMAIL_PORT=587
+      - EMAIL_HOST_USER=club@pmi.moscow
+      - EMAIL_HOST_PASSWORD=
+      - MEDIA_UPLOAD_URL=https://media.pmi.moscow/upload/
+      - MEDIA_UPLOAD_CODE=
     env_file:
       - .env
     restart: always

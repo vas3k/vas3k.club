@@ -54,7 +54,7 @@ def send_auth_email(user: User, code: Code):
     auth_template = loader.get_template("emails/auth.html")
     send_club_email(
         recipient=user.email,
-        subject=f"{code.code} — ваш код для входа",
+        subject=f"Авторизация в PMI Russia клубе", # subject=f"{code.code} — ваш код для входа",
         html=auth_template.render({"user": user, "code": code}),
         tags=["auth"]
     )
