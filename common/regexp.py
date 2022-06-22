@@ -28,3 +28,10 @@ EMOJI_RE = re.compile(
     "\U000024C2-\U0001F251"
     "]+"
 )
+
+NO_RU_LETTERS_RE = re.compile(r'^([^А-яЁё]\s*)+$')
+
+NO_SPACES_RE = re.compile(r'^[^ ]+$')
+
+# TODO: this won't handle repeated text with punctuation
+REPETITIONS_RE = re.compile(r'^([^\r\n]+)(\s?\1){6,}$', re.MULTILINE)

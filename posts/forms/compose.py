@@ -8,6 +8,7 @@ from slugify import slugify_filename
 
 from common.regexp import EMOJI_RE
 from common.url_metadata_parser import parse_url_preview
+from common.validators import validate_has_spaces, validate_is_russian, validate_repetitions
 from posts.models.post import Post
 from posts.models.topics import Topic
 from common.forms import ImageUploadField
@@ -106,6 +107,7 @@ class PostTextForm(PostForm):
         required=True,
         max_length=128,
         widget=forms.TextInput(attrs={"placeholder": "Заголовок 🤙"}),
+        validators=[validate_repetitions],
     )
     text = forms.CharField(
         label="Текст поста",
@@ -118,6 +120,7 @@ class PostTextForm(PostForm):
                 "placeholder": "Дорогой Мартин Алексеевич…"
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
     coauthors = SimpleArrayField(
         forms.CharField(max_length=32),
@@ -149,6 +152,7 @@ class PostLinkForm(PostForm):
         required=True,
         max_length=128,
         widget=forms.TextInput(attrs={"placeholder": "Заголовок ссылки"}),
+        validators=[validate_repetitions],
     )
     text = forms.CharField(
         label="TL;DR",
@@ -166,6 +170,7 @@ class PostLinkForm(PostForm):
                                "\n\nЕсли тема подразумевает дискуссию — задайте пару вопросов от себя.",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
 
     class Meta:
@@ -197,6 +202,7 @@ class PostQuestionForm(PostForm):
         required=True,
         max_length=128,
         widget=forms.TextInput(attrs={"placeholder": "Вопрос кратко и четко 🤔"}),
+        validators=[validate_repetitions, validate_is_russian],
     )
     text = forms.CharField(
         label="Развернутая версия",
@@ -212,6 +218,7 @@ class PostQuestionForm(PostForm):
                                "вы уже попробовали и почему они не подошли.",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
 
     class Meta:
@@ -231,6 +238,7 @@ class PostIdeaForm(PostForm):
         required=True,
         max_length=128,
         widget=forms.TextInput(attrs={"placeholder": "Кратко суть идеи 🤔"}),
+        validators=[validate_repetitions],
     )
     text = forms.CharField(
         label="Развернутое описание",
@@ -244,6 +252,7 @@ class PostIdeaForm(PostForm):
                                "Приведите примеры похожих продуктов...",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
 
     class Meta:
@@ -275,6 +284,7 @@ class PostEventForm(PostForm):
         required=True,
         max_length=128,
         widget=forms.TextInput(attrs={"placeholder": "Название и дата события 📅"}),
+        validators=[validate_repetitions],
     )
     event_day = forms.ChoiceField(
         label="День",
@@ -348,6 +358,7 @@ class PostEventForm(PostForm):
                 "class": "markdown-editor-full",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
 
     class Meta:
@@ -446,6 +457,7 @@ class PostProjectForm(PostForm):
                                "\n- Нужны ли какие-то советы или помошь Клуба?"
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
     coauthors = SimpleArrayField(
         forms.CharField(max_length=32),
@@ -482,11 +494,13 @@ class PostBattleForm(PostForm):
         label="Одна сторона",
         required=True,
         max_length=64,
+        validators=[validate_repetitions],
     )
     side_b = forms.CharField(
         label="Вторая сторона",
         required=True,
         max_length=64,
+        validators=[validate_repetitions],
     )
     text = forms.CharField(
         label="Суть",
@@ -503,6 +517,7 @@ class PostBattleForm(PostForm):
                                "Лучше напишите его первым комментарием после публикации батла.",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
 
     class Meta:
@@ -541,6 +556,7 @@ class PostGuideForm(PostForm):
                 "value": "Клубный Путеводитель: ******",
             }
         ),
+        validators=[validate_repetitions],
     )
     text = forms.CharField(
         label="Текст путеводителя",
@@ -609,6 +625,7 @@ class PostGuideForm(PostForm):
                 "class": "markdown-editor-full",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
     coauthors = SimpleArrayField(
         forms.CharField(max_length=32),
@@ -635,6 +652,7 @@ class PostThreadForm(PostForm):
         required=True,
         max_length=128,
         widget=forms.TextInput(attrs={"placeholder": "Заголовок 🤙"}),
+        validators=[validate_repetitions],
     )
     text = forms.CharField(
         label="Текст треда",
@@ -647,6 +665,7 @@ class PostThreadForm(PostForm):
                 "placeholder": "Дорогой Мартин Алексеевич…"
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
     comment_template = forms.CharField(
         label="Шаблон комментария",

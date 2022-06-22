@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
+from common.validators import validate_has_spaces, validate_is_russian, validate_repetitions
 from users.models.user import User
 from common.forms import ImageUploadField
 
@@ -23,7 +24,8 @@ class UserIntroForm(ModelForm):
     full_name = forms.CharField(
         label="Как вас зовут",
         required=True,
-        max_length=128
+        max_length=128,
+        validators=[validate_repetitions],
     )
     email = forms.EmailField(
         label="E-mail",
@@ -38,7 +40,8 @@ class UserIntroForm(ModelForm):
     city = forms.CharField(
         label="город",
         required=True,
-        max_length=120
+        max_length=120,
+        validators=[validate_repetitions],
     )
     country = forms.ChoiceField(
         label="Страна",
@@ -50,25 +53,30 @@ class UserIntroForm(ModelForm):
         required=True,
         max_length=1024,
         widget=forms.Textarea(attrs={"maxlength": 1024}),
+        validators=[validate_repetitions],
     )
     contact = forms.CharField(
         label="Контакт для связи",
         required=True,
         max_length=256,
+        validators=[validate_repetitions],
     )
     company = forms.CharField(
         label="Компания",
         required=True,
-        max_length=128
+        max_length=128,
+        validators=[validate_repetitions],
     )
     position = forms.CharField(
         label="Должность или что вы делаете",
         required=True,
-        max_length=128
+        max_length=128,
+        validators=[validate_repetitions],
     )
     intro = forms.CharField(
         label="#intro",
         required=True,
+        min_length=600,
         widget=forms.Textarea(
             attrs={
                 "maxlength": 10000,
@@ -76,6 +84,7 @@ class UserIntroForm(ModelForm):
                 "placeholder": "Расскажите Клубу о себе...",
             }
         ),
+        validators=[validate_has_spaces, validate_is_russian, validate_repetitions],
     )
     email_digest_type = forms.ChoiceField(
         label="Подписка на дайджест",

@@ -7,6 +7,7 @@ from common.data.expertise import EXPERTISE
 from users.models.user import User
 from users.models.expertise import UserExpertise
 from common.forms import ImageUploadField
+from common.validators import validate_repetitions
 
 
 class ProfileEditForm(ModelForm):
@@ -19,7 +20,8 @@ class ProfileEditForm(ModelForm):
     city = forms.CharField(
         label="город",
         required=True,
-        max_length=120
+        max_length=120,
+        validators=[validate_repetitions],
     )
     country = forms.ChoiceField(
         label="Страна",
@@ -29,23 +31,28 @@ class ProfileEditForm(ModelForm):
     bio = forms.CharField(
         label="Ссылочки на себя и всякое такое",
         required=True,
+        min_length=6,
         max_length=1024,
-        widget=forms.Textarea(attrs={"maxlength": 1024}),
+        widget=forms.Textarea(attrs={"minlength": 6, "maxlength": 1024}),
+        validators=[validate_repetitions],
     )
     company = forms.CharField(
         label="Компания",
         required=True,
-        max_length=128
+        max_length=128,
+        validators=[validate_repetitions],
     )
     position = forms.CharField(
         label="Должность или что вы делаете",
         required=True,
-        max_length=128
+        max_length=128,
+        validators=[validate_repetitions],
     )
     contact = forms.CharField(
         label="Контакт для связи",
         required=True,
         max_length=256,
+        validators=[validate_repetitions],
     )
 
     class Meta:
