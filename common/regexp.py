@@ -29,7 +29,7 @@ EMOJI_RE = re.compile(
     "]+"
 )
 
-NO_RU_LETTERS_RE = re.compile(r'^([^А-яЁё]\s*)+$')
+NO_RU_LETTERS_RE = re.compile(r'^([^А-яЁё]+)$')
 
 NO_SPACES_RE = re.compile(r'^[^ ]+$')
 
