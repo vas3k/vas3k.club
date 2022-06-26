@@ -4,6 +4,7 @@
 @import "normalize.css";
 @import "./fonts.css";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "vue-select/dist/vue-select.css";
 
 @import "./theme.css";
 @import "./base.css";
@@ -26,3 +27,4 @@
 @import "./components/stats.css";
 @import "./components/friends.css";
 @import "./components/badges.css";
+@import "./components/select.css";

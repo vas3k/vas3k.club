@@ -37,6 +37,7 @@
     "normalize.css": "^8.0.1",
     "twemoji": "^13.0.2",
     "vue": "^2.6.11",
+    "vue-select": "^3.18.3",
     "vue-mapbox": "^0.4.1"
   },
   "husky": {

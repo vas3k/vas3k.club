@@ -188,7 +188,8 @@ input[type=email],
 input[type=time],
 textarea,
 select,
-.CodeMirror {
+.CodeMirror,
+.input-select .vs__search {
     -webkit-appearance: none;
     border: none;
     box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
@@ -204,7 +205,8 @@ select,
 
     input:focus,
     textarea:focus,
-    .CodeMirror-focused {
+    .CodeMirror-focused,
+    .input-select .vs__search {
         box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
     }
 
@@ -223,7 +225,8 @@ select,
         }
 
     input:hover,
-    textarea:hover {
+    textarea:hover,
+    .input-select .vs__search {
         transform: scale(1.01);
         transition: all linear .2s;
     }

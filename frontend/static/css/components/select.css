@@ -1,0 +1,21 @@
+/* WIP */
+
+.input-select {
+    background: #EEE;
+}
+
+.input-select .vs__search {
+    text-align: center;
+}
+
+.input-select .vs__dropdown-toggle {
+    border: 0;
+}
+
+.input-select .vs__selected-options {
+    width: 80%;
+}
+
+.vs__dropdown-menu li {
+    margin-bottom: 0;
+}
