@@ -207,9 +207,9 @@
                                           is-active-by-default
                                 ></user-tag>
                             {% else %}
-                                {% if tag.code in active_tags %}
-                                    <span class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">{{ tag.name }}</span>
-                                {% endif %}
+                                <a href="{% url "people" %}?tags={{ tag.code }}" class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">
+                                    {{ tag.name }}
+                                </a>
                             {% endif %}
                         {% endfor %}
                     </div>

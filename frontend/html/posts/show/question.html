@@ -82,5 +82,9 @@
             </footer>
         {% endblock %}
     </article>
+
+    {% if me and collectible_tag %}
+        {% include "posts/widgets/collectible_tag.html" %}
+    {% endif %}
 </section>
 {% endblock %}
