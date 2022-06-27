@@ -928,7 +928,7 @@
     padding: 50px;
     position: relative;
     max-width: var(--post-width);
-    margin: 150px 0;
+    margin: 150px auto;
     font-size: 120%;
     text-align: center;
     display: flex;

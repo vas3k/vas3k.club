@@ -1,37 +1,34 @@
-{% if post_type == "post" or post_type == "guide" or post_type == "project" or post_type == "thread" %}
-<details class="block compose-form-advanced" {% if form.instance.coauthors %}open{% endif %}>
+<details class="block compose-form-advanced" {% if form.instance.coauthors or form.instance.collectible_tag_code %}open{% endif %}>
     <summary class="compose-form-advanced-summary">Продвинутые настройки</summary>
 
-    <div class="form-row compose-form-coauthors">
-        <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
-        {{ form.coauthors }}
-        {% if form.coauthors.errors %}
-            <span class="form-row-errors">{{ form.coauthors.errors }}</span>
-        {% endif %}
-        <span class="form-row-help form-row-help-wide">
-            Список никнеймов через запятую. Они смогут тоже редактировать пост, но лучше не делать этого одновременно — изменения одного автора могут затереть другого.
-        </span>
-    </div>
+    <div class="clearfix50"></div>
 
-    <div class="form-row compose-form-collectible-tag">
-        {% if me.is_curator or me.is_moderator or me.upvotes >= settings.MIN_UPVOTES_TO_CREATE_COLLECTIBLE_TAGS %}
-            <label for="{{ form.collectible_tag_code.id_for_label }}" class="form-label">{{ form.collectible_tag_code.label }}</label>
-            {{ form.collectible_tag_code }}
-            {% if form.collectible_tag_code.errors %}
-                <span class="form-row-errors">{{ form.collectible_tag_code.errors }}</span>
+    {% if post_type == "post" or post_type == "guide" or post_type == "project" %}
+        <div class="form-row compose-form-coauthors">
+            <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
+            {{ form.coauthors }}
+            {% if form.coauthors.errors %}
+                <span class="form-row-errors">{{ form.coauthors.errors }}</span>
             {% endif %}
             <span class="form-row-help form-row-help-wide">
-                Каждый тег обязан начинаться с <a href="https://emojipedia.org/" target="_blank">emoji</a>, потом идёт пробел и название.
+                Список никнеймов через запятую. Они смогут тоже редактировать пост, но лучше не делать этого одновременно — изменения одного автора могут затереть другого.
             </span>
-        {% else %}
-            <span class="form-row-help form-row-help-wide">
-                🎁 Возможность прикреплять коллекционные теги откроется после {{ settings.MIN_UPVOTES_TO_CREATE_COLLECTIBLE_TAGS }} плюсиков.
-                Но если вам очень хочется — вы можете вежливо попросить об этом @moderator в комментах.
-            </span>
+        </div>
+    {% endif %}
+
+    <div class="form-row compose-form-collectible-tag">
+        <label for="{{ form.collectible_tag_code.id_for_label }}" class="form-label">{{ form.collectible_tag_code.label }}</label>
+        {{ form.collectible_tag_code }}
+
+        {% if form.collectible_tag_code.errors %}
+            <span class="form-row-errors">{{ form.collectible_tag_code.errors }}</span>
         {% endif %}
+
+        <span class="form-row-help form-row-help-wide">
+            Каждый тег обязан начинаться с <a href="https://emojipedia.org/" target="_blank">emoji</a>, потом идёт пробел и название.
+        </span>
     </div>
 </details>
-{% endif %}
 
 {% if mode == "create" or form.instance.is_public or form.instance.comment_count < 10 or form.instance.published_at is None or me.is_moderator %}
 <div class="big-radio compose-visibility">

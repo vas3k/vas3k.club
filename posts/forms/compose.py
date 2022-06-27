@@ -64,6 +64,11 @@ class PostForm(forms.ModelForm):
         empty_label="Для всех",
         queryset=Topic.objects.filter(is_visible=True).all(),
     )
+    collectible_tag_code = CollectibleTagField(
+        label="Прикрепить коллекционный тег",
+        max_length=32,
+        required=False,
+    )
     is_public = forms.ChoiceField(
         label="Виден ли в большой интернет?",
         choices=((True, "Публичный пост"), (False, "Только для своих")),
@@ -120,11 +125,6 @@ class PostTextForm(PostForm):
         label="Соавторы поста",
         required=False,
     )
-    collectible_tag_code = CollectibleTagField(
-        label="Прикрепить коллекционный тег",
-        max_length=32,
-        required=False,
-    )
 
     class Meta:
         model = Post
@@ -132,9 +132,9 @@ class PostTextForm(PostForm):
             "title",
             "text",
             "topic",
-            "is_public",
             "coauthors",
             "collectible_tag_code",
+            "is_public",
         ]
 
 
@@ -175,7 +175,8 @@ class PostLinkForm(PostForm):
             "text",
             "url",
             "topic",
-            "is_public"
+            "collectible_tag_code",
+            "is_public",
         ]
 
     def clean(self):
@@ -219,6 +220,7 @@ class PostQuestionForm(PostForm):
             "title",
             "text",
             "topic",
+            "collectible_tag_code",
             "is_public"
         ]
 
@@ -250,7 +252,8 @@ class PostIdeaForm(PostForm):
             "title",
             "text",
             "topic",
-            "is_public"
+            "collectible_tag_code",
+            "is_public",
         ]
 
 
@@ -353,6 +356,7 @@ class PostEventForm(PostForm):
             "title",
             "text",
             "topic",
+            "collectible_tag_code",
             "is_public"
         ]
 
@@ -449,11 +453,6 @@ class PostProjectForm(PostForm):
         label="Соавторы поста",
         required=False,
     )
-    collectible_tag_code = CollectibleTagField(
-        label="Прикрепить коллекционный тег",
-        max_length=32,
-        required=False,
-    )
 
     class Meta:
         model = Post
@@ -463,9 +462,9 @@ class PostProjectForm(PostForm):
             "topic",
             "url",
             "image",
-            "is_public",
             "coauthors",
             "collectible_tag_code",
+            "is_public",
         ]
 
 
@@ -511,7 +510,8 @@ class PostBattleForm(PostForm):
         fields = [
             "text",
             "topic",
-            "is_public"
+            "collectible_tag_code",
+            "is_public",
         ]
 
     def clean(self):
@@ -616,11 +616,6 @@ class PostGuideForm(PostForm):
         label="Соавторы поста",
         required=False,
     )
-    collectible_tag_code = CollectibleTagField(
-        label="Прикрепить коллекционный тег",
-        max_length=32,
-        required=False,
-    )
 
     class Meta:
         model = Post
@@ -628,9 +623,9 @@ class PostGuideForm(PostForm):
             "title",
             "text",
             "topic",
-            "is_public",
             "coauthors",
-            "collectible_tag_code"
+            "collectible_tag_code",
+            "is_public",
         ]
 
 
@@ -671,11 +666,6 @@ class PostThreadForm(PostForm):
         label="Соавторы поста",
         required=False,
     )
-    collectible_tag_code = CollectibleTagField(
-        label="Прикрепить коллекционный тег",
-        max_length=32,
-        required=False,
-    )
 
     class Meta:
         model = Post
@@ -684,9 +674,9 @@ class PostThreadForm(PostForm):
             "text",
             "comment_template",
             "topic",
-            "is_public",
             "coauthors",
-            "collectible_tag_code"
+            "collectible_tag_code",
+            "is_public",
         ]
 
 

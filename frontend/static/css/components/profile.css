@@ -423,6 +423,7 @@
         }
 
             .user-tag {
+                position: relative;
                 cursor: pointer;
                 font-size: 110%;
                 font-weight: 300;
@@ -433,7 +434,8 @@
                 border-radius: 20px;
                 text-decoration: none;
                 text-align: center;
-                opacity: 0.6;
+                opacity: 0.7;
+                z-index: 100;
             }
 
                 .user-tag:hover,

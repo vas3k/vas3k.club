@@ -205,6 +205,10 @@ class Post(models.Model, ModelDiffMixin):
         return self.is_visible and not self.is_shadow_banned
 
     @property
+    def is_approved(self):
+        return self.is_approved_by_moderator or self.upvotes >= settings.COMMUNITY_APPROVE_UPVOTES
+
+    @property
     def is_safely_deletable_by_author(self):
         return self.comment_count < settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR
 

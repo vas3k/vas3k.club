@@ -53,7 +53,7 @@
                 <div class="form-row compose-form-text">
                     <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
                     {{ form.text }}
-                    {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
+                    {% if form.text.errors %}<span class="compose-form-errors">{{ form.text.errors }}</span>{% endif %}
                     <span class="form-row-help form-row-help-wide">
                         Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a>.
                         Для загрузки картинок просто перетащите их в редактор.
