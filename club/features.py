@@ -13,6 +13,6 @@ PRIVATE_FEED = True
 PATREON_AUTH_ENABLED = False
 
 # Enable Free membership
-#   True - 
-#   False - 
+#   True - Free registration
+#   False - Paid registration
 FREE_MEMBERSHIP = True

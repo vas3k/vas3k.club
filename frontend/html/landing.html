@@ -227,6 +227,7 @@
             </div>
         </div>
 
+        {% if not features.FREE_MEMBERSHIP %}
         <div class="landing-block landing-block-narrow" id="join">
             <div>
                 <h2 class="landing-block-title">Как вступить?</h2>
@@ -248,6 +249,23 @@
                 </p>
             </div>
         </div>
+        {% else %}
+        <div class="landing-block landing-block-narrow" id="join">
+            <div>
+                <h2 class="landing-block-title">Как вступить?</h2>
+
+                <p>
+                    Членство в Клубе бесплатное. Но мы не пускаем анонимов. Вам придется заполнить профиль и рассказать о себе.
+                </p>
+
+                <br>
+
+                <p>
+                    <a href="{% url "login" %}" class="button button-black">Вступить в клуб</a>
+                </p>
+            </div>
+        </div>
+        {% endif %}
     </main>
 {% endblock %}
 
