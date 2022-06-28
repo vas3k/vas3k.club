@@ -20,10 +20,13 @@
             </template>
 
             <template #option="{ title, isExist }">
-                <span>{{ title }}</span>
+                <span>
+                    <template v-if="!isExist">Добавить тег: </template>
+                    {{ title }}
+                </span>
                 <br>
                 <template v-if="!isExist">
-                    <span class="TODO_HINT">
+                    <span class="vs__dropdown-option-hint">
                         <template v-if="!isValidInput">
                             Каждый тег обязан начинаться с emoji, потом идёт пробел и название.
                         </template>
@@ -48,16 +51,7 @@
     </div>
 </template>
 
-<!--
-
-    v-bind: === : →→→
-    v-on:   === @ ←←←
-    v-model === bind + on ←→←→←→
-
--->
-
 <script>
-
 import { debounce } from "../common/utils";
 
 const EMOJI_REGEXP = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$/;
@@ -68,9 +62,6 @@ export default {
         initialValue: String
     },
     mounted() {
-        console.log(this.selectValue);
-        console.log(this.initialValue);
-
         if (this.$props.initialValue) {
             this.selectValue = {
                 title: this.initialValue,

@@ -17,7 +17,7 @@
     {% endif %}
 
     <div class="form-row compose-form-collectible-tag">
-        {{ form.collectible_tag_code.label }}
+        <label for="{{ form.collectible_tag_code.id_for_label }}" class="form-label">{{ form.collectible_tag_code.label }}</label>
         <collection-tag
             initial-value="{{ form.collectible_tag_code.value|default_if_none:'' }}"
             id="{{ form.collectible_tag_code.html_name }}"
