@@ -26,7 +26,7 @@
                 </span>
                 <br>
                 <template v-if="!isExist">
-                    <span class="vs__dropdown-option-hint">
+                    <span class="vs__dropdown-option-secondary-text">
                         <template v-if="!isValidInput">
                             Каждый тег обязан начинаться с emoji, потом идёт пробел и название.
                         </template>
