@@ -162,18 +162,17 @@ LANDING_CACHE_TIMEOUT = 60 * 60 * 24
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST", "mail.pmi.moscow")
-EMAIL_PORT = os.getenv("EMAIL_PORT", 25)
+EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "PMI Club <club@pmi.moscow>")
 
 # App
-
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
 APP_NAME = "PMI Club Russia"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
-LAUNCH_DATE = datetime(2020, 4, 13)
+LAUNCH_DATE = datetime(2022, 7, 2)
 
 AUTH_CODE_LENGTH = 6
 AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=10)
@@ -245,7 +244,7 @@ OG_IMAGE_GENERATOR_DEFAULTS = {
 }
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL") or "https://t.me/vas3k_club_bot"
+TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL") or "https://t.me/pmiclubbot"
 TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
 TELEGRAM_CLUB_CHANNEL_URL = os.getenv("TELEGRAM_CLUB_CHANNEL_URL")
 TELEGRAM_CLUB_CHANNEL_ID = os.getenv("TELEGRAM_CLUB_CHANNEL_ID")
