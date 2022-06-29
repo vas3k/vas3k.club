@@ -2,36 +2,42 @@
     <div class="input-select">
         <input type="hidden" :value="formValue" :name="id" />
         <v-select
-            taggable
+            :taggable="allowCreateNew"
+            :multiple="allowMultiple"
 
             label="title"
             placeholder=""
 
             v-model="selectValue"
 
-            :options="tags"
+            :options="options"
             :selectable="canSelect"
 
             @input="onSelectValueChange"
             @search="onSearch"
         >
             <template #no-options="{ search, searching, loading }">
-              Начните набирать текст для поиска...
+                <template v-if="!searching || search.length < 3">
+                    Начните набирать текст для поиска...
+                </template>
+                <template v-else>
+                    Ничего не найдено
+                </template>
             </template>
 
             <template #option="{ title, isExist }">
                 <span>
-                    <template v-if="!isExist">Добавить тег: </template>
+                    <template v-if="!isExist">{{ labelPrefixInput }}</template>
                     {{ title }}
                 </span>
                 <br>
                 <template v-if="!isExist">
                     <span class="vs__dropdown-option-secondary-text">
                         <template v-if="!isValidInput">
-                            Каждый тег обязан начинаться с emoji, потом идёт пробел и название.
+                            {{ labelInvalidInput }}
                         </template>
                         <template v-else>
-                            Вы добавите этот тег первым!
+                            {{ labelValidInput }}
                         </template>
                     </span>
                 </template>
@@ -54,12 +60,39 @@
 <script>
 import { debounce } from "../common/utils";
 
-const EMOJI_REGEXP = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$/;
 
 export default {
     props: {
-        id: String,
-        initialValue: String
+        id: {
+            type: String,
+            required: true,
+        },
+        initialValue: {
+            type: String,
+            required: false,
+        },
+        allowCreateNew: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+        allowMultiple: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+        validationRegExp: {
+            type: String,
+            required: false,
+            default: null,
+        },
+        searchUrl: {
+            type: String,
+            required: true,
+        },
+        labelValidInput: String,
+        labelInvalidInput: String,
+        labelPrefixInput: String,
     },
     mounted() {
         if (this.$props.initialValue) {
@@ -75,8 +108,17 @@ export default {
             isValidInput: false,
             selectValue: null,
             formValue: null,
-            tags: [],
+            options: [],
         };
+    },
+    computed: {
+        validationRe() {
+            if (!this.validationRegExp) {
+                return null;
+            }
+
+            return new RegExp(this.validationRegExp);
+        }
     },
     methods: {
         canSelect(option) {
@@ -84,7 +126,12 @@ export default {
         },
 
         onInputChange(event) {
-            if (EMOJI_REGEXP.test(event.target.value)) {
+            if (!this.validationRe) {
+                this.isValidInput = true;
+                return;
+            }
+
+            if (this.validationRe.test(event.target.value)) {
                 this.isValidInput = true;
                 return;
             }
@@ -94,7 +141,7 @@ export default {
 
         onInputBlur(event) {
             // clear old search results
-            this.tags = [];
+            this.options = [];
         },
 
         onSearch(search, loading) {
@@ -104,17 +151,17 @@ export default {
                 return;
             }
 
-            this.tags = [];
+            this.options = [];
         },
 
         search: debounce(((loading, search, vm) => {
-            fetch(`/search/tags.json?prefix=${search}`)
+            fetch(`${vm.$props.searchUrl}${search}`)
                 .then(response => response.json())
                 .then(json => {
                     if (!json.tags) {
                         return;
                     }
-                    vm.tags = json.tags.map(tag => ({
+                    vm.options = json.tags.map(tag => ({
                         title: tag.name,
                         isExist: true,
                     }));
@@ -126,15 +173,13 @@ export default {
         }), 500),
 
         // value changed at item in dropdown
-        onSelectValueChange(tag) {
-            console.log('Value changed: ', tag);
-
-            if (!tag) {
+        onSelectValueChange(option) {
+            if (!option) {
                 this.formValue = null;
                 return;
             }
 
-            this.formValue = tag.title;
+            this.formValue = option.title;
         }
     },
 };

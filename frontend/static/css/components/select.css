@@ -239,6 +239,7 @@
 
 /* Dropdown: single option-hint */
 .vs__no-options {
+    width: 95%;
     text-align: center;
 }
 
