@@ -179,7 +179,7 @@ export default {
                 return;
             }
 
-            this.formValue = option.title;
+            this.formValue = option.title || option;
         }
     },
 };
