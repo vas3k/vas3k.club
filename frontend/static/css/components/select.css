@@ -263,12 +263,6 @@
     color: var(--select-color);
 }
 
-.vs__dropdown-option--deselect {
-    /* TODO ? */
-    background: #fb5858;
-    color: #fff;
-}
-
 .vs__dropdown-option--disabled {
     background: var(--button-disabled-bg-color);
     cursor: not-allowed;
