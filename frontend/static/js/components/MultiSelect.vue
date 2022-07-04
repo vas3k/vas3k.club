@@ -10,11 +10,13 @@
 
             v-model="selectValue"
 
-            :options="options"
+            :options="lastSearchOptions"
             :selectable="canSelect"
 
             @input="onSelectValueChange"
             @search="onSearch"
+            @option:selected="clearSearchResults"
+            @option:created="clearSearchResults"
         >
             <template #no-options="{ search, searching, loading }">
                 <template v-if="!searching || search.length < 3">
@@ -25,13 +27,14 @@
                 </template>
             </template>
 
-            <template #option="{ title, isExist }">
+            <template #option="{ title, isExist, description }">
                 <span>
                     <template v-if="!isExist">{{ labelPrefixInput }}</template>
-                    {{ title }}
+                    <span>{{ title }}</span>
+                    <span class="vs__dropdown-option-description-text" v-if="!!description">{{ description }}</span>
                 </span>
                 <br>
-                <template v-if="!isExist">
+                <template v-if="!isExist || !isValidInput">
                     <span class="vs__dropdown-option-secondary-text">
                         <template v-if="!isValidInput">
                             {{ labelInvalidInput }}
@@ -48,7 +51,6 @@
                 <input
                     class="vs__search"
                     @input="onInputChange"
-                    @blur="onInputBlur"
                     v-bind="attributes"
                     v-on="events"
                 />
@@ -81,6 +83,11 @@ export default {
             required: false,
             default: false,
         },
+        maxCount: {
+            type: Number,
+            required: false,
+            default: 10,
+        },
         validationRegExp: {
             type: String,
             required: false,
@@ -90,12 +97,29 @@ export default {
             type: String,
             required: true,
         },
+        apiFieldArray: {
+            type: String,
+            required: true,
+        },
+        apiFieldItemTitle: {
+            type: String,
+            required: true,
+        },
+        apiFieldItemDescription: {
+            type: String,
+            required: false,
+        },
         labelValidInput: String,
         labelInvalidInput: String,
         labelPrefixInput: String,
     },
     mounted() {
-        if (this.$props.initialValue) {
+        if (this.initialValue) {
+            if (this.allowMultiple) {
+                // TODO: handle initial data for multiple values case
+                return;
+            }
+
             this.selectValue = {
                 title: this.initialValue,
                 isExist: true,
@@ -108,7 +132,7 @@ export default {
             isValidInput: false,
             selectValue: null,
             formValue: null,
-            options: [],
+            lastSearchOptions: [],
         };
     },
     computed: {
@@ -122,7 +146,18 @@ export default {
     },
     methods: {
         canSelect(option) {
+            // Limits
+            if (this.allowMultiple && this.selectValue && this.selectValue.length >= this.maxCount) {
+                this.isValidInput = false;
+                return false;
+            }
+
+            // Skip check for existing items OR look at regexp result
             return option.isExist || this.isValidInput;
+        },
+
+        clearSearchResults() {
+            this.lastSearchOptions = [];
         },
 
         onInputChange(event) {
@@ -139,11 +174,6 @@ export default {
             this.isValidInput = false;
         },
 
-        onInputBlur(event) {
-            // clear old search results
-            this.options = [];
-        },
-
         onSearch(search, loading) {
             if (search.length >= 3) {
                 loading(true);
@@ -151,18 +181,20 @@ export default {
                 return;
             }
 
-            this.options = [];
+            this.lastSearchOptions = [];
         },
 
         search: debounce(((loading, search, vm) => {
-            fetch(`${vm.$props.searchUrl}${search}`)
+            fetch(`${vm.searchUrl}${search}`)
                 .then(response => response.json())
                 .then(json => {
-                    if (!json.tags) {
+                    if (!json[vm.apiFieldArray]) {
                         return;
                     }
-                    vm.options = json.tags.map(tag => ({
-                        title: tag.name,
+
+                    vm.lastSearchOptions = json[vm.apiFieldArray].map(item => ({
+                        title: item[vm.apiFieldItemTitle],
+                        description: vm.apiFieldItemDescription ? item[vm.apiFieldItemDescription] : null,
                         isExist: true,
                     }));
                 })
@@ -172,14 +204,19 @@ export default {
 
         }), 500),
 
-        // value changed at item in dropdown
-        onSelectValueChange(option) {
-            if (!option) {
+        onSelectValueChange(options) {
+            if (!options) {
                 this.formValue = null;
                 return;
             }
 
-            this.formValue = option.title || option;
+            // TODO: need to test it properly
+            if (Array.isArray(options)) {
+                this.formValue = options.map(item => item.title || item);
+                return;
+            }
+
+            this.formValue = options.title || options;
         }
     },
 };

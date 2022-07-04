@@ -6,12 +6,24 @@
     {% if post_type == "post" or post_type == "guide" or post_type == "project" %}
         <div class="form-row compose-form-coauthors">
             <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
-            {{ form.coauthors }}
+                <multi-select
+                    initial-value="{{ form.coauthors.value|default_if_none:'' }}"
+                    id="{{ form.coauthors.html_name }}"
+                    search-url="/search/users.json?prefix="
+                    api-field-array="users"
+                    api-field-item-title="slug"
+                    api-field-item-description="full_name"
+                    allow-multiple
+                    :max-count="2"
+                    label-invalid-input="Можно добавить не более 2 соавторов. [TODO: change to 10]"
+                >
+                </multi-select>
+
             {% if form.coauthors.errors %}
                 <span class="form-row-errors">{{ form.coauthors.errors }}</span>
             {% endif %}
             <span class="form-row-help form-row-help-wide">
-                Список никнеймов через запятую. Они смогут тоже редактировать пост, но лучше не делать этого одновременно — изменения одного автора могут затереть другого.
+                Список никнеймов соавторов (не более 10). Они смогут тоже редактировать пост, но лучше не делать этого одновременно — изменения одного автора могут затереть другого.
             </span>
         </div>
     {% endif %}
@@ -22,6 +34,8 @@
             initial-value="{{ form.collectible_tag_code.value|default_if_none:'' }}"
             id="{{ form.collectible_tag_code.html_name }}"
             search-url="/search/tags.json?prefix="
+            api-field-array="tags"
+            api-field-item-title="name"
             allow-create-new
             validation-reg-exp="^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$"
             label-prefix-input="Добавить тег: "

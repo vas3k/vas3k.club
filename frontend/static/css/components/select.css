@@ -269,6 +269,11 @@
     opacity: .6;
 }
 
+.vs__dropdown-option-description-text {
+    font-size: 80%;
+    opacity: .6;
+}
+
 .vs__dropdown-option-secondary-text {
     font-size: 80%;
 }
