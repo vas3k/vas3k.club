@@ -178,7 +178,7 @@ ACHIEVEMENTS = [
     ("photo_winner_1", {
         "name": "Фотограф",
         "description": "За победу на неделе фото. Выдается секретным чатом фотографов",
-        "image": "https://vas3k.club/static/images/achievements/photo_winner_1.png",
+        "image": "https://vas3k.club/static/images/achievements/photo_winner_1_new.png",
         "style": "background-color: #e3e4f8; font-size: 120%;",
     }),
     ("photo_winner_2", {
