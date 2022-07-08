@@ -179,7 +179,25 @@ ACHIEVEMENTS = [
         "name": "Фотограф",
         "description": "За победу на неделе фото. Выдается секретным чатом фотографов",
         "image": "https://vas3k.club/static/images/achievements/photo_winner_1.png",
-        "style": "background-color: #a4d26f; font-size: 120%;",
+        "style": "background-color: #e3e4f8; font-size: 120%;",
+    }),
+    ("photo_winner_2", {
+        "name": "Серебряный фотограф",
+        "description": "За три победы на неделе фото. Выдается секретным чатом фотографов",
+        "image": "https://vas3k.club/static/images/achievements/photo_winner_2.png",
+        "style": "background-color: #c4ede5; font-size: 120%;",
+    }),
+    ("photo_winner_3", {
+        "name": "Золотой фотограф",
+        "description": "За пять побед на неделе фото. Выдается секретным чатом фотографов",
+        "image": "https://vas3k.club/static/images/achievements/photo_winner_3.png",
+        "style": "background-color: #e5ecb6; font-size: 120%;",
+    }),
+    ("photo_winner_4", {
+        "name": "Платиновый фотограф",
+        "description": "За семь побед на неделе фото. Выдается секретным чатом фотографов",
+        "image": "https://vas3k.club/static/images/achievements/photo_winner_4.png",
+        "style": "background-color: #f9dbd0; font-size: 120%;",
     }),
     ("music_jam_1", {
         "name": "Мастер баррэ",
