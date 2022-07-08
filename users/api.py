@@ -19,3 +19,12 @@ def api_profile(request, user_slug):
     return JsonResponse({
         "user": user.to_dict()
     })
+
+
+@api_required
+def api_profile_by_telegram_id(request, telegram_id):
+    user = get_object_or_404(User, telegram_id=telegram_id)
+
+    return JsonResponse({
+        "user": user.to_dict()
+    })

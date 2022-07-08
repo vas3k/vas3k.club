@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
     "badges.apps.BadgesConfig",
+    "tags.apps.TagsConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -196,7 +197,7 @@ GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
 GDPR_ARCHIVE_DELETE_TIMEDELTA = timedelta(hours=24)
 GDPR_DELETE_CODE_LENGTH = 14
 GDPR_DELETE_CONFIRMATION = "я готов удалиться навсегда"
-GDPR_DELETE_TIMEDELTA = timedelta(hours=5 * 24)
+GDPR_DELETE_TIMEDELTA = timedelta(hours=3 * 24)
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 
@@ -208,6 +209,9 @@ PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET")
 PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
 PATREON_GOD_IDS = ["8724543"]
+
+COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
+COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
 
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
@@ -278,6 +282,7 @@ CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
     "\n```"
+
 
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"

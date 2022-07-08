@@ -1,0 +1,34 @@
+{% if post.is_approved or me.id == post.author_id %}
+    <section class="block post-collectible-tag-block">
+        <div class="post-collectible-tag-bg">
+            💎
+        </div>
+
+        <div class="post-collectible-tag-header">
+            💎 Вы нашли коллекционный тег!
+        </div>
+
+        {% if post.is_approved %}
+            <user-tag tag-name="{{ collectible_tag.name }}"
+                      tag-color="{{ collectible_tag.color }}"
+                      class="user-tag post-collectible-tag"
+                      url="{% url "toggle_tag" collectible_tag.code %}"
+                      {% if is_collectible_tag_collected %}is-active-by-default{% endif %}
+            ></user-tag>
+
+            <div class="post-collectible-tag-description">
+                Если на него клацнуть — он добавится в ваш профиль.
+                Так все будут видеть, что вы интересуетесь данной темой, а вы начнёте получать уведомления о будущих постах с таким же тегом.
+            </div>
+        {% else %}
+            <span class="user-tag">
+                {{ collectible_tag.name }}
+            </span>
+
+            <div class="post-collectible-tag-description">
+                ⚠️ Тег еще не прошел модерацию, потому утаскивать в профиль его пока нельзя.
+                Этот блок видите только вы, для остальных тут пока ничего нет.
+            </div>
+        {% endif %}
+    </section>
+{% endif %}

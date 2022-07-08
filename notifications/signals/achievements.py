@@ -21,7 +21,7 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
     achievement = user_achievement.achievement
 
     # messages
-    if user.is_club_member and user.telegram_id:
+    if user.is_member and user.telegram_id:
         if achievement.image:
             send_telegram_image(
                 chat=Chat(id=user.telegram_id),

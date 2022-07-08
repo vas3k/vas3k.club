@@ -405,6 +405,21 @@
             padding-top: 20px;
         }
 
+        .comment-type-battle-userinfo {
+            display: flex;
+            gap: 0 6px;
+        }
+
+        .comment-type-battle-userinfo .reply-date {
+            padding-left: 0;
+        }
+
+        @media only screen and (max-width : 350px) {
+            .comment-type-battle-userinfo {
+                flex-direction: column;
+            }
+        }
+
         .comment-type-battle-side-a {
             background: rgba(76, 152, 213, 0.3);
         }
@@ -441,7 +456,7 @@
     }
 
         .battle-comment-prefix-side-a {
-            color: #4C98D5;;
+            color: #4C98D5;
         }
 
         .battle-comment-prefix-side-b {

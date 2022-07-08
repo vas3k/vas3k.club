@@ -56,7 +56,7 @@
                     {% if user.membership_days_left < 150 %}
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
-                    {% elif user.membership_days_left < 700 %}
+                    {% elif user.membership_days_left <= 730 %}
                         <span class="profile-status-number">😎 {{ user.membership_days_left | days_to_months | cool_number  }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | days_to_months | rupluralize:"месяц,месяца,месяцев" }}</span>
                     {% else %}
@@ -113,14 +113,14 @@
                     {% elif user.deleted_at %}
                         <span class="profile-status-icon">🏃‍♀️</span>
                         <span class="profile-status-text">удалился из Клуба</span>
-                    {% elif not user.is_paid_member %}
+                    {% elif not user.is_active_member %}
                         <span class="profile-status-icon">️😴</span>
                         <span class="profile-status-text">аккаунт неактивен</span>
                     {% else %}
                         {% if user.membership_created_days < 150 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
-                        {% elif user.membership_created_days < 700 %}
+                        {% elif user.membership_created_days <= 730 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
                         {% else %}
@@ -174,6 +174,52 @@
                     <a href="{% url "show_post" intro.type intro.slug %}#comments">
                         {{ intro.comment_count }} {{ intro.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
                     </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if projects %}
+            <div class="profile-header">Проекты</div>
+
+            <div class="user-projects">
+                {% for project in projects %}
+                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
+                        {% if project.image %}
+                            <img src="{{ project.image }}" alt="{{ project.title }}">
+                        {% endif %}
+                        <span class="user-project-title">{{ project.title }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if collectible_tags %}
+            <div class="profile-header" id="tags_collectible">Коллекционные теги</div>
+            <div class="block profile-tags">
+                <div class="profile-tags-group collectible-tags-group">
+                    <div class="user-tags">
+                        {% for tag in collectible_tags %}
+                            {% if me.id == user.id  %}
+                                <user-tag tag-name="{{ tag.name }}"
+                                          tag-color="{{ tag.color }}"
+                                          class="user-tag"
+                                          url="{% url "toggle_tag" tag.code %}"
+                                          is-active-by-default
+                                ></user-tag>
+                            {% else %}
+                                <a href="{% url "people" %}?tags={{ tag.code }}" class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">
+                                    {{ tag.name }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="profile-tags-footer">
+                    <small>
+                        Коллекционные теги можно найти только в специальных тематических постах и утащить к себе в профиль.
+                        Их наличие показывает особую увлечённость темой.
+                    </small>
                 </div>
             </div>
         {% endif %}
@@ -255,21 +301,6 @@
                         </span>
                     {% endfor %}
                 </div>
-            </div>
-        {% endif %}
-
-        {% if projects %}
-            <div class="profile-header">Проекты</div>
-
-            <div class="user-projects">
-                {% for project in projects %}
-                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
-                        {% if project.image %}
-                            <img src="{{ project.image }}" alt="{{ project.title }}">
-                        {% endif %}
-                        <span class="user-project-title">{{ project.title }}</span>
-                    </a>
-                {% endfor %}
             </div>
         {% endif %}
 

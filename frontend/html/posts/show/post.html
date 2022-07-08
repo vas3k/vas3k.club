@@ -97,6 +97,10 @@
         {% endblock %}
 
         {% block post_footer %}
+            {% if me and collectible_tag %}
+                {% include "posts/widgets/collectible_tag.html" %}
+            {% endif %}
+
             <footer class="post-footer p-author">
                 {% include "users/widgets/card.html" with user=post.author %}
 

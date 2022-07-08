@@ -923,3 +923,43 @@
         .post-guide-rules-description ul {
             padding-left: 20px;
         }
+
+.post-collectible-tag-block {
+    padding: 50px;
+    position: relative;
+    max-width: var(--post-width);
+    margin: 150px auto;
+    font-size: 120%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    overflow: hidden;
+}
+
+    .post-collectible-tag-bg {
+        font-size: 300px;
+        opacity: 0.1;
+        position: absolute;
+        top: -3%;
+        right: -20%;
+        height: 300px;
+        width: 300px;
+    }
+
+    .post-collectible-tag-header {
+        font-size: 140%;
+        line-height: 120%;
+        font-weight: 500;
+    }
+
+    .post-collectible-tag-description {
+        opacity: 0.7;
+    }
+
+    .post-collectible-tag {
+        font-size: 150%;
+        margin: 0;
+    }

@@ -5,11 +5,16 @@
 
     {% if "invite" in payment.product_code %}
         <p>
-            Вы успешно пригласили друга <strong>{{ payment.invited_user_email }}</strong>
+            {% if payment.data.is_created %}
+                Вы успешно пригласили друга <strong>{{ payment.invited_user_email }}</strong>
+            {% else %}
+                Вы успешно продлили аккаунт другу <strong>{{ payment.invited_user_email }}</strong>
+            {% endif %}
         </p>
 
         <p>
             Сейчас ему и вам упадут на почту все нужные подтверждения и инструкции что делать дальше.
+            Можете написать ему сами и порадовать от себя.
         </p>
 
         <br>
@@ -17,7 +22,8 @@
         <p>
             <a href="{% url "profile" payment.user.slug %}" class="button">Вернуться в свой профиль</a>
         </p>
-    {% elif payment.user.is_club_member %}
+
+    {% elif payment.user.is_member %}
         <p>
             Ваша клубная карта продлена!
         </p>

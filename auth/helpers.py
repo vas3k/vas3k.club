@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 import jwt
 from django.shortcuts import redirect, render, get_object_or_404
 
-from auth.models import Session
+from auth.models import Session, Apps
 from club import settings
-from club.exceptions import AccessDenied, ApiAuthRequired
+from club.exceptions import AccessDenied, ApiAuthRequired, ClubException, ApiException
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -18,13 +18,20 @@ def authorized_user(request):
 
 
 def authorized_user_with_session(request):
+    # normal user access
     auth_token = request.COOKIES.get("token") or request.GET.get("token")
     if auth_token:
         return user_by_token(auth_token)
 
+    # oauth requests for API
     jwt_token = request.COOKIES.get("jwt") or request.GET.get("jwt")
     if jwt_token:
         return user_by_jwt(jwt_token)
+
+    # requests on behalf of apps (user == owner, just for simplicity)
+    service_token = request.GET.get("service_token")
+    if service_token:
+        return user_by_service_token(service_token)
 
     return None, None
 
@@ -40,6 +47,18 @@ def user_by_token(token):
         return None, None  # session is expired
 
     return session.user, session
+
+
+def user_by_service_token(service_token):
+    app = Apps.objects\
+        .filter(service_token=service_token)\
+        .select_related("owner")\
+        .first()
+
+    if not app:
+        return None, None  # no such app
+
+    return app.owner, None
 
 
 def user_by_jwt(jwt_token):
@@ -128,7 +147,25 @@ def api_required(view):
     def wrapper(request, *args, **kwargs):
         if not request.me:
             raise ApiAuthRequired()
-        return view(request, *args, **kwargs)
+
+        try:
+            return view(request, *args, **kwargs)
+        except ApiException:
+            raise  # simply re-raise
+        except ClubException as ex:
+            # wrap and re-raise
+            raise ApiException(
+                code=ex.code,
+                title=ex.title,
+                message=ex.message,
+                data=ex.data,
+            )
+        except Exception as ex:
+            raise ApiException(
+                code=ex.__class__.__name__,
+                title=str(ex),
+            )
+
     return wrapper
 
 

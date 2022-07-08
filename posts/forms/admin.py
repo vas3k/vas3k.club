@@ -58,10 +58,15 @@ class PostCuratorForm(forms.Form):
         required=False,
     )
 
+    re_ping_collectible_tag_owners = forms.BooleanField(
+        label="Перепингануть подписчиков коллективного тега",
+        required=False,
+    )
+
 
 class PostAdminForm(PostCuratorForm):
-    close_comments = forms.BooleanField(
-        label="Закрыть комменты",
+    toggle_is_commentable = forms.BooleanField(
+        label="Закрыть комменты (повторный клик переоткроет заново)",
         required=False,
     )
 

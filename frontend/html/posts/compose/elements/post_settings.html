@@ -1,20 +1,44 @@
-{% if post_type == "post" or post_type == "guide" %}
-<details class="block compose-form-advanced" {% if form.instance.coauthors %}open{% endif %}>
+<details class="block compose-form-advanced" {% if form.instance.coauthors or form.instance.collectible_tag_code %}open{% endif %}>
     <summary class="compose-form-advanced-summary">Продвинутые настройки</summary>
 
-    <div class="form-row compose-form-coauthors">
-        <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
-        {{ form.coauthors }}
-        {% if form.coauthors.errors %}
-            <span class="form-row-errors">{{ form.coauthors.errors }}</span>
+    <div class="clearfix50"></div>
+
+    {% if post_type == "post" or post_type == "guide" or post_type == "project" %}
+        <div class="form-row compose-form-coauthors">
+            <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
+            {{ form.coauthors }}
+            {% if form.coauthors.errors %}
+                <span class="form-row-errors">{{ form.coauthors.errors }}</span>
+            {% endif %}
+            <span class="form-row-help form-row-help-wide">
+                Список никнеймов через запятую. Они смогут тоже редактировать пост, но лучше не делать этого одновременно — изменения одного автора могут затереть другого.
+            </span>
+        </div>
+    {% endif %}
+
+    <div class="form-row compose-form-collectible-tag">
+        <label for="{{ form.collectible_tag_code.id_for_label }}" class="form-label">{{ form.collectible_tag_code.label }}</label>
+        <multi-select
+            initial-value="{{ form.collectible_tag_code.value|default_if_none:'' }}"
+            id="{{ form.collectible_tag_code.html_name }}"
+            search-url="/search/tags.json?prefix="
+            allow-create-new
+            validation-reg-exp="^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$"
+            label-prefix-input="Добавить тег: "
+            label-invalid-input="Каждый тег обязан начинаться с emoji, потом идёт пробел и название."
+            label-valid-input="Вы добавите этот тег первым!"
+        >
+        </multi-select>
+
+        {% if form.collectible_tag_code.errors %}
+            <span class="form-row-errors">{{ form.collectible_tag_code.errors }}</span>
         {% endif %}
+
         <span class="form-row-help form-row-help-wide">
-            Список никнеймов через запятую. Они смогут тоже редактировать пост.
-            Лучше не делать этого одновременно, ведь изменения одного автора перетирают другого.
+            Каждый тег обязан начинаться с <a href="https://emojipedia.org/" target="_blank">emoji</a>, потом идёт пробел и название.
         </span>
     </div>
 </details>
-{% endif %}
 
 {% if mode == "create" or form.instance.is_public or form.instance.comment_count < 10 or form.instance.published_at is None or me.is_moderator %}
 <div class="big-radio compose-visibility">

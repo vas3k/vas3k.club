@@ -13,12 +13,16 @@ from club import features
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment
 from common.feature_flags import feature_switch
-from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings
+from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
+    godmode_invite
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
-from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, email_digest_switch, \
-    link_telegram
+from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
+    email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
-from payments.views import membership_expired, pay, done, stripe_webhook, stop_subscription
+from payments.views.common import membership_expired
+from payments.api import api_gift_days
+from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
+from payments.views.crypto import crypto, coinbase_webhook
 from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
 from posts.rss import NewPostsRss
@@ -30,7 +34,7 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
     toggle_post_subscription, delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
-from users.api import api_profile
+from users.api import api_profile, api_profile_by_telegram_id
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
@@ -42,7 +46,7 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.admin import admin_profile
 from users.views.people import people
-from search.api import api_search_users
+from search.api import api_search_users, api_search_tags
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))"
@@ -69,13 +73,17 @@ urlpatterns = [
     path("auth/external/", external_login, name="external_login"),
 
     path("monies/", pay, name="pay"),
+    path("monies/crypto/", crypto, name="crypto"),
     path("monies/done/", done, name="done"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
-    path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
+    path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
+    path("monies/coinbase/webhook/", coinbase_webhook, name="coinbase_webhook"),
+    path("monies/gift/<int:days>/<slug:user_slug>.json", api_gift_days, name="api_gift_days"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
+    path("user/by_telegram_id/<slug:telegram_id>.json", api_profile_by_telegram_id, name="api_profile_by_telegram_id"),
     path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
     path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),
@@ -128,6 +136,7 @@ urlpatterns = [
 
     path("search/", search, name="search"),
     path("search/users.json", api_search_users, name="api_search_users"),
+    path("search/tags.json", api_search_tags, name="api_search_tags"),
 
     path("room/<slug:topic_slug>/", feed, name="feed_topic"),
     path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
@@ -161,6 +170,7 @@ urlpatterns = [
     path("godmode/", godmode_settings, name="godmode_settings"),
     path("godmode/network/", godmode_network_settings, name="godmode_network_settings"),
     path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
+    path("godmode/invite/", godmode_invite, name="godmode_invite"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
     path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),

@@ -181,6 +181,18 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/photo_winner_1.png",
         "style": "background-color: #a4d26f; font-size: 120%;",
     }),
+    ("music_jam_1", {
+        "name": "Мастер баррэ",
+        "description": "Выдаётся за участие в музыкальном челлендже",
+        "image": "https://vas3k.club/static/images/achievements/Jamuary_1.png",
+        "style": "background-color: #1f6c7d; font-size: 120%;",
+    }),
+    ("mydudes", {
+        "name": "Золотая лягуха",
+        "description": "Всем среда, мои чуваки!",
+        "image": "https://i.vas3k.ru/3d916eda28fb4a9625e32788db339b429f14a7614fbf510bb35d23ac8335c372.png",
+        "style": "background-color: #ffce30;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png

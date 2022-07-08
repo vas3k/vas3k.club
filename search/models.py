@@ -10,7 +10,7 @@ from django.db.models import F
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
-from users.models.tags import UserTag
+from tags.models import UserTag
 
 
 class SearchIndex(models.Model):
@@ -32,7 +32,7 @@ class SearchIndex(models.Model):
 
     tags = ArrayField(models.CharField(max_length=32), null=True, db_index=True)
 
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    created_at = models.DateTimeField(db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     index = SearchVectorField(null=False, editable=False)
@@ -88,7 +88,7 @@ class SearchIndex(models.Model):
                     .filter(id=post.id)
                     .values_list("vector", flat=True)
                     .first(),
-                    created_at=post.created_at,
+                    created_at=post.published_at or post.created_at,
                     updated_at=datetime.utcnow(),
                 )
             )
@@ -99,10 +99,12 @@ class SearchIndex(models.Model):
     def update_user_index(cls, user):
         vector = SearchVector("slug", weight="A", config="russian") \
                  + SearchVector("full_name", weight="A", config="russian") \
+                 + SearchVector("email", weight="A", config="russian") \
                  + SearchVector("bio", weight="B", config="russian") \
                  + SearchVector("company", weight="B", config="russian") \
                  + SearchVector("country", weight="C", config="russian") \
-                 + SearchVector("city", weight="C", config="russian")
+                 + SearchVector("city", weight="C", config="russian") \
+                 + SearchVector("contact", weight="C", config="russian")
 
         user_index = User.objects\
             .annotate(vector=vector)\

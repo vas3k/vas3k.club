@@ -10,7 +10,7 @@ from bot.handlers.common import UserRejectReason, PostRejectReason
 from bot.decorators import is_moderator
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
-    notify_post_rejected
+    notify_post_rejected, notify_post_collectible_tag_owners
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
 from search.models import SearchIndex
@@ -34,9 +34,6 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     post.published_at = datetime.utcnow()
     post.save()
 
-    notify_post_approved(post)
-    announce_in_club_chats(post)
-
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
         "post_type": post.type,
         "post_slug": post.slug,
@@ -49,6 +46,12 @@ def approve_post(update: Update, context: CallbackContext) -> None:
 
     # hide buttons
     update.callback_query.edit_message_reply_markup(reply_markup=None)
+
+    # send notifications
+    notify_post_approved(post)
+    announce_in_club_chats(post)
+    if post.collectible_tag_code:
+        notify_post_collectible_tag_owners(post)
 
     return None
 
