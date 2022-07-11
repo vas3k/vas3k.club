@@ -130,7 +130,6 @@ export default {
     mounted() {
         if (this.initialValue) {
             if (this.allowMultiple) {
-                // TODO: handle initial data for multiple values case - it's WIP solution?
                 const values = this.initialValue.split(',');
 
                 this.selectValue = values.map(value => ({
@@ -232,7 +231,6 @@ export default {
                 return;
             }
 
-            // TODO: need to test it properly
             if (Array.isArray(options)) {
                 this.formValue = options.map(item => item.title || item);
                 return;
