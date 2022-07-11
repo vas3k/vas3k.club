@@ -56,3 +56,5 @@ venv/
 
 gdpr/downloads/*.zip
 .history
+
+*.log
