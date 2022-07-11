@@ -1,0 +1,321 @@
+@keyframes vSelectSpinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+:root {
+    --vs-line-height: 1.4;
+    --vs-dropdown-min-width: 160px;
+    --vs-dropdown-max-height: 350px;
+
+    --vs-controls-actions-size: 24px;
+    --vs-input-margin: 4px 2px;
+
+    /* Copied from theme.css */
+    --vs-dropdown-box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
+}
+
+
+/* Cleanup global styles */
+.input-select input, .input-select input:focus {
+    width: inherit;
+    margin: var(--vs-input-margin);
+}
+
+.input-select {
+    padding: 0;
+}
+
+/* Common styles for select */
+.v-select {
+    font-family: inherit;
+    position: relative;
+}
+
+.v-select, .v-select * {
+    box-sizing: border-box;
+}
+
+
+
+/* Search input */
+.vs__search, .vs__search:focus {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border: 1px solid transparent;
+    border-left: none;
+    box-shadow: none;
+    color: var(--input-color);
+    flex-grow: 1;
+    font-size: 100%;
+    line-height: var(--vs-line-height);
+    margin: 4px 0 0;
+    max-width: 100%;
+    outline: none;
+    padding: 0 7px;
+    width: 0;
+    z-index: 1;
+    text-align: center;
+}
+
+/* Dropdown skeleton animation */
+.vs__fade-enter-active, .vs__fade-leave-active {
+    pointer-events: none;
+    transition: opacity 0.15s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.vs__fade-enter, .vs__fade-leave-to {
+    opacity: 0;
+}
+
+/* Disabled */
+.vs--disabled .vs__clear,
+.vs--disabled .vs__dropdown-toggle,
+.vs--disabled .vs__open-indicator,
+.vs--disabled .vs__search,
+.vs--disabled .vs__selected {
+    background-color: var(--button-disabled-bg-color);
+    cursor: not-allowed;
+}
+
+
+
+/* Input with side buttons, without dropdown options list */
+.vs__dropdown-toggle {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    display: flex;
+    padding: 8px 15px;
+    white-space: normal;
+}
+
+
+/* Selected options next to input */
+.vs__selected-options {
+    display: flex;
+    flex-basis: 90%;
+    flex-wrap: wrap;
+    padding: 0 2px;
+    position: relative;
+}
+
+/* Selected option */
+.vs__selected {
+    align-items: center;
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--input-border-color);
+    border-radius: 4px;
+    color: var(--input-color);
+    display: flex;
+    line-height: var(--vs-line-height);
+    margin: var(--vs-input-margin);
+    padding: 0 .25em;
+    z-index: 0;
+}
+
+/* Mods for single option mode */
+.vs--single .vs__selected {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.vs--single.vs--loading .vs__selected, .vs--single.vs--open .vs__selected {
+    opacity: .4;
+    position: absolute;
+}
+
+
+
+/* Side buttons */
+.vs__actions {
+    align-items: center;
+    display: flex;
+    margin-left: auto;
+    padding: 4px 6px 0 3px;
+}
+
+.vs--searchable .vs__dropdown-toggle {
+    cursor: text;
+}
+
+.vs--unsearchable .vs__dropdown-toggle {
+    cursor: pointer;
+}
+
+/* Dropdown symbol */
+.vs__open-indicator {
+    fill: var(--input-toolbar-button-color);
+    transition: transform 0.15s cubic-bezier(1, 0.5, 0.8, 1);
+    opacity: 0.5;
+    cursor: pointer;
+    margin: calc((var(--vs-controls-actions-size) - 10px)/2) calc((var(--vs-controls-actions-size) - 14px)/2);
+}
+
+.vs--open .vs__open-indicator {
+    transform: rotate(180deg);
+}
+
+.vs--loading .vs__open-indicator {
+    opacity: 0;
+}
+
+/* Clear button */
+.vs__clear {
+    fill: var(--input-toolbar-button-color);
+    opacity: 0.5;
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    margin-right: 8px;
+    padding: 0;
+    position: relative;
+    top: -2px;
+}
+
+/* Loader */
+.vs__spinner {
+    align-self: center;
+    -webkit-animation: vSelectSpinner 1.1s linear infinite;
+    animation: vSelectSpinner 1.1s linear infinite;
+    border: .9em solid hsla(0, 0%, 39%, .1);
+    border-left-color: rgba(60, 60, 60, .45);
+    font-size: 5px;
+    opacity: 0;
+    overflow: hidden;
+    text-indent: -9999em;
+    transition: opacity .1s;
+}
+
+.vs__spinner, .vs__spinner:after, .vs__clear {
+    width: var(--vs-controls-actions-size);
+    height: var(--vs-controls-actions-size);
+}
+
+.vs__spinner, .vs__spinner:after {
+    border-radius: 50%;
+    height: var(--vs-controls-actions-size);
+}
+
+.vs--loading .vs__spinner {
+    opacity: 1;
+}
+
+
+
+/* Dropdown options */
+.vs__dropdown-menu {
+    background: var(--input-bg-color);
+    box-shadow: var(--vs-dropdown-box-shadow);
+    box-sizing: border-box;
+    display: block;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    max-height: var(--vs-dropdown-max-height);
+    min-width: var(--vs-dropdown-min-width);
+    overflow-y: auto;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    z-index: 1000;
+    font-size: 90%;
+    text-align: left;
+}
+
+/* Dropdown: any option item (enabled + disabled + hint) */
+.vs__dropdown-menu li {
+    margin: 0;
+    padding: 8px 16px;
+}
+
+/* Dropdown: single option-hint */
+.vs__no-options {
+    width: 95%;
+    text-align: center;
+}
+
+/* Dropdown: new + existed items */
+.vs__dropdown-option {
+    clear: both;
+    cursor: pointer;
+    display: block;
+    line-height: 1.42857143;
+    padding: 3px 20px;
+    white-space: nowrap;
+    border-left: 4px solid transparent;
+}
+
+.vs__dropdown-option:hover {
+    border-left-color: var(--button-hover-color);
+}
+
+.vs__dropdown-option--highlight {
+    background: var(--select-bg-color);
+    color: var(--select-color);
+}
+
+.vs__dropdown-option--disabled {
+    background: var(--button-disabled-bg-color);
+    cursor: not-allowed;
+    opacity: .6;
+}
+
+.vs__dropdown-option-secondary-text {
+    font-size: 80%;
+}
+
+.vs__deselect {
+    fill: var(--input-toolbar-button-color);
+    opacity: .5;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    display: inline-flex;
+    margin-left: 4px;
+    padding: 0;
+    text-shadow: 0 1px 0 #fff;
+}
+
+/* Don't merge this line with rule below - it's workaround for chrome clear button */
+.vs__search::-webkit-search-cancel-button {
+    display: none;
+}
+
+.vs--single.vs--searching .vs__selected,
+.vs__search::-ms-clear,
+.vs__search::-webkit-search-decoration,
+.vs__search::-webkit-search-results-button,
+.vs__search::-webkit-search-results-decoration {
+    display: none;
+}
+
+.vs__search::-moz-placeholder,
+.vs__search:-ms-input-placeholder,
+.vs__search::placeholder {
+    color: inherit;
+    opacity: .8;
+}
+
+.vs--unsearchable .vs__search {
+    opacity: 1;
+}
+
+.vs--unsearchable:not(.vs--disabled) .vs__search {
+    cursor: pointer;
+}
+
+.vs--single.vs--searching:not(.vs--open):not(.vs--loading) .vs__search {
+    opacity: .2;
+}

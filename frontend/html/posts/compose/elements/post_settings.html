@@ -18,7 +18,17 @@
 
     <div class="form-row compose-form-collectible-tag">
         <label for="{{ form.collectible_tag_code.id_for_label }}" class="form-label">{{ form.collectible_tag_code.label }}</label>
-        {{ form.collectible_tag_code }}
+        <multi-select
+            initial-value="{{ form.collectible_tag_code.value|default_if_none:'' }}"
+            id="{{ form.collectible_tag_code.html_name }}"
+            search-url="/search/tags.json?prefix="
+            allow-create-new
+            validation-reg-exp="^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$"
+            label-prefix-input="Добавить тег: "
+            label-invalid-input="Каждый тег обязан начинаться с emoji, потом идёт пробел и название."
+            label-valid-input="Вы добавите этот тег первым!"
+        >
+        </multi-select>
 
         {% if form.collectible_tag_code.errors %}
             <span class="form-row-errors">{{ form.collectible_tag_code.errors }}</span>

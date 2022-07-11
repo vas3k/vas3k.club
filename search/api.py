@@ -46,7 +46,7 @@ def api_search_tags(request):
                 "tags": []
             })
 
-        tags = tags.filter(name__contains=prefix)
+        tags = tags.filter(name__icontains=prefix)
 
     return JsonResponse({
         "tags": [
