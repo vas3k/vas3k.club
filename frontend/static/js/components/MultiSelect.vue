@@ -27,9 +27,10 @@
                 </template>
             </template>
 
-            <template #option="{ title, isExist, description }">
+            <template #option="{ title, isExist, description, img }">
                 <span>
                     <template v-if="!isExist">{{ labelPrefixInput }}</template>
+                    <img v-if="img" :src="img"></img>
                     <span>{{ title }}</span>
                     <span class="vs__dropdown-option-description-text" v-if="!!description">{{ description }}</span>
                 </span>
@@ -105,18 +106,38 @@ export default {
             type: String,
             required: true,
         },
+        apiFieldItemImg: {
+            type: String,
+            required: false,
+        },
         apiFieldItemDescription: {
             type: String,
             required: false,
         },
-        labelValidInput: String,
-        labelInvalidInput: String,
-        labelPrefixInput: String,
+        labelValidInput: {
+            type: String,
+            required: false,
+        },
+        labelInvalidInput: {
+            type: String,
+            required: false,
+        },
+        labelPrefixInput: {
+            type: String,
+            required: false,
+        },
     },
     mounted() {
         if (this.initialValue) {
             if (this.allowMultiple) {
-                // TODO: handle initial data for multiple values case
+                // TODO: handle initial data for multiple values case - it's WIP solution?
+                const values = this.initialValue.split(',');
+
+                this.selectValue = values.map(value => ({
+                   title: value,
+                   isExist: true,
+                }));
+                this.formValue = values;
                 return;
             }
 
@@ -195,6 +216,7 @@ export default {
                     vm.lastSearchOptions = json[vm.apiFieldArray].map(item => ({
                         title: item[vm.apiFieldItemTitle],
                         description: vm.apiFieldItemDescription ? item[vm.apiFieldItemDescription] : null,
+                        img: vm.apiFieldItemImg ? item[vm.apiFieldItemImg] : null,
                         isExist: true,
                     }));
                 })

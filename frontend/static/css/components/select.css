@@ -258,6 +258,14 @@
     border-left-color: var(--button-hover-color);
 }
 
+.vs__dropdown-option img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    vertical-align: bottom;
+    margin-right: 6px;
+}
+
 .vs__dropdown-option--highlight {
     background: var(--select-bg-color);
     color: var(--select-color);
