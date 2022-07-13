@@ -25,7 +25,7 @@
             <img src="{% static "images/logo/logo-1024.png" %}" alt="">
             <div class="landing-title">
                 <h1>PMI Russia Club</h1>
-                <p>Сообщество профессисоналов в управлении проектами, программами, портфелями и всего такого</p>
+                <p>Недушное сообщество профессисоналов</p>
                 <a href="{% url "login" %}" class="button button-black">Войти</a>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 <h2>ПРО КЛУБ</h2>
 
                 <p>
-                    PMI Russia Club — это наше закрытое сообщество руководителей проектов, программ, портфелей, великолепных менеджеров, членов продуктовых команд.
+                    PMI Russia Club — это наше закрытое сообщество руководителей проектов, программ, портфелей, великолепных менеджеров, членов продуктовых команд и всего такого.
                 </p>
 
                 <p>
@@ -55,9 +55,8 @@
                 <h3 class="feature-title">Чужой опыт и инсайды</h3>
 
                 <ul class="feature-list">
-                    <li>В Клубе пишут статьи, просят советов, обмениваются опытом, делятся идеями, обсуждают самые новые методы и практики</li>
+                    <li>В Клубе пишут статьи, просят советов, обмениваются опытом, делятся идеями, обсуждают новые методы и практики</li>
                     <li>А ещё устраиваются батлы, генерируются идеи, проводятся жаркие обсуждения последних новостей</li>
-                    <li>Формат «только для своих» позволяет обсуждать темы без посторонних</li>
                     <li>Никаких алгоритмических лент, охоты за вниманием, буллинга, дискриминации и прочего зашквара</li>
                 </ul>
             </div>
@@ -153,36 +152,38 @@
 
         <div class="landing-block landing-block-limited">
             <div class="landing-block-50">
-                <img src="{% static "images/landing/rooms.png" %}" class="feature-image" alt="chats" style="padding-top: 40px;">
+                <img src="{% static "images/landing/ama_session.png" %}" class="feature-image" alt="AMA Sessions" style="padding-top: 55px;">
             </div>
 
             <div class="landing-block-50">
-                <h3 class="feature-title">Тусовки по интересам</h3>
+                <h3 class="feature-title">&nbsp;&nbsp;У нас есть движ</h3>
 
                 <ul class="feature-list">
-                    <li>Сеть клубных чатиков в телеграме</li>
+                    <li>Клубные чатики в телеграме</li>
                     <li>Коммьюнити по городам и странам</li>
                     <li>АМА с экспертами и отзывчивые участники</li>
-                    <li>Место, в котором хорошо</li>
+                    <li>Место, в котором всем хорошо</li>
                 </ul>
             </div>
         </div>
 
+        <!--
         <div class="landing-block landing-block-chats">
             <img src="{% static "images/landing/chats1.png" %}" class="feature-image" alt="chats">
             <img src="{% static "images/landing/chats2.png" %}" class="feature-image" alt="chats">
             <img src="{% static "images/landing/chats3.png" %}" class="feature-image" alt="chats">
             <img src="{% static "images/landing/chats4.png" %}" class="feature-image" alt="chats">
         </div>
+        -->
 
         <div class="landing-block landing-block-limited">
             <div class="landing-block-40">
-                <h3 class="feature-title">Движухи, фан и взаимопомощь</h3>
+                <h3 class="feature-title">Клуб для жизни</h3>
 
                 <ul class="feature-list">
                     <li>Митапы и сходки в офлайне</li>
                     <li>Коучинг и менторство между участниками Клуба</li>
-                    <li>У нас запрещена анонимность и действует жесткая модерация. Так мы сохраняем здоровое коммьюнити без говна</li>
+                    <li>У нас запрещена анонимность и действует жесткая модерация. Так мы сохраняем здоровое коммьюнити</li>
                     <li>Подробнее о правилах можно почитать в разделе <a href="{% url "docs" "about" %}" target="_blank">О Клубе</a></li>
                 </ul>
             </div>
@@ -192,10 +193,11 @@
             </div>
         </div>
 
+        <!--
         <div class="landing-block landing-block-limited landing-block-map-title" id="map">
             <h3 class="feature-title">Недушное коммьюнити</h3>
         </div>
-
+        
         <div class="landing-block landing-block-map">
             <div class="map-background" style="background-image: url('{% static "images/landing/map.jpg" %}');">
             </div>
@@ -227,6 +229,7 @@
                 </div>
             </div>
         </div>
+        -->
 
         {% if not features.FREE_MEMBERSHIP %}
         <div class="landing-block landing-block-narrow" id="join">
@@ -277,7 +280,7 @@
             <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
         </div>
         <div class="footer-right" style="text-align: center; font-size: 130%">
-            Works on <a href="https://vas3k.club">vas3k.club</a> engine ❤️<br><br>
+            Работает на платформе <a href="https://vas3k.club">vas3k.club</a>❤️<br><br>
         </div>
     </footer>
 {% endblock %}
