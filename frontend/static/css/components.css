@@ -1069,7 +1069,6 @@
     }
 
 .post-comments {
-    padding-top: 80px;
 }
 
     .post-comments-title {
@@ -1087,7 +1086,6 @@
     }
 
     .post-comments-list {
-        padding-top: 25px;
         padding-bottom: 40px;
     }
 
@@ -1102,24 +1100,6 @@
         padding-top: 30px;
         padding-left: 10px;
     }
-
-    .post-comments-rules {
-        padding-top: 50px;
-        padding-left: 90px;
-        padding-right: 30px;
-    }
-
-        .post-comments-rules ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        @media only screen and (max-width : 570px) {
-            .post-comments-rules {
-                padding-left: 0;
-                padding-right: 0;
-            }
-        }
 
     .post-comments-order {
         display: inline-block;

@@ -291,7 +291,7 @@
 .comment-form {
     display: grid;
     grid-template-columns: min-content minmax(auto, 1fr);
-    grid-template-rows: auto 60px;
+    grid-template-rows: auto;
     justify-content: stretch;
 }
 
@@ -311,11 +311,31 @@
         justify-self: stretch;
     }
 
-    .comment-form-button {
-        grid-column-start: 1;
+    .post-comments-rules {
+        grid-column-start: 2;
         grid-column-end: 3;
         grid-row-start: 2;
         grid-row-end: 3;
+        justify-self: stretch;
+    }
+
+        .post-comments-rules ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .post-comments-rules {
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
+    .comment-form-button {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        grid-row-start: 3;
+        grid-row-end: 4;
         justify-self: end;
         align-self: end;
     }
