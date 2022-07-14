@@ -112,8 +112,8 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 ### 😎 I want to write some code
 
-- Open our [Issues page](https://github.com/vas3k/vas3k.club/issues) to see the most important tickets at top. 
-- Pick one issue you like and **leave a comment** inside that you're getting it.
+- Open our [Discussions page](https://github.com/vas3k/vas3k.club/discussions) to see the most important tickets at top. 
+- Pick one discussion you like and **leave a comment** inside that you're getting it.
 
 **For big changes** open an issues first or (if it's already opened) leave a comment with brief explanation what and why you're going to change. Many tickets hang open not because they cannot be done, but because they cause many logical contradictions that you may not know. It's better to clarify them in comments before sending a PR.
 
