@@ -19,7 +19,6 @@ ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "pmi.moscow"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
-    ("admin", "club@pmi.moscow"),
     ("TopTuK", "sergey.sidorov@pmi.moscow"),
 ]
 
