@@ -84,12 +84,12 @@ PERSONAL = [
 ]
 
 TECH = [
-    {"project-manager", "Проектный подход"},
-    {"agile-mind", "Agile"},
-    {"scrum-master", "Scrum"},
-    {"kanban-delivery", "KANBAN"},
-    {"risks-control", "Риски"},
-    {"pmp-cert", "PMP Certificate"},
+    {"project_manager", "📆 Проектный подход"},
+    {"agile_mind", "Agile"},
+    {"scrum_master", "📉 Scrum"},
+    {"kanban_delivery", "📏 KANBAN"},
+    {"risks_control", "🛡 Риски"},
+    {"pmp_cert", "👨‍💼 PMP сертификат"},
 ]
 
 CLUB = [
