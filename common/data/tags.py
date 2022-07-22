@@ -35,7 +35,7 @@ HOBBIES = [
     ("gadgets", "⌚️ Гаджеты"),
     ("bdsm", "😶 BDSM"),
     ("time-management", "⏰ Тайм-менеджмент"),
-    {"kitty", "🐈 Котики"},
+    ("kitty-lover", "🐈 Котики"),
 ]
 
 PERSONAL = [
@@ -84,12 +84,20 @@ PERSONAL = [
 ]
 
 TECH = [
-    {"project", "📆 Проектный подход"},
-    {"agile", "📜 Agile"},
-    {"scrum", "📈 Scrum"},
-    {"kanban", "📏 KANBAN"},
-    {"riks-control", "🛡 Риски"},
-    {"pmp-cert", "🎓 PMP"},
+    ("projectmanager", "📆 Проектный подход"),
+    ("agilemind", "📦 Agile"),
+    ("scrummaster", "📉 Scrum"),
+    ("kanbandelivery", "✅ KANBAN"),
+    ("riskscontrol", "🛡 Риски"),
+    ("pmpcert", "👨‍💼 PMP сертификат"),
+    ("product_owner", "👩‍💻 Владею продуктом"),
+    ("ux_designed", "👩‍🎨 Создаю UX"),
+    ("qa_engineer", "🔧 Обеспечения качества"),
+    ("dev_engineer", "👷‍♀️ Пишу код"),
+    ("cross_lead", "🤹‍♀️ Мастер на все руки"),
+    ("t-shirt", "👕 T-shirt размер"),
+    ("delivery_lead", "🎁 Delivery менеджер"),
+    ("stakeholder", "👩‍💼 Стейкхолдер"),
 ]
 
 CLUB = [

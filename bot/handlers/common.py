@@ -47,7 +47,7 @@ def get_club_user(update: Update):
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
         update.message.reply_text(
-            f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
+            f"😐 Привяжи <a href=\"https://pmi.moscow/user/me/edit/bot/\">бота</a> к профилю, братишка",
             parse_mode=ParseMode.HTML
         )
         return None
