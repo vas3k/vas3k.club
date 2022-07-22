@@ -63,6 +63,7 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
     post = Post.objects.get(id=post_id)
     post.is_approved_by_moderator = False
     post.published_at = datetime.utcnow()
+    post.collectible_tag_code = None
     post.save()
 
     post_url = settings.APP_HOST + reverse("show_post", kwargs={

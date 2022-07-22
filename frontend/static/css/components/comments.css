@@ -52,6 +52,11 @@
             border-radius: 5px;
         }
 
+    .comment-form-subscribe {
+        opacity: 0.5;
+        padding: 0 20px;
+    }
+
 .reply-form {
     margin-top: 0;
     margin-left: 25px;

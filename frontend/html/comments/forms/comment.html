@@ -10,8 +10,11 @@
             </comment-markdown-editor>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
-        <div class="comment-form-button">
-            <button type="submit" class="button">Отправить</button>
+        <div class="comment-form-footer">
+            <div class="comment-form-subscribe">
+                {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+            </div>
+            <button type="submit" class="button comment-form-button">Отправить</button>
         </div>
     </div>
 </form>
