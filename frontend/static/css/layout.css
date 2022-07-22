@@ -311,13 +311,16 @@
         justify-self: stretch;
     }
 
-    .comment-form-button {
+    .comment-form-footer {
         grid-column-start: 1;
         grid-column-end: 3;
         grid-row-start: 2;
         grid-row-end: 3;
         justify-self: end;
         align-self: end;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 
     .comment-form-body {
