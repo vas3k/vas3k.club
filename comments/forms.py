@@ -17,6 +17,12 @@ class CommentForm(forms.ModelForm):
             }
         ),
     )
+    subscribe_to_post = forms.BooleanField(
+        label="подписаться на новые комментарии",
+        label_suffix="",
+        initial=True,
+        required=False,
+    )
 
     class Meta:
         model = Comment
@@ -82,6 +88,12 @@ class BattleCommentForm(forms.ModelForm):
                 "class": "markdown-editor-invisible",
             }
         ),
+    )
+    subscribe_to_post = forms.BooleanField(
+        label="подписаться на новые комментарии",
+        label_suffix="",
+        initial=True,
+        required=False,
     )
 
     class Meta:

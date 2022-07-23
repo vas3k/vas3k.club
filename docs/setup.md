@@ -1,21 +1,22 @@
-# Advanced Setup
+# Setup enviroment for local development
 
 ## Local development
 
-Once you decided to code something in the project you'll need to setup your environment. Here's how you can make it.
+If you want to develop something here is instruction how to setup local enviroment. Enjoy!
 
-### Setup pipenv
+### Setup pipenv (Python)
 
 1. Get pipenv: `pip3 install --user pipenv`
 2. Install packages and activate virtual environment: `pipenv install --dev`
 3. Check that it was installed correctly: `pipenv shell`
+4. Exit from shell: `exit()`
 
 ### Setup postgres
 
 #### locally
   Easies way is to run postgres is to run in docker, just run it with follow command:
   ```sh
-  $ docker-compose -f docker-compose.yml up -d postgres
+  docker-compose -f docker-compose.yml up -d postgres
   ```
   When you need to connect to postgres use next params:
   ```dotenv
@@ -54,25 +55,59 @@ Once you decided to code something in the project you'll need to setup your envi
   </details>
   
 #### Setup frontend
+
+Start new console proccess
 ```sh
 $ cd frontend
 $ npm run watch # will implicitly run `npm ci`
 ```
 
+In case you have some issues with dependencies use `--legacy-peer-deps` flag
+```sh
+$ npm run watch --legacy-peer-deps
+```
+
+#### Make .env file
+
+Go to club directory and copy .env.example file
+```sh
+$ cd club
+$ cp .env.example .env
+```
+
+Explore `.env` file. Basic example:
+```
+SECRET_KEY="wow_secret_phrase"
+
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="postgres"
+
+MEDIA_UPLOAD_URL="https://<my.pepic.url>"
+MEDIA_UPLOAD_CODE="<my.pepic.code>"
+
+EMAIL_HOST="<my.mail.host>"
+EMAIL_HOST_USER="<sender@email>"
+EMAIL_HOST_PASSWORD="<password_for_sender>"
+```
+
 #### Run dev server
+
 After you have setup postgres, venv and build frontend (look this steps above) complete preparations with follow commands:
 ```sh
-# run redis
-$ docker-compose -f docker-compose.yml up redis
+# run redis (remove -d flag if you want console output)
+docker-compose -f docker-compose.yml up -d redis
 
-# run queue
-$ pipenv run python manage.py qcluster
+# run queue (in new console)
+pipenv run python manage.py qcluster
 
-# run db migration
-$ pipenv run python manage.py migrate
+# run db migration (Creates DB structure)
+pipenv run python manage.py migrate
 
-# run dev server
-$ pipenv run python manage.py runserver 0.0.0.0:8000
+# Update tags
+pipenv run python manage.py update_tags
+
+# run dev server (In new console)
+pipenv run python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Telegram bot

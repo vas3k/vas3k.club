@@ -19,7 +19,6 @@ ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "pmi.moscow"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
-    ("admin", "club@pmi.moscow"),
     ("TopTuK", "sergey.sidorov@pmi.moscow"),
 ]
 
@@ -166,13 +165,13 @@ EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "PMI Club <club@pmi.moscow>")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "PMI Russia Club <club@pmi.moscow>")
 
 # App
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
 APP_NAME = "PMI Club Russia"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
-LAUNCH_DATE = datetime(2022, 7, 2)
+LAUNCH_DATE = datetime(2022, 7, 21)
 
 AUTH_CODE_LENGTH = 6
 AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=10)
@@ -213,7 +212,7 @@ COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
 COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
 
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
-JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
+_JWT_PUBLIC_KEY_ = """-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvEDEGKL0b+okI6QBBMiu
 3GOHOG/Ml4KJ13tWyPnl5yGswf9rUGOLo0T0dXxSwxp/6g1ZeYqDR7jckuP6A3Rv
 DPdKYc44eG3YB/bO2Yeq57Kx1rxvFvWZap2jTyu2wbALmmeg0ne3wkXPExTy/EQ4
@@ -226,6 +225,20 @@ eoDmq2uz6Q2WH2gPwyuVlRfatJOHCUDjd6dE93lA0ibyJmzxo/G35ns8sZoZaJrW
 rVdFROm3nmAIATC/ui9Ex+tfuOkScYJ5OV1H1qXBckzRVwfOHF0IiJQP4EblLlvv
 6CEL2VBz0D2+gE4K4sez6YSn3yTg9TkWGhXWCJ7vomfwIfHIdZsItqay156jMPaV
 c+Ha7cw3U+n6KI4idHLiwa0CAwEAAQ==
+-----END PUBLIC KEY-----"""
+JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA03rHsNGQ3HUfHIqSYXCh
+dCAl8S4hlhCwNK7OPqh7oWVW8O/UFMqdQ1OMxb95iTIDx/as65crXVFx6X/PWBkx
+w2qRLcK+r7XXPsfIGmvlJC/TDsoHx86QXutsmLFSjAmr5MyvV7S1178cf5OqdXZH
+HB0nZpM+UlncbcHbQuEgcVmsn2JurJzvAFE8DUu887Kcv+e8fLXc5DVVE3IKKW20
+DoZOn2kTPSw7oS75qmDIXw5aa6B5S93MFFy09kwwnfemZkQ9Sa2Ae14SugxmBns6
+1BS9+KNxFUdlWLADSh8N2Yho8PnIu1O5KL/pnQxByVsXYF2aU6+zTkeLM814VFYI
+knYX4sHDZHl8lco7gDxC5Fo9m46CFgBjirJE6y/5BJ+PggmpwXwN8JQvRZ9aCIS1
+qktKiGnql5817Gr4VdTouQBS4ITZq/Ly+lAIKc3E5R+7VNgjW9kiDb+nPmNcb+Dg
+FrszQVIzss9rVZWGHBX0IihkBHkUpPgtzulzk3LzWpr7bsRqW+lHeLdUCqNE35k5
+3rHVnhAXzoHYT6csfDfAB441Zrf8X7BjTINGqiRY2yPjYdXkGrdRaU0p3Cfm/x5+
+pDj7UCL9iaN+xZdV4IULs3OvwLY+iuVKQR/Ja5lnyazAMZHBjIDBejHd/3hXlUBL
+BbPun08UBA4T4QntAsUVfvsCAwEAAQ==
 -----END PUBLIC KEY-----"""
 JWT_ALGORITHM = "RS256"
 
