@@ -71,7 +71,7 @@ services:
       POSTGRES_PASSWORD: vas3k
       POSTGRES_DB: vas3k_club
     volumes:
-      - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
+      - /home/pmi-admin/pgdata:/var/lib/postgresql/data:rw
     ports:
       - "127.0.0.1:54333:5432"
 
@@ -81,3 +81,7 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+networks:
+  default:
+      name: pmi_network
