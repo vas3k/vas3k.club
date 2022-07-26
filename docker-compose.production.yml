@@ -2,6 +2,9 @@ version: "3"
 services:
   club_app: &app
     #image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    build: 
+      dockerfile: Dockerfile
+      context: .
     command: make docker-run-production
     container_name: club_app
     environment:
@@ -10,20 +13,21 @@ services:
       - DEBUG=false
       - APP_HOST=https://pmi.moscow
       - MEDIA_UPLOAD_URL=https://media.pmi.moscow/upload/
-      - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=vas3k
-      - POSTGRES_PASSWORD=vas3k
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
-      - EMAIL_HOST
-      - EMAIL_PORT
-      - DEFAULT_FROM_EMAIL
+      #- VIRTUAL_HOST=pmi.moscow,www.pmi.moscow
+      #- VIRTUAL_PORT=443
+      #- VIRTUAL_PROTO=https
     env_file:
-      - .env
+      - club/.env
     restart: always
     volumes:
-      - ./frontend/static:/tmp/static
+      #- ./frontend/static:/tmp/static
+      - ./frontend:/app/frontend/ # Vyshka club
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres
@@ -67,9 +71,9 @@ services:
     container_name: club_postgres
     restart: always
     environment:
-      POSTGRES_USER: vas3k
-      POSTGRES_PASSWORD: vas3k
-      POSTGRES_DB: vas3k_club
+      POSTGRES_USER: pmiclub
+      POSTGRES_PASSWORD: pmiclub
+      POSTGRES_DB: pmi_club
     volumes:
       - /home/pmi-admin/pgdata:/var/lib/postgresql/data:rw
     ports:
