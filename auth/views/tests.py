@@ -9,7 +9,7 @@ from django.http.response import HttpResponseNotAllowed, HttpResponseBadRequest
 from django_q import brokers
 from django_q.signing import SignedPackage
 import jwt
-from unittest import skip
+from unittest import skip, skipIf
 from unittest.mock import patch
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
@@ -166,6 +166,7 @@ class ViewEmailLoginTests(TestCase):
         # it's not yet authorised, only code was sent
         self.assertFalse(self.client.is_authorised())
 
+    @skip("Free membership")
     def test_login_user_not_exist(self):
         response = self.client.post(reverse('email_login'),
                                     data={'email_or_login': 'not-existed@user.com', })
@@ -341,7 +342,7 @@ class ViewExternalLoginTests(TestCase):
 
         self.assertFalse(self.client.is_authorised())
 
-
+@skip("Free membership. Skip Pateron login")
 class ViewPatreonLoginTests(TestCase):
     def test_positive(self):
         with self.settings(PATREON_CLIENT_ID="x-client_id",
@@ -353,6 +354,7 @@ class ViewPatreonLoginTests(TestCase):
                                  fetch_redirect_response=False)
 
 
+@skip('Free membership. Skip Pateron login')
 @patch('auth.views.patreon.patreon')
 class ViewPatreonOauthCallbackTests(TestCase):
     @classmethod

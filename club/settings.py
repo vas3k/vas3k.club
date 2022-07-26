@@ -100,8 +100,8 @@ LOGGING = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("POSTGRES_DB") or "vas3k_club",
-        "USER": os.getenv("POSTGRES_USER") or "postgres",
+        "NAME": os.getenv("POSTGRES_DB") or "pmi_club",
+        "USER": os.getenv("POSTGRES_USER") or "pmiclub",
         "PASSWORD": os.getenv("POSTGRES_PASSWORD") or "",
         "HOST": os.getenv("POSTGRES_HOST") or "localhost",
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
@@ -171,7 +171,7 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "PMI Russia Club <club@pmi.
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
 APP_NAME = "PMI Club Russia"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
-LAUNCH_DATE = datetime(2022, 7, 21)
+LAUNCH_DATE = datetime(2022, 8, 1)
 
 AUTH_CODE_LENGTH = 6
 AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=10)

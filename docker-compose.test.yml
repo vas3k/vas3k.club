@@ -12,9 +12,9 @@ services:
       - DEBUG=true  # regardless of this value django will override it on false
       - TESTS_RUN=da
       - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
@@ -36,9 +36,9 @@ services:
     image: postgres:11
     container_name: club_postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
+      - POSTGRES_DB=pmi_club
     ports:
       - 5432
 
