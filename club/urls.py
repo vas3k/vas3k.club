@@ -15,7 +15,7 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
 from common.feature_flags import feature_switch
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite
-from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
+from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, page404
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
     email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
@@ -191,7 +191,10 @@ urlpatterns = [
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
     path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
     path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),
+    path("404", page404, name="page_404")
 ]
+
+handler404 = "misc.views.page404"
 
 if settings.DEBUG:
     import debug_toolbar

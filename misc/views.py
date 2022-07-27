@@ -137,3 +137,7 @@ def generate_google_invite(request):
     })
 
     return redirect(f"https://calendar.google.com/calendar/u/0/r/eventedit?{google_url_params}")
+
+
+def page404(request, exception=None):
+    return render(request, "404.html", status=404)

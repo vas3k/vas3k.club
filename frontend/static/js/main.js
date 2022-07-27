@@ -28,6 +28,7 @@ Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollAr
 Vue.component("comment-markdown-editor", () => import("./components/CommentMarkdownEditor.vue"));
 Vue.component("v-select", vSelect);
 Vue.component("multi-select", () => import("./components/MultiSelect.vue"));
+Vue.component("page404", () => import("./components/Page404.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.
