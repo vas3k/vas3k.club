@@ -19,15 +19,14 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
-      #- VIRTUAL_HOST=pmi.moscow,www.pmi.moscow
-      #- VIRTUAL_PORT=443
-      #- VIRTUAL_PROTO=https
+      - VIRTUAL_HOST=pmi.moscow,www.pmi.moscow
+      - VIRTUAL_PORT=8814
     env_file:
       - club/.env
     restart: always
     volumes:
-      #- ./frontend/static:/tmp/static
-      - ./frontend:/app/frontend/ # Vyshka club
+      - ./frontend/static:/tmp/static
+      #- ./frontend:/app/frontend/ # Vyshka club
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres
