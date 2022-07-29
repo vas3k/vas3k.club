@@ -4,8 +4,8 @@
 <b>E-mail:</b> {{ user.email }}
 <b>Работа:</b> {{ user.position }}{% if user.company %} — {{ user.company }}{% endif %}
 <b>Город:</b> {{ user.city }} {{ user.country }}
-{% if user.contact %}<b>Для связи:</b> {{ user.contact }}{% endif %}
-<b>Био:</b> {{ user.bio }}
+<b>Контакты и био:</b> {{ user.bio }}
+<b>Аватар:</b> {{ user.avatar }}
 
 <b>Интро:</b>
 <pre>{% render_plain intro 2000 %}</pre>
