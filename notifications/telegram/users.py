@@ -22,16 +22,16 @@ def notify_profile_needs_review(user, intro):
                 telegram.InlineKeyboardButton("❌️ Плохое интро", callback_data=f"reject_user_intro:{user.id}"),
             ],
             [
-                telegram.InlineKeyboardButton("❌️ Недостаточно данных", callback_data=f"reject_user_data:{user.id}"),
-            ],
-            [
-                telegram.InlineKeyboardButton("❌️ Агрессия", callback_data=f"reject_user_aggression:{user.id}"),
+                telegram.InlineKeyboardButton("❌️ Плохое имя", callback_data=f"reject_user_name:{user.id}"),
             ],
             [
                 telegram.InlineKeyboardButton("❌️ Слишком общее", callback_data=f"reject_user_general:{user.id}"),
             ],
             [
-                telegram.InlineKeyboardButton("❌️ Плохое имя", callback_data=f"reject_user_name:{user.id}"),
+                telegram.InlineKeyboardButton("❌️ Нет контактов", callback_data=f"reject_user_data:{user.id}"),
+            ],
+            [
+                telegram.InlineKeyboardButton("❌️ Агрессия", callback_data=f"reject_user_aggression:{user.id}"),
             ],
             [
                 telegram.InlineKeyboardButton("✏️ Написать юзеру", url=admin_profile_url),
