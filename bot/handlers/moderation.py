@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.urls import reverse
@@ -141,7 +141,9 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
         return None
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
-    user.created_at = datetime.utcnow()
+    if user.created_at > datetime.utcnow() - timedelta(days=30):
+        # to avoid zeroing out the profiles of the old users
+        user.created_at = datetime.utcnow()
     user.save()
 
     # make intro visible
