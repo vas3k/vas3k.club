@@ -1,5 +1,3 @@
-limit_req zone=club_limit burst=50 nodelay;
-
 add_header "Access-Control-Allow-Origin" "*";
 add_header "Access-Control-Allow-Methods" "GET, POST, OPTIONS";
 add_header "Access-Control-Allow-Headers" "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range";
@@ -7,7 +5,7 @@ add_header "Access-Control-Expose-Headers" "Content-Length,Content-Range";
 add_header "Strict-Transport-Security" "max-age=31536000;includeSubDomains";
 add_header "X-Content-Type-Options" "nosniff";
 add_header "Referrer-Policy" "strict-origin-when-cross-origin";
-add_header "Permissions-Policy" "accelerometer=(),camera=(),geolocation=(self 'https://vas3k.club'),gyroscope=(),magnetometer=(),microphone=(),payment=(),usb=()";
+add_header "Permissions-Policy" "accelerometer=(),camera=(),geolocation=(self 'https://pmi.moscow'),gyroscope=(),magnetometer=(),microphone=(),payment=(),usb=()";
 
 proxy_set_header "Host" $http_host;
 proxy_set_header "X-Forwarded-For" $proxy_add_x_forwarded_for;
