@@ -21,6 +21,7 @@ services:
       - REDIS_HOST=redis
       - VIRTUAL_HOST=pmi.moscow,www.pmi.moscow
       - VIRTUAL_PORT=8814
+      - VIRTUAL_PATH=/
     env_file:
       - club/.env
     restart: always
@@ -34,6 +35,9 @@ services:
       - queue
     ports:
       - "127.0.0.1:8814:8814"
+    networks:
+      - front
+      - club
 
   queue:
     <<: *app
@@ -43,17 +47,32 @@ services:
       - postgres
       - redis
     ports: []
+    networks:
+      - club
 
   bot:
     <<: *app
     command: make docker-run-bot
     container_name: club_bot
+    environment:
+      - APP_HOST=https://pmi.moscow
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - REDIS_DB=0
+      - VIRTUAL_HOST=pmi.moscow
+      - VIRTUAL_PATH=/telegram/webhook/
+      - VIRTUAL_PORT=8816
     depends_on:
       - club_app
       - postgres
       - redis
     ports:
       - "8816:8816"
+    networks:
+      - club
 
   cron:
     <<: *app
@@ -64,6 +83,8 @@ services:
       - postgres
       - redis
     ports: []
+    networks:
+      - club
 
   postgres:
     image: postgres:12
@@ -77,6 +98,8 @@ services:
       - /home/pmi-admin/pgdata:/var/lib/postgresql/data:rw
     ports:
       - "127.0.0.1:54333:5432"
+    networks:
+      - club
 
   redis:
     image: redis:alpine
@@ -84,7 +107,11 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - club
 
 networks:
-  default:
-      name: pmi_network
+  front:
+    name: pmi_network
+  club:
+    name: club_network
