@@ -22,16 +22,16 @@ def notify_profile_needs_review(user, intro):
                 telegram.InlineKeyboardButton("❌️ Плохое интро", callback_data=f"reject_user_intro:{user.id}"),
             ],
             [
-                telegram.InlineKeyboardButton("❌️ Недостаточно данных", callback_data=f"reject_user_data:{user.id}"),
-            ],
-            [
-                telegram.InlineKeyboardButton("❌️ Агрессия", callback_data=f"reject_user_aggression:{user.id}"),
+                telegram.InlineKeyboardButton("❌️ Плохое имя", callback_data=f"reject_user_name:{user.id}"),
             ],
             [
                 telegram.InlineKeyboardButton("❌️ Слишком общее", callback_data=f"reject_user_general:{user.id}"),
             ],
             [
-                telegram.InlineKeyboardButton("❌️ Плохое имя", callback_data=f"reject_user_name:{user.id}"),
+                telegram.InlineKeyboardButton("❌️ Нет контактов", callback_data=f"reject_user_data:{user.id}"),
+            ],
+            [
+                telegram.InlineKeyboardButton("❌️ Агрессия", callback_data=f"reject_user_aggression:{user.id}"),
             ],
             [
                 telegram.InlineKeyboardButton("✏️ Написать юзеру", url=admin_profile_url),
@@ -47,7 +47,8 @@ def notify_user_profile_approved(user):
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
             text=f"🚀 Подравляем, вы прошли модерацию. Добро пожаловать в Клуб!"
-                 f"\n\nМожно пойти заполнить другие смешные поля в профиле:"
+                 f"\n\nТеперь можно пойти заполнять другие смешные поля в своем профиле, "
+                 f"указать хобби, добавить картинок в интро и просто сделать его красивым:"
                  f"\n\n{user_profile_url}"
         )
 
