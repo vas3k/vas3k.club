@@ -292,13 +292,14 @@ MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
 MAX_MUTE_COUNT = 5  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
-    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
+    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@pmi.moscow" \
     "\n```"
 
 
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
 
+# TODO: Recreate club public posts
 POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"

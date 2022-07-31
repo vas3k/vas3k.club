@@ -12,8 +12,10 @@ from users.models.user import User
 COMMENT_REPLY_RE = re.compile(r"^💬.*")
 POST_COMMENT_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🙋‍♀️].*")
 
-COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
-POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
+# COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
+COMMENT_URL_RE = re.compile(r"https?://pmi.moscow/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
+#POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
+POST_URL_RE = re.compile(r"https?://pmi.moscow/[a-zA-Z]+/(.+?)/")
 
 log = logging.getLogger(__name__)
 
