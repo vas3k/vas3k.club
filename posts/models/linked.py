@@ -6,7 +6,8 @@ from django.db.models import Q
 from posts.models.post import Post
 from users.models.user import User
 
-CLUB_POST_URL_RE = re.compile(r"https:\/\/vas3k.club\/[\S]+?\/([\S]+?)\/")
+# CLUB_POST_URL_RE = re.compile(r"https:\/\/vas3k.club\/[\S]+?\/([\S]+?)\/")
+CLUB_POST_URL_RE = re.compile(r"https:\/\/pmi.moscow\/[\S]+?\/([\S]+?)\/")
 
 
 class LinkedPost(models.Model):

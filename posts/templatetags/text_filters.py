@@ -117,15 +117,21 @@ def is_video(value):
 
 @register.filter
 def resized_image(value, arg="full"):
-    if not value or "://i.vas3k.club/" not in value:
+    # if not value or "://i.vas3k.club/" not in value:
+    if (not value) or ("://media.pmi.moscow/" not in value) or ("://i.vas3k.club/" not in value):
         return value
 
     if is_video(value):
         return value
 
-    if value.startswith("https://i.vas3k.club/full/"):
+    # if value.startswith("https://i.vas3k.club/full/"):
+    #     return value.replace(
+    #         "https://i.vas3k.club/full/", "https://i.vas3k.club/{}/".format(arg)
+    #     )
+
+    if value.startswith("https://media.pmi.moscow/full/"):
         return value.replace(
-            "https://i.vas3k.club/full/", "https://i.vas3k.club/{}/".format(arg)
+            "https://media.pmi.moscow/full/", "https://media.pmi.moscow/{}/".format(arg)
         )
     else:
         return value

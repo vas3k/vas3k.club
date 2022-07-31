@@ -27,7 +27,7 @@
                     <br>
                     <div class="block form-warning">
                         ⚠️ Вы не подтвердили свой адрес электронной почты, так что мы пока не будем слать на него рассылки.
-                        Кнопка подтверждения была в «Велком дринке». Если вы удалили то письмо, придётся написать нам <a href="mailto:club@vas3k.club">на почту</a>.
+                        Кнопка подтверждения была в «Велком дринке». Если вы удалили то письмо, придётся написать нам <a href="mailto:club@pmi.moscow">на почту</a>.
                     </div>
                 {% endif %}
 
@@ -74,7 +74,7 @@
                     <a href="{% url "network" %}" rel="noreferrer" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
                     <a href="https://twitter.com/vas3k_club" rel="noreferrer" target="_blank" style="font-weight: bold;">Твиттер</a> — автоматическая лента новых постов в твиттере.<br><br>
                     <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" rel="noreferrer" target="_blank" style="font-weight: bold;">Онлайн</a> — прямой эфир всего. Только для самых хардкорных.<br><br>
-                    <strong>RSS:</strong> <a href="{% url "rss" %}">vas3k.club/posts.rss</a> <a href="https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fvas3k.club%2Fposts.rss" target="_blank" style="font-weight: bold;">[добавить в Feedly]</a><br><br>
+                    <!--<strong>RSS:</strong> <a href="{% url "rss" %}">vas3k.club/posts.rss</a> <a href="https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fvas3k.club%2Fposts.rss" target="_blank" style="font-weight: bold;">[добавить в Feedly]</a><br><br>-->
                     <a href="{% url "edit_bot" user.slug %}" target="_blank" style="font-weight: bold;">Подключите нашего бота</a> — он будет приносить уведомления, касающиеся лично вас.
                 </div>
             </div>

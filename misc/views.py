@@ -68,10 +68,19 @@ def network(request):
 
 @require_GET
 def robots(request):
+    # lines = [
+    #    "User-agent: *",
+    #    "Sitemap: https://vas3k.club/sitemap.xml",
+    #    "Host: https://vas3k.club",
+    #    "Disallow: /intro/",
+    #    "Disallow: /user/",
+    #    "Disallow: /people/",
+    #    "Clean-param: comment_order&goto /",
+    # ]
     lines = [
         "User-agent: *",
-        "Sitemap: https://vas3k.club/sitemap.xml",
-        "Host: https://vas3k.club",
+        "Sitemap: https://pmi.moscow/sitemap.xml",
+        "Host: https://pmi.moscow",
         "Disallow: /intro/",
         "Disallow: /user/",
         "Disallow: /people/",

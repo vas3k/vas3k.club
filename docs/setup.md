@@ -121,4 +121,4 @@ To run telegram bot you have to:
 
 ## Docker-compose
 
-Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
+Check out our [docker-compose.yml](https://github.com/toptuk/pmi.moscow.club/blob/master/docker-compose.yml) to understand the infrastructure.
