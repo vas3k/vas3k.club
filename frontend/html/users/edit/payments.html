@@ -11,68 +11,76 @@
         <div class="form-title">🎩<br>Клубные взносы</div>
 
         <div class="block-subheader">
-            Клубная карта активна до <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong> — это <span class="badge-price">💎 {{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }}</span>
+            Членство в клубе активно до <strong>{{ me.membership_expires_at | date:"j E Y" }}</strong> — это <span class="badge-price">💎 {{ me.membership_days_left|floor }} {{ me.membership_days_left|rupluralize:"день,дня,дней" }}</span>
         </div>
 
-        {% if me.membership_platform_type == "patreon" %}
-            <div class="block pay-subscription">
-                🙂 Подключён <a href="https://www.patreon.com/vas3k" target="_blank">Patreon</a>.
-                Рекомендуем по возможности перейти на прямую оплату ниже.
+        {% if not features.FREE_MEMBERSHIP %}
+            {% if me.membership_platform_type == "patreon" %}
+                <div class="block pay-subscription">
+                    🙂 Подключён <a href="https://www.patreon.com/vas3k" target="_blank">Patreon</a>.
+                    Рекомендуем по возможности перейти на прямую оплату ниже.
+                </div>
+            {% else %}
+                {% if not subscriptions %}
+                    <div class="block pay-subscription">Автопродление отключено 😟</div>
+                {% endif %}
+            {% endif %}
+
+            {% for subscription in subscriptions %}
+                <div class="block pay-subscription">
+                    🔥 Включено автопополнение на <strong>€{{ subscription.amount | floatformat }}</strong> каждый
+                    {% if subscription.interval == "month" %}
+                        месяц <strong>{{ subscription.next_charge_at | date:"j" }} числа</strong>
+                    {% else %}
+                        год <strong>{{ subscription.next_charge_at | date:"j E" }}</strong>
+                    {% endif %}
+
+                    <br><br>
+
+                    <a href="{% url "stop_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
+                </div>
+            {% endfor %}
+
+            <div class="block-description block-description-center">
+                О любых проблемах с оплатой сразу пишите на <a href="mailto:money@pmi.moscow">money@pmi.moscow</a>.<br>
+                Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.
+            </div>
+
+            <form action="{% url "pay" %}" method="get">
+
+            <div class="block-header" id="select_package">На сколько еще пополняем?</div>
+
+            <br>
+
+            {% include "payments/blocks/packages.html" %}
+
+            <button type="submit" class="button button-big join-button">Продлить членство 🤙</button>
+
+            </form>
+
+            <br><br>
+
+            <div class="block-description block-description-center">
+                Пополняйте когда вам удобно — новые дни будут просто суммироваться.
+            </div>
+
+            <div class="block-description block-description-center">
+                Даже годовые подписки можно покупать каждый месяц — это специальная фича для диких, кто хочет еще больше поддерживать Клуб!
+            </div>
+        
+            <div class="block-header" style="max-width: 600px; margin-top: 100px;">🏅<br>А чтобы было веселее, вот топ членов Клуба с самой длинной подпиской</div>
+
+            <div class="block-description">
+                Все собранные взносы идут на развитие Клуба, поэтому если вам хочется поддержать или отблагодарить Клуб за помощь,
+                лучший способ это сделать — продлить свою карту ещё на пару тысяч лет вперёд :D
             </div>
         {% else %}
-            {% if not subscriptions %}
-                <div class="block pay-subscription">Автопродление отключено 😟</div>
-            {% endif %}
-        {% endif %}
-
-        {% for subscription in subscriptions %}
-            <div class="block pay-subscription">
-                🔥 Включено автопополнение на <strong>€{{ subscription.amount | floatformat }}</strong> каждый
-                {% if subscription.interval == "month" %}
-                    месяц <strong>{{ subscription.next_charge_at | date:"j" }} числа</strong>
-                {% else %}
-                    год <strong>{{ subscription.next_charge_at | date:"j E" }}</strong>
-                {% endif %}
-
-                <br><br>
-
-                <a href="{% url "stop_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
+            <div class="block-description">
+                Членство в клубе пока бесплатное. Для продления членства необходимо обратиться к великолепным модераторам и волонтерам.
             </div>
-        {% endfor %}
 
-        <div class="block-description block-description-center">
-            О любых проблемах с оплатой сразу пишите на <a href="mailto:money@pmi.moscow">money@pmi.moscow</a>.<br>
-            Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.
-        </div>
-
-        <form action="{% url "pay" %}" method="get">
-
-        <div class="block-header" id="select_package">На сколько еще пополняем?</div>
-
-        <br>
-
-        {% include "payments/blocks/packages.html" %}
-
-        <button type="submit" class="button button-big join-button">Продлить членство 🤙</button>
-
-        </form>
-
-        <br><br>
-
-        <div class="block-description block-description-center">
-            Пополняйте когда вам удобно — новые дни будут просто суммироваться.
-        </div>
-
-        <div class="block-description block-description-center">
-            Даже годовые подписки можно покупать каждый месяц — это специальная фича для диких, кто хочет еще больше поддерживать Клуб!
-        </div>
-
-        <div class="block-header" style="max-width: 600px; margin-top: 100px;">🏅<br>А чтобы было веселее, вот топ членов Клуба с самой длинной подпиской</div>
-
-        <div class="block-description">
-            Все собранные взносы идут на развитие Клуба, поэтому если вам хочется поддержать или отблагодарить Клуб за помощь,
-            лучший способ это сделать — продлить свою карту ещё на пару тысяч лет вперёд :D
-        </div>
+            <div class="block-header" style="max-width: 600px; margin-top: 100px;">🏅<br>А чтобы было веселее, вот топ членов Клуба с самой длинной подпиской</div>
+        {% endif %}
     </div>
 
     <div class="block stats-top-users">
