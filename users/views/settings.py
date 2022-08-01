@@ -14,6 +14,7 @@ from users.forms.profile import ProfileEditForm, NotificationsEditForm
 from users.models.geo import Geo
 from users.models.user import User
 from utils.strings import random_hash
+from club import features
 
 
 @auth_required
