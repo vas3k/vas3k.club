@@ -1,7 +1,7 @@
 version: "3"
 services:
   club_app: &app
-    #image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    # image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
     build: 
       dockerfile: Dockerfile
       context: .
@@ -83,8 +83,8 @@ services:
       - postgres
       - redis
     ports: []
-    networks:
-      - club
+    # networks:
+    #   - club
 
   postgres:
     image: postgres:12
