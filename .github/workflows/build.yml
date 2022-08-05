@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.DEPLOY_TOKEN }}
+      - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
       - run: docker build -t ghcr.io/$GITHUB_ACTOR/pmiclub:latest -t ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA .
       - run: docker image push ghcr.io/$GITHUB_ACTOR/pmiclub:$GITHUB_SHA
       - run: docker image push ghcr.io/$GITHUB_ACTOR/pmiclub:latest
