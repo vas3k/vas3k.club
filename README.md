@@ -4,6 +4,10 @@
   <h1>PMI Moscow club</h1>
 </div>
 
+## TESTS
+[![Run tests](https://github.com/TopTuK/pmi.moscow.club/actions/workflows/tests.yml/badge.svg)](https://github.com/TopTuK/pmi.moscow.club/actions/workflows/tests.yml)
+[![Check it could be build and run from scratch](https://github.com/TopTuK/pmi.moscow.club/actions/workflows/check_build_and_run.yml/badge.svg)](https://github.com/TopTuK/pmi.moscow.club/actions/workflows/check_build_and_run.yml)
+
 ## RU
 Привет! Этот проект содержит исходники [PMI Russia](https://pmi.moscow) клуба. Мы строим наше комьюнити экпертов в управлении проектами вокруг института [PMI](https://pmi.org). В 2022 году равление PMI приняло решение о приостановке детяльности локальных отделений PMI в России, Беларуси, ДНР и ЛНР, поэтому нами было принято решение о создании временно независимого сообщества экпертов, главнами ценностями которого являются люди, их знания, навыки и опыт.
 
