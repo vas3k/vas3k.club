@@ -12,6 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
-      - run: docker build -t ghcr.io/$GITHUB_ACTOR/pmiclub:latest -t ghcr.io/toptuk/pmiclub:$GITHUB_SHA .
-      - run: docker image push ghcr.io/$GITHUB_ACTOR/pmiclub:$GITHUB_SHA
-      - run: docker image push ghcr.io/$GITHUB_ACTOR/pmiclub:latest
+      - run: docker build -t ghcr.io/toptuk/pmiclub:latest -t ghcr.io/toptuk/pmiclub:$GITHUB_SHA .
+      - run: docker image push ghcr.io/toptuk/pmiclub:$GITHUB_SHA
+      - run: docker image push ghcr.io/toptuk/pmiclub:latest
