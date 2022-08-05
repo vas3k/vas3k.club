@@ -3,21 +3,21 @@ name: Deploy production
 on:
   push:
     branches:
-      - master
+      - Deploy
 
 jobs:
   build:
-    name: Build image
+    name: Build and pull club image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
-      - run: docker build -t ghcr.io/$GITHUB_ACTOR/club:latest -t ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA .
-      - run: docker image push ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA
-      - run: docker image push ghcr.io/$GITHUB_ACTOR/club:latest
+      - run: docker build -t ghcr.io/toptuk/pmiclub:latest -t ghcr.io/toptuk/pmiclub:$GITHUB_SHA .
+      - run: docker image push ghcr.io/toptuk/pmiclub:$GITHUB_SHA
+      - run: docker image push ghcr.io/toptuk/pmiclub:latest
 
   deploy:
-    name: Deploy
+    name: Deploy pmi club
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -32,6 +32,9 @@ jobs:
           secret_APP_HOST: ${{ secrets.APP_HOST }}
           secret_MEDIA_UPLOAD_URL: ${{ secrets.MEDIA_UPLOAD_URL }}
           secret_MEDIA_UPLOAD_CODE: ${{ secrets.MEDIA_UPLOAD_CODE }}
+          secret_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          secret_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          secret_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           secret_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           secret_EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
           secret_EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
@@ -45,17 +48,17 @@ jobs:
           secret_TELEGRAM_CLUB_CHAT_ID: ${{ secrets.TELEGRAM_CLUB_CHAT_ID }}
           secret_TELEGRAM_ONLINE_CHANNEL_URL: ${{ secrets.TELEGRAM_ONLINE_CHANNEL_URL }}
           secret_TELEGRAM_ONLINE_CHANNEL_ID: ${{ secrets.TELEGRAM_ONLINE_CHANNEL_ID }}
-          secret_STRIPE_ACTIVE: ${{ secrets.STRIPE_ACTIVE }}
-          secret_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
-          secret_STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
-          secret_STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-          secret_COINBASE_WEBHOOK_SECRET: ${{ secrets.COINBASE_WEBHOOK_SECRET }}
-          secret_PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}
-          secret_PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}
+          secret_STRIPE_ACTIVE: ""
+          secret_STRIPE_API_KEY: ""
+          secret_STRIPE_PUBLIC_KEY: ""
+          secret_STRIPE_WEBHOOK_SECRET: ""
+          secret_COINBASE_WEBHOOK_SECRET: ""
+          secret_PATREON_CLIENT_ID: ""
+          secret_PATREON_CLIENT_SECRET: ""
           secret_JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-          secret_WEBHOOK_SECRETS: ${{ secrets.WEBHOOK_SECRETS }}
+          secret_WEBHOOK_SECRETS: ""
       - run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - run: echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ${{ env.SSH_KEY_PATH }} && chmod 600 ${{ env.SSH_KEY_PATH }}
-      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/vas3k/vas3k.club/.env
-      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/vas3k/vas3k.club/docker-compose.production.yml
-      - run: ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /home/vas3k/vas3k.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA && docker-compose -f docker-compose.production.yml --env-file=.env up -d && docker system prune --all --force"
+      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/pmi-admin/pmi.moscow.club/club/.env
+      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/pmi-admin/pmi.moscow.club/docker-compose.production.yml
+      - run: ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /home/pmi-admin/pmi.moscow.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/toptuk/pmiclub:$GITHUB_SHA && docker-compose -f docker-compose.production.yml --env-file=./club/.env up -d && docker system prune --all --force"
