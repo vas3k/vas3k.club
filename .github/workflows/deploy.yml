@@ -48,15 +48,7 @@ jobs:
           secret_TELEGRAM_CLUB_CHAT_ID: ${{ secrets.TELEGRAM_CLUB_CHAT_ID }}
           secret_TELEGRAM_ONLINE_CHANNEL_URL: ${{ secrets.TELEGRAM_ONLINE_CHANNEL_URL }}
           secret_TELEGRAM_ONLINE_CHANNEL_ID: ${{ secrets.TELEGRAM_ONLINE_CHANNEL_ID }}
-          secret_STRIPE_ACTIVE: ""
-          secret_STRIPE_API_KEY: ""
-          secret_STRIPE_PUBLIC_KEY: ""
-          secret_STRIPE_WEBHOOK_SECRET: ""
-          secret_COINBASE_WEBHOOK_SECRET: ""
-          secret_PATREON_CLIENT_ID: ""
-          secret_PATREON_CLIENT_SECRET: ""
           secret_JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-          secret_WEBHOOK_SECRETS: ""
       - run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - run: echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ${{ env.SSH_KEY_PATH }} && chmod 600 ${{ env.SSH_KEY_PATH }}
       - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/pmi-admin/pmi.moscow.club/club/.env
