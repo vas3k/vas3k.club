@@ -202,8 +202,10 @@ SENTRY_DSN = os.getenv("SENTRY_DSN")
 PATREON_AUTH_URL = "https://www.patreon.com/oauth2/authorize"
 PATREON_TOKEN_URL = "https://www.patreon.com/api/oauth2/token"
 PATREON_USER_URL = "https://www.patreon.com/api/oauth2/v2/identity"
-PATREON_CLIENT_ID = os.getenv("PATREON_CLIENT_ID")
-PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET")
+
+PATREON_CLIENT_ID = os.getenv("PATREON_CLIENT_ID") or ""
+PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET") or ""
+
 PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
 PATREON_GOD_IDS = ["8724543"]
@@ -271,7 +273,6 @@ TELEGRAM_BOT_WEBHOOK_PORT = 8816
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""
-STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET") or ""
 STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
