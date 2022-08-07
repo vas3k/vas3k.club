@@ -6,7 +6,7 @@
 {% load emails %}
 
 {% block og_meta %}
-    <meta property="og:site_name" content="Вастрик.Клуб" />
+    <meta property="og:site_name" content="PMI Russia Club" />
     <meta property="og:title" content="Клубный журнал. Итоги недели. Выпуск #{{ issue_number }}" />
     <meta property="og:type" content="article" />
     <meta property="og:description" content="На этой неделе у нас +{{ newbie_count }} {{ newbie_count|rupluralize:"новый член,новых члена,новых членов" }} Клуба. Всего за неделю написали {{ post_count }} {{ post_count | rupluralize:"пост,поста,постов" }}." />
@@ -97,7 +97,7 @@
 {% endblock %}
 
 {% block title %}
-    Журнал Вастрик.Клуба<br>
+    Журнал PMI Russia Клуба<br>
 
     {% if not digest_title %}
         <span class="issue">Итоги недели. Выпуск #{{ issue_number }}</span>
