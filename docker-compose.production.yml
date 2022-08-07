@@ -1,7 +1,7 @@
 version: "3"
 services:
   club_app: &app
-    # image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    image: ghcr.io/toptuk/pmiclub:${GITHUB_SHA:-latest}
     build: 
       dockerfile: Dockerfile
       context: .
