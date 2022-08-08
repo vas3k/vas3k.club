@@ -250,7 +250,7 @@ VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.pmi.moscow/preview"
-OG_IMAGE_DEFAULT = "https://pmi.moscow/static/images/share.png"
+OG_IMAGE_DEFAULT = "https://pmi.moscow/static/images/pmi_share.png"
 OG_MACHINE_AUTHOR_LOGO = "https://pmi.moscow/static/images/the_machine_logo.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
     "logo": "https://pmi.moscow/static/images/logo/logo-white-text.png",
