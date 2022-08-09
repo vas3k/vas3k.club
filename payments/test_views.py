@@ -203,6 +203,7 @@ class TestPayView(TestCase):
         self.assertContains(response=response, text="Не выбран пакет", status_code=200)
 
 
+
 class TestStripeWebhookView(TestCase):
 
     def setUp(self):
@@ -393,6 +394,7 @@ class TestStripeWebhookView(TestCase):
             self.assertEqual(user.stripe_id, json_event['data']['object']['id'])
             self.assertEqual(user.membership_expires_at, self.existed_user.membership_expires_at)
 
+    @skip("Free memebership")
     def test_negative_no_payload(self):
         header = {'HTTP_STRIPE_SIGNATURE': 'xxx'}
         response = self.client.post(reverse("stripe_webhook"), content_type='application/json', **header)
