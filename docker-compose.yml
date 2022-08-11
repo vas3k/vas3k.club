@@ -50,28 +50,28 @@ services:
       - postgres
       - redis
   
-  bot:
-    build:
-      dockerfile: Dockerfile
-      context: .
-    command: make docker-run-bot
-    environment:
-      - MODE=dev
-      - DEBUG=true
-      - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=pmi_club
-      - POSTGRES_USER=pmiclub
-      - POSTGRES_PASSWORD=pmiclub
-      - POSTGRES_HOST=postgres
-      - REDIS_DB=0
-      - REDIS_HOST=redis
-    restart: always
-    volumes:
-      - .:/app:delegated
-    depends_on:
-      - club_app
-      - postgres
-      - redis
+  # bot:
+    # build:
+      # dockerfile: Dockerfile
+      # context: .
+    # command: make docker-run-bot
+    # environment:
+      # - MODE=dev
+      # - DEBUG=true
+      # - PYTHONUNBUFFERED=1
+      # - POSTGRES_DB=pmi_club
+      # - POSTGRES_USER=pmiclub
+      # - POSTGRES_PASSWORD=pmiclub
+      # - POSTGRES_HOST=postgres
+      # - REDIS_DB=0
+      # - REDIS_HOST=redis
+    # restart: always
+    # volumes:
+      # - .:/app:delegated
+    # depends_on:
+      # - club_app
+      # - postgres
+      # - redis
 
   postgres:
     image: postgres:11
