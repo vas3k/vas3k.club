@@ -278,7 +278,7 @@ STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
-DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
+DEFAULT_AVATAR = "https://media.pmi.moscow/30095075d17a92786cfea143a73d68f5f1b3e71173e3f4ecf16f90d25834e45e.png"
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
 COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
 COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA = timedelta(days=14)

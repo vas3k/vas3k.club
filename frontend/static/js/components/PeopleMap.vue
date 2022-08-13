@@ -37,7 +37,7 @@ export default {
             accessToken: "pk.eyJ1IjoidmFzM2siLCJhIjoiY2thZ254NXVwMDhkbjJ5dDk5eGh5Y21wbyJ9.wYXG58PrErQfRHTflvdSfA",
             mapStyle: "mapbox://styles/vas3k/ckagmhzm90tkd1inu8pg76p9s/draft",
             coordinates: [18.3, 51.06],
-            defaultAvatar: "https://i.vas3k.club/v.png",
+            defaultAvatar: "https://media.pmi.moscow/30095075d17a92786cfea143a73d68f5f1b3e71173e3f4ecf16f90d25834e45e.png",
         };
     },
     created() {
