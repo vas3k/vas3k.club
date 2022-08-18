@@ -1,5 +1,11 @@
 <template>
     <div class="comment-markdown-editor">
+        <div class="comment-mobile-tools">
+            <label :style="{ padding: '8px 10px', cursor: 'pointer' }">
+                <i class="fas fa-image"></i>
+                <input type="file" multiple accept="image/*" :style="{ display: 'none' }" />
+            </label>
+        </div>
         <slot></slot>
         <div
             class="mention-autocomplete-hint"
@@ -27,14 +33,20 @@ import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions
 
 export default {
     mounted() {
-        if (isMobile()) {
-            return;
-        }
-
-        const $markdownElementDiv = this.$el.children[0];
+        const $markdownElementDiv = this.$el.children[1];
         this.editor = createMarkdownEditor($markdownElementDiv, {
             toolbar: false,
         });
+
+        if (isMobile()) {
+            const $mobileToolsEl = this.$el.children[0];
+            inlineAttachment.editors.codemirror4.attachMobile(
+                this.editor.codemirror,
+                imageUploadOptions,
+                $mobileToolsEl
+            );
+            return;
+        }
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
         inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, imageUploadOptions);

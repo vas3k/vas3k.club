@@ -668,3 +668,15 @@
     .mention-autocomplete-hint__option--suggested span {
         color: #fff;
     }
+
+    .comment-mobile-tools {
+      position: absolute;
+      left: 5px;
+      bottom: 100%;
+      margin-bottom: 8px;
+    }
+    @media only screen and (min-width : 600px) {
+      .comment-mobile-tools {
+        visibility: hidden;
+      }
+    }
