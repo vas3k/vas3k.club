@@ -349,6 +349,13 @@ class PostEventForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
+
 
     class Meta:
         model = Post
@@ -356,6 +363,7 @@ class PostEventForm(PostForm):
             "title",
             "text",
             "topic",
+            "coauthors",
             "collectible_tag_code",
             "is_public"
         ]
