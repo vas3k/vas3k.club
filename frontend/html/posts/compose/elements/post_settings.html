@@ -3,7 +3,7 @@
 
     <div class="clearfix50"></div>
 
-    {% if post_type == "post" or post_type == "guide" or post_type == "project" %}
+    {% if post_type == "post" or post_type == "guide" or post_type == "project" or post_type == "event" %}
         <div class="form-row compose-form-coauthors">
             <label for="{{ form.coauthors.id_for_label }}" class="form-label">{{ form.coauthors.label }}</label>
             {{ form.coauthors }}
