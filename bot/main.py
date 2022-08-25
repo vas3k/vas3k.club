@@ -49,7 +49,7 @@ def private_message(update: Update, context: CallbackContext) -> None:
         )
     else:
         update.effective_chat.send_message(
-            "Йо! Полный список моих команд покажет /help,"
+            "Йо! Полный список моих команд покажет /help, "
             "а еще мне можно отвечать на посты и уведомления, всё это будет поститься прямо в Клуб!",
             parse_mode=ParseMode.HTML
         )
