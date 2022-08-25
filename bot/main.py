@@ -85,6 +85,7 @@ def main() -> None:
     # Only private chats
     dispatcher.add_handler(CommandHandler("start", auth.command_auth, Filters.private))
     dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
+    dispatcher.add_handler(MessageHandler(Filters.forwarded & Filters.private, whois.command_whois))
     dispatcher.add_handler(MessageHandler(Filters.private, private_message))
 
     # Start the bot
