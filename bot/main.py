@@ -49,7 +49,7 @@ def private_message(update: Update, context: CallbackContext) -> None:
         )
     else:
         update.effective_chat.send_message(
-            "Йо! Полный список моих команд покажет /help,"
+            "Йо! Полный список моих команд покажет /help, "
             "а еще мне можно отвечать на посты и уведомления, всё это будет поститься прямо в Клуб!",
             parse_mode=ParseMode.HTML
         )
@@ -85,6 +85,7 @@ def main() -> None:
     # Only private chats
     dispatcher.add_handler(CommandHandler("start", auth.command_auth, Filters.private))
     dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
+    dispatcher.add_handler(MessageHandler(Filters.forwarded & Filters.private, whois.command_whois))
     dispatcher.add_handler(MessageHandler(Filters.private, private_message))
 
     # Start the bot
