@@ -17,7 +17,7 @@ TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60  # 24 hours
 
 @auth_required
 def people(request):
-    users = User.registered_members().order_by("-created_at").select_related("geo")
+    users = User.registered_members().order_by("-created_at").select_related("geo")  # joining with "geo" for map
 
     query = request.GET.get("query")
     if query:
@@ -64,7 +64,9 @@ def people(request):
             "work": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
                 "can_refer", "search_employees", "search_job", "search_remote", "search_relocate"
             }],
-            "collectible": [tag for tag in tag_stat_groups[Tag.GROUP_COLLECTIBLE]][:20]
+            "collectible": [
+                tag for tag in tag_stat_groups[Tag.GROUP_COLLECTIBLE] if tag.user_count > 1
+            ][:20]
         })
         cache.set("people_tag_stat_groups", tag_stat_groups, TAGS_CACHE_TIMEOUT_SECONDS)
         cache.set("people_tags_with_stats", tags_with_stats, TAGS_CACHE_TIMEOUT_SECONDS)
