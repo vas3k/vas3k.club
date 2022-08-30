@@ -94,6 +94,11 @@
                         <label for="tag_search_events">🤪️ Любят движуху</label>
                     </div>
 
+                    <div class="people-filters-tag">
+                        <input type="checkbox" name="filters" value="friends" id="filter_friends" {% if "friends" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
+                        <label for="filter_friends">🤝 Мои чуваки</label>
+                    </div>
+
                     <div class="people-filters-header">Путешествия</div>
 
                     {% for tag in tag_stat_groups.travel %}
@@ -118,7 +123,6 @@
                     </div>
 
                     <div class="people-filters-header">Взаимопомощь</div>
-
                     {% for tag in tag_stat_groups.grow %}
                         <div class="people-filters-tag">
                             <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %} @change="$event.target.form.submit()">
@@ -127,7 +131,6 @@
                     {% endfor %}
 
                     <div class="people-filters-header">Личные качества</div>
-
                     {% for tag in tag_stat_groups.personal %}
                         <div class="people-filters-tag">
                             <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %}>
@@ -138,6 +141,8 @@
                         </div>
                     {% endfor %}
 
+                    <button type="submit" class="button people-filters-button">Отфильтровать</button>
+
                     <div class="people-filters-header">Увлечения</div>
                     {% for tag in tag_stat_groups.hobbies %}
                         <div class="people-filters-tag">
@@ -146,7 +151,18 @@
                                 {{ tag.name }}
                                 <div class="people-filters-tag-bar" style="width: {{ tag.user_count | percentage_of:max_tag_user_count }}%;"></div>
                             </label>
+                        </div>
+                    {% endfor %}
 
+                    <button type="submit" class="button people-filters-button">Отфильтровать</button>
+
+                    <div class="people-filters-header">Коллекционные теги</div>
+                    {% for tag in tag_stat_groups.collectible %}
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="tags" value="{{ tag.code }}" id="tag_{{ tag.code }}" {% if tag.code in people_query.tags %}checked{% endif %}>
+                            <label for="tag_{{ tag.code }}">
+                                {{ tag.name }}
+                            </label>
                         </div>
                     {% endfor %}
 
