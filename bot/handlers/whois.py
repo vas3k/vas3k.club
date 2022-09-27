@@ -10,7 +10,10 @@ from users.models.user import User
 
 @is_club_member
 def command_whois(update: Update, context: CallbackContext) -> None:
-    is_private_forward = update.message.forward_date is not None and update.message.chat.type == TGChat.PRIVATE
+    is_private_forward = update.message is not None \
+        and update.message.forward_date is not None \
+        and update.message.chat.type == TGChat.PRIVATE
+
     if not update.message or not update.message.reply_to_message and not is_private_forward:
         update.effective_chat.send_message(
             "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать",
@@ -21,6 +24,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
     original_message = update.message  # look at the author of this message (works only in private chats)
     if update.message.reply_to_message:
         original_message = update.message.reply_to_message  # look at the author of replied message
+
     from_user = original_message.from_user
     if original_message.forward_date:
         if not original_message.forward_from:
