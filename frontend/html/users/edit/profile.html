@@ -85,15 +85,6 @@
                     </span>
                 </div>
 
-                <div class="form-row">
-                    <label for="{{ form.contact.id_for_label }}" class="form-label">
-                        Контакт для обратной связи
-                    </label>
-                    {{ form.contact }}
-                    {% if form.contact.errors %}<span class="form-row-errors">{{ form.contact.errors }}</span>{% endif %}
-                    <span class="form-row-help">Он будет виден другим участникам Клуба. Так они смогут вам написать и завязать нетворкинг. Наружу он не виден.</span>
-                </div>
-
                 <button type="submit" class="button button-big">Сохранить изменения</button>
 
                 <div class="clearfix50"></div>

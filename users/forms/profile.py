@@ -42,11 +42,6 @@ class ProfileEditForm(ModelForm):
         required=True,
         max_length=128
     )
-    contact = forms.CharField(
-        label="Контакт для связи",
-        required=True,
-        max_length=256,
-    )
 
     class Meta:
         model = User
@@ -57,7 +52,6 @@ class ProfileEditForm(ModelForm):
             "city",
             "country",
             "bio",
-            "contact",
         ]
 
 
