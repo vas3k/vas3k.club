@@ -162,17 +162,12 @@ def toggle_post_subscription(request, post_slug):
 
     post = get_object_or_404(Post, slug=post_slug)
 
-    subscription, is_created = PostSubscription.subscribe(
+    status = PostSubscription.toggle(
         user=request.me,
         post=post,
-        type=PostSubscription.TYPE_TOP_LEVEL_ONLY,
     )
-
-    if not is_created:
-        subscription.delete()
-
     return {
-        "status": "created" if is_created else "deleted"
+        "status": status,
     }
 
 
