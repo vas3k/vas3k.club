@@ -26,9 +26,11 @@ def whos_joined(update: Update, context: CallbackContext) -> None:
 
     telegram_id = from_user.id
     user = User.objects.filter(telegram_id=telegram_id).first()
+
+    whos_joined = from_username if from_username else telegram_id
     if not user:
         update.message.reply_text(
-            f"🤨 К чату присоединился {from_username}, которого нет в Клубе. Гоните его, насмехайтесь над ним!",
+            f"🤨 К чату присоединился {whos_joined}, которого нет в Клубе. Гоните его, насмехайтесь над ним!",
             quote=True
         )
         return None
@@ -38,7 +40,7 @@ def whos_joined(update: Update, context: CallbackContext) -> None:
     })
 
     update.message.reply_text(
-        f"""🫡 К чату присоединился {from_username}, в клубе он <a href="{profile_url}">{user.full_name}</a>""",
+        f"""🫡 К чату присоединился {whos_joined}, в клубе он <a href="{profile_url}">{user.full_name}</a>""",
         parse_mode=ParseMode.HTML,
         quote=True
     )
