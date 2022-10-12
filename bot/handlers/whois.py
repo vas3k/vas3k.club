@@ -9,6 +9,43 @@ from users.models.user import User
 
 
 @is_club_member
+def whos_joined(update: Update, context: CallbackContext) -> None:
+
+    original_message = update.message  # look at the author of this message (works only in private chats)
+    from_user = original_message.from_user
+    from_username = original_message.chat.username
+
+    context.bot.delete_message(chat_id=update.message.chat_id, message_id=update.message.message_id)
+
+    if from_user.is_bot:
+        update.message.reply_text(
+            f"🤖В ч@т з@ш3л 60т: {from_user.id}",
+            quote=True
+        )
+        return None
+
+    telegram_id = from_user.id
+    user = User.objects.filter(telegram_id=telegram_id).first()
+    if not user:
+        update.message.reply_text(
+            f"🤨 К чату присоединился {from_username}, которого нет в Клубе. Гоните его, насмехайтесь над ним!",
+            quote=True
+        )
+        return None
+
+    profile_url = settings.APP_HOST + reverse("profile", kwargs={
+        "user_slug": user.slug,
+    })
+
+    update.message.reply_text(
+        f"""🫡 К чату присоединился {from_username}, в клубе он <a href="{profile_url}">{user.full_name}</a>""",
+        parse_mode=ParseMode.HTML,
+        quote=True
+    )
+
+    return None
+
+@is_club_member
 def command_whois(update: Update, context: CallbackContext) -> None:
     is_private_forward = update.message is not None \
         and update.message.forward_date is not None \
