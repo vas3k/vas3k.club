@@ -267,10 +267,6 @@
                                 {% if user.id != me.id %}
                                     <small>Не забудьте сказать, что вы из Вастрик.Клуба</small>
                                 {% endif %}
-                            {% else %}
-                                {% if user.id == me.id %}
-                                    <strong>⚠️ Вы не указали контакт для обратной связи.<br><a href="{% url "edit_profile" user.slug %}#id_contact">Сделайте это здесь</a></strong>
-                                {% endif %}
                             {% endif %}
 
                             {% if user.id == me.id %}
