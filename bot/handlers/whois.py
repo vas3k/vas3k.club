@@ -30,7 +30,7 @@ def whos_joined(update: Update, context: CallbackContext) -> None:
     whos_joined = from_username if from_username else telegram_id
     if not user:
         update.message.reply_text(
-            f"🤨 К чату присоединился {whos_joined}, которого нет в Клубе. Гоните его, насмехайтесь над ним!",
+            f"🤨 К чату присоединился @{whos_joined}, которого нет в Клубе. Гоните его, насмехайтесь над ним!",
             quote=True
         )
         return None
