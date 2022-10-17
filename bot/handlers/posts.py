@@ -1,13 +1,11 @@
 import logging
 
-import telegram
 from django.urls import reverse
 from telegram import Update
 from telegram.ext import CallbackContext
 
 from bot.handlers.common import get_club_user
 from club import settings
-from notifications.telegram.common import send_telegram_message, Chat
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 
@@ -31,17 +29,8 @@ def subscribe(update: Update, context: CallbackContext) -> None:
     )
 
     if user.telegram_id:
-        post_url = settings.APP_HOST + reverse("show_post", kwargs={
-            "post_type": post.type,
-            "post_slug": post.slug,
-        })
-
-        send_telegram_message(
-            chat=Chat(id=user.telegram_id),
-            text=f"➜ Вы подписались на уведомления о новых комментариях "
-                 f"к посту «<a href=\"{post_url}\">{post.title}</a>» 🔔\n\n"
-                 f"Они будут приходить сюда в бота.",
-            parse_mode=telegram.ParseMode.HTML,
+        update.callback_query.answer(
+            text=f"Вы подписались на уведомления о новых комментариях к посту «{post.title}» 🔔"
         )
 
 
@@ -67,16 +56,10 @@ def unsubscribe(update: Update, context: CallbackContext) -> None:
         })
 
         if is_unsubscribed:
-            send_telegram_message(
-                chat=Chat(id=user.telegram_id),
-                text=f"➜ Вы отписались от о комментариев к посту «<a href=\"{post_url}\">{post.title}</a>» 🔕\n\n"
-                     f"Однако, люди всё еще могут пингануть вас по имени.",
-                parse_mode=telegram.ParseMode.HTML,
+            update.callback_query.answer(
+                text=f"Вы отписались от о комментариев к посту «{post.title}» 🔕"
             )
         else:
-            send_telegram_message(
-                chat=Chat(id=user.telegram_id),
-                text=f"➜ Вы и так не подписаны на пост «<a href=\"{post_url}\">{post.title}</a>». "
-                     f"Скорее всего кто-то упомянул вас по имени.",
-                parse_mode=telegram.ParseMode.HTML,
+            update.callback_query.answer(
+                text="Вы и не были подписаны на уведомления к этому посту ❌"
             )

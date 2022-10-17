@@ -1,15 +1,11 @@
 import logging
 
-import telegram
-from django.conf import settings
-from django.urls import reverse
 from telegram import Update
 from telegram.ext import CallbackContext
 
 from bot.handlers.common import get_club_user, COMMENT_EMOJI_RE, POST_EMOJI_RE, get_club_comment, get_club_post
 from bot.decorators import is_club_member
 from comments.models import CommentVote, Comment
-from notifications.telegram.common import Chat, send_telegram_message
 from posts.models.post import Post
 from posts.models.votes import PostVote
 
@@ -65,16 +61,10 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
         comment=comment,
     )
 
-    if is_created and user.telegram_id:
-        comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
-            "post_slug": comment.post.slug,
-            "comment_id": comment.id
-        })
-        send_telegram_message(
-            chat=Chat(id=user.telegram_id),
-            text=f"➜ Заплюсован <a href=\"{comment_url}\">комментарий</a> от {comment.author.full_name} 👍",
-            parse_mode=telegram.ParseMode.HTML,
-        )
+    if is_created:
+        update.callback_query.answer(text=f"Комментарий заплюсован 👍")
+    else:
+        update.callback_query.answer(text=f"Вы уже плюсовали этот комментарий")
 
     return None
 
@@ -94,15 +84,9 @@ def upvote_post(update: Update, context: CallbackContext) -> None:
         post=post,
     )
 
-    if is_created and user.telegram_id:
-        post_url = settings.APP_HOST + reverse("show_post", kwargs={
-            "post_type": post.type,
-            "post_slug": post.slug,
-        })
-        send_telegram_message(
-            chat=Chat(id=user.telegram_id),
-            text=f"➜ Заплюсован <a href=\"{post_url}\">пост</a> «{post.title}» 👍",
-            parse_mode=telegram.ParseMode.HTML,
-        )
+    if is_created:
+        update.callback_query.answer(text=f"Пост заплюсован 👍")
+    else:
+        update.callback_query.answer(text=f"Вы уже плюсовали этот пост")
 
     return None
