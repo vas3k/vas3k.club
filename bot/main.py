@@ -77,7 +77,8 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("whois", whois.command_whois))
     dispatcher.add_handler(CallbackQueryHandler(posts.subscribe, pattern=r"^subscribe:.+"))
     dispatcher.add_handler(CallbackQueryHandler(posts.unsubscribe, pattern=r"^unsubscribe:.+"))
-    dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote, pattern=r"^upvote:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote_post, pattern=r"^upvote_post:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote_comment, pattern=r"^upvote_comment:.+"))
     dispatcher.add_handler(
         MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
     )

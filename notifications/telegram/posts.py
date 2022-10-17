@@ -33,7 +33,7 @@ def announce_in_club_chats(post):
     })
     post_reply_markup = telegram.InlineKeyboardMarkup([
         [
-            telegram.InlineKeyboardButton("👍", callback_data=f"upvote:{post.id}"),
+            telegram.InlineKeyboardButton("👍", callback_data=f"upvote_post:{post.id}"),
             telegram.InlineKeyboardButton("🔗", url=post_url),
             telegram.InlineKeyboardButton("🔔", callback_data=f"subscribe:{post.id}"),
         ],

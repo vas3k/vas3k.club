@@ -34,7 +34,7 @@ def async_create_or_update_comment(comment):
     })
     comment_reply_markup = telegram.InlineKeyboardMarkup([
         [
-            telegram.InlineKeyboardButton("👍", callback_data=f"upvote:{comment.id}"),
+            telegram.InlineKeyboardButton("👍", callback_data=f"upvote_comment:{comment.id}"),
             telegram.InlineKeyboardButton("🔗", url=comment_url),
             telegram.InlineKeyboardButton("🔕", callback_data=f"unsubscribe:{comment.post_id}"),
         ],

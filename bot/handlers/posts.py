@@ -9,18 +9,19 @@ from bot.handlers.common import get_club_user, get_club_post
 from bot.decorators import is_club_member
 from club import settings
 from notifications.telegram.common import send_telegram_message, Chat
+from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 
 log = logging.getLogger(__name__)
 
 
-@is_club_member
 def subscribe(update: Update, context: CallbackContext) -> None:
     user = get_club_user(update)
     if not user or not user.telegram_id:
         return None
 
-    post = get_club_post(update)
+    _, post_id = update.callback_query.data.split(":", 1)
+    post = Post.objects.filter(id=post_id).filter()
     if not post:
         return None
 
@@ -45,13 +46,13 @@ def subscribe(update: Update, context: CallbackContext) -> None:
         )
 
 
-@is_club_member
 def unsubscribe(update: Update, context: CallbackContext) -> None:
     user = get_club_user(update)
     if not user or not user.telegram_id:
         return None
 
-    post = get_club_post(update)
+    _, post_id = update.callback_query.data.split(":", 1)
+    post = Post.objects.filter(id=post_id).filter()
     if not post:
         return None
 
