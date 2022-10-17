@@ -127,6 +127,7 @@ class User(models.Model, ModelDiffMixin):
 
     def to_dict(self):
         return {
+            "id": str(self.id),
             "slug": self.slug,
             "full_name": self.full_name,
             "avatar": self.avatar,

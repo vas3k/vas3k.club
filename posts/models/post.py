@@ -139,6 +139,7 @@ class Post(models.Model, ModelDiffMixin):
             "id": str(self.id),
             "type": self.type,
             "slug": self.slug,
+            "author_id": str(self.author.id),
             "author_slug": self.author.slug,
             "title": self.title,
             "text": self.text,
