@@ -36,7 +36,9 @@ def upvote(update: Update, context: CallbackContext) -> None:
                 user=user,
                 comment=comment,
             )
-            update.message.reply_text(f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц")
+            update.callback_query.answer(
+                text=f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц",
+            )
 
     if POST_EMOJI_RE.match(reply_text_start):
         post = get_club_post(update)
@@ -45,7 +47,9 @@ def upvote(update: Update, context: CallbackContext) -> None:
                 user=user,
                 post=post,
             )
-            update.message.reply_text(f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц")
+            update.callback_query.answer(
+                text=f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц",
+            )
 
     return None
 
@@ -95,14 +99,8 @@ def upvote_post(update: Update, context: CallbackContext) -> None:
     )
 
     if is_created and user.telegram_id:
-        post_url = settings.APP_HOST + reverse("show_post", kwargs={
-            "post_type": post.type,
-            "post_slug": post.slug,
-        })
-        send_telegram_message(
-            chat=Chat(id=user.telegram_id),
-            text=f"➜ Заплюсован <a href=\"{post_url}\">пост</a> «{post.title}» 👍",
-            parse_mode=telegram.ParseMode.HTML,
+        update.callback_query.answer(
+            text=f"➜ Заплюсован пост «{post.title}» 👍",
         )
 
     return None
