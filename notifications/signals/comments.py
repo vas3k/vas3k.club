@@ -75,7 +75,7 @@ def async_create_or_update_comment(comment):
     if not comment.reply_to and comment.post.is_visible and comment.post.is_visible_in_feeds:
         send_telegram_message(
             chat=CLUB_ONLINE,
-            text=render_html_message("comment_to_post.html", comment=comment),
+            text=render_html_message("channel_comment_announce.html", comment=comment),
         )
 
     # notify friends about your comments (not replies)

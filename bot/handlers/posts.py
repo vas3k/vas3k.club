@@ -5,8 +5,7 @@ from django.urls import reverse
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from bot.handlers.common import get_club_user, get_club_post
-from bot.decorators import is_club_member
+from bot.handlers.common import get_club_user
 from club import settings
 from notifications.telegram.common import send_telegram_message, Chat
 from posts.models.post import Post
@@ -21,7 +20,7 @@ def subscribe(update: Update, context: CallbackContext) -> None:
         return None
 
     _, post_id = update.callback_query.data.split(":", 1)
-    post = Post.objects.filter(id=post_id).filter()
+    post = Post.objects.filter(id=post_id).first()
     if not post:
         return None
 
@@ -52,7 +51,7 @@ def unsubscribe(update: Update, context: CallbackContext) -> None:
         return None
 
     _, post_id = update.callback_query.data.split(":", 1)
-    post = Post.objects.filter(id=post_id).filter()
+    post = Post.objects.filter(id=post_id).first()
     if not post:
         return None
 
