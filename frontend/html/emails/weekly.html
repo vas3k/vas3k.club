@@ -171,11 +171,11 @@
     {% if pro_tip %}
         <br><br><br>
 
-        <h2>💡 Про-тип: {{ pro_tip.title }}</h2>
+        <h2>💡 Про-тип недели:<br>{{ pro_tip.title }}</h2>
 
         <div class="block">
             <p>
-                {{ pro_tip.text | markdown | striptags }}
+                {{ pro_tip.text | markdown }}
             </p>
         </div>
     {% endif %}
