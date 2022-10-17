@@ -38,8 +38,8 @@ def subscribe(update: Update, context: CallbackContext) -> None:
 
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
-            text=f"Вы подписались на уведомления о новых "
-                 f"комментариях в посте «<a href=\"{post_url}\">{post.title}</a>» 🔔\n\n"
+            text=f"➜ Вы подписались на уведомления о новых комментариях "
+                 f"к посту «<a href=\"{post_url}\">{post.title}</a>» 🔔\n\n"
                  f"Они будут приходить сюда в бота.",
             parse_mode=telegram.ParseMode.HTML,
         )
@@ -69,14 +69,14 @@ def unsubscribe(update: Update, context: CallbackContext) -> None:
         if is_unsubscribed:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
-                text=f"Вы отписались от о комментариев к посту «<a href=\"{post_url}\">{post.title}</a>» 🔕\n\n"
+                text=f"➜ Вы отписались от о комментариев к посту «<a href=\"{post_url}\">{post.title}</a>» 🔕\n\n"
                      f"Однако, люди всё еще могут пингануть вас по имени.",
                 parse_mode=telegram.ParseMode.HTML,
             )
         else:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
-                text=f"Вы и так не подписаны на пост «<a href=\"{post_url}\">{post.title}</a>». "
+                text=f"➜ Вы и так не подписаны на пост «<a href=\"{post_url}\">{post.title}</a>». "
                      f"Скорее всего кто-то упомянул вас по имени.",
                 parse_mode=telegram.ParseMode.HTML,
             )

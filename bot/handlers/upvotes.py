@@ -1,6 +1,8 @@
 import logging
 
 import telegram
+from django.conf import settings
+from django.urls import reverse
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -34,7 +36,7 @@ def upvote(update: Update, context: CallbackContext) -> None:
                 user=user,
                 comment=comment,
             )
-            update.message.reply_text(f"Заплюсовано 👍" if is_created else "Ты уже плюсовал, поц")
+            update.message.reply_text(f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц")
 
     if POST_EMOJI_RE.match(reply_text_start):
         post = get_club_post(update)
@@ -43,7 +45,7 @@ def upvote(update: Update, context: CallbackContext) -> None:
                 user=user,
                 post=post,
             )
-            update.message.reply_text(f"Заплюсовано 👍" if is_created else "Ты уже плюсовал, поц")
+            update.message.reply_text(f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц")
 
     return None
 
@@ -54,7 +56,7 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
         return None
 
     _, comment_id = update.callback_query.data.split(":", 1)
-    comment = Comment.objects.filter(id=comment_id).first()
+    comment = Comment.objects.filter(id=comment_id).select_related("post").first()
     if not comment:
         return None
 
@@ -64,9 +66,13 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
     )
 
     if is_created and user.telegram_id:
+        comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
+            "post_slug": comment.post.slug,
+            "comment_id": comment.id
+        })
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
-            text=f"Заплюсован коммент от {comment.author.full_name} 👍",
+            text=f"➜ Заплюсован <a href=\"{comment_url}\">комментарий</a> от {comment.author.full_name} 👍",
             parse_mode=telegram.ParseMode.HTML,
         )
 
@@ -89,9 +95,13 @@ def upvote_post(update: Update, context: CallbackContext) -> None:
     )
 
     if is_created and user.telegram_id:
+        post_url = settings.APP_HOST + reverse("show_post", kwargs={
+            "post_type": post.type,
+            "post_slug": post.slug,
+        })
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
-            text=f"Заплюсован пост «{post.title}» 👍",
+            text=f"➜ Заплюсован <a href=\"{post_url}\">пост</a> «{post.title}» 👍",
             parse_mode=telegram.ParseMode.HTML,
         )
 
