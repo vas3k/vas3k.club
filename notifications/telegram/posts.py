@@ -1,5 +1,7 @@
 import telegram
+from django.conf import settings
 from django.template import TemplateDoesNotExist
+from django.urls import reverse
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
 from tags.models import Tag, UserTag
@@ -25,6 +27,27 @@ def announce_in_club_channel(post, announce_text=None, image=None):
 
 
 def announce_in_club_chats(post):
+    post_url = settings.APP_HOST + reverse("show_post", kwargs={
+        "post_type": post.type,
+        "post_slug": post.slug
+    })
+    post_reply_markup = telegram.InlineKeyboardMarkup([
+        [
+            telegram.InlineKeyboardButton("👍", callback_data=f"upvote:{post.id}"),
+            telegram.InlineKeyboardButton("🔗", url=post_url),
+            telegram.InlineKeyboardButton("🔔", callback_data=f"subscribe:{post.id}"),
+        ],
+    ])
+
+    # announce to public chat
+    send_telegram_message(
+        chat=CLUB_CHAT,
+        text=render_html_message("channel_post_announce.html", post=post),
+        parse_mode=telegram.ParseMode.HTML,
+        disable_preview=True,
+        reply_markup=post_reply_markup,
+    )
+
     if post.topic and post.topic.chat_id:
         # announce to the topic chat
         send_telegram_message(
@@ -32,14 +55,7 @@ def announce_in_club_chats(post):
             text=render_html_message("channel_post_announce.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
             disable_preview=True,
-        )
-    else:
-        # announce to public chat
-        send_telegram_message(
-            chat=CLUB_CHAT,
-            text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=telegram.ParseMode.HTML,
-            disable_preview=True,
+            reply_markup=post_reply_markup,
         )
 
 

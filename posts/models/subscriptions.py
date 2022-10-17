@@ -34,5 +34,9 @@ class PostSubscription(models.Model):
         return cls.objects.update_or_create(user=user, post=post, defaults=dict(type=type))
 
     @classmethod
+    def unsubscribe(cls, user, post):
+        return cls.objects.filter(user=user, post=post).delete()
+
+    @classmethod
     def post_subscribers(cls, post):
         return cls.objects.filter(post=post).select_related("user")

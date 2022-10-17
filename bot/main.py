@@ -16,7 +16,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContex
     CallbackQueryHandler
 
 from bot.cache import cached_telegram_users
-from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top
+from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +75,9 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("random", fun.command_random))
     dispatcher.add_handler(CommandHandler("top", top.command_top))
     dispatcher.add_handler(CommandHandler("whois", whois.command_whois))
+    dispatcher.add_handler(CallbackQueryHandler(posts.subscribe, pattern=r"^subscribe:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(posts.unsubscribe, pattern=r"^unsubscribe:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote, pattern=r"^upvote:.+"))
     dispatcher.add_handler(
         MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
     )

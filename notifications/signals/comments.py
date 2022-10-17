@@ -1,5 +1,7 @@
+import telegram
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django_q.tasks import async_task
 
 from club import settings
@@ -26,6 +28,18 @@ def async_create_or_update_comment(comment):
         Muted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)
     )
 
+    comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
+        "post_slug": comment.post.slug,
+        "comment_id": comment.id,
+    })
+    comment_reply_markup = telegram.InlineKeyboardMarkup([
+        [
+            telegram.InlineKeyboardButton("👍", callback_data=f"upvote:{comment.id}"),
+            telegram.InlineKeyboardButton("🔗", url=comment_url),
+            telegram.InlineKeyboardButton("🔕", callback_data=f"unsubscribe:{comment.post_id}"),
+        ],
+    ])
+
     # notify post subscribers
     post_subscribers = PostSubscription.post_subscribers(comment.post)
     for post_subscriber in post_subscribers:
@@ -39,6 +53,7 @@ def async_create_or_update_comment(comment):
                 send_telegram_message(
                     chat=Chat(id=post_subscriber.user.telegram_id),
                     text=render_html_message("comment_to_post.html", comment=comment),
+                    reply_markup=comment_reply_markup,
                 )
                 notified_user_ids.add(post_subscriber.user.id)
 
@@ -52,6 +67,7 @@ def async_create_or_update_comment(comment):
             send_telegram_message(
                 chat=Chat(id=thread_author.telegram_id),
                 text=render_html_message("comment_to_thread.html", comment=comment),
+                reply_markup=comment_reply_markup,
             )
             notified_user_ids.add(thread_author.id)
 
@@ -72,6 +88,7 @@ def async_create_or_update_comment(comment):
                 send_telegram_message(
                     chat=Chat(id=friend.user_from.telegram_id),
                     text=render_html_message("friend_comment.html", comment=comment),
+                    reply_markup=comment_reply_markup,
                 )
                 notified_user_ids.add(friend.user_from.id)
 
@@ -95,5 +112,6 @@ def async_create_or_update_comment(comment):
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message("comment_mention.html", comment=comment),
+                reply_markup=comment_reply_markup,
             )
             notified_user_ids.add(user.id)

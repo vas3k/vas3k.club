@@ -169,7 +169,11 @@ def toggle_post_subscription(request, post_slug):
     )
 
     if not is_created:
-        subscription.delete()
+        # already exist? remove it
+        PostSubscription.unsubscribe(
+            user=request.me,
+            post=post,
+        )
 
     return {
         "status": "created" if is_created else "deleted"
