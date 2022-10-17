@@ -22,10 +22,16 @@ def create_or_update_comment(sender, instance, created, **kwargs):
 
 def async_create_or_update_comment(comment):
     notified_user_ids = set()
+    muted_author_user_ids = set(
+        Muted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)
+    )
 
     # notify post subscribers
     post_subscribers = PostSubscription.post_subscribers(comment.post)
     for post_subscriber in post_subscribers:
+        if post_subscriber.user_id in muted_author_user_ids:
+            continue
+
         if post_subscriber.user.telegram_id and comment.author != post_subscriber.user:
             # respect subscription type (i.e. all comments vs top level only)
             if post_subscriber.type == PostSubscription.TYPE_ALL_COMMENTS \
@@ -39,7 +45,10 @@ def async_create_or_update_comment(comment):
     # notify thread author on reply (note: do not notify yourself)
     if comment.reply_to:
         thread_author = comment.reply_to.author
-        if thread_author.telegram_id and comment.author != thread_author and thread_author.id not in notified_user_ids:
+        if thread_author.telegram_id \
+                and comment.author != thread_author \
+                and thread_author.id not in notified_user_ids \
+                and thread_author.id not in muted_author_user_ids:
             send_telegram_message(
                 chat=Chat(id=thread_author.telegram_id),
                 text=render_html_message("comment_to_thread.html", comment=comment),
@@ -76,11 +85,13 @@ def async_create_or_update_comment(comment):
             continue
 
         user = User.objects.filter(slug=username).first()
-        is_muted = Muted.objects.filter(user_from=user, user_to=comment.author).exists()
-        if is_muted:
+        if not user:
             continue
 
-        if user and user.telegram_id and user.id not in notified_user_ids:
+        if user.id in muted_author_user_ids:
+            continue
+
+        if user.telegram_id and user.id not in notified_user_ids:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message("comment_mention.html", comment=comment),
