@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "gdpr.apps.GdprConfig",
     "badges.apps.BadgesConfig",
     "tags.apps.TagsConfig",
+    "misc.apps.MiscConfig",
     "simple_history",
     "django_q",
     "webpack_loader",

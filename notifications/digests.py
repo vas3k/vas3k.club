@@ -11,6 +11,7 @@ from club.exceptions import NotFound
 from comments.models import Comment, CommentVote
 from common.flat_earth import parse_horoscope
 from landing.models import GodSettings
+from misc.models import ProTip
 from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
@@ -225,6 +226,9 @@ def generate_weekly_digest(no_footer=False):
 
     issue_number = (end_date - settings.LAUNCH_DATE).days // 7
 
+    # Pro tips
+    pro_tip = ProTip.random_tip()
+
     og_params = urlencode({
         **settings.OG_IMAGE_GENERATOR_DEFAULTS,
         "title": f"Клубный журнал. Итоги недели. Выпуск #{issue_number}.",
@@ -246,6 +250,7 @@ def generate_weekly_digest(no_footer=False):
         "digest_title": digest_title,
         "digest_intro": digest_intro,
         "issue_number": issue_number,
+        "pro_tip": pro_tip,
         "is_footer_excluded": no_footer,
         "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}"
     })
