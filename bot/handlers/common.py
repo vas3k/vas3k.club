@@ -46,18 +46,27 @@ class PostRejectReason(Enum):
 def get_club_user(update: Update):
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
-        update.message.reply_text(
-            f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
-            parse_mode=ParseMode.HTML
-        )
+        if update.callback_query:
+            update.callback_query(text=f"☝️ Привяжи бота к профилю, братишка")
+        else:
+            update.message.reply_text(
+                f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
+                parse_mode=ParseMode.HTML
+            )
         return None
 
     if user.is_banned:
-        update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
+        if update.callback_query:
+            update.callback_query(text=f"🙈 Ты в бане, мы больше не дружим")
+        else:
+            update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
         return None
 
     if not user.is_member:
-        update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
+        if update.callback_query:
+            update.callback_query(text=f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
+        else:
+            update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
         return None
 
     return user

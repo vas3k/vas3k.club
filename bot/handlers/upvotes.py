@@ -41,7 +41,7 @@ def upvote(update: Update, context: CallbackContext) -> None:
                 user=user,
                 post=post,
             )
-            update.message.reply_text(f"➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц")
+            update.message.reply_text("➜ Заплюсовано 👍" if is_created else "➜ Ты уже плюсовал, поц")
 
     return None
 
@@ -62,9 +62,9 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
     )
 
     if is_created:
-        update.callback_query.answer(text=f"Комментарий заплюсован 👍")
+        update.callback_query.answer(text="Комментарий заплюсован 👍")
     else:
-        update.callback_query.answer(text=f"Вы уже плюсовали этот комментарий")
+        update.callback_query.answer(text="Вы уже плюсовали этот комментарий")
 
     return None
 
@@ -85,8 +85,8 @@ def upvote_post(update: Update, context: CallbackContext) -> None:
     )
 
     if is_created:
-        update.callback_query.answer(text=f"Пост заплюсован 👍")
+        update.callback_query.answer(text="Пост заплюсован 👍")
     else:
-        update.callback_query.answer(text=f"Вы уже плюсовали этот пост")
+        update.callback_query.answer(text="Вы уже плюсовали этот пост")
 
     return None
