@@ -184,7 +184,10 @@ class PostLinkForm(PostForm):
 
         parsed_url = parse_url_preview(cleaned_data.get("url"))
         if parsed_url:
-            self.instance.metadata = dict(parsed_url._asdict())
+            self.instance.metadata = {
+                **(self.instance.metadata or {}),
+                **dict(parsed_url._asdict())
+            }
             self.instance.url = parsed_url.url
             self.instance.image = parsed_url.favicon
 
@@ -387,14 +390,17 @@ class PostEventForm(PostForm):
             raise ValidationError({"event_day": "Несуществующая дата"})
 
         self.instance.metadata = {
-            "event": {
-                "day": cleaned_data["event_day"],
-                "month": cleaned_data["event_month"],
-                "time": str(cleaned_data["event_time"]),
-                "timezone": cleaned_data["event_timezone"],
-                "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
-                .utcoffset().total_seconds() // 60,
-                "location": cleaned_data["event_location"],
+            **(self.instance.metadata or {}),
+            **{
+                "event": {
+                    "day": cleaned_data["event_day"],
+                    "month": cleaned_data["event_month"],
+                    "time": str(cleaned_data["event_time"]),
+                    "timezone": cleaned_data["event_timezone"],
+                    "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
+                    .utcoffset().total_seconds() // 60,
+                    "location": cleaned_data["event_location"],
+                }
             }
         }
         return cleaned_data
