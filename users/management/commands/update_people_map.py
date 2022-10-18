@@ -16,6 +16,6 @@ class Command(BaseCommand):
 
         for user in users:
             print(f"Updating for {user.slug} ({user.country}, {user.city})...")
-            Geo.update_for_user(user)
+            Geo.update_for_user(user, fuzzy=True)
 
         self.stdout.write("Done 🥙")
