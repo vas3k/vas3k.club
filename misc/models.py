@@ -25,5 +25,5 @@ class ProTip(models.Model):
 
     @classmethod
     def random_tip(cls):
-        return cls.objects.order_by("?").first()
+        return cls.objects.filter(is_visible=True).order_by("?").first()
 
