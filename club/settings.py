@@ -198,7 +198,7 @@ GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
 GDPR_ARCHIVE_DELETE_TIMEDELTA = timedelta(hours=24)
 GDPR_DELETE_CODE_LENGTH = 14
 GDPR_DELETE_CONFIRMATION = "я готов удалиться навсегда"
-GDPR_DELETE_TIMEDELTA = timedelta(hours=3 * 24)
+GDPR_DELETE_TIMEDELTA = timedelta(hours=2 * 24)
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 
@@ -278,7 +278,7 @@ POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before 
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
-MAX_MUTE_COUNT = 5  # maximum number of users allowed to mute
+MAX_MUTE_COUNT = 10  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
