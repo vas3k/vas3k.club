@@ -13,6 +13,7 @@ from notifications.telegram.posts import notify_post_approved, announce_in_club_
     notify_post_rejected, notify_post_collectible_tag_owners
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
+from posts.models.subscriptions import PostSubscription
 from search.models import SearchIndex
 from users.models.user import User
 
@@ -154,6 +155,8 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     if not intro.published_at:
         intro.published_at = datetime.utcnow()
     intro.save()
+
+    PostSubscription.subscribe(user, intro, type=PostSubscription.TYPE_ALL_COMMENTS)
 
     SearchIndex.update_user_index(user)
 
