@@ -128,7 +128,7 @@ def upvote_post(request, post_slug):
         "post": {
             "upvotes": post.upvotes + (1 if is_vote_created else 0),
         },
-        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000)
+        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000) if post_vote else 0
     }
 
 

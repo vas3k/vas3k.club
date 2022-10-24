@@ -100,8 +100,13 @@ def link_summary(post):
 
 
 @register.filter
-def can_upvote(user, post_or_comment):
-    return bool(user and user != post_or_comment.author)
+def can_upvote_post(user, post):
+    return bool(user and user != post.author and user.slug not in post.coauthors)
+
+
+@register.filter
+def can_upvote_comment(user, comment):
+    return bool(user and user != comment.author)
 
 
 @register.filter

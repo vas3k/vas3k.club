@@ -56,7 +56,7 @@
                             initial-is-voted
                             initial-upvote-timestamp="{{comment.upvoted_at}}"
                          {% endif %}
-                         {% if not me|can_upvote:comment or upvote_disabled %}is-disabled{% endif %}>
+                         {% if not me|can_upvote_comment:comment or upvote_disabled %}is-disabled{% endif %}>
         </comment-upvote>
 
         {% if comment.is_pinned %}

@@ -25,7 +25,7 @@ class PostVote(models.Model):
 
     @classmethod
     def upvote(cls, user, post, request=None):
-        if not user.is_god and user.id == post.author_id:
+        if not user.is_god and (user.id == post.author_id or user.slug in post.coauthors):
             return None, False
 
         post_vote, is_vote_created = PostVote.objects.get_or_create(
@@ -39,6 +39,8 @@ class PostVote(models.Model):
         if is_vote_created:
             post.increment_vote_count()
             post.author.increment_vote_count()
+            if post.coauthors:
+                post.increment_coauthors_vote_count()
 
         return post_vote, is_vote_created
 
@@ -48,7 +50,7 @@ class PostVote(models.Model):
 
     @classmethod
     def retract_vote(cls, request, user, post):
-        if not user.is_god and user.id == post.author_id:
+        if not user.is_god and (user.id == post.author_id or user.slug in post.coauthors):
             return False
 
         try:
@@ -64,6 +66,8 @@ class PostVote(models.Model):
             if is_vote_deleted:
                 post.decrement_vote_count()
                 post.author.decrement_vote_count()
+                if post.coauthors:
+                    post.decrement_coauthors_vote_count()
 
                 return True if is_vote_deleted > 0 else False
         except PostVote.DoesNotExist:

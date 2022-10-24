@@ -172,6 +172,12 @@ class Post(models.Model, ModelDiffMixin):
     def decrement_vote_count(self):
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
 
+    def increment_coauthors_vote_count(self):
+        return User.objects.filter(slug__in=self.coauthors).update(upvotes=F("upvotes") + 1)
+
+    def decrement_coauthors_vote_count(self):
+        return User.objects.filter(slug__in=self.coauthors, upvotes__gt=0).update(upvotes=F("upvotes") - 1)
+
     def can_edit(self, user):
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
