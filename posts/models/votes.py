@@ -39,8 +39,6 @@ class PostVote(models.Model):
         if is_vote_created:
             post.increment_vote_count()
             post.author.increment_vote_count()
-            if post.coauthors:
-                post.increment_coauthors_vote_count()
 
         return post_vote, is_vote_created
 
@@ -66,8 +64,6 @@ class PostVote(models.Model):
             if is_vote_deleted:
                 post.decrement_vote_count()
                 post.author.decrement_vote_count()
-                if post.coauthors:
-                    post.decrement_coauthors_vote_count()
 
                 return True if is_vote_deleted > 0 else False
         except PostVote.DoesNotExist:

@@ -167,9 +167,13 @@ class Post(models.Model, ModelDiffMixin):
         return Post.objects.filter(id=self.id).update(view_count=F("view_count") + 1)
 
     def increment_vote_count(self):
+        if self.coauthors:
+            self.increment_coauthors_vote_count()
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
     def decrement_vote_count(self):
+        if self.coauthors:
+            self.decrement_coauthors_vote_count()
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
 
     def increment_coauthors_vote_count(self):
