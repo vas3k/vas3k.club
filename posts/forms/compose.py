@@ -89,15 +89,20 @@ class PostForm(forms.ModelForm):
         return topic
 
     def clean_coauthors(self):
-        coathors = self.cleaned_data.get("coauthors")
-        if not coathors:
+        coauthors = self.cleaned_data.get("coauthors")
+        if not coauthors:
             return []
 
-        non_existing_coauthors = [coauthor for coauthor in coathors if not User.objects.filter(slug=coauthor).exists()]
+        seen = set()
+        duplicated_coauthors = [coauthor for coauthor in coauthors if coauthor in seen or seen.add(coauthor)]
+        if duplicated_coauthors:
+            raise ValidationError("Пользователи уже соавторы: {}".format(', '.join(duplicated_coauthors)))
+
+        non_existing_coauthors = [coauthor for coauthor in coauthors if not User.objects.filter(slug=coauthor).exists()]
         if non_existing_coauthors:
             raise ValidationError("Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors)))
 
-        return coathors
+        return coauthors
 
 
 class PostTextForm(PostForm):

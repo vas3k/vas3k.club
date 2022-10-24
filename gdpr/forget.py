@@ -49,6 +49,15 @@ def delete_user_data(user: User):
     # delete draft and unpublished posts
     Post.objects.filter(author=user, is_visible=False).delete()
 
+    # remove user from coauthors
+    posts = Post.objects.filter(coauthors__contains=[old_slug])
+    for post in posts:
+        try:
+            post.coauthors.remove(old_slug)
+            post.save()
+        except ValueError:
+            pass
+
     # transfer visible post ownership to "@deleted" user
     deleted_user = User.objects.filter(slug=settings.DELETED_USERNAME).first()
     if deleted_user:
