@@ -89,4 +89,11 @@ LABELS = {
         "color": "#F7DC6F",
         "notify": False
     },
+    "inteview": {
+        "title": "Интервью",
+        "description": "Клубное интервью",
+        "emoji": "🎙",
+        "color": "#f75990",
+        "notify": False
+    },
 }
