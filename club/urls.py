@@ -108,7 +108,7 @@ urlpatterns = [
     path("achievements/", RedirectView.as_view(url="/stats", permanent=True), name="achievements"),
     path("stats/", stats, name="stats"),
 
-    path("profile/tag/<slug:tag_code>/toggle/", toggle_tag, name="toggle_tag"),
+    path("profile/tag/<str:tag_code>/toggle/", toggle_tag, name="toggle_tag"),
     path("profile/expertise/add/", add_expertise, name="add_expertise"),
     path("profile/expertise/<slug:expertise>/delete/", delete_expertise, name="delete_expertise"),
     path("profile/on_review/", on_review, name="on_review"),
