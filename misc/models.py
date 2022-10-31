@@ -24,6 +24,7 @@ class ProTip(models.Model):
         return super().save(*args, **kwargs)
 
     @classmethod
-    def random_tip(cls):
-        return cls.objects.filter(is_visible=True).order_by("?").first()
-
+    def weekly_tip(cls, seed: int):
+        tips = cls.objects.filter(is_visible=True)
+        number = seed % tips.count()
+        return tips[number]
