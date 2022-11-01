@@ -57,7 +57,7 @@ export default {
             window.addEventListener("scroll", onScroll);
             onScroll();
 
-            document.location.hash = `#${el.id}`;
+            document.location.replace(`#${el.id}`);
         },
         scrollExtreme(direction) {
             if (direction === "Down") {
