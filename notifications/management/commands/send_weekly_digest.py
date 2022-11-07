@@ -68,8 +68,7 @@ class Command(BaseCommand):
         for user in subscribed_users:
             self.stdout.write(f"Sending to {user.email}...")
 
-            if not options.get("production") and user.email not in dict(settings.ADMINS).values():
-                self.stdout.write("Test mode. Use --production to send the digest to all users")
+            if not options.get("production") and user.is_god:
                 continue
 
             try:
@@ -93,11 +92,12 @@ class Command(BaseCommand):
             # flush digest intro and title for next time
             GodSettings.objects.update(digest_intro=None, digest_title=None)
 
-        send_telegram_message(
-            chat=CLUB_CHANNEL,
-            text=render_html_message("weekly_digest_announce.html", post=post),
-            disable_preview=False,
-            parse_mode=telegram.ParseMode.HTML,
-        )
+            # announce on channel
+            send_telegram_message(
+                chat=CLUB_CHANNEL,
+                text=render_html_message("weekly_digest_announce.html", post=post),
+                disable_preview=False,
+                parse_mode=telegram.ParseMode.HTML,
+            )
 
         self.stdout.write("Done 🥙")
