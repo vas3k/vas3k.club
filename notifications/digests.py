@@ -200,6 +200,7 @@ def generate_weekly_digest(no_footer=False):
         .filter(is_deleted=False)\
         .exclude(post__type=Post.TYPE_BATTLE)\
         .exclude(post__is_visible=False)\
+        .exclude(post__is_approved_by_moderator=False)\
         .exclude(post__is_visible_in_feeds=False)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]

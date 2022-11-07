@@ -68,7 +68,7 @@ class Command(BaseCommand):
         for user in subscribed_users:
             self.stdout.write(f"Sending to {user.email}...")
 
-            if not options.get("production") and user.is_god:
+            if not options.get("production") and not user.is_god:
                 continue
 
             try:
