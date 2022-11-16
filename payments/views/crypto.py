@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render
 
 from payments.exceptions import PaymentNotFound, PaymentAlreadyFinalized
@@ -17,6 +17,8 @@ log = logging.getLogger()
 
 
 def crypto(request):
+    raise Http404()  # turned off
+
     product_code = request.GET.get("product_code") or "club1"
 
     # find product by code
