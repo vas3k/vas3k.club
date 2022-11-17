@@ -111,7 +111,8 @@ def profile_posts(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
     posts = Post.objects_for_user(request.me) \
-        .filter(author=user, is_visible=True) \
+        .filter(is_visible=True) \
+        .filter(Q(author=user) | Q(coauthors__contains=[user.slug])) \
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST]) \
         .order_by("-published_at")
 
