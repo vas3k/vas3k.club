@@ -44,7 +44,7 @@ def email_login(request):
         return set_session_cookie(response, user, session)
     else:
         # email/nickname login
-        user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
+        user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug__iexact=email_or_login)).first()
         if not user:
             return render(request, "error.html", {
                 "title": "Такого юзера нет 🤔",
