@@ -38,6 +38,13 @@ def pay(request):
             "message": "Выберите что вы хотите купить или насколько пополнить свою карту"
         })
 
+    # filter our legacy products
+    if product_code.startswith("legacy"):
+        return render(request, "error.html", {
+            "title": "Это устаревший тариф ☠️",
+            "message": "По этому коду больше нельзя совершать покупки, выберите другой"
+        })
+
     payment_data = {}
     now = datetime.utcnow()
 
