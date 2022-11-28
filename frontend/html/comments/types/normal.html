@@ -99,7 +99,7 @@
             <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-edit"></i></a>
         {% endif %}
 
-        {% if me and comment.post.is_commentable %}
+        {% if me and me.is_active_membership and comment.post.is_commentable %}
             <span class="comment-footer-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
         {% endif %}
     </div>

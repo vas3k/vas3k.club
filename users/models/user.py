@@ -198,6 +198,10 @@ class User(models.Model, ModelDiffMixin):
         return self.is_member and self.membership_expires_at >= datetime.utcnow()
 
     @property
+    def is_active_membership(self):
+        return self.membership_expires_at >= datetime.utcnow()
+
+    @property
     def secret_auth_code(self):
         return f"{self.email}|-{self.secret_hash}"
 

@@ -101,12 +101,12 @@ def link_summary(post):
 
 @register.filter
 def can_upvote_post(user, post):
-    return bool(user and user != post.author and user.slug not in post.coauthors)
+    return bool(user and user.is_active_membership and user != post.author and user.slug not in post.coauthors)
 
 
 @register.filter
 def can_upvote_comment(user, comment):
-    return bool(user and user != comment.author)
+    return bool(user and user.is_active_membership and user != comment.author)
 
 
 @register.filter

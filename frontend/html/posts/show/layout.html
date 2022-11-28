@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="post-comments-title-left">
-                        {% if me %}
+                        {% if me and me.is_active_membership %}
                             <post-subscription
                                 url="{% url "toggle_post_subscription" post.slug %}"
                                 {% if subscription %}is-active-by-default{% endif %}
@@ -81,7 +81,7 @@
                     </div>
                 {% endif %}
 
-                {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
+                {% if me and me.is_active_membership and post.is_commentable and post.is_visible or me.is_moderator %}
                     <div class="post-comments-form" id="post-comments-form">
                         {% include "comments/forms/comment.html" with post=post form=comment_form %}
                     </div>
@@ -101,6 +101,10 @@
 
         {% if me and not post.is_commentable %}
             {% include "posts/widgets/not_commentable.html" %}
+        {% endif %}
+
+        {% if me and not me.is_active_membership %}
+            {% include "posts/widgets/membership_expired.html" %}
         {% endif %}
 
         {% if not me %}

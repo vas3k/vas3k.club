@@ -84,7 +84,7 @@
         </div>
 
         <div class="post-event-rsvp">
-            {% if me %}
+            {% if me and me.is_active_membership %}
                 <post-rsvp
                     url="{% url "toggle_post_subscription" post.slug %}"
                     {% if subscription %}is-active-by-default{% endif %}
