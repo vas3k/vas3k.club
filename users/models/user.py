@@ -195,7 +195,7 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def is_active_member(self):
-        return self.is_member and self.membership_expires_at >= datetime.utcnow()
+        return self.is_member and self.is_active_membership
 
     @property
     def is_active_membership(self):
