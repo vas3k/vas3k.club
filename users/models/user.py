@@ -137,12 +137,12 @@ class User(models.Model, ModelDiffMixin):
             "membership_started_at": self.membership_started_at.isoformat(),
             "membership_expires_at": self.membership_expires_at.isoformat(),
             "moderation_status": self.moderation_status,
-            "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
+            "payment_status": "active" if self.is_active_membership else "inactive",
             "company": self.company,
             "position": self.position,
             "city": self.city,
             "country": self.country,
-            "is_active_member": self.is_active_member,
+            "is_active_profile": self.is_active_profile,
         }
 
     def update_last_activity(self):
@@ -194,12 +194,12 @@ class User(models.Model, ModelDiffMixin):
                and self.deleted_at is None
 
     @property
-    def is_active_member(self):
-        return self.is_member and self.is_active_membership
-
-    @property
     def is_active_membership(self):
         return self.membership_expires_at >= datetime.utcnow()
+
+    @property
+    def is_active_profile(self):
+        return self.is_member and self.is_active_membership
 
     @property
     def secret_auth_code(self):
