@@ -113,7 +113,7 @@
                     {% elif user.deleted_at %}
                         <span class="profile-status-icon">🏃‍♀️</span>
                         <span class="profile-status-text">удалился из Клуба</span>
-                    {% elif not user.is_active_profile %}
+                    {% elif not user.is_active_member %}
                         <span class="profile-status-icon">️😴</span>
                         <span class="profile-status-text">аккаунт неактивен</span>
                     {% else %}
