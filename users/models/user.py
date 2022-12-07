@@ -137,7 +137,7 @@ class User(models.Model, ModelDiffMixin):
             "membership_started_at": self.membership_started_at.isoformat(),
             "membership_expires_at": self.membership_expires_at.isoformat(),
             "moderation_status": self.moderation_status,
-            "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
+            "payment_status": "active" if self.is_active_membership else "inactive",
             "company": self.company,
             "position": self.position,
             "city": self.city,
