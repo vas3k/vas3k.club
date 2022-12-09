@@ -137,7 +137,7 @@ class User(models.Model, ModelDiffMixin):
             "membership_started_at": self.membership_started_at.isoformat(),
             "membership_expires_at": self.membership_expires_at.isoformat(),
             "moderation_status": self.moderation_status,
-            "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
+            "payment_status": "active" if self.is_active_membership else "inactive",
             "company": self.company,
             "position": self.position,
             "city": self.city,
@@ -195,7 +195,11 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def is_active_member(self):
-        return self.is_member and self.membership_expires_at >= datetime.utcnow()
+        return self.is_member and self.is_active_membership
+
+    @property
+    def is_active_membership(self):
+        return self.membership_expires_at >= datetime.utcnow()
 
     @property
     def secret_auth_code(self):
