@@ -97,7 +97,7 @@
         {% endblock %}
 
         {% block post_footer %}
-            {% if me and me.is_active_membership and collectible_tag %}
+            {% if me and collectible_tag %}
                 {% include "posts/widgets/collectible_tag.html" %}
             {% endif %}
 
