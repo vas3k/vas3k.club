@@ -106,7 +106,7 @@ ACHIEVEMENTS = [
     ("2022", {
         "name": "2022",
         "description": "Призовое место в итогах 2022 года",
-        "image": "https://i.vas3k.club/6fa17ce1ed30e2030f517ef252b76305ed8d0c62e645d8a30cf20616744e7f25.jpg",
+        "image": "https://vas3k.club/static/images/achievements/2022.png",
         "style": "background-color: #BE3435; font-size: 190%;",
     }),
     ("mic", {
