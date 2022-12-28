@@ -262,13 +262,6 @@
 
                     {% if tag_group.list.0.group == "club" %}
                         <div class="profile-tags-footer">
-                            {% if user.contact %}
-                                <strong>Для связи:</strong> {{ user.contact | urlize }}<br>
-                                {% if user.id != me.id %}
-                                    <small>Не забудьте сказать, что вы из Вастрик.Клуба</small>
-                                {% endif %}
-                            {% endif %}
-
                             {% if user.id == me.id %}
                                 <small><br>Для абстрактных тегов типа «ищу работу» или «могу научить» не забудьте рассказать подробности в интро. Это поможет другим вас найти!</small>
                             {% endif %}
