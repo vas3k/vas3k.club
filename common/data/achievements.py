@@ -217,6 +217,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/Jammer.png",
         "style": "background-color: #55BBE0; font-size: 120%;",
     }),
+    ("music_jam_3", {
+        "name": "Faller",
+        "description": "За участие в осеннем депрессивном челлендже 2022",
+        "image": "https://vas3k.club/static/images/achievements/Faller.png",
+        "style": "background-color: #176273; font-size: 120%;",
+    }),
     ("mydudes", {
         "name": "Золотая лягуха",
         "description": "Всем среда, мои чуваки!",
