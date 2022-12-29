@@ -42,14 +42,6 @@ module.exports = {
                 ],
             },
             {
-                test: /\.css$/,
-                include: /node_modules/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    { loader: 'css-loader', options: { importLoaders: 1 } },
-                ],
-            },
-            {
                 test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
                 use: [{
                     loader: "file-loader",
@@ -70,7 +62,7 @@ module.exports = {
     resolve: {
         alias: {
             vue: mode === "production" ? "vue/dist/vue.min.js" : "vue/dist/vue.js",
-            "vue-mapbox": "vue-mapbox/dist/vue-mapbox.umd.min.js",
+            "vue-mapbox-ho": "vue-mapbox-ho/dist/vue-mapbox.min.js",
         }
     }
 };
