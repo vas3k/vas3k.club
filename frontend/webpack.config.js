@@ -42,6 +42,14 @@ module.exports = {
                 ],
             },
             {
+                test: /\.css$/,
+                include: /node_modules/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    { loader: 'css-loader', options: { importLoaders: 1 } },
+                ],
+            },
+            {
                 test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
                 use: [{
                     loader: "file-loader",
