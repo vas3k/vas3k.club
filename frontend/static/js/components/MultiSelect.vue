@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { debounce } from "../common/utils";
+import { debounce, emojiValidationRegex } from "../common/utils";
 
 
 export default {
@@ -109,12 +109,16 @@ export default {
             selectValue: null,
             formValue: null,
             options: [],
+            emojiValidationRegex: emojiValidationRegex,
         };
     },
     computed: {
         validationRe() {
             if (!this.validationRegExp) {
                 return null;
+            }
+            if (this.validationRegExp === "emojiValidationRegex") {
+                return new RegExp(this.emojiValidationRegex);
             }
 
             return new RegExp(this.validationRegExp);

@@ -1,3 +1,5 @@
+import emojiRegex from "emoji-regex";
+
 export const findParentForm = (element) => {
     let form = element.parentElement;
 
@@ -81,3 +83,5 @@ export const debounce = (func, wait, immediate) => {
         }
     };
 }
+
+export const emojiValidationRegex = `^(${emojiRegex()}) .+$`

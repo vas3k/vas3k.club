@@ -38,7 +38,8 @@
     "twemoji": "^13.0.2",
     "vue": "^2.6.11",
     "vue-select": "^3.18.3",
-    "vue-mapbox": "^0.4.1"
+    "vue-mapbox": "^0.4.1",
+    "emoji-regex": "^10.2.1"
   },
   "husky": {
     "hooks": {
