@@ -39,7 +39,7 @@
     "vue": "^2.6.11",
     "vue-select": "^3.18.3",
     "vue-mapbox": "^0.4.1",
-    "emoji-regex": "^10.2.1"
+    "emoji-regex": "^8.0.0"
   },
   "husky": {
     "hooks": {
