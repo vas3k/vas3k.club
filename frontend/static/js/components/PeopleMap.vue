@@ -16,7 +16,7 @@
 <script>
 import Mapbox from "mapbox-gl";
 
-import { MglMap, MglNavigationControl, MglGeolocateControl, MglMarker } from "vue-mapbox";
+import { MglMap, MglNavigationControl, MglGeolocateControl, MglMarker } from "vue-mapbox-ho";
 
 export default {
     name: "PeopleMap",
