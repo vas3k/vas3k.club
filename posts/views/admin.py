@@ -7,6 +7,7 @@ from posts.admin import do_post_admin_actions, do_post_curator_actions
 from posts.forms.admin import PostAdminForm, PostAnnounceForm, PostCuratorForm
 from posts.helpers import extract_any_image
 from posts.models.post import Post
+from posts.renderers import render_post
 
 
 @auth_required
@@ -44,6 +45,17 @@ def admin_post(request, post_slug):
         "title": "Админить пост",
         "post": post,
         "form": form
+    })
+
+
+@auth_required
+@curator_role_required
+def full_view_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    return render_post(request, post, {
+        "post_last_view_at": None,
+        "linked_posts": [],
+        "full_view": True,
     })
 
 
