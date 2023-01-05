@@ -25,7 +25,7 @@ def profile(request, user_slug):
     if user_slug == "me":
         return redirect("profile", request.me.slug, permanent=False)
 
-    user = get_object_or_404(User, slug=user_slug)
+    user = get_object_or_404(User, slug__iexact=user_slug)
 
     if user.moderation_status != User.MODERATION_STATUS_APPROVED and not request.me.is_moderator:
         # hide unverified users
