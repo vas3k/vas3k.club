@@ -4,6 +4,6 @@
 {% endif %}{% if comment.title %}
 <b>{{ comment.title }}</b>
 {% endif %}
-{% load posts %}<b>{{ comment.author.full_name }}:</b> {% render_plain comment %}
+{% load posts %}<b>{{ comment.author.full_name }}:</b> {% render_plain comment 3000 %}
 
 <i>↩ Вы можете ответить просто реплайнув на это сообщение</i>

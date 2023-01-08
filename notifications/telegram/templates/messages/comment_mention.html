@@ -1,5 +1,5 @@
 💬 <b>Кто-то упомянул вас в комментарии под постом «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b>
 
-{% load posts %}<b>{{ comment.author.full_name }}:</b> {% render_plain comment %}
+{% load posts %}<b>{{ comment.author.full_name }}:</b> {% render_plain comment 3000 %}
 
 <i>↩ Вы можете ответить просто реплайнув на это сообщение</i>
