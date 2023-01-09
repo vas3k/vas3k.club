@@ -4,6 +4,6 @@
 {% endif %}{% if comment.title %}
 <b>{{ comment.title }}</b>
 {% endif %}
-{% load posts %}<b>{{ comment.author.full_name }}:</b> {% render_plain comment %}
+{% load posts %}<b>{{ comment.author.full_name }}:</b> {% render_plain comment 3000 %}
 
 <a href="{{ settings.APP_HOST }}{% url "show_comment" comment.post.slug comment.id %}#comment-{{ comment.id }}">Посмотреть ➜</a>

@@ -31,7 +31,7 @@ def send_telegram_message(
     try:
         return bot.send_message(
             chat_id=chat.id,
-            text=text,
+            text=text[:4096],
             parse_mode=parse_mode,
             disable_web_page_preview=disable_preview,
             **kwargs
