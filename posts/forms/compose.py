@@ -89,7 +89,7 @@ class PostForm(forms.ModelForm):
         return topic
 
     def clean_coauthors(self):
-        coauthors = self.cleaned_data.get("coauthors")
+        coauthors = [coauthor.replace("@", "", 1) for coauthor in self.cleaned_data.get("coauthors")]
         if not coauthors:
             return []
 
