@@ -563,6 +563,10 @@
             font-size: 110%;
         }
 
+    .text-body-type-deleted-comment {
+        background: linear-gradient(to right, var(--bg-color), var(--bg-color) calc(100% - 72px), #fdd);
+    }
+
     .text-body > *:first-child {
         margin-top: 0;
         padding-top: 0;

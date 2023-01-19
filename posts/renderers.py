@@ -15,6 +15,9 @@ POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
 
 def render_post(request, post, context=None):
+    full_view = context.get("full_view") and (request.me.is_moderator or request.me.is_curator)
+    if context.get("full_view") and not full_view:
+        raise AccessDenied()
     # render "raw" newsletters
     if post.type == Post.TYPE_WEEKLY_DIGEST:
         return HttpResponse(post.html)
@@ -45,7 +48,7 @@ def render_post(request, post, context=None):
         comments = comments.order_by(comment_order, "created_at")  # additionally sort by time to preserve an order
 
     # hide deleted comments for battle (visual junk)
-    if post.type == Post.TYPE_BATTLE:
+    if post.type == Post.TYPE_BATTLE and not full_view:
         comments = comments.filter(is_deleted=False)
 
     comment_form = CommentForm(initial={'text': post.comment_template}) if post.comment_template else CommentForm()

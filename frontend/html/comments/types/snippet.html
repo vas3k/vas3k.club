@@ -36,7 +36,7 @@
         <span class="upvote upvote-disabled upvote-type-small">{{ comment.upvotes }}</span>
     </div>
     <div class="comment-body">
-        <div class="text-body text-body-type-comment">
+        <div class="text-body text-body-type-comment {% if comment.is_deleted and full_view %}text-body-type-deleted-comment{% endif %}">
             {% render_comment comment %}
         </div>
     </div>

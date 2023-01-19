@@ -48,7 +48,7 @@ def comment_tree(comments):
 
 @register.simple_tag(takes_context=True)
 def render_comment(context, comment):
-    if comment.is_deleted:
+    if comment.is_deleted and not context['full_view']:
         if comment.deleted_by == comment.author_id:
             by_who = " его автором"
         elif comment.deleted_by == comment.post.author_id:

@@ -109,7 +109,7 @@
 
         {% if comments %}
             <div class="post-comments-list">
-                {% include "comments/list.html" with comments=comments reply_form=reply_form type="battle" %}
+                {% include "comments/list.html" with comments=comments reply_form=reply_form type="battle" full_view=full_view %}
             </div>
         {% endif %}
 
