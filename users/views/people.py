@@ -21,7 +21,12 @@ def people(request):
 
     query = request.GET.get("query")
     if query:
-        users = users.filter(index__index=SearchQuery(query, config="russian"))
+        users = users.filter(
+            index__index=(
+                SearchQuery(query, config="simple", search_type="websearch") |
+                SearchQuery(query, config="russian", search_type="websearch")
+            )
+        )
 
     tags = request.GET.getlist("tags")
     if tags:
