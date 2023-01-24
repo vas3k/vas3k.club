@@ -22,7 +22,7 @@
                 </p>
 
                 <ul>
-                    <li>☠️ <b>Все данные из вашего профиля, включая интро, места работы и хобби, удаляются из базы навсегда</b>. Восстановить аккаунт не получится даже через саппорт.</li>
+                    <li>☠️ <b>Все данные из вашего профиля, включая интро, места работы, бейджики, удаляются из базы навсегда</b>. Восстановить аккаунт не получится даже через саппорт.</li>
                     <li>☠️ Обнуляется подписка на блог, чаты и другие зависимые от Клуба проекты.</li>
                     <li>☠️ <b>Все ваши посты станут анонимными</b>. Под ними могут остаться комментарии других людей, которые не хотели бы их терять. Вы можете очистить содержимое своих постов при желании.</li>
                     <li>☠️ <b>Ваши комментарии тоже анонимизируются</b>, чтобы не ломать ветки обсуждений. Вы всегда можете удалить их руками или написать нам.</li>
@@ -35,7 +35,7 @@
             </div>
 
             <div class="block-description block-description-center">
-                <form action="{% url "request_delete_account" user.slug %}" method="post" onsubmit="return confirm('Точно?')">
+                <form action="{% url "request_delete_account" %}" method="post" onsubmit="return confirm('Точно?')">
                     {% csrf_token %}
                     <input type="text" name="confirm" placeholder="{{ settings.GDPR_DELETE_CONFIRMATION }}" style="width: 280px;" required>
                     <button type="submit" class="button button-small button-red">Подтверждаю</button>

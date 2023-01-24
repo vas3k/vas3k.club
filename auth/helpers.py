@@ -11,6 +11,12 @@ from users.models.user import User
 
 log = logging.getLogger(__name__)
 
+PATH_PREFIXES_WITHOUT_AUTH = [
+    "/profile/",
+    "/auth/",
+    "/intro/",
+]
+
 
 def authorized_user(request):
     user, _ = authorized_user_with_session(request)
@@ -84,35 +90,31 @@ def auth_required(view):
 
 
 def check_user_permissions(request, **context):
+    if any(request.path.startswith(prefix) for prefix in PATH_PREFIXES_WITHOUT_AUTH):
+        return None
+
     if not request.me:
         return render(request, "auth/access_denied.html", context)
 
-    # FIXME: really bad IF, fix it
-    if not request.path.startswith("/profile/") \
-            and not request.path.startswith("/auth/") \
-            and not request.path.startswith("/intro/") \
-            and not request.path.startswith("/network/") \
-            and not request.path.startswith("/messages/"):
+    if not request.me.is_active_membership:
+        log.info("User membership expired. Redirecting to payments page...")
+        return redirect("membership_expired")
 
-        if not request.me.is_active_membership:
-            log.info("User membership expired. Redirecting to payments page...")
-            return redirect("membership_expired")
+    if request.me.is_banned:
+        log.info("User was banned. Redirecting to 'banned' page...")
+        return redirect("banned")
 
-        if request.me.is_banned:
-            log.info("User was banned. Redirecting to 'banned' page...")
-            return redirect("banned")
+    if request.me.moderation_status == User.MODERATION_STATUS_INTRO:
+        log.info("New user. Redirecting to intro...")
+        return redirect("intro")
 
-        if request.me.moderation_status == User.MODERATION_STATUS_INTRO:
-            log.info("New user. Redirecting to intro...")
-            return redirect("intro")
+    if request.me.moderation_status == User.MODERATION_STATUS_REJECTED:
+        log.info("Rejected user. Redirecting to 'rejected' page...")
+        return redirect("rejected")
 
-        if request.me.moderation_status == User.MODERATION_STATUS_REJECTED:
-            log.info("Rejected user. Redirecting to 'rejected' page...")
-            return redirect("rejected")
-
-        if request.me.moderation_status == User.MODERATION_STATUS_ON_REVIEW:
-            log.info("User on review. Redirecting to 'on_review' page...")
-            return redirect("on_review")
+    if request.me.moderation_status == User.MODERATION_STATUS_ON_REVIEW:
+        log.info("User on review. Redirecting to 'on_review' page...")
+        return redirect("on_review")
 
     return None
 

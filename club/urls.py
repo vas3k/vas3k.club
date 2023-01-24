@@ -91,6 +91,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/friends/", friends, name="friends"),
     path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
     path("user/<slug:user_slug>/muted/", muted, name="muted"),
+
     path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
     path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
     path("user/<slug:user_slug>/edit/account/", edit_account, name="edit_account"),
@@ -100,8 +101,6 @@ urlpatterns = [
     path("user/<slug:user_slug>/edit/data/", edit_data, name="edit_data"),
     path("user/<slug:user_slug>/edit/data/request/", request_data, name="request_user_data"),
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
-    path("user/<slug:user_slug>/delete/", request_delete_account, name="request_delete_account"),
-    path("user/<slug:user_slug>/delete/confirm/", confirm_delete_account, name="confirm_delete_account"),
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
@@ -114,6 +113,8 @@ urlpatterns = [
     path("profile/on_review/", on_review, name="on_review"),
     path("profile/rejected/", rejected, name="rejected"),
     path("profile/banned/", banned, name="banned"),
+    path("profile/delete/", request_delete_account, name="request_delete_account"),
+    path("profile/delete/confirm/", confirm_delete_account, name="confirm_delete_account"),
 
     path("create/", compose, name="compose"),
     path("create/<slug:post_type>/", compose_type, name="compose_type"),

@@ -41,11 +41,30 @@
 
         {% include "payments/blocks/packages.html" %}
 
-        <br><br><br><br>
+        <br>
 
         <input type="hidden" name="email" value="{{ me.email }}">
 
         <button type="submit" class="button button-big join-button">Продлить 🤙</button>
 
     </form>
+
+
+    <div class="block membership-expired" style="margin-top: 280px;">
+        <div class="membership-expired-title">☠️ Хотите удалиться полностью?</div>
+
+        <div class="membership-expired-description">
+            <p>
+                Без проблем. Напишите «{{ settings.GDPR_DELETE_CONFIRMATION }}» в поле внизу — это запустит процесс удаления вашего профиля из Клуба.
+            </p>
+        </div>
+
+        <div class="membership-expired-description">
+            <form action="{% url "request_delete_account" %}" method="post" onsubmit="return confirm('Точно?')">
+                {% csrf_token %}
+                <input type="text" name="confirm" placeholder="{{ settings.GDPR_DELETE_CONFIRMATION }}" style="width: 300px;" required>
+                <button type="submit" class="button button-small button-red">Подтверждаю</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}
