@@ -31,5 +31,10 @@
         <button type="submit" class="button button-big join-button">Перейти к оплате</button>
 
         </form>
+
+        <div class="block pay-warning" style="margin-top: 100px;">
+            ⚠️ Платежи из <strong>России и некоторых банков Беларуси</strong> больше не проходят из-за санкций.
+            Альтернативные опции оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
+        </div>
     </div>
 {% endblock %}

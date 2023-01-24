@@ -127,6 +127,10 @@
         text-decoration: none;
     }
 
+    .doc a {
+        font-weight: bold;
+    }
+
     .doc h1 {
         font-size: 230%;
     }
