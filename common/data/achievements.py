@@ -229,6 +229,12 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.ru/3d916eda28fb4a9625e32788db339b429f14a7614fbf510bb35d23ac8335c372.png",
         "style": "background-color: #FFCE30;",
     }),
+    ("astrophoto", {
+        "name": "Космо-папарации",
+        "description": "За участие в мероприятии астрофотографов",
+        "image": "https://vas3k.club/static/images/achievements/astrophoto.png",
+        "style": "background-color: #200836; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
