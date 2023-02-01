@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import F

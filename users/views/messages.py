@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from users.models.user import User
 
 

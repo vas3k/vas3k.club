@@ -1,13 +1,14 @@
 from django.conf import settings
+from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
-from auth.helpers import auth_switch
-from auth.views.auth import login, logout, debug_dev_login, debug_random_login, debug_login, join
-from auth.views.email import email_login, email_login_code
-from auth.views.external import external_login
-from auth.views.patreon import patreon_login, patreon_oauth_callback
+from authn.helpers import auth_switch
+from authn.views.auth import login, logout, debug_dev_login, debug_random_login, debug_login, join
+from authn.views.email import email_login, email_login_code
+from authn.views.external import external_login
+from authn.views.patreon import patreon_login, patreon_oauth_callback
 from badges.views import create_badge_for_post, create_badge_for_comment
 from club import features
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
@@ -169,6 +170,7 @@ urlpatterns = [
 
     # admin features
     path("godmode/", godmode_settings, name="godmode_settings"),
+    path("godmode/admin/", admin.site.urls),
     path("godmode/network/", godmode_network_settings, name="godmode_network_settings"),
     path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
     path("godmode/invite/", godmode_invite, name="godmode_invite"),

@@ -6,7 +6,7 @@ from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 from django_q.tasks import async_task
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
 from search.models import SearchIndex

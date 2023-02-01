@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 from django_q.tasks import async_task
 
-from auth.helpers import api_required
+from authn.helpers import api_required
 from club.exceptions import ApiAccessDenied
 from notifications.email.invites import send_invite_renewed_email
 from payments.helpers import gift_membership_days

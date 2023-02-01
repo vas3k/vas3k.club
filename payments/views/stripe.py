@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from payments.exceptions import PaymentException
 from payments.models import Payment
 from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT

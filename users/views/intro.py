@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django_q.tasks import async_task
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from notifications.telegram.users import notify_profile_needs_review
 from posts.models.post import Post
 from users.forms.intro import UserIntroForm

@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from club.exceptions import AccessDenied, NotFound
 
 from common.request import ajax_request

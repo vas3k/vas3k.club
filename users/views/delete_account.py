@@ -4,8 +4,8 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django_q.tasks import async_task
 
-from auth.helpers import auth_required
-from auth.models import Code, Session
+from authn.helpers import auth_required
+from authn.models import Code, Session
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from club.exceptions import BadRequest, AccessDenied
 from gdpr.models import DataRequests

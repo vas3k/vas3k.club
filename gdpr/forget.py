@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db.models import Value
 from django.db.models.functions import Replace
 
-from auth.models import Session, Code
+from authn.models import Session, Code
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models.post import Post

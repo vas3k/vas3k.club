@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from common.pagination import paginate
 from posts.models.post import Post
 

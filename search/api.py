@@ -1,6 +1,6 @@
 from django.http import Http404, JsonResponse
 
-from auth.helpers import api_required
+from authn.helpers import api_required
 from tags.models import Tag
 from users.models.user import User
 

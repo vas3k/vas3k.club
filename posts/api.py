@@ -1,7 +1,7 @@
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 
-from auth.helpers import api_required
+from authn.helpers import api_required
 from posts.models.post import Post
 
 

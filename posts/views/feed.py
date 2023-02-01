@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from club import features
 from common.feature_flags import feature_switch, noop
 from common.pagination import paginate

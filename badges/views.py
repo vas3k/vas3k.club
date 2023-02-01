@@ -3,7 +3,7 @@ from datetime import datetime
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from badges.models import Badge, UserBadge
 from club.exceptions import BadRequest
 from comments.models import Comment

@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
-from auth.helpers import check_user_permissions, auth_required
+from authn.helpers import check_user_permissions, auth_required
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
 from common.request import ajax_request
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm

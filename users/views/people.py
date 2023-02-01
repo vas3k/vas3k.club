@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from common.models import group_by, top
 from common.pagination import paginate
 from tags.models import Tag

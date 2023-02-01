@@ -7,7 +7,7 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import render, redirect
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from club.exceptions import AccessDenied
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings

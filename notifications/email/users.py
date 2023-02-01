@@ -1,6 +1,6 @@
 from django.template import loader, TemplateDoesNotExist
 
-from auth.models import Code
+from authn.models import Code
 from bot.handlers.common import UserRejectReason
 from notifications.email.sender import send_club_email
 from users.models.user import User

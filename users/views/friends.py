@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from common.request import ajax_request
 from common.pagination import paginate
 from users.models.friends import Friend

@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from club.exceptions import AccessDenied
 from notifications.telegram.users import notify_admin_user_on_mute
 from users.models.mute import Muted

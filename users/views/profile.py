@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from badges.models import UserBadge
 from comments.models import Comment
 from common.pagination import paginate

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from common.pagination import paginate
 from search.models import SearchIndex
 

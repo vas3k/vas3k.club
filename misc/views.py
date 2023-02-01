@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
 from icalendar import Calendar, Event
 
-from auth.helpers import auth_required
+from authn.helpers import auth_required
 from badges.models import UserBadge
 from landing.models import GodSettings
 from users.models.achievements import Achievement

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
-from auth.helpers import api_required
+from authn.helpers import api_required
 from club.exceptions import ApiAccessDenied
 from users.models.user import User
 

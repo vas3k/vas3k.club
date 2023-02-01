@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from auth.helpers import authorized_user_with_session
+from authn.helpers import authorized_user_with_session
 from club.exceptions import ClubException, ApiException
 
 
