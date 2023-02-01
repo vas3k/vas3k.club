@@ -354,7 +354,7 @@ class ViewPatreonLoginTests(TestCase):
                                  fetch_redirect_response=False)
 
 
-@patch('auth.views.patreon.patreon')
+@patch('authn.views.patreon.patreon')
 class ViewPatreonOauthCallbackTests(TestCase):
     @classmethod
     def setUpTestData(cls):
