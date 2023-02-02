@@ -361,6 +361,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
         # Set up data for the whole TestCase
         cls.new_user: User = User.objects.create(
             email="existed-user@email.com",
+            patreon_id="12345",
             membership_started_at=datetime.now() - timedelta(days=5),
             membership_expires_at=datetime.now() + timedelta(days=5),
             slug="ujlbu4"
@@ -379,7 +380,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
         self.stub_patreon_response_oauth_identity = None  # doesn't need for now
         self.stub_parse_membership = Membership(
             platform=Platform.patreon,
-            user_id=str(uuid.uuid4()),
+            user_id="12345",
             full_name="PatreonMember FullName",
             email="platform@patreon.com",
             image="http://xxx.url",
@@ -414,6 +415,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
         mocked_patreon.fetch_user_data.return_value = self.stub_patreon_response_oauth_identity
         membership = self.stub_parse_membership
         membership.email = "existed-user@email.com"
+        membership.user_id = "12345"
         membership.lifetime_support_cents = 100500
         mocked_patreon.parse_active_membership.return_value = membership
 
@@ -425,7 +427,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
                              fetch_redirect_response=False)
         self.assertTrue(self.client.is_authorised())
         # user updated attributes
-        created_user: User = User.objects.filter(email="existed-user@email.com").get()
+        created_user: User = User.objects.filter(patreon_id="12345").get()
         self.assertIsNotNone(created_user)
         self.assertEqual(created_user.membership_expires_at, membership.expires_at)
         self.assertEqual(created_user.balance, 1005)  # 100500 / 100
