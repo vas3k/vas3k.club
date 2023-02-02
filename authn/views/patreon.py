@@ -77,7 +77,7 @@ def patreon_oauth_callback(request):
     now = datetime.utcnow()
 
     # get user by patreon_id or email
-    user = User.objects.filter(Q(patreon_id=membership.user_id) | Q(email=membership.email.lower())).first()
+    user = User.objects.filter(patreon_id=membership.user_id).first()
     if not user:
         # user is new, do not allow patreon users to register
         return render(request, "error.html", {
