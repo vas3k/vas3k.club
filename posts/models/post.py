@@ -134,6 +134,9 @@ class Post(models.Model, ModelDiffMixin):
         db_table = "posts"
         ordering = ["-created_at"]
 
+    def __str__(self):
+        return f"Post: {self.title}"
+
     def to_dict(self):
         return {
             "id": str(self.id),
