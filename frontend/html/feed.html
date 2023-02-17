@@ -72,7 +72,7 @@
         {% endif %}
 
         {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" or ordering == "top_year" %}
-            <select class="feed-ordering-item" onchange="location.href = location.protocol + '//' + location.host + location.pathname + '../' + event.target.value">
+            <select class="feed-ordering-item" onchange="location.href = location.protocol + '//' + location.host + location.pathname + '../' + event.target.value + '/'">
                 <option value="top" {% if ordering == "top" %}selected{% endif %}>вообще</option>
                 <option value="top_year" {% if ordering == "top_year" %}selected{% endif %}>за год</option>
                 <option value="top_month" {% if ordering == "top_month" %}selected{% endif %}>за месяц</option>
