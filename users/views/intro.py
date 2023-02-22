@@ -11,7 +11,7 @@ from users.models.user import User
 
 @auth_required
 def intro(request):
-    if request.me.moderation_status == User.MODERATION_STATUS_APPROVED:
+    if request.me and request.me.moderation_status == User.MODERATION_STATUS_APPROVED:
         return redirect("profile", request.me.slug)
 
     if request.method == "POST":
