@@ -13,6 +13,7 @@ class BadgesAdmin(admin.ModelAdmin):
         "is_visible",
     )
     ordering = ("-created_at",)
+    search_fields = ["title"]
 
 
 admin.site.register(Badge, BadgesAdmin)

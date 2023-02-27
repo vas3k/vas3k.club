@@ -20,6 +20,7 @@ class PostsAdmin(admin.ModelAdmin):
         "is_public",
     )
     ordering = ("-created_at",)
+    search_fields = ["title", "slug"]
 
 
 admin.site.register(Post, PostsAdmin)
@@ -38,6 +39,7 @@ class TopicsAdmin(admin.ModelAdmin):
         "is_visible_in_feeds",
     )
     ordering = ("slug",)
+    search_fields = ["slug", "name"]
 
 
 admin.site.register(Topic, TopicsAdmin)

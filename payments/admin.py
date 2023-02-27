@@ -14,6 +14,7 @@ class PaymentsAdmin(admin.ModelAdmin):
         "status",
     )
     ordering = ("-created_at",)
+    search_fields = ["reference"]
 
 
 admin.site.register(Payment, PaymentsAdmin)

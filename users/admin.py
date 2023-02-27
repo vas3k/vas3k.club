@@ -22,11 +22,63 @@ class UsersAdmin(admin.ModelAdmin):
         "moderation_status",
     )
     ordering = ("-created_at",)
+    search_fields = ["slug", "email", "full_name"]
 
 
 admin.site.register(User, UsersAdmin)
 
-admin.site.register(Achievement)
-admin.site.register(UserAchievement)
-admin.site.register(Friend)
-admin.site.register(Muted)
+
+class AchievementsAdmin(admin.ModelAdmin):
+    list_display = (
+        "code",
+        "name",
+        "image",
+        "description",
+        "style",
+        "index",
+        "is_visible",
+    )
+    ordering = ("index",)
+    search_fields = ["code", "name"]
+
+
+admin.site.register(Achievement, AchievementsAdmin)
+
+
+class UserAchievementsAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "achievement",
+        "created_at",
+    )
+    ordering = ("-created_at",)
+
+
+admin.site.register(UserAchievement, UserAchievementsAdmin)
+
+
+class FriendsAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_from",
+        "user_to",
+        "created_at",
+        "is_subscribed_to_posts",
+        "is_subscribed_to_comments",
+    )
+    ordering = ("-created_at",)
+
+
+admin.site.register(Friend, FriendsAdmin)
+
+
+class MutedAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_from",
+        "user_to",
+        "created_at",
+        "comment",
+    )
+    ordering = ("-created_at",)
+
+
+admin.site.register(Muted, MutedAdmin)

@@ -12,6 +12,7 @@ class TagsAdmin(admin.ModelAdmin):
         "is_visible",
     )
     ordering = ("name", "group")
+    search_fields = ["code", "name"]
 
 
 admin.site.register(Tag, TagsAdmin)

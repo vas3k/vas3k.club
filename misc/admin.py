@@ -12,6 +12,7 @@ class ProTipsAdmin(admin.ModelAdmin):
         "is_visible",
     )
     ordering = ("-created_at",)
+    search_fields = ["title", "text"]
 
 
 admin.site.register(ProTip, ProTipsAdmin)

@@ -8,9 +8,6 @@ class AppsAdmin(admin.ModelAdmin):
         "id",
         "name",
         "owner",
-        "jwt_secret",
-        "jwt_algorithm",
-        "jwt_expire_hours",
         "redirect_urls",
         "service_token",
     )

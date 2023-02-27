@@ -16,6 +16,7 @@ class CommentsAdmin(admin.ModelAdmin):
         "is_deleted",
     )
     ordering = ("-created_at",)
+    search_fields = ["text"]
 
 
 admin.site.register(Comment, CommentsAdmin)

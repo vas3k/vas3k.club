@@ -2,7 +2,6 @@ from datetime import datetime
 from urllib.parse import urlencode, parse_qsl
 
 from django.conf import settings
-from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
