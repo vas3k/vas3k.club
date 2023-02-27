@@ -28,7 +28,7 @@ from posts.api import md_show_post, api_show_post
 from posts.models.post import Post
 from posts.rss import NewPostsRss
 from posts.sitemaps import sitemaps
-from posts.views.admin import admin_post, announce_post, curate_post
+from posts.views.admin_actions import admin_post, announce_post, curate_post
 from posts.views.api import toggle_post_bookmark
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
@@ -45,7 +45,7 @@ from users.views.profile import profile, toggle_tag, add_expertise, delete_exper
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
     edit_bot, edit_data, request_data
 from users.views.intro import intro
-from users.views.admin import admin_profile
+from users.views.admin_actions import admin_profile
 from users.views.people import people
 from search.api import api_search_users, api_search_tags
 

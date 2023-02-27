@@ -89,9 +89,15 @@ def do_user_admin_actions(request, user, data):
         if not user.is_god:
             user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
             user.save()
+
+            # send email and other notifs
             if data["ban_days"] > 0:
                 send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
                 notify_admin_user_on_ban(user, days=data["ban_days"], reason=data["ban_reason"])
+
+            # cancel subscriptions for long bans
+            if data["ban_days"] > 30 and user.is_banned_until > user.membership_expires_at:
+                cancel_all_stripe_subscriptions(user.stripe_id)
 
     # Unmoderate
     if data["is_rejected"]:
