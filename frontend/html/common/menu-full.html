@@ -1,5 +1,10 @@
 {% load static %}
 <nav class="menu menu-full">
+    <div class="menu-burger">
+        <span onclick="document.getElementById('app').classList.toggle('mobile-menu-opened')">
+            ≡
+        </span>
+    </div>
     <div class="menu-left">
         <a href="{% url "index" %}" class="menu-logo">
             Вастрик<img src="{% static "images/logo/logo-128.png" %}" alt=" x " width="26" height="26">Клуб
@@ -17,12 +22,20 @@
     <div class="menu-right">
         {% if me %}
             {% if me.is_member %}
-                <a href="{% url "compose" %}" class="button menu-button menu-button-compose"><i class="fas fa-pen"></i><span class="compose-btn-text">&nbsp;&nbsp;Пиши</span></a>
-                <a href="{% url "bookmarks" %}" class="menu-button menu-button-bookmark"><i class="fa fa-bookmark"></i>&nbsp;&nbsp;</a>
+                <a href="{% url "compose" %}" class="button menu-button menu-button-compose">
+                    <i class="fas fa-pen"></i>
+                    <span class="menu-button-compose-text">Пиши</span>
+                </a>
+                <a href="{% url "bookmarks" %}" class="menu-button menu-button-bookmark">
+                    <i class="fa fa-bookmark"></i>
+                </a>
+                {% if me.is_god %}
+                    <a href="{% url "godmode_settings" %}" class="menu-button menu-button-godmode"><i class="fa fa-bomb"></i></a>
+                {% endif %}
             {% endif %}
-            <a href="{% url "profile" me.slug %}" class="avatar menu-avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" /></a>
+            <a href="{% url "profile" me.slug %}" class="avatar menu-avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}"></a>
         {% else %}
-            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar"><img src="{% static "images/test/avatar.png"%}" alt="Аватар" /></a>
+            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar"><img src="{% static "images/test/avatar.png"%}" alt="Аватар"></a>
         {% endif %}
     </div>
 </nav>

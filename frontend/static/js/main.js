@@ -20,7 +20,6 @@ Vue.component("user-expertise-window", () => import("./components/UserExpertiseW
 Vue.component("user-tag", () => import("./components/UserTag.vue"));
 Vue.component("people-map", () => import("./components/PeopleMap.vue"));
 Vue.component("user-avatar-input", () => import("./components/UserAvatarInput.vue"));
-Vue.component("sidebar-toggler", () => import("./components/SidebarToggler.vue"));
 Vue.component("stripe-checkout-button", () => import("./components/StripeCheckoutButton.vue"));
 Vue.component("input-length-counter", () => import("./components/InputLengthCounter.vue"));
 Vue.component("friend-button", () => import("./components/FriendButton.vue"));

@@ -1,3 +1,118 @@
+.people-wrapper {
+    display: grid;
+    grid-template-columns: 320px minmax(auto, 1fr);
+    grid-template-rows: 90px 100px 500px auto;
+    justify-content: stretch;
+    align-items: flex-start;
+    column-gap: 20px;
+    row-gap: 20px;
+    margin: 0 auto;
+    position: relative;
+    max-width: var(--max-content-width);
+}
+
+    .people-title {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 2;
+        justify-self: start;
+        z-index: 100;
+        font-size: 220%;
+        font-weight: 500;
+        padding-top: 30px;
+    }
+
+        .people-title a {
+            text-decoration: none;
+        }
+
+    .people-search {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+        justify-self: start;
+        z-index: 100;
+        width: 100%;
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .people-search-text,
+        .people-search-country {
+            display: block;
+            padding: 10px;
+            font-size: 145%;
+        }
+
+            .people-search-text > input,
+            .people-search-country > select {
+                display: block;
+                position: relative;
+                appearance: none;
+                -webkit-appearance: none;
+                border: none;
+                resize: vertical;
+            }
+
+            .people-search-text {
+                width: 100%;
+                min-width: 200px;
+                max-width: 400px;
+                margin-right: 20px;
+            }
+
+                .people-search-text > input {
+                    width: 100%;
+                }
+
+            .people-search-country > select {
+                width: 200px;
+            }
+
+    .people-results {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 4;
+        grid-row-end: 5;
+        justify-self: start;
+        z-index: 100;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .people-wrapper {
+            grid-template-columns: auto;
+            grid-template-rows: 100px 250px auto;
+        }
+
+        .people-title {
+            display: none;
+        }
+
+        .people-search {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 1;
+            grid-row-end: 2;
+        }
+
+        .people-filters {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 3;
+            grid-row-end: 4;
+        }
+
+        .people-results {
+            grid-column-start: 1;
+            grid-column-end: 2;
+            grid-row-start: 4;
+            grid-row-end: 5;
+        }
+    }
+
 .people {
     max-width: 100%;
 }
@@ -64,62 +179,13 @@
         line-height: 30px;
     }
 
-.people-wrapper {
-    margin: 0 auto;
-    position: relative;
-    max-width: var(--max-content-width);
-}
-
-.people-title {
-    font-size: 220%;
-    font-weight: 500;
-    padding-top: 30px;
-}
-
-    .people-title a {
-        text-decoration: none;
-    }
-
-.people-search {
-    width: 100%;
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-    .people-search-text,
-    .people-search-country {
-        display: block;
-        padding: 10px;
-        font-size: 145%;
-    }
-
-        .people-search-text > input,
-        .people-search-country > select {
-            display: block;
-            position: relative;
-            appearance: none;
-            -webkit-appearance: none;
-            border: none;
-            resize: vertical;
-        }
-
-        .people-search-text {
-            width: 100%;
-            min-width: 200px;
-            max-width: 400px;
-            margin-right: 20px;
-        }
-
-            .people-search-text > input {
-                width: 100%;
-            }
-
-        .people-search-country > select {
-            width: 200px;
-        }
-
 .people-filters {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 6;
+    justify-self: start;
+    z-index: 100;
     display: block;
     background-color: var(--block-bg-color);
     border-radius: var(--block-border-radius);

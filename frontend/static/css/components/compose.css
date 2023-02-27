@@ -8,10 +8,6 @@
         .compose {
             font-size: 80%;
         }
-
-        .compose-btn-text {
-            display: none;
-        }
     }
 
     .compose-types {

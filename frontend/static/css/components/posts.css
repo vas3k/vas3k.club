@@ -963,3 +963,92 @@
         font-size: 150%;
         margin: 0;
     }
+
+.post-comments {
+    padding-top: 80px;
+}
+
+    .post-comments-title {
+        font-size: 110%;
+        font-weight: 500;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        scroll-margin-top: 20px;
+    }
+
+    .post-comments-count {
+        font-size: 160%;
+        text-decoration: none;
+    }
+
+    .post-comments-list {
+        padding-top: 25px;
+        padding-bottom: 40px;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .post-comments-list {
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+        }
+
+    .post-comments-form {
+        padding-top: 30px;
+        padding-left: 10px;
+    }
+
+    .post-comments-rules {
+        padding-top: 50px;
+        padding-left: 90px;
+        padding-right: 30px;
+    }
+
+        .post-comments-rules ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .post-comments-rules {
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
+    .post-comments-order {
+        display: inline-block;
+        margin-left: 10px;
+        opacity: 0.7;
+    }
+
+        .post-comments-order select {
+            position: relative;
+            padding: 4px 7px;
+            top: -4px;
+        }
+
+    .post-comments-subscription {
+        display: inline-block;
+        position: relative;
+        top: -3px;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: var(--button-border-radius);
+        border: var(--button-border);
+    }
+
+        .post-comments-subscription.is-subscribed {
+            background-color: var(--button-bg-color);
+            border: var(--button-border);
+            color: var(--button-color);
+        }
+
+        .post-comments-subscription > * {
+            cursor: pointer;
+        }
+
+        .post-comments-subscription > input {
+            margin-right: 5px;
+        }
