@@ -566,6 +566,11 @@
                 text-align: left;
             }
 
+            .profile-note-footer {
+                padding-top: 20px;
+                opacity: 0.8;
+            }
+
         .profile-note-extended {
             opacity: 1;
             width: 100%;

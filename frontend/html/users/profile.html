@@ -180,6 +180,12 @@
                         </div>
                     {% endfor %}
                 {% endif %}
+
+                {% if not note.text and not moderator_notes %}
+                    <div class="profile-note-footer">
+                        Заметка видна только вам, сам пользователь ничего не узнает 😈
+                    </div>
+                {% endif %}
             </form>
         </div>
 
