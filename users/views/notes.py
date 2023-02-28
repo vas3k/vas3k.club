@@ -1,0 +1,25 @@
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
+
+from authn.helpers import auth_required
+from users.models.notes import UserNote
+from users.models.user import User
+
+
+@auth_required
+def edit_note(request, user_slug):
+    if request.method != "POST":
+        raise Http404()
+
+    user_to = get_object_or_404(User, slug=user_slug)
+    text = request.POST.get("text")
+
+    UserNote.objects.update_or_create(
+        user_from=request.me,
+        user_to=user_to,
+        defaults=dict(
+            text=(text or "").strip()
+        )
+    )
+
+    return redirect("profile", user_slug)

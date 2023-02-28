@@ -157,6 +157,32 @@
             </a>
         {% endif %}
 
+        <div class="profile-note {% if note.text or moderator_notes %}profile-note-extended{% endif %}" id="profile-note">
+            <label for="profile-note-form-text" class="profile-note-title" onclick="document.getElementById('profile-note').classList.toggle('profile-note-extended');">
+                {% if not note.text %}
+                    ✏️ Оставить заметку об этом юзере
+                {% else %}
+                    📝 Ваша заметка об этом юзере
+                {% endif %}
+            </label>
+
+            <form action="{% url "edit_note" user.slug %}" method="post" class="profile-note-form">
+                <textarea name="text" class="profile-note-form-text" id="profile-note-form-text">{{ note.text | default:"" }}</textarea>
+
+                <button type="submit" class="button button-small profile-note-form-button">
+                    Сохранить
+                </button>
+
+                {% if moderator_notes %}
+                    {% for moderator_note in moderator_notes %}
+                        <div class="profile-note-moderator">
+                            <strong>{{ moderator_note.user_from.slug }}</strong>: {{ moderator_note.text }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </form>
+        </div>
+
         {% if intro %}
             <div class="block profile-intro">
                 <div class="profile-header">
