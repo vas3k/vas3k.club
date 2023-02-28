@@ -12,14 +12,20 @@ def edit_note(request, user_slug):
         raise Http404()
 
     user_to = get_object_or_404(User, slug=user_slug)
-    text = request.POST.get("text")
+    text = request.POST.get("text") or ""
 
-    UserNote.objects.update_or_create(
-        user_from=request.me,
-        user_to=user_to,
-        defaults=dict(
-            text=(text or "").strip()
+    if not text.strip():
+        UserNote.objects.filter(
+            user_from=request.me,
+            user_to=user_to
+        ).delete()
+    else:
+        UserNote.objects.update_or_create(
+            user_from=request.me,
+            user_to=user_to,
+            defaults=dict(
+                text=text.strip()
+            )
         )
-    )
 
     return redirect("profile", user_slug)
