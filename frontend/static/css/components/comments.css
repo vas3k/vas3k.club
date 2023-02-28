@@ -294,9 +294,15 @@
             .comment-header-author-name {
                 text-decoration: none;
                 font-weight: 500;
+                padding-right: 5px;
             }
 
             .comment-header-author-position {
+                opacity: 0.7;
+            }
+
+            .comment-header-author-note {
+                font-weight: 500;
                 opacity: 0.7;
             }
 

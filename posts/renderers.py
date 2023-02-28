@@ -10,6 +10,7 @@ from posts.models.subscriptions import PostSubscription
 from posts.models.votes import PostVote
 from tags.models import Tag, UserTag
 from users.models.mute import Muted
+from users.models.notes import UserNote
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
@@ -21,12 +22,13 @@ def render_post(request, post, context=None):
 
     # select votes and comments
     if request.me:
-        comments = Comment.objects_for_user(request.me).filter(post=post).all()
+        comments = Comment.objects_for_user(request.me).filter(post=post).all()  # do not add more joins here! it slows down a lot!
         is_bookmark = PostBookmark.objects.filter(post=post, user=request.me).exists()
         is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
         upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
         subscription = PostSubscription.get(request.me, post)
         muted_user_ids = list(Muted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True).all())
+        user_notes = dict(UserNote.objects.filter(user_from=request.me).values_list("user_to", "text").all()[:100])
         collectible_tag = Tag.objects.filter(code=post.collectible_tag_code).first() if post.collectible_tag_code else None
         is_collectible_tag_collected = UserTag.objects.filter(tag=collectible_tag, user=request.me).exists() if collectible_tag else False
     else:
@@ -36,6 +38,7 @@ def render_post(request, post, context=None):
         upvoted_at = None
         subscription = None
         muted_user_ids = []
+        user_notes = {}
         collectible_tag = None
         is_collectible_tag_collected = False
 
@@ -61,6 +64,7 @@ def render_post(request, post, context=None):
         "upvoted_at": upvoted_at,
         "subscription": subscription,
         "muted_user_ids": muted_user_ids,
+        "user_notes": user_notes,
         "collectible_tag": collectible_tag,
         "is_collectible_tag_collected": is_collectible_tag_collected,
     }

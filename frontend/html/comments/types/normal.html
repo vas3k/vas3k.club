@@ -24,7 +24,11 @@
                 >
                     {{ comment.author.full_name }}
                 </a>
-                <span class="comment-header-author-position">, {{ comment.author.position }}</span>
+                {% if comment.author_id in user_notes %}
+                    <span class="comment-header-author-note">{{ user_notes|lookup:comment.author_id|truncatechars:128 }}</span>
+                {% else %}
+                    <span class="comment-header-author-position">{{ comment.author.position }}</span>
+                {% endif %}
                 {% if comment.author.hat %}{% include "users/widgets/hat.html" with hat=comment.author.hat %}{% endif %}
                 {% if comment.author == post.author %}{% include "users/widgets/hat_author.html" %}{% endif %}
                 {% if me and comment.author_id != me.id and not comment.metadata.badges and not comment.author.deleted_at %}

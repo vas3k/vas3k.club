@@ -23,6 +23,10 @@
                 {{ comment.author.full_name }}
             </a>
 
+            {% if comment.author_id in user_notes %}
+                <span class="comment-header-author-note">{{ user_notes|lookup:comment.author_id|truncatechars:50 }}</span>
+            {% endif %}
+
             <a href="#comment-{{ comment.id }}" class="reply-date">
                 {{ comment.created_at | cool_date }}
             </a>

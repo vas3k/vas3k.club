@@ -35,6 +35,11 @@ def ceil(value):
 
 
 @register.filter
+def lookup(obj, key):
+    return obj.get(key)
+
+
+@register.filter
 def floor(value):
     return math.floor(value or 0)
 
