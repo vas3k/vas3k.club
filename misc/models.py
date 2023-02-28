@@ -28,3 +28,40 @@ class ProTip(models.Model):
         tips = cls.objects.filter(is_visible=True)
         number = seed % tips.count()
         return tips[number]
+
+
+class NetworkGroup(models.Model):
+    code = models.CharField(max_length=32, primary_key=True)
+
+    title = models.TextField(null=False)
+    text = models.TextField(null=True, blank=True)
+    index = models.PositiveIntegerField(default=0)
+    is_visible = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "network_groups"
+        ordering = ["index"]
+
+    @classmethod
+    def visible_objects(cls):
+        return cls.objects.filter(is_visible=True)
+
+
+class NetworkItem(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+
+    group = models.ForeignKey(NetworkGroup, related_name="items", db_index=True, null=True, on_delete=models.SET_NULL)
+
+    name = models.CharField(max_length=128, null=True, blank=True)
+    description = models.CharField(max_length=256, null=True, blank=True)
+    image = models.URLField(null=False)
+    icon = models.CharField(max_length=256, null=True, blank=True)
+    url = models.URLField(null=False)
+
+    telegram_chat_id = models.CharField(max_length=32, null=True, blank=True)
+
+    index = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = "network_items"
+        ordering = ["index"]

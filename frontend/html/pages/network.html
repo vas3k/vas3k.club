@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% load static %}
 {% load users %}
+{% load text_filters %}
 
 {% block title %}
     Сеть — {{ block.super }}
@@ -23,6 +24,53 @@
 
 {% block content %}
     <div class="content network">
-        {{ page_html | safe }}
+        <div class="network-title">Сеть Клуба</div>
+
+        <div class="network-description">
+            Здесь мы собираем все наши чатики и прочие официальные представительства Клуба в Большом Интернете.
+        </div>
+
+        {% if not network %}
+            <div class="block network-block">
+                <a class="network-header">Тут пока ничего нет :(</a>
+                <p>
+                    Добавьте чатики в таблички network_groups и network_items через админку, тогда они появятся здесь.
+                </p>
+            </div>
+        {% endif %}
+
+        {% for group in network %}
+            <div class="block network-block" id="{{ group.code }}">
+                <a href="#{{ group.code }}" class="network-header">{{ group.title }}</a>
+
+                {% if group.items %}
+                    <div class="network-channels">
+                        {% for item in group.items.all %}
+                            <a href="{{ item.url }}" target="_blank" class="network-channel">
+                                {% if item.image %}
+                                    <span class="avatar network-channel-icon"><img src="{{ item.image }}" alt="{{ item.name }}"></span>
+                                {% endif %}
+
+                                {% if item.icon %}
+                                    <span class="network-channel-badge">{{ item.icon | safe }}</span>
+                                {% endif %}
+
+                                {% if item.name %}
+                                    <span class="network-channel-name">{{ item.name | safe  }}</span>
+                                {% endif %}
+
+                                {% if item.description %}
+                                    <span class="network-channel-description">{{ item.description | safe }}</span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="network-channel-text">
+                    {{ group.text | markdown }}
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

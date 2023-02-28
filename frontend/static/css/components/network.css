@@ -76,6 +76,7 @@
                 display: block;
                 padding-top: 10px;
                 text-decoration: underline;
+                font-weight: 500;
             }
 
             .network-channel-description {
@@ -105,7 +106,7 @@
                     }
         }
 
-        .network-channel-footer {
+        .network-channel-text {
             font-size: 90%;
-            padding-top: 40px;
+            padding: 10px;
         }
