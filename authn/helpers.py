@@ -90,11 +90,11 @@ def auth_required(view):
 
 
 def check_user_permissions(request, **context):
-    if any(request.path.startswith(prefix) for prefix in PATH_PREFIXES_WITHOUT_AUTH):
-        return None
-
     if not request.me:
         return render(request, "auth/access_denied.html", context)
+
+    if any(request.path.startswith(prefix) for prefix in PATH_PREFIXES_WITHOUT_AUTH):
+        return None
 
     if not request.me.is_active_membership:
         log.info("User membership expired. Redirecting to payments page...")
