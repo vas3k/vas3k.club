@@ -69,7 +69,7 @@ class ViewsAuthTests(TestCase):
 
     def test_logout_unauthorised(self):
         response = self.client.post(reverse('logout'))
-        self.assertRedirects(response=response, expected_url=f'/', fetch_redirect_response=False)
+        self.assertTrue(self.client.is_access_denied(response))
         self.assertFalse(self.client.is_authorised())
 
     def test_logout_wrong_method(self):
