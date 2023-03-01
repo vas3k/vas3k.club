@@ -30,7 +30,7 @@ def is_club_member(callback):
 
         if str(update.effective_user.id) not in set(club_users):
             if update.callback_query:
-                update.callback_query(text=f"☝️ Привяжи бота к профилю, братишка")
+                update.callback_query.answer(text=f"☝️ Привяжи бота к профилю, братишка")
             else:
                 update.message.reply_text(
                     f"☝️ Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
