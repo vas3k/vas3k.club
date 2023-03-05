@@ -59,18 +59,18 @@ def people(request):
         tags_with_stats = Tag.tags_with_stats()
         tag_stat_groups = group_by(tags_with_stats, "group", todict=True)
         tag_stat_groups.update({
-            "travel": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
+            "travel": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
                 "can_coffee", "can_city", "can_beer", "can_office", "can_sleep",
             }],
-            "grow": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
+            "grow": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
                 "can_advice", "can_project", "can_teach", "search_idea",
                 "can_idea", "can_invest", "search_mentor", "can_mentor", "can_hobby"
             }],
-            "work": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
+            "work": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
                 "can_refer", "search_employees", "search_job", "search_remote", "search_relocate"
             }],
             "collectible": [
-                tag for tag in tag_stat_groups[Tag.GROUP_COLLECTIBLE] if tag.user_count > 1
+                tag for tag in tag_stat_groups.get(Tag.GROUP_COLLECTIBLE, []) if tag.user_count > 1
             ][:20]
         })
         cache.set("people_tag_stat_groups", tag_stat_groups, TAGS_CACHE_TIMEOUT_SECONDS)
