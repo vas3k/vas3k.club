@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from authn.helpers import authorized_user
-from authn.models import Apps
+from authn.models.session import Apps
 
 
 def external_login(request):

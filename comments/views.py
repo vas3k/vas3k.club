@@ -4,12 +4,14 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_http_methods
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
-from common.request import parse_ip_address, parse_useragent, ajax_request
+from common.request import parse_ip_address, parse_useragent
+from authn.decorators.api import api
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -19,7 +21,7 @@ from search.models import SearchIndex
 log = logging.getLogger(__name__)
 
 
-@auth_required
+@require_auth
 def create_comment(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if not post.is_commentable and not request.me.is_moderator:
@@ -97,7 +99,7 @@ def show_comment(request, post_slug, comment_id):
     )
 
 
-@auth_required
+@require_auth
 def edit_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -146,7 +148,7 @@ def edit_comment(request, comment_id):
     })
 
 
-@auth_required
+@require_auth
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -191,7 +193,7 @@ def delete_comment(request, comment_id):
     return redirect("show_comment", comment.post.slug, comment.id)
 
 
-@auth_required
+@require_auth
 def pin_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -213,12 +215,9 @@ def pin_comment(request, comment_id):
     return redirect("show_comment", comment.post.slug, comment.id)
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def upvote_comment(request, comment_id):
-    if request.method != "POST":
-        raise Http404()
-
     comment = get_object_or_404(Comment, id=comment_id)
 
     post_vote, is_created = CommentVote.upvote(
@@ -235,12 +234,9 @@ def upvote_comment(request, comment_id):
     }
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def retract_comment_vote(request, comment_id):
-    if request.method != "POST":
-        raise Http404()
-
     comment = get_object_or_404(Comment, id=comment_id)
 
     is_retracted = CommentVote.retract_vote(

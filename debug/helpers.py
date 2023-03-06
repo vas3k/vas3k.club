@@ -4,7 +4,7 @@ import json
 from django.test import Client
 from django.urls import reverse
 
-from authn.models import Session
+from authn.models.session import Session
 
 
 class JWT_STUB_VALUES:

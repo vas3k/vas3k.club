@@ -186,6 +186,7 @@ input[type=number],
 input[type=file],
 input[type=email],
 input[type=time],
+input[type=url],
 textarea,
 select,
 .CodeMirror,
@@ -229,6 +230,17 @@ select,
         transform: scale(1.01);
         transition: all linear .2s;
     }
+
+pre > code {
+    display: block;
+    padding: 15px 20px;
+    white-space: pre-wrap;
+    background-color: var(--opposite-block-bg-color);
+    color: var(--opposite-text-color);
+    border-radius: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 
 .battle-side-a-color {
     color: #4C98D5;

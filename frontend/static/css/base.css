@@ -28,6 +28,10 @@
             padding-bottom: 0.8em;
         }
 
+        .block-description a {
+            font-weight: 600;
+        }
+
     .block-header {
         display: block;
         font-size: 200%;
@@ -37,6 +41,10 @@
         padding-bottom: 20px;
         margin: 0 auto;
     }
+
+        .block-header-big {
+            font-size: 300%;
+        }
 
     .block-subheader {
         display: block;

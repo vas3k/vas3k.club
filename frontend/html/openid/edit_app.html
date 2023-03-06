@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Приложение: {{ app.name }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="profile-header">
+            Приложение: {{ app.name }}
+        </div>
+
+        <div class="block">
+            <div class="block-header">🪙 Важные штуки</div>
+
+            <div class="block-description">
+                <strong>OAuth Client ID:</strong>
+                <pre><code>{{ app.client_id }}</code></pre>
+            </div>
+
+            <div class="block-description">
+                <strong>OAuth Client Secret:</strong>
+                <pre><code>{{ app.client_secret }}</code></pre>
+            </div>
+
+            <div class="block-description">
+                <strong>OpenID Configuration:</strong>
+                <pre><code>{{ settings.APP_HOST }}{% url "openid_well_known_configuration" %}</code></pre>
+            </div>
+
+            <div class="block-description">
+                <strong>Service Token:</strong>
+                <pre><code>{{ app.service_token }}</code></pre>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="block-header">✍️ Редактировать приложение</div>
+
+            <div class="block-description">
+                <form action="." method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% for row in form %}
+                        <div class="form-row">
+                            <label for="{{ row.id_for_label }}" class="form-label">
+                                {{ row.label }}
+                            </label>
+                            {{ row }}
+                            {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="button">Сохранить</button>
+                </form>
+            </div>
+        </div>
+
+        <br><br><br><br>
+
+        <div class="block">
+            <div class="block-header">☢️ Опасная зона ☢️</div>
+
+            <div class="block-description block-description-center">
+                <form action="{% url "delete_app" app.id %}" method="post">
+                    <button class="button button-red" onclick="return confirm('Точно удалить? Все токены будут обнулены');">Удалить приложение</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from authn.exceptions import PatreonException
 from authn.helpers import set_session_cookie
-from authn.models import Session
+from authn.models.session import Session
 from authn.providers import patreon
 from club import features
 from common.feature_flags import feature_required

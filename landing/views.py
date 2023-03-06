@@ -7,7 +7,7 @@ from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import render, redirect
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings
@@ -43,7 +43,7 @@ def docs(request, doc_slug):
     return render(request, f"docs/{doc_slug}.html")
 
 
-@auth_required
+@require_auth
 def godmode_settings(request):
     if not request.me.is_god:
         raise AccessDenied()
@@ -51,7 +51,7 @@ def godmode_settings(request):
     return render(request, "admin/godmode.html")
 
 
-@auth_required
+@require_auth
 def godmode_network_settings(request):
     if not request.me.is_god:
         raise AccessDenied()
@@ -69,7 +69,7 @@ def godmode_network_settings(request):
     return render(request, "admin/simple_form.html", {"form": form})
 
 
-@auth_required
+@require_auth
 def godmode_digest_settings(request):
     if not request.me.is_god:
         raise AccessDenied()
@@ -87,7 +87,7 @@ def godmode_digest_settings(request):
     return render(request, "admin/simple_form.html", {"form": form})
 
 
-@auth_required
+@require_auth
 def godmode_invite(request):
     if not request.me.is_god:
         raise AccessDenied()

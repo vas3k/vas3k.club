@@ -6,7 +6,7 @@ from django.test import TestCase
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
-from authn.models import Code
+from authn.models.session import Code
 from club.exceptions import RateLimitException, InvalidCode
 from users.models.user import User
 

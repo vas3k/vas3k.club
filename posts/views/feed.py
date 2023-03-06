@@ -1,29 +1,19 @@
 from datetime import datetime, timedelta
 
 from django.db.models import Q
-from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from club import features
 from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
+from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed
 from posts.models.post import Post
 from posts.models.topics import Topic
 from users.models.mute import Muted
 
-POST_TYPE_ALL = "all"
 
-ORDERING_ACTIVITY = "activity"
-ORDERING_NEW = "new"
-ORDERING_HOT = "hot"
-ORDERING_TOP = "top"
-ORDERING_TOP_WEEK = "top_week"
-ORDERING_TOP_MONTH = "top_month"
-ORDERING_TOP_YEAR = "top_year"
-
-
-@feature_switch(features.PRIVATE_FEED, yes=auth_required, no=noop)
+@feature_switch(features.PRIVATE_FEED, yes=require_auth, no=noop)
 def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
     post_type = post_type or Post
 
@@ -38,10 +28,11 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
         posts = posts.filter(type=post_type)
 
     # filter by topic
-    topic = None
     if topic_slug:
         topic = get_object_or_404(Topic, slug=topic_slug)
         posts = posts.filter(topic=topic)
+    else:
+        topic = None
 
     # filter by label
     if label_code:
@@ -57,7 +48,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
     if not request.me:
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
 
-    # exclude shadow banned posts, but show them in "new" tab
+    # exclude shadow-banned posts from main feed, but show them in "new" tab
     if ordering != ORDERING_NEW:
         if request.me:
             posts = posts.exclude(Q(is_shadow_banned=True) & ~Q(author_id=request.me.id))
@@ -69,31 +60,9 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
         posts = posts.filter(is_visible_in_feeds=True)
 
     # order posts by some metric
-    if ordering:
-        if ordering == ORDERING_ACTIVITY:
-            posts = posts.order_by("-last_activity_at")
-        elif ordering == ORDERING_NEW:
-            posts = posts.order_by("-published_at", "-created_at")
-        elif ordering == ORDERING_TOP:
-            posts = posts.order_by("-upvotes")
-        elif ordering == ORDERING_HOT:
-            posts = posts.order_by("-hotness")
-        elif ordering == ORDERING_TOP_WEEK:
-            posts = posts.filter(
-                published_at__gte=datetime.utcnow() - timedelta(days=7)
-            ).order_by("-upvotes")
-        elif ordering == ORDERING_TOP_MONTH:
-            posts = posts.filter(
-                published_at__gte=datetime.utcnow() - timedelta(days=31)
-            ).order_by("-upvotes")
-        elif ordering == ORDERING_TOP_YEAR:
-            posts = posts.filter(
-                published_at__gte=datetime.utcnow() - timedelta(days=365)
-            ).order_by("-upvotes")
-        else:
-            raise Http404()
+    posts = sort_feed(posts, ordering)
 
-    # split results into pinned and unpinned posts on main page
+    # for main page — add pinned posts
     pinned_posts = []
     if ordering == ORDERING_ACTIVITY:
         pinned_posts = posts.filter(is_pinned_until__gte=datetime.utcnow())

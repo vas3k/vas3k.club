@@ -1,16 +1,16 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django_q.tasks import async_task
 
-from authn.helpers import api_required
+from authn.decorators.api import api
 from club.exceptions import ApiAccessDenied
 from notifications.email.invites import send_invite_renewed_email
 from payments.helpers import gift_membership_days
 from users.models.user import User
 
 
-@api_required
+@api(require_auth=True)
 @require_POST
 def api_gift_days(request, days, user_slug):
     from_user = request.me

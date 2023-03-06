@@ -1,0 +1,36 @@
+.apps-list {
+    padding: 20px 0;
+}
+
+.apps-list-placeholder {
+    text-align: center;
+    padding: 50px 20px;
+    font-size: 120%;
+    opacity: 0.7;
+}
+
+.apps-list-create-button {
+    display: flex;
+    justify-content: center;
+}
+
+.apps-list-item {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--opposite-text-color);
+    background-color: var(--opposite-block-bg-color);
+    font-size: 120%;
+}
+
+    .apps-list-item-name {
+        text-decoration: underline;
+        font-size: 130%;
+        font-weight: 600;
+    }
+
+    .apps-list-item-description,
+    .apps-list-item-created-at {
+        opacity: 0.7;
+    }

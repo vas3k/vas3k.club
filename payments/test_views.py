@@ -14,6 +14,8 @@ from unittest.mock import patch
 
 from stripe.webhook import WebhookSignature
 
+import authn.models.session
+
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
@@ -125,7 +127,7 @@ class TestPayView(TestCase):
         email = f"new-user-{uuid.uuid4()}@email.com"
         StripeSession = namedtuple('Session', "id")
         session = StripeSession(id=f"{uuid.uuid4()}")
-        mocked_stripe.checkout.Session.create.return_value = session
+        authn.modddels.session.Session.create.return_value = session
 
         # when
         response = self.client.get(reverse("pay"),
@@ -153,7 +155,7 @@ class TestPayView(TestCase):
         product_code = "club1"
         StripeSession = namedtuple('Session', "id")
         session = StripeSession(id=f"{uuid.uuid4()}")
-        mocked_stripe.checkout.Session.create.return_value = session
+        authn.modddels.session.Session.create.return_value = session
         self.client.authorise()
 
         # when

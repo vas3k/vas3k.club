@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.shortcuts import get_object_or_404, render, redirect
 
-from authn.helpers import auth_required, moderator_role_required, curator_role_required
+from authn.decorators.auth import require_auth, require_moderator_role, require_curator_role
 from club.exceptions import AccessDenied
 from comments.models import Comment
 from common.data.labels import LABELS
@@ -15,8 +15,8 @@ from posts.models.post import Post
 from users.models.user import User
 
 
-@auth_required
-@curator_role_required
+@require_auth
+@require_curator_role
 def curate_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
@@ -34,8 +34,8 @@ def curate_post(request, post_slug):
     })
 
 
-@auth_required
-@moderator_role_required
+@require_auth
+@require_moderator_role
 def admin_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
@@ -53,8 +53,8 @@ def admin_post(request, post_slug):
     })
 
 
-@auth_required
-@moderator_role_required
+@require_auth
+@require_moderator_role
 def announce_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 

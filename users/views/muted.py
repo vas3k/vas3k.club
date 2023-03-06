@@ -2,14 +2,14 @@ from django.conf import settings
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from notifications.telegram.users import notify_admin_user_on_mute
 from users.models.mute import Muted
 from users.models.user import User
 
 
-@auth_required
+@require_auth
 def toggle_mute(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
     if user_to.is_moderator or user_to == request.me:
@@ -73,7 +73,7 @@ def toggle_mute(request, user_slug):
         })
 
 
-@auth_required
+@require_auth
 def muted(request, user_slug):
     if request.me.slug != user_slug:
         return HttpResponseForbidden()

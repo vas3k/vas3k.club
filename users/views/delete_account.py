@@ -4,8 +4,8 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django_q.tasks import async_task
 
-from authn.helpers import auth_required
-from authn.models import Code, Session
+from authn.decorators.auth import require_auth
+from authn.models.session import Session, Code
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from club.exceptions import BadRequest, AccessDenied
 from gdpr.models import DataRequests
@@ -13,7 +13,7 @@ from notifications.email.users import send_delete_account_request_email, send_de
 from payments.helpers import cancel_all_stripe_subscriptions
 
 
-@auth_required
+@require_auth
 def request_delete_account(request):
     if request.method != "POST":
         return redirect("edit_account", "me", permanent=False)
@@ -38,7 +38,7 @@ def request_delete_account(request):
     return render(request, "users/messages/delete_account_requested.html", {"user": request.me})
 
 
-@auth_required
+@require_auth
 def confirm_delete_account(request):
     confirmation_hash = request.POST.get("secret_hash")
     code = request.POST.get("code")

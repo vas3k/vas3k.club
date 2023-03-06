@@ -2,10 +2,12 @@ from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
-from authn.helpers import check_user_permissions, auth_required
+from authn.helpers import check_user_permissions
+from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from common.request import ajax_request
+from authn.decorators.api import api
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
@@ -24,9 +26,8 @@ def show_post(request, post_type, post_slug):
         return redirect("show_post", post.type, post.slug)
 
     # drafts are visible only to authors, coauthors and moderators
-    if not post.is_visible:
-        if not request.me or not post.can_view_draft(request.me):
-            raise Http404()
+    if not post.can_view(request.me):
+        raise Http404()
 
     # don't show private posts into public
     if not post.is_public:
@@ -64,7 +65,7 @@ def show_post(request, post_type, post_slug):
     })
 
 
-@auth_required
+@require_auth
 def unpublish_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if not request.me.is_moderator:
@@ -83,7 +84,7 @@ def unpublish_post(request, post_slug):
     return redirect("show_post", post.type, post.slug)
 
 
-@auth_required
+@require_auth
 def clear_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if post.author != request.me and not request.me.is_moderator:
@@ -94,7 +95,7 @@ def clear_post(request, post_slug):
     return redirect("show_post", post.type, post.slug)
 
 
-@auth_required
+@require_auth
 def delete_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if post.author != request.me:
@@ -110,12 +111,9 @@ def delete_post(request, post_slug):
     return redirect("compose")
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def upvote_post(request, post_slug):
-    if request.method != "POST":
-        raise Http404()
-
     post = get_object_or_404(Post, slug=post_slug)
 
     post_vote, is_vote_created = PostVote.upvote(
@@ -132,12 +130,9 @@ def upvote_post(request, post_slug):
     }
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def retract_post_vote(request, post_slug):
-    if request.method != "POST":
-        raise Http404()
-
     post = get_object_or_404(Post, slug=post_slug)
 
     is_retracted = PostVote.retract_vote(
@@ -154,12 +149,9 @@ def retract_post_vote(request, post_slug):
     }
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def toggle_post_subscription(request, post_slug):
-    if request.method != "POST":
-        raise Http404()
-
     post = get_object_or_404(Post, slug=post_slug)
 
     subscription, is_created = PostSubscription.subscribe(
@@ -180,7 +172,7 @@ def toggle_post_subscription(request, post_slug):
     }
 
 
-@auth_required
+@require_auth
 def compose(request):
     drafts = Post.objects\
         .filter(is_visible=False, deleted_at__isnull=True)\
@@ -191,7 +183,7 @@ def compose(request):
     })
 
 
-@auth_required
+@require_auth
 def compose_type(request, post_type):
     if post_type not in dict(Post.TYPES):
         raise Http404()
@@ -199,7 +191,7 @@ def compose_type(request, post_type):
     return create_or_edit(request, post_type, mode="create")
 
 
-@auth_required
+@require_auth
 def edit_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if not post.can_edit(request.me):

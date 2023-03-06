@@ -1,12 +1,12 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from users.models.notes import UserNote
 from users.models.user import User
 
 
-@auth_required
+@require_auth
 def edit_note(request, user_slug):
     if request.method != "POST":
         raise Http404()
