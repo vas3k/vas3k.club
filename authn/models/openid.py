@@ -105,7 +105,7 @@ class OAuth2Token(models.Model, TokenMixin):
         return self.issued_at + timedelta(seconds=settings.OPENID_JWT_EXPIRE_SECONDS) < datetime.utcnow()
 
     def is_revoked(self):
-        return False  # we remove tokens from db completely
+        return self.revoked
 
     def get_client_id(self):
         return str(self.client_id)

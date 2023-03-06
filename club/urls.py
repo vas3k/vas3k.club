@@ -15,6 +15,7 @@ from authn.views.openid import openid_authorize, openid_issue_token, openid_revo
 from authn.views.patreon import patreon_login, patreon_oauth_callback
 from badges.views import create_badge_for_post, create_badge_for_comment
 from club import features
+from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment
 from common.feature_flags import feature_switch
@@ -213,6 +214,7 @@ urlpatterns = [
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
     path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
     path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),
+    path("<slug:post_type>/<slug:post_slug>/comments.json", api_list_post_comments, name="api_list_post_comments"),
 ]
 
 if settings.DEBUG:
