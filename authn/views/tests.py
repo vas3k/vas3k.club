@@ -14,8 +14,7 @@ from unittest.mock import patch
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
-from authn.models.openid import Apps
-from authn.models.session import Code
+from authn.models.session import Apps, Code
 from authn.providers.common import Membership, Platform
 from authn.exceptions import PatreonException
 from debug.helpers import HelperClient, JWT_STUB_VALUES

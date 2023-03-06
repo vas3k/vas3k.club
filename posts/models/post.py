@@ -197,12 +197,16 @@ class Post(models.Model, ModelDiffMixin):
         return User.objects.filter(slug__in=self.coauthors, upvotes__gt=0).update(upvotes=F("upvotes") - 1)
 
     def can_edit(self, user):
+        if not user:
+            return False
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
     def can_view(self, user):
         return self.is_visible or self.can_view_draft(user)
 
     def can_view_draft(self, user):
+        if not user:
+            return False
         return self.can_edit(user) or user.is_curator
 
     @property
