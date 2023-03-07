@@ -26,7 +26,7 @@ class AppForm(forms.ModelForm):
 
     redirect_uris = forms.CharField(
         label="Разрешенные Callback URL для OAuth (можно несколько через запятую)",
-        required=True,
+        required=False,
         widget=forms.Textarea(
             attrs={
                 "rows": 3,

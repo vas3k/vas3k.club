@@ -69,7 +69,10 @@ def profile(request, user_slug):
 
     moderator_notes = []
     if request.me.is_moderator:
-        moderator_notes = UserNote.objects.filter(user_to=user).exclude(user_from=request.me).all()
+        moderator_notes = UserNote.objects.filter(user_to=user)\
+            .exclude(user_from=request.me)\
+            .select_related("user_from")\
+            .all()
 
     return render(request, "users/profile.html", {
         "user": user,

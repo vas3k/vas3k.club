@@ -13,9 +13,19 @@
                 Хотите разрешить приложению «{{ app.name }}» доступ к вашему аккаунту в Клубе?
             </div>
 
+            {% if app.description or app.website %}
+                <div class="block-description block-description-center">
+                    {% if app.description %}<p>{{ app.description }}</p>{% endif %}
+                    <p>
+                        {% if app.website %}🌍 {{ app.website | urlize }}&nbsp;&nbsp;&nbsp;{% endif %}
+                        от: 👤 <a href="{% url "profile" app.owner.slug %}">{{ app.owner.full_name }}</a>
+                    </p>
+                </div>
+            {% endif %}
+
             <div class="block-description block-description-center">
                 <p>
-                    ✅ {{ app.name }} сможет читать данные вашего профиля,<br> включая email
+                    ✅ {{ app.name }} сможет видеть данные вашего профиля,<br> включая email
                 </p>
 
                 <p>
