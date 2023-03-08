@@ -237,6 +237,11 @@ def generate_weekly_digest(no_footer=False):
         "ava": settings.OG_MACHINE_AUTHOR_LOGO
     })
 
+    og_description = render_to_string("emails/weekly_og_description.html", {
+        "newbie_count" : newbie_count,
+        "post_count": post_count,
+    })
+
     return render_to_string("emails/weekly.html", {
         "posts": posts,
         "comments": comments,
@@ -253,5 +258,6 @@ def generate_weekly_digest(no_footer=False):
         "issue_number": issue_number,
         "pro_tip": pro_tip,
         "is_footer_excluded": no_footer,
-        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}"
-    })
+        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}",
+        "og_description" : og_description,
+    }), og_description
