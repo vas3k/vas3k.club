@@ -5,7 +5,7 @@ from authlib.oauth2 import OAuth2Error
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
 from django.http import JsonResponse, HttpResponse
 
-from authn.models.session import Apps
+from authn.models.openid import OAuth2App
 from authn.providers.openid import oauth2_token_validator
 from club.exceptions import ApiException, ClubException, ApiAuthRequired
 from users.models.user import User
@@ -77,7 +77,7 @@ def is_ajax(request):
 
 
 def user_by_service_token(service_token) -> Optional[User]:
-    app = Apps.objects\
+    app = OAuth2App.objects\
         .filter(service_token=service_token)\
         .select_related("owner")\
         .first()
