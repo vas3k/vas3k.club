@@ -5,12 +5,17 @@ from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 
 from authn.helpers import auth_switch
-from authn.views.auth import login, logout, debug_dev_login, debug_random_login, debug_login, join
+from authn.views.apps import list_apps, create_app, edit_app, delete_app
+from authn.views.auth import login, logout, join
+from authn.views.debug import debug_dev_login, debug_random_login, debug_login
 from authn.views.email import email_login, email_login_code
 from authn.views.external import external_login
+from authn.views.openid import openid_authorize, openid_issue_token, openid_revoke_token, \
+    openid_well_known_configuration, openid_well_known_jwks
 from authn.views.patreon import patreon_login, patreon_oauth_callback
 from badges.views import create_badge_for_post, create_badge_for_comment
 from club import features
+from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment
 from common.feature_flags import feature_switch
@@ -24,7 +29,7 @@ from payments.views.common import membership_expired
 from payments.api import api_gift_days
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from payments.views.crypto import crypto, coinbase_webhook
-from posts.api import md_show_post, api_show_post
+from posts.api import md_show_post, api_show_post, json_feed
 from posts.models.post import Post
 from posts.rss import NewPostsRss
 from posts.sitemaps import sitemaps
@@ -74,6 +79,10 @@ urlpatterns = [
     path("auth/email/code/", email_login_code, name="email_login_code"),
     path("auth/external/", external_login, name="external_login"),
 
+    path("auth/openid/authorize", openid_authorize, name="openid_authorize"),
+    path("auth/openid/token", openid_issue_token, name="openid_issue_token"),
+    path("auth/openid/revoke", openid_revoke_token, name="openid_revoke_token"),
+
     path("monies/", pay, name="pay"),
     path("monies/crypto/", crypto, name="crypto"),
     path("monies/done/", done, name="done"),
@@ -104,6 +113,11 @@ urlpatterns = [
     path("user/<slug:user_slug>/edit/data/", edit_data, name="edit_data"),
     path("user/<slug:user_slug>/edit/data/request/", request_data, name="request_user_data"),
     path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
+
+    path("apps/", list_apps, name="apps"),
+    path("apps/create/", create_app, name="create_app"),
+    path("apps/<slug:app_id>/edit/", edit_app, name="edit_app"),
+    path("apps/<slug:app_id>/delete/", delete_app, name="delete_app"),
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
@@ -187,7 +201,11 @@ urlpatterns = [
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("posts.rss", NewPostsRss(), name="rss"),
+    path("feed.json", json_feed, name="json_feed"),
+    re_path(r"^{}/{}/feed.json$".format(POST_TYPE_RE, ORDERING_RE), json_feed, name="json_feed_ordering"),
 
+    path(".well-known/openid-configuration", openid_well_known_configuration, name="openid_well_known_configuration"),
+    path(".well-known/jwks.json", openid_well_known_jwks, name="openid_well_known_jwks"),
     path("robots.txt", robots, name="robots"),
 
     # keep these guys at the bottom
@@ -196,6 +214,7 @@ urlpatterns = [
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
     path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
     path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),
+    path("<slug:post_type>/<slug:post_slug>/comments.json", api_list_post_comments, name="api_list_post_comments"),
 ]
 
 if settings.DEBUG:

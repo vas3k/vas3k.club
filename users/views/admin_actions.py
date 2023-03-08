@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render, redirect
 
-from authn.helpers import auth_required, moderator_role_required
-from authn.models import Session
+from authn.decorators.auth import require_auth, require_moderator_role
+from authn.models.session import Session
 from club.exceptions import AccessDenied
 from common.data.hats import HATS
 from notifications.email.users import send_banned_email, send_unmoderated_email, send_delete_account_confirm_email, \
@@ -19,8 +19,8 @@ from users.models.user import User
 from users.utils import is_role_manageable_by_user
 
 
-@auth_required
-@moderator_role_required
+@require_auth
+@require_moderator_role
 def admin_profile(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 

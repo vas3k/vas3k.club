@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django_q.tasks import async_task
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from notifications.telegram.users import notify_profile_needs_review
 from posts.models.post import Post
 from users.forms.intro import UserIntroForm
@@ -9,7 +9,7 @@ from users.models.geo import Geo
 from users.models.user import User
 
 
-@auth_required
+@require_auth
 def intro(request):
     if request.me and request.me.moderation_status == User.MODERATION_STATUS_APPROVED:
         return redirect("profile", request.me.slug)

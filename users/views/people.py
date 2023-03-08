@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import render
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from common.models import group_by, top
 from common.pagination import paginate
 from tags.models import Tag
@@ -15,7 +15,7 @@ from users.models.user import User
 TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60  # 24 hours
 
 
-@auth_required
+@require_auth
 def people(request):
     users = User.registered_members().order_by("-created_at").select_related("geo")  # joining with "geo" for map
 

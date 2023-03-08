@@ -1,6 +1,6 @@
 from django.http import Http404, JsonResponse
 
-from authn.helpers import api_required
+from authn.decorators.api import api
 from tags.models import Tag
 from users.models.user import User
 
@@ -8,7 +8,7 @@ MIN_PREFIX_LENGTH = 3
 MAX_PREFIX_LENGTH = 15
 
 
-@api_required
+@api(require_auth=True)
 def api_search_users(request):
     if request.method != "GET":
         raise Http404()
@@ -30,7 +30,7 @@ def api_search_users(request):
     })
 
 
-@api_required
+@api(require_auth=True)
 def api_search_tags(request):
     tags = Tag.objects.filter(is_visible=True)
 

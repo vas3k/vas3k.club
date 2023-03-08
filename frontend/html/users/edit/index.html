@@ -29,6 +29,11 @@
                 <span class="dashboard-item-title">Мои данные</span>
             </a>
 
+            <a href="{% url "apps" %}" class="dashboard-item">
+                <span class="dashboard-item-icon">🤖</span>
+                <span class="dashboard-item-title">API</span>
+            </a>
+
             <a href="{% url "edit_account" user.slug %}" class="dashboard-item">
                 <span class="dashboard-item-icon">🧨</span>
                 <span class="dashboard-item-title">Удалить аккаунт</span>

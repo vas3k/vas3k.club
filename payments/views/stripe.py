@@ -5,7 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from authn.helpers import auth_required
+from authn.decorators.auth import require_auth
 from payments.exceptions import PaymentException
 from payments.models import Payment
 from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
@@ -137,7 +137,7 @@ def pay(request):
     })
 
 
-@auth_required
+@require_auth
 def stop_subscription(request, subscription_id):
     try:
         stripe.Subscription.delete(subscription_id)

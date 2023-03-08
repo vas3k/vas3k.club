@@ -14,6 +14,8 @@ from unittest.mock import patch
 
 from stripe.webhook import WebhookSignature
 
+import authn.models.session
+
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment

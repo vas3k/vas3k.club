@@ -137,20 +137,31 @@ class Post(models.Model, ModelDiffMixin):
     def __str__(self):
         return f"Post: {self.title}"
 
-    def to_dict(self):
+    def to_dict(self, including_private=False):
         return {
-            "id": str(self.id),
-            "type": self.type,
-            "slug": self.slug,
-            "author_id": str(self.author.id),
-            "author_slug": self.author.slug,
+            "id": self.id,
+            "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "title": self.title,
-            "text": self.text,
-            "upvotes": self.upvotes,
-            "metadata": self.metadata,
-            "published_at": self.published_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
-            "last_activity_at": self.last_activity_at.isoformat(),
+            "content_text": self.text if self.is_public or including_private else None,
+            "date_published": self.published_at.isoformat(),
+            "date_modified": self.updated_at.isoformat(),
+            "authors": [
+                {
+                    "name": self.author.full_name,
+                    "url": f"{settings.APP_HOST}{self.author.get_absolute_url()}",
+                    "avatar": self.author.get_avatar()
+                }
+            ],
+            "_club": {
+                "type": self.type,
+                "slug": self.slug,
+                "coauthors": self.coauthors,
+                "comment_count": self.comment_count,
+                "view_count": self.view_count,
+                "upvotes": self.upvotes,
+                "is_public": self.is_public,
+                "is_commentable": self.is_commentable,
+            }
         }
 
     def save(self, *args, **kwargs):
@@ -186,9 +197,16 @@ class Post(models.Model, ModelDiffMixin):
         return User.objects.filter(slug__in=self.coauthors, upvotes__gt=0).update(upvotes=F("upvotes") - 1)
 
     def can_edit(self, user):
+        if not user:
+            return False
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
+    def can_view(self, user):
+        return self.is_visible or self.can_view_draft(user)
+
     def can_view_draft(self, user):
+        if not user:
+            return False
         return self.can_edit(user) or user.is_curator
 
     @property

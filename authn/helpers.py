@@ -1,12 +1,11 @@
 import logging
 from datetime import datetime, timedelta
+from typing import Optional, Tuple
 
-import jwt
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render
 
-from authn.models import Session, Apps
+from authn.models.session import Session
 from club import settings
-from club.exceptions import AccessDenied, ApiAuthRequired, ClubException, ApiException
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -23,26 +22,15 @@ def authorized_user(request):
     return user
 
 
-def authorized_user_with_session(request):
-    # normal user access
+def authorized_user_with_session(request) -> Tuple[Optional[User], Optional[Session]]:
     auth_token = request.COOKIES.get("token") or request.GET.get("token")
     if auth_token:
         return user_by_token(auth_token)
 
-    # oauth requests for API
-    jwt_token = request.COOKIES.get("jwt") or request.GET.get("jwt")
-    if jwt_token:
-        return user_by_jwt(jwt_token)
-
-    # requests on behalf of apps (user == owner, just for simplicity)
-    service_token = request.GET.get("service_token")
-    if service_token:
-        return user_by_service_token(service_token)
-
     return None, None
 
 
-def user_by_token(token):
+def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
     session = Session.objects\
         .filter(token=token)\
         .order_by()\
@@ -53,40 +41,6 @@ def user_by_token(token):
         return None, None  # session is expired
 
     return session.user, session
-
-
-def user_by_service_token(service_token):
-    app = Apps.objects\
-        .filter(service_token=service_token)\
-        .select_related("owner")\
-        .first()
-
-    if not app:
-        return None, None  # no such app
-
-    return app.owner, None
-
-
-def user_by_jwt(jwt_token):
-    try:
-        payload = jwt.decode(jwt_token, settings.JWT_PUBLIC_KEY, algorithms=[settings.JWT_ALGORITHM])
-    except (jwt.DecodeError, jwt.ExpiredSignatureError):
-        return None, None  # bad jwt token
-
-    user = get_object_or_404(User, slug=payload["user_slug"])
-
-    return user, None
-
-
-def auth_required(view):
-    def wrapper(request, *args, **kwargs):
-        access_denied = check_user_permissions(request)
-        if access_denied:
-            return access_denied
-
-        return view(request, *args, **kwargs)
-
-    return wrapper
 
 
 def check_user_permissions(request, **context):
@@ -117,58 +71,6 @@ def check_user_permissions(request, **context):
         return redirect("on_review")
 
     return None
-
-
-def moderator_role_required(view):
-    def wrapper(request, *args, **kwargs):
-        if not request.me:
-            return redirect("login")
-
-        if not request.me.is_moderator:
-            raise AccessDenied()
-
-        return view(request, *args, **kwargs)
-
-    return wrapper
-
-
-def curator_role_required(view):
-    def wrapper(request, *args, **kwargs):
-        if not request.me:
-            return redirect("login")
-
-        if not request.me.is_curator:
-            raise AccessDenied()
-
-        return view(request, *args, **kwargs)
-
-    return wrapper
-
-
-def api_required(view):
-    def wrapper(request, *args, **kwargs):
-        if not request.me:
-            raise ApiAuthRequired()
-
-        try:
-            return view(request, *args, **kwargs)
-        except ApiException:
-            raise  # simply re-raise
-        except ClubException as ex:
-            # wrap and re-raise
-            raise ApiException(
-                code=ex.code,
-                title=ex.title,
-                message=ex.message,
-                data=ex.data,
-            )
-        except Exception as ex:
-            raise ApiException(
-                code=ex.__class__.__name__,
-                title=str(ex),
-            )
-
-    return wrapper
 
 
 def auth_switch(yes, no):
