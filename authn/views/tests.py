@@ -1,6 +1,7 @@
+import unittest
+import uuid
 from datetime import datetime, timedelta
 from urllib.parse import urljoin
-import uuid
 
 import django
 from django.test import TestCase
@@ -17,6 +18,7 @@ django.setup()  # todo: how to run tests from PyCharm without this workaround?
 from authn.models.session import Apps, Code
 from authn.providers.common import Membership, Platform
 from authn.exceptions import PatreonException
+from club import features
 from debug.helpers import HelperClient, JWT_STUB_VALUES
 from users.models.user import User
 
@@ -343,6 +345,7 @@ class ViewExternalLoginTests(TestCase):
         self.assertFalse(self.client.is_authorised())
 
 
+@unittest.skipIf(not features.PATREON_AUTH_ENABLED, reason="Patreon auth was disabled")
 class ViewPatreonLoginTests(TestCase):
     def test_positive(self):
         with self.settings(PATREON_CLIENT_ID="x-client_id",
@@ -354,6 +357,7 @@ class ViewPatreonLoginTests(TestCase):
                                  fetch_redirect_response=False)
 
 
+@unittest.skipIf(not features.PATREON_AUTH_ENABLED, reason="Patreon auth was disabled")
 @patch("authn.views.patreon.patreon")
 class ViewPatreonOauthCallbackTests(TestCase):
     @classmethod
