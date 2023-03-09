@@ -104,7 +104,7 @@ def render_daily_digest(request, user_slug):
 
 def render_weekly_digest(request):
     try:
-        digest = generate_weekly_digest()
+        digest, _ = generate_weekly_digest()
     except NotFound:
         raise Http404()
 

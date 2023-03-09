@@ -27,13 +27,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # render digest using a special html endpoint
         try:
-            digest = generate_weekly_digest()
+            digest, _ = generate_weekly_digest()
         except NotFound:
             log.error("Weekly digest is empty")
             return
 
         # get a version without "unsubscribe" footer for posting on home page
-        digest_without_footer = generate_weekly_digest(no_footer=True)
+        digest_without_footer, og_description = generate_weekly_digest(no_footer=True)
 
         # save digest as a post
         issue = (datetime.utcnow() - settings.LAUNCH_DATE).days // 7
@@ -49,6 +49,7 @@ class Command(BaseCommand):
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
                 is_public=False,
+                metadata={"og_description" : og_description},
             )
         )
 

@@ -14,12 +14,12 @@
         <meta property="og:site_name" content="{{ settings.APP_NAME }}">
         <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
         <meta property="og:type" content="article" />
-        <meta property="og:description" content="{{ post.description | truncatechars:100 }}">
+        <meta property="og:description" content="{% if post.metadata.og_description %}{{ post.metadata.og_description }} {% else %}{{ post.description | truncatechars:100 }}{% endif %}">
         <meta property="og:image" content="{% og_image post %}">
 
         <meta name="twitter:card" content="summary">
         <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
-        <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
+        <meta name="twitter:description" content="{% if post.metadata.og_description %}{{ post.metadata.og_description }} {% else %}{{ post.description | truncatechars:100 }}{% endif %}">
         <meta name="twitter:image" content="{% og_image post %}">
     {% endif %}
 {% endblock %}
