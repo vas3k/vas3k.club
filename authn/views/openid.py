@@ -3,7 +3,8 @@ import logging
 from authlib.integrations.django_oauth2 import RevocationEndpoint
 from authlib.jose import JsonWebKey
 from authlib.oauth2 import OAuth2Error
-from authlib.oauth2.rfc6749 import InvalidClientError
+from authlib.oauth2.rfc6749 import InvalidClientError, UnsupportedResponseTypeError, UnsupportedGrantTypeError, \
+    InvalidScopeError
 from django.conf import settings
 from django.shortcuts import render
 from django.urls import reverse
@@ -26,8 +27,12 @@ def openid_authorize(request):
                 "title": f"Приложение '{request.GET.get('client_id')}' не найдено",
                 "message": "Убедитесь, что правильно указали client_id или обратитесь к автору приложения"
             })
+        except (UnsupportedResponseTypeError, UnsupportedGrantTypeError, InvalidScopeError):
+            return render(request, "error.html", {
+                "title": f"Неправильные параметры запроса OAuth",
+                "message": "Параметры response_type, grant, scope где-то потерялись или не поддерживаются"
+            })
         except OAuth2Error as ex:
-            log.exception(ex)
             return render(request, "error.html", {
                 "title": "Ошибка OAuth",
                 "message": str(ex)
