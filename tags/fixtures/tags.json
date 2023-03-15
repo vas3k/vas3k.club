@@ -1,0 +1,1132 @@
+[
+  {
+    "model": "tags.Tag",
+    "pk": 100,
+    "fields": {
+      "code": "optimism",
+      "group": "personal",
+      "name": "👍 Оптимист",
+      "index": 100
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 101,
+    "fields": {
+      "code": "pessimism",
+      "group": "personal",
+      "name": "👎 Пессимист",
+      "index": 101
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 102,
+    "fields": {
+      "code": "bureaucrat",
+      "group": "personal",
+      "name": "👨‍💼 Бюрократ",
+      "index": 102
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 103,
+    "fields": {
+      "code": "experiments",
+      "group": "personal",
+      "name": "🧪 Экспериментатор",
+      "index": 103
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 104,
+    "fields": {
+      "code": "work-hard",
+      "group": "personal",
+      "name": "👩‍💻 Трудоголик",
+      "index": 104
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 105,
+    "fields": {
+      "code": "single",
+      "group": "personal",
+      "name": "❣️ Одинок",
+      "index": 105
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 106,
+    "fields": {
+      "code": "family",
+      "group": "personal",
+      "name": "👨‍👩‍👦 Семьянин",
+      "index": 106
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 107,
+    "fields": {
+      "code": "no_kids",
+      "group": "personal",
+      "name": "😎 Без детей",
+      "index": 107
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 108,
+    "fields": {
+      "code": "nomad",
+      "group": "personal",
+      "name": "🏝 Номад",
+      "index": 108
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 109,
+    "fields": {
+      "code": "extrovert",
+      "group": "personal",
+      "name": "👯‍♂️ Люблю людей",
+      "index": 109
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 110,
+    "fields": {
+      "code": "introvert",
+      "group": "personal",
+      "name": "🧘‍♂️ Люблю уединение",
+      "index": 110
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 111,
+    "fields": {
+      "code": "feminism",
+      "group": "personal",
+      "name": "👩‍🏫 Феминист*ка",
+      "index": 111
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 112,
+    "fields": {
+      "code": "control",
+      "group": "personal",
+      "name": "🎛 Контрол-фрик",
+      "index": 112
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 113,
+    "fields": {
+      "code": "mentor",
+      "group": "personal",
+      "name": "👨‍🏫 Ментор",
+      "index": 113
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 114,
+    "fields": {
+      "code": "stoicism",
+      "group": "personal",
+      "name": "💪 Стоицизм",
+      "index": 114
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 115,
+    "fields": {
+      "code": "business",
+      "group": "personal",
+      "name": "🚀 Свой бизнес",
+      "index": 115
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 116,
+    "fields": {
+      "code": "abroad",
+      "group": "personal",
+      "name": "🚜 Пора валить",
+      "index": 116
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 117,
+    "fields": {
+      "code": "smoker",
+      "group": "personal",
+      "name": "🚬 Курю",
+      "index": 117
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 118,
+    "fields": {
+      "code": "beer",
+      "group": "personal",
+      "name": "🍻 Пиво",
+      "index": 118
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 119,
+    "fields": {
+      "code": "wine",
+      "group": "personal",
+      "name": "🍷 Винишко",
+      "index": 119
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 120,
+    "fields": {
+      "code": "non-drinker",
+      "group": "personal",
+      "name": "🚱 Не пью",
+      "index": 120
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 121,
+    "fields": {
+      "code": "coffee",
+      "group": "personal",
+      "name": "☕️ Кофе",
+      "index": 121
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 122,
+    "fields": {
+      "code": "tea",
+      "group": "personal",
+      "name": "🍵 Чай",
+      "index": 122
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 123,
+    "fields": {
+      "code": "meditation",
+      "group": "personal",
+      "name": "👁 Медитирую",
+      "index": 123
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 124,
+    "fields": {
+      "code": "tattoo",
+      "group": "personal",
+      "name": "👩‍🎤 Есть тату",
+      "index": 124
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 125,
+    "fields": {
+      "code": "burnout",
+      "group": "personal",
+      "name": "🥵 Выгорал",
+      "index": 125
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 126,
+    "fields": {
+      "code": "therapy",
+      "group": "personal",
+      "name": "👌 Хожу к терапевту",
+      "index": 126
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 127,
+    "fields": {
+      "code": "vegan",
+      "group": "personal",
+      "name": "🍏 Веган",
+      "index": 127
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 128,
+    "fields": {
+      "code": "healthy-food",
+      "group": "personal",
+      "name": "🥑 Здоровое питание",
+      "index": 128
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 129,
+    "fields": {
+      "code": "cynic",
+      "group": "personal",
+      "name": "😕 Циник",
+      "index": 129
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 130,
+    "fields": {
+      "code": "cats",
+      "group": "personal",
+      "name": "😽 Котики",
+      "index": 130
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 131,
+    "fields": {
+      "code": "dogs",
+      "group": "personal",
+      "name": "🐶 Пёсики",
+      "index": 131
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 132,
+    "fields": {
+      "code": "cities",
+      "group": "personal",
+      "name": "🌃 Большие города",
+      "index": 132
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 133,
+    "fields": {
+      "code": "villages",
+      "group": "personal",
+      "name": "🏘 Уютные деревушки",
+      "index": 133
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 134,
+    "fields": {
+      "code": "early-bird",
+      "group": "personal",
+      "name": "🌅 Жаворонок",
+      "index": 134
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 135,
+    "fields": {
+      "code": "night-life",
+      "group": "personal",
+      "name": "🌜 Сова",
+      "index": 135
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 136,
+    "fields": {
+      "code": "linux",
+      "group": "personal",
+      "name": "🐧 Linux",
+      "index": 136
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 137,
+    "fields": {
+      "code": "mac",
+      "group": "personal",
+      "name": "🍎 Mac",
+      "index": 137
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 138,
+    "fields": {
+      "code": "windows",
+      "group": "personal",
+      "name": "💻 Windows",
+      "index": 138
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 139,
+    "fields": {
+      "code": "ios",
+      "group": "personal",
+      "name": "⌚️ iOS",
+      "index": 139
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 140,
+    "fields": {
+      "code": "android",
+      "group": "personal",
+      "name": "📱 Android",
+      "index": 140
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 141,
+    "fields": {
+      "code": "ps",
+      "group": "personal",
+      "name": "🎮 PlayStation",
+      "index": 141
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 142,
+    "fields": {
+      "code": "xbox",
+      "group": "personal",
+      "name": "🕹 Xbox",
+      "index": 142
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 143,
+    "fields": {
+      "code": "pc",
+      "group": "personal",
+      "name": "🖥 Пэка",
+      "index": 143
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 144,
+    "fields": {
+      "code": "conservative",
+      "group": "personal",
+      "name": "📜 Консерватизм",
+      "index": 144
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 145,
+    "fields": {
+      "code": "centrism",
+      "group": "personal",
+      "name": "🎯 Центризм",
+      "index": 145
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 146,
+    "fields": {
+      "code": "socialism",
+      "group": "personal",
+      "name": "🚩 Социализм",
+      "index": 146
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 147,
+    "fields": {
+      "code": "parties",
+      "group": "personal",
+      "name": "🎉 Тусовщик",
+      "index": 147
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 300,
+    "fields": {
+      "code": "travel",
+      "group": "hobbies",
+      "name": "🛣 Путешествую",
+      "index": 300
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 301,
+    "fields": {
+      "code": "photo",
+      "group": "hobbies",
+      "name": "🌆 Фотографирую",
+      "index": 301
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 302,
+    "fields": {
+      "code": "writing",
+      "group": "hobbies",
+      "name": "✏️ Пишу",
+      "index": 302
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 303,
+    "fields": {
+      "code": "walking",
+      "group": "hobbies",
+      "name": "🚶‍♂️ Гуляю",
+      "index": 303
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 304,
+    "fields": {
+      "code": "cycle",
+      "group": "hobbies",
+      "name": "🚴‍♀️ Велосипед",
+      "index": 304
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 305,
+    "fields": {
+      "code": "pet-projects",
+      "group": "hobbies",
+      "name": "🏗 Пет-проджекты",
+      "index": 305
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 306,
+    "fields": {
+      "code": "drinks",
+      "group": "hobbies",
+      "name": "🍸 Бухаю",
+      "index": 306
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 307,
+    "fields": {
+      "code": "making",
+      "group": "hobbies",
+      "name": "👷‍♀️ Строю",
+      "index": 307
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 308,
+    "fields": {
+      "code": "running",
+      "group": "hobbies",
+      "name": "🏃‍♂️ Бегаю",
+      "index": 308
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 309,
+    "fields": {
+      "code": "books",
+      "group": "hobbies",
+      "name": "📚 Книги",
+      "index": 309
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 310,
+    "fields": {
+      "code": "time-management",
+      "group": "hobbies",
+      "name": "⏰ Тайм-менеджмент",
+      "index": 310
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 311,
+    "fields": {
+      "code": "collecting",
+      "group": "hobbies",
+      "name": "📦 Коллекционирование",
+      "index": 311
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 312,
+    "fields": {
+      "code": "music",
+      "group": "hobbies",
+      "name": "🎙 Музыка",
+      "index": 312
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 313,
+    "fields": {
+      "code": "video",
+      "group": "hobbies",
+      "name": "🎥 Видео",
+      "index": 313
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 314,
+    "fields": {
+      "code": "cars",
+      "group": "hobbies",
+      "name": "🚘 Автомобили",
+      "index": 314
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 315,
+    "fields": {
+      "code": "420",
+      "group": "hobbies",
+      "name": "🍁 420",
+      "index": 315
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 316,
+    "fields": {
+      "code": "yoga",
+      "group": "hobbies",
+      "name": "🧘‍♀️ Йога",
+      "index": 316
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 317,
+    "fields": {
+      "code": "gadgets",
+      "group": "hobbies",
+      "name": "⌚️ Гаджеты",
+      "index": 317
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 318,
+    "fields": {
+      "code": "languages",
+      "group": "hobbies",
+      "name": "🈵 Языки",
+      "index": 318
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 319,
+    "fields": {
+      "code": "anime",
+      "group": "hobbies",
+      "name": "😻 Аниме",
+      "index": 319
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 320,
+    "fields": {
+      "code": "politics",
+      "group": "hobbies",
+      "name": "👩‍💼 Политика",
+      "index": 320
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 321,
+    "fields": {
+      "code": "history",
+      "group": "hobbies",
+      "name": "🏛 История",
+      "index": 321
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 322,
+    "fields": {
+      "code": "dancing",
+      "group": "hobbies",
+      "name": "💃 Танцы",
+      "index": 322
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 323,
+    "fields": {
+      "code": "bikes",
+      "group": "hobbies",
+      "name": "🏍 Мотоцикл",
+      "index": 323
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 324,
+    "fields": {
+      "code": "board-games",
+      "group": "hobbies",
+      "name": "🎲 Настолки",
+      "index": 324
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 325,
+    "fields": {
+      "code": "modelling",
+      "group": "hobbies",
+      "name": "⛵️ Моделирование",
+      "index": 325
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 326,
+    "fields": {
+      "code": "boards",
+      "group": "hobbies",
+      "name": "🏂 Доски",
+      "index": 326
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 327,
+    "fields": {
+      "code": "gym",
+      "group": "hobbies",
+      "name": "🏋️‍️ ‍Качалочка",
+      "index": 327
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 328,
+    "fields": {
+      "code": "sport",
+      "group": "hobbies",
+      "name": "🎾 Другой спорт",
+      "index": 328
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 329,
+    "fields": {
+      "code": "fishing",
+      "group": "hobbies",
+      "name": "🐠 Охота и рыбалка",
+      "index": 329
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 330,
+    "fields": {
+      "code": "planes",
+      "group": "hobbies",
+      "name": "✈️ Самолеты",
+      "index": 330
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 331,
+    "fields": {
+      "code": "yachts",
+      "group": "hobbies",
+      "name": "🚤 Яхты",
+      "index": 331
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 332,
+    "fields": {
+      "code": "space",
+      "group": "hobbies",
+      "name": "🛰️ Космос",
+      "index": 332
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 333,
+    "fields": {
+      "code": "bbq",
+      "group": "hobbies",
+      "name": "🍖️ BBQ",
+      "index": 333
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 334,
+    "fields": {
+      "code": "stonks",
+      "group": "hobbies",
+      "name": "📉 stonks",
+      "index": 334
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 335,
+    "fields": {
+      "code": "gardening",
+      "group": "hobbies",
+      "name": "☘️ Садоводство",
+      "index": 335
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 336,
+    "fields": {
+      "code": "fashion",
+      "group": "hobbies",
+      "name": "👗️ Мода",
+      "index": 336
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 337,
+    "fields": {
+      "code": "art",
+      "group": "hobbies",
+      "name": "🎨 Арт",
+      "index": 337
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 338,
+    "fields": {
+      "code": "bdsm",
+      "group": "hobbies",
+      "name": "😶 BDSM",
+      "index": 338
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 339,
+    "fields": {
+      "code": "audiophile",
+      "group": "hobbies",
+      "name": "🎧 Аудиофил",
+      "index": 339
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 340,
+    "fields": {
+      "code": "cooking",
+      "group": "hobbies",
+      "name": "🍲 Готовлю",
+      "index": 340
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 341,
+    "fields": {
+      "code": "games",
+      "group": "hobbies",
+      "name": "🎮 Геймер",
+      "index": 341
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 500,
+    "fields": {
+      "code": "can_meet",
+      "group": "club",
+      "name": "🎉 Открыт к общению",
+      "index": 500
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 501,
+    "fields": {
+      "code": "search_events",
+      "group": "club",
+      "name": "🤪️ За движ",
+      "index": 501
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 502,
+    "fields": {
+      "code": "can_beer",
+      "group": "club",
+      "name": "🍻 Можем выпить по пиву",
+      "index": 502
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 503,
+    "fields": {
+      "code": "can_office",
+      "group": "club",
+      "name": "🏢 Могу показать офис",
+      "index": 503
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 504,
+    "fields": {
+      "code": "can_coffee",
+      "group": "club",
+      "name": "☕️ Готов выпить кофе",
+      "index": 504
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 505,
+    "fields": {
+      "code": "can_city",
+      "group": "club",
+      "name": "🗼 Могу показать город",
+      "index": 505
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 506,
+    "fields": {
+      "code": "can_refer",
+      "group": "club",
+      "name": "💼 Могу зареферить в компанию",
+      "index": 506
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 507,
+    "fields": {
+      "code": "can_sleep",
+      "group": "club",
+      "name": "🛌 Могу вписать на ночь",
+      "index": 507
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 508,
+    "fields": {
+      "code": "can_travel",
+      "group": "club",
+      "name": "🏔 Можем вместе попутешествовать",
+      "index": 508
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 509,
+    "fields": {
+      "code": "can_advice",
+      "group": "club",
+      "name": "👍 Готов помочь советом",
+      "index": 509
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 510,
+    "fields": {
+      "code": "search_friend",
+      "group": "club",
+      "name": "🤟 Хочу дружить",
+      "index": 510
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 511,
+    "fields": {
+      "code": "can_project",
+      "group": "club",
+      "name": "👷‍♂️ Могу поучаствовать в проекте",
+      "index": 511
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 512,
+    "fields": {
+      "code": "search_employees",
+      "group": "club",
+      "name": "🔍 Ищу сотрудников",
+      "index": 512
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 513,
+    "fields": {
+      "code": "can_teach",
+      "group": "club",
+      "name": "🎸 Могу проконсультировать за деньги",
+      "index": 513
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 514,
+    "fields": {
+      "code": "search_idea",
+      "group": "club",
+      "name": "️🙇‍♂️ Ищу идеи",
+      "index": 514
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 515,
+    "fields": {
+      "code": "can_idea",
+      "group": "club",
+      "name": "💡 У меня куча идей",
+      "index": 515
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 516,
+    "fields": {
+      "code": "can_invest",
+      "group": "club",
+      "name": "💸 Могу проинвестировать",
+      "index": 516
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 517,
+    "fields": {
+      "code": "search_mentor",
+      "group": "club",
+      "name": "🤓 Ищу ментора",
+      "index": 517
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 518,
+    "fields": {
+      "code": "can_mentor",
+      "group": "club",
+      "name": "🧐 Могу поменторить",
+      "index": 518
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 519,
+    "fields": {
+      "code": "can_hobby",
+      "group": "club",
+      "name": "🏓 Ищу приятеля по хобби",
+      "index": 519
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 520,
+    "fields": {
+      "code": "search_job",
+      "group": "club",
+      "name": "🔎 Ищу работу",
+      "index": 520
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 521,
+    "fields": {
+      "code": "search_remote",
+      "group": "club",
+      "name": "🛋 Хочу удалёнку",
+      "index": 521
+    }
+  },
+  {
+    "model": "tags.Tag",
+    "pk": 522,
+    "fields": {
+      "code": "search_relocate",
+      "group": "club",
+      "name": "🚜 Хочу релокацию",
+      "index": 522
+    }
+  }
+]
