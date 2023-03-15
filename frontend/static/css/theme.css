@@ -13,6 +13,8 @@
     --button-hover-border: solid 2px #333;
 
     --badge-color: rgba(255, 196, 85, 0.91);
+
+    --input-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
 }
 
 html, html[theme="light"] {
@@ -47,7 +49,8 @@ html, html[theme="light"] {
     --input-bg-color: #fff;
     --input-border-color: #ddd;
     --input-toolbar-bg: #fff;
-    --input-toolbar-button-color: #000;
+    --input-toolbar-button-bg: #F5F5F5;
+    --input-toolbar-button-color: #333;
     --input-link: #7f8c8d;
     --input-selection-color: #d7d4f0;
 }
@@ -84,7 +87,8 @@ html[theme="dark"] {
     --input-bg-color: #373c48;
     --input-border-color: #333;
     --input-toolbar-bg: #252a35;
-    --input-toolbar-button-color: #fff;
+    --input-toolbar-button-bg: #252a35;
+    --input-toolbar-button-color: #DDD;
     --input-link: #b3b6ff;
     --input-selection-color: #978fd8;
 }
@@ -116,6 +120,9 @@ html[theme="dark"] {
     }
 }
 
+select, input, textarea {
+  font-size: 16px;
+}
 body {
     font-family: var(--sans-font);
     font-size: 15px;
@@ -193,7 +200,7 @@ select,
 {
     -webkit-appearance: none;
     border: none;
-    box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
+    box-shadow: var(--input-shadow);
     outline: none;
     padding: 8px 15px;
     resize: vertical;
@@ -212,7 +219,7 @@ select,
 
         .editor-toolbar {
             border: none;
-            box-shadow: 0 4px 8px -2px rgba(9,30,66,.25), 0 0 0 1px rgba(9,30,66,.08);
+            box-shadow: var(--input-shadow);
             background: var(--input-toolbar-bg);
         }
 

@@ -393,5 +393,24 @@
         return result;
     };
 
+    /**
+     * Called when input[type="file"] onChange event occurs
+     * @param  {Event} e
+     * @return {Boolean} if the event was handled
+     */
+    inlineAttachment.prototype.onFileInputChange = function(e) {
+        var result = false;
+        for (var i = 0; i < e.target.files.length; i++) {
+            var file = e.target.files[i];
+            if (this.isFileAllowed(file)) {
+                result = true;
+                this.onFileInserted(file);
+                this.uploadFile(file);
+            }
+        }
+
+        return result;
+    };
+
     window.inlineAttachment = inlineAttachment;
 })(document, window);

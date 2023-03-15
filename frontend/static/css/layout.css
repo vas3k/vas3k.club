@@ -331,7 +331,7 @@
 
 .reply-form {
     display: grid;
-    grid-template-columns: 40px auto 110px;
+    grid-template-columns: 40px auto 40px;
     justify-content: stretch;
 }
 

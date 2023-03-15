@@ -8,7 +8,7 @@
 (function () {
     "use strict";
 
-    var codeMirrorEditor = function (instance) {
+    const codeMirrorEditor = function (instance) {
         if (!instance.getWrapperElement) {
             throw "Invalid CodeMirror object given";
         }
@@ -59,27 +59,27 @@
         });
     };
 
-    var codeMirrorEditor4 = function (instance) {
+    const codeMirrorEditor4 = function(instance) {
         codeMirrorEditor.call(this, instance);
     };
 
-    codeMirrorEditor4.attach = function (codeMirror, options) {
+    codeMirrorEditor4.attach = function (codeMirror, options, fileInputEl) {
         options = options || {};
 
-        var editor = new codeMirrorEditor(codeMirror),
-            inlineattach = new inlineAttachment(options, editor),
-            el = codeMirror.getWrapperElement();
+        const editor = new codeMirrorEditor(codeMirror);
+        const inlineAttach = new inlineAttachment(options, editor);
+        const el = codeMirror.getWrapperElement();
 
         el.addEventListener(
             "paste",
             function (e) {
-                inlineattach.onPaste(e);
+                inlineAttach.onPaste(e);
             },
             false
         );
 
         codeMirror.on("drop", function (data, e) {
-            if (inlineattach.onDrop(e)) {
+            if (inlineAttach.onDrop(e)) {
                 e.stopPropagation();
                 e.preventDefault();
                 return true;
@@ -87,6 +87,8 @@
                 return false;
             }
         });
+
+        fileInputEl && fileInputEl.addEventListener("change", (e) => inlineAttach.onFileInputChange(e));
     };
 
     inlineAttachment.editors.codemirror4 = codeMirrorEditor4;

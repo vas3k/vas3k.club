@@ -1,6 +1,27 @@
 <template>
     <div class="comment-markdown-editor">
         <slot></slot>
+
+        <div v-show="false">
+            <input
+                ref="input"
+                type="file"
+                multiple accept="image/*"
+            />
+
+            <input
+                v-if="subscribeFormName"
+                :name="subscribeFormName"
+                type="checkbox"
+                :checked="subscribeFormValue"
+            />
+
+            <button
+                ref="submit"
+                type="submit"
+            />
+        </div>
+
         <div
             class="mention-autocomplete-hint"
             v-show="users.length > 0"
@@ -23,21 +44,74 @@
 
 <script>
 import { isMobile, throttle } from "../common/utils";
-import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../common/markdown-editor";
+import { createMarkdownEditor, imageUploadOptions } from "../common/markdown-editor";
 
 export default {
+    props: {
+        submitLabel: {
+            type: String,
+            required: true,
+        },
+        subscribeValue: {
+            type: Boolean,
+            required: false,
+        },
+        subscribeLabel: {
+            type: String,
+            required: false,
+        },
+        subscribeFormName: {
+            type: String,
+            required: false,
+        }
+    },
     mounted() {
+        const $markdownElementDiv = this.$el.children[0];
+        const toolbar = [
+                {
+                    name: 'attach',
+                    action: () => {
+                        this.$refs.input.click();
+                    },
+                    className: 'tbutton fas fa-image',
+                    title: "Прикрепить..."
+                },
+                {
+                    name: 'submit',
+                    action: () => {
+                        this.$refs.submit.click();
+                    },
+                    className: 'tsubmit',
+                },
+            ];
+
+        if (this.subscribeFormName) {
+            // Add subscribe button next to attach
+            toolbar.splice(1, 0,
+                {
+                    name: 'subscribe',
+                    action: (editor) => {
+                        this.toggleSubscribe(editor);
+                    },
+                    className: 'tbutton tcheckbox',
+                },
+            );
+        }
+
+        this.editor = createMarkdownEditor($markdownElementDiv, { toolbar });
+        this.editor.toolbarElements.submit.innerHTML = this.submitLabel;
+        if (this.subscribeFormName) {
+            this.editor.toolbarElements.subscribe.innerHTML = this.subscribeLabel;
+
+            if (this.subscribeFormValue) {
+                this.editor.toolbarElements.subscribe.classList.toggle('checked');
+            }
+        }
+
+        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, imageUploadOptions, this.$refs.input);
         if (isMobile()) {
             return;
         }
-
-        const $markdownElementDiv = this.$el.children[0];
-        this.editor = createMarkdownEditor($markdownElementDiv, {
-            toolbar: false,
-        });
-
-        this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
-        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, imageUploadOptions);
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
@@ -64,9 +138,14 @@ export default {
                 samples: {},
                 users: {},
             },
+            subscribeFormValue: !!this.subscribeValue
         };
     },
     methods: {
+        toggleSubscribe() {
+            this.subscribeFormValue = !this.subscribeFormValue;
+            this.editor.toolbarElements.subscribe.classList.toggle('checked');
+        },
         handleKeydown(event) {
             if (
                 event.code !== "ArrowDown" &&

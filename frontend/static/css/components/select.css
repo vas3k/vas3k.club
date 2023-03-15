@@ -16,7 +16,7 @@
     --vs-input-margin: 4px 2px;
 
     /* Copied from theme.css */
-    --vs-dropdown-box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
+    --vs-dropdown-box-shadow: var(--input-shadow);
 }
 
 
