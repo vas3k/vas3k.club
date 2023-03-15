@@ -272,7 +272,7 @@
 .comment-form {
     display: grid;
     grid-template-columns: min-content minmax(auto, 1fr);
-    grid-template-rows: auto 60px;
+    grid-template-rows: auto;
     justify-content: stretch;
 }
 
@@ -302,6 +302,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        margin-top: 12px;
     }
 
     .comment-form-body {
