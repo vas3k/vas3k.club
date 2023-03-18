@@ -183,7 +183,7 @@ urlpatterns = [
     path("docs/<slug:doc_slug>/", docs, name="docs"),
 
     path("network/", network, name="network"),
-    path("network/chat/<slug:chat_id>", network_chat, name="network_chat"),
+    path("network/chat/<slug:chat_id>/", network_chat, name="network_chat"),
 
     # admin features
     path("godmode/", godmode_settings, name="godmode_settings"),
