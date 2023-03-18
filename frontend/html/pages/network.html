@@ -46,7 +46,7 @@
                 {% if group.items %}
                     <div class="network-channels">
                         {% for item in group.items.all %}
-                            <a href="{{ item.url }}" target="_blank" class="network-channel">
+                            <a href="{{ item.get_private_url }}" target="_blank" class="network-channel">
                                 {% if item.image %}
                                     <span class="avatar network-channel-icon"><img src="{{ item.image }}" alt="{{ item.name }}"></span>
                                 {% endif %}

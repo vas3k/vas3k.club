@@ -21,7 +21,7 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
 from common.feature_flags import feature_switch
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite
-from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
+from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, network_chat
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
     email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
@@ -183,6 +183,7 @@ urlpatterns = [
     path("docs/<slug:doc_slug>/", docs, name="docs"),
 
     path("network/", network, name="network"),
+    path("network/chat/<slug:chat_id>", network_chat, name="network_chat"),
 
     # admin features
     path("godmode/", godmode_settings, name="godmode_settings"),

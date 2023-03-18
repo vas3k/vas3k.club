@@ -3,15 +3,15 @@ from urllib.parse import urlencode
 
 import pytz
 from django.db.models import Count, Q, Sum
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_GET
 from icalendar import Calendar, Event
 
 from authn.decorators.auth import require_auth
 from badges.models import UserBadge
 from landing.models import GodSettings
-from misc.models import NetworkGroup
+from misc.models import NetworkGroup, NetworkItem
 from users.models.achievements import Achievement
 from users.models.user import User
 
@@ -65,6 +65,14 @@ def network(request):
     return render(request, "pages/network.html", {
         "network": network_groups,
     })
+
+
+@require_auth
+def network_chat(request, chat_id):
+    network_item = get_object_or_404(NetworkItem, id=chat_id)
+    if not network_item.url:
+        raise Http404()
+    return redirect(network_item.url, permanent=False)
 
 
 @require_GET

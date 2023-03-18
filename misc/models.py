@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from django.db import models
+from django.urls import reverse
 
 
 class ProTip(models.Model):
@@ -48,7 +49,7 @@ class NetworkGroup(models.Model):
 
 
 class NetworkItem(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    id = models.CharField(primary_key=True, max_length=32, default=uuid4)
 
     group = models.ForeignKey(NetworkGroup, related_name="items", db_index=True, null=True, on_delete=models.SET_NULL)
 
@@ -65,3 +66,8 @@ class NetworkItem(models.Model):
     class Meta:
         db_table = "network_items"
         ordering = ["index"]
+
+    def get_private_url(self):
+        if self.url:
+            return reverse("network_chat", kwargs={"chat_id": self.id})
+        return None
