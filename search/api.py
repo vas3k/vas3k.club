@@ -25,7 +25,8 @@ def api_search_users(request):
     return JsonResponse({
         "users": [{
             "slug": user.slug,
-            "full_name": user.full_name
+            "full_name": user.full_name,
+            "avatar": user.avatar
         } for user in suggested_users],
     })
 
