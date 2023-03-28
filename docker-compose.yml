@@ -98,3 +98,8 @@ services:
     volumes:
       - .:/app:delegated
     working_dir: /app/frontend
+
+networks:
+  default:
+    external:
+      name: therapytribe_network
