@@ -87,6 +87,9 @@
 
 {% block comments %}
     <div class="post-comments" id="comments">
+        <div class="comment-scroll-arrow-wrapper">
+            <comment-scroll-arrow />
+        </div>
         {% battle_stats post comments %}
 
         {% if me and me.is_active_membership %}
@@ -106,7 +109,7 @@
                 </a>
             </div>
         {% endif %}
-
+                
         {% if comments %}
             <div class="post-comments-list">
                 {% include "comments/list.html" with comments=comments reply_form=reply_form type="battle" %}
