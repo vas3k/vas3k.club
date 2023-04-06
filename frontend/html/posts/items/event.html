@@ -1,6 +1,19 @@
 {% load posts %}
 {% load text_filters %}
-<div class="block feed-post h-entry {% css_classes post %}">
+<div class="block feed-post feed-post-type-{{ post.type }} h-entry {% css_classes post %}">
+    {% if post.metadata.event %}
+        <div class="feed-post-header-icon">
+            <div class="post-event-date">
+                <div class="post-event-date-day">
+                    {{ post.event_datetime|date:"d" }}
+                </div>
+                <div class="post-event-date-month">
+                    {{ post.event_datetime|date:"E"|lower  }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="feed-post-header">
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
