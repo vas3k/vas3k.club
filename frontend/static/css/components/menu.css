@@ -37,6 +37,10 @@
         }
 
         @media only screen and (max-width : 570px) {
+            .menu-left {
+                min-width: auto;
+            }
+            
             .menu-burger {
                 display: block;
             }
