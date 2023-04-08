@@ -238,7 +238,7 @@ ACHIEVEMENTS = [
     ("music_jam_4", {
         "name": "OSTallenge",
         "description": "За участие в весеннем OSTэллендже 2023",
-        "image": "https://vas3k.club/static/images/achievements/music_jam_4.png",
+        "image": "https://vas3k.club/static/images/achievements/ost-achievement.png",
         "style": "background-color: #4996FF; font-size: 120%;",
     }),
 ]
