@@ -235,6 +235,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/astrophoto.png",
         "style": "background-color: #200836; font-size: 120%;",
     }),
+    ("music_jam_4", {
+        "name": "OSTallenge",
+        "description": "За участие в весеннем OSTэллендже 2023",
+        "image": "https://vas3k.club/static/images/achievements/ost-achievement.png",
+        "style": "background-color: #4996FF; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
