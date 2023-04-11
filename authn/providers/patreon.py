@@ -102,20 +102,6 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
     if not user_data or not user_data.get("data") or not user_data.get("included"):
         return None
 
-    if user_data["data"]["id"] in settings.PATREON_GOD_IDS:
-        return Membership(
-            platform=Platform.patreon,
-            user_id=user_data["data"]["id"],
-            full_name=user_data["data"]["attributes"]["full_name"],
-            email=user_data["data"]["attributes"]["email"],
-            image=user_data["data"]["attributes"]["image_url"],
-            started_at=datetime.utcnow(),
-            charged_at=None,
-            expires_at=datetime.utcnow() + timedelta(days=100 * 365),
-            lifetime_support_cents=-1,
-            currently_entitled_amount_cents=0
-        )
-
     for membership in user_data["included"]:
         if membership["attributes"]["patron_status"] == "active_patron" \
                 and membership["attributes"]["last_charge_status"] == "Paid":

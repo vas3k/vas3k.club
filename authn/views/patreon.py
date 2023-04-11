@@ -1,40 +1,33 @@
-from datetime import datetime
-from urllib.parse import urlencode, parse_qsl
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.urls import reverse
 
+from authn.decorators.auth import require_auth
 from authn.exceptions import PatreonException
-from authn.helpers import set_session_cookie
-from authn.models.session import Session
 from authn.providers import patreon
 from club import features
-from common.feature_flags import feature_required
+from common.feature_flags import require_feature
 from users.models.user import User
 
 
-@feature_required(features.PATREON_AUTH_ENABLED)
-def patreon_login(request):
-    state = {}
-    goto = request.GET.get("goto")
-    if goto:
-        state["goto"] = goto
-
+@require_auth
+@require_feature(features.PATREON_AUTH_ENABLED)
+def patreon_sync(request):
     query_string = urlencode(
         {
             "response_type": "code",
             "client_id": settings.PATREON_CLIENT_ID,
             "redirect_uri": settings.PATREON_REDIRECT_URL,
             "scope": settings.PATREON_SCOPE,
-            "state": urlencode(state) if state else "",
         }
     )
     return redirect(f"{settings.PATREON_AUTH_URL}?{query_string}")
 
 
-@feature_required(features.PATREON_AUTH_ENABLED)
-def patreon_oauth_callback(request):
+@require_auth
+@require_feature(features.PATREON_AUTH_ENABLED)
+def patreon_sync_callback(request):
     code = request.GET.get("code")
     if not code:
         return render(request, "error.html", {
@@ -73,48 +66,27 @@ def patreon_oauth_callback(request):
                        "Проверьте, всё ли там у них в порядке."
         }, status=402)
 
-    now = datetime.utcnow()
-
-    # get user by patreon_id or email
-    user = User.objects.filter(patreon_id=membership.user_id).first()
-    if not user:
-        # user is new, do not allow patreon users to register
+    if request.me.email != membership.email:
+        # user and patreon emails do not match
         return render(request, "error.html", {
-            "title": "🤕 Регистрироваться через Патреон больше нельзя",
-            "message": "Возможность входа через Патреон осталась только для легаси-юзеров, "
-                       "но создавать новые аккаунты в Клубе через него больше нельзя. "
-                       "Через Патреон регистрируется очень много виртуалов и прочих анонимов, "
-                       "так как им это дешево. Мы же устали их ловить и выгонять, "
-                       "потому решили полностью прикрыть регистрацию."
+            "title": "⛔️ Ваш email не совпадает с патреоновским",
+            "message": f"Для продления аккаунта ваш адрес почты в Клубе и на Патреоне должен совпадать.<br><br> "
+                       f"Сейчас там {membership.email}, а здесь {request.me.email}.<br><br> "
+                       "Так нельзя, ибо это открывает дыру для продления сразу нескольким людям :)"
         }, status=400)
 
-    else:
-        # user exists
-        if user.deleted_at:
-            return render(request, "error.html", {
-                "title": "💀 Аккаунт был удалён",
-                "message": "Войти через этот патреон больше не получится"
-            }, status=404)
+    if request.me.membership_platform_type != User.MEMBERSHIP_PLATFORM_PATREON:
+        # wrong platform
+        return render(request, "error.html", {
+            "title": "⛔️ Вы не легаси-пользователь",
+            "message": "Патреон — это старый метод входа. Он оставлен исключительно для олдов, "
+                       "которые подписались много лет назад и не хотят никуда переезжать. "
+                       "По нашим данным, вы уже перешли на более совершенный вид оплаты и вернуться назад не получится."
+        }, status=400)
 
-        # update membership dates
-        user.balance = membership.lifetime_support_cents / 100
-        if membership.expires_at > user.membership_expires_at:
-            user.membership_expires_at = membership.expires_at
+    # update membership dates
+    if membership.expires_at > request.me.membership_expires_at:
+        request.me.membership_expires_at = membership.expires_at
+    request.me.save()
 
-    user.membership_platform_data = {
-        "access_token": auth_data["access_token"],
-        "refresh_token": auth_data["refresh_token"],
-    }
-    user.save()
-
-    # create a new session token to authorize the user
-    session = Session.create_for_user(user)
-    redirect_to = reverse("profile", args=[user.slug])
-    state = request.GET.get("state")
-    if state:
-        state_dict = dict(parse_qsl(state))
-        if "goto" in state_dict:
-            redirect_to = state_dict["goto"]
-
-    response = redirect(redirect_to)
-    return set_session_cookie(response, user, session)
+    return redirect("profile", request.me.slug)

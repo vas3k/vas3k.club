@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 
-def feature_required(feature_flag):
+def require_feature(feature_flag):
     def decorator(view):
         def wrapper(request, *args, **kwargs):
             if not feature_flag:

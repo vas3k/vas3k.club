@@ -19,7 +19,7 @@
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 
             <span class="p-name">
-                📅 <a href="{% url "show_post" post.type post.slug %}" class="post-title-link">{{ post.title | rutypography }}</a>
+                <a href="{% url "show_post" post.type post.slug %}" class="post-title-link">{{ post.title | rutypography }}</a>
             </span>
 
             {% if post.label %}

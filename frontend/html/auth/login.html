@@ -12,19 +12,12 @@
                         <button type="submit" class="button login-button" style="min-width: 200px;">🤙 Войти</button>
                     </form>
                 </div>
-            </div>
-
-            {% if features.PATREON_AUTH_ENABLED %}
-                <div class="block login-service" style="max-width: 300px;">
-                    <div class="login-service-title">Патреон</div>
+                {% if features.PATREON_AUTH_ENABLED %}
                     <div class="login-service-description">
-                        Старый вход для олдов
+                        ☝️ Олды с Патреона: используйте свой email оттуда
                     </div>
-                    <div class="login-service-form">
-                        <a href="{% url "patreon_login" %}{% if goto %}?goto={{ goto|urlencode }}{% endif %}" class="button login-button login-button-patreon"><i class="fab fa-patreon"></i> Войти</a>
-                    </div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
 
         <div class="login-separator">🤔 Всё еще нет клубной карты?</div>

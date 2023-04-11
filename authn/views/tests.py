@@ -347,11 +347,23 @@ class ViewExternalLoginTests(TestCase):
 
 @unittest.skipIf(not features.PATREON_AUTH_ENABLED, reason="Patreon auth was disabled")
 class ViewPatreonLoginTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Set up data for the whole TestCase
+        cls.new_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4"
+        )
+
     def test_positive(self):
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
         with self.settings(PATREON_CLIENT_ID="x-client_id",
                            PATREON_REDIRECT_URL="http://x-redirect_url.com",
                            PATREON_SCOPE="x-scope"):
-            response = self.client.get(reverse("patreon_login"), )
+            response = self.client.get(reverse("patreon_sync"), )
             self.assertRedirects(response=response,
                                  expected_url="https://www.patreon.com/oauth2/authorize?client_id=x-client_id&redirect_uri=http%3A%2F%2Fx-redirect_url.com&response_type=code&scope=x-scope",
                                  fetch_redirect_response=False)
@@ -372,7 +384,8 @@ class ViewPatreonOauthCallbackTests(TestCase):
         )
 
     def setUp(self):
-        self.client = HelperClient()
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
 
         self.stub_patreon_response_oauth_token = {
             "access_token": "xxx-access-token",
@@ -405,10 +418,10 @@ class ViewPatreonOauthCallbackTests(TestCase):
         mocked_patreon.parse_active_membership.return_value = membership
 
         # when
-        response = self.client.get(reverse("patreon_oauth_callback"), data={"code": "1234"})
+        response = self.client.get(reverse("patreon_sync_callback"), data={"code": "1234"})
 
         # then
-        self.assertContains(response=response, text="Регистрироваться через Патреон больше нельзя",
+        self.assertContains(response=response, text="Ваш email не совпадает",
                             status_code=400)
         created_user: User = User.objects.filter(email=membership.email).first()
         self.assertIsNone(created_user)
@@ -424,7 +437,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
         mocked_patreon.parse_active_membership.return_value = membership
 
         # when
-        response = self.client.get(reverse("patreon_oauth_callback"), data={"code": "1234"})
+        response = self.client.get(reverse("patreon_sync_callback"), data={"code": "1234"})
 
         # then
         self.assertRedirects(response=response, expected_url=f"/user/ujlbu4/",
@@ -434,16 +447,13 @@ class ViewPatreonOauthCallbackTests(TestCase):
         created_user: User = User.objects.filter(patreon_id="12345").get()
         self.assertIsNotNone(created_user)
         self.assertEqual(created_user.membership_expires_at, membership.expires_at)
-        self.assertEqual(created_user.balance, 1005)  # 100500 / 100
-        self.assertEqual(created_user.membership_platform_data, {"access_token": "xxx-access-token",
-                                                                 "refresh_token": "xxx-refresh-token"})
 
     def test_patreon_exception(self, mocked_patreon):
         # given
         mocked_patreon.fetch_auth_data.side_effect = PatreonException("custom_test_exception")
 
         # when
-        response = self.client.get(reverse("patreon_oauth_callback"), data={"code": "1234"})
+        response = self.client.get(reverse("patreon_sync_callback"), data={"code": "1234"})
 
         # then
         self.assertContains(response=response, text="Не получилось загрузить ваш профиль с серверов патреона",
@@ -456,11 +466,11 @@ class ViewPatreonOauthCallbackTests(TestCase):
         mocked_patreon.parse_active_membership.return_value = None  # no membership
 
         # when
-        response = self.client.get(reverse("patreon_oauth_callback"), data={"code": "1234"})
+        response = self.client.get(reverse("patreon_sync_callback"), data={"code": "1234"})
 
         # then
         self.assertContains(response=response, text="Надо быть патроном, чтобы состоять в Клубе", status_code=402)
 
     def test_param_code_absent(self, mocked_patreon=None):
-        response = self.client.get(reverse("patreon_oauth_callback"), data={})
+        response = self.client.get(reverse("patreon_sync_callback"), data={})
         self.assertContains(response=response, text="Что-то сломалось между нами и патреоном", status_code=500)

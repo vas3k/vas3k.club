@@ -220,7 +220,6 @@ PATREON_CLIENT_ID = os.getenv("PATREON_CLIENT_ID")
 PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET")
 PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
-PATREON_GOD_IDS = ["8724543"]
 
 COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
 COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")

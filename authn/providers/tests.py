@@ -76,26 +76,6 @@ class UnitTestsParseActiveMembership(SimpleTestCase):
         self.assertEqual(result.lifetime_support_cents, 400)
         self.assertEqual(result.currently_entitled_amount_cents, 100)
 
-    def test_successful_god_id(self):
-        with self.settings(PATREON_GOD_IDS=['12345689']):
-            result: Membership = parse_active_membership(self.stub_patreon_response_oauth_identity)
-
-            self.assertIsNotNone(result)
-            self.assertTrue(isinstance(result, Membership))
-
-            self.assertEqual(result.platform, "patreon")
-            self.assertEqual(result.user_id, "12345689")
-            self.assertEqual(result.full_name, "FullName With Space")
-            self.assertEqual(result.email, "user-email@email.com")
-            self.assertEqual(result.image, 'https://url.example')
-
-            self.assertAlmostEquals(result.started_at, datetime.utcnow(), delta=timedelta(seconds=5))
-            self.assertAlmostEquals(result.expires_at, datetime.utcnow() + timedelta(days=100*365),
-                                    delta=timedelta(seconds=5))
-
-            self.assertEqual(result.lifetime_support_cents, -1)
-            self.assertEqual(result.currently_entitled_amount_cents, 0)
-
     def test_wrong_data(self):
         result = parse_active_membership({})
         self.assertIsNone(result)
