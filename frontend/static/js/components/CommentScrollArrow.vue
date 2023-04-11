@@ -90,6 +90,8 @@ export default {
                      ".post-comments-list > .replies > .reply:not(.comment-is-new) > .reply.comment-is-new",
                      // Новые реплаи на втором уровне бэтлов
                      ".battle-comments .post-comments-list > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
+                     // новые аргументы в бэтлах
+                     ".comment.comment-type-battle-is-new",
                  ].join()
              );
 
