@@ -5,7 +5,7 @@
 <div class="battle-comment-prefix battle-comment-prefix-side-{{ comment.metadata.battle.side }}">
     за «{{ comment.battle_side }}»
 </div>
-<div class="block comment comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}" id="comment-{{ comment.id }}">
+<div class="block comment {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %}  comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}" id="comment-{{ comment.id }}">
     <div class="comment-header">
         <div class="comment-title">{{ comment.title | rutypography }}</div>
         <div  class="comment-type-battle-userinfo">
