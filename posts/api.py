@@ -41,12 +41,6 @@ def api_show_post(request, post_type, post_slug):
     if not post.can_view(request.me):
         raise Http404()
 
-    # don't show private posts into public
-    if not post.is_public:
-        access_denied = check_user_permissions(request, post=post)
-        if access_denied:
-            return access_denied
-
     return {
         "post": post.to_dict(including_private=bool(request.me))
     }
