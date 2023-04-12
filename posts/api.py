@@ -3,6 +3,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
+from authn.helpers import check_user_permissions
 from authn.decorators.api import api
 from common.pagination import paginate
 from posts.models.post import Post
@@ -19,6 +20,12 @@ def md_show_post(request, post_type, post_slug):
     if not post.can_view(request.me):
         raise Http404()
 
+    # don't show private posts into public
+    if not post.is_public:
+        access_denied = check_user_permissions(request, post=post)
+        if access_denied:
+            return access_denied
+
     post_markdown = f"""# {post.title}\n\n{post.text}"""
 
     return HttpResponse(post_markdown, content_type="text/plain; charset=utf-8")
@@ -33,6 +40,12 @@ def api_show_post(request, post_type, post_slug):
 
     if not post.can_view(request.me):
         raise Http404()
+
+    # don't show private posts into public
+    if not post.is_public:
+        access_denied = check_user_permissions(request, post=post)
+        if access_denied:
+            return access_denied
 
     return {
         "post": post.to_dict(including_private=bool(request.me))
