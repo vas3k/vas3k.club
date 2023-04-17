@@ -66,7 +66,7 @@ def patreon_sync_callback(request):
                        "Проверьте, всё ли там у них в порядке."
         }, status=402)
 
-    if request.me.email != membership.email:
+    if request.me.email.lower() != membership.email.lower():
         # user and patreon emails do not match
         return render(request, "error.html", {
             "title": "⛔️ Ваш email не совпадает с патреоновским",
