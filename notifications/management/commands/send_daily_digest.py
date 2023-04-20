@@ -1,14 +1,13 @@
-import base64
 import logging
 from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django.template.defaultfilters import date
+from django_q.tasks import async_task
 
 from club.exceptions import NotFound
 from notifications.digests import generate_daily_digest
-from notifications.email.sender import send_club_email
+from notifications.telegram.common import send_telegram_message, Chat
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -22,18 +21,24 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # select daily subscribers
-        subscribed_users = User.objects\
-            .filter(
-                email_digest_type=User.EMAIL_DIGEST_TYPE_DAILY,
-                is_email_verified=True,
-                membership_expires_at__gte=datetime.utcnow() - timedelta(days=14),
-                moderation_status=User.MODERATION_STATUS_APPROVED,
-            )\
-            .exclude(is_email_unsubscribed=True)
+        if not options.get("production"):
+            subscribed_users = User.objects.filter(
+                email__in=dict(settings.ADMINS).values(),
+                telegram_id__isnull=False
+            )
+        else:
+            subscribed_users = User.objects\
+                .filter(
+                    email_digest_type=User.EMAIL_DIGEST_TYPE_DAILY,
+                    is_email_verified=True,
+                    membership_expires_at__gte=datetime.utcnow() - timedelta(days=14),
+                    moderation_status=User.MODERATION_STATUS_APPROVED,
+                )\
+                .exclude(is_email_unsubscribed=True)
 
         for user in subscribed_users:
-            if not options.get("production") and user.email not in dict(settings.ADMINS).values():
-                self.stdout.write("Test mode. Use --production to send the digest to all users")
+            if not user.telegram_id:
+                self.stdout.write("User does not have telegram ID in profile")
                 continue
 
             # render user digest using a special html endpoint
@@ -45,19 +50,13 @@ class Command(BaseCommand):
                 self.stdout.write("Empty digest. Skipping")
                 continue
 
-            digest = digest\
-                .replace("%username%", user.slug)\
-                .replace("%user_id%", str(user.id))\
-                .replace("%secret_code%", base64.b64encode(user.secret_hash.encode("utf-8")).decode())
-
-            self.stdout.write(f"Sending email to {user.email}...")
+            self.stdout.write(f"Sending message to {user.slug}...")
 
             try:
-                send_club_email(
-                    recipient=user.email,
-                    subject=f"Дайджест за {date(datetime.utcnow(), 'd E')}",
-                    html=digest,
-                    tags=["daily_digest"]
+                async_task(
+                    send_telegram_message,
+                    chat=Chat(id=user.telegram_id),
+                    text=digest,
                 )
             except Exception as ex:
                 self.stdout.write(f"Sending to {user.email} failed: {ex}")

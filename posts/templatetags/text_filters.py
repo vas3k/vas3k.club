@@ -90,7 +90,7 @@ def percentage_of(value, arg):
 @register.filter
 def rupluralize(value, arg="дурак,дурака,дураков"):
     args = arg.split(",")
-    number = abs(int(value))
+    number = abs(int(value or 0))
     a = number % 10
     b = number % 100
 

@@ -192,8 +192,8 @@
                         {{ form.email_digest_type.1.tag }}
                         <label for="{{ form.email_digest_type.1.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-envelope-open"></i>
-                            <span class="big-radio-title">Ежедневные<br> обновления + журнал</span>
-                            <span class="big-radio-description">Шлите мне всё!</span>
+                            <span class="big-radio-title">Ежедневные дайджесты</span>
+                            <span class="big-radio-description">Хочу быть в курсе всего!</span>
                         </label>
                     </div>
                     <div class="big-radio-item">
@@ -201,15 +201,15 @@
                         <label for="{{ form.email_digest_type.2.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-calendar-week"></i>
                             <span class="big-radio-title">Журнал раз в неделю</span>
-                            <span class="big-radio-description">Подборка отборного контента за неделю</span>
+                            <span class="big-radio-description">Подборка лучшего по понедельникам</span>
                         </label>
                     </div>
                     <div class="big-radio-item">
                         {{ form.email_digest_type.0.tag }}
                         <label for="{{ form.email_digest_type.0.id_for_label }}" class="big-radio-label">
                             <i class="fab fa-telegram"></i>
-                            <span class="big-radio-title">Онлайн в <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">телеграме</a></span>
-                            <span class="big-radio-description">Не хочу никаких писем, сам разберусь (нет)</span>
+                            <span class="big-radio-title">Никак</span>
+                            <span class="big-radio-description">Я сам разберусь (нет)</span>
                         </label>
                     </div>
                 </div>
