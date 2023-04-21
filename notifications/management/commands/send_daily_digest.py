@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.core.management import BaseCommand
-from django_q.tasks import async_task
 
 from club.exceptions import NotFound
 from notifications.digests import generate_daily_digest
@@ -53,8 +52,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Sending message to {user.slug}...")
 
             try:
-                async_task(
-                    send_telegram_message,
+                send_telegram_message(
                     chat=Chat(id=user.telegram_id),
                     text=digest,
                 )
