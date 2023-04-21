@@ -19,12 +19,21 @@ from users.models.achievements import UserAchievement
 from users.models.user import User
 
 
+BONUS_HOURS = 10  # for better/honest rating estimation of "night" posts
+
+
 def generate_daily_digest(user):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=1)
-    if end_date.weekday() == 0:
+
+    if end_date.weekday() == 1:
         # we don't have daily on weekends and mondays, we need to include all these posts at tuesday
-        start_date = end_date - timedelta(days=3)
+        start_date = end_date - timedelta(hours=3 * 24 + BONUS_HOURS)
+    elif end_date.weekday() in (2, 3):
+        # middle of the week is usually full of posts, so we include only 1 day
+        start_date = end_date - timedelta(days=1 * 24 + BONUS_HOURS)
+    else:
+        # other days are quieter
+        start_date = end_date - timedelta(hours=2 * 24 + BONUS_HOURS)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
@@ -67,7 +76,7 @@ def generate_daily_digest(user):
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")[:3]
 
-    if not new_upvotes and not new_post_comments and not new_posts and not intros:
+    if not new_post_comments and not new_posts and not intros:
         raise NotFound()
 
     return render_to_string("messages/good_morning.html", {
