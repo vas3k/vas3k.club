@@ -30,7 +30,7 @@ def generate_daily_digest(user):
         start_date = end_date - timedelta(hours=3 * 24 + BONUS_HOURS)
     elif end_date.weekday() in (2, 3):
         # middle of the week is usually full of posts, so we include only 1 day
-        start_date = end_date - timedelta(days=1 * 24 + BONUS_HOURS)
+        start_date = end_date - timedelta(hours=1 * 24 + BONUS_HOURS)
     else:
         # other days are quieter
         start_date = end_date - timedelta(hours=2 * 24 + BONUS_HOURS)

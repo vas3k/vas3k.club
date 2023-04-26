@@ -32,6 +32,7 @@ class Command(BaseCommand):
                     is_email_verified=True,
                     membership_expires_at__gte=datetime.utcnow() - timedelta(days=14),
                     moderation_status=User.MODERATION_STATUS_APPROVED,
+                    deleted_at__isnull=True,
                 )\
                 .exclude(is_email_unsubscribed=True)
 
