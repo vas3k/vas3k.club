@@ -247,6 +247,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/cake_is_a_lie.png",
         "style": "background-color: #FF7400; font-size: 120%;",
     }),
+    ("botmom", {
+        "name": "BotMother",
+        "description": "За создание бота для клубного чата",
+        "image": "https://vas3k.club/static/images/achievements/botmom.png",
+        "style": "background-color: #002C35; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
