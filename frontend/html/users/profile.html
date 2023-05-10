@@ -134,6 +134,9 @@
                     url="{% url "toggle_friend" user.slug %}"
                     {% if friend %}is-friend-by-default{% endif %}>
                 </friend-button>
+                <audio id="audioPlayer">
+                    <source src="/static/audio/itswednesdaymydudes.mp3" type="audio/mpeg">
+                </audio>
 
                 {% if not user.is_curator and not user.is_moderator %}
                     {% if muted %}
