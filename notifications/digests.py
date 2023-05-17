@@ -26,11 +26,8 @@ def generate_daily_digest(user):
     end_date = datetime.utcnow()
 
     if end_date.weekday() == 1:
-        # we don't have daily on weekends and mondays, we need to include all these posts at tuesday
+        # we don't have daily digest on weekends and mondays, we need to include all these posts at tuesday
         start_date = end_date - timedelta(hours=3 * 24 + BONUS_HOURS)
-    elif end_date.weekday() in (2, 3):
-        # middle of the week is usually full of posts, so we include only 1 day
-        start_date = end_date - timedelta(hours=1 * 24 + BONUS_HOURS)
     else:
         # other days are quieter
         start_date = end_date - timedelta(hours=2 * 24 + BONUS_HOURS)
