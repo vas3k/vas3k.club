@@ -1,36 +1,42 @@
 version: "3"
 services:
   club_app: &app
-    image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    build: 
+      dockerfile: Dockerfile
+      context: .
     command: make docker-run-production
     container_name: club_app
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
       - DEBUG=false
-      - APP_HOST=https://vas3k.club
-      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
-      - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=vas3k
-      - POSTGRES_PASSWORD=vas3k
+      - APP_HOST=https://therapytribe.ru
+      - MEDIA_UPLOAD_URL=https://media.therapytribe.ru/upload/
+      - POSTGRES_DB=therapytribe_ru
+      - POSTGRES_USER=therapytriberu
+      - POSTGRES_PASSWORD=therapytriberu
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
-      - EMAIL_HOST
-      - EMAIL_PORT
-      - DEFAULT_FROM_EMAIL
+      - VIRTUAL_HOST=therapytribe.ru,www.therapytribe.ru
+      - VIRTUAL_PORT=8000
+      - VIRTUAL_PATH=/
     env_file:
-      - .env
+      - club/.env
     restart: always
     volumes:
       - ./frontend/static:/tmp/static
+      - ./frontend:/app/frontend/
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres
       - redis
       - queue
     ports:
-      - "127.0.0.1:8814:8814"
+      - "8000:8000"
+    networks:
+      - front
+      - club
 
   queue:
     <<: *app
@@ -40,17 +46,32 @@ services:
       - postgres
       - redis
     ports: []
+    networks:
+      - club
 
   bot:
     <<: *app
     command: make docker-run-bot
     container_name: club_bot
+    environment:
+      - APP_HOST=https://therapytribe.ru
+      - POSTGRES_DB=therapytribe_ru
+      - POSTGRES_USER=therapytriberu
+      - POSTGRES_PASSWORD=therapytriberu
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - REDIS_DB=0
+      - VIRTUAL_HOST=therapytribe.ru
+      - VIRTUAL_PATH=/telegram/webhook/
+      - VIRTUAL_PORT=8816
     depends_on:
       - club_app
       - postgres
       - redis
     ports:
       - "8816:8816"
+    networks:
+      - club
 
   cron:
     <<: *app
@@ -61,23 +82,59 @@ services:
       - postgres
       - redis
     ports: []
+    networks:
+      - club
 
   postgres:
     image: postgres:12
     container_name: club_postgres
     restart: always
     environment:
-      POSTGRES_USER: vas3k
-      POSTGRES_PASSWORD: vas3k
-      POSTGRES_DB: vas3k_club
+      POSTGRES_USER: therapytriberu
+      POSTGRES_PASSWORD: therapytriberu
+      POSTGRES_DB: therapytribe_ru
     volumes:
-      - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
+      - /home/therapytribe-admin/pgdata:/var/lib/postgresql/data:rw
     ports:
-      - "127.0.0.1:54333:5432"
+      - "54333:5432"
+    networks:
+      - club
+  
+  # pgbackups:
+  #   image: prodrigestivill/postgres-backup-local
+  #   restart: always
+  #   volumes:
+  #     - /home/pmi-admin/backup/pmi/pgdata:/backups
+  #   links:
+  #     - postgres
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     - POSTGRES_HOST=postgres
+  #     - POSTGRES_DB=therapytribe_ru
+  #     - POSTGRES_USER=therapytriberu
+  #     - POSTGRES_PASSWORD=therapytriberu
+  #     - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
+  #     - SCHEDULE=@weekly
+  #     - BACKUP_KEEP_DAYS=7
+  #     - BACKUP_KEEP_WEEKS=4
+  #     - BACKUP_KEEP_MONTHS=6
+  #     - HEALTHCHECK_PORT=8080
+  #   networks:
+  #     - club
 
   redis:
     image: redis:alpine
-    container_name: club_redis
+    container_name: therapytribe_ru
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - club
+
+
+networks:
+  front:
+    name: therapytribe_network
+  club:
+    name: club_network

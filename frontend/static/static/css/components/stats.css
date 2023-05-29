@@ -1,0 +1,214 @@
+.stats {
+    padding-top: 40px;
+    margin: 0 auto;
+    max-width: var(--max-content-width);
+}
+
+    .stats-title {
+        display: block;
+        font-size: 300%;
+        text-align: center;
+        font-weight: 500;
+        padding-top: 50px;
+        padding-bottom: 30px;
+        text-decoration: none;
+    }
+
+    .stats-header {
+        display: block;
+        font-size: 250%;
+        text-align: center;
+        font-weight: 500;
+        padding-top: 80px;
+        padding-bottom: 30px;
+        text-decoration: none;
+        max-width: var(--post-width);
+        margin: 0 auto;
+    }
+
+    .stats-subheader {
+        display: block;
+        font-size: 180%;
+        text-align: center;
+        font-weight: 500;
+        padding-top: 60px;
+        padding-bottom: 50px;
+        text-decoration: none;
+        max-width: var(--post-width);
+        margin: 0 auto;
+    }
+
+    .stats-description {
+        display: block;
+        font-size: 130%;
+        text-align: center;
+        padding-bottom: 30px;
+        max-width: var(--post-width);
+        margin: 0 auto;
+    }
+
+.stats-top-users {
+    max-width: var(--max-content-width);
+    margin: 0 auto 50px;
+}
+
+.top-users {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 50px;
+}
+
+    .top-user {
+        display: block;
+        width: 100%;
+        text-decoration: none;
+        text-align: center;
+        position: relative;
+    }
+
+        .top-user-avatar {
+            width: 150px;
+            height: 150px;
+        }
+
+        .top-user-avatar-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 50px;
+        }
+
+        .top-user-name {
+            display: block;
+            font-size: 140%;
+            font-weight: 500;
+            padding: 10px 0 5px;
+            line-height: 1.2em;
+        }
+
+        .top-user-info {
+            display: block;
+            opacity: 0.8;
+        }
+
+        .top-user-more {
+            display: block;
+            font-size: 120%;
+            align-self: center;
+        }
+
+    .top-user-big {
+        max-width: 160px;
+        margin: 10px;
+    }
+
+    .top-user-medium {
+        max-width: 120px;
+        margin: 10px 5px;
+    }
+
+        .top-user-medium .top-user-avatar {
+            width: 80px;
+            height: 80px;
+        }
+
+        .top-user-medium .top-user-name {
+            font-size: 110%;
+        }
+
+        .top-user-medium .top-user-info {
+            font-size: 80%;
+        }
+
+    .top-user-small {
+        max-width: 60px;
+        margin: 5px;
+    }
+
+        .top-user-small .top-user-avatar {
+            width: 60px;
+            height: 60px;
+        }
+
+.stats-achievements {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    padding-bottom: 50px;
+}
+
+    .stats-achievements-badge {
+        width: 200px;
+    }
+
+    .stats-achievements-users {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: left;
+        padding-top: 50px;
+        width: 100%;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .stats-achievements {
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+        .stats-achievements-badge {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .stats-achievements-users {
+            justify-content: center;
+        }
+    }
+
+.stats-badges-latest {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+    .stats-badge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 100px;
+        text-align: center;
+        gap: 3px;
+        text-decoration: none;
+    }
+
+        .stats-badge-image {
+            width: 80px;
+            height: 80px;
+        }
+
+            .stats-badge-image-tiny {
+                width: 25px;
+                height: 25px;
+            }
+
+        .stats-badge-title {
+            font-size: 120%;
+            font-weight: 500;
+        }
+
+        .stats-badge-info {
+            font-size: 80%;
+        }
+
+.stats-badges-top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: var(--max-content-width);
+}

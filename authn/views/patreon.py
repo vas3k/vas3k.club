@@ -67,7 +67,7 @@ def patreon_oauth_callback(request):
     if not membership:
         return render(request, "error.html", {
             "title": "Надо быть патроном, чтобы состоять в Клубе",
-            "message": "Кажется, вы не патроните <a href=\"https://www.patreon.com/join/vas3k\">@vas3k</a>. "
+            "message": "Кажется, вы не патроните <a href=\"https://www.patreon.com/join/therapytribe\">@therapytribe</a>. "
                        "А это одно из основных требований для входа в Клуб.<br><br>"
                        "Ещё иногда бывает, что ваш банк отказывает патреону в снятии денег. "
                        "Проверьте, всё ли там у них в порядке."

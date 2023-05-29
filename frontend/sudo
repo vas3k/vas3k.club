@@ -1,0 +1,1 @@
+deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/jammy pgadmin4 main tee /etc/apt/sources.list.d/pgadmin4.list

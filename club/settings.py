@@ -15,12 +15,11 @@ SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
 DEBUG = (os.getenv("DEBUG") != "false")  # SECURITY WARNING: don't run with debug turned on in production!
 TESTS_RUN = True if os.getenv("TESTS_RUN") else False
 
-ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club"]
+ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "therapytribe.ru", "www.therapytribe.ru"]
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
-    ("admin", "club@vas3k.club"),
-    ("vas3k", "me@vas3k.ru"),
+    ("admin", "urionsisdi@gmail.com"),
 ]
 
 INSTALLED_APPS = [
@@ -113,8 +112,8 @@ LOGGING = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("POSTGRES_DB") or "vas3k_club",
-        "USER": os.getenv("POSTGRES_USER") or "postgres",
+        "NAME": os.getenv("POSTGRES_DB") or "",
+        "USER": os.getenv("POSTGRES_USER") or "",
         "PASSWORD": os.getenv("POSTGRES_PASSWORD") or "",
         "HOST": os.getenv("POSTGRES_HOST") or "localhost",
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
@@ -142,7 +141,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/static")]
 REDIS_HOST = os.getenv("REDIS_HOST") or "localhost"
 REDIS_PORT = os.getenv("REDIS_PORT") or 6379
 Q_CLUSTER = {
-    "name": "vas3k_club",
+    "name": "therapytribe_club",
     "workers": 4,
     "recycle": 500,
     "timeout": 30,
@@ -173,17 +172,18 @@ LANDING_CACHE_TIMEOUT = 60 * 60 * 24
 # Email
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST", "email-smtp.eu-central-1.amazonaws.com")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Вастрик.Клуб <club@vas3k.club>")
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Therapy Tribe.Клуб <club@therapytribe.ru>")
 
 # App
 
 APP_HOST = os.environ.get("APP_HOST") or "http://127.0.0.1:8000"
-APP_NAME = "Вастрик.Клуб"
+APP_NAME = "Therapy Tribe"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
 LAUNCH_DATE = datetime(2020, 4, 13)
 
@@ -227,18 +227,18 @@ COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
 
 JWT_PRIVATE_KEY = (os.getenv("JWT_PRIVATE_KEY") or "").replace("\\n", "\n")
 JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
-MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvEDEGKL0b+okI6QBBMiu
-3GOHOG/Ml4KJ13tWyPnl5yGswf9rUGOLo0T0dXxSwxp/6g1ZeYqDR7jckuP6A3Rv
-DPdKYc44eG3YB/bO2Yeq57Kx1rxvFvWZap2jTyu2wbALmmeg0ne3wkXPExTy/EQ4
-LDft8nraSJuW7c+qrah+F94qKGVNvilf20V5S186iGpft2j/UAl9s81kzZKBwk7M
-B+u4jSH8E3KHZVb28CVNOpnYYcLBNLsjGwZk6qbiuq1PEq4AZ5TN3EdoVP9nbIGY
-BZAMwoNxP4YQN+mDRa6BU2Mhy+c9ea+fuCKRxNi3+nYjF00D28fErFFcA+BEe4A1
-Hhq25PsVfUgOYvpv1F/ImPJBl8q728DEzDcj1QzL0flbPUMBV6Bsq+l2X3OdrVtQ
-GXiwJfJRWIVRVDuJzdH+Te2bvuxk2d0Sq/H3uzXYd/IQU5Jw0ZZRTKs+Rzdpb8ui
-eoDmq2uz6Q2WH2gPwyuVlRfatJOHCUDjd6dE93lA0ibyJmzxo/G35ns8sZoZaJrW
-rVdFROm3nmAIATC/ui9Ex+tfuOkScYJ5OV1H1qXBckzRVwfOHF0IiJQP4EblLlvv
-6CEL2VBz0D2+gE4K4sez6YSn3yTg9TkWGhXWCJ7vomfwIfHIdZsItqay156jMPaV
-c+Ha7cw3U+n6KI4idHLiwa0CAwEAAQ==
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAurISLo3YFRSPij4n72X3
+HVqalsADSmAlKY0r84r6JAQBvWySsXtpo9uvTE4QW3Eltxu8r7Sv/mVrcS0cqNsU
+3+NBigvOSBWEpY0NBxFtbFMa7mAEmBigEPuc9vR6FSho/Ch4W7seAP2s9dtxPLGi
+DnNm4PvRTmenaupPTjilFvG3ak7CB5ntBvqUs1/0+eF+LmaiXcoRXX56BDUbxeel
+8JoTHKaE2qG8z2p+SZ6QtW2o5XyqKh9Bf9rLIRR9JostQSmrMROcnBOHwx/Qspis
+45q0kDYH1VkseZllLPzX1JKQMxLAgp6/ezhhjHcNxamY5w/MtL8Q3OpLR1i/Wsck
+dmj+pnZZsRE+6tj2p2UcGqRD2POLUb0WfUu24opVy+/UMLZHYGces8YVpSCNWXnS
+OZ63iB+AB0teA23t8ubRxJN4ZIndsR/UOyHRfss96RrPOI1c7JHjuabTggONU74U
+vi6bJFmug2hRx4lWOBNTuxZYX4z9AwP9g3ZUr1kBgvEv5CUnuEk4cyyZw7joOzrS
+vtzCvdbbrXP7UXg+/Uf/9R0mZEr2TiiVuZ1MQ9kKN9AlQs4XVaCzCN2moRhEheIA
+egymMcn4iALYhQmAqcL1SpgGHq/1+ZDePTA3xuOOJT4x12S9hnk04sWazW8Mxkb3
+hXZ1C8AGHKKt21ZjvOqN3AMCAwEAAQ==
 -----END PUBLIC KEY-----"""
 
 OPENID_JWT_ALGORITHM = "RS256"
@@ -247,22 +247,22 @@ OPENID_CODE_EXPIRE_SECONDS = 300  # 5 minutes
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/multipart/"
+MEDIA_UPLOAD_URL = "https://media.therapytribe.ru/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
 IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
 
-OG_IMAGE_GENERATOR_URL = "https://og.vas3k.club/preview"
-OG_IMAGE_DEFAULT = "https://vas3k.club/static/images/share.png"
-OG_MACHINE_AUTHOR_LOGO = "https://vas3k.club/static/images/the_machine_logo.png"
+OG_IMAGE_GENERATOR_URL = "https://og.therapytribe.ru/preview"
+OG_IMAGE_DEFAULT = "https://therapytribe.ru/static/images/share.png"
+OG_MACHINE_AUTHOR_LOGO = "https://therapytribe.ru/static/images/the_machine_logo.png"
 OG_IMAGE_GENERATOR_DEFAULTS = {
-    "logo": "https://vas3k.club/static/images/logo/logo-white-text.png",
+    "logo": "https://therapytribe.ru/static/images/logo/logo-white-text.png",
     "op": 0.6,
     "bg": "#FFFFFF",
 }
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL") or "https://t.me/vas3k_club_bot"
+TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL") or "https://t.me/therapytribe_club_bot"
 TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
 TELEGRAM_CLUB_CHANNEL_URL = os.getenv("TELEGRAM_CLUB_CHANNEL_URL")
 TELEGRAM_CLUB_CHANNEL_ID = os.getenv("TELEGRAM_CLUB_CHANNEL_ID")
@@ -270,7 +270,7 @@ TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
-TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
+TELEGRAM_BOT_WEBHOOK_URL = "https://therapytribe.ru/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
 
@@ -282,7 +282,7 @@ STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
-DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
+DEFAULT_AVATAR = "https://media.therapytribe.ru/v.png"
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
 COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
 COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA = timedelta(days=14)
@@ -297,18 +297,18 @@ MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
 MAX_MUTE_COUNT = 10  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
-    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
+    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@therapytribe.ru." \
     "\n```"
 
 
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
 
-VALUES_GUIDE_URL = "https://vas3k.club/post/values/"
-POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
-CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
-PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
-PARLIAMENT_GUIDE_URL = "https://vas3k.club/post/12870/"
+VALUES_GUIDE_URL = "https://therapytribe.ru/post/values/"
+POSTING_GUIDE_URL = "https://therapytribe.ru/post/10447/"
+CHATS_GUIDE_URL = "https://therapytribe.ru/post/9542/"
+PEOPLE_GUIDE_URL = "https://therapytribe.ru/post/2584/"
+PARLIAMENT_GUIDE_URL = "https://therapytribe.ru/post/12870/"
 
 WEBPACK_LOADER = {
     "DEFAULT": {
@@ -337,3 +337,4 @@ if SENTRY_DSN and not DEBUG:
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
+

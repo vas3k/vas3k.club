@@ -12,8 +12,8 @@ from users.models.user import User
 COMMENT_EMOJI_RE = re.compile(r"^💬.*")
 POST_EMOJI_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🏗🙋‍♀️].*")
 
-COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
-POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
+COMMENT_URL_RE = re.compile(r"https?://therapytribe.ru/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
+POST_URL_RE = re.compile(r"https?://therapytribe.ru/[a-zA-Z]+/(.+?)/")
 
 log = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def get_club_user(update: Update):
             update.callback_query.answer(text=f"☝️ Привяжи бота к профилю, братишка")
         else:
             update.message.reply_text(
-                f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
+                f"😐 Привяжи <a href=\"https://therapytribe.ru/user/me/edit/bot/\">бота</a> к профилю, братишка",
                 parse_mode=ParseMode.HTML
             )
         return None

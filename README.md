@@ -4,9 +4,9 @@
   <h1>vas3k.club</h1>
 </div>
 
-Welcome to the [vas3k.club](https://vas3k.club) codebase. We're building our own little IT-lifestyle community. We've opensourced the code so that every member could contribute or implement a feature that they want.
+Welcome to the [therapytribe.ru](https://therapytribe.ru) codebase. We're building our own little IT-lifestyle community. We've opensourced the code so that every member could contribute or implement a feature that they want.
 
-[vas3k.club](https://vas3k.club) is a platform with private and paid memberships that has emerged around the [vas3k.ru](https://vas3k.ru) blog and satellite chat rooms. It's not a typical IT community with tutorials and framework reviews, but rather more of a lifestyle one. We are trying to build a peaceful and useful ecosystem, which the Internet has lost a long ago. Therefore, we carefully select and filter new members and do not seek wild growth.
+[therapytribe.ru](https://therapytribe.ru) is a platform with private and paid memberships that has emerged around the [therapytribe.ru](https://therapytribe.ru) blog and satellite chat rooms. It's not a typical IT community with tutorials and framework reviews, but rather more of a lifestyle one. We are trying to build a peaceful and useful ecosystem, which the Internet has lost a long ago. Therefore, we carefully select and filter new members and do not seek wild growth.
 
 Our values: honesty, fair share, respect for other members, rationality, friendliness and usefulness. We have a zero-tolerance policy on anonymity, insults and toxicity. But we always try to stay in touch with reality, so we're also not tolerant of witch hunting and call-out culture.
 
@@ -31,8 +31,8 @@ Feel free to propose "state of the art" refactorings for UI or backend code if y
 2. Clone the repo
 
     ```sh
-    $ git clone https://github.com/vas3k/vas3k.club.git
-    $ cd vas3k.club
+    $ git clone https://github.com/therapytribe/therapytribe.club.git
+    $ cd therapytribe.club
     ```
 
 3. Run

@@ -1,0 +1,147 @@
+.pay {
+    font-size: 120%;
+    padding-top: 30px;
+}
+
+    .pay-title {
+        text-align: center;
+        font-weight: 500;
+        font-size: 200%;
+        padding-top: 20px;
+        line-height: 1em;
+    }
+
+        .pay-title small {
+            font-size: 50%;
+            font-weight: normal;
+        }
+
+    .pay-subtitle {
+        text-align: center;
+        font-weight: 500;
+        font-size: 180%;
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .pay-description {
+        font-size: 120%;
+        margin-top: 40px;
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .pay-list {
+        text-align: left;
+        list-style: none;
+    }
+
+    .pay-button {
+        margin: 50px 0 0;
+    }
+
+    .pay-subscription {
+        display: block;
+        margin-top: 20px;
+        font-size: 130%;
+        text-align: center;
+    }
+
+    .pay-warning {
+        background-color: rgba(255, 252, 103, 0.5);
+    }
+
+.invite-friend {
+    max-width: 450px;
+    font-size: 140%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+    .invite-friend input {
+        margin: 20px 0;
+    }
+
+.membership-expired {
+    max-width: 600px;
+    font-size: 140%;
+    margin: 150px auto 50px;
+}
+
+    .membership-expired-title {
+        font-size: 140%;
+        font-weight: 500;
+        padding-top: 20px;
+    }
+
+    .membership-expired-description {
+        padding: 20px 0;
+    }
+
+
+.pay-packages {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+    .pay-packages input[type=radio] {
+        display: none;
+    }
+
+    .pay-package {
+        display: block;
+        margin: 10px;
+        width: 240px;
+        text-align: center;
+        font-size: 140%;
+        cursor: pointer;
+    }
+
+        .pay-package:hover {
+            transform: scale(1.05);
+            transition: transform .2s;
+        }
+
+        .pay-packages input[type=radio]:checked + .pay-package {
+            transform: scale(1.05);
+            background-color: var(--opposite-block-bg-color);
+            color: var(--opposite-text-color);
+        }
+
+        .pay-package-name {
+
+        }
+
+        .pay-package-image {
+            font-size: 56px;
+            padding: 10px 0;
+        }
+
+        .pay-package-price {
+            font-weight: 500;
+            font-size: 120%;
+        }
+
+.pay-recurrent {
+    display: block;
+    padding: 20px;
+    text-align: center;
+}
+
+    .pay-recurrent-block {
+        display: inline-block;
+        font-size: 120%;
+        padding: 10px 30px;
+    }
+
+        .pay-recurrent-block input[type=checkbox] {
+            transform: scale(1.5);
+            margin-right: 5px;
+        }
+
+        .pay-recurrent-block select {
+            padding: 5px 10px;
+            margin-left: 5px;
+        }

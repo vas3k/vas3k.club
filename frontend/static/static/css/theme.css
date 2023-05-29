@@ -1,0 +1,260 @@
+:root {
+    --sans-font: "Ubuntu", Helvetica, Verdana, sans-serif;
+    --serif-font: "Merriweather", Georgia, Times, serif;
+
+    --block-border-radius: 15px;
+    --button-border-radius: 15px;
+
+    --button-color: #FFF;
+    --button-bg-color: #333;
+    --button-border: solid 2px #333;
+    --button-hover-color: #333;
+    --button-hover-bg-color: #FFF;
+    --button-hover-border: solid 2px #333;
+
+    --badge-color: rgba(255, 196, 85, 0.91);
+}
+
+html, html[theme="light"] {
+    --bg-color: #FCFDFF;
+    --opposite-bg-color: #282c35;
+
+    --text-color: #333;
+    --brighter-text-color: #000;
+    --opposite-text-color: #DDD;
+
+    --block-bg-color: #FFF;
+    --opposite-block-bg-color: #282c35;
+    --block-shadow: 10px 15px 40px rgba(83, 91, 110, 0.11);
+    --block-border: none;
+
+    --link-color: #333;
+    --link-hover-color: #000;
+    --visited-link-color: #333;
+
+    --button-color: #FFF;
+    --button-bg-color: #333;
+    --button-disabled-bg-color: #DDD;
+    --button-border: solid 2px #333;
+    --button-hover-color: #333;
+    --button-hover-bg-color: #FFF;
+    --button-hover-border: solid 2px #333;
+
+    --select-color: #333;
+    --select-bg-color: #FFF;
+
+    --input-color: #000;
+    --input-bg-color: #fff;
+    --input-border-color: #ddd;
+    --input-toolbar-bg: #fff;
+    --input-toolbar-button-color: #000;
+    --input-link: #7f8c8d;
+    --input-selection-color: #d7d4f0;
+}
+
+html[theme="dark"] {
+    --bg-color: #282c35;
+    --opposite-bg-color: #FCFDFF;
+
+    --text-color: #DDD;
+    --brighter-text-color: #FFF;
+    --opposite-text-color: #333;
+
+    --block-bg-color: #1B1B1C;
+    --opposite-block-bg-color: #FFF;
+    --block-shadow: 0px 0px 0px #000;
+    --block-border: solid 1px #FCFDFF;
+
+    --link-color: #DDD;
+    --link-hover-color: #FFF;
+    --visited-link-color: #737373;
+
+    --button-color: #333;
+    --button-bg-color: #FFF;
+    --button-disabled-bg-color: #8A8A8A;
+    --button-border: solid 2px #FFF;
+    --button-hover-color: #FFF;
+    --button-hover-bg-color: #333;
+    --button-hover-border: solid 2px #FFF;
+
+    --select-color: #333;
+    --select-bg-color: #FFF;
+
+    --input-color: #fff;
+    --input-bg-color: #373c48;
+    --input-border-color: #333;
+    --input-toolbar-bg: #252a35;
+    --input-toolbar-button-color: #fff;
+    --input-link: #b3b6ff;
+    --input-selection-color: #978fd8;
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        --bg-color: #282c35;
+        --opposite-bg-color: #FCFDFF;
+
+        --text-color: #DDD;
+        --brighter-text-color: #FFF;
+        --opposite-text-color: #333;
+
+        --block-bg-color: #1B1B1C;
+        --opposite-block-bg-color: #FFF;
+        --block-shadow: 0px 0px 0px #000;
+        --block-border: solid 1px #FCFDFF;
+
+        --link-color: #DDD;
+        --link-hover-color: #FFF;
+        --visited-link-color: #737373;
+
+        --button-color: #333;
+        --button-bg-color: #FFF;
+        --button-border: solid 2px #FFF;
+        --button-hover-color: #FFF;
+        --button-hover-bg-color: #333;
+        --button-hover-border: solid 2px #FFF;
+    }
+}
+
+body {
+    font-family: var(--sans-font);
+    font-size: 15px;
+    line-height: 1.42;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    text-rendering: optimizeSpeed;
+    transition: 0.5s ease-out;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+    @media only screen and (min-device-width : 768px)
+    and (max-device-width : 1024px)
+    and (orientation : portrait) {
+        body {
+            font-size: 14px;
+        }
+    }
+
+    @media only screen and (max-width : 800px) {
+        body {
+            font-size: 13px;
+        }
+    }
+
+a {
+    color: var(--link-color);
+    transition: color linear .1s;
+}
+
+    a:hover {
+        color: var(--link-hover-color);
+    }
+
+
+figure {
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
+}
+
+select {
+    color: var(--select-color);
+    background-color: var(--select-bg-color);
+}
+
+h1, h2, h3, h4, h5 {
+    scroll-margin-top: 30px;
+}
+
+li {
+    margin-bottom: 0.8em;
+}
+
+h1 > a,
+h2 > a,
+h3 > a,
+h4 > a,
+h5 > a {
+    text-decoration: none;
+}
+
+input[type=text],
+input[type=number],
+input[type=file],
+input[type=email],
+input[type=time],
+input[type=url],
+textarea,
+select,
+.CodeMirror,
+.input-select
+{
+    -webkit-appearance: none;
+    border: none;
+    box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
+    outline: none;
+    padding: 8px 15px;
+    resize: vertical;
+    box-sizing: border-box;
+    line-height: 1.4em;
+    background: var(--input-bg-color);
+    border-color: var(--input-border-color);
+    color: var(--input-color);
+}
+
+    input:focus,
+    textarea:focus,
+    .CodeMirror-focused {
+        box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
+    }
+
+        .editor-toolbar {
+            border: none;
+            box-shadow: 0 4px 8px -2px rgba(9,30,66,.25), 0 0 0 1px rgba(9,30,66,.08);
+            background: var(--input-toolbar-bg);
+        }
+
+        .editor-toolbar button {
+            color: var(--input-toolbar-button-color);
+        }
+
+        .editor-toolbar button:hover {
+            background: var(--input-bg-color);
+        }
+
+    input:hover,
+    textarea:hover {
+        transform: scale(1.01);
+        transition: all linear .2s;
+    }
+
+pre > code {
+    display: block;
+    padding: 15px 20px;
+    white-space: pre-wrap;
+    background-color: var(--opposite-block-bg-color);
+    color: var(--opposite-text-color);
+    border-radius: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.battle-side-a-color {
+    color: #4C98D5;
+    text-decoration-color: #4C98D5;
+}
+
+.battle-side-b-color {
+    color: #53AA68;
+    text-decoration-color: #53AA68;
+}
+
+.battle-side-a-background {
+    background: #4C98D5;
+}
+.battle-side-b-background {
+    background: #53AA68;
+}

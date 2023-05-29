@@ -1,0 +1,242 @@
+.create-badge {}
+
+.create-badge-comment-snippet {
+    position: relative;
+    max-height: 280px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+    .create-badge-comment-snippet:after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--block-bg-color, 0) 90%);
+        width: 100%;
+        height: 6em;
+    }
+
+
+.create-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    padding-bottom: 50px;
+}
+
+    .create-badge-list-item {
+        position: relative;
+        max-width: 200px;
+        cursor: pointer;
+    }
+
+        .create-badge-list-item-label {
+            padding: 15px 20px;
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+            gap: 7px;
+        }
+
+        .create-badge-list-item-disabled .create-badge-list-item-label {
+            opacity: 0.2;
+            cursor: not-allowed;
+            filter: blur(2px);
+            user-select: none;
+        }
+
+        .create-badge-list-item input:checked + .create-badge-list-item-label {
+            background-color: var(--opposite-block-bg-color);
+            color: var(--opposite-text-color);
+            filter: blur(0);
+        }
+
+        .create-badge-list-item input {
+            position: absolute;
+            top: 0;
+            left: -1000px;
+            opacity: 0;
+        }
+
+        .create-badge-list-item-image {
+            width: 100%;
+        }
+
+        .create-badge-list-item-title {
+            width: 100%;
+            padding-top: 10px;
+            font-size: 140%;
+            line-height: 1.2em;
+            font-weight: 600;
+        }
+
+        .create-badge-list-item-description {
+            width: 100%;
+            font-size: 90%;
+            line-height: 1.3em;
+        }
+
+        .create-badge-list-item-price {
+            margin-top: 5px;
+            display: block;
+            font-size: 120%;
+        }
+
+    .create-badge-note {
+        display: block;
+        margin: 40px auto;
+        width: 80%;
+        height: 150px;
+        font-size: 120%;
+    }
+
+    .create-badge-button {
+        text-align: center;
+    }
+
+.badge {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    text-decoration: none;
+}
+
+    .badge:hover {
+        transform: scale(1.2);
+        opacity: 0.7;
+        transition: 0.3s;
+    }
+
+    .badge-image {
+        max-width: 2em;
+        max-height: 2em;
+    }
+
+    .badge-count {
+        font-weight: 700;
+        line-height: 1.8em;
+    }
+
+    .badge-price {
+        display: inline-block;
+        background-color: var(--badge-color);
+        color: #FFFFFF;
+        border-radius: 10px;
+        font-weight: 500;
+        padding: 3px 7px;
+    }
+
+        .badge-price a {
+            color: #FFFFFF;
+        }
+
+
+.post-badges, .comment-badges, .reply-badges, .user-badges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 15px;
+    text-decoration: none;
+}
+
+.post-badges {
+    padding-bottom: 20px;
+    font-size: 24px;
+}
+
+    .post-badges-center {
+        justify-content: center;
+    }
+
+.comment-badges {
+    font-size: 16px;
+    padding-left: 10px;
+}
+
+.reply-badges {
+    font-size: 13px;
+    padding-left: 10px;
+}
+
+.user-badges {
+    padding-bottom: 30px;
+    font-size: 35px;
+    justify-content: center;
+    gap: 25px;
+}
+
+.profile-badge {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+    .profile-badge-side {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        width: 130px;
+        min-width: 130px;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .profile-badge-side {
+                width: 50px;
+                min-width: 50px;
+            }
+        }
+
+    .profile-badge-main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .profile-badge-image {
+        width: 100%;
+        max-width: none;
+        max-height: none;
+    }
+
+    .profile-badge-title {
+        font-size: 130%;
+        font-weight: 500;
+    }
+
+    .profile-badge-body {
+        display: block;
+    }
+
+    .profile-badge-note {
+        display: inline-block;
+        opacity: 0.5;
+        font-size: 110%;
+        padding-left: 20px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+    }
+
+    .profile-badge-from {
+        display: inline-block;
+    }
+
+        .profile-badge-from .avatar {
+            width: 20px;
+            height: 20px;
+        }
+

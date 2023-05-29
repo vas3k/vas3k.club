@@ -14,10 +14,12 @@
                 <span class="dashboard-item-icon">😎</span>
                 <span class="dashboard-item-title">Профиль</span>
             </a>
+            {% if not features.FREE_MEMBERSHIP %}
             <a href="{% url "edit_payments" user.slug %}" class="dashboard-item">
                 <span class="dashboard-item-icon">💰</span>
                 <span class="dashboard-item-title">Деньги</span>
             </a>
+            {% endif %}
 
             <a href="{% url "edit_notifications" user.slug %}" class="dashboard-item">
                 <span class="dashboard-item-icon">🔔</span>

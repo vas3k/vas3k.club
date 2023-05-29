@@ -1,0 +1,455 @@
+.feed {
+    display: grid;
+    grid-template-columns: 250px auto;
+    margin: 0 auto;
+    max-width: var(--max-content-width);
+    padding: 10px 20px 50px;
+}
+
+    @media only screen and (max-width : 1024px) {
+        .feed {
+            grid-template-columns: 210px auto;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+
+    @media only screen and (max-width : 570px) {
+        .feed {
+            grid-template-columns: auto;
+        }
+    }
+
+    .feed-sidebar {
+        padding-top: 30px;
+        padding-right: 30px;
+        font-size: 110%;
+    }
+        @media only screen and (max-width : 570px) {
+            .feed-sidebar {
+                transform: translate(-100%);
+                position: absolute;
+                top: 90px;
+                left: 0;
+                right: 0;
+                background: var(--bg-color);
+                z-index: 2;
+                min-height: calc(100% - 120px);
+                padding: 30px 14px;
+            }
+
+            .mobile-menu-opened .feed-sidebar {
+                transform: translate(0);
+                margin-top: 20px;
+                padding-top: 0;
+            }
+        }
+
+        .feed-sidebar-block {
+            padding-bottom: 20px;
+        }
+
+        .feed-sidebar-header {
+            font-size: 110%;
+            font-weight: 600;
+        }
+
+        @media only screen and (max-width : 570px) {
+            .feed-sidebar-header {
+                padding: 5px 10px;
+            }
+        }
+
+        .feed-sidebar-list {
+            list-style: none;
+            padding: 0;
+        }
+
+            .feed-sidebar-list li {
+                padding-bottom: 15px;
+                margin-bottom: 0;
+            }
+
+        .feed-sidebar-menu {
+            font-size: 110%;
+            font-weight: 500;
+        }
+
+            .feed-sidebar-menu a {
+                display: block;
+                text-decoration: none;
+                padding: 5px 10px;
+            }
+
+            .feed-sidebar-menu a:hover,
+            .feed-sidebar-menu-selected {
+                color: var(--opposite-text-color);
+                background-color: var(--opposite-bg-color);
+            }
+
+            .feed-sidebar-menu-small {
+                font-size: 90%;
+            }
+
+                .feed-sidebar-menu-small li {
+                    padding-bottom: 5px;
+                }
+
+        .feed-sidebar-topics {
+            max-width: 100%;
+        }
+
+    .feed-main {
+    }
+
+    @media only screen and (max-width : 570px) {
+        .mobile-menu-opened .feed-main {
+            display: none;
+        }
+    }
+
+    .feed-topic-header {
+        padding: 30px;
+        box-sizing: border-box;
+        color: #FFF;
+        font-size: 110%;
+        margin-bottom: 40px;
+    }
+
+        .feed-topic-header a {
+            color: #FFF;
+        }
+
+    .feed-topic-header-name {
+        margin: 0;
+        padding-top: 10px;
+        padding-bottom: 20px;
+    }
+
+    .feed-topic-header-icon {
+        width: 64px;
+        height: 64px;
+        border-width: 4px;
+        float: left;
+        margin-right: 15px;
+        position: relative;
+    }
+
+    .feed-topic-header-desctiption {
+        display: block;
+    }
+
+    .feed-topic-header-footer {
+        display: block;
+        padding-top: 20px;
+        font-size: 115%;
+    }
+
+    .feed-ordering {
+        display: flex;
+        align-content: flex-start;
+        justify-content: flex-end;
+        font-size: 100%;
+        padding: 0 10px 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .feed-ordering {
+                justify-content: space-around;
+            }
+        }
+
+        .feed-ordering-item {
+            padding: 10px;
+            text-decoration: none;
+            opacity: 0.5;
+        }
+
+            select.feed-ordering-item {
+                padding: 5px;
+                margin: 5px 0 5px 0;
+                opacity: 1;
+            }
+
+            .feed-ordering-item:hover {
+                opacity: 0.8;
+            }
+
+            .feed-ordering-item-is-active {
+                font-weight: 700;
+                opacity: 1.0;
+            }
+
+.feed-post {
+    display: grid;
+    grid-template-columns: min-content minmax(auto, 1fr) min-content;
+    grid-template-rows: auto auto;
+    justify-content: stretch;
+    position: relative;
+    padding-left: 40px;
+    margin-left: 30px;
+    min-height: 130px;
+    cursor: pointer;
+}
+
+    .feed-post-author,
+    .feed-post-image {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 3;
+        justify-self: start;
+        display: flex;
+        align-items: center;
+    }
+
+    .feed-post-votes {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 3;
+        justify-self: end;
+        display: flex;
+        align-items: center;
+    }
+
+    .feed-post-header {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 2;
+        justify-self: start;
+        align-self: end;
+    }
+
+    .feed-post-footer {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+        justify-self: start;
+        align-self: start;
+        z-index: 1;
+    }
+
+    .feed-post-type-intro,
+    .feed-post-type-weekly_digest {
+        min-height: 20px;
+    }
+
+    .feed-post-type-intro .post-title-link:focus {
+        outline: auto;
+    }
+
+    .feed-post a {
+        z-index: 1;
+    }
+
+    .feed-post:hover {
+        box-shadow: 0 0 40px rgba(94, 104, 125, 0.3);
+    }
+
+        .feed-post-type-intro:hover,
+        .feed-post-type-weekly_digest:hover {
+            box-shadow: none;
+        }
+
+    .feed-post-votes {
+        padding-left: 10px;
+        z-index: 2;
+    }
+
+    .feed-post-header {
+        padding-bottom: 10px;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .feed-post-title {
+        font-size: 140%;
+        font-weight: 500;
+        line-height: 1.3em;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .feed-post-title a {
+            text-decoration: none;
+        }
+
+    .feed-post-author .avatar {
+        position: absolute;
+        left: -26px;
+        width: 52px;
+        height: 52px;
+        border: solid 3px var(--block-bg-color);
+        text-align: left;
+        z-index: 2;
+    }
+
+    .feed-post-author .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .feed-post-image {
+        width: 20px;
+    }
+
+        .feed-post-image-link {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            left: -36px;
+            border: solid 3px var(--block-bg-color);
+            border-radius: 100%;
+            overflow: hidden;
+            display: flex;
+        }
+
+        @media only screen and (max-width: 570px) {
+            .feed-post-image-link {
+                width: 48px;
+                height: 48px;
+                left: -18px;
+            }
+        }
+
+        .feed-post-image img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+    .feed-post-topic {
+        padding-right: 10px;
+        display: inline-block;
+    }
+
+    .feed-post-badge {
+        width: 1.3em;
+        height: 1.3em;
+        margin-right: 5px;
+        vertical-align: middle;
+        position: relative;
+        top: -2px;
+    }
+
+    .feed-post-comments {
+        text-decoration: none;
+        color: #999;
+        white-space: nowrap;
+    }
+
+    .feed-post-footer .bookmark-button {
+        display: inline-block;
+        text-decoration: none;
+        opacity: 0.6;
+    }
+
+    .feed-post-is-pinned {
+        background-color: var(--opposite-block-bg-color);
+        color: var(--opposite-text-color);
+    }
+
+        .feed-post-is-pinned a {
+            color: var(--opposite-text-color);
+        }
+
+        .feed-post-is-pinned .avatar {
+            border-color: var(--opposite-block-bg-color);
+        }
+
+        .feed-post-is-pinned .upvote {
+            color: var(--text-color);
+            border-color: var(--opposite-text-color);
+        }
+
+            .feed-post-is-pinned .upvote:hover,
+            .feed-post-is-pinned .upvote-voted {
+                color: var(--opposite-text-color);
+            }
+
+    .feed-post-comments-unread {
+        font-weight: 600;
+        color: var(--link-color);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .feed-post {
+            padding: 15px 15px 15px 30px;
+            margin-left: 10px;
+            margin-bottom: 25px;
+        }
+
+            .feed-post-author .avatar {
+                left: -16px;
+                width: 36px;
+                height: 36px;
+            }
+    }
+
+.feed-post-type-intro,
+.feed-post-type-weekly_digest {
+    display: flex;
+    font-size: 120%;
+    padding: 0 0 20px 0;
+    margin-left: 40px;
+}
+
+    .feed-post-type-intro .feed-post-title,
+    .feed-post-type-weekly_digest .feed-post-title {
+        font-size: 100%;
+        font-weight: 400;
+        line-height: 1.1em;
+        padding-top: 3px;
+    }
+
+    .feed-post-type-intro .avatar {
+        position: relative;
+        top: -2px;
+        left: -5px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .feed-post-type-intro .user-position {
+        font-size: 80%;
+    }
+
+    .feed-post-type-intro .upvote {
+        margin-left: 10px;
+        margin-right: 10px;
+        top: 0;
+    }
+
+    .feed-post-type-intro .feed-post-comments {
+        font-weight: 400;
+        font-size: 80%;
+        opacity: 0.5;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .feed-post-type-intro,
+        .feed-post-type-weekly_digest {
+            margin-left: 10px;
+            margin-bottom: 0;
+        }
+    }
+
+    .feed-post-type-intro .user-position {
+        opacity: 0.7;
+    }
+
+.feed-post-type-weekly_digest .feed-post-author {
+    font-size: 30px;
+    padding-right: 10px;
+    line-height: 1em;
+}

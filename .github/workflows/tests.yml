@@ -41,9 +41,9 @@ jobs:
       postgres:
         image: postgres:12-alpine
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: vas3k_club
+          POSTGRES_USER: therapytriberu
+          POSTGRES_PASSWORD: therapytriberu
+          POSTGRES_DB: therapytribe_ru
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -107,9 +107,9 @@ jobs:
 
       - name: Run tests
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: vas3k_club
+          POSTGRES_USER: therapytriberu
+          POSTGRES_PASSWORD: therapytriberu
+          POSTGRES_DB: therapytribe_ru
           POSTGRES_HOST: localhost
           REDIS_DB: 0
           REDIS_HOST: localhost

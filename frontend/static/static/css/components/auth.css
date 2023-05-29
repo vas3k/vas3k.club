@@ -1,0 +1,157 @@
+.join {
+    font-size: 120%;
+    padding-top: 80px;
+}
+
+    .join-title {
+        text-align: center;
+        font-weight: 500;
+        font-size: 280%;
+        padding-top: 20px;
+    }
+
+        .join-title a {
+            text-decoration: none;
+        }
+
+    .join-subtitle {
+        text-align: center;
+        font-weight: 500;
+        font-size: 180%;
+        padding-top: 100px;
+        padding-bottom: 40px;
+    }
+
+    .join-description {
+        text-align: center;
+        padding: 50px 20px;
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 110%;
+    }
+
+    .join-email {
+        display: block;
+        font-size: 120%;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+        .join-email input {
+            width: 300px;
+        }
+
+    .join-consent {
+        font-size: 110%;
+        display: block;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 0;
+    }
+
+    .join-button {
+        display: block;
+        margin: 0 auto;
+        max-width: 350px;
+    }
+
+.login {
+    font-size: 130%;
+    padding-top: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+    .login-services {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+        .login-service {
+            display: block;
+            margin: 20px;
+            width: 460px;
+        }
+
+            .login-service-title {
+                font-size: 150%;
+                font-weight: 500;
+                padding-bottom: 20px;
+            }
+
+            .login-service-description {
+                font-size: 90%;
+            }
+
+            .login-service-form {
+
+            }
+
+            .login-email {
+                width: 100%;
+            }
+
+            .login-button {
+                margin-top: 20px;
+                min-width: 170px;
+            }
+
+            .login-button-patreon {
+                background-color: #f96854;
+                border-color: #f96854;
+                color: #052d49;
+            }
+
+.login-separator {
+    display: block;
+    width: 100%;
+    padding: 100px 0 30px;
+    font-size: 120%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.login-join {
+    text-align: center;
+}
+
+.login-code {
+    max-width: 500px;
+    margin: 40px auto;
+}
+
+    .login-code-title {
+        text-align: center;
+        font-weight: 500;
+        font-size: 150%;
+        padding-top: 20px;
+    }
+
+    .login-code-description {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .login-code-form {
+        text-align: center;
+    }
+
+    .login-code-input {
+        width: 250px;
+        font-size: 36px;
+        text-align: center;
+        letter-spacing: 5px;
+        font-weight: 500;
+    }
+
+    .login-code-button {
+        display: block;
+        min-width: 170px;
+        margin: 40px auto 0;
+    }

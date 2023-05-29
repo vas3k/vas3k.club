@@ -3,7 +3,7 @@
 # Makes shell non-interactive and exit on any error
 .SHELLFLAGS = -ec
 
-PROJECT_NAME=vas3k_club
+PROJECT_NAME=therapytribe_ru
 
 run-dev:  ## Runs dev server
 	pipenv run python manage.py runserver 0.0.0.0:8000
@@ -38,6 +38,9 @@ docker-run-production:  ## Runs production server in docker
 	cp -r /app/frontend/static /tmp/
 	gunicorn club.asgi:application -w 7 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8814 --capture-output --log-level debug --access-logfile - --error-logfile -
 
+docker-update-achievements:
+	python3 manage.py update_achievements
+
 help:  ## Display this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 	  | sort \
@@ -62,7 +65,7 @@ test-ci:   ## Run tests (intended for CI usage)
 	python3 manage.py test
 
 psql:
-	psql -h localhost -p 5433 -d vas3k_club -U vas3k
+	psql -h localhost -p 5433 -d therapytribe_ru -U therapytriberu
 
 .PHONY: \
   docker-run-dev \

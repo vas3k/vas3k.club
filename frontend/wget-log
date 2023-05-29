@@ -1,0 +1,11 @@
+--2023-05-10 06:02:38--  https://www.pgadmin.org/static/packages_pgadmin_org.pub
+Распознаётся www.pgadmin.org (www.pgadmin.org)… 72.32.157.249, 2001:4800:3e1:1::249
+Подключение к www.pgadmin.org (www.pgadmin.org)|72.32.157.249|:443... соединение установлено.
+HTTP-запрос отправлен. Ожидание ответа… 200 OK
+Длина: 3935 (3,8K) [application/octet-stream]
+Сохранение в: ‘packages_pgadmin_org.pub’
+
+packages_pgadmin_org.pub               0%[                                                                       ]       0  --.-KB/s               packages_pgadmin_org.pub             100%[======================================================================>]   3,84K  --.-KB/s    за 0s      
+
+2023-05-10 06:02:39 (1,47 GB/s) - ‘packages_pgadmin_org.pub’ сохранён [3935/3935]
+

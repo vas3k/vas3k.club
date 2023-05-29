@@ -53,7 +53,7 @@ class TestPaymentModel(TestCase):
         '''
         Is regression test for #545.
 
-        https://github.com/vas3k/vas3k.club/issues/545
+        https://github.com/therapytribe/therapytribe.ru/issues/545
         '''
         scenarios = itertools.product([None, self.user], [True, False])
         for user, post_is_public in scenarios:

@@ -11,9 +11,9 @@ services:
       - MODE=dev
       - DEBUG=true
       - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=therapytribe_ru
+      - POSTGRES_USER=therapytriberu
+      - POSTGRES_PASSWORD=therapytriberu
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
@@ -37,9 +37,9 @@ services:
       - MODE=dev
       - DEBUG=true
       - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=therapytribe_ru
+      - POSTGRES_USER=therapytriberu
+      - POSTGRES_PASSWORD=therapytriberu
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
@@ -60,7 +60,7 @@ services:
 #      - MODE=dev
 #      - DEBUG=true
 #      - PYTHONUNBUFFERED=1
-#      - POSTGRES_DB=vas3k_club
+#      - POSTGRES_DB=therapytribe_ru
 #      - POSTGRES_USER=postgres
 #      - POSTGRES_PASSWORD=postgres
 #      - POSTGRES_HOST=postgres
@@ -78,9 +78,9 @@ services:
     image: postgres:11
     container_name: club_postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=therapytriberu
+      - POSTGRES_PASSWORD=therapytriberu
+      - POSTGRES_DB=therapytribe_ru
     ports:
       - "5432:5432"
 
@@ -101,5 +101,5 @@ services:
 
 networks:
   default:
-    external:
       name: therapytribe_network
+

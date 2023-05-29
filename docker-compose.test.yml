@@ -12,7 +12,7 @@ services:
       - DEBUG=true  # regardless of this value django will override it on false
       - TESTS_RUN=da
       - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=vas3k_club
+      - POSTGRES_DB=therapytribe_ru
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=postgres
@@ -38,7 +38,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=vas3k_club
+      - POSTGRES_DB=therapytribe_ru
     ports:
       - 5432
 

@@ -48,6 +48,7 @@ media/images
 media/i
 
 club/.env
+club/.env.example
 .env
 db.sqlite3
 *.session
@@ -55,3 +56,5 @@ venv/
 
 gdpr/downloads/*.zip
 .history
+
+*.log
