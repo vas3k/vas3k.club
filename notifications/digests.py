@@ -240,7 +240,7 @@ def generate_weekly_digest(no_footer=False):
         "post_count": post_count,
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
-        "tol_old_post": top_old_post,
+        "top_old_post": top_old_post,
         "featured_post": featured_post,
         "digest_title": digest_title,
         "digest_intro": digest_intro,
