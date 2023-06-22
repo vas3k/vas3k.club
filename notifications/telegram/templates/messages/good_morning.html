@@ -18,6 +18,10 @@
 {{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "profile" intro.author.slug %}">{{ intro.author.full_name }}</a>, {{ intro.author.position }}{% if intro.author.company %} — {{ intro.author.company }}{% endif %} (+{{ intro.upvotes }})
 {% endfor %}{% endif %}
 
+{% if top_old_post %}⏱️ <b>Топ пост год назад</b>
+- <a href="{{ settings.APP_HOST }}{% url "show_post" top_old_post.type top_old_post.slug %}">{% if top_old_post.emoji %}{{ top_old_post.emoji }} {% endif %}{% if top_old_post.prefix %}{{ top_old_post.prefix }} {% endif %}{{ top_old_post.title }}</a> (+{{ top_old_post.upvotes }})
+{% endif %}
+
 Хорошего дня! ❤️
 
-<i>Отныне дайджест будет приходить не на почту, а сюда в бота. Коллективный разум решил, что так удобнее. Если он вас бесит и вы хотите отписаться, нажмите <a href="{{ settings.APP_HOST }}/notifications/switch/weekly/{{ user.id }}/{{ secret_code }}/">здесь</a>.</i>
+<i>Если вас бесит этот дайджест, вы всегда можете от него отписаться, нажав <a href="{{ settings.APP_HOST }}/notifications/switch/weekly/{{ user.id }}/{{ secret_code }}/">здесь</a>.</i>

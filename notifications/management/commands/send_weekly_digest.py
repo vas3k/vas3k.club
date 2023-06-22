@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
                 is_public=False,
-                metadata={"og_description" : og_description},
+                metadata={"og_description": og_description},
             )
         )
 

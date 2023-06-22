@@ -303,6 +303,49 @@
         </div>
     {% endif %}
 
+    {% if top_old_post %}
+        <br><br><br>
+
+        <h2>⏱️ Год назад</h2>
+
+        <p class="center editorial">
+            Лучший пост, написанный год назад в то же время.
+        </p>
+
+        <div class="block post">
+            <span class="upvotes">
+                👍{{ top_old_post.upvotes }}
+            </span>
+
+            <h3>
+                {% if top_old_post.type != "post" %}
+                    {{ top_old_post.emoji }}
+                {% endif %}
+
+                {{ top_old_post.prefix }}
+
+                <a href="{{ settings.APP_HOST }}{% url "show_post" top_old_post.type top_old_post.slug %}" target="_blank">{{ top_old_post.title }}</a>
+
+                {% if top_old_post.label %}
+                    &nbsp;{% include "posts/widgets/label.html" with label=top_old_post.label %}
+                {% endif %}
+            </h3>
+
+            <p>
+                {{ top_old_post.text | markdown | striptags | truncatechars:400 }}
+            </p>
+
+            <span class="post-footer">
+                <a href="{{ settings.APP_HOST }}{% url "profile" top_old_post.author.slug %}" style="text-decoration: none; color: #999;">
+                    <img src="{{ top_old_post.author.get_avatar }}" alt="" width="24" height="24" class="avatar-small">
+                    &nbsp;{{ top_old_post.author.full_name }}
+                </a>
+                | {{ top_old_post.view_count }}&nbsp;{{ top_old_post.view_count | rupluralize:"просмотр,просмотра,просмотров" }}
+                | {{ top_old_post.comment_count }}&nbsp;{{ top_old_post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
+            </span>
+        </div>
+    {% endif %}
+
     {% if top_video_comment or top_video_post %}
         <br><br><br>
 

@@ -73,6 +73,20 @@ def generate_daily_digest(user):
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
         .order_by("-upvotes")[:3]
 
+    # Top post 1 year ago
+    if end_date.weekday() == 2:  # wednesday!
+        top_old_post = Post.visible_objects()\
+            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+            .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+            .filter(
+                published_at__gte=start_date - timedelta(days=362),
+                published_at__lte=end_date - timedelta(days=367)
+             )\
+            .order_by("-upvotes")\
+            .first()
+    else:
+        top_old_post = None
+
     if not new_post_comments and not new_posts and not intros:
         raise NotFound()
 
@@ -81,6 +95,7 @@ def generate_daily_digest(user):
         "intros": intros,
         "new_posts": new_posts,
         "hot_posts": hot_posts,
+        "top_old_post": top_old_post,
         "stats": {
             "new_post_comments": new_post_comments,
             "new_upvotes": new_upvotes,
@@ -167,6 +182,17 @@ def generate_weekly_digest(no_footer=False):
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
+    # Best post 1 year ago
+    top_old_post = Post.visible_objects()\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(
+            published_at__gte=start_date - timedelta(days=360),
+            published_at__lte=end_date - timedelta(days=370)
+         )\
+        .order_by("-upvotes")\
+        .first()
+
     # Get intro and title
     god_settings = GodSettings.objects.first()
     digest_title = god_settings.digest_title
@@ -214,6 +240,7 @@ def generate_weekly_digest(no_footer=False):
         "post_count": post_count,
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
+        "tol_old_post": top_old_post,
         "featured_post": featured_post,
         "digest_title": digest_title,
         "digest_intro": digest_intro,
