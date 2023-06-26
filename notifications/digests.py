@@ -226,7 +226,7 @@ def generate_weekly_digest(no_footer=False):
     })
 
     og_description = render_to_string("emails/weekly_og_description.html", {
-        "newbie_count" : newbie_count,
+        "newbie_count": newbie_count,
         "post_count": post_count,
     })
 

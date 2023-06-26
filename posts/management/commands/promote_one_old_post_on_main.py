@@ -11,7 +11,7 @@ from posts.models.post import Post
 log = logging.getLogger(__name__)
 
 
-DELTA_DAYS = 10
+DELTA_DAYS = 5
 
 
 class Command(BaseCommand):
