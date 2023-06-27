@@ -16,7 +16,7 @@ class EmailRenderer(ClubRenderer):
                f'</span></a><br>{escape_html(title or "")}'
 
     def video(self, src, alt="", title=None):
-        return f'<video src="{escape_html(src)}" controls autoplay loop muted playsinline>{alt}</video><br>{title or ""}'
+        return f'<video src="{escape_html(src)}" controls muted playsinline>{alt}</video><br>{title or ""}'
 
     def tweet(self, src, alt="", title=None):
         return f'<a href="{escape_html(src)}">{escape_html(src)}</a><br>{escape_html(title or "")}'
