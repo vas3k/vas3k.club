@@ -65,7 +65,7 @@
                 top: 16px;
                 right: 16px;
                 font-size: 200%;
-                border-radius: 50%;
+                border-radius: 1em;
                 background-color: var(--bg-color);
                 line-height: 1em;
                 min-width: 1em;
