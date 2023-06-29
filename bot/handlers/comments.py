@@ -13,7 +13,7 @@ from posts.models.linked import LinkedPost
 
 log = logging.getLogger(__name__)
 
-MIN_COMMENT_LEN = 140
+MIN_COMMENT_LEN = 40
 
 
 def comment(update: Update, context: CallbackContext) -> None:

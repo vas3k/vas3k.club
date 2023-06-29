@@ -20,6 +20,7 @@ from users.models.user import User
 
 
 BONUS_HOURS = 10  # for better/honest rating estimation of "night" posts
+MIN_TOP_POST_UPVOTES = 30
 
 
 def generate_daily_digest(user):
@@ -74,17 +75,18 @@ def generate_daily_digest(user):
         .order_by("-upvotes")[:3]
 
     # Top post 1 year ago
-    if end_date.weekday() == 2:  # wednesday!
-        top_old_post = Post.visible_objects()\
-            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-            .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-            .filter(
-                published_at__gte=start_date - timedelta(days=367),
-                published_at__lte=end_date - timedelta(days=362)
-             )\
-            .order_by("-upvotes")\
-            .first()
-    else:
+    top_old_post = Post.visible_objects()\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(
+            published_at__gte=start_date - timedelta(days=366),
+            published_at__lte=end_date - timedelta(days=364)
+         )\
+        .order_by("-upvotes")\
+        .first()
+
+    # Filter out "bad" top posts
+    if top_old_post.upvotes < MIN_TOP_POST_UPVOTES:
         top_old_post = None
 
     if not new_post_comments and not new_posts and not intros:
