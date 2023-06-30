@@ -142,9 +142,9 @@ class Post(models.Model, ModelDiffMixin):
             "id": self.id,
             "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "title": self.title,
-            "content_text": self.text if self.is_public or including_private else None,
-            "date_published": self.published_at.isoformat(),
-            "date_modified": self.updated_at.isoformat(),
+            "content_text": self.text if self.is_public or including_private else "🔒",
+            "date_published": self.published_at.astimezone().isoformat(),
+            "date_modified": self.updated_at.astimezone().isoformat(),
             "authors": [
                 {
                     "name": self.author.full_name,
@@ -348,4 +348,3 @@ class Post(models.Model, ModelDiffMixin):
     def undelete(self, *args, **kwargs):
         self.deleted_at = None
         self.save()
-
