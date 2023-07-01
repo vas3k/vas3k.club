@@ -261,7 +261,7 @@ ACHIEVEMENTS = [
     }), 
     ("diy_challenge_2", {
         "name": "Мастер на все руки",
-        "description": "За участие в 3 DIY челленджах",
+        "description": "За участие в 4 DIY челленджах",
         "image": "https://vas3k.club/static/images/achievements/diy_challenge_2.png",
         "style": "background-color: #f4f1de; font-size: 120%;",
     }),
