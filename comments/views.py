@@ -60,9 +60,13 @@ def create_comment(request, post_slug):
             comment.save()
 
             # subscribe to top level comments
-            is_sub = form.cleaned_data.get("subscribe_to_post")
-            if is_sub and not PostSubscription.objects.filter(user=request.me, post=post).exists():
-                PostSubscription.subscribe(request.me, post, PostSubscription.TYPE_TOP_LEVEL_ONLY)
+            if form.cleaned_data.get("subscribe_to_post"):
+                PostSubscription.subscribe(
+                    user=request.me,
+                    post=post,
+                    type=PostSubscription.TYPE_ALL_COMMENTS if post.author_id == request.me.id
+                    else PostSubscription.TYPE_TOP_LEVEL_ONLY
+                )
 
             # update the shitload of counters :)
             request.me.update_last_activity()

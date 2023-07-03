@@ -79,8 +79,8 @@ def generate_daily_digest(user):
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(
-            published_at__gte=start_date - timedelta(days=366),
-            published_at__lte=end_date - timedelta(days=364)
+            published_at__gte=start_date - timedelta(days=365),
+            published_at__lte=end_date - timedelta(days=365)
          )\
         .order_by("-upvotes")\
         .first()
