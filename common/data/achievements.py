@@ -253,6 +253,18 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/botmom.png",
         "style": "background-color: #002C35; font-size: 120%;",
     }),
+    ("diy_challenge_1", {
+        "name": "Самоделкин",
+        "description": "За участие в одном DIY челлендже",
+        "image": "https://vas3k.club/static/images/achievements/diy_challenge_1.png",
+        "style": "background-color: #C9C097; font-size: 120%;",
+    }), 
+    ("diy_challenge_2", {
+        "name": "Мастер на все руки",
+        "description": "За участие в 4 DIY челленджах",
+        "image": "https://vas3k.club/static/images/achievements/diy_challenge_2.png",
+        "style": "background-color: #C9C097; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
