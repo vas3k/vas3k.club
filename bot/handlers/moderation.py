@@ -12,6 +12,7 @@ from notifications.email.users import send_welcome_drink, send_user_rejected_ema
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
     notify_post_rejected, notify_post_collectible_tag_owners
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
+from notifications.twitter.posts import send_to_twitter
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from search.models import SearchIndex
@@ -51,6 +52,7 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     # send notifications
     notify_post_approved(post)
     announce_in_club_chats(post)
+    send_to_twitter(post)
     if post.collectible_tag_code:
         notify_post_collectible_tag_owners(post)
 

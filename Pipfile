@@ -38,6 +38,7 @@ icalendar = "*"
 httptools = "*"
 croniter = "*"
 authlib = "==1.2"
+tweepy = "==4.14.0"
 
 [requires]
 python_version = "3.8"
