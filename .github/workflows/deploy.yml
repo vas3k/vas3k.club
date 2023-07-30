@@ -55,7 +55,7 @@ jobs:
           secret_JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
           secret_WEBHOOK_SECRETS: ${{ secrets.WEBHOOK_SECRETS }}
           secret_TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
-          secret_TTWITTER_SECRET_KEY: ${{ secrets.TWITTER_SECRET_KEY }}
+          secret_TWITTER_SECRET_KEY: ${{ secrets.TWITTER_SECRET_KEY }}
           secret_TWITTER_ACCESS_TOKEN : ${{ secrets.TWITTER_ACCESS_TOKEN }}
           secret_TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
       - run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
