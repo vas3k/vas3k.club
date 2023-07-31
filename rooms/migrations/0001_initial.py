@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('slug', models.CharField(max_length=32, primary_key=True, serialize=False, unique=True)),
                 ('title', models.CharField(max_length=64)),
                 ('subtitle', models.CharField(blank=True, max_length=256, null=True)),
-                ('image', models.URLField()),
+                ('image', models.URLField(blank=True, null=True)),
                 ('icon', models.URLField(blank=True, null=True)),
                 ('description', models.TextField(blank=True, null=True)),
                 ('color', models.CharField(max_length=16)),
