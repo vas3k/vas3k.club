@@ -12,7 +12,7 @@ from simple_history.models import HistoricalRecords
 
 from common.data.labels import LABELS
 from common.models import ModelDiffMixin
-from posts.models.topics import Topic
+from rooms.models import Room
 from users.models.user import User
 from utils.slug import generate_unique_slug
 
@@ -74,7 +74,7 @@ class Post(models.Model, ModelDiffMixin):
 
     author = models.ForeignKey(User, related_name="posts", db_index=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
-    topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
+    room = models.ForeignKey(Room, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
     collectible_tag_code = models.CharField(max_length=32, null=True)
     coauthors = ArrayField(models.CharField(max_length=32), default=list, null=False, db_index=True)
@@ -126,7 +126,7 @@ class Post(models.Model, ModelDiffMixin):
             "is_visible_in_feeds",
             "is_pinned_until",
             "is_shadow_banned",
-            "topic",
+            "room",
         ],
     )
 
@@ -274,7 +274,7 @@ class Post(models.Model, ModelDiffMixin):
 
     @classmethod
     def visible_objects(cls):
-        return cls.objects.filter(is_visible=True).select_related("topic", "author")
+        return cls.objects.filter(is_visible=True).select_related("room", "author")
 
     @classmethod
     def objects_for_user(cls, user):

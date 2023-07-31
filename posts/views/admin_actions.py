@@ -166,6 +166,11 @@ def do_common_admin_and_curator_actions(request, post, data):
         post.is_visible_in_feeds = False
         post.save()
 
+    # Show back in feeds
+    if data["show_in_feeds"]:
+        post.is_visible_in_feeds = True
+        post.save()
+
     # Ping collectible tag owners again
     if data["re_ping_collectible_tag_owners"]:
         if post.collectible_tag_code:

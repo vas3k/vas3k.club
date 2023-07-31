@@ -32,9 +32,9 @@
         </post-upvote>
     </div>
     <div class="feed-post-footer">
-        {% if post.topic %}
-            <span class="feed-post-topic">
-                {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
+        {% if post.room %}
+            <span class="feed-post-room">
+                {% include "rooms/widgets/room.html" with room=post.room type="inline" %}
             </span>
         {% endif %}
 

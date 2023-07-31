@@ -54,8 +54,8 @@
                 </div>
 
                 <div class="post-info">
-                    {% if post.topic %}
-                        {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
+                    {% if post.room %}
+                        {% include "rooms/widgets/room.html" with room=post.room type="inline" %}
                     {% endif %}
                     <div class="post-actions-line">
                         {% include "posts/widgets/post_actions_line.html" %}

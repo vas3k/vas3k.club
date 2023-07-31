@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "gdpr.apps.GdprConfig",
     "badges.apps.BadgesConfig",
     "tags.apps.TagsConfig",
+    "rooms.apps.RoomsConfig",
     "misc.apps.MiscConfig",
     "simple_history",
     "django_q",
@@ -82,7 +83,7 @@ TEMPLATES = [
                 "club.context_processors.data_processor",
                 "club.context_processors.features_processor",
                 "authn.context_processors.users.me",
-                "posts.context_processors.topics.topics",
+                "posts.context_processors.rooms.rooms",
             ]
         },
     }

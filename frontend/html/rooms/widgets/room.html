@@ -1,0 +1,9 @@
+<a href="{% url "feed_room" room.slug %}" class="topic {% if type %}topic-type-{{type}}{% endif %}" style="{% if room.style %}{{ room.style }}{% else %}background-color: {{ room.color }};{% endif %}">
+    <span class="topic-gradient"></span>
+    <span class="topic-icon-wrapper">
+        <span class="topic-icon"><img src="{{ room.image }}" alt="Иконка комнаты {{ room.title }}" loading="lazy" /></span>
+    </span>
+    <span class="topic-name-wrapper">
+        <span class="topic-name">{{ room.title }}</span>
+    </span>
+</a>

@@ -4,7 +4,7 @@
 
 {% block title %}
     {% if post %}
-        {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %} [{{ post.topic.name }}]{% endif %} — {{ block.super }}
+        {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.room %} [{{ post.room.title }}]{% endif %} — {{ block.super }}
     {% endif %}
 {% endblock %}
 

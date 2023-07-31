@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
-from posts.models.topics import Topic
 
 
 class PostsAdmin(admin.ModelAdmin):
@@ -24,25 +23,6 @@ class PostsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Post, PostsAdmin)
-
-
-class TopicsAdmin(admin.ModelAdmin):
-    list_display = (
-        "slug",
-        "name",
-        "icon",
-        "color",
-        "style",
-        "chat_name",
-        "last_activity_at",
-        "is_visible",
-        "is_visible_in_feeds",
-    )
-    ordering = ("slug",)
-    search_fields = ["slug", "name"]
-
-
-admin.site.register(Topic, TopicsAdmin)
 
 
 class LinkedPostsAdmin(admin.ModelAdmin):

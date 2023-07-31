@@ -9,12 +9,12 @@ from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
 from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed
 from posts.models.post import Post
-from posts.models.topics import Topic
+from rooms.models import Room
 from users.models.mute import Muted
 
 
 @feature_switch(features.PRIVATE_FEED, yes=require_auth, no=noop)
-def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
+def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
     post_type = post_type or Post
 
     if request.me:
@@ -27,12 +27,12 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
     if post_type != POST_TYPE_ALL:
         posts = posts.filter(type=post_type)
 
-    # filter by topic
-    if topic_slug:
-        topic = get_object_or_404(Topic, slug=topic_slug)
-        posts = posts.filter(topic=topic)
+    # filter by room
+    if room_slug:
+        room = get_object_or_404(Room, slug=room_slug)
+        posts = posts.filter(room=room)
     else:
-        topic = None
+        room = None
 
     # filter by label
     if label_code:
@@ -56,7 +56,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
             posts = posts.exclude(is_shadow_banned=True)
 
     # hide no-feed posts (show only inside rooms and topics)
-    if not topic and not label_code:
+    if not room and not label_code:
         posts = posts.filter(is_visible_in_feeds=True)
 
     # order posts by some metric
@@ -71,7 +71,7 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, label_code=None, ord
     return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
         "ordering": ordering,
-        "topic": topic,
+        "room": room,
         "label_code": label_code,
         "posts": paginate(request, posts),
         "pinned_posts": pinned_posts,

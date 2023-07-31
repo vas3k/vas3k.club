@@ -6,9 +6,9 @@
 
 {% block post %}
     <div class="battle-header">
-        {% if post.topic %}
+        {% if post.room %}
             <div class="battle-header-topic">
-                {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
+                {% include "rooms/widgets/room.html" with room=post.room type="post" %}
             </div>
         {% endif %}
 
@@ -109,7 +109,7 @@
                 </a>
             </div>
         {% endif %}
-                
+
         {% if comments %}
             <div class="post-comments-list">
                 {% include "comments/list.html" with comments=comments reply_form=reply_form type="battle" %}

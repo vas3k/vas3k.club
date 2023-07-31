@@ -241,8 +241,8 @@ def create_or_edit(request, post_type, post=None, mode="create"):
             PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
         if post.is_visible:
-            if post.topic:
-                post.topic.update_last_activity()
+            if post.room:
+                post.room.update_last_activity()
 
             SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)

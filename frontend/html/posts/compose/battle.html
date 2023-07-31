@@ -39,11 +39,6 @@
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="form-row form-row-center">
-                    {{ form.topic }}
-                    {% if form.topic.errors %}<span class="form-row-errors">{{ form.topic.errors }}</span>{% endif %}
-                </div>
-
                 <div class="form-row">
                     <label for="{{ form.side_a.id_for_label }}" class="form-label">Стороны батла</label>
                     <div class="form-row-center">

@@ -99,6 +99,12 @@
             max-width: 100%;
         }
 
+        .feed-sidebar-topics-more {
+            text-align: center;
+            padding: 20px 5px;
+            font-weight: 500;
+        }
+
     .feed-main {
     }
 
@@ -120,20 +126,27 @@
             color: #FFF;
         }
 
-    .feed-topic-header-name {
-        margin: 0;
-        padding-top: 10px;
-        padding-bottom: 20px;
-    }
+        .feed-topic-header-title {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: center;
+        }
 
-    .feed-topic-header-icon {
-        width: 64px;
-        height: 64px;
-        border-width: 4px;
-        float: left;
-        margin-right: 15px;
-        position: relative;
-    }
+            .feed-topic-header-name {
+                font-size: 210%;
+                font-weight: 700;
+                text-decoration: none;
+            }
+
+            .feed-topic-header-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                overflow: hidden;
+                position: relative;
+                border: solid 2px var(--bg-color);
+            }
 
     .feed-topic-header-desctiption {
         display: block;
@@ -326,7 +339,7 @@
             height: 100%;
         }
 
-    .feed-post-topic {
+    .feed-post-room {
         padding-right: 10px;
         display: inline-block;
     }

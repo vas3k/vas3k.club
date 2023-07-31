@@ -7,8 +7,8 @@
 {% block post_header %}
     <header class="post-header">
         <div class="post-info">
-            {% if post.topic %}
-                {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
+            {% if post.room %}
+                {% include "rooms/widgets/room.html" with room=post.room type="post" %}
             {% endif %}
         </div>
         <h1 class="post-title">

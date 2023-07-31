@@ -20,7 +20,7 @@
                 </li>
                 <li>
                     <a href="{% url "network" %}">
-                        💬 Сеть
+                        💬 Чаты
                     </a>
                 </li>
                 <li>
@@ -82,9 +82,12 @@
         <div class="feed-sidebar-block">
             <div class="feed-sidebar-header">Комнаты</div>
             <div class="feed-sidebar-topics">
-                {% for topic in topics %}
-                    {% include "posts/widgets/topic.html" with topic=topic type="card" %}
+                {% for room in rooms|slice:":10" %}
+                    {% include "rooms/widgets/room.html" with room=room type="card" %}
                 {% endfor %}
+            </div>
+            <div class="feed-sidebar-topics-more">
+                <a class="button button-small button-inverted" href="{% url "list_rooms" %}">Все комнаты &rarr;</a>
             </div>
         </div>
     </aside>

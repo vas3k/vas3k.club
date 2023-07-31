@@ -58,6 +58,11 @@ class PostCuratorForm(forms.Form):
         required=False,
     )
 
+    show_in_feeds = forms.BooleanField(
+        label="Вернуть на главную (или вытащить из комнаты)",
+        required=False,
+    )
+
     re_ping_collectible_tag_owners = forms.BooleanField(
         label="Перепингануть подписчиков коллективного тега",
         required=False,

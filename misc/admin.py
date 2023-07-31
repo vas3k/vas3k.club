@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from misc.models import ProTip, NetworkGroup, NetworkItem
+from misc.models import ProTip, NetworkGroup
 
 
 class ProTipsAdmin(admin.ModelAdmin):
@@ -30,19 +30,4 @@ class NetworkGroupAdmin(admin.ModelAdmin):
 
 
 admin.site.register(NetworkGroup, NetworkGroupAdmin)
-
-
-class NetworkItemAdmin(admin.ModelAdmin):
-    list_display = (
-        "name",
-        "description",
-        "group",
-        "url",
-        "index",
-    )
-    ordering = ("index",)
-    search_fields = ["title", "description"]
-
-
-admin.site.register(NetworkItem, NetworkItemAdmin)
 

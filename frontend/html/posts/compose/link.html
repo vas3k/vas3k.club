@@ -40,11 +40,6 @@
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="form-row form-row-center">
-                    {{ form.topic }}
-                    {% if form.topic.errors %}<span class="form-row-errors">{{ form.topic.errors }}</span>{% endif %}
-                </div>
-
                 <div class="form-row compose-form-title">
                     {{ form.url }}
                     {% if form.url.errors %}<span class="form-row-errors">{{ form.url.errors }}</span>{% endif %}

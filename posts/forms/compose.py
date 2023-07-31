@@ -9,8 +9,8 @@ from slugify import slugify_filename
 from common.regexp import EMOJI_RE
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
-from posts.models.topics import Topic
-from common.forms import ImageUploadField
+from common.forms import ImageUploadField, ReverseBooleanField
+from rooms.models import Room
 from tags.models import Tag
 from users.models.user import User
 
@@ -58,16 +58,21 @@ class CollectibleTagField(forms.CharField):
 
 
 class PostForm(forms.ModelForm):
-    topic = forms.ModelChoiceField(
+    room = forms.ModelChoiceField(
         label="Комната",
         required=False,
         empty_label="Для всех",
-        queryset=Topic.objects.filter(is_visible=True).all(),
+        queryset=Room.objects.filter(is_visible=True, is_open_for_posting=True).order_by("title").all(),
     )
     collectible_tag_code = CollectibleTagField(
         label="Прикрепить коллекционный тег",
         max_length=32,
         required=False,
+    )
+    is_visible_in_feeds = ReverseBooleanField(
+        label="Пост только для этой комнаты (не отображается на главной)",
+        initial=True,
+        required=False
     )
     is_public = forms.ChoiceField(
         label="Виден ли в большой интернет?",
@@ -78,15 +83,6 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         abstract = True
-
-    def clean_topic(self):
-        topic = self.cleaned_data["topic"]
-
-        if topic and not topic.is_visible_in_feeds:
-            # topic settings are more important
-            self.instance.is_visible_in_feeds = False
-
-        return topic
 
     def clean_coauthors(self):
         coauthors = [coauthor.replace("@", "", 1) for coauthor in self.cleaned_data.get("coauthors")]
@@ -103,6 +99,17 @@ class PostForm(forms.ModelForm):
             raise ValidationError("Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors)))
 
         return coauthors
+
+    def clean_is_visible_in_feeds(self):
+        new_value = self.cleaned_data.get("is_visible_in_feeds")
+
+        if new_value is None:
+            return self.instance.is_visible_in_feeds
+
+        if new_value and not self.instance.is_visible_in_feeds:
+            raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
+
+        return new_value
 
 
 class PostTextForm(PostForm):
@@ -136,9 +143,10 @@ class PostTextForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "coauthors",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 
@@ -179,8 +187,9 @@ class PostLinkForm(PostForm):
             "title",
             "text",
             "url",
-            "topic",
+            "room",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 
@@ -227,8 +236,9 @@ class PostQuestionForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public"
         ]
 
@@ -259,8 +269,9 @@ class PostIdeaForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 
@@ -370,9 +381,10 @@ class PostEventForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "coauthors",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public"
         ]
 
@@ -478,11 +490,12 @@ class PostProjectForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "url",
             "image",
             "coauthors",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 
@@ -528,8 +541,9 @@ class PostBattleForm(PostForm):
         model = Post
         fields = [
             "text",
-            "topic",
+            "room",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 
@@ -641,9 +655,10 @@ class PostGuideForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "coauthors",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 
@@ -692,9 +707,10 @@ class PostThreadForm(PostForm):
             "title",
             "text",
             "comment_template",
-            "topic",
+            "room",
             "coauthors",
             "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public",
         ]
 

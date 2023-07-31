@@ -40,18 +40,19 @@ def announce_in_club_chats(post):
     ])
 
     # announce to public chat
-    send_telegram_message(
-        chat=CLUB_CHAT,
-        text=render_html_message("channel_post_announce.html", post=post),
-        parse_mode=telegram.ParseMode.HTML,
-        disable_preview=True,
-        reply_markup=post_reply_markup,
-    )
-
-    if post.topic and post.topic.chat_id:
-        # announce to the topic chat
+    if post.is_visible_in_feeds or not post.room:
         send_telegram_message(
-            chat=Chat(id=post.topic.chat_id),
+            chat=CLUB_CHAT,
+            text=render_html_message("channel_post_announce.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+            disable_preview=True,
+            reply_markup=post_reply_markup,
+        )
+
+    if post.room and post.room.chat_id:
+        # announce to the room chat
+        send_telegram_message(
+            chat=Chat(id=post.room.chat_id),
             text=render_html_message("channel_post_announce.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
             disable_preview=True,

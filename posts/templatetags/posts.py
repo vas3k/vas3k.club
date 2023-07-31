@@ -56,9 +56,9 @@ def render_plain(context, post, truncate=None):
 
 
 @register.simple_tag()
-def feed_ordering_url(topic, label_code, post_type, ordering_type):
-    if topic:
-        return reverse("feed_topic_ordering", args=[topic.slug, ordering_type])
+def feed_ordering_url(room, label_code, post_type, ordering_type):
+    if room:
+        return reverse("feed_room_ordering", args=[room.slug, ordering_type])
     elif label_code:
         return reverse("feed_label_ordering", args=[label_code, ordering_type])
     else:

@@ -77,7 +77,7 @@ class SearchIndex(models.Model):
         vector = _multi_search_vector("title", weight="A") \
                  + _multi_search_vector("text", weight="B") \
                  + _multi_search_vector("author__slug", weight="C") \
-                 + _multi_search_vector("topic__name", weight="C")
+                 + _multi_search_vector("room__title", weight="C")
 
         if post.is_searchable:
             SearchIndex.objects.update_or_create(

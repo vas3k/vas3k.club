@@ -24,7 +24,7 @@ def post_to_json(post: Post) -> dict:
         "slug": post.slug,
         "author_id": str(post.author_id),
         "type": post.type,
-        "topic": post.topic.name if post.topic else None,
+        "room": post.room.title if post.room else None,
         "label": post.label,
         "title": post.title,
         "text": post.text,

@@ -5,66 +5,68 @@
 {% load posts %}
 
 {% block title %}
-    {% if topic %}{{ topic.name }} — {% endif %}{{ block.super }}
+    {% if room %}{{ room.title }} — {% endif %}{{ block.super }}
 {% endblock %}
 
 {% block og_tags %}
-    <meta property="og:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
+    <meta property="og:title" content="{% if room %}{{ room.title }} — {% endif %}{{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}">
     <meta property="og:type" content="website" />
-    <meta property="og:description" content="{% if topic %}{{ topic.description }}{% endif %}">
+    <meta property="og:description" content="{% if room %}{{ room.description }}{% endif %}">
     <meta property="og:image" content="{% static "images/share.png" %}">
 
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{% if topic %}{{ topic.name }} — {% endif %}{{ settings.APP_NAME }}">
-    <meta name="twitter:description" content="{% if topic %}{{ topic.description }}{% endif %}">
+    <meta name="twitter:title" content="{% if room %}{{ room.title }} — {% endif %}{{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="{% if room %}{{ room.subtitle }}{% endif %}">
     <meta name="twitter:image" content="{% static "images/share.png" %}">
 {% endblock %}
 
 {% block feed_content %}
-    {% if topic %}
-        <div class="feed-topic-header" style="background-color: {{ topic.color }};">
-            <span class="topic-icon feed-topic-header-icon"><img src="{{ topic.icon }}" alt="Иконка комнаты {{ topic.name }}" loading="lazy" /></span>
-            <h1 class="feed-topic-header-name">{{ topic.name }}</h1>
+    {% if room %}
+        <div class="feed-topic-header" style="background-color: {{ room.color }};">
+            <div class="feed-topic-header-title">
+                <span class="room-icon feed-topic-header-icon"><img src="{{ room.image }}" alt="Иконка комнаты {{ room.title }}" loading="lazy" /></span>
+                <a href="{% url "feed_room" room.slug %}" class="feed-topic-header-name">{{ room.title }}</a>
+            </div>
             <span class="feed-topic-header-desctiption">
-                {{ topic.description | markdown }}
+                {{ room.description | markdown }}
             </span>
-            {% if topic.chat_url and topic.chat_name %}
+            {% if room.chat_url and room.chat_name %}
                 <span class="feed-topic-header-footer">
-                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Официальный чат:</strong> <a href="{{ topic.chat_url }}" rel="noreferrer" target="_blank">{{ topic.chat_name }}</a>
+                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Официальный чат:</strong> <a href="{{ room.chat_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
                 </span>
             {% endif %}
         </div>
     {% endif %}
 
     <div class="feed-ordering">
-        <a href="{% feed_ordering_url topic label_code post_type "activity" %}"
+        <a href="{% feed_ordering_url room label_code post_type "activity" %}"
         class="feed-ordering-item {% if ordering == "activity" %}feed-ordering-item-is-active{% endif %}"
         >
             Фид
         </a>
 
-        <a href="{% feed_ordering_url topic label_code post_type "new" %}"
+        <a href="{% feed_ordering_url room label_code post_type "new" %}"
         class="feed-ordering-item {% if ordering == "new" %}feed-ordering-item-is-active{% endif %}"
         >
             Новое
         </a>
 
-        <a href="{% feed_ordering_url topic label_code post_type "hot" %}"
+        <a href="{% feed_ordering_url room label_code post_type "hot" %}"
         class="feed-ordering-item {% if ordering == "hot" %}feed-ordering-item-is-active{% endif %}"
         >
             Обсуждаемое
         </a>
 
         {% if me and me.created_at < date_month_ago %}
-            <a href="{% feed_ordering_url topic label_code post_type "top_month" %}"
+            <a href="{% feed_ordering_url room label_code post_type "top_month" %}"
             class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
             >
                 Лучшее
             </a>
         {% else %}
-            <a href="{% feed_ordering_url topic label_code post_type "top" %}"
+            <a href="{% feed_ordering_url room label_code post_type "top" %}"
             class="feed-ordering-item {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" %}feed-ordering-item-is-active{% endif %}"
             >
                 Лучшее

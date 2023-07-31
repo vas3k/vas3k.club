@@ -21,7 +21,8 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
 from common.feature_flags import feature_switch
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite
-from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, network_chat
+from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
+from rooms.views import redirect_to_room_chat, list_rooms
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
     email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
@@ -156,8 +157,10 @@ urlpatterns = [
     path("search/users.json", api_search_users, name="api_search_users"),
     path("search/tags.json", api_search_tags, name="api_search_tags"),
 
-    path("room/<slug:topic_slug>/", feed, name="feed_topic"),
-    path("room/<slug:topic_slug>/<slug:ordering>/", feed, name="feed_topic_ordering"),
+    path("rooms/", list_rooms, name="list_rooms"),
+    path("room/<slug:room_slug>/", feed, name="feed_room"),
+    path("room/<slug:room_slug>/chat/", redirect_to_room_chat, name="redirect_to_room_chat"),
+    path("room/<slug:room_slug>/<slug:ordering>/", feed, name="feed_room_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
     path("label/<slug:label_code>/<slug:ordering>/", feed, name="feed_label_ordering"),
 
@@ -183,7 +186,8 @@ urlpatterns = [
     path("docs/<slug:doc_slug>/", docs, name="docs"),
 
     path("network/", network, name="network"),
-    path("network/chat/<slug:chat_id>/", network_chat, name="network_chat"),
+    path("network/chat/<slug:chat_id>/", RedirectView.as_view(url="/room/%(chat_id)s/chat/", permanent=True),
+         name="network_chat"),
 
     # admin features
     path("godmode/", godmode_settings, name="godmode_settings"),

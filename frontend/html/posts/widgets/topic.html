@@ -1,9 +1,0 @@
-<a href="{% url "feed_topic" topic.slug %}" class="topic {% if type %}topic-type-{{type}}{% endif %}" style="{% if topic.style %}{{ topic.style }}{% else %}background-color: {{ topic.color }};{% endif %}">
-    <span class="topic-gradient"></span>
-    <span class="topic-icon-wrapper">
-        <span class="topic-icon"><img src="{{ topic.icon }}" alt="Иконка комнаты {{ topic.name }}" loading="lazy" /></span>
-    </span>
-    <span class="topic-name-wrapper">
-        <span class="topic-name">{{ topic.name }}</span>
-    </span>
-</a>

@@ -154,3 +154,11 @@
         font-size: 130%;
         text-align: center;
     }
+
+    .compose-form-room select {
+        width: 100%;
+        padding: 10px;
+        font-size: 110%;
+        font-weight: 500;
+        appearance: auto;
+    }
