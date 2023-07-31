@@ -26,4 +26,4 @@ def send_to_twitter(post: Post):
     text = f"{title} {url}"
 
     log.info(f"Twitter sending tweet with text: {text}")
-    twitter.update_status(status = text)
+    twitter.update_status(status=text)
