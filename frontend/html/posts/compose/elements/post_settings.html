@@ -15,7 +15,11 @@
             id="{{ form.room.html_name }}"
             initial-value="{{ form.room.value|default_if_none:'' }}"
             :options="[
-                {% for room in rooms %}{label: '{{ room.emoji }} {{ room.title }}', code: '{{ room.slug }}'},{% endfor %}
+                {% for choice, _ in form.room.field.choices %}
+                    {% if choice.instance %}
+                        {label: '{{ choice.instance.emoji }} {{ choice.instance.title }}', code: '{{ choice.instance.slug }}'},
+                    {% endif %}
+                {% endfor %}
             ]"
         >
         </simple-select>

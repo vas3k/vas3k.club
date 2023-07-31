@@ -32,7 +32,7 @@
             </span>
             {% if room.chat_url and room.chat_name %}
                 <span class="feed-topic-header-footer">
-                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Официальный чат:</strong> <a href="{{ room.chat_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
+                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Официальный чат:</strong> <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
                 </span>
             {% endif %}
         </div>

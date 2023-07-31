@@ -40,7 +40,7 @@ def announce_in_club_chats(post):
     ])
 
     # announce to public chat
-    if post.is_visible_in_feeds or not post.room:
+    if post.is_visible_in_feeds or not post.room or not post.room.chat_id:
         send_telegram_message(
             chat=CLUB_CHAT,
             text=render_html_message("channel_post_announce.html", post=post),
