@@ -108,7 +108,11 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
             f"😣 Сорян, я пока умею только в текстовые реплаи"
         )
         return None
-
+        
+    for skip_word in ("/skip","#skip","#ignore"):
+        if skip_word in text:
+            return None
+            
     if len(text) < MIN_COMMENT_LEN:
         update.message.reply_text(
             f"😋 Твой коммент слишком короткий. Не буду постить его в Клуб, пускай остается в чате"
