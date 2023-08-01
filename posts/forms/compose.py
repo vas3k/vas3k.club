@@ -62,7 +62,7 @@ class PostForm(forms.ModelForm):
         label="Комната",
         required=False,
         blank=True,
-        queryset=Room.objects.filter(is_visible=True, is_open_for_posting=True),
+        queryset=Room.objects.filter(is_visible=True, is_open_for_posting=True).order_by("title").all(),
     )
     collectible_tag_code = CollectibleTagField(
         label="Прикрепить коллекционный тег",

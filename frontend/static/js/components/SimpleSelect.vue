@@ -35,7 +35,7 @@ export default {
     },
     methods: {
         onChange(newValue) {
-            this.currentValue = newValue;
+            this.currentValue = newValue || {};
         }
     }
 };
