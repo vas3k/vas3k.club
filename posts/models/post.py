@@ -278,6 +278,9 @@ class Post(models.Model, ModelDiffMixin):
 
     @classmethod
     def objects_for_user(cls, user):
+        if not user:
+            return cls.visible_objects()
+
         return cls.visible_objects()\
             .extra({
                 "is_voted": "select 1 from post_votes "

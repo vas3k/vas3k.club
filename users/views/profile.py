@@ -21,19 +21,21 @@ from users.models.user import User
 from users.utils import calculate_similarity
 
 
-@require_auth
 def profile(request, user_slug):
     if user_slug == "me":
         return redirect("profile", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
 
+    if not user.can_view(request.me):
+        return render(request, "auth/private_profile.html")
+
     if user.moderation_status != User.MODERATION_STATUS_APPROVED and not request.me.is_moderator:
         # hide unverified users
         raise Http404()
 
     # handle auth redirect
-    if user.id == request.me.id:
+    if request.me and user.id == request.me.id:
         goto = request.GET.get("goto")
         if goto and goto.startswith(settings.APP_HOST):
             return redirect(goto)
@@ -44,7 +46,7 @@ def profile(request, user_slug):
     active_tags = {t.tag_id for t in user_tags if t.tag.group != Tag.GROUP_COLLECTIBLE}
     collectible_tags = [t.tag for t in user_tags if t.tag.group == Tag.GROUP_COLLECTIBLE]
     similarity = {}
-    if user.id != request.me.id:
+    if request.me and user.id != request.me.id:
         my_tags = {t.tag_id for t in UserTag.objects.filter(user=request.me).all()}
         similarity = calculate_similarity(my_tags, active_tags, tags)
 
@@ -54,21 +56,27 @@ def profile(request, user_slug):
     badges = UserBadge.user_badges_grouped(user=user)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
     expertises = UserExpertise.objects.filter(user=user).all()
-    comments = Comment.visible_objects()\
-        .filter(author=user, post__is_visible=True)\
-        .order_by("-created_at")\
-        .select_related("post")
-    posts = Post.objects_for_user(request.me)\
-        .filter(is_visible=True)\
+    posts = Post.objects_for_user(request.me).filter(is_visible=True)\
         .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
-    friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
-    muted = Muted.objects.filter(user_from=request.me, user_to=user).first()
-    note = UserNote.objects.filter(user_from=request.me, user_to=user).first()
+
+    if request.me:
+        comments = Comment.visible_objects()\
+            .filter(author=user, post__is_visible=True)\
+            .order_by("-created_at")\
+            .select_related("post")
+        friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
+        muted = Muted.objects.filter(user_from=request.me, user_to=user).first()
+        note = UserNote.objects.filter(user_from=request.me, user_to=user).first()
+    else:
+        comments = None
+        friend = None
+        muted = None
+        note = None
 
     moderator_notes = []
-    if request.me.is_moderator:
+    if request.me and request.me.is_moderator:
         moderator_notes = UserNote.objects.filter(user_to=user)\
             .exclude(user_from=request.me)\
             .select_related("user_from")\
@@ -84,10 +92,10 @@ def profile(request, user_slug):
         "collectible_tags": collectible_tags,
         "achievements": [ua.achievement for ua in achievements],
         "expertises": expertises,
-        "comments": comments[:3],
-        "comments_total": comments.count(),
+        "comments": comments[:3] if comments else [],
+        "comments_total": comments.count() if comments else 0,
         "posts": posts[:15],
-        "posts_total": posts.count(),
+        "posts_total": posts.count() if posts else 0,
         "similarity": similarity,
         "friend": friend,
         "muted": muted,
@@ -114,12 +122,14 @@ def profile_comments(request, user_slug):
     })
 
 
-@require_auth
 def profile_posts(request, user_slug):
     if user_slug == "me":
         return redirect("profile_posts", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
+
+    if not user.can_view(request.me):
+        return render(request, "auth/private_profile.html")
 
     posts = Post.objects_for_user(request.me) \
         .filter(is_visible=True) \
@@ -133,12 +143,14 @@ def profile_posts(request, user_slug):
     })
 
 
-@require_auth
 def profile_badges(request, user_slug):
     if user_slug == "me":
         return redirect("profile_badges", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
+
+    if not user.can_view(request.me):
+        return render(request, "auth/private_profile.html")
 
     badges = UserBadge.user_badges(user)
 

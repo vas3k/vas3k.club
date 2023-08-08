@@ -99,6 +99,7 @@ class User(models.Model, ModelDiffMixin):
 
     stripe_id = models.CharField(max_length=128, null=True)
 
+    is_profile_public = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_email_unsubscribed = models.BooleanField(default=False)
     is_banned_until = models.DateTimeField(null=True)
@@ -172,6 +173,9 @@ class User(models.Model, ModelDiffMixin):
     def get_avatar(self):
         return self.avatar or settings.DEFAULT_AVATAR
 
+    def can_view(self, user):
+        return user or self.is_profile_public
+
     @property
     def is_banned(self):
         if self.is_god:
@@ -226,3 +230,4 @@ class User(models.Model, ModelDiffMixin):
         return cls.objects.filter(
             moderation_status=User.MODERATION_STATUS_APPROVED
         )
+

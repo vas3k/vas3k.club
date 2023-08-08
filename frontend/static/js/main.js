@@ -16,7 +16,6 @@ Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
 Vue.component("post-subscription", () => import("./components/PostSubscription.vue"));
 Vue.component("post-rsvp", () => import("./components/PostRSVP.vue"));
 Vue.component("comment-upvote", () => import("./components/CommentUpvote.vue"));
-Vue.component("user-expertise-window", () => import("./components/UserExpertiseWindow.vue"));
 Vue.component("user-tag", () => import("./components/UserTag.vue"));
 Vue.component("people-map", () => import("./components/PeopleMap.vue"));
 Vue.component("user-avatar-input", () => import("./components/UserAvatarInput.vue"));

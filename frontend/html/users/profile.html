@@ -130,10 +130,12 @@
                     {% endif %}
                 </div>
 
-                <friend-button
-                    url="{% url "toggle_friend" user.slug %}"
-                    {% if friend %}is-friend-by-default{% endif %}>
-                </friend-button>
+                {% if me %}
+                    <friend-button
+                        url="{% url "toggle_friend" user.slug %}"
+                        {% if friend %}is-friend-by-default{% endif %}>
+                    </friend-button>
+                {% endif %}
 
                 {% if not user.is_curator and not user.is_moderator %}
                     {% if muted %}
@@ -157,37 +159,39 @@
             </a>
         {% endif %}
 
-        <div class="profile-note {% if note.text or moderator_notes %}profile-note-extended{% endif %}" id="profile-note">
-            <label for="profile-note-form-text" class="profile-note-title" onclick="document.getElementById('profile-note').classList.toggle('profile-note-extended');">
-                {% if not note.text %}
-                    ✏️ Оставить заметку об этом юзере
-                {% else %}
-                    📝 Ваша заметка об этом юзере
-                {% endif %}
-            </label>
+        {% if me %}
+            <div class="profile-note {% if note.text or moderator_notes %}profile-note-extended{% endif %}" id="profile-note">
+                <label for="profile-note-form-text" class="profile-note-title" onclick="document.getElementById('profile-note').classList.toggle('profile-note-extended');">
+                    {% if not note.text %}
+                        ✏️ Оставить заметку об этом юзере
+                    {% else %}
+                        📝 Ваша заметка об этом юзере
+                    {% endif %}
+                </label>
 
-            <form action="{% url "edit_note" user.slug %}" method="post" class="profile-note-form">
-                <textarea name="text" class="profile-note-form-text" id="profile-note-form-text">{{ note.text | default:"" }}</textarea>
+                <form action="{% url "edit_note" user.slug %}" method="post" class="profile-note-form">
+                    <textarea name="text" class="profile-note-form-text" id="profile-note-form-text">{{ note.text | default:"" }}</textarea>
 
-                <button type="submit" class="button button-small profile-note-form-button">
-                    Сохранить
-                </button>
+                    <button type="submit" class="button button-small profile-note-form-button">
+                        Сохранить
+                    </button>
 
-                {% if moderator_notes %}
-                    {% for moderator_note in moderator_notes %}
-                        <div class="profile-note-moderator">
-                            <strong>{{ moderator_note.user_from.slug }}</strong>: {{ moderator_note.text }}
+                    {% if moderator_notes %}
+                        {% for moderator_note in moderator_notes %}
+                            <div class="profile-note-moderator">
+                                <strong>{{ moderator_note.user_from.slug }}</strong>: {{ moderator_note.text }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if not note.text and not moderator_notes %}
+                        <div class="profile-note-footer">
+                            Заметка видна только вам, сам пользователь ничего не узнает 😈
                         </div>
-                    {% endfor %}
-                {% endif %}
-
-                {% if not note.text and not moderator_notes %}
-                    <div class="profile-note-footer">
-                        Заметка видна только вам, сам пользователь ничего не узнает 😈
-                    </div>
-                {% endif %}
-            </form>
-        </div>
+                    {% endif %}
+                </form>
+            </div>
+        {% endif %}
 
         {% if intro %}
             <div class="block profile-intro">
@@ -325,7 +329,7 @@
             </div>
         {% endif %}
 
-        {% if comments %}
+        {% if me and comments %}
             <div class="profile-header">
                 <a href="{% url "profile_comments" user.slug  %}">Комментарии ({{ comments_total }}) &rarr;</a>
             </div>
@@ -361,10 +365,4 @@
             {% endif %}
         {% endif %}
     </div>
-
-    <user-expertise-window submit-form-action="{% url "add_expertise" %}"
-                           :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
-                           v-show="shownWindow === 'add-expertise'"
-                           @close-window="shownWindow = null">
-    </user-expertise-window>
 {% endblock %}

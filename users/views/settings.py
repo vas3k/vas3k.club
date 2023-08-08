@@ -45,8 +45,6 @@ def edit_profile(request, user_slug):
 
             SearchIndex.update_user_index(user)
             Geo.update_for_user(user, fuzzy=True)
-
-            return redirect("profile", user.slug)
     else:
         form = ProfileEditForm(instance=user)
 

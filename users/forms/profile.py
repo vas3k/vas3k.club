@@ -4,6 +4,7 @@ from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
 from common.data.expertise import EXPERTISE
+from posts.models.post import Post
 from users.models.user import User
 from users.models.expertise import UserExpertise
 from common.forms import ImageUploadField
@@ -42,6 +43,10 @@ class ProfileEditForm(ModelForm):
         required=True,
         max_length=128
     )
+    is_profile_public = forms.BooleanField(
+        label="Сделать мой профиль публичным",
+        required=False,
+    )
 
     class Meta:
         model = User
@@ -52,7 +57,18 @@ class ProfileEditForm(ModelForm):
             "city",
             "country",
             "bio",
+            "is_profile_public",
         ]
+
+    def clean_is_profile_public(self):
+        new_value = self.cleaned_data["is_profile_public"]
+        old_value = self.instance.is_profile_public
+
+        # update intro post visibility settings
+        if new_value != old_value:
+            Post.objects.filter(author=self.instance, type=Post.TYPE_INTRO).update(is_public=new_value)
+
+        return new_value
 
 
 class NotificationsEditForm(ModelForm):

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load posts %}
+
+{% block title %}
+    Кто тут? — {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+    <div class="block access-denied">
+        <h2>🥷 Это приватный профиль</h2>
+
+        <p>
+            Его автор не разрешил показывать его в большой интернет. Профиль доступен только пользователям Клуба.
+        </p>
+
+        <p>
+            <br>
+            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="button">Войти</a>&nbsp;&nbsp;или&nbsp;&nbsp;<a href="{% url "join" %}" class="button">Вступить в Клуб</a>
+        </p>
+    </div>
+{% endblock %}
