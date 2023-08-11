@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 
 from authn.decorators.auth import require_auth
+from authn.helpers import check_user_permissions
 from authn.models.session import Session
 
 
@@ -15,6 +16,11 @@ def join(request):
 
 def login(request):
     if request.me:
+        # moderation status check for new-joiners
+        access_denied = check_user_permissions(request)
+        if access_denied:
+            return access_denied
+
         return redirect("profile", request.me.slug)
 
     return render(request, "auth/login.html", {

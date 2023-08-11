@@ -87,6 +87,6 @@ def email_login_code(request):
         user.deleted_at = None
         user.save()
 
-    redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
+    redirect_to = reverse("login") if not goto else goto
     response = redirect(redirect_to)
     return set_session_cookie(response, user, session)
