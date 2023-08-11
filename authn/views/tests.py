@@ -235,7 +235,7 @@ class ViewEmailLoginCodeTests(TestCase):
         response = self.client.get(reverse("email_login_code"),
                                    data={"email": self.new_user.email, "code": self.code.code})
 
-        self.assertRedirects(response=response, expected_url=f"/user/{self.new_user.slug}/",
+        self.assertRedirects(response=response, expected_url=f"/auth/login/",
                              fetch_redirect_response=False)
         self.assertTrue(self.client.is_authorised())
         self.assertTrue(User.objects.get(id=self.new_user.id).is_email_verified)
