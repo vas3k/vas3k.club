@@ -56,7 +56,7 @@ ACHIEVEMENTS = [
     }),
     ("international", {
         "name": "Между-народные отношения",
-        "description": "Выдаётся за офлайн-встречу с ранее не знакомыми членами Клуба в другой стране (не СНГ)",
+        "description": "Выдаётся за офлайн-встречу трёх и более человек с разным гражданством или ВНЖ",
         "image": "https://i.vas3k.club/3aq.png",
         "style": "background-color: #1976D2; font-size: 120%;",
     }),
@@ -258,7 +258,7 @@ ACHIEVEMENTS = [
         "description": "За участие в одном DIY челлендже",
         "image": "https://vas3k.club/static/images/achievements/diy_challenge_1.png",
         "style": "background-color: #C9C097; font-size: 120%;",
-    }), 
+    }),
     ("diy_challenge_2", {
         "name": "Мастер на все руки",
         "description": "За участие в 4 DIY челленджах",
