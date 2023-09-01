@@ -1,0 +1,13 @@
+{% if post.is_public %}
+    {% if post.room_id and not post.is_visible_in_feeds %}
+        <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост для комнаты «{{ post.room.title }}»
+    {% else %}
+        <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
+    {% endif %}
+{% else %}
+    {% if post.room_id and not post.is_visible_in_feeds %}
+        <i class="fas fa-lock"></i>&nbsp;Только для комнаты «{{ post.room.title }}»
+    {% else %}
+        <i class="fas fa-lock"></i>&nbsp;Только для своих
+    {% endif %}
+{% endif %}

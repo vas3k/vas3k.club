@@ -38,12 +38,8 @@
         </div>
 
         <div class="post-actions-line">
-            <span class="post-is-public">
-                {% if post.is_public %}
-                    <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост&nbsp;&nbsp;&nbsp;
-                {% else %}
-                    <i class="fas fa-lock"></i>&nbsp;Только для своих&nbsp;&nbsp;&nbsp;
-                {% endif %}
+            <span class="post-publicity-preferences">
+                {% include "posts/widgets/publicity_preferences.html" with post=post %}
             </span>
             {% include "posts/widgets/post_actions_line.html" %}
         </div>

@@ -11,15 +11,15 @@
                 {% include "rooms/widgets/room.html" with room=post.room type="post" %}
             {% endif %}
         </div>
+
         <h1 class="post-title">
             📅 {{ post.title | rutypography }}
         </h1>
-        <span class="post-is-public">
-            {% if post.is_public %}
-                <i class="fas fa-globe-americas"></i>&nbsp;Публичный ивент
-            {% else %}
-                <i class="fas fa-lock"></i>&nbsp;Только для своих
-            {% endif %}
+
+        <div class="clearfix10"></div>
+
+        <span class="post-publicity-preferences">
+            {% include "posts/widgets/publicity_preferences.html" with post=post %}
         </span>
 
         <div class="post-data">

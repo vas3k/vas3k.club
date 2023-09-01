@@ -28,12 +28,8 @@
                         <h1 class="post-inline-title p-name">{{ post.title | rutypography }}</h1>
                     {% endblock %}
 
-                    <span class="post-is-public">
-                        {% if post.is_public %}
-                            <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
-                        {% else %}
-                            <i class="fas fa-lock"></i>&nbsp;Только для своих
-                        {% endif %}
+                    <span class="post-publicity-preferences">
+                        {% include "posts/widgets/publicity_preferences.html" with post=post %}
                     </span>
 
                     {% if post.label %}

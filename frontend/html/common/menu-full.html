@@ -11,13 +11,15 @@
         </a>
     </div>
     <div class="menu-center">
-        <div class="menu-search">
-            <form action="{% url "search" %}">
-                <label for="menu-search-input" class="menu-search-label {% if query %}menu-search-label-is-active{% endif %}" id="menu-search-label"><i class="fas fa-search"></i></label>
-                <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}" aria-labelledby="menu-search-label" placeholder="Поиск">
-                <input type="submit" value="&rarr;" style="position: absolute; top: 0; left: -9999px;">
-            </form>
-        </div>
+        {% if me and me.is_member %}
+            <div class="menu-search">
+                <form action="{% url "search" %}">
+                    <label for="menu-search-input" class="menu-search-label {% if query %}menu-search-label-is-active{% endif %}" id="menu-search-label"><i class="fas fa-search"></i></label>
+                    <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}" aria-labelledby="menu-search-label" placeholder="Поиск">
+                    <input type="submit" value="&rarr;" style="position: absolute; top: 0; left: -9999px;">
+                </form>
+            </div>
+        {% endif %}
     </div>
     <div class="menu-right">
         {% if me %}

@@ -39,7 +39,7 @@
         position: relative;
     }
 
-    .post-title .post-is-public {
+    .post-publicity-preferences {
         display: inline-block;
         font-size: initial;
         font-weight: lighter;
