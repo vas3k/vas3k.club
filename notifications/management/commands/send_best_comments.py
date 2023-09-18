@@ -42,7 +42,6 @@ class Command(BaseCommand):
                     send_telegram_message(
                         chat=Chat(id=TELEGRAM_CHANNEL_ID),
                         text=message,
-                        disable_preview=False,
                     )
                 except Exception as ex:
                     self.stdout.write(f"Error sending the message: {ex}")
