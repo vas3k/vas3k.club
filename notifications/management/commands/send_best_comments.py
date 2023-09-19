@@ -12,8 +12,8 @@ log = logging.getLogger(__name__)
 
 TELEGRAM_CHANNEL_ID = -1001814814883
 TIME_INTERVAL = timedelta(days=3)
-LIMIT = 20
-MIN_UPVOTES = 25
+LIMIT = 30
+MIN_UPVOTES = 15
 
 
 class Command(BaseCommand):
@@ -22,11 +22,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         best_comments = Comment.visible_objects().filter(
             created_at__gte=datetime.utcnow() - TIME_INTERVAL,
-            post__is_approved_by_moderator=True,
             upvotes__gte=MIN_UPVOTES,
         ).order_by("-upvotes")[:LIMIT]
 
         for comment in best_comments:
+            if comment.text.startswith("!"):
+                # skip images/memes
+                continue
+
             if not comment.metadata or not comment.metadata.get("in_best_comments"):
                 self.stdout.write(f"Comment {comment.id} +{comment.upvotes}")
                 comment.metadata = comment.metadata or {}
