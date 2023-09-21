@@ -28,7 +28,6 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
     "@stripe/stripe-js": "^1.11.0",
     "easymde": "^2.11.0",
     "inline-attachment": "^2.0.3",

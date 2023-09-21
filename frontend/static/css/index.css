@@ -3,7 +3,7 @@
 @import "easymde/dist/easymde.min.css";
 @import "normalize.css";
 @import "./fonts.css";
-@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "./fontawesome.all.css";
 
 @import "./theme.css";
 @import "./base.css";
