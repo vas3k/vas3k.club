@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.template.loader import render_to_string
 
+from badges.models import UserBadge
 from comments.models import Comment
 from notifications.telegram.common import send_telegram_message, Chat
 
@@ -26,7 +27,14 @@ class Command(BaseCommand):
             upvotes__gte=MIN_UPVOTES,
         ).order_by("-upvotes")[:LIMIT]
 
-        for comment in best_comments:
+        new_badges = UserBadge.objects.filter(
+            created_at__gte=datetime.utcnow() - TIME_INTERVAL,
+            comment__isnull=False,
+        ).order_by("-created_at")[:LIMIT]
+
+        comments_with_badges = [b.comment for b in new_badges]
+
+        for comment in list(comments_with_badges) + list(best_comments):
             if not comment.metadata or not comment.metadata.get("in_best_comments"):
                 self.stdout.write(f"Comment {comment.id} +{comment.upvotes}")
                 comment.metadata = comment.metadata or {}
