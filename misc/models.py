@@ -46,28 +46,3 @@ class NetworkGroup(models.Model):
     @classmethod
     def visible_objects(cls):
         return cls.objects.filter(is_visible=True)
-
-
-class NetworkItem(models.Model):
-    id = models.CharField(primary_key=True, max_length=32, default=uuid4)
-
-    group = models.ForeignKey(NetworkGroup, related_name="items", db_index=True, null=True, on_delete=models.SET_NULL)
-
-    name = models.CharField(max_length=128, null=True, blank=True)
-    description = models.CharField(max_length=256, null=True, blank=True)
-    image = models.URLField(null=False)
-    icon = models.CharField(max_length=256, null=True, blank=True)
-    url = models.URLField(null=False)
-
-    telegram_chat_id = models.CharField(max_length=32, null=True, blank=True)
-
-    index = models.PositiveIntegerField(default=0)
-
-    class Meta:
-        db_table = "network_items"
-        ordering = ["index"]
-
-    def get_private_url(self):
-        if self.url:
-            return reverse("network_chat", kwargs={"chat_id": self.id})
-        return None
