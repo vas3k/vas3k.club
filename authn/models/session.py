@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from club.exceptions import RateLimitException, InvalidCode
@@ -10,26 +9,10 @@ from users.models.user import User
 from utils.strings import random_string, random_number
 
 
-class Apps(models.Model):
-    id = models.CharField(max_length=16, primary_key=True)
-    name = models.CharField(max_length=64, unique=True)
-    owner = models.ForeignKey(User, related_name="apps", null=True, on_delete=models.CASCADE)
-    jwt_secret = models.TextField(null=True)
-    jwt_algorithm = models.CharField(max_length=16, default="")
-    jwt_expire_hours = models.IntegerField(default=240)
-    redirect_urls = ArrayField(models.CharField(max_length=256), default=list, null=False)
-    service_token = models.CharField(max_length=128, unique=True, db_index=True, null=True)
-
-    class Meta:
-        db_table = "apps"
-
-
 class Session(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     user = models.ForeignKey(User, related_name="sessions", db_index=True, on_delete=models.CASCADE)
-    app = models.ForeignKey(Apps, related_name="sessions", null=True, on_delete=models.CASCADE)
-
     token = models.CharField(max_length=128, unique=True, db_index=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

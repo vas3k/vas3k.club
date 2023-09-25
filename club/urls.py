@@ -9,7 +9,6 @@ from authn.views.apps import list_apps, create_app, edit_app, delete_app
 from authn.views.auth import login, logout, join
 from authn.views.debug import debug_dev_login, debug_random_login, debug_login
 from authn.views.email import email_login, email_login_code
-from authn.views.external import external_login
 from authn.views.openid import openid_authorize, openid_issue_token, openid_revoke_token, \
     openid_well_known_configuration, openid_well_known_jwks
 from authn.views.patreon import patreon_sync, patreon_sync_callback
@@ -78,7 +77,6 @@ urlpatterns = [
     path("auth/patreon_callback/", patreon_sync_callback, name="patreon_sync_callback"),
     path("auth/email/", email_login, name="email_login"),
     path("auth/email/code/", email_login_code, name="email_login_code"),
-    path("auth/external/", external_login, name="external_login"),
 
     path("auth/openid/authorize", openid_authorize, name="openid_authorize"),
     path("auth/openid/token", openid_issue_token, name="openid_issue_token"),
