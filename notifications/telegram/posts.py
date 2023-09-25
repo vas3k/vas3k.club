@@ -49,7 +49,7 @@ def announce_in_club_chats(post):
             reply_markup=post_reply_markup,
         )
 
-    if post.room and post.room.chat_id:
+    if post.room and post.room.chat_id and post.room.send_new_posts_to_chat:
         # announce to the room chat
         send_telegram_message(
             chat=Chat(id=post.room.chat_id),

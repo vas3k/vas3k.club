@@ -20,6 +20,8 @@ class Room(models.Model):
     chat_name = models.CharField(max_length=128, null=True, blank=True)
     chat_url = models.URLField(null=True, blank=True)
     chat_id = models.CharField(max_length=32, null=True, blank=True)
+    send_new_posts_to_chat = models.BooleanField(default=True)
+    send_new_comments_to_chat = models.BooleanField(default=False)
 
     network_group = models.ForeignKey(
         "misc.NetworkGroup",
@@ -31,7 +33,6 @@ class Room(models.Model):
 
     is_visible = models.BooleanField(default=True)
     is_open_for_posting = models.BooleanField(default=True)
-    is_bot_active = models.BooleanField(default=True)
 
     index = models.PositiveIntegerField(default=0)
 

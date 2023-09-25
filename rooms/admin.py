@@ -12,11 +12,12 @@ class RoomsAdmin(admin.ModelAdmin):
         "icon",
         "color",
         "chat_name",
+        "send_new_posts_to_chat",
+        "send_new_comments_to_chat",
         "network_group",
         "last_activity_at",
         "is_visible",
         "is_open_for_posting",
-        "is_bot_active",
         "index",
     )
     ordering = ("title",)

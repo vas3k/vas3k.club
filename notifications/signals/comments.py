@@ -71,12 +71,20 @@ def async_create_or_update_comment(comment):
             )
             notified_user_ids.add(thread_author.id)
 
-    # post top level comments to online channel
+    # post top level comments to "online" channel
     if not comment.reply_to and comment.post.is_visible and comment.post.is_visible_in_feeds:
         send_telegram_message(
             chat=CLUB_ONLINE,
             text=render_html_message("channel_comment_announce.html", comment=comment),
         )
+
+    # post top level comments to "rooms" (if necessary)
+    if not comment.reply_to and comment.post.is_visible:
+        if comment.post.room_id and comment.post.room.chat_id and comment.post.room.send_new_comments_to_chat:
+            send_telegram_message(
+                chat=Chat(id=comment.post.room.chat_id),
+                text=render_html_message("channel_comment_announce.html", comment=comment),
+            )
 
     # notify friends about your comments (not replies)
     if not comment.reply_to:
