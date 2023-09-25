@@ -39,34 +39,4 @@ class Migration(migrations.Migration):
                 'ordering': ['-last_activity_at'],
             },
         ),
-        migrations.RunSQL("""
-            insert into rooms (slug, title, subtitle, image, icon, description, color, style, url, chat_name,
-            chat_url, chat_id, last_activity_at, is_visible, is_bot_active, "index", network_group_id)
-            select id, name, description, image, icon, '', '#282c35', '', '', name, url, telegram_chat_id, now(),
-            true, true, index, group_id from network_items;
-        """),
-        migrations.RunSQL("""
-            insert into rooms (slug, title, subtitle, image, icon, description, color, style, url, chat_name,
-            chat_url, chat_id, last_activity_at, is_visible, is_bot_active, "index", network_group_id)
-            select slug, name, '', icon, '', description, color, style, '', chat_name, chat_url, chat_id, now(),
-            true, false, 0, null from topics where slug in ('nepotism', 'productivity', 'hobby', 'dumbasshome');
-        """),
-        migrations.RunSQL("""
-            update rooms set (image, description, color, chat_id) = (select icon, description, color, chat_id from topics where slug = 'books') where slug = 'books';
-        """),
-        migrations.RunSQL("""
-            update rooms set (slug, description, color, chat_id) = (select slug, description, color, chat_id from topics where slug = 'chef') where slug = 'cooking';
-        """),
-        migrations.RunSQL("""
-            update rooms set (slug, image, description, color, chat_id) = (select slug, icon, description, color, chat_id from topics where slug = 'indie') where slug = 'indiehackers';
-        """),
-        migrations.RunSQL("""
-            update rooms set (slug, title, image, description, color, chat_id) = (select slug, name, icon, description, color, chat_id from topics where slug = 'stonks') where slug = 'fire';
-        """),
-        migrations.RunSQL("""
-            update rooms set (image, title, description, color, chat_id) = (select icon, name, description, color, chat_id from topics where slug = 'tractor') where slug = 'tractor';
-        """),
-        migrations.RunSQL("""
-            update rooms set (image, description, color) = (select icon, description, color from topics where slug = 'travel') where slug = 'travel';
-        """)
     ]
