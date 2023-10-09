@@ -72,7 +72,7 @@ def dump_user_profile(user_dir, user):
 
 
 def dump_user_posts(user_dir, user):
-    posts = Post.objects.filter(author=user).select_related("author", "topic")
+    posts = Post.objects.filter(author=user).select_related("author", "room")
 
     for post in posts:
         post_dir = os.path.join(user_dir, f"posts/{post.slug}")
