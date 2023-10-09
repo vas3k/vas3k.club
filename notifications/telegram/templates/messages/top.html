@@ -18,3 +18,8 @@
 {{ top_comment.author.full_name }} к посту <a href="{{ settings.APP_HOST }}{% url "show_post" top_comment.post.type top_comment.post.slug %}">{{ top_comment.post.title }}</a> (+{{ top_comment.upvotes }})
 {% load posts %}
 {% render_plain top_comment 300 %}
+
+🔍 <b>Посты которые никто не видел</b>
+{% for post in hidden_gems %}
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
+{% endfor %}

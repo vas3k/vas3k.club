@@ -43,6 +43,15 @@ def command_top(update: Update, context: CallbackContext) -> None:
         .order_by("-upvotes") \
         .first()
 
+    # Least seen posts
+    hidden_gems = Post.visible_objects()\
+        .filter(published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
+         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+         .exclude(id__in=[p.id for p in top_posts]) \
+         .exclude(id__in=[p.id for p in hot_posts]) \
+        .order_by("view_count")[:5]
+
     update.effective_chat.send_message(
         render_html_message(
             template="top.html",
@@ -50,6 +59,7 @@ def command_top(update: Update, context: CallbackContext) -> None:
             hot_posts=hot_posts,
             top_intros=top_intros,
             top_comment=top_comment,
+            hidden_gems=hidden_gems,
         ),
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
