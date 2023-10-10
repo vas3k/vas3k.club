@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 TELEGRAM_CHANNEL_ID = -1001814814883
 TIME_INTERVAL = timedelta(days=4)
 LIMIT = 40
-MIN_UPVOTES = 20
+MIN_UPVOTES = 25
 
 
 class Command(BaseCommand):
