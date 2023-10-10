@@ -2,7 +2,8 @@
 0 3 * * * root cd /app && python3 manage.py cleanup_old_oauth_tokens  >/proc/1/fd/1 2>/proc/1/fd/2
 0 8 * * 2,3,4,5 root cd /app && python3 manage.py send_daily_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
 30 */4 * * 1-6 root cd /app && python3 manage.py send_best_comments  >/proc/1/fd/1 2>/proc/1/fd/2
-0 11 * * 1 root cd /app && python3 manage.py send_weekly_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
+0 09 * * 1 root cd /app && python3 manage.py send_weekly_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
+0 10 * * * root cd /app && python3 manage.py send_subscription_expired --production true  >/proc/1/fd/1 2>/proc/1/fd/2
 0 5 * * 7 root cd /app && python3 manage.py rebuild_search_index  >/proc/1/fd/1 2>/proc/1/fd/2
 0 8 * * * root cd /app && python3 manage.py replay_stuck_reviews  >/proc/1/fd/1 2>/proc/1/fd/2
 0 8 * * * root find /app/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete >/proc/1/fd/1 2>/proc/1/fd/2

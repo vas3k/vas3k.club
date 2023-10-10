@@ -66,6 +66,7 @@ class Command(BaseCommand):
 
                 message = render_to_string("messages/subscription_expired.html", {
                     "user": user,
+                    "settings": settings,
                 })
 
                 try:
