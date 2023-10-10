@@ -1,5 +1,6 @@
+import base64
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta, date
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -11,7 +12,7 @@ from users.models.user import User
 
 log = logging.getLogger(__name__)
 
-TIMEDELTA = timedelta(days=14)
+EXPIRATION_DAY = date.today() + timedelta(days=14)
 
 
 class Command(BaseCommand):
@@ -30,12 +31,11 @@ class Command(BaseCommand):
         else:
             about_to_expire_users = User.objects\
                 .filter(
-                    membership_expires_at__gte=datetime.utcnow() + TIMEDELTA,
-                    membership_expires_at__lt=datetime.utcnow() + TIMEDELTA + timedelta(days=1),
+                    membership_expires_at__gte=EXPIRATION_DAY,
+                    membership_expires_at__lt=EXPIRATION_DAY + timedelta(days=1),
                     moderation_status=User.MODERATION_STATUS_APPROVED,
                     deleted_at__isnull=True,
                 )\
-                .exclude(is_email_unsubscribed=True)\
                 .exclude(membership_platform_type=User.MEMBERSHIP_PLATFORM_PATREON)
 
         for user in about_to_expire_users:
@@ -50,6 +50,11 @@ class Command(BaseCommand):
                     email = render_to_string("emails/subscription_expired.html", {
                         "user": user,
                     })
+
+                    email = email\
+                        .replace("%username%", user.slug)\
+                        .replace("%user_id%", str(user.id))\
+                        .replace("%secret_code%", base64.b64encode(user.secret_hash.encode("utf-8")).decode())
 
                     send_club_email(
                         recipient=user.email,
