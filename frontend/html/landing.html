@@ -22,9 +22,9 @@
 {% block body %}
     <main class="landing">
         <div class="landing-block landing-block-limited">
-            <img src="{% static "images/logo/logo-1024.png" %}" alt="">
+            <img  style="border-radius: 200px; width: 800px; height: 800px;" src="{% static "images/logo/tulip.png" %}" alt="tulip">
             <div class="landing-title">
-                <h1>Вастрик.Клуб</h1>
+                <h1>Ulan Club</h1>
                 <p>Всё самое интересное происходит за закрытыми дверями</p>
                 <a href="{% url "login" %}" class="button button-black">Войти</a>
             </div>
@@ -256,8 +256,8 @@
 
 {% block footer %}
     <footer class="footer">
-        <div class="footer-left" style="text-align: center; font-size: 130%;">
-            &copy; <a href="https://vas3k.ru" target="_blank">Вастрик</a> {% now "Y" %}
+        <div class="footer-left" style="text-align:center;font-size:130%;">
+            &copy; <a href="https://vas3k.ru" target="_blank">Ulan</a> {% now "Y" %}
             &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
             <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
         </div>

@@ -2,7 +2,7 @@
 {% load static %}
 <html lang="ru">
 <head>
-    <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
+    <title>{% block title %}Ulan Club{% endblock %}</title>
     {% block fonts %}
         {% include "common/fonts.html" %}
     {% endblock %}
@@ -17,10 +17,10 @@
     </script>
 
     <link rel="alternate" type="application/rss+xml"
-          title="Вастрик.Клуб: Новые посты"
+          title="Ulan Club: Новые посты"
           href="{{ settings.APP_HOST }}{% url "rss" %}{% if me %}?hash={{ me.secret_hash }}{% endif %}" />
 
-    <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
+    <link rel="alternate" title="Ulan Club: JSON Feed"
           type="application/feed+json"
           href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
 
