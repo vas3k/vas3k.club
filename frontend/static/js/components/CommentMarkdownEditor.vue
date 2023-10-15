@@ -27,11 +27,12 @@ import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions
 
 export default {
     mounted() {
+        const $markdownElementDiv = this.$el.children[0];
         if (isMobile()) {
+            inlineAttachment.editors.input.attachToInput($markdownElementDiv, imageUploadOptions);
             return;
         }
 
-        const $markdownElementDiv = this.$el.children[0];
         this.editor = createMarkdownEditor($markdownElementDiv, {
             toolbar: false,
         });
