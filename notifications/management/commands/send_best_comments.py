@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
         comments_with_badges = [b.comment for b in new_badges]
 
-        for comment in list(comments_with_badges) + list(best_comments):
+        for comment in list(best_comments) + list(comments_with_badges):
             if not comment.metadata or not comment.metadata.get("in_best_comments"):
                 self.stdout.write(f"Comment {comment.id} +{comment.upvotes}")
                 comment.metadata = comment.metadata or {}
