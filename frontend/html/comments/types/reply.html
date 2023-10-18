@@ -76,22 +76,22 @@
         </div>
         <div class="reply-footer thread-collapse-toggle">
             {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
-                {% if not comment.is_deleted or me.id == comment.deleted_by or me.is_moderator %}
-                    {% if comment.is_deleted %}
-                        <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
-                    {% else %}
-                        <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
-                    {% endif %}
+                {% if comment.is_deleted %}
+                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+                {% else %}
+                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button reply-button-hidden" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
                 {% endif %}
+            {% endif %}
 
+            {% if me.id == comment.author_id or me.is_moderator %}
                 <a href="{% url "edit_comment" comment.id %}" class="comment-footer-button reply-button-hidden"><i class="fas fa-edit"></i></a>
             {% endif %}
 
-	    {% if me and me.is_active_membership and comment.post.is_commentable %}
-            <span class="comment-footer-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
-                <i class="fas fa-reply"></i>&nbsp;ответить
-            </span>
-	    {% endif %}
+            {% if me and me.is_active_membership and comment.post.is_commentable %}
+                <span class="comment-footer-button" v-on:click="showReplyForm('{{ reply_to.id }}', '{{ comment.author.slug }}', true)">
+                    <i class="fas fa-reply"></i>&nbsp;ответить
+                </span>
+            {% endif %}
         </div>
         <div class="reply-replies thread-collapse-toggle">
             {% if replies %}
