@@ -265,6 +265,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/diy_challenge_2.png",
         "style": "background-color: #C9C097; font-size: 120%;",
     }),
+    ("music_jam_5", {
+        "name": "Mashmer",
+        "description": "За участие в летнем музыкальном челлендже 2023",
+        "image": "https://vas3k.club/static/images/achievements/mashmer.png",
+        "style": "background-color: #3320A0; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
