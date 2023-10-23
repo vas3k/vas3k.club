@@ -57,7 +57,7 @@ class CollectibleTagField(forms.CharField):
         return tag.code
 
 
-class PostForm(forms.ModelForm):
+class AbstractPostForm(forms.ModelForm):
     room = forms.ModelChoiceField(
         label="Комната",
         required=False,
@@ -112,7 +112,29 @@ class PostForm(forms.ModelForm):
         return new_value
 
 
-class PostTextForm(PostForm):
+class PostIntroForm(forms.ModelForm):
+    text = forms.CharField(
+        label="Текст интро",
+        required=True,
+        max_length=500000,
+        min_length=600,
+        widget=forms.Textarea(
+            attrs={
+                "minlength": 600,
+                "maxlength": 500000,
+                "class": "markdown-editor-full",
+            }
+        ),
+    )
+
+    class Meta:
+        model = Post
+        fields = [
+            "text",
+        ]
+
+
+class PostTextForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -151,7 +173,7 @@ class PostTextForm(PostForm):
         ]
 
 
-class PostLinkForm(PostForm):
+class PostLinkForm(AbstractPostForm):
     url = forms.URLField(
         label="Ссылка",
         required=True,
@@ -208,7 +230,7 @@ class PostLinkForm(PostForm):
         return cleaned_data
 
 
-class PostQuestionForm(PostForm):
+class PostQuestionForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -243,7 +265,7 @@ class PostQuestionForm(PostForm):
         ]
 
 
-class PostIdeaForm(PostForm):
+class PostIdeaForm(AbstractPostForm):
     title = forms.CharField(
         label="Суть идеи",
         required=True,
@@ -276,7 +298,7 @@ class PostIdeaForm(PostForm):
         ]
 
 
-class PostEventForm(PostForm):
+class PostEventForm(AbstractPostForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get("instance")
         if instance and instance.metadata:
@@ -423,7 +445,7 @@ class PostEventForm(PostForm):
         return cleaned_data
 
 
-class PostProjectForm(PostForm):
+class PostProjectForm(AbstractPostForm):
     title = forms.CharField(
         label="Название проекта",
         required=True,
@@ -500,7 +522,7 @@ class PostProjectForm(PostForm):
         ]
 
 
-class PostBattleForm(PostForm):
+class PostBattleForm(AbstractPostForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get("instance")
         if instance and instance.metadata:
@@ -563,7 +585,7 @@ class PostBattleForm(PostForm):
         return cleaned_data
 
 
-class PostGuideForm(PostForm):
+class PostGuideForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -663,7 +685,7 @@ class PostGuideForm(PostForm):
         ]
 
 
-class PostThreadForm(PostForm):
+class PostThreadForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -716,6 +738,7 @@ class PostThreadForm(PostForm):
 
 
 POST_TYPE_MAP = {
+    Post.TYPE_INTRO: PostIntroForm,
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
     Post.TYPE_QUESTION: PostQuestionForm,
