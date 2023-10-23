@@ -9,7 +9,7 @@ from users.models.user import User
 from common.forms import ImageUploadField
 
 
-class UserIntroForm(ModelForm):
+class UserInitialIntroForm(ModelForm):
     slug = forms.CharField(
         label="Никнейм",
         required=True,

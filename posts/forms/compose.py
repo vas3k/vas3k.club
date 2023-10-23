@@ -112,7 +112,7 @@ class AbstractPostForm(forms.ModelForm):
         return new_value
 
 
-class PostIntroForm(forms.ModelForm):
+class IntroForm(forms.ModelForm):
     text = forms.CharField(
         label="Текст интро",
         required=True,
@@ -738,7 +738,7 @@ class PostThreadForm(AbstractPostForm):
 
 
 POST_TYPE_MAP = {
-    Post.TYPE_INTRO: PostIntroForm,
+    Post.TYPE_INTRO: IntroForm,
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
     Post.TYPE_QUESTION: PostQuestionForm,

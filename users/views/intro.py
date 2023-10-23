@@ -4,7 +4,7 @@ from django_q.tasks import async_task
 from authn.decorators.auth import require_auth
 from notifications.telegram.users import notify_profile_needs_review
 from posts.models.post import Post
-from users.forms.intro import UserIntroForm
+from users.forms.intro import UserInitialIntroForm
 from users.models.geo import Geo
 from users.models.user import User
 
@@ -15,7 +15,7 @@ def intro(request):
         return redirect("profile", request.me.slug)
 
     if request.method == "POST":
-        form = UserIntroForm(request.POST, request.FILES, instance=request.me)
+        form = UserInitialIntroForm(request.POST, request.FILES, instance=request.me)
         if form.is_valid():
             user = form.save(commit=False)
 
@@ -36,7 +36,7 @@ def intro(request):
             return redirect("on_review")
     else:
         existing_intro = Post.get_user_intro(request.me)
-        form = UserIntroForm(
+        form = UserInitialIntroForm(
             instance=request.me,
             initial={"intro": existing_intro.text if existing_intro else ""},
         )
