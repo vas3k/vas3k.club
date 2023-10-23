@@ -215,7 +215,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
     # validate form on POST
     form = FormClass(request.POST, request.FILES, instance=post)
     if form.is_valid():
-        if post.type != Post.TYPE_INTRO and not request.me.is_moderator:
+        if (post and post.type != Post.TYPE_INTRO) and not request.me.is_moderator:
             if Post.check_duplicate(
                 user=request.me,
                 title=form.cleaned_data["title"],
