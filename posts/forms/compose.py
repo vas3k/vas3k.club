@@ -85,9 +85,10 @@ class AbstractPostForm(forms.ModelForm):
         abstract = True
 
     def clean_coauthors(self):
-        coauthors = [coauthor.replace("@", "", 1) for coauthor in self.cleaned_data.get("coauthors")]
+        coauthors = self.cleaned_data.get("coauthors")
         if not coauthors:
             return []
+        coauthors = [coauthor.replace("@", "", 1) for coauthor in coauthors]
 
         seen = set()
         duplicated_coauthors = [coauthor for coauthor in coauthors if coauthor in seen or seen.add(coauthor)]
