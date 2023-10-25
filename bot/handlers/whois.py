@@ -36,6 +36,12 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         from_user = original_message.forward_from
 
     if from_user.is_bot:
+        if getattr(original_message, 'sender_chat', None):
+            update.message.reply_text(
+                "Сообщение отправлено от имени чата/канала",
+                quote=True
+            )
+            return
         update.message.reply_text(
             "Это бот, глупышка",
             quote=True
