@@ -33,7 +33,7 @@ def show_post(request, post_type, post_slug):
     if not post.is_public:
         access_denied = check_user_permissions(request, post=post)
         if access_denied:
-            return access_denied
+            raise Http404()
 
     # record a new view
     last_view_at = None

@@ -25,7 +25,7 @@ def md_show_post(request, post_type, post_slug):
     if not post.is_public:
         access_denied = check_user_permissions(request, post=post)
         if access_denied:
-            raise ApiAuthRequired()
+            raise Http404()
 
     post_markdown = f"""# {post.title}\n\n{post.text}"""
 

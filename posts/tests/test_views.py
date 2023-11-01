@@ -49,6 +49,15 @@ class TestPaymentModel(TestCase):
 
             self.assertContains(response=response, text='', status_code=200)
 
+    def test_404_on_hidden_post(self):
+        post = self.creator.create_post(
+            is_visible=True,
+            is_public=False,
+        )
+        client = self._authorized_client(None)
+        response = client.get(self._post_url(post))
+        self.assertContains(response=response, text='', status_code=404)
+
     def test_show_draft_post(self):
         '''
         Is regression test for #545.
