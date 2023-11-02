@@ -50,7 +50,12 @@
         </p>
 
         <p>
-            Почта для входа: <strong>{{ payment.user.email }}</strong>
+            Почта для входа:
+            {% if payment %}
+                <strong>{{ payment.user.email }}</strong>
+            {% else %}
+                <strong>{{ user.email }}</strong>
+            {% endif %}
         </p>
 
         <p>

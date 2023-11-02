@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from authn.decorators.auth import require_auth
+from club import features
 from payments.exceptions import PaymentException
 from payments.models import Payment
 from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
@@ -106,6 +107,12 @@ def pay(request):
         customer_data = dict(customer=user.stripe_id)
     else:
         customer_data = dict(customer_email=user.email)
+
+    if not features.STRIPE_ENABLED:
+        return render(request, "payments/messages/done.html", {
+            "payment": None,
+            "user": user
+        })
 
     # create stripe session and payment (to keep track of history)
     session = stripe.checkout.Session.create(
