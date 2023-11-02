@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 
 from authn.models.session import Session
 from club import settings
+from club import features
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ def check_user_permissions(request, **context):
     if any(request.path.startswith(prefix) for prefix in PATH_PREFIXES_WITHOUT_AUTH):
         return None
 
-    if not request.me.is_active_membership:
+    if features.STRIPE_ENABLED and not request.me.is_active_membership:
         log.info("User membership expired. Redirecting to payments page...")
         return redirect("membership_expired")
 
