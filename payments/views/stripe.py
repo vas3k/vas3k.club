@@ -24,30 +24,9 @@ def done(request):
 
 
 def pay(request):
-    product_code = request.GET.get("product_code")
-    is_invite = request.GET.get("is_invite")
-    is_recurrent = request.GET.get("is_recurrent")
-    if is_recurrent:
-        interval = request.GET.get("recurrent_interval") or "yearly"
-        product_code = f"{product_code}_recurrent_{interval}"
-
-    # find product by code
-    product = PRODUCTS.get(product_code)
-    if not product:
-        return render(request, "error.html", {
-            "title": "Не выбран пакет 😣",
-            "message": "Выберите что вы хотите купить или насколько пополнить свою карту"
-        })
-
-    # filter our legacy products
-    if product_code.startswith("legacy"):
-        return render(request, "error.html", {
-            "title": "Это устаревший тариф ☠️",
-            "message": "По этому коду больше нельзя совершать покупки, выберите другой"
-        })
-
     payment_data = {}
     now = datetime.utcnow()
+    is_invite = request.GET.get("is_invite")
 
     # parse email
     email = request.GET.get("email") or ""
@@ -102,17 +81,38 @@ def pay(request):
     else:  # scenario 3: account renewal
         user = request.me
 
-    # reuse stripe customer ID if user already has it
-    if user.stripe_id:
-        customer_data = dict(customer=user.stripe_id)
-    else:
-        customer_data = dict(customer_email=user.email)
-
     if not features.STRIPE_ENABLED:
         return render(request, "payments/messages/done.html", {
             "payment": None,
             "user": user
         })
+
+    product_code = request.GET.get("product_code")
+    is_recurrent = request.GET.get("is_recurrent")
+    if is_recurrent:
+        interval = request.GET.get("recurrent_interval") or "yearly"
+        product_code = f"{product_code}_recurrent_{interval}"
+
+    # find product by code
+    product = PRODUCTS.get(product_code)
+    if not product:
+        return render(request, "error.html", {
+            "title": "Не выбран пакет 😣",
+            "message": "Выберите что вы хотите купить или насколько пополнить свою карту"
+        })
+
+    # filter our legacy products
+    if product_code.startswith("legacy"):
+        return render(request, "error.html", {
+            "title": "Это устаревший тариф ☠️",
+            "message": "По этому коду больше нельзя совершать покупки, выберите другой"
+        })
+
+    # reuse stripe customer ID if user already has it
+    if user.stripe_id:
+        customer_data = dict(customer=user.stripe_id)
+    else:
+        customer_data = dict(customer_email=user.email)
 
     # create stripe session and payment (to keep track of history)
     session = stripe.checkout.Session.create(
