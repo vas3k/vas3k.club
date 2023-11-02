@@ -14,9 +14,11 @@
 
         <form action="{% url "pay" %}" method="get">
 
-        <div class="join-subtitle" id="select_package">Пакет брать будем?</div>
+        {% if features.STRIPE_ENABLED %}
+            <div class="join-subtitle" id="select_package">Пакет брать будем?</div>
 
-        {% include "payments/blocks/packages.html" %}
+            {% include "payments/blocks/packages.html" %}
+        {% endif %}
 
         <div class="join-subtitle">Ваш e-mail</div>
 
@@ -28,13 +30,21 @@
 
         <label class="join-consent"><input type="checkbox" name="iconsent" value="true" required> &larr; я даю согласие на обработку <a href="{% url "docs" "privacy_policy" %}" target="_blank">персональных данных</a>, соглашаюсь с <a href="{% url "docs" "about" %}" target="_blank">правилами</a> Клуба и помню, что мне придётся написать интро и пройти модерацию</label>
 
-        <button type="submit" class="button button-big join-button">Перейти к оплате</button>
+        <button type="submit" class="button button-big join-button">
+            {% if features.STRIPE_ENABLED %}
+                 Перейти к оплате
+            {% else %}
+                Создать профиль
+            {% endif %}
+        </button>
 
         </form>
 
-        <div class="block pay-warning" style="margin-top: 100px;">
-            ⚠️ Платежи из <strong>России и некоторых банков Беларуси</strong> больше не проходят из-за санкций.
-            Альтернативные опции оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
-        </div>
+        {% if features.STRIPE_ENABLED %}
+            <div class="block pay-warning" style="margin-top: 100px;">
+                ⚠️ Платежи из <strong>России и некоторых банков Беларуси</strong> больше не проходят из-за санкций.
+                Альтернативные опции оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
