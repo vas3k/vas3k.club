@@ -161,10 +161,13 @@ export default {
                     if (!json.tags) {
                         return;
                     }
-                    vm.options = json.tags.map(tag => ({
-                        title: tag.name,
-                        isExist: true,
-                    }));
+                    vm.options = json.tags
+                        .filter(tag => tag.group === 'collectible')
+                        .map(tag => ({
+                            title: tag.name,
+                            isExist: true,
+                        }))
+                    ;
                 })
                 .finally(() => {
                     loading(false);
