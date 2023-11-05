@@ -5,7 +5,13 @@
             :options="options"
             :value="currentValue"
             @input="onChange"
+            placeholder="Комната не выбрана"
         >
+            <template #no-options="{ search, searching, loading }">
+                <template>
+                    Ничего не найдено
+                </template>
+            </template>
         </v-select>
     </div>
 </template>
@@ -30,12 +36,12 @@ export default {
     },
     data() {
         return {
-            currentValue: this.options.find(x => x.code === this.initialValue) || {},
+            currentValue: this.options.find(x => x.code === this.initialValue) || [],
         };
     },
     methods: {
         onChange(newValue) {
-            this.currentValue = newValue || {};
+            this.currentValue = newValue || [];
         }
     }
 };
