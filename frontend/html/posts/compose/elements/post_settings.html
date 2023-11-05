@@ -81,7 +81,7 @@
         <tag-select
             initial-value="{{ form.collectible_tag_code.value|default_if_none:'' }}"
             id="{{ form.collectible_tag_code.html_name }}"
-            search-url="/search/tags.json?prefix="
+            search-url="/search/tags.json?group=collectible&prefix="
             allow-create-new
             validation-reg-exp="^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$"
             label-prefix-input="Добавить тег: "

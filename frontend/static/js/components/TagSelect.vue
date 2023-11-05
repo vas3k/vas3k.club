@@ -162,7 +162,6 @@ export default {
                         return;
                     }
                     vm.options = json.tags
-                        .filter(tag => tag.group === 'collectible')
                         .map(tag => ({
                             title: tag.name,
                             isExist: true,
