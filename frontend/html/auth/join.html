@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <label class="join-consent"><input type="checkbox" name="iconsent" value="true" required> &larr; я даю согласие на обработку <a href="{% url "docs" "privacy_policy" %}" target="_blank">персональных данных</a>, соглашаюсь с <a href="{% url "docs" "about" %}" target="_blank">правилами</a> Клуба и помню, что мне придётся написать интро и пройти модерацию</label>
+        <label class="join-consent"><input type="checkbox" name="iconsent" value="true" required> &larr; я даю согласие на обработку персональных данных, соглашаюсь с <a href="{% url "docs" "about" %}" target="_blank">правилами</a> Клуба и помню, что мне придётся написать интро и пройти модерацию</label>
 
         <button type="submit" class="button button-big join-button">
             {% if features.STRIPE_ENABLED %}
