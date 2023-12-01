@@ -46,23 +46,25 @@
                 {% if group.rooms %}
                     <div class="network-channels">
                         {% for room in group.rooms.all %}
-                            <a href="{{ room.get_private_url }}" target="_blank" class="network-channel">
-                                {% if room.image %}
-                                    <span class="avatar network-channel-icon"><img src="{{ room.image }}" alt="{{ room.title }}"></span>
-                                {% endif %}
+                            {% if room.get_private_url %}
+                                <a href="{{ room.get_private_url }}" target="_blank" class="network-channel">
+                                    {% if room.image %}
+                                        <span class="avatar network-channel-icon"><img src="{{ room.image }}" alt="{{ room.title }}"></span>
+                                    {% endif %}
 
-                                {% if room.icon %}
-                                    <span class="network-channel-badge">{{ room.icon | safe }}</span>
-                                {% endif %}
+                                    {% if room.icon %}
+                                        <span class="network-channel-badge">{{ room.icon | safe }}</span>
+                                    {% endif %}
 
-                                {% if room.title %}
-                                    <span class="network-channel-name">{{ room.title | safe  }}</span>
-                                {% endif %}
+                                    {% if room.title %}
+                                        <span class="network-channel-name">{{ room.title | safe  }}</span>
+                                    {% endif %}
 
-                                {% if room.subtitle %}
-                                    <span class="network-channel-description">{{ room.subtitle | safe }}</span>
-                                {% endif %}
-                            </a>
+                                    {% if room.subtitle %}
+                                        <span class="network-channel-description">{{ room.subtitle | safe }}</span>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 {% endif %}
