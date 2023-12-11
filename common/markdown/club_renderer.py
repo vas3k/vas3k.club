@@ -1,7 +1,7 @@
 import html
 import mistune
 from urllib.parse import unquote
-from mistune import escape_html
+from mistune import escape_html, InlineParser
 from slugify import slugify
 
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
@@ -11,10 +11,18 @@ IMAGE_CSS_CLASSES = {
 }
 
 
+class ClubInlineParser(InlineParser):
+    def parse_text(self, text, state):
+        return 'text', text, state.get('_in_link', False)
+
+
 class ClubRenderer(mistune.HTMLRenderer):
-    def text(self, text):
+    def text(self, text, in_link=False):
         text = escape_html(text)
-        text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
+        # Do not replace @username if text is already in link
+        # Link state is obtained from ClubInlineParser.parse_text
+        if not in_link:
+            text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
         return text
 
     def paragraph(self, text):
