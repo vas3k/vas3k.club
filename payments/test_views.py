@@ -14,6 +14,8 @@ from unittest.mock import patch
 
 from stripe.webhook import WebhookSignature
 
+import authn.models.session
+
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
@@ -105,7 +107,7 @@ class TestDoneView(TestCase):
         self.assertContains(response=response, text="Теперь у вас есть аккаунт в Клубе", status_code=200)
 
 
-@patch('payments.views.stripe')
+@patch('payments.views.stripe.stripe')
 class TestPayView(TestCase):
     @classmethod
     def setUpTestData(cls):

@@ -25,7 +25,7 @@ class PostVote(models.Model):
 
     @classmethod
     def upvote(cls, user, post, request=None):
-        if not user.is_god and user.id == post.author_id:
+        if not user.is_god and (user.id == post.author_id or user.slug in post.coauthors):
             return None, False
 
         post_vote, is_vote_created = PostVote.objects.get_or_create(
@@ -48,7 +48,7 @@ class PostVote(models.Model):
 
     @classmethod
     def retract_vote(cls, request, user, post):
-        if not user.is_god and user.id == post.author_id:
+        if not user.is_god and (user.id == post.author_id or user.slug in post.coauthors):
             return False
 
         try:

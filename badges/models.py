@@ -24,6 +24,9 @@ class Badge(models.Model):
         db_table = "badges"
         ordering = ["price_days", "code"]
 
+    def __str__(self):
+        return f"Badge: {self.code}"
+
     @classmethod
     def visible_objects(cls):
         return cls.objects.filter(is_visible=True)

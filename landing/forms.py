@@ -47,3 +47,16 @@ class GodmodeNetworkSettingsEditForm(forms.ModelForm):
         fields = [
             "network_page",
         ]
+
+
+class GodmodeInviteForm(forms.Form):
+    email = forms.EmailField(
+        label="E-mail",
+        required=True,
+    )
+
+    days = forms.IntegerField(
+        label="Дней",
+        required=True,
+        initial=365,
+    )

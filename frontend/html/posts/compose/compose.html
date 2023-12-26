@@ -6,46 +6,65 @@
 
 {% block content %}
     <div class="content compose">
-        <div class="content-header">Что пишем?</div>
+        {% if not me.telegram_id %}
+            <div class="block">
+                <div class="block-header">☝️ Перед тем, как писать</div>
 
-        <div class="block compose-types">
-            <a href="{% url "compose_type" "post" %}" class="compose-type">
-                <span class="compose-type-icon">📝</span>
-                <span class="compose-type-name">Пост</span>
-            </a>
-            <a href="{% url "compose_type" "question" %}" class="compose-type">
-                <span class="compose-type-icon">🤔️️</span>
-                <span class="compose-type-name">Вопрос</span>
-            </a>
-            <a href="{% url "compose_type" "link" %}" class="compose-type">
-                <span class="compose-type-icon">🔗</span>
-                <span class="compose-type-name">Ссылка</span>
-            </a>
-            <a href="{% url "compose_type" "idea" %}" class="compose-type">
-                <span class="compose-type-icon">💡</span>
-                <span class="compose-type-name">Идея</span>
-            </a>
-            <a href="{% url "compose_type" "battle" %}" class="compose-type">
-                <span class="compose-type-icon">🤜🤛</span>
-                <span class="compose-type-name">Батл</span>
-            </a>
-            <a href="{% url "compose_type" "event" %}" class="compose-type">
-                <span class="compose-type-icon">📅</span>
-                <span class="compose-type-name">Событие</span>
-            </a>
-            <a href="{% url "compose_type" "project" %}" class="compose-type">
-                <span class="compose-type-icon">🏗</span>
-                <span class="compose-type-name">Проект</span>
-            </a>
-            <a href="{% url "compose_type" "guide" %}" class="compose-type">
-                <span class="compose-type-icon">🗺</span>
-                <span class="compose-type-name">Путеводитель</span>
-            </a>
-            <a href="{% url "compose_type" "thread" %}" class="compose-type">
-                <span class="compose-type-icon">🗄</span>
-                <span class="compose-type-name">Тред</span>
-            </a>
-        </div>
+                <div class="block-description block-description-center">
+                    Чтобы писать посты в Клуб, нужно <a href="{% url "edit_bot" me.slug %}">привязать бота</a> к своему профилю.
+                    Через него будут приходить уведомления о комментария и наградах, а если пост не пройдет модерацию — бот расскажет почему.
+                    Без бота будет совсем ничего не понятно.
+                </div>
+
+                <div class="block-description block-description-center">
+                    <a href="{% url "edit_bot" me.slug %}" target="_blank" class="button button-blue">
+                        Привязать бота
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="content-header">Что пишем?</div>
+
+            <div class="block compose-types">
+                <a href="{% url "compose_type" "post" %}" class="compose-type">
+                    <span class="compose-type-icon">📝</span>
+                    <span class="compose-type-name">Пост</span>
+                </a>
+                <a href="{% url "compose_type" "question" %}" class="compose-type">
+                    <span class="compose-type-icon">🤔️️</span>
+                    <span class="compose-type-name">Вопрос</span>
+                </a>
+                <a href="{% url "compose_type" "link" %}" class="compose-type">
+                    <span class="compose-type-icon">🔗</span>
+                    <span class="compose-type-name">Ссылка</span>
+                </a>
+                <a href="{% url "compose_type" "idea" %}" class="compose-type">
+                    <span class="compose-type-icon">💡</span>
+                    <span class="compose-type-name">Идея</span>
+                </a>
+                <a href="{% url "compose_type" "battle" %}" class="compose-type">
+                    <span class="compose-type-icon">🤜🤛</span>
+                    <span class="compose-type-name">Батл</span>
+                </a>
+                <a href="{% url "compose_type" "event" %}" class="compose-type">
+                    <span class="compose-type-icon">📅</span>
+                    <span class="compose-type-name">Событие</span>
+                </a>
+                <a href="{% url "compose_type" "project" %}" class="compose-type">
+                    <span class="compose-type-icon">🏗</span>
+                    <span class="compose-type-name">Проект</span>
+                </a>
+                <a href="{% url "compose_type" "guide" %}" class="compose-type">
+                    <span class="compose-type-icon">🗺</span>
+                    <span class="compose-type-name">Путеводитель</span>
+                </a>
+                <a href="{% url "compose_type" "thread" %}" class="compose-type">
+                    <span class="compose-type-icon">🗄</span>
+                    <span class="compose-type-name">Тред</span>
+                </a>
+            </div>
+        {% endif %}
+
         <div class="compose-posts-header" id="compose-drafts">
             <h2>Черновики 🙇‍♂️ </h2>
             {% if drafts %}

@@ -22,11 +22,11 @@
     {% endif %}
 {% endif %}
 
-{% if post.author == me or me.is_moderator or me.slug in post.coauthors %}
+{% if post.author == me and me.is_active_membership or me.is_moderator or me.slug in post.coauthors %}
     <a href="{% url "edit_post" post.slug %}" class="post-actions-line-item"><i class="fas fa-edit"></i>&nbsp;Править</a>
 {% endif %}
 
-{% if post.author == me and not post.is_visible %}
+{% if post.author == me and me.is_active_membership and not post.is_visible %}
     {% if not post.deleted_at %}
         <a href="{% url "delete_post" post.slug %}" onclick="return confirm('Действительно удалить?')" class="post-actions-line-item"><i class="fas fa-trash"></i>&nbsp;Удалить&nbsp;&nbsp;&nbsp;</a>
     {% else %}

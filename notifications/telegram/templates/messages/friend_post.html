@@ -1,4 +1,4 @@
 Ваш чувак {{ post.author.full_name }} написал пост 👇
 
-{% if post.emoji %}{{ post.emoji }} {% endif %}<b>{% if post.prefix %}{{ post.prefix }} {% endif %}<a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a> {% if post.topic %} [{{ post.topic.name }}]{% endif %}</b>
+{% if post.emoji %}{{ post.emoji }} {% endif %}<b>{% if post.prefix %}{{ post.prefix }} {% endif %}<a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a> {% if post.room %} [{{ post.room.title }}]{% endif %}</b>
 {% load posts %}{% render_plain post 350 %}

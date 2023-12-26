@@ -40,7 +40,7 @@
                             <label for="{{ form.email_digest_type.1.id_for_label }}" class="big-radio-label">
                                 <i class="fas fa-envelope-open"></i>
                                 <span class="big-radio-title">Дайджест каждый день</span>
-                                <span class="big-radio-description">+ гороскоп в подарок</span>
+                                <span class="big-radio-description">Всё самое свежее вам в телеграм-бота</span>
                             </label>
                         </div>
                         <div class="big-radio-item">
@@ -55,8 +55,8 @@
                             {{ form.email_digest_type.0.tag }}
                             <label for="{{ form.email_digest_type.0.id_for_label }}" class="big-radio-label">
                                 <i class="fas fa-skull-crossbones"></i>
-                                <span class="big-radio-title">Не надо никаких писем</span>
-                                <span class="big-radio-description">Я сам подпишусь где мне нравится</span>
+                                <span class="big-radio-title">Не надо ничего</span>
+                                <span class="big-radio-description">Я всё забуду и умру в одиночестве</span>
                             </label>
                         </div>
                     </div>
@@ -72,6 +72,7 @@
                 <div class="block-description" style="text-align: left; padding-top: 40px;">
                     <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank" style="font-weight: bold;">Телеграм-канал Клуба</a> — туда модераторы отбирают лучший контент. Он же главный источник всех анонсов.<br><br>
                     <a href="{% url "network" %}" rel="noreferrer" target="_blank" style="font-weight: bold;">Секретные Чаты</a> — наша сеть чатов обо всём. Туда автоматически попадают тематические посты.<br><br>
+                    <a href="https://twitter.com/vas3k_club" rel="noreferrer" target="_blank" style="font-weight: bold;">Твиттер</a> — автоматическая лента новых постов в твиттере.<br><br>
                     <a href="{{ settings.TELEGRAM_ONLINE_CHANNEL_URL }}" rel="noreferrer" target="_blank" style="font-weight: bold;">Онлайн</a> — прямой эфир всего. Только для самых хардкорных.<br><br>
                     <strong>RSS:</strong> <a href="{% url "rss" %}">vas3k.club/posts.rss</a> <a href="https://feedly.com/i/subscription/feed%2Fhttps%3A%2F%2Fvas3k.club%2Fposts.rss" target="_blank" style="font-weight: bold;">[добавить в Feedly]</a><br><br>
                     <a href="{% url "edit_bot" user.slug %}" target="_blank" style="font-weight: bold;">Подключите нашего бота</a> — он будет приносить уведомления, касающиеся лично вас.

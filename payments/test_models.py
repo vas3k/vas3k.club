@@ -7,6 +7,7 @@ from django.test import TestCase
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
+from payments.exceptions import PaymentNotFound
 from payments import products
 from payments.products import PRODUCTS
 from users.models.user import User
@@ -69,11 +70,11 @@ class TestPaymentModel(TestCase):
         self.assertEqual(payment.status, Payment.STATUS_SUCCESS)
         self.assertEqual(payment.data, '{"some": "data"}')
 
-    def test_finis_payment_not_existed_payment(self):
-        result = Payment.finish(reference="wrong-not-existed-reference",
-                                status=Payment.STATUS_FAILED,
-                                data={"some": "data"})
-        self.assertIsNone(result)
+    def test_finish_non_existent_payment_exception(self):
+        with self.assertRaises(PaymentNotFound):
+            result = Payment.finish(reference="wrong-not-existed-reference",
+                                    status=Payment.STATUS_FAILED,
+                                    data={"some": "data"})
 
 
 class TestProducts(TestCase):
@@ -135,12 +136,12 @@ class TestProducts(TestCase):
     def test_find_by_price_id_positive(self):
         product = PRODUCTS['club1_recurrent_yearly']
         price_id = product['stripe_id']
-        result = products.find_by_price_id(price_id=price_id)
+        result = products.find_by_stripe_id(price_id=price_id)
 
         self.assertIsNotNone(result)
         self.assertEqual(result, product)
 
     def test_find_by_price_id_not_existed(self):
-        result = products.find_by_price_id(price_id="not-existed-price-id")
+        result = products.find_by_stripe_id(price_id="not-existed-price-id")
 
         self.assertIsNone(result)

@@ -9,8 +9,8 @@ from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
 
-COMMENT_REPLY_RE = re.compile(r"^💬.*")
-POST_COMMENT_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🙋‍♀️].*")
+COMMENT_EMOJI_RE = re.compile(r"^💬.*")
+POST_EMOJI_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🏗🙋‍♀️].*")
 
 COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
 POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
@@ -46,18 +46,27 @@ class PostRejectReason(Enum):
 def get_club_user(update: Update):
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
-        update.message.reply_text(
-            f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
-            parse_mode=ParseMode.HTML
-        )
+        if update.callback_query:
+            update.callback_query.answer(text=f"☝️ Привяжи бота к профилю, братишка")
+        else:
+            update.message.reply_text(
+                f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
+                parse_mode=ParseMode.HTML
+            )
         return None
 
     if user.is_banned:
-        update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
+        if update.callback_query:
+            update.callback_query.answer(text=f"🙈 Ты в бане, мы больше не дружим")
+        else:
+            update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
         return None
 
-    if not user.is_club_member:
-        update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
+    if not user.is_member:
+        if update.callback_query:
+            update.callback_query.answer(text=f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
+        else:
+            update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
         return None
 
     return user

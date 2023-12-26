@@ -1,6 +1,28 @@
-👋 {{ greetings }}, Клуб!
+{% load text_filters %}☀️ {{ greetings }}, {{ user.full_name.split.0 }}!
 
-Вот <b>топ постов</b> за вчера:
-{% for post in posts %}
-<a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}<b>{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</b></a>{% if not post.is_public %} 🔒{% endif %}
-{% endfor %}
+Сегодня {% if date.weekday == 2 %}среда, мои чуваки! 🐸{% else %}{{ date|date:"j E, l"|lower }}.{% endif %} {% if stats.new_upvotes %}Вы получили 💎 <b>{{ stats.new_upvotes }} {{ stats.new_upvotes | rupluralize:"новый плюсик,новых плюсика,новых плюсиков" }}</b> за посты и комменты!{% endif %} {% if stats.new_post_comments %}К вашему посту <b><a href="{{ settings.APP_HOST }}{% url "show_post" stats.new_post_comments.post__type stats.new_post_comments.post__slug %}">{{ stats.new_post_comments.post__title }}</a></b> написали <b>{{ stats.new_post_comments.count }} {{ stats.new_post_comments.count | rupluralize:"новый комментарий,новых комментария,новых комментариев" }}</b>.{% endif %}
+
+
+{% if new_posts %}📝 <b>Свежие посты</b>
+{% for post in new_posts %}
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
+{% endfor %}{% endif %}
+
+{% if hot_posts %}🔥 <b>Обсуждаемые темы</b>
+{% for post in hot_posts %}
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> ({{ post.comment_count }} {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }})
+{% endfor %}{% endif %}
+{% if intros %}
+😎 <b>Новые люди</b>
+{% for intro in intros %}
+{{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "profile" intro.author.slug %}">{{ intro.author.full_name }}</a>, {{ intro.author.position }}{% if intro.author.company %} — {{ intro.author.company }}{% endif %} (+{{ intro.upvotes }})
+{% endfor %}{% endif %}
+{% if top_old_post %}
+⏱️ <b>Топ пост год назад</b>
+
+- <a href="{{ settings.APP_HOST }}{% url "show_post" top_old_post.type top_old_post.slug %}">{% if top_old_post.emoji %}{{ top_old_post.emoji }} {% endif %}{% if top_old_post.prefix %}{{ top_old_post.prefix }} {% endif %}{{ top_old_post.title }}</a> (+{{ top_old_post.upvotes }})
+{% endif %}
+
+Хорошего дня! ❤️
+
+<i>Если вас бесит этот дайджест, вы всегда можете от него отписаться, нажав <a href="{{ settings.APP_HOST }}/notifications/switch/weekly/{{ user.id }}/{{ secret_code }}/">здесь</a>.</i>

@@ -35,6 +35,11 @@ def ceil(value):
 
 
 @register.filter
+def lookup(obj, key):
+    return obj.get(key)
+
+
+@register.filter
 def floor(value):
     return math.floor(value or 0)
 
@@ -49,9 +54,9 @@ def cool_number(value, num_decimals=1):
     if int_value < 1000:
         return str(int_value)
     elif int_value < 1000000:
-        return formatted_number.format(int_value / 1000.0).rstrip("0.") + "K"
+        return formatted_number.format(int_value / 1000.0).rstrip("0").rstrip(".") + "K"
     else:
-        return formatted_number.format(int_value / 1000000.0).rstrip("0.") + "M"
+        return formatted_number.format(int_value / 1000000.0).rstrip("0").rstrip(".") + "M"
 
 
 @register.filter
@@ -85,7 +90,7 @@ def percentage_of(value, arg):
 @register.filter
 def rupluralize(value, arg="дурак,дурака,дураков"):
     args = arg.split(",")
-    number = abs(int(value))
+    number = abs(int(value or 0))
     a = number % 10
     b = number % 100
 

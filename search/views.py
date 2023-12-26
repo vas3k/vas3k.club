@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 
-from auth.helpers import auth_required
+from authn.decorators.auth import require_auth
 from common.pagination import paginate
 from search.models import SearchIndex
 
@@ -9,7 +9,7 @@ ALLOWED_TYPES = {"post", "comment", "user"}
 ALLOWED_ORDERING = {"-rank", "-created_at", "created_at"}
 
 
-@auth_required
+@require_auth
 def search(request):
     query = request.GET.get("q")
     if not query:

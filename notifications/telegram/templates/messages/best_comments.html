@@ -1,0 +1,7 @@
+{% load text_filters %}{% load posts %}{% if comment.metadata.badges %}🏆 Комментарий получил награду {% for badge in comment.metadata.badges.values %}«{{ badge.title }}» {% endfor %}
+
+{% endif %}Re: <b><a href="{{ settings.APP_HOST }}{% url "show_comment" comment.post.slug comment.id %}">{% if comment.post.emoji %}{{ comment.post.emoji }} {% endif %}{% if comment.post.prefix %}{{ comment.post.prefix }} {% endif %}{{ comment.post.title }}</a></b>
+
+(+{{ comment.upvotes }}) <b>{{ comment.author.full_name }}:</b> {% render_plain comment 3000 %}
+
+<a href="{{ settings.APP_HOST }}{% url "show_comment" comment.post.slug comment.id %}">{{ comment.created_at | cool_date }}</a>

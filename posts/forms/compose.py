@@ -4,20 +4,75 @@ import pytz
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
+from slugify import slugify_filename
 
+from common.regexp import EMOJI_RE
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
-from posts.models.topics import Topic
-from common.forms import ImageUploadField
+from common.forms import ImageUploadField, ReverseBooleanField
+from rooms.models import Room
+from tags.models import Tag
 from users.models.user import User
 
 
-class PostForm(forms.ModelForm):
-    topic = forms.ModelChoiceField(
+class CollectibleTagField(forms.CharField):
+    widget = forms.TextInput(attrs={
+        "minlength": 5,
+        "maxlength": 32,
+        "title": "Тег обязан начинаться с emoji, потом пробел, а потом название не длиннее 32 символов"
+    })
+
+    def prepare_value(self, value):
+        if value:
+            tag = Tag.objects.filter(code=value).first()
+            if tag:
+                return tag.name
+        return value
+
+    def to_python(self, value):
+        if not value:
+            return None
+
+        if " " not in value:
+            raise ValidationError("Тег обязан начинаться с emoji, потом идёт пробел, потом название")
+
+        tag_emoji, tag_text = value.split(" ", 1)
+        if not EMOJI_RE.match(tag_emoji):
+            raise ValidationError("Тег обязан начинаться с emoji")
+
+        if not tag_text:
+            raise ValidationError("Название тега не может быть пустым")
+
+        tag_code = slugify_filename(value).lower()
+        if not tag_code:
+            return None
+
+        tag, _ = Tag.objects.get_or_create(
+            code=tag_code,
+            defaults=dict(
+                name=value,
+                group=Tag.GROUP_COLLECTIBLE,
+            )
+        )
+        return tag.code
+
+
+class AbstractPostForm(forms.ModelForm):
+    room = forms.ModelChoiceField(
         label="Комната",
         required=False,
-        empty_label="Для всех",
-        queryset=Topic.objects.filter(is_visible=True).all(),
+        blank=True,
+        queryset=Room.objects.filter(is_visible=True, is_open_for_posting=True).order_by("title").all(),
+    )
+    collectible_tag_code = CollectibleTagField(
+        label="Прикрепить коллекционный тег",
+        max_length=32,
+        required=False,
+    )
+    is_visible_in_feeds = ReverseBooleanField(
+        label="Пост только для этой комнаты (не отображается на главной)",
+        initial=True,
+        required=False
     )
     is_public = forms.ChoiceField(
         label="Виден ли в большой интернет?",
@@ -29,25 +84,58 @@ class PostForm(forms.ModelForm):
     class Meta:
         abstract = True
 
-    def clean_topic(self):
-        topic = self.cleaned_data["topic"]
+    def clean_coauthors(self):
+        coauthors = self.cleaned_data.get("coauthors")
+        if not coauthors:
+            return []
+        coauthors = [coauthor.replace("@", "", 1) for coauthor in coauthors]
 
-        if topic and not topic.is_visible_in_feeds:
-            # topic settings are more important
-            self.instance.is_visible_in_feeds = False
+        seen = set()
+        duplicated_coauthors = [coauthor for coauthor in coauthors if coauthor in seen or seen.add(coauthor)]
+        if duplicated_coauthors:
+            raise ValidationError("Пользователи уже соавторы: {}".format(', '.join(duplicated_coauthors)))
 
-        return topic
-
-    def validate_coauthors(self, cleaned_data):
-        non_existing_coauthors = [coauthor for coauthor in cleaned_data.get("coauthors", [])
-                                  if not User.objects.filter(slug=coauthor).exists()]
+        non_existing_coauthors = [coauthor for coauthor in coauthors if not User.objects.filter(slug=coauthor).exists()]
         if non_existing_coauthors:
-            raise ValidationError({"coauthors": "Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors))})
-        self.instance.coauthors = cleaned_data["coauthors"]
+            raise ValidationError("Несуществующие пользователи: {}".format(', '.join(non_existing_coauthors)))
+
+        return coauthors
+
+    def clean_is_visible_in_feeds(self):
+        new_value = self.cleaned_data.get("is_visible_in_feeds")
+
+        if new_value is None:
+            return self.instance.is_visible_in_feeds
+
+        if new_value and not self.instance.is_visible_in_feeds:
+            raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
+
+        return new_value
 
 
+class IntroForm(forms.ModelForm):
+    text = forms.CharField(
+        label="Текст интро",
+        required=True,
+        max_length=500000,
+        min_length=600,
+        widget=forms.Textarea(
+            attrs={
+                "minlength": 600,
+                "maxlength": 500000,
+                "class": "markdown-editor-full",
+            }
+        ),
+    )
 
-class PostTextForm(PostForm):
+    class Meta:
+        model = Post
+        fields = [
+            "text",
+        ]
+
+
+class PostTextForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -75,15 +163,18 @@ class PostTextForm(PostForm):
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public", "coauthors"]
+        fields = [
+            "title",
+            "text",
+            "room",
+            "coauthors",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
+        ]
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.validate_coauthors(cleaned_data)
-        return cleaned_data
 
-
-class PostLinkForm(PostForm):
+class PostLinkForm(AbstractPostForm):
     url = forms.URLField(
         label="Ссылка",
         required=True,
@@ -119,8 +210,10 @@ class PostLinkForm(PostForm):
             "title",
             "text",
             "url",
-            "topic",
-            "is_public"
+            "room",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
         ]
 
     def clean(self):
@@ -128,14 +221,17 @@ class PostLinkForm(PostForm):
 
         parsed_url = parse_url_preview(cleaned_data.get("url"))
         if parsed_url:
-            self.instance.metadata = dict(parsed_url._asdict())
+            self.instance.metadata = {
+                **(self.instance.metadata or {}),
+                **dict(parsed_url._asdict())
+            }
             self.instance.url = parsed_url.url
             self.instance.image = parsed_url.favicon
 
         return cleaned_data
 
 
-class PostQuestionForm(PostForm):
+class PostQuestionForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -163,12 +259,14 @@ class PostQuestionForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public"
         ]
 
 
-class PostIdeaForm(PostForm):
+class PostIdeaForm(AbstractPostForm):
     title = forms.CharField(
         label="Суть идеи",
         required=True,
@@ -194,12 +292,14 @@ class PostIdeaForm(PostForm):
         fields = [
             "title",
             "text",
-            "topic",
-            "is_public"
+            "room",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
         ]
 
 
-class PostEventForm(PostForm):
+class PostEventForm(AbstractPostForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get("instance")
         if instance and instance.metadata:
@@ -291,13 +391,23 @@ class PostEventForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
+
 
     class Meta:
         model = Post
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
+            "coauthors",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
             "is_public"
         ]
 
@@ -320,20 +430,23 @@ class PostEventForm(PostForm):
             raise ValidationError({"event_day": "Несуществующая дата"})
 
         self.instance.metadata = {
-            "event": {
-                "day": cleaned_data["event_day"],
-                "month": cleaned_data["event_month"],
-                "time": str(cleaned_data["event_time"]),
-                "timezone": cleaned_data["event_timezone"],
-                "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
-                .utcoffset().total_seconds() // 60,
-                "location": cleaned_data["event_location"],
+            **(self.instance.metadata or {}),
+            **{
+                "event": {
+                    "day": cleaned_data["event_day"],
+                    "month": cleaned_data["event_month"],
+                    "time": str(cleaned_data["event_time"]),
+                    "timezone": cleaned_data["event_timezone"],
+                    "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
+                    .utcoffset().total_seconds() // 60,
+                    "location": cleaned_data["event_location"],
+                }
             }
         }
         return cleaned_data
 
 
-class PostProjectForm(PostForm):
+class PostProjectForm(AbstractPostForm):
     title = forms.CharField(
         label="Название проекта",
         required=True,
@@ -388,20 +501,29 @@ class PostProjectForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
 
     class Meta:
         model = Post
         fields = [
             "title",
             "text",
-            "topic",
+            "room",
             "url",
             "image",
-            "is_public"
+            "coauthors",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
         ]
 
 
-class PostBattleForm(PostForm):
+class PostBattleForm(AbstractPostForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs.get("instance")
         if instance and instance.metadata:
@@ -442,8 +564,10 @@ class PostBattleForm(PostForm):
         model = Post
         fields = [
             "text",
-            "topic",
-            "is_public"
+            "room",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
         ]
 
     def clean(self):
@@ -462,7 +586,7 @@ class PostBattleForm(PostForm):
         return cleaned_data
 
 
-class PostGuideForm(PostForm):
+class PostGuideForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -551,15 +675,18 @@ class PostGuideForm(PostForm):
 
     class Meta:
         model = Post
-        fields = ["title", "text", "topic", "is_public", "coauthors"]
+        fields = [
+            "title",
+            "text",
+            "room",
+            "coauthors",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
+        ]
 
-    def clean(self):
-        cleaned_data = super().clean()
-        self.validate_coauthors(cleaned_data)
-        return cleaned_data
 
-
-class PostThreadForm(PostForm):
+class PostThreadForm(AbstractPostForm):
     title = forms.CharField(
         label="Заголовок",
         required=True,
@@ -590,13 +717,29 @@ class PostThreadForm(PostForm):
             }
         ),
     )
+    coauthors = SimpleArrayField(
+        forms.CharField(max_length=32),
+        max_length=10,
+        label="Соавторы поста",
+        required=False,
+    )
 
     class Meta:
         model = Post
-        fields = ["title", "text", "comment_template", "topic", "is_public"]
+        fields = [
+            "title",
+            "text",
+            "comment_template",
+            "room",
+            "coauthors",
+            "collectible_tag_code",
+            "is_visible_in_feeds",
+            "is_public",
+        ]
 
 
 POST_TYPE_MAP = {
+    Post.TYPE_INTRO: IntroForm,
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
     Post.TYPE_QUESTION: PostQuestionForm,

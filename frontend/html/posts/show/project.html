@@ -8,12 +8,8 @@
     <header class="post-header">
         <div class="post-title p-name">
             Проект: <a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.title | rutypography }}</a>
-            <span class="post-is-public">
-                {% if post.is_public %}
-                    <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
-                {% else %}
-                    <i class="fas fa-lock"></i>&nbsp;Только для своих
-                {% endif %}
+            <span class="post-publicity-preferences">
+                {% include "posts/widgets/publicity_preferences.html" with post=post %}
             </span>
         </div>
         <div class="post-data">

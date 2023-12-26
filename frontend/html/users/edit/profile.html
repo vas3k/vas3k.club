@@ -7,18 +7,36 @@
 
 {% block content %}
     <div class="content user-edit">
+        <div class="form-title">😎<br>Редактирование профиля</div>
+
+        {% if form.non_field_errors %}
+            <div class="form-row form-row-center">
+                {% for error in form.non_field_errors %}
+                    <span class="form-row-errors">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="block">
+            <div class="block-description block-description-center">
+                <p>
+                    E-mail для входа и уведомлений: <strong>{{ user.email }}</strong>
+                </p>
+
+                <p>
+                    Ваш юзернейм в Клубе: <strong>{{ user.slug }}</strong>
+                </p>
+            </div>
+
+            <div class="block-description">
+                Сменить их можно, только <a href="mailto:club@vas3k.club">написав нам</a> на почту.
+                От частой смены этих настроек могут поломаться комментарии и уведомления у других пользователей,
+                потому пока мы предпочитаем делать это руками.
+            </div>
+        </div>
+
         <form action="{% url "edit_profile" user.slug %}" method="post" class="intro-form" enctype="multipart/form-data">
             {% csrf_token %}
-
-            <div class="form-title">😎<br>Редактирование профиля</div>
-
-            {% if form.non_field_errors %}
-                <div class="form-row form-row-center">
-                    {% for error in form.non_field_errors %}
-                        <span class="form-row-errors">{{ error }}</span>
-                    {% endfor %}
-                </div>
-            {% endif %}
 
             <div class="block">
                 <div class="form-row">
@@ -67,16 +85,41 @@
                     </span>
                 </div>
 
-                <div class="form-row">
-                    <label for="{{ form.contact.id_for_label }}" class="form-label">
-                        Контакт для обратной связи
-                    </label>
-                    {{ form.contact }}
-                    {% if form.contact.errors %}<span class="form-row-errors">{{ form.contact.errors }}</span>{% endif %}
-                    <span class="form-row-help">Он будет виден другим участникам Клуба. Так они смогут вам написать и завязать нетворкинг. Наружу он не виден.</span>
-                </div>
+                <button type="submit" class="button button-big" {% if user.is_profile_public %}name="is_profile_public" value="1"{% endif %}>Сохранить изменения</button>
 
-                <button type="submit" class="button button-big">Сохранить изменения</button>
+                <div class="clearfix50"></div>
+            </div>
+
+            <div class="block">
+                <div class="block-header">🥷 Публичность профиля</div>
+
+                <div class="block-description block-description-center">
+                    {% if form.is_profile_public.errors %}
+                        <span class="form-row-errors">{{ form.is_profile_public.errors }}</span>
+                    {% endif %}
+
+                    {% if user.is_profile_public %}
+                        <p>
+                            Сейчас ваш профиль <strong>ОТКРЫТ</strong> для большого интернета по ссылке: <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}" target="_blank">{{ settings.APP_HOST }}{% url "profile" user.slug %}</a>
+                        </p>
+                        <p>
+                            Его могут индексировать поисковики и видеть люди без регистрации в Клубе. Можете посмотреть как он выглядит со стороны через инкогнито-мод в вашем браузере.
+                        </p>
+                    {% else %}
+                        <p>
+                            Сейчас ваш профиль <strong>ЗАКРЫТ</strong> для большого интернета. Его могут просматривать только члены Клуба.
+                        </p>
+                        <p>
+                            Вы можете сделать его видимым наружу. Комментарии при этом останутся скрытыми, но ваши контакты, интро, посты и награды будут видны всем.
+                        </p>
+                    {% endif %}
+
+                    {% if user.is_profile_public %}
+                        <button type="submit" class="button">Нет, скройте меня от большого интернета!</button>
+                    {% else %}
+                        <button type="submit" class="button button-red" name="is_profile_public" value="1">Да, я хочу публичности!</button>
+                    {% endif %}
+                </div>
 
                 <div class="clearfix50"></div>
             </div>

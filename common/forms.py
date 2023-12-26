@@ -23,3 +23,13 @@ class ImageUploadField(forms.ImageField):
             convert_to=self.convert_to,
             quality=self.quality,
         )
+
+
+class ReverseBooleanField(forms.BooleanField):
+    def prepare_value(self, value):
+        return not value
+
+    def to_python(self, value):
+        value = super().to_python(value)
+        return not value
+

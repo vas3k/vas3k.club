@@ -57,7 +57,7 @@ export default {
             window.addEventListener("scroll", onScroll);
             onScroll();
 
-            document.location.hash = `#${el.id}`;
+            document.location.replace(`#${el.id}`);
         },
         scrollExtreme(direction) {
             if (direction === "Down") {
@@ -88,6 +88,8 @@ export default {
                      ".post-comments-list > .replies > .reply.comment-is-new",
                      // Новые реплаи на втором уровне к старым реплаям без родительского комментария
                      ".post-comments-list > .replies > .reply:not(.comment-is-new) > .reply.comment-is-new",
+                     // Новые реплаи на втором уровне бэтлов
+                     ".battle-comments .post-comments-list > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
                  ].join()
              );
 

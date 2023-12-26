@@ -1,16 +1,17 @@
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
+from django.views.decorators.http import require_http_methods
 
-from auth.helpers import auth_required
-from common.request import ajax_request
+from authn.decorators.auth import require_auth
+from authn.decorators.api import api
 from common.pagination import paginate
 from users.models.friends import Friend
 from users.models.user import User
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def toggle_friend(request, user_slug):
     if request.method != "POST":
         raise Http404()
@@ -33,7 +34,7 @@ def toggle_friend(request, user_slug):
     }
 
 
-@auth_required
+@require_auth
 def friends(request, user_slug):
     if request.me.slug != user_slug:
         return HttpResponseForbidden()

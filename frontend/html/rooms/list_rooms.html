@@ -1,0 +1,40 @@
+{% extends "sidebar_layout.html" %}
+{% load text_filters %}
+{% load static %}
+{% load paginator %}
+{% load posts %}
+
+{% block title %}
+    Комнаты — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Комнаты — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Комнаты — {{ settings.APP_NAME }}">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block feed_content %}
+    {% for room in rooms %}
+        <div class="feed-topic-header" style="background-color: {{ room.color }};">
+            <div class="feed-topic-header-title">
+                <span class="room-icon feed-topic-header-icon"><img src="{{ room.image }}" alt="Иконка комнаты {{ room.title }}" loading="lazy" /></span>
+                <a href="{% url "feed_room" room.slug %}" class="feed-topic-header-name">{{ room.title }}</a>
+            </div>
+            <span class="feed-topic-header-desctiption">
+                {{ room.description | markdown }}
+            </span>
+            {% if room.chat_url and room.chat_name %}
+                <span class="feed-topic-header-footer">
+                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Официальный чат:</strong> <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
+                </span>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

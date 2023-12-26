@@ -24,11 +24,16 @@ ADMINS = [
 ]
 
 INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.sitemaps",
     "club",
-    "auth.apps.AuthConfig",
+    "authn.apps.AuthnConfig",
     "bookmarks.apps.BookmarksConfig",
     "comments.apps.CommentsConfig",
     "landing.apps.LandingConfig",
@@ -39,6 +44,9 @@ INSTALLED_APPS = [
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",
     "badges.apps.BadgesConfig",
+    "tags.apps.TagsConfig",
+    "rooms.apps.RoomsConfig",
+    "misc.apps.MiscConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -46,6 +54,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "club.middleware.me",
     "club.middleware.ExceptionMiddleware",
@@ -65,11 +77,13 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
+                "django.contrib.messages.context_processors.messages",
+                "django.contrib.auth.context_processors.auth",
                 "club.context_processors.settings_processor",
                 "club.context_processors.data_processor",
                 "club.context_processors.features_processor",
-                "auth.context_processors.users.me",
-                "posts.context_processors.topics.topics",
+                "authn.context_processors.users.me",
+                "posts.context_processors.rooms.rooms",
             ]
         },
     }
@@ -196,7 +210,7 @@ GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
 GDPR_ARCHIVE_DELETE_TIMEDELTA = timedelta(hours=24)
 GDPR_DELETE_CODE_LENGTH = 14
 GDPR_DELETE_CONFIRMATION = "я готов удалиться навсегда"
-GDPR_DELETE_TIMEDELTA = timedelta(hours=5 * 24)
+GDPR_DELETE_TIMEDELTA = timedelta(hours=2 * 24)
 
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 
@@ -207,9 +221,11 @@ PATREON_CLIENT_ID = os.getenv("PATREON_CLIENT_ID")
 PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET")
 PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
-PATREON_GOD_IDS = ["8724543"]
 
-JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
+COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
+COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
+
+JWT_PRIVATE_KEY = (os.getenv("JWT_PRIVATE_KEY") or "").replace("\\n", "\n")
 JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvEDEGKL0b+okI6QBBMiu
 3GOHOG/Ml4KJ13tWyPnl5yGswf9rUGOLo0T0dXxSwxp/6g1ZeYqDR7jckuP6A3Rv
@@ -224,7 +240,12 @@ rVdFROm3nmAIATC/ui9Ex+tfuOkScYJ5OV1H1qXBckzRVwfOHF0IiJQP4EblLlvv
 6CEL2VBz0D2+gE4K4sez6YSn3yTg9TkWGhXWCJ7vomfwIfHIdZsItqay156jMPaV
 c+Ha7cw3U+n6KI4idHLiwa0CAwEAAQ==
 -----END PUBLIC KEY-----"""
-JWT_ALGORITHM = "RS256"
+
+OPENID_JWT_ALGORITHM = "RS256"
+OPENID_JWT_EXPIRE_SECONDS = 24 * 60 * 60  # 24 hours
+OPENID_CODE_EXPIRE_SECONDS = 300  # 5 minutes
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
@@ -273,15 +294,17 @@ POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before 
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
-MAX_MUTE_COUNT = 5  # maximum number of users allowed to mute
+MAX_MUTE_COUNT = 20  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
     "\n```"
 
+
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
 
+VALUES_GUIDE_URL = "https://vas3k.club/post/values/"
 POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"

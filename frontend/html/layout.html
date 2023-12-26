@@ -18,7 +18,11 @@
 
     <link rel="alternate" type="application/rss+xml"
           title="Вастрик.Клуб: Новые посты"
-          href="{% url "rss" %}{% if me %}?hash={{ me.secret_hash }}{% endif %}" />
+          href="{{ settings.APP_HOST }}{% url "rss" %}{% if me %}?hash={{ me.secret_hash }}{% endif %}" />
+
+    <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
+          type="application/feed+json"
+          href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
 
     {% block og_tags %}
         {% include "common/og.html" %}
@@ -49,7 +53,7 @@
         <div class="footer-left">
             <a href="{% url "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "contact" %}">Написать нам</a> &nbsp;&middot;&nbsp;
+            <a href="{% url "docs" "contact" %}">Связаться с нами</a> &nbsp;&middot;&nbsp;
 
             <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a><br><br>
 

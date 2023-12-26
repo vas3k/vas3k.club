@@ -1,12 +1,25 @@
 {% load posts %}
 {% load text_filters %}
-<div class="block feed-post h-entry {% css_classes post %}">
+<div class="block feed-post feed-post-type-{{ post.type }} h-entry {% css_classes post %}">
+    {% if post.metadata.event %}
+        <div class="feed-post-header-icon">
+            <div class="post-event-date">
+                <div class="post-event-date-day">
+                    {{ post.event_datetime|date:"d" }}
+                </div>
+                <div class="post-event-date-month">
+                    {{ post.event_datetime|date:"E"|lower  }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="feed-post-header">
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 
             <span class="p-name">
-                📅 <a href="{% url "show_post" post.type post.slug %}" class="post-title-link">{{ post.title | rutypography }}</a>
+                <a href="{% url "show_post" post.type post.slug %}" class="post-title-link">{{ post.title | rutypography }}</a>
             </span>
 
             {% if post.label %}
@@ -28,14 +41,14 @@
                         initial-is-voted
                         initial-upvote-timestamp={{post.upvoted_at}}
                      {% endif %}
-                     {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
+                     {% if not me|can_upvote_post:post or upvote_disabled %}is-disabled{% endif %}>
         </post-upvote>
     </div>
 
     <div class="feed-post-footer">
-        {% if post.topic %}
-            <span class="feed-post-topic">
-                {% include "posts/widgets/topic.html" with topic=post.topic type="inline" %}
+        {% if post.room %}
+            <span class="feed-post-room">
+                {% include "rooms/widgets/room.html" with room=post.room type="inline" %}
             </span>
         {% endif %}
 

@@ -1,11 +1,11 @@
 from django.shortcuts import render
 
-from auth.helpers import auth_required
+from authn.decorators.auth import require_auth
 from common.pagination import paginate
 from posts.models.post import Post
 
 
-@auth_required
+@require_auth
 def bookmarks(request):
     user = request.me
 

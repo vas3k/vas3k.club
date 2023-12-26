@@ -2,24 +2,31 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.postgres.search import SearchQuery
+from django.core.cache import cache
 from django.db.models import Count
 from django.shortcuts import render
 
-from auth.helpers import auth_required
+from authn.decorators.auth import require_auth
 from common.models import group_by, top
 from common.pagination import paginate
-from users.models.expertise import UserExpertise
-from users.models.tags import Tag
+from tags.models import Tag
 from users.models.user import User
 
+TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60  # 24 hours
 
-@auth_required
+
+@require_auth
 def people(request):
-    users = User.registered_members().order_by("-created_at").select_related("geo")
+    users = User.registered_members().order_by("-created_at").select_related("geo")  # joining with "geo" for map
 
     query = request.GET.get("query")
     if query:
-        users = users.filter(index__index=SearchQuery(query, config="russian"))
+        users = users.filter(
+            index__index=(
+                SearchQuery(query, config="simple", search_type="websearch") |
+                SearchQuery(query, config="russian", search_type="websearch")
+            )
+        )
 
     tags = request.GET.getlist("tags")
     if tags:
@@ -43,20 +50,31 @@ def people(request):
         if "activity" in filters:
             users = users.filter(last_activity_at__gte=datetime.utcnow() - timedelta(days=30))
 
-    tags_with_stats = Tag.tags_with_stats()
-    tag_stat_groups = group_by(tags_with_stats, "group", todict=True)
-    tag_stat_groups.update({
-        "travel": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
-            "can_coffee", "can_city", "can_beer", "can_office", "can_sleep",
-        }],
-        "grow": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
-            "can_advice", "can_project", "can_teach", "search_idea",
-            "can_idea", "can_invest", "search_mentor", "can_mentor", "can_hobby"
-        }],
-        "work": [tag for tag in tag_stat_groups[Tag.GROUP_CLUB] if tag.code in {
-            "can_refer", "search_employees", "search_job", "search_remote", "search_relocate"
-        }],
-    })
+        if "friends" in filters:
+            users = users.filter(friends_to__user_from=request.me)
+
+    tag_stat_groups = cache.get("people_tag_stat_groups")
+    tags_with_stats = cache.get("people_tags_with_stats")
+    if not tag_stat_groups or not tags_with_stats:
+        tags_with_stats = Tag.tags_with_stats()
+        tag_stat_groups = group_by(tags_with_stats, "group", todict=True)
+        tag_stat_groups.update({
+            "travel": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
+                "can_coffee", "can_city", "can_beer", "can_office", "can_sleep",
+            }],
+            "grow": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
+                "can_advice", "can_project", "can_teach", "search_idea",
+                "can_idea", "can_invest", "search_mentor", "can_mentor", "can_hobby"
+            }],
+            "work": [tag for tag in tag_stat_groups.get(Tag.GROUP_CLUB, []) if tag.code in {
+                "can_refer", "search_employees", "search_job", "search_remote", "search_relocate"
+            }],
+            "collectible": [
+                tag for tag in tag_stat_groups.get(Tag.GROUP_COLLECTIBLE, []) if tag.user_count > 1
+            ][:20]
+        })
+        cache.set("people_tag_stat_groups", tag_stat_groups, TAGS_CACHE_TIMEOUT_SECONDS)
+        cache.set("people_tags_with_stats", tags_with_stats, TAGS_CACHE_TIMEOUT_SECONDS)
 
     active_countries = User.registered_members().filter(country__isnull=False)\
         .values("country")\
@@ -65,15 +83,10 @@ def people(request):
 
     users_total = users.count()
 
-    if users_total < 200:
-        user_expertise = UserExpertise.objects.filter(user_id__in=[u.id for u in users])
-    else:
-        user_expertise = UserExpertise.objects.all()
-
     map_stat_groups = {
         "💼 Топ компаний": top(users, "company", skip={"-"})[:5],
+        "🌍 Страны": top(users, "country")[:5],
         "🏰 Города": top(users, "city")[:5],
-        "🎬 Экспертиза": top(user_expertise, "name")[:5],
     }
 
     return render(request, "users/people.html", {

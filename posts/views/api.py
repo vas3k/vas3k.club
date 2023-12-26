@@ -1,16 +1,14 @@
-from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_http_methods
 
-from auth.helpers import api_required
+from authn.decorators.api import api
 from posts.models.post import Post
 from bookmarks.models import PostBookmark
 
 
-@api_required
+@api(require_auth=True)
+@require_http_methods(["POST"])
 def toggle_post_bookmark(request, post_slug):
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
-
     post = get_object_or_404(Post, slug=post_slug)
 
     bookmark, is_created = PostBookmark.objects.get_or_create(
@@ -21,6 +19,6 @@ def toggle_post_bookmark(request, post_slug):
     if not is_created:
         bookmark.delete()
 
-    return JsonResponse({
+    return {
         "status": "created" if is_created else "deleted"
-    })
+    }

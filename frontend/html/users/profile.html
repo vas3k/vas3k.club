@@ -56,7 +56,7 @@
                     {% if user.membership_days_left < 150 %}
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
-                    {% elif user.membership_days_left < 700 %}
+                    {% elif user.membership_days_left <= 730 %}
                         <span class="profile-status-number">😎 {{ user.membership_days_left | days_to_months | cool_number  }}</span>
                         <span class="profile-status-text">{{ user.membership_days_left | days_to_months | rupluralize:"месяц,месяца,месяцев" }}</span>
                     {% else %}
@@ -113,14 +113,14 @@
                     {% elif user.deleted_at %}
                         <span class="profile-status-icon">🏃‍♀️</span>
                         <span class="profile-status-text">удалился из Клуба</span>
-                    {% elif not user.is_paid_member %}
+                    {% elif not user.is_active_member %}
                         <span class="profile-status-icon">️😴</span>
                         <span class="profile-status-text">аккаунт неактивен</span>
                     {% else %}
                         {% if user.membership_created_days < 150 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
-                        {% elif user.membership_created_days < 700 %}
+                        {% elif user.membership_created_days <= 730 %}
                             <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
                             <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
                         {% else %}
@@ -130,10 +130,12 @@
                     {% endif %}
                 </div>
 
-                <friend-button
-                    url="{% url "toggle_friend" user.slug %}"
-                    {% if friend %}is-friend-by-default{% endif %}>
-                </friend-button>
+                {% if me %}
+                    <friend-button
+                        url="{% url "toggle_friend" user.slug %}"
+                        {% if friend %}is-friend-by-default{% endif %}>
+                    </friend-button>
+                {% endif %}
 
                 {% if not user.is_curator and not user.is_moderator %}
                     {% if muted %}
@@ -157,6 +159,40 @@
             </a>
         {% endif %}
 
+        {% if me %}
+            <div class="profile-note {% if note.text or moderator_notes %}profile-note-extended{% endif %}" id="profile-note">
+                <label for="profile-note-form-text" class="profile-note-title" onclick="document.getElementById('profile-note').classList.toggle('profile-note-extended');">
+                    {% if not note.text %}
+                        ✏️ Оставить заметку об этом юзере
+                    {% else %}
+                        📝 Ваша заметка об этом юзере
+                    {% endif %}
+                </label>
+
+                <form action="{% url "edit_note" user.slug %}" method="post" class="profile-note-form">
+                    <textarea name="text" class="profile-note-form-text" id="profile-note-form-text">{{ note.text | default:"" }}</textarea>
+
+                    <button type="submit" class="button button-small profile-note-form-button">
+                        Сохранить
+                    </button>
+
+                    {% if moderator_notes %}
+                        {% for moderator_note in moderator_notes %}
+                            <div class="profile-note-moderator">
+                                <strong>{{ moderator_note.user_from.slug }}</strong>: {{ moderator_note.text }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if not note.text and not moderator_notes %}
+                        <div class="profile-note-footer">
+                            Заметка видна только вам, сам пользователь ничего не узнает 😈
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        {% endif %}
+
         {% if intro %}
             <div class="block profile-intro">
                 <div class="profile-header">
@@ -174,6 +210,52 @@
                     <a href="{% url "show_post" intro.type intro.slug %}#comments">
                         {{ intro.comment_count }} {{ intro.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
                     </a>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if projects %}
+            <div class="profile-header">Проекты</div>
+
+            <div class="user-projects">
+                {% for project in projects %}
+                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
+                        {% if project.image %}
+                            <img src="{{ project.image }}" alt="{{ project.title }}">
+                        {% endif %}
+                        <span class="user-project-title">{{ project.title }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if collectible_tags %}
+            <div class="profile-header" id="tags_collectible">Коллекционные теги</div>
+            <div class="block profile-tags">
+                <div class="profile-tags-group collectible-tags-group">
+                    <div class="user-tags">
+                        {% for tag in collectible_tags %}
+                            {% if me.id == user.id  %}
+                                <user-tag tag-name="{{ tag.name }}"
+                                          tag-color="{{ tag.color }}"
+                                          class="user-tag"
+                                          url="{% url "toggle_tag" tag.code %}"
+                                          is-active-by-default
+                                ></user-tag>
+                            {% else %}
+                                <a href="{% url "people" %}?tags={{ tag.code }}" class="user-tag user-tag-active" style="background-color: {{ tag.color  }};">
+                                    {{ tag.name }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="profile-tags-footer">
+                    <small>
+                        Коллекционные теги можно найти только в специальных тематических постах и утащить к себе в профиль.
+                        Их наличие показывает особую увлечённость темой.
+                    </small>
                 </div>
             </div>
         {% endif %}
@@ -216,17 +298,6 @@
 
                     {% if tag_group.list.0.group == "club" %}
                         <div class="profile-tags-footer">
-                            {% if user.contact %}
-                                <strong>Для связи:</strong> {{ user.contact | urlize }}<br>
-                                {% if user.id != me.id %}
-                                    <small>Не забудьте сказать, что вы из Вастрик.Клуба</small>
-                                {% endif %}
-                            {% else %}
-                                {% if user.id == me.id %}
-                                    <strong>⚠️ Вы не указали контакт для обратной связи.<br><a href="{% url "edit_profile" user.slug %}#id_contact">Сделайте это здесь</a></strong>
-                                {% endif %}
-                            {% endif %}
-
                             {% if user.id == me.id %}
                                 <small><br>Для абстрактных тегов типа «ищу работу» или «могу научить» не забудьте рассказать подробности в интро. Это поможет другим вас найти!</small>
                             {% endif %}
@@ -258,22 +329,7 @@
             </div>
         {% endif %}
 
-        {% if projects %}
-            <div class="profile-header">Проекты</div>
-
-            <div class="user-projects">
-                {% for project in projects %}
-                    <a href="{% url "show_post" project.type project.slug %}" class="block user-project">
-                        {% if project.image %}
-                            <img src="{{ project.image }}" alt="{{ project.title }}">
-                        {% endif %}
-                        <span class="user-project-title">{{ project.title }}</span>
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        {% if comments %}
+        {% if me and comments %}
             <div class="profile-header">
                 <a href="{% url "profile_comments" user.slug  %}">Комментарии ({{ comments_total }}) &rarr;</a>
             </div>
@@ -309,10 +365,4 @@
             {% endif %}
         {% endif %}
     </div>
-
-    <user-expertise-window submit-form-action="{% url "add_expertise" %}"
-                           :expertise-list="JSON.parse('{{ global_data.expertise | jsonify }}')"
-                           v-show="shownWindow === 'add-expertise'"
-                           @close-window="shownWindow = null">
-    </user-expertise-window>
 {% endblock %}

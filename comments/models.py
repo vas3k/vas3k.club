@@ -65,7 +65,11 @@ class Comment(models.Model):
     def to_dict(self):
         return {
             "id": str(self.id),
+            "text": self.text,
+            "author": self.author.to_dict(),
+            "reply_to_id": self.reply_to_id,
             "upvotes": self.upvotes,
+            "created_at": self.created_at.isoformat(),
         }
 
     def save(self, *args, **kwargs):

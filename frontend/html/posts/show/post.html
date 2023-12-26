@@ -9,8 +9,8 @@
         {% block post_header %}
             <header class="post-header">
                 <div class="post-info">
-                    {% if post.topic %}
-                        {% include "posts/widgets/topic.html" with topic=post.topic type="post" %}
+                    {% if post.room %}
+                        {% include "rooms/widgets/room.html" with room=post.room type="post" %}
                     {% endif %}
                 </div>
 
@@ -18,12 +18,10 @@
                     {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title | rutypography }}
                 </h1>
 
-                <span class="post-is-public">
-                    {% if post.is_public %}
-                        <i class="fas fa-globe-americas"></i>&nbsp;Публичный пост
-                    {% else %}
-                        <i class="fas fa-lock"></i>&nbsp;Только для своих
-                    {% endif %}
+                <div class="clearfix10"></div>
+
+                <span class="post-publicity-preferences">
+                    {% include "posts/widgets/publicity_preferences.html" with post=post %}
                 </span>
 
                 <a class="post-data">
@@ -86,7 +84,7 @@
                                     initial-is-voted
                                     initial-upvote-timestamp={{upvoted_at}}
                                  {% endif %}
-                                 {% if not me|can_upvote:post or upvote_disabled %}is-disabled{% endif %}>
+                                 {% if not me|can_upvote_post:post or upvote_disabled %}is-disabled{% endif %}>
                     </post-upvote>
                 {% endblock %}
 
@@ -97,6 +95,10 @@
         {% endblock %}
 
         {% block post_footer %}
+            {% if me and me.is_active_membership and collectible_tag %}
+                {% include "posts/widgets/collectible_tag.html" %}
+            {% endif %}
+
             <footer class="post-footer p-author">
                 {% include "users/widgets/card.html" with user=post.author %}
 

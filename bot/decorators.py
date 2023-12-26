@@ -29,10 +29,13 @@ def is_club_member(callback):
         club_users = cached_telegram_users()
 
         if str(update.effective_user.id) not in set(club_users):
-            update.message.reply_text(
-                f"☝️ Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
-                parse_mode=ParseMode.HTML
-            )
+            if update.callback_query:
+                update.callback_query.answer(text=f"☝️ Привяжи бота к профилю, братишка")
+            else:
+                update.message.reply_text(
+                    f"☝️ Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
+                    parse_mode=ParseMode.HTML
+                )
             return None
 
         return callback(update, context, *args, **kwargs)

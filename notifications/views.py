@@ -8,10 +8,10 @@ from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
-from auth.helpers import auth_required
+from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, NotFound
 
-from common.request import ajax_request
+from authn.decorators.api import api
 from notifications.digests import generate_daily_digest, generate_weekly_digest
 from users.models.user import User
 
@@ -104,15 +104,14 @@ def render_daily_digest(request, user_slug):
 
 def render_weekly_digest(request):
     try:
-        digest = generate_weekly_digest()
+        digest, _ = generate_weekly_digest()
     except NotFound:
         raise Http404()
 
     return HttpResponse(digest)
 
 
-@auth_required
-@ajax_request
+@api(require_auth=True)
 def link_telegram(request):
     if not request.body:
         raise Http404()

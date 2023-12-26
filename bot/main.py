@@ -16,7 +16,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContex
     CallbackQueryHandler
 
 from bot.cache import cached_telegram_users
-from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top
+from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ def command_help(update: Update, context: CallbackContext) -> None:
         "Через меня можно отвечать на комменты и посты — просто напиши "
         "ответ реплаем на сообщение и я перепостю его в Клуб. "
         "Так можно общаться в комментах даже не открывая сайт.\n\n"
+        "Добавь /skip, #skip или #ignore, чтобы реплай не запостился в Клуб.\n\n"
         "Чтобы плюсануть — реплайни +.\n\n"
         "Еще я знаю всякие команды:\n\n"
         "/top - Топ событий в Клубе\n\n"
@@ -49,7 +50,7 @@ def private_message(update: Update, context: CallbackContext) -> None:
         )
     else:
         update.effective_chat.send_message(
-            "Йо! Полный список моих команд покажет /help,"
+            "Йо! Полный список моих команд покажет /help, "
             "а еще мне можно отвечать на посты и уведомления, всё это будет поститься прямо в Клуб!",
             parse_mode=ParseMode.HTML
         )
@@ -75,6 +76,10 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("random", fun.command_random))
     dispatcher.add_handler(CommandHandler("top", top.command_top))
     dispatcher.add_handler(CommandHandler("whois", whois.command_whois))
+    dispatcher.add_handler(CallbackQueryHandler(posts.subscribe, pattern=r"^subscribe:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(posts.unsubscribe, pattern=r"^unsubscribe:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote_post, pattern=r"^upvote_post:.+"))
+    dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote_comment, pattern=r"^upvote_comment:.+"))
     dispatcher.add_handler(
         MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
     )
@@ -85,6 +90,7 @@ def main() -> None:
     # Only private chats
     dispatcher.add_handler(CommandHandler("start", auth.command_auth, Filters.private))
     dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
+    dispatcher.add_handler(MessageHandler(Filters.forwarded & Filters.private, whois.command_whois))
     dispatcher.add_handler(MessageHandler(Filters.private, private_message))
 
     # Start the bot

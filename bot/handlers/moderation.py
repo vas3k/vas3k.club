@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.urls import reverse
@@ -10,9 +10,10 @@ from bot.handlers.common import UserRejectReason, PostRejectReason
 from bot.decorators import is_moderator
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
-    notify_post_rejected
+    notify_post_rejected, notify_post_collectible_tag_owners
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
+from posts.models.subscriptions import PostSubscription
 from search.models import SearchIndex
 from users.models.user import User
 
@@ -34,9 +35,6 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     post.published_at = datetime.utcnow()
     post.save()
 
-    notify_post_approved(post)
-    announce_in_club_chats(post)
-
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
         "post_type": post.type,
         "post_slug": post.slug,
@@ -50,6 +48,12 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     # hide buttons
     update.callback_query.edit_message_reply_markup(reply_markup=None)
 
+    # send notifications
+    notify_post_approved(post)
+    announce_in_club_chats(post)
+    if post.collectible_tag_code:
+        notify_post_collectible_tag_owners(post)
+
     return None
 
 
@@ -60,6 +64,7 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
     post = Post.objects.get(id=post_id)
     post.is_approved_by_moderator = False
     post.published_at = datetime.utcnow()
+    post.collectible_tag_code = None
     post.save()
 
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
@@ -137,7 +142,9 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
         return None
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
-    user.created_at = datetime.utcnow()
+    if user.created_at > datetime.utcnow() - timedelta(days=30):
+        # to avoid zeroing out the profiles of the old users
+        user.created_at = datetime.utcnow()
     user.save()
 
     # make intro visible
@@ -148,6 +155,8 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     if not intro.published_at:
         intro.published_at = datetime.utcnow()
     intro.save()
+
+    PostSubscription.subscribe(user, intro, type=PostSubscription.TYPE_ALL_COMMENTS)
 
     SearchIndex.update_user_index(user)
 

@@ -26,11 +26,22 @@ class Geo(models.Model):
         return [longitude, latitude]
 
     @classmethod
-    def update_for_user(cls, user):
+    def update_for_user(cls, user, fuzzy=False):
+        if not user.country or not user.city:
+            return
+
         geo = Geo.objects.filter(
             Q(country=user.country) &
             (Q(city__iexact=user.city) | Q(city_en__iexact=user.city))
         ).order_by("id").first()
+
+        if not geo and fuzzy:
+            # try fuzzy matches
+            geo = Geo.objects.filter(
+                Q(country=user.country) &
+                (Q(city__icontains=user.city) | Q(city_en__icontains=user.city))
+            ).order_by("id").first()
+
         if geo:
             user.geo = geo
             user.save()

@@ -3,14 +3,14 @@ from datetime import datetime
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 
-from auth.helpers import auth_required
+from authn.decorators.auth import require_auth
 from badges.models import Badge, UserBadge
 from club.exceptions import BadRequest
 from comments.models import Comment
 from posts.models.post import Post
 
 
-@auth_required
+@require_auth
 def create_badge_for_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if post.deleted_at:
@@ -58,7 +58,7 @@ def create_badge_for_post(request, post_slug):
     })
 
 
-@auth_required
+@require_auth
 def create_badge_for_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     if comment.is_deleted:

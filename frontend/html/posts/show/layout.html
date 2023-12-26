@@ -4,7 +4,7 @@
 {% load text_filters %}
 
 {% block title %}
-    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.topic %} [{{ post.topic.name }}]{% endif %} — {{ block.super }}
+    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.room %} [{{ post.room.title }}]{% endif %} — {{ block.super }}
 {% endblock %}
 
 {% block og_tags %}
@@ -12,12 +12,12 @@
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
     <meta property="og:type" content="article" />
-    <meta property="og:description" content="{{ post.description | truncatechars:100 }}">
+    <meta property="og:description" content="{% if post.is_public %}{{ post.description | truncatechars:150 }}{% else %}🔒 Это закрытый пост, доступный только членам Клуба{% endif %}">
     <meta property="og:image" content="{% og_image post %}">
 
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
-    <meta name="twitter:description" content="{{ post.description | truncatechars:100 }}">
+    <meta name="twitter:description" content="{% if post.is_public %}{{ post.description | truncatechars:150 }}{% else %}🔒 Это закрытый пост, доступный только членам Клуба{% endif %}">
     <meta name="twitter:image" content="{% og_image post %}">
 {% endblock %}
 
@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="post-comments-title-left">
-                        {% if me %}
+                        {% if me and me.is_active_membership %}
                             <post-subscription
                                 url="{% url "toggle_post_subscription" post.slug %}"
                                 {% if subscription %}is-active-by-default{% endif %}
@@ -81,7 +81,7 @@
                     </div>
                 {% endif %}
 
-                {% if me and post.is_commentable and post.is_visible or me.is_moderator %}
+                {% if me and me.is_active_membership and post.is_commentable and post.is_visible or me.is_moderator %}
                     <div class="post-comments-form" id="post-comments-form">
                         {% include "comments/forms/comment.html" with post=post form=comment_form %}
                     </div>
@@ -92,7 +92,7 @@
                             <li>☝️ Если кто-то ведёт себя плохо — скажите ему. Если он продолжает, позовите <a href="/user/moderator/">@moderator</a></li>
                             <li>👀 Автор поста может и должен модерировать срачи в комментариях</li>
                             <li>🥰 Не душните, расслабьтесь и будьте сладкими пирожочками</li>
-                            <li>✍️ Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a></li>
+                            <li>✍️ Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a></li>
                         </ul>
                     </div>
                 {% endif %}
@@ -101,6 +101,10 @@
 
         {% if me and not post.is_commentable %}
             {% include "posts/widgets/not_commentable.html" %}
+        {% endif %}
+
+        {% if me and not me.is_active_membership %}
+            {% include "posts/widgets/membership_expired.html" %}
         {% endif %}
 
         {% if not me %}

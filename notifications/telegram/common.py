@@ -26,12 +26,12 @@ def send_telegram_message(
         log.warning("No telegram token. Skipping")
         return
 
-    log.info(f"Telegram: sending the message: {text}")
+    log.info(f"Telegram: sending message to chat_id {chat.id}, starting with {text[:10]}...")
 
     try:
         return bot.send_message(
             chat_id=chat.id,
-            text=text,
+            text=text[:4096],
             parse_mode=parse_mode,
             disable_web_page_preview=disable_preview,
             **kwargs
@@ -51,7 +51,7 @@ def send_telegram_image(
         log.warning("No telegram token. Skipping")
         return
 
-    log.info(f"Telegram: sending the image: {image_url} {text}")
+    log.info(f"Telegram: sending the image: {image_url} {text[:20]}")
 
     try:
         return bot.send_photo(

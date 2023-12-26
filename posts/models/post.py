@@ -12,7 +12,7 @@ from simple_history.models import HistoricalRecords
 
 from common.data.labels import LABELS
 from common.models import ModelDiffMixin
-from posts.models.topics import Topic
+from rooms.models import Room
 from users.models.user import User
 from utils.slug import generate_unique_slug
 
@@ -25,7 +25,6 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
     TYPE_EVENT = "event"
-    TYPE_REFERRAL = "referral"
     TYPE_BATTLE = "battle"
     TYPE_WEEKLY_DIGEST = "weekly_digest"
     TYPE_GUIDE = "guide"
@@ -38,7 +37,6 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
         (TYPE_EVENT, "Событие"),
-        (TYPE_REFERRAL, "Рефералка"),
         (TYPE_BATTLE, "Батл"),
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
         (TYPE_GUIDE, "Путеводитель"),
@@ -53,7 +51,6 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
         TYPE_EVENT: "📅",
-        TYPE_REFERRAL: "🏢",
         TYPE_BATTLE: "🤜🤛",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "🗄",
@@ -67,7 +64,6 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
         TYPE_EVENT: "Событие:",
-        TYPE_REFERRAL: "Рефералка:",
         TYPE_BATTLE: "Батл:",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "Тред:",
@@ -78,8 +74,9 @@ class Post(models.Model, ModelDiffMixin):
 
     author = models.ForeignKey(User, related_name="posts", db_index=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=32, choices=TYPES, default=TYPE_POST, db_index=True)
-    topic = models.ForeignKey(Topic, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
+    room = models.ForeignKey(Room, related_name="posts", null=True, db_index=True, on_delete=models.SET_NULL)
     label_code = models.CharField(max_length=16, null=True, db_index=True)
+    collectible_tag_code = models.CharField(max_length=32, null=True)
     coauthors = ArrayField(models.CharField(max_length=32), default=list, null=False, db_index=True)
 
     title = models.TextField(null=False)
@@ -129,7 +126,7 @@ class Post(models.Model, ModelDiffMixin):
             "is_visible_in_feeds",
             "is_pinned_until",
             "is_shadow_banned",
-            "topic",
+            "room",
         ],
     )
 
@@ -137,19 +134,34 @@ class Post(models.Model, ModelDiffMixin):
         db_table = "posts"
         ordering = ["-created_at"]
 
-    def to_dict(self):
+    def __str__(self):
+        return f"Post: {self.title}"
+
+    def to_dict(self, including_private=False):
         return {
-            "id": str(self.id),
-            "type": self.type,
-            "slug": self.slug,
-            "author_slug": self.author.slug,
+            "id": self.id,
+            "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "title": self.title,
-            "text": self.text,
-            "upvotes": self.upvotes,
-            "metadata": self.metadata,
-            "published_at": self.published_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
-            "last_activity_at": self.last_activity_at.isoformat(),
+            "content_text": self.text if self.is_public or including_private else "🔒",
+            "date_published": self.published_at.astimezone().isoformat(),
+            "date_modified": self.updated_at.astimezone().isoformat(),
+            "authors": [
+                {
+                    "name": self.author.full_name,
+                    "url": f"{settings.APP_HOST}{self.author.get_absolute_url()}",
+                    "avatar": self.author.get_avatar()
+                }
+            ],
+            "_club": {
+                "type": self.type,
+                "slug": self.slug,
+                "coauthors": self.coauthors,
+                "comment_count": self.comment_count,
+                "view_count": self.view_count,
+                "upvotes": self.upvotes,
+                "is_public": self.is_public,
+                "is_commentable": self.is_commentable,
+            }
         }
 
     def save(self, *args, **kwargs):
@@ -169,15 +181,32 @@ class Post(models.Model, ModelDiffMixin):
         return Post.objects.filter(id=self.id).update(view_count=F("view_count") + 1)
 
     def increment_vote_count(self):
+        if self.coauthors:
+            self.increment_coauthors_vote_count()
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
 
     def decrement_vote_count(self):
+        if self.coauthors:
+            self.decrement_coauthors_vote_count()
         return Post.objects.filter(id=self.id).update(upvotes=F("upvotes") - 1)
 
+    def increment_coauthors_vote_count(self):
+        return User.objects.filter(slug__in=self.coauthors).update(upvotes=F("upvotes") + 1)
+
+    def decrement_coauthors_vote_count(self):
+        return User.objects.filter(slug__in=self.coauthors, upvotes__gt=0).update(upvotes=F("upvotes") - 1)
+
     def can_edit(self, user):
+        if not user:
+            return False
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
+    def can_view(self, user):
+        return self.is_visible or self.can_view_draft(user)
+
     def can_view_draft(self, user):
+        if not user:
+            return False
         return self.can_edit(user) or user.is_curator
 
     @property
@@ -206,6 +235,10 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def is_searchable(self):
         return self.is_visible and not self.is_shadow_banned
+
+    @property
+    def is_approved(self):
+        return self.is_approved_by_moderator or self.upvotes >= settings.COMMUNITY_APPROVE_UPVOTES
 
     @property
     def is_safely_deletable_by_author(self):
@@ -241,10 +274,13 @@ class Post(models.Model, ModelDiffMixin):
 
     @classmethod
     def visible_objects(cls):
-        return cls.objects.filter(is_visible=True).select_related("topic", "author")
+        return cls.objects.filter(is_visible=True).select_related("room", "author")
 
     @classmethod
     def objects_for_user(cls, user):
+        if not user:
+            return cls.visible_objects()
+
         return cls.visible_objects()\
             .extra({
                 "is_voted": "select 1 from post_votes "
@@ -315,4 +351,3 @@ class Post(models.Model, ModelDiffMixin):
     def undelete(self, *args, **kwargs):
         self.deleted_at = None
         self.save()
-

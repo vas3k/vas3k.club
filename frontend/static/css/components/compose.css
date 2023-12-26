@@ -8,10 +8,6 @@
         .compose {
             font-size: 80%;
         }
-
-        .compose-btn-text {
-            display: none;
-        }
     }
 
     .compose-types {
@@ -86,11 +82,6 @@
             font-family: var(--sans-font);
         }
 
-    .compose-form-advanced summary {
-        cursor: pointer;
-        font-size: 130%;
-    }
-
     .compose-vs {
         display: inline-block;
         padding: 5px 10px;
@@ -158,6 +149,16 @@
     margin-bottom: 50px;
 }
 
-    .compose-form-coauthors {
-        padding-top: 40px;
+    .compose-form-advanced summary {
+        cursor: pointer;
+        font-size: 130%;
+        text-align: center;
+    }
+
+    .compose-form-room select {
+        width: 100%;
+        padding: 10px;
+        font-size: 110%;
+        font-weight: 500;
+        appearance: auto;
     }

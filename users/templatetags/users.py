@@ -2,7 +2,7 @@ import json
 
 from django import template
 
-from users.models.tags import Tag
+from tags.models import Tag
 
 register = template.Library()
 

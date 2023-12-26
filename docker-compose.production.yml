@@ -31,6 +31,10 @@ services:
       - queue
     ports:
       - "127.0.0.1:8814:8814"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
 
   queue:
     <<: *app
@@ -40,6 +44,10 @@ services:
       - postgres
       - redis
     ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
 
   bot:
     <<: *app
@@ -51,6 +59,10 @@ services:
       - redis
     ports:
       - "8816:8816"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
 
   cron:
     <<: *app
@@ -61,6 +73,10 @@ services:
       - postgres
       - redis
     ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
 
   postgres:
     image: postgres:12

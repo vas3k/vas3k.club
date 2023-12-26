@@ -1,0 +1,33 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+{% endblock %}
+
+{% block title %}
+    Клубная карта продлена
+{% endblock %}
+
+{% block body %}
+    <p>
+        Ваша подписка в <a href="{{ settings.APP_HOST }}">Клубе</a> стала еще длинее. Заходите в свой профиль, насладитесь своей более длинной подпиской. Ни у кого такой нет! (наверное)
+    </p>
+
+    <p>
+        Напомим ваши данные:
+    </p>
+
+    <p>
+        Ваш юзернейм: <b>@{{ user.slug }}</b><br>
+        Почта для входа: <b>{{ user.email }}</b>
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "login" %}?email={{ to_user.email }}" class="button">Отлично!</a>
+    </p>
+
+    <br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

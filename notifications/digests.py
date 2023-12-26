@@ -1,28 +1,37 @@
+import base64
+import random
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from django.conf import settings
 from django.db.models import Count, Q
 from django.template.loader import render_to_string
-from django.urls import reverse
 
 from badges.models import UserBadge
 from club.exceptions import NotFound
 from comments.models import Comment, CommentVote
-from common.flat_earth import parse_horoscope
+from common.data.greetings import DUMB_GREETINGS
 from landing.models import GodSettings
+from misc.models import ProTip
 from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
 from users.models.user import User
 
 
+BONUS_HOURS = 10  # for better/honest rating estimation of "night" posts
+MIN_TOP_POST_UPVOTES = 30
+
+
 def generate_daily_digest(user):
     end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=1)
+
     if end_date.weekday() == 1:
-        # we don't have daily on sundays and mondays, we need to include all these posts at tuesday
-        start_date = end_date - timedelta(days=3)
+        # we don't have daily digest on weekends and mondays, we need to include all these posts at tuesday
+        start_date = end_date - timedelta(hours=3 * 24 + BONUS_HOURS)
+    else:
+        # other days are quieter
+        start_date = end_date - timedelta(hours=2 * 24 + BONUS_HOURS)
 
     if settings.DEBUG:
         start_date = end_date - timedelta(days=1000)
@@ -30,102 +39,73 @@ def generate_daily_digest(user):
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
-    # Moon
-    moon_phase = parse_horoscope()
-
-    # New actions
-    subscription_comments = Comment.visible_objects()\
+    # New comments
+    new_post_comments = Comment.visible_objects()\
         .filter(
-            post__subscriptions__user=user,
+            post__author=user,
             **created_at_condition
         )\
         .values("post__type", "post__slug", "post__title", "post__author_id")\
-        .annotate(count=Count("id"))\
-        .order_by()
+        .annotate(count=Count("post"))\
+        .order_by("-count")\
+        .first()
 
-    replies = Comment.visible_objects()\
-        .filter(
-            reply_to__author=user,
-            **created_at_condition
-        )\
-        .values("post__type", "post__slug", "post__title")\
-        .annotate(count=Count("reply_to_id"))\
-        .order_by()
-
-    new_events = [
-        {
-            "type": "my_post_comment",
-            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
-            "post_title": e["post__title"],
-            "count": e["count"],
-        } for e in subscription_comments if e["post__author_id"] == user.id
-    ] + [
-        {
-            "type": "subscribed_post_comment",
-            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
-            "post_title": e["post__title"],
-            "count": e["count"],
-        } for e in subscription_comments if e["post__author_id"] != user.id
-    ] + [
-        {
-            "type": "reply",
-            "post_url": reverse("show_post", kwargs={"post_type": e["post__type"], "post_slug": e["post__slug"]}),
-            "post_title": e["post__title"],
-            "count": e["count"],
-        } for e in replies
-    ]
-
-    upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
+    new_upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
         + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
 
-    if upvotes:
-        new_events = [
-            {
-                "type": "upvotes",
-                "count": upvotes,
-            }
-        ] + new_events
-
-    # Mentions
-    mentions = Comment.visible_objects() \
-        .filter(**created_at_condition) \
-        .filter(text__regex=fr"@\y{user.slug}\y", is_deleted=False)\
-        .exclude(reply_to__author=user)\
-        .order_by("-upvotes")[:5]
-
-    # Best posts
-    posts = Post.visible_objects()\
+    # New posts
+    new_posts = Post.visible_objects()\
         .filter(**published_at_condition)\
         .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(is_visible_in_feeds=True)\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(is_shadow_banned=True)\
-        .order_by("-upvotes")[:100]
+        .order_by("-upvotes")[:3]
 
-    # New joiners
+    # Hot posts
+    hot_posts = Post.visible_objects()\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
+        .exclude(id__in=[p.id for p in new_posts]) \
+        .order_by("-hotness")[:3]
+
+    # New intros
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
-        .order_by("-upvotes")
+        .order_by("-upvotes")[:3]
 
-    if not posts and not mentions and not intros:
+    # Top post 1 year ago
+    top_old_post = Post.visible_objects()\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(
+            published_at__gte=start_date - timedelta(days=365),
+            published_at__lte=end_date - timedelta(days=364)
+         )\
+        .order_by("-upvotes")\
+        .first()
+
+    # Filter out "bad" top posts
+    if top_old_post.upvotes < MIN_TOP_POST_UPVOTES:
+        top_old_post = None
+
+    if not new_post_comments and not new_posts and not intros:
         raise NotFound()
 
-    og_params = urlencode({
-        **settings.OG_IMAGE_GENERATOR_DEFAULTS,
-        "title": f"Ежедневный дайджест пользователя {user.slug}",
-        "author": "THE MACHINE",
-        "ava": settings.OG_MACHINE_AUTHOR_LOGO
-    })
-
-    return render_to_string("emails/daily.html", {
+    return render_to_string("messages/good_morning.html", {
         "user": user,
-        "events": new_events,
         "intros": intros,
-        "posts": posts,
-        "mentions": mentions,
+        "new_posts": new_posts,
+        "hot_posts": hot_posts,
+        "top_old_post": top_old_post,
+        "stats": {
+            "new_post_comments": new_post_comments,
+            "new_upvotes": new_upvotes,
+        },
+        "settings": settings,  # why not automatically?
         "date": end_date,
-        "moon_phase": moon_phase,
-        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}"
+        "greetings": random.choice(DUMB_GREETINGS),
+        "secret_code": base64.b64encode(user.secret_hash.encode("utf-8")).decode()
     })
 
 
@@ -199,9 +179,21 @@ def generate_weekly_digest(no_footer=False):
         .filter(is_deleted=False)\
         .exclude(post__type=Post.TYPE_BATTLE)\
         .exclude(post__is_visible=False)\
+        .exclude(post__is_approved_by_moderator=False)\
         .exclude(post__is_visible_in_feeds=False)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
+
+    # Best post 1 year ago
+    top_old_post = Post.visible_objects()\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(
+            published_at__gte=start_date - timedelta(days=365),
+            published_at__lte=end_date - timedelta(days=365)
+         )\
+        .order_by("-upvotes")\
+        .first()
 
     # Get intro and title
     god_settings = GodSettings.objects.first()
@@ -225,11 +217,19 @@ def generate_weekly_digest(no_footer=False):
 
     issue_number = (end_date - settings.LAUNCH_DATE).days // 7
 
+    # Pro tips
+    pro_tip = ProTip.weekly_tip(issue_number)
+
     og_params = urlencode({
         **settings.OG_IMAGE_GENERATOR_DEFAULTS,
         "title": f"Клубный журнал. Итоги недели. Выпуск #{issue_number}.",
         "author": "THE MACHINE",
         "ava": settings.OG_MACHINE_AUTHOR_LOGO
+    })
+
+    og_description = render_to_string("emails/weekly_og_description.html", {
+        "newbie_count": newbie_count,
+        "post_count": post_count,
     })
 
     return render_to_string("emails/weekly.html", {
@@ -242,10 +242,13 @@ def generate_weekly_digest(no_footer=False):
         "post_count": post_count,
         "top_video_comment": top_video_comment,
         "top_video_post": top_video_post,
+        "top_old_post": top_old_post,
         "featured_post": featured_post,
         "digest_title": digest_title,
         "digest_intro": digest_intro,
         "issue_number": issue_number,
+        "pro_tip": pro_tip,
         "is_footer_excluded": no_footer,
-        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}"
-    })
+        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}",
+        "og_description": og_description,
+    }), og_description

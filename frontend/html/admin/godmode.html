@@ -10,13 +10,17 @@
 <div class="content compose">
     <div class="content-header">Админим</div>
     <div class="block compose-types">
-        <a href="{% url "godmode_network_settings" %}" class="compose-type">
-            <span class="compose-type-icon">💬</span>
-            <span class="compose-type-name">Нетворк</span>
-        </a>
         <a href="{% url "godmode_digest_settings" %}" class="compose-type">
             <span class="compose-type-icon">📰</span>
             <span class="compose-type-name">Дайджест</span>
+        </a>
+        <a href="{% url "godmode_invite" %}" class="compose-type">
+            <span class="compose-type-icon">🎁</span>
+            <span class="compose-type-name">Инвайты</span>
+        </a>
+        <a href="{% url "admin:index" %}" class="compose-type">
+            <span class="compose-type-icon">💿</span>
+            <span class="compose-type-name">Админка</span>
         </a>
     </div>
 </div>

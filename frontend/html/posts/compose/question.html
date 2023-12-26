@@ -48,11 +48,6 @@
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="form-row form-row-center">
-                    {{ form.topic }}
-                    {% if form.topic.errors %}<span class="form-row-errors">{{ form.topic.errors }}</span>{% endif %}
-                </div>
-
                 <div class="form-row compose-form-title">
                     {{ form.title }}
                     {% if form.title.errors %}<span class="form-row-errors">{{ form.title.errors }}</span>{% endif %}
@@ -61,9 +56,9 @@
                 <div class="form-row compose-form-text">
                     <label for="{{ form.text.id_for_label }}" class="form-label">{{ form.text.label }}</label>
                     {{ form.text }}
-                    {% if form.title.errors %}<span class="compose-form-errors">{{ form.title.errors }}</span>{% endif %}
+                    {% if form.text.errors %}<span class="compose-form-errors">{{ form.text.errors }}</span>{% endif %}
                     <span class="form-row-help form-row-help-wide">
-                        Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a>.
+                        Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a>.
                         Для загрузки картинок просто перетащите их в редактор.
                     </span>
                 </div>

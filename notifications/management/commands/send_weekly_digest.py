@@ -27,13 +27,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # render digest using a special html endpoint
         try:
-            digest = generate_weekly_digest()
+            digest_template, _ = generate_weekly_digest()
         except NotFound:
             log.error("Weekly digest is empty")
             return
 
         # get a version without "unsubscribe" footer for posting on home page
-        digest_without_footer = generate_weekly_digest(no_footer=True)
+        digest_without_footer, og_description = generate_weekly_digest(no_footer=True)
 
         # save digest as a post
         issue = (datetime.utcnow() - settings.LAUNCH_DATE).days // 7
@@ -49,6 +49,7 @@ class Command(BaseCommand):
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
                 is_public=False,
+                metadata={"og_description": og_description},
             )
         )
 
@@ -68,12 +69,11 @@ class Command(BaseCommand):
         for user in subscribed_users:
             self.stdout.write(f"Sending to {user.email}...")
 
-            if not options.get("production") and user.email not in dict(settings.ADMINS).values():
-                self.stdout.write("Test mode. Use --production to send the digest to all users")
+            if not options.get("production") and not user.is_god:
                 continue
 
             try:
-                digest = digest\
+                digest = digest_template\
                     .replace("%username%", user.slug)\
                     .replace("%user_id%", str(user.id))\
                     .replace("%secret_code%", base64.b64encode(user.secret_hash.encode("utf-8")).decode())
@@ -93,11 +93,12 @@ class Command(BaseCommand):
             # flush digest intro and title for next time
             GodSettings.objects.update(digest_intro=None, digest_title=None)
 
-        send_telegram_message(
-            chat=CLUB_CHANNEL,
-            text=render_html_message("weekly_digest_announce.html", post=post),
-            disable_preview=False,
-            parse_mode=telegram.ParseMode.HTML,
-        )
+            # announce on channel
+            send_telegram_message(
+                chat=CLUB_CHANNEL,
+                text=render_html_message("weekly_digest_announce.html", post=post),
+                disable_preview=False,
+                parse_mode=telegram.ParseMode.HTML,
+            )
 
         self.stdout.write("Done 🥙")

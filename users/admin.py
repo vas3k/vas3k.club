@@ -1,111 +1,98 @@
-from datetime import datetime, timedelta
+from django.contrib import admin
 
-from django.conf import settings
-from django.shortcuts import redirect
-
-from auth.models import Session
-from club.exceptions import AccessDenied
-from common.data.hats import HATS
-from notifications.email.users import send_unmoderated_email, send_banned_email, send_ping_email, \
-    send_delete_account_confirm_email
-from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
-from notifications.telegram.users import notify_user_ping, notify_admin_user_ping, notify_admin_user_unmoderate, \
-    notify_admin_user_on_ban
-from payments.helpers import cancel_all_stripe_subscriptions
-from users.models.achievements import UserAchievement, Achievement
+from users.models.achievements import Achievement, UserAchievement
+from users.models.friends import Friend
+from users.models.mute import Muted
+from users.models.notes import UserNote
 from users.models.user import User
-from users.utils import is_role_manageable_by_user
 
 
-def do_user_admin_actions(request, user, data):
-    if not request.me.is_moderator:
-        raise AccessDenied()
+class UsersAdmin(admin.ModelAdmin):
+    list_display = (
+        "email",
+        "slug",
+        "full_name",
+        "city",
+        "country",
+        "membership_started_at",
+        "membership_expires_at",
+        "email_digest_type",
+        "is_email_verified",
+        "is_email_unsubscribed",
+        "is_banned_until",
+        "moderation_status",
+    )
+    ordering = ("-created_at",)
+    search_fields = ["slug", "email", "full_name"]
 
-    # Roles
-    if data["role"] and is_role_manageable_by_user(data["role"], request.me):
-        role = data["role"]
-        if data["role_action"] == "add" and role not in user.roles:
-            user.roles.append(role)
-            user.save()
-        if data["role_action"] == "delete" and role in user.roles:
-            user.roles.remove(role)
-            user.save()
 
-    # Hats
-    if data["remove_hat"]:
-        user.hat = None
-        user.save()
+admin.site.register(User, UsersAdmin)
 
-    if data["add_hat"]:
-        if data["new_hat"]:
-            hat = HATS.get(data["new_hat"])
-            if hat:
-                user.hat = {"code": data["new_hat"], **hat}
-                user.save()
-        else:
-            user.hat = {
-                "code": "custom",
-                "title": data["new_hat_name"],
-                "icon": data["new_hat_icon"],
-                "color": data["new_hat_color"],
-            }
-            user.save()
 
-    # Achievements
-    if data["new_achievement"]:
-        achievement = Achievement.objects.filter(code=data["new_achievement"]).first()
-        if achievement:
-            UserAchievement.objects.get_or_create(
-                user=user,
-                achievement=achievement,
-            )
+class AchievementsAdmin(admin.ModelAdmin):
+    list_display = (
+        "code",
+        "name",
+        "image",
+        "description",
+        "style",
+        "index",
+        "is_visible",
+    )
+    ordering = ("index",)
+    search_fields = ["code", "name"]
 
-    # Ban
-    if data["is_banned"]:
-        if not user.is_god:
-            user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
-            user.save()
-            if data["ban_days"] > 0:
-                send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
-                notify_admin_user_on_ban(user, days=data["ban_days"], reason=data["ban_reason"])
 
-    # Unmoderate
-    if data["is_rejected"]:
-        user.moderation_status = User.MODERATION_STATUS_REJECTED
-        user.save()
-        send_unmoderated_email(user)
-        notify_admin_user_unmoderate(user)
+admin.site.register(Achievement, AchievementsAdmin)
 
-    # Delete account
-    if data["delete_account"] and request.me.is_god:
-        user.membership_expires_at = datetime.utcnow()
-        user.is_banned_until = datetime.utcnow() + timedelta(days=5000)
 
-        # cancel recurring payments
-        cancel_all_stripe_subscriptions(user.stripe_id)
+class UserAchievementsAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "achievement",
+        "created_at",
+    )
+    ordering = ("-created_at",)
 
-        # mark user for deletion
-        user.deleted_at = datetime.utcnow()
-        user.save()
 
-        # remove sessions
-        Session.objects.filter(user=user).delete()
+admin.site.register(UserAchievement, UserAchievementsAdmin)
 
-        # notify user
-        send_delete_account_confirm_email(
-            user=user,
-        )
 
-        # notify admins
-        send_telegram_message(
-            chat=ADMIN_CHAT,
-            text=f"💀 Юзер был удален админами: {settings.APP_HOST}/user/{user.slug}/",
-        )
+class FriendsAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_from",
+        "user_to",
+        "created_at",
+        "is_subscribed_to_posts",
+        "is_subscribed_to_comments",
+    )
+    ordering = ("-created_at",)
 
-    # Ping
-    if data["ping"]:
-        send_ping_email(user, message=data["ping"])
-        notify_user_ping(user, message=data["ping"])
-        notify_admin_user_ping(user, message=data["ping"])
 
-    return redirect("profile", user.slug)
+admin.site.register(Friend, FriendsAdmin)
+
+
+class MutedAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_from",
+        "user_to",
+        "created_at",
+        "comment",
+    )
+    ordering = ("-created_at",)
+
+
+admin.site.register(Muted, MutedAdmin)
+
+
+class UserNotesAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_to",
+        "user_from",
+        "text",
+        "created_at",
+    )
+    ordering = ("-created_at",)
+
+
+admin.site.register(UserNote, UserNotesAdmin)

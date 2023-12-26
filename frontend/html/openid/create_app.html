@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Новое приложение — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="block">
+            <div class="block-header">🤖 Новое приложение</div>
+
+            <div class="block-description">
+                <form action="." method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% for row in form %}
+                        <div class="form-row">
+                            {{ row.label_tag }}
+                            {{ row }}
+                            {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="button">Создать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

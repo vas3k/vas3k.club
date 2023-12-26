@@ -1,0 +1,99 @@
+.intro {
+    padding-top: 50px;
+    font-size: 110%;
+}
+
+    .intro .form-title {
+        font-size: 300%;
+    }
+
+    .intro-form {
+        padding-top: 40px;
+        text-align: center;
+    }
+
+        .form-row #id_slug {
+            max-width: 220px;
+            font-weight: 500;
+        }
+
+        .form-row #id_full_name {
+            max-width: 430px;
+            font-weight: 500;
+        }
+
+        .form-row #id_email {
+            max-width: 350px;
+            font-weight: 500;
+        }
+
+        .form-row #id_avatar {
+            max-width: 350px;
+        }
+
+        .form-row #id_bio {
+            width: 80%;
+            height: 180px;
+            min-height: auto;
+        }
+
+        .form-row #id_contact {
+            width: 80%;
+        }
+
+        .form-row #id_country,
+        .form-row #id_city {
+            display: inline-block;
+            width: 35%;
+            min-width: 150px;
+        }
+
+        .intro-form textarea,
+        .intro-form .CodeMirror {
+            text-align: left;
+            min-height: 700px;
+            transform: scale(1);
+        }
+
+        .form-row #id_company {
+            max-width: 400px;
+            font-weight: 500;
+        }
+
+        .form-row #id_position {
+            max-width: 500px;
+            font-weight: 500;
+        }
+
+        .intro-form-counter {
+            display: block;
+            text-align: right;
+            font-size: 120%;
+            font-weight: bold;
+            padding-top: 5px;
+        }
+
+            .intro-form-counter.bad {
+                color: #c41509;
+            }
+
+            .intro-form-counter.good {
+                color: #53AA68;
+            }
+
+.post-join {
+    margin-top: 30px;
+    font-size: 120%;
+    text-align: center;
+}
+
+    .post-join-icon {
+        font-size: 50px;
+        margin: 20px;
+        line-height: 1em;
+    }
+
+    .post-join-message {
+        font-size: 130%;
+        font-weight: 500;
+    }

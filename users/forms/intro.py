@@ -9,7 +9,7 @@ from users.models.user import User
 from common.forms import ImageUploadField
 
 
-class UserIntroForm(ModelForm):
+class UserInitialIntroForm(ModelForm):
     slug = forms.CharField(
         label="Никнейм",
         required=True,
@@ -46,15 +46,10 @@ class UserIntroForm(ModelForm):
         required=True
     )
     bio = forms.CharField(
-        label="Ссылочки на себя и всякое такое",
-        required=False,
+        label="Контакты, соцсети и краткое био",
+        required=True,
         max_length=1024,
         widget=forms.Textarea(attrs={"maxlength": 1024}),
-    )
-    contact = forms.CharField(
-        label="Контакт для связи",
-        required=True,
-        max_length=256,
     )
     company = forms.CharField(
         label="Компания",
@@ -100,7 +95,6 @@ class UserIntroForm(ModelForm):
             "city",
             "country",
             "bio",
-            "contact",
             "email_digest_type",
         ]
 
