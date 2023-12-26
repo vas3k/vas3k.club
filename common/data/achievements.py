@@ -277,6 +277,24 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/mashmer.png",
         "style": "background-color: #3320A0; font-size: 120%;",
     }),
+    ("dota_winner_1", {
+        "name": "Дотер 2 уровня",
+        "description": "За взятие призового места в кибертурнире по Dota2",
+        "image": "https://vas3k.club/static/images/achievements/dota_winner_1.png",
+        "style": "background-color: #000000; font-size: 120%;",
+    }),
+    ("cs_winner_1", {
+        "name": "Pew-pew mfs",
+        "description": "За взятие призового места в кибертурнире по CS",
+        "image": "https://vas3k.club/static/images/achievements/cs_winner_1.png",
+        "style": "background-color: #FFA300; font-size: 120%;",
+    }),
+    ("game_tournament_org_1", {
+        "name": "Королевская клешня",
+        "description": "За участие в киберспортивном турнире",
+        "image": "https://vas3k.club/static/images/achievements/game_tournament_org_1.png",
+        "style": "background-color: #929292; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
