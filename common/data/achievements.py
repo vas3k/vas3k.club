@@ -279,27 +279,21 @@ ACHIEVEMENTS = [
     }),
     ("dota_winner_1", {
         "name": "Дотер 2 уровня",
-        "description": "За взятие призового места в первом турнире игорей по Dota2",
+        "description": "За взятие призового места в кибертурнире по Dota2",
         "image": "https://vas3k.club/static/images/achievements/dota_winner_1.png",
         "style": "background-color: #000000; font-size: 120%;",
     }),
     ("cs_winner_1", {
         "name": "Pew-pew mfs",
-        "description": "За взятие призового места в первом турнире игорей по CS",
+        "description": "За взятие призового места в кибертурнире по CS",
         "image": "https://vas3k.club/static/images/achievements/cs_winner_1.png",
         "style": "background-color: #FFA300; font-size: 120%;",
     }),
     ("game_tournament_org_1", {
         "name": "Королевская клешня",
-        "description": "За организацию первого турнира игорей",
+        "description": "За участие в киберспортивном турнире",
         "image": "https://vas3k.club/static/images/achievements/game_tournament_org_1.png",
         "style": "background-color: #929292; font-size: 120%;",
-    }),
-    ("uporot_1", {
-        "name": "СВСМ УПРЛС",
-        "description": "За победу в конкурсе упоротых видео",
-        "image": "https://vas3k.club/static/images/achievements/uporot_1.png",
-        "style": "background-color: #B38F7E; font-size: 120%;",
     }),
 ]
 
