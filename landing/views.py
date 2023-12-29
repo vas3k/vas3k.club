@@ -12,6 +12,7 @@ from club.exceptions import AccessDenied
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings
 from notifications.email.invites import send_invited_email
+from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from users.models.user import User
 
 EXISTING_DOCS = [
@@ -125,6 +126,12 @@ def godmode_invite(request):
                 )
 
             send_invited_email(request.me, user)
+
+            send_telegram_message(
+                chat=ADMIN_CHAT,
+                text=f"🎁 <b>Юзера '{email}' заинвайтили за донат</b>",
+            )
+
             return render(request, "message.html", {
                 "title": "🎁 Юзер приглашен",
                 "message": f"Сейчас он получит на почту '{email}' уведомление об этом. "
