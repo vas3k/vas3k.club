@@ -98,18 +98,32 @@ def godmode_invite(request):
             email = form.cleaned_data["email"]
             days = form.cleaned_data["days"]
             now = datetime.utcnow()
-            user, is_created = User.objects.get_or_create(
-                email=email,
-                defaults=dict(
-                    membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
-                    full_name=email[:email.find("@")],
-                    membership_started_at=now,
-                    membership_expires_at=now + timedelta(days=days),
-                    created_at=now,
-                    updated_at=now,
-                    moderation_status=User.MODERATION_STATUS_INTRO,
-                ),
-            )
+
+            user = User.objects.filter(email=email).first()
+            if user:
+                # add days to existing user instead of overwriting
+                user.membership_expires_at = max(
+                    now + timedelta(days=days),
+                    user.membership_expires_at + timedelta(days=days)
+                )
+                user.membership_platform_type = User.MEMBERSHIP_PLATFORM_DIRECT
+                user.updated_at = now
+                user.save()
+            else:
+                # create new user with that email
+                user, is_created = User.objects.get_or_create(
+                    email=email,
+                    defaults=dict(
+                        membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
+                        full_name=email[:email.find("@")],
+                        membership_started_at=now,
+                        membership_expires_at=now + timedelta(days=days),
+                        created_at=now,
+                        updated_at=now,
+                        moderation_status=User.MODERATION_STATUS_INTRO,
+                    ),
+                )
+
             send_invited_email(request.me, user)
             return render(request, "message.html", {
                 "title": "🎁 Юзер приглашен",
