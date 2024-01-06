@@ -75,7 +75,7 @@ services:
 #      - redis
 
   postgres:
-    image: postgres:11
+    image: postgres:12
     container_name: club_postgres
     environment:
       - POSTGRES_USER=postgres
