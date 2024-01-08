@@ -1,0 +1,46 @@
+---
+default_stages: [pre-commit, pre-push]
+fail_fast: false
+
+repos:
+  - repo: local
+    hooks:
+      #
+      # YAML
+      - id: yamllint
+        name: yamllint
+        files: .*\.(yaml|yml)$
+        entry: yamllint --config-file ./.yamllint
+        language: system
+        always_run: false
+        pass_filenames: true
+
+      #
+      # Python
+      - id: py-flake8
+        name: py-flake8
+        files: .*\.py$
+        entry: flake8 --config setup.cfg
+        language: system
+        always_run: false
+        pass_filenames: true
+
+      #
+      # POST-CHECKOUT
+      # optional, need to be installed with: pre-commit install -t post-checkout
+      - id: git-pull
+        name: git pull
+        entry: bash -c '[[ $(git branch --show-current) == "master" ]] && git pull --all || true'
+        language: system
+        stages: [post-checkout]
+        always_run: true
+        pass_filenames: false
+
+      - id: git-branch-delete-stale
+        name: Delete stale committed branches
+        # yamllint disable-line rule:line-length
+        entry: bash -c '[[ $(git branch --show-current) == "master" ]] && (git fetch -p && git branch -vv | grep ":\ gone]" | awk "{ print \$1 }" | xargs git branch -D) || true' --
+        language: system
+        stages: [post-checkout]
+        always_run: true
+        pass_filenames: false
