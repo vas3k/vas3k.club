@@ -4,7 +4,7 @@ from django.template import loader
 from django_q.tasks import async_task
 
 from notifications.telegram.common import Chat, render_html_message, send_telegram_image
-from notifications.email.sender import send_club_email
+from notifications.email.sender import send_transactional_email
 from users.models.achievements import UserAchievement
 
 
@@ -32,7 +32,7 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
     # emails
     if not user.is_email_unsubscribed:
         email_template = loader.get_template("emails/achievement.html")
-        send_club_email(
+        send_transactional_email(
             recipient=user.email,
             subject=f"🏆 Вы получили ачивку «{achievement.name}»",
             html=email_template.render({"user": user, "achievement": achievement}),

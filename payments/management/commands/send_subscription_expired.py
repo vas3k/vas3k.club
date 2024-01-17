@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.template.loader import render_to_string
 
-from notifications.email.sender import send_club_email
+from notifications.email.sender import send_transactional_email
 from notifications.telegram.common import send_telegram_message, Chat
 from users.models.user import User
 
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                         .replace("%user_id%", str(user.id))\
                         .replace("%secret_code%", base64.b64encode(user.secret_hash.encode("utf-8")).decode())
 
-                    send_club_email(
+                    send_transactional_email(
                         recipient=user.email,
                         subject=f"Ваша клубная карта скоро истечёт 😱",
                         html=email,

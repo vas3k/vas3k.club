@@ -6,7 +6,7 @@ from django_q.tasks import async_task
 
 from badges.models import UserBadge
 from notifications.telegram.common import Chat, render_html_message, send_telegram_image
-from notifications.email.sender import send_club_email
+from notifications.email.sender import send_transactional_email
 
 
 @receiver(post_save, sender=UserBadge)
@@ -31,7 +31,7 @@ def async_create_or_update_badge(user_badge: UserBadge):
     # emails
     if not to_user.is_email_unsubscribed:
         email_template = loader.get_template("emails/badge.html")
-        send_club_email(
+        send_transactional_email(
             recipient=to_user.email,
             subject=f"🏅 Вам подарили награду «{user_badge.badge.title}»",
             html=email_template.render({"user_badge": user_badge}),

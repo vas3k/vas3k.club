@@ -10,7 +10,7 @@ from club.exceptions import NotFound
 from notifications.digests import generate_weekly_digest
 from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message
 from landing.models import GodSettings
-from notifications.email.sender import send_club_email
+from notifications.email.sender import send_mass_email
 from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.user import User
@@ -73,16 +73,18 @@ class Command(BaseCommand):
                 continue
 
             try:
+                secret_code = base64.b64encode(user.secret_hash.encode("utf-8")).decode()
+
                 digest = digest_template\
                     .replace("%username%", user.slug)\
                     .replace("%user_id%", str(user.id))\
-                    .replace("%secret_code%", base64.b64encode(user.secret_hash.encode("utf-8")).decode())
+                    .replace("%secret_code%", secret_code)
 
-                send_club_email(
+                send_mass_email(
                     recipient=user.email,
                     subject=f"🤘 Клубный журнал. Итоги недели. Выпуск #{issue}",
                     html=digest,
-                    tags=["weekly_digest", f"weekly_digest_{issue}"]
+                    unsubscribe_link=f"{settings.APP_HOST}/notifications/unsubscribe/{user.id}/{secret_code}/"
                 )
             except Exception as ex:
                 self.stdout.write(f"Sending to {user.email} failed: {ex}")
