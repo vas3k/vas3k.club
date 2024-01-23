@@ -1,0 +1,402 @@
+body,
+html {
+  margin: 0;
+  padding: 30px 180px;
+  font-family: Arial, sans-serif;
+  background: #e6dfcf;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 90px;
+  gap: 15px;
+}
+
+.login-button {
+  width: 262.5px;
+  height: 86px;
+  padding: 30px 60px;
+  background-color: #e6dfcf;
+  color: #141c15;
+  border: none;
+  transition: background-color 0.3s ease-in-out 0.1s;
+}
+
+.login-button:hover {
+  background-color: #0c8341;
+}
+
+.signup-button {
+  width: 262.5px;
+  height: 86px;
+  padding: 30px 60px;
+  background-color: #141c15;
+  color: #fcfcfc;
+  border: none;
+  transition: background-color 0.3s ease-in-out 0.1s;
+}
+.signup-button:hover {
+  background-color: #d43925;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  flex: 0 0 auto;
+  margin-bottom: 90px;
+}
+
+.content {
+  justify-content: flex-end;
+  margin-bottom: 90px;
+}
+
+.welcome-question img {
+  margin-bottom: 15px;
+}
+
+.intro-detail img {
+  margin-bottom: 15px;
+  margin-left: 20px;
+}
+
+.detail-button img {
+  margin-right: 127px;
+}
+
+.for-whom {
+  width: 1080px;
+  height: 164px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 90px;
+  margin-left: 65px;
+}
+
+.for-whom h2 {
+  font-family: "IBM Plex Sans";
+  font-size: 30px;
+  font-weight: 400;
+  white-space: nowrap;
+  margin-right: 45px;
+}
+.for-whom p {
+  background-color: #0c8341;
+  width: 902px;
+  height: 164px;
+  padding: 30px;
+  color: #fcfcfc;
+  border-radius: 30px;
+  align-items: center;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: normal;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.about {
+  display: flex;
+  align-items: center;
+  margin-bottom: 90px;
+  margin-left: 65px;
+}
+
+.about h2 {
+  font-family: "IBM Plex Sans";
+
+  width: 91px;
+  height: 39px;
+  font-size: 30px;
+  line-height: normal;
+  margin-right: 45px;
+  white-space: nowrap;
+  font-weight: 400;
+}
+.about ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.about li {
+  margin: 5px;
+}
+
+.button-like-list-item {
+  padding: 15px 15px;
+  font-family: "IBM Plex Sans";
+  color: #fff;
+  background-color: #e6dfcf;
+  border: 1px solid #141c15;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: 400;
+  min-width: 134px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-like-list-item a {
+  text-decoration: none;
+  color: #141c15;
+  border-radius: 20px;
+}
+
+.button-like-list-item:first-child {
+  background-color: #0c8341;
+  border: none;
+}
+
+.button-like-list-item:last-child {
+  background-color: #0c8341;
+  border: none;
+}
+.button-like-list-item:nth-child(4) {
+  background-color: #0c8341;
+  border: none;
+}
+
+.button-like-list-item a {
+  white-space: nowrap;
+  padding: 0 10px;
+}
+
+.how-to-join {
+  width: 1080px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 90px;
+}
+
+.how-to-join h3 {
+  width: 194px;
+  height: 39px;
+  font-family: "IBM Plex Sans";
+  font-size: 30px;
+  font-weight: 400;
+  margin-left: 55px;
+  white-space: nowrap;
+}
+
+.how-to-join p {
+  margin-left: 45px;
+  width: 842px;
+  height: 104px;
+  font-family: "IBM Plex Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: #141c15;
+}
+
+.top {
+  display: flex;
+  margin-bottom: 90px;
+  gap: 15px;
+  margin-left: 50px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 120px;
+  margin-left: 65px;
+}
+
+.footer span {
+  width: 229px;
+  height: 39;
+  color: #141c15;
+  text-align: center;
+  font-family: "IBM Plex Sans";
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-right: 45px;
+  white-space: nowrap;
+}
+
+.footer ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.footer li {
+  margin: 5px;
+}
+.button {
+  padding: 15px 15px;
+  font-family: "IBM Plex Sans";
+  color: #fff;
+  background-color: e6dfcf;
+  border: 1px solid #141c15;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 20px;
+  font-weight: 400;
+  min-width: 134px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button a {
+  text-decoration: none;
+  color: #141c15;
+  border-radius: 20px;
+  white-space: nowrap;
+  padding: 0 10px;
+}
+
+.footer ul li:nth-child(3) {
+  background-color: #0c8341;
+  border: none;
+}
+
+.vastrik {
+  width: 290px;
+  height: 26px;
+  color: #141c15;
+  text-align: center;
+  font-family: "IBM Plex Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 164px;
+  margin-left: 50px;
+}
+
+.vastrik a {
+  text-decoration: none;
+  color: black;
+}
+
+@media screen and (max-width: 600px) {
+  body,
+  html {
+    padding: 10px;
+  }
+
+  .top-bar,
+  .container,
+  .about,
+  .footer,
+  .how-to-join,
+  .sections {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .login-button,
+  .signup-button,
+  .button-like-list-item,
+  .button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .for-whom,
+  .about,
+  .how-to-join {
+    width: 100%;
+    padding: 0 15px;
+  }
+
+  .for-whom h2,
+  .about h2,
+  .how-to-join h3,
+  .footer span {
+    font-size: 24px;
+  }
+
+  .about ul,
+  .footer ul {
+    flex-direction: column;
+  }
+
+  .content,
+  .welcome-question,
+  .intro-detail,
+  .detail-button {
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  body,
+  html {
+    padding: 10px;
+  }
+
+  .top-bar,
+  .container,
+  .about,
+  .footer,
+  .how-to-join,
+  .sections {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .login-button,
+  .signup-button,
+  .button-like-list-item,
+  .button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .for-whom,
+  .about,
+  .how-to-join {
+    width: 100%;
+    padding: 0 15px;
+  }
+
+  .for-whom h2,
+  .about h2,
+  .how-to-join h3,
+  .footer span {
+    font-size: 24px;
+  }
+
+  .about ul,
+  .footer ul {
+    flex-direction: column;
+  }
+
+  .content,
+  .welcome-question,
+  .intro-detail,
+  .detail-button {
+    align-items: center;
+  }
+
+  .vastrik {
+    width: auto;
+    margin-top: 20px;
+  }
+}
