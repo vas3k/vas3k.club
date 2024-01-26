@@ -12,6 +12,11 @@ IMAGE_CSS_CLASSES = {
 
 
 class ClubRenderer(mistune.HTMLRenderer):
+    def __init__(self):
+        super(ClubRenderer, self).__init__()
+        # key: slug, value: usage counter
+        self._used_anchor_slugs = {}
+
     def text(self, text):
         text = escape_html(text)
         text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
@@ -21,9 +26,21 @@ class ClubRenderer(mistune.HTMLRenderer):
         text = text.replace("\n", "<br>\n")  # Mistune 2.0 broke newlines, let's hack it =/
         return f"<p>{text}</p>\n"
 
+    def _get_anchor(self, slug):
+        usage_counter = self._used_anchor_slugs.get(slug, 0)
+
+        if usage_counter == 0:
+            anchor = slug
+        else:
+            anchor = f"{slug}--{usage_counter}"
+
+        self._used_anchor_slugs[slug] = usage_counter + 1
+        return anchor
+
     def heading(self, text, level):
         tag = f"h{level}"
-        anchor = slugify(text[:24])
+        slug = slugify(text[:24])
+        anchor = self._get_anchor(slug)
         return f"<{tag} id=\"{anchor}\"><a href=\"#{anchor}\">{text}</a></{tag}>\n"
 
     def link(self, link, text=None, title=None):
