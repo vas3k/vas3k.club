@@ -1,5 +1,4 @@
 import os
-import random
 from datetime import timedelta, datetime
 
 import sentry_sdk
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     "simple_history",
     "django_q",
     "webpack_loader",
+    "askbot.apps.AskBotConfig",
 ]
 
 MIDDLEWARE = [
@@ -273,6 +273,13 @@ TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
 TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
+
+TELEGRAM_ASK_BOT_TOKEN = os.getenv("TELEGRAM_ASK_BOT_TOKEN")
+TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID = os.getenv("TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID")
+TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID = os.getenv("TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID")
+TELEGRAM_ASK_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/askbot/webhook/"
+TELEGRAM_ASK_BOT_WEBHOOK_HOST = "0.0.0.0"
+TELEGRAM_ASK_BOT_WEBHOOK_PORT = 8817
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""
