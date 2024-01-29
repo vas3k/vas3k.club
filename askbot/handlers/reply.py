@@ -4,13 +4,13 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from askbot.ask_common import channel_msg_link, send_html_msg
+from askbot.room import get_rooms
 from askbot.models import Question
 from club import settings
-from rooms.models import Room
 
 log = logging.getLogger(__name__)
 
-rooms = {r.chat_id: r for r in Room.objects.filter(is_visible=True, chat_id__isnull=False).all()}
+rooms = {r.chat_id: r for r in get_rooms()}
 
 
 def handle_reply_from_channel(update: Update) -> None:

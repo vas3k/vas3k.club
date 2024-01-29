@@ -8,6 +8,7 @@ from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, M
 
 from askbot.ask_common import channel_msg_link, send_html_msg, chat_msg_link
 from askbot.models import Question, UserAskBan
+from askbot.room import get_rooms
 from bot.handlers.common import get_club_user
 from club import settings
 from rooms.models import Room
@@ -39,7 +40,7 @@ question_markup = ReplyKeyboardMarkup(question_keyboard)
 CUR_FIELD_KEY = "cur_field"
 
 DO_NOT_SEND_ROOM = "Не отправлять"
-rooms = {r.title: r for r in Room.objects.filter(is_visible=True, chat_id__isnull=False).all()}
+rooms = {r.title: r for r in get_rooms()}
 
 
 def get_rooms_markup() -> list:
@@ -97,7 +98,7 @@ def question_to_str(user_data: Dict[str, str]) -> str:
     body = f"Текст вопроса:\n{user_data.get(QKeyboard.BODY.value, '')}\n\n\n" if user_data.get(
         QKeyboard.BODY.value) else ""
     tags = f"Теги: {user_data.get(QKeyboard.TAGS.value, '')}\n\n" if user_data.get(QKeyboard.TAGS.value) else ""
-    room = f"Выбранная комната: {user_data.get(QKeyboard.ROOM.value, '')}" if user_data.get(
+    room = f"Комната: {user_data.get(QKeyboard.ROOM.value, '')}" if user_data.get(
         QKeyboard.ROOM.value) else ""
     return title + body + tags + room
 
