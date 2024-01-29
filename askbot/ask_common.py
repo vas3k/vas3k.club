@@ -3,11 +3,11 @@ from telegram import Bot, ParseMode
 from club import settings
 
 
-def send_html_msg(chat_id: int,
-                  text: str,
-                  reply_to_message_id: int = None,
-                  parse_mode: ParseMode = ParseMode.HTML
-                  ):
+def send_msg(chat_id: int,
+             text: str,
+             reply_to_message_id: int = None,
+             parse_mode: ParseMode = ParseMode.HTML
+             ):
     bot = Bot(token=settings.TELEGRAM_ASK_BOT_TOKEN)
     return bot.send_message(chat_id=chat_id, text=text, reply_to_message_id=reply_to_message_id, parse_mode=parse_mode)
 

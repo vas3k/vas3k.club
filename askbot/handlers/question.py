@@ -6,7 +6,7 @@ from typing import Dict
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
-from askbot.ask_common import channel_msg_link, send_html_msg, chat_msg_link
+from askbot.ask_common import channel_msg_link, send_msg, chat_msg_link
 from askbot.models import Question, UserAskBan
 from askbot.room import get_rooms
 from bot.handlers.common import get_club_user
@@ -204,7 +204,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     room = rooms[room_title] if room_title and room_title != DO_NOT_SEND_ROOM else None
     room_chat_msg = None
     if room and room.chat_id:
-        room_chat_msg = send_html_msg(room.chat_id, room_chat_msg_text)
+        room_chat_msg = send_msg(room.chat_id, room_chat_msg_text)
 
     channel_msg_text = room_chat_msg_text
 
@@ -218,7 +218,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         channel_msg_text = f"{channel_msg_text}\n\n" \
                            f"<a href=\"{group_msg_link}\">Ссылка на вопрос в тематическом чате</a>"
 
-    channel_msg = send_html_msg(
+    channel_msg = send_msg(
         chat_id=settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID,
         text=channel_msg_text
     )

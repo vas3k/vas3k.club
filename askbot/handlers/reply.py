@@ -3,7 +3,7 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from askbot.ask_common import channel_msg_link, send_html_msg
+from askbot.ask_common import channel_msg_link, send_msg
 from askbot.room import get_rooms
 from askbot.models import Question
 from club import settings
@@ -63,7 +63,7 @@ def handle_reply_from_room_chat(update: Update) -> None:
                    f"{update.message.text}"
 
     chat_id = settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID
-    send_html_msg(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
+    send_msg(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
 
 
 def notify_user_about_reply(update: Update, question: Question, from_room_chat: bool) -> None:
@@ -101,7 +101,7 @@ def notify_user_about_reply(update: Update, question: Question, from_room_chat: 
             f"{reply_text}\n\n" \
             f"{question_link}"
 
-    send_html_msg(chat_id=user_id, text=message_text)
+    send_msg(chat_id=user_id, text=message_text)
 
 
 def on_reply_message(update: Update, context: CallbackContext) -> None:
