@@ -11,9 +11,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "club.settings")
 django.setup()
 # THE END
 
-from askbot.handlers import question
-from askbot.handlers.reply import reply_handler
-from askbot.models import Question
+from askbot.handlers.question import update_discussion_message_id, QuestionHandler
+from askbot.handlers.reply import on_reply_message
 
 from django.conf import settings
 from telegram import Update, ParseMode
@@ -21,41 +20,30 @@ from telegram.ext import Updater, CommandHandler, CallbackContext, Filters, Mess
 
 log = logging.getLogger(__name__)
 
+TELEGRAM_ADMIN_BOT_ID = 777000
 
-# todo fill out
-def command_help(update: Update, context: CallbackContext) -> None:
+
+def on_help_command(update: Update, context: CallbackContext) -> None:
     update.effective_chat.send_message(
         "🤔 <b>Справочная Вастрик.Клуба</b>\n\n"
-        ""
+        "Здесь ты можешь задать свой вопрос и получить ответы.\n\n\n"
         "Список команд:\n\n"
-        "/start - Задать вопрос\n\n"
+        "/start - Заполнение и отправка вопроса\n"
         "/help - Справка",
         parse_mode=ParseMode.HTML
     )
 
 
-TELEGRAM_ADMIN_ID = 777000
-
-
-# TODO move to a new module
-def telegram_admin_update(update: Update, context: CallbackContext) -> None:
+def on_telegram_admin_bot_message(update: Update, context: CallbackContext) -> None:
     if not update.message:
         return None
 
     message = update.message
     if message.chat.id == int(settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID) \
+        and message.forward_from_chat \
         and message.forward_from_chat.id == int(settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID) \
         and message.forward_from_message_id:
         update_discussion_message_id(update)
-
-
-def update_discussion_message_id(update: Update) -> None:
-    channel_msg_id = update.message.forward_from_message_id
-    discussion_msg_id = update.message.message_id
-
-    question = Question.objects.filter(channel_msg_id=channel_msg_id).first()
-    question.discussion_msg_id = discussion_msg_id
-    question.save()
 
 
 def main() -> None:
@@ -66,10 +54,10 @@ def main() -> None:
     dispatcher = updater.dispatcher
 
     # Set handlers
-    dispatcher.add_handler(CommandHandler("help", command_help))
-    dispatcher.add_handler(question.start_handler)
-    dispatcher.add_handler(MessageHandler(Filters.reply & ~Filters.command, reply_handler))
-    dispatcher.add_handler(MessageHandler(Filters.user(TELEGRAM_ADMIN_ID), telegram_admin_update))
+    dispatcher.add_handler(CommandHandler("help", on_help_command))
+    dispatcher.add_handler(QuestionHandler("start"))
+    dispatcher.add_handler(MessageHandler(Filters.reply & ~Filters.command, on_reply_message))
+    dispatcher.add_handler(MessageHandler(Filters.user(TELEGRAM_ADMIN_BOT_ID), on_telegram_admin_bot_message))
 
     # Start the bot
     if settings.DEBUG:

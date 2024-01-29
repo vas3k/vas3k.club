@@ -13,22 +13,23 @@ log = logging.getLogger(__name__)
 rooms = {r.chat_id: r for r in Room.objects.filter(is_visible=True, chat_id__isnull=False).all()}
 
 
-# TODO name (private method)
 def handle_reply_from_channel(update: Update) -> None:
     channel_msg_id = update.message.reply_to_message.forward_from_message_id
     if not channel_msg_id:
         log.error(f"forward_from_message_id is null")
         return None
 
-    question = Question.objects.filter(channel_msg_id=channel_msg_id).first()
+    question = Question.objects\
+        .filter(channel_msg_id=channel_msg_id)\
+        .select_related("user", "room")\
+        .first()
     if not question:
         log.warning(f"Question with channel_msg_id: {channel_msg_id} is not found")
         return None
 
-    notify_user_about_reply(update, question)
+    notify_user_about_reply(update, question, False)
 
 
-# TODO name (private method)
 def handle_reply_from_room_chat(update: Update) -> None:
     room_chat_msg_id = update.message.reply_to_message.message_id
     if not room_chat_msg_id:
@@ -38,13 +39,17 @@ def handle_reply_from_room_chat(update: Update) -> None:
     room_chat_id = str(update.message.chat.id)
     room = rooms[room_chat_id]
 
-    question = Question.objects.filter(room=room, room_chat_msg_id=room_chat_msg_id).first()
+    question = Question.objects\
+        .filter(room=room, room_chat_msg_id=room_chat_msg_id) \
+        .select_related("user", "room")\
+        .first()
     if not question:
         log.warning(f"Question with room_chat_msg_id: {room_chat_msg_id} is not found")
         return None
 
-    notify_user_about_reply(update, question)
+    notify_user_about_reply(update, question, True)
 
+    # Forward message
     from_user = update.message.from_user
     from_user_link = f"<a href=\"tg://user?id={from_user.id}\">{from_user.first_name}</a>"
 
@@ -61,8 +66,7 @@ def handle_reply_from_room_chat(update: Update) -> None:
     send_html_msg(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
 
 
-# TODO name (private method)
-def notify_user_about_reply(update: Update, question: Question) -> None:
+def notify_user_about_reply(update: Update, question: Question, from_room_chat: bool) -> None:
     if not question.user:
         log.info(f"User is null for question {question.id}")
         return None
@@ -76,24 +80,31 @@ def notify_user_about_reply(update: Update, question: Question) -> None:
 
     reply_chat_id = str(message.chat.id).replace("-100", "")
     reply_msg_id = message.message_id
-    reply_link = f"https://t.me/c/{reply_chat_id}/{reply_msg_id}"
+    reply_link = f"<a href=\"https://t.me/c/{reply_chat_id}/{reply_msg_id}\">ответ</a>"
     question_title = question.json_text["title"]
 
     from_user_link = f"<a href=\"tg://user?id={from_user.id}\">{from_user.first_name}</a>"
     reply_text = message.text
 
-    question_link = channel_msg_link(question.channel_msg_id)
+    question_link = f"<a href=\"{channel_msg_link(question.channel_msg_id)}\">❓ Ссылка на твой вопрос</a>"
 
-    # TODO if from room chat -> another message with invite link
-    message_text = \
-        f"💬 Новый <a href=\"{reply_link}\">ответ</a> на твой вопрос \"{question_title}\" от {from_user_link} из чата канала:\n\n" \
-        f"{reply_text}\n\n" \
-        f"<a href=\"{question_link}\">❓ Ссылка на твой вопрос</a>"
+    if from_room_chat:
+        room = question.room
+        room_chat_link = f"<a href=\"{room.chat_url}\">{room.title}</a>"
+        message_text = \
+            f"💬 Новый {reply_link} на твой вопрос \"{question_title}\" от {from_user_link} из чата {room_chat_link}:\n\n" \
+            f"{reply_text}\n\n" \
+            f"{question_link}"
+    else:
+        message_text = \
+            f"💬 Новый {reply_link} на твой вопрос \"{question_title}\" от {from_user_link} из чата канала:\n\n" \
+            f"{reply_text}\n\n" \
+            f"{question_link}"
 
     send_html_msg(chat_id=user_id, text=message_text)
 
 
-def reply_handler(update: Update, context: CallbackContext) -> None:
+def on_reply_message(update: Update, context: CallbackContext) -> None:
     if not update.message \
         or not update.message.reply_to_message \
         or not update.message.text:
@@ -108,3 +119,4 @@ def reply_handler(update: Update, context: CallbackContext) -> None:
     else:
         if str(reply_to.chat.id) in rooms.keys():
             handle_reply_from_room_chat(update)
+            return None

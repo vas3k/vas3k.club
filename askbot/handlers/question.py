@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Dict
 
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode, Bot
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
-from askbot.ask_common import is_banned, channel_msg_link, send_html_msg
-from askbot.models import Question
+from askbot.ask_common import channel_msg_link, send_html_msg, chat_msg_link
+from askbot.models import Question, UserAskBan
 from bot.handlers.common import get_club_user
 from club import settings
 from rooms.models import Room
@@ -18,7 +18,6 @@ log = logging.getLogger(__name__)
 REQUEST_FOR_INPUT, INPUT_RESPONSE, FINISH_REVIEW = range(3)
 
 
-# TODO Think about refactoring - splitting for keyboard values and key for storing in the user_data
 class QKeyboard(Enum):
     TITLE = "Заголовок"
     BODY = "Текст вопроса"
@@ -42,23 +41,16 @@ CUR_FIELD_KEY = "cur_field"
 DO_NOT_SEND_ROOM = "Не отправлять"
 rooms = {r.title: r for r in Room.objects.filter(is_visible=True, chat_id__isnull=False).all()}
 
+
 def get_rooms_markup() -> list:
     room_names = list(rooms.keys())
     room_names.append(DO_NOT_SEND_ROOM)
 
     num_columns = 2
-
     return [room_names[i:i + num_columns] for i in range(0, len(room_names), num_columns)]
 
 
 room_choose_markup = ReplyKeyboardMarkup(get_rooms_markup())
-
-# TODO refactor
-finish_review_keyboard = [
-    ["Опубликовать", "Отредактировать"],
-    ["Отменить"]
-]
-finish_review_markup = ReplyKeyboardMarkup(finish_review_keyboard)
 
 
 def start(update: Update, context: CallbackContext) -> int:
@@ -66,7 +58,8 @@ def start(update: Update, context: CallbackContext) -> int:
     if not user:
         return ConversationHandler.END
 
-    if is_banned(user):
+    user_ask_ban = UserAskBan.objects.filter(user=user).first()
+    if user_ask_ban and user_ask_ban.is_banned:
         update.message.reply_text("🙈 Ты в бане, поэтому не можешь задавать вопросы")
         return ConversationHandler.END
 
@@ -75,8 +68,9 @@ def start(update: Update, context: CallbackContext) -> int:
         .filter(created_at__gte=yesterday) \
         .count()
 
-    if question_number >= 3:
-        update.message.reply_text("Ты очень любознателен(ьна)! Но на сегодня хватит вопросов 😫")
+    question_limit = 3
+    if question_number >= question_limit:
+        update.message.reply_text("Ты очень любознателен(ьна)! Но на сегодня хватит вопросов, я устал 😫")
         return ConversationHandler.END
 
     update.message.reply_text(
@@ -136,7 +130,7 @@ def input_response(update: Update, context: CallbackContext) -> int:
 def request_room_choose(update: Update, context: CallbackContext) -> int:
     context.user_data[CUR_FIELD_KEY] = QKeyboard.ROOM.value
     update.message.reply_text(
-        "Выберите комнату в которую отправить ваш вопрос",
+        "Выберите комнату в которую отправить твой вопрос",
         reply_markup=room_choose_markup,
     )
     return INPUT_RESPONSE
@@ -151,43 +145,35 @@ def review_question(update: Update, context: CallbackContext) -> int:
         update.message.reply_text("Пожалуйста, заполни как минимум заголовок и текст вопроса")
         return edit_question(update, context)
 
+    title_len_limit = 150
+    body_len_limit = 2500
+    if len(title) > title_len_limit:
+        update.message.reply_text(
+            f"Заголовок вопроса превышает максимальную длину {title_len_limit}. Поправь пожалуйста.")
+        return edit_question(update, context)
+
+    if len(body) > body_len_limit:
+        update.message.reply_text(f"Текст вопроса превышает максимальную длину {body_len_limit}. Поправь пожалуйста.")
+        return edit_question(update, context)
+
     update.message.reply_text(
         "Заполнение вопроса завершено, давай проверим, что все верно:\n\n"
         f"{question_to_str(user_data)}",
-        reply_markup=finish_review_markup,
+        reply_markup=ReplyKeyboardMarkup([
+            ["Опубликовать", "Отредактировать"],
+            ["Отменить"]
+        ]
+        ),
     )
     return FINISH_REVIEW
 
 
-def get_room_by_title(title: str) -> Room:
-    if not title or title == DO_NOT_SEND_ROOM:
-        return None
-    else:
-        return rooms[title]
-
-
-# todo refactor - replace Json with an object
-def convert_to_user_msg(update: Update, json: Dict[str, str]) -> str:
-    user_id = update.effective_user.id
-    user_name = update.effective_user["first_name"]
-    user_link = f"<a href=\"tg://user?id={user_id}\">{user_name}</a>"
-    title = json.get("title")
-    body = json.get("body")
-    tags = json.get("tags", "")
-
-    # todo fix text
-    return (
-        f"Вопрос от {user_link}\n\n"
-        f"{title}\n\n"
-        f"{body}\n\n"
-        f"{tags}"
-    )
-
-
 def publish_question(update: Update, user_data: Dict[str, str]) -> str:
+    title = user_data[QKeyboard.TITLE.value]
+    body = user_data[QKeyboard.BODY.value]
     json_text = {
-        "title": user_data[QKeyboard.TITLE.value],
-        "body": user_data[QKeyboard.BODY.value]
+        "title": title,
+        "body": body
     }
     tags = user_data.get(QKeyboard.TAGS.value, None)
     if tags:
@@ -202,14 +188,22 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         json_text=json_text)
     question.save()
 
-    room_chat_msg_text = convert_to_user_msg(update, json_text)
+    user_id = update.effective_user.id
+    user_name = update.effective_user.first_name
+    user_link = f"<a href=\"tg://user?id={user_id}\">{user_name}</a>"
 
-    room = get_room_by_title(room_title)
+    room_chat_msg_text = \
+        f"Вопрос от {user_link}\n\n" \
+        f"<b>{title}</b>\n\n" \
+        f"{body}"
+
+    if tags:
+        room_chat_msg_text = f"{room_chat_msg_text}\n\n{tags}"
+
+    room = rooms[room_title] if room_title and room_title != DO_NOT_SEND_ROOM else None
     room_chat_msg = None
     if room and room.chat_id:
         room_chat_msg = send_html_msg(room.chat_id, room_chat_msg_text)
-    else:
-        log.warning(f"Chat id is not found for room: {room_title}")
 
     channel_msg_text = room_chat_msg_text
 
@@ -217,14 +211,15 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         question.room = room
         question.room_chat_msg_id = room_chat_msg.message_id
 
-        group_link_id = room.chat_id.replace("-100", "")
-        group_msg_link = f"https://t.me/c/{group_link_id}/{room_chat_msg.message_id}"
-        channel_msg_text = channel_msg_text + "\n\n" + \
-                           f"<a href=\"{group_msg_link}\">Ссылка на вопрос в комнате</a>"
+        group_msg_link = chat_msg_link(
+            room.chat_id.replace("-100", ""),
+            room_chat_msg.message_id)
+        channel_msg_text = f"{channel_msg_text}\n\n" \
+                           f"<a href=\"{group_msg_link}\">Ссылка на вопрос в тематическом чате</a>"
 
     channel_msg = send_html_msg(
         chat_id=settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID,
-        text = channel_msg_text
+        text=channel_msg_text
     )
 
     question.channel_msg_id = channel_msg.message_id
@@ -283,39 +278,51 @@ def error_fallback(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
-start_handler = ConversationHandler(
-    entry_points=[CommandHandler("start", start)],
-    states={
-        REQUEST_FOR_INPUT: [
-            MessageHandler(
-                Filters.regex(f"^({QKeyboard.TITLE.value}|{QKeyboard.BODY.value}|{QKeyboard.TAGS.value})$"),
-                request_text_value
-            ),
-            MessageHandler(
-                Filters.regex(f"^{QKeyboard.ROOM.value}$"),
-                request_room_choose
-            ),
-            MessageHandler(
-                Filters.regex(f"^{QKeyboard.REVIEW.value}$"),
-                review_question
-            ),
-            MessageHandler(
-                Filters.text & ~Filters.command,
-                fallback
-            )
-        ],
-        INPUT_RESPONSE: [
-            MessageHandler(
-                Filters.text & ~Filters.command,
-                input_response,
-            ),
-        ],
-        FINISH_REVIEW: [
-            MessageHandler(
-                Filters.text & ~Filters.command,
-                finish_review,
-            )
-        ]
-    },
-    fallbacks=[MessageHandler(Filters.all, error_fallback)],
-)
+class QuestionHandler(ConversationHandler):
+    def __init__(self, command):
+        # Call the constructor of the parent class using super()
+        super().__init__(
+            entry_points=[CommandHandler(command, start)],
+            states={
+                REQUEST_FOR_INPUT: [
+                    MessageHandler(
+                        Filters.regex(f"^({QKeyboard.TITLE.value}|{QKeyboard.BODY.value}|{QKeyboard.TAGS.value})$"),
+                        request_text_value
+                    ),
+                    MessageHandler(
+                        Filters.regex(f"^{QKeyboard.ROOM.value}$"),
+                        request_room_choose
+                    ),
+                    MessageHandler(
+                        Filters.regex(f"^{QKeyboard.REVIEW.value}$"),
+                        review_question
+                    ),
+                    MessageHandler(
+                        Filters.text & ~Filters.command,
+                        fallback
+                    )
+                ],
+                INPUT_RESPONSE: [
+                    MessageHandler(
+                        Filters.text & ~Filters.command,
+                        input_response,
+                    ),
+                ],
+                FINISH_REVIEW: [
+                    MessageHandler(
+                        Filters.text & ~Filters.command,
+                        finish_review,
+                    )
+                ]
+            },
+            fallbacks=[MessageHandler(Filters.all, error_fallback)],
+        )
+
+
+def update_discussion_message_id(update: Update) -> None:
+    channel_msg_id = update.message.forward_from_message_id
+    discussion_msg_id = update.message.message_id
+
+    question = Question.objects.filter(channel_msg_id=channel_msg_id).first()
+    question.discussion_msg_id = discussion_msg_id
+    question.save()
