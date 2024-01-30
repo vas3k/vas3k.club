@@ -13,16 +13,20 @@
                 </select>
             </div>
             <div class="comment-form-body-title">{{ form.title }}</div>
-            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}">
+            <comment-markdown-editor
+                class="comment-form-body-text"
+                post-slug="{{ post.slug }}"
+                submit-label="Отправить"
+            >
                 {{ form.text }}
             </comment-markdown-editor>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
-        <div class="comment-form-footer">
+        <noscript class="comment-form-footer" inline-template>
             <div class="comment-form-subscribe">
                 {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
             </div>
             <button type="submit" class="button comment-form-button">Отправить</button>
-        </div>
+        </noscript>
     </div>
 </form>

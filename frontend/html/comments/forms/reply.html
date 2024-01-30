@@ -6,7 +6,10 @@
         </div>
 
         <div class="reply-form-body">
-            <comment-markdown-editor post-slug="{{ post.slug }}">
+            <comment-markdown-editor
+                post-slug="{{ post.slug }}"
+                submit-label="Отправить"
+            >
                 {{ reply_form.text }}
             </comment-markdown-editor>
             {% if reply_form.text.errors %}<span class="form-errors">{{ reply_form.full_name.errors }}</span>{% endif %}
@@ -14,8 +17,8 @@
 
         <input type="hidden" name="reply_to_id" value="{{ comment.id }}">
 
-        <div class="reply-form-button">
+        <noscript class="reply-form-button" inline-template>
             <button type="submit" class="button button-small">Отправить</button>
-        </div>
+        </noscript>
     </div>
 </form>
