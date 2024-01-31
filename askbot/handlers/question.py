@@ -11,12 +11,14 @@ from askbot.models import Question, UserAskBan
 from askbot.room import get_rooms
 from bot.handlers.common import get_club_user
 from club import settings
-from rooms.models import Room
 
 log = logging.getLogger(__name__)
 
-# States
-REQUEST_FOR_INPUT, INPUT_RESPONSE, FINISH_REVIEW = range(3)
+
+class State(Enum):
+    REQUEST_FOR_INPUT = 0
+    INPUT_RESPONSE = 1
+    FINISH_REVIEW = 2
 
 
 class QKeyboard(Enum):
@@ -54,7 +56,7 @@ def get_rooms_markup() -> list:
 room_choose_markup = ReplyKeyboardMarkup(get_rooms_markup())
 
 
-def start(update: Update, context: CallbackContext) -> int:
+def start(update: Update, context: CallbackContext) -> State:
     user = get_club_user(update)
     if not user:
         return ConversationHandler.END
@@ -89,7 +91,7 @@ def start(update: Update, context: CallbackContext) -> int:
         disable_web_page_preview=True,
     )
 
-    return REQUEST_FOR_INPUT
+    return State.REQUEST_FOR_INPUT
 
 
 def question_to_str(user_data: Dict[str, str]) -> str:
@@ -103,16 +105,16 @@ def question_to_str(user_data: Dict[str, str]) -> str:
     return title + body + tags + room
 
 
-def request_text_value(update: Update, context: CallbackContext) -> int:
+def request_text_value(update: Update, context: CallbackContext) -> State:
     text = update.message.text
     context.user_data[CUR_FIELD_KEY] = text
     update.message.reply_text(f"Пожалуйста введи текст для поля: {text}",
                               reply_markup=ReplyKeyboardRemove())
 
-    return INPUT_RESPONSE
+    return State.INPUT_RESPONSE
 
 
-def input_response(update: Update, context: CallbackContext) -> int:
+def input_response(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
     text = update.message.text
     field = user_data[CUR_FIELD_KEY]
@@ -125,19 +127,19 @@ def input_response(update: Update, context: CallbackContext) -> int:
         reply_markup=question_markup,
     )
 
-    return REQUEST_FOR_INPUT
+    return State.REQUEST_FOR_INPUT
 
 
-def request_room_choose(update: Update, context: CallbackContext) -> int:
+def request_room_choose(update: Update, context: CallbackContext) -> State:
     context.user_data[CUR_FIELD_KEY] = QKeyboard.ROOM.value
     update.message.reply_text(
         "Выберите комнату в которую отправить твой вопрос",
         reply_markup=room_choose_markup,
     )
-    return INPUT_RESPONSE
+    return State.INPUT_RESPONSE
 
 
-def review_question(update: Update, context: CallbackContext) -> int:
+def review_question(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
 
     title = user_data.get(QKeyboard.TITLE.value, None)
@@ -166,7 +168,7 @@ def review_question(update: Update, context: CallbackContext) -> int:
         ]
         ),
     )
-    return FINISH_REVIEW
+    return State.FINISH_REVIEW
 
 
 def publish_question(update: Update, user_data: Dict[str, str]) -> str:
@@ -229,15 +231,15 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     return channel_msg_link(channel_msg.message_id)
 
 
-def edit_question(update: Update, context: CallbackContext) -> int:
+def edit_question(update: Update, context: CallbackContext) -> State:
     update.message.reply_text(
         "Выбери что нужно отредактировать",
         reply_markup=question_markup,
     )
-    return REQUEST_FOR_INPUT
+    return State.REQUEST_FOR_INPUT
 
 
-def finish_review(update: Update, context: CallbackContext) -> int:
+def finish_review(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
     text = update.message.text
 
@@ -263,13 +265,13 @@ def finish_review(update: Update, context: CallbackContext) -> int:
         raise Exception("Неожиданная команда: " + text)
 
 
-def fallback(update: Update, context: CallbackContext) -> int:
+def fallback(update: Update, context: CallbackContext) -> State:
     update.message.reply_text(
         "Похоже ты начал вводить текст не выбрав что именно заполнять. "
         "Пожалуйста, выбери один из вариантов на клавиатуре",
         reply_markup=question_markup,
     )
-    return REQUEST_FOR_INPUT
+    return State.REQUEST_FOR_INPUT
 
 
 def error_fallback(update: Update, context: CallbackContext) -> int:
@@ -285,7 +287,7 @@ class QuestionHandler(ConversationHandler):
         super().__init__(
             entry_points=[CommandHandler(command, start)],
             states={
-                REQUEST_FOR_INPUT: [
+                State.REQUEST_FOR_INPUT: [
                     MessageHandler(
                         Filters.regex(f"^({QKeyboard.TITLE.value}|{QKeyboard.BODY.value}|{QKeyboard.TAGS.value})$"),
                         request_text_value
@@ -303,13 +305,13 @@ class QuestionHandler(ConversationHandler):
                         fallback
                     )
                 ],
-                INPUT_RESPONSE: [
+                State.INPUT_RESPONSE: [
                     MessageHandler(
                         Filters.text & ~Filters.command,
                         input_response,
                     ),
                 ],
-                FINISH_REVIEW: [
+                State.FINISH_REVIEW: [
                     MessageHandler(
                         Filters.text & ~Filters.command,
                         finish_review,
