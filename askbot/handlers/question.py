@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from enum import Enum
+from enum import Enum, auto
 from typing import Dict
 
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
@@ -16,9 +16,9 @@ log = logging.getLogger(__name__)
 
 
 class State(Enum):
-    REQUEST_FOR_INPUT = 0
-    INPUT_RESPONSE = 1
-    FINISH_REVIEW = 2
+    REQUEST_FOR_INPUT = auto()
+    INPUT_RESPONSE = auto()
+    FINISH_REVIEW = auto()
 
 
 class QKeyboard(Enum):
@@ -54,6 +54,8 @@ def get_rooms_markup() -> list:
 
 
 room_choose_markup = ReplyKeyboardMarkup(get_rooms_markup())
+
+hyperlink_format = "<a href=\"{href}\">{text}</a>".format
 
 
 def start(update: Update, context: CallbackContext) -> State:
@@ -193,7 +195,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
 
     user_id = update.effective_user.id
     user_name = update.effective_user.first_name
-    user_link = f"<a href=\"tg://user?id={user_id}\">{user_name}</a>"
+    user_link = hyperlink_format(href=f"tg://user?id={user_id}", text=user_name)
 
     room_chat_msg_text = \
         f"Вопрос от {user_link}\n\n" \
@@ -217,8 +219,8 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         group_msg_link = chat_msg_link(
             room.chat_id.replace("-100", ""),
             room_chat_msg.message_id)
-        channel_msg_text = f"{channel_msg_text}\n\n" \
-                           f"<a href=\"{group_msg_link}\">Ссылка на вопрос в тематическом чате</a>"
+        channel_msg_text = (f"{channel_msg_text}\n\n" +
+                            hyperlink_format(href=group_msg_link, text="Ссылка на вопрос в тематическом чате"))
 
     channel_msg = send_msg(
         chat_id=settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID,
@@ -246,8 +248,8 @@ def finish_review(update: Update, context: CallbackContext) -> State:
     if text == "Опубликовать":
         link = publish_question(update, user_data)
         update.message.reply_text(
-            "🎉 Ура! Твой вопрос опубликован. \n"
-            f"🔗 <a href=\"{link}\">Ссылка на твой вопрос, там же ты сможешь найти ответы</a>",
+            "🎉 Ура! Твой вопрос опубликован. \n" +
+            hyperlink_format(href=link, text="Ссылка на твой вопрос, там же ты сможешь найти ответы"),
             reply_markup=ReplyKeyboardRemove(),
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True,
