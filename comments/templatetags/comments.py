@@ -6,6 +6,8 @@ from django.utils.safestring import mark_safe
 from club import settings
 from common.markdown.markdown import markdown_text
 
+from comments.forms import BattleCommentForm
+
 register = template.Library()
 
 TreeComment = namedtuple("TreeComment", ["comment", "replies"])
@@ -68,3 +70,16 @@ def render_comment(context, comment):
             comment.save()
 
     return mark_safe(comment.html or "")
+
+
+@register.filter
+def edit_form(form):
+    return "comments/forms/battle.html" if isinstance(form, BattleCommentForm) else "comments/forms/comment.html"
+
+
+@register.simple_tag(takes_context=True)
+def selected_battle_side(context):
+    try:
+        return "selected" if context['comment'].battle_side == context['side']['name'] else ""
+    except Exception:
+        return ""
