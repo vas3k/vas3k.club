@@ -132,6 +132,8 @@ def edit_comment(request, comment_id):
 
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
+        if post.type == Post.TYPE_BATTLE:
+            form = BattleCommentForm(request.POST, instance=comment)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.is_deleted = False
@@ -145,6 +147,8 @@ def edit_comment(request, comment_id):
             return redirect("show_comment", post.slug, comment.id)
     else:
         form = CommentForm(instance=comment)
+        if post.type == Post.TYPE_BATTLE:
+            form = BattleCommentForm(instance=comment)
 
     return render(request, "comments/edit.html", {
         "comment": comment,
