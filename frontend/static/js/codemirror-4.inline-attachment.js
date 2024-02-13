@@ -89,5 +89,16 @@
         });
     };
 
+    codeMirrorEditor4.attachMobile = function (codeMirror, options, mobileToolsEl) {
+      options = options || {};
+
+      var editor = new codeMirrorEditor(codeMirror),
+          inlineattach = new inlineAttachment(options, editor);
+
+      mobileToolsEl
+          .querySelector("input[type='file']")
+          .addEventListener("change", (e) => inlineattach.onFileInputChange(e));
+  };
+
     inlineAttachment.editors.codemirror4 = codeMirrorEditor4;
 })();
