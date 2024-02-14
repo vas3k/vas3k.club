@@ -83,7 +83,7 @@
 
                 {% if me and me.is_active_membership and post.is_commentable and post.is_visible or me.is_moderator %}
                     <div class="post-comments-form" id="post-comments-form">
-                        {% include "comments/forms/comment.html" with post=post form=comment_form %}
+                        {% include "comments/forms/comment.html" with post=post form=comment_form save_message="Отправить"%}
                     </div>
 
                     <div class="post-comments-rules">
