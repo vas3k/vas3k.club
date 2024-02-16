@@ -9,12 +9,12 @@ from users.models.user import User
 
 class Question(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL) # TODO discuss on_delete action
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     json_text = models.JSONField()
     channel_msg_id = models.CharField(max_length=32, null=True, blank=True, unique=True)
     discussion_msg_id = models.CharField(max_length=32, null=True, blank=True)
-    room = models.ForeignKey(Room, null=True, on_delete=models.SET_NULL) # TODO discuss on_delete action
+    room = models.ForeignKey(Room, null=True, on_delete=models.SET_NULL)
     room_chat_msg_id = models.CharField(max_length=32, null=True, blank=True)
 
     class Meta:

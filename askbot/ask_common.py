@@ -1,4 +1,4 @@
-from telegram import Bot, ParseMode
+from telegram import Bot, ParseMode, Update, ReplyMarkup
 
 from club import settings
 
@@ -10,6 +10,20 @@ def send_msg(chat_id: int,
              ):
     bot = Bot(token=settings.TELEGRAM_ASK_BOT_TOKEN)
     return bot.send_message(chat_id=chat_id, text=text, reply_to_message_id=reply_to_message_id, parse_mode=parse_mode)
+
+
+def msg_reply(update: Update,
+              text: str,
+              parse_mode: ParseMode = ParseMode.HTML,
+              reply_markup: ReplyMarkup = None,
+              disable_web_page_preview: bool = True,
+              ):
+    update.message.reply_text(
+        text=text,
+        parse_mode=parse_mode,
+        reply_markup=reply_markup,
+        disable_web_page_preview=disable_web_page_preview
+    )
 
 
 def channel_msg_link(message_id: str) -> str:

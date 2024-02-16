@@ -70,6 +70,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "notifications/telegram/templates"),
+            os.path.join(BASE_DIR, "askbot/templates"),
             os.path.join(BASE_DIR, "frontend/html"),
         ],
         "APP_DIRS": True,

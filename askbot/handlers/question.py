@@ -3,14 +3,15 @@ from datetime import datetime, timedelta
 from enum import Enum, auto
 from typing import Dict
 
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, ParseMode
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
-from askbot.ask_common import channel_msg_link, send_msg, chat_msg_link
+from askbot.ask_common import channel_msg_link, send_msg, chat_msg_link, msg_reply
 from askbot.models import Question, UserAskBan
 from askbot.room import get_rooms
 from bot.handlers.common import get_club_user
 from club import settings
+from notifications.telegram.common import render_html_message
 
 log = logging.getLogger(__name__)
 
@@ -58,6 +59,23 @@ room_choose_markup = ReplyKeyboardMarkup(get_rooms_markup())
 hyperlink_format = "<a href=\"{href}\">{text}</a>".format
 
 
+class QuestionDto:
+    def __init__(self, title="", body="", tags="", room=""):
+        self.title = title
+        self.body = body
+        self.tags = tags
+        self.room = room
+
+    @classmethod
+    def from_user_data(cls, user_data: Dict[str, str]) -> "QuestionDto":
+        return QuestionDto(
+            title=user_data.get(QKeyboard.TITLE.value, ""),
+            body=user_data.get(QKeyboard.BODY.value, ""),
+            tags=user_data.get(QKeyboard.TAGS.value, ""),
+            room=user_data.get(QKeyboard.ROOM.value, "")
+        )
+
+
 def start(update: Update, context: CallbackContext) -> State:
     user = get_club_user(update)
     if not user:
@@ -65,7 +83,7 @@ def start(update: Update, context: CallbackContext) -> State:
 
     user_ask_ban = UserAskBan.objects.filter(user=user).first()
     if user_ask_ban and user_ask_ban.is_banned:
-        update.message.reply_text("🙈 Ты в бане, поэтому не можешь задавать вопросы")
+        msg_reply(update, render_html_message("askbot_ban.html"))
         return ConversationHandler.END
 
     yesterday = datetime.utcnow() - timedelta(hours=24)
@@ -75,43 +93,28 @@ def start(update: Update, context: CallbackContext) -> State:
 
     question_limit = 3
     if question_number >= question_limit:
-        update.message.reply_text("Ты очень любознателен(ьна)! Но на сегодня хватит вопросов, я устал 😫")
+        msg_reply(update, render_html_message("askbot_question_limit.html"))
         return ConversationHandler.END
 
-    update.message.reply_text(
-        "Здравствуй добрый человек 🤗\n\n\n"
-        "Я готов начать записывать твой вопрос, но для начала напомню:\n\n"
-        "❗️ Флуд и спам запрещены. Тут действуют все <a href=\"https://vas3k.club/docs/about/\">правила Клуба</a>.\n\n"
-        "📰 Заголовок должен сразу давать понять суть, а не заигрывать с аудиторией.\n\n"
-        "📝 Формулируй вопрос как можно точнее. "
-        "Правильный вопрос - половина ответа. Расскажи, что ты уже пробовал(а), и что не получилось.\n\n"
-        "#️⃣ Добавление тегов поможет в поиске аналогичных вопросов и ответов, но они не обязательны\n\n\n"
-        "Кнопка \"Комната\" позволяет выбрать комнату (клубный тематический чат) в которую также будет "
-        "опубликован твой вопрос",
-        parse_mode=ParseMode.HTML,
+    context.user_data.clear()
+
+    msg_reply(
+        update,
+        render_html_message("askbot_welcome.html"),
         reply_markup=question_markup,
-        disable_web_page_preview=True,
     )
 
     return State.REQUEST_FOR_INPUT
 
 
-def question_to_str(user_data: Dict[str, str]) -> str:
-    title = f"Заголовок:\n{user_data.get(QKeyboard.TITLE.value, '')}\n\n" if user_data.get(
-        QKeyboard.TITLE.value) else ""
-    body = f"Текст вопроса:\n{user_data.get(QKeyboard.BODY.value, '')}\n\n\n" if user_data.get(
-        QKeyboard.BODY.value) else ""
-    tags = f"Теги: {user_data.get(QKeyboard.TAGS.value, '')}\n\n" if user_data.get(QKeyboard.TAGS.value) else ""
-    room = f"Комната: {user_data.get(QKeyboard.ROOM.value, '')}" if user_data.get(
-        QKeyboard.ROOM.value) else ""
-    return title + body + tags + room
-
-
 def request_text_value(update: Update, context: CallbackContext) -> State:
     text = update.message.text
     context.user_data[CUR_FIELD_KEY] = text
-    update.message.reply_text(f"Пожалуйста введи текст для поля: {text}",
-                              reply_markup=ReplyKeyboardRemove())
+    msg_reply(
+        update,
+        render_html_message("askbot_request_text_value.html", field_name=text),
+        reply_markup=ReplyKeyboardRemove()
+    )
 
     return State.INPUT_RESPONSE
 
@@ -123,9 +126,9 @@ def input_response(update: Update, context: CallbackContext) -> State:
     user_data[field] = text
     del user_data[CUR_FIELD_KEY]
 
-    update.message.reply_text(
-        "Сейчас твой вопрос выглядит так: \n\n"
-        f"{question_to_str(user_data)}",
+    msg_reply(
+        update,
+        render_html_message("askbot_question_current_state.html", question=QuestionDto.from_user_data(user_data)),
         reply_markup=question_markup,
     )
 
@@ -134,8 +137,9 @@ def input_response(update: Update, context: CallbackContext) -> State:
 
 def request_room_choose(update: Update, context: CallbackContext) -> State:
     context.user_data[CUR_FIELD_KEY] = QKeyboard.ROOM.value
-    update.message.reply_text(
-        "Выберите комнату в которую отправить твой вопрос",
+    msg_reply(
+        update,
+        render_html_message("askbot_request_room_choose.html"),
         reply_markup=room_choose_markup,
     )
     return State.INPUT_RESPONSE
@@ -147,28 +151,26 @@ def review_question(update: Update, context: CallbackContext) -> State:
     title = user_data.get(QKeyboard.TITLE.value, None)
     body = user_data.get(QKeyboard.BODY.value, None)
     if not title or not body:
-        update.message.reply_text("Пожалуйста, заполни как минимум заголовок и текст вопроса")
+        msg_reply(update, render_html_message("askbot_title_body_empty_error.html"))
         return edit_question(update, context)
 
     title_len_limit = 150
     body_len_limit = 2500
     if len(title) > title_len_limit:
-        update.message.reply_text(
-            f"Заголовок вопроса превышает максимальную длину {title_len_limit}. Поправь пожалуйста.")
+        msg_reply(update, render_html_message("askbot_title_max_len_error.html", limit=title_len_limit))
         return edit_question(update, context)
 
     if len(body) > body_len_limit:
-        update.message.reply_text(f"Текст вопроса превышает максимальную длину {body_len_limit}. Поправь пожалуйста.")
+        msg_reply(update, render_html_message("askbot_body_max_len_error.html", limit=body_len_limit))
         return edit_question(update, context)
 
-    update.message.reply_text(
-        "Заполнение вопроса завершено, давай проверим, что все верно:\n\n"
-        f"{question_to_str(user_data)}",
+    msg_reply(
+        update,
+        render_html_message("askbot_review_question.html", question=QuestionDto.from_user_data(user_data)),
         reply_markup=ReplyKeyboardMarkup([
             ["Опубликовать", "Отредактировать"],
             ["Отменить"]
-        ]
-        ),
+        ]),
     )
     return State.FINISH_REVIEW
 
@@ -234,8 +236,9 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
 
 
 def edit_question(update: Update, context: CallbackContext) -> State:
-    update.message.reply_text(
-        "Выбери что нужно отредактировать",
+    msg_reply(
+        update,
+        render_html_message("askbot_edit_question.html"),
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
@@ -247,20 +250,19 @@ def finish_review(update: Update, context: CallbackContext) -> State:
 
     if text == "Опубликовать":
         link = publish_question(update, user_data)
-        update.message.reply_text(
-            "🎉 Ура! Твой вопрос опубликован. \n" +
-            hyperlink_format(href=link, text="Ссылка на твой вопрос, там же ты сможешь найти ответы"),
+        msg_reply(
+            update,
+            render_html_message("askbot_question_is_published.html", link=link),
             reply_markup=ReplyKeyboardRemove(),
-            parse_mode=ParseMode.HTML,
-            disable_web_page_preview=True,
         )
         return ConversationHandler.END
     elif text == "Отредактировать":
         return edit_question(update, context)
     elif text == "Отменить":
-        update.message.reply_text(
-            "Заполнение вопроса отменено. Если хочешь начать сначала введи команду /start",
-            reply_markup=ReplyKeyboardRemove()
+        msg_reply(
+            update,
+            render_html_message("askbot_edit_canceled.html"),
+            reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
     else:
@@ -268,17 +270,18 @@ def finish_review(update: Update, context: CallbackContext) -> State:
 
 
 def fallback(update: Update, context: CallbackContext) -> State:
-    update.message.reply_text(
-        "Похоже ты начал вводить текст не выбрав что именно заполнять. "
-        "Пожалуйста, выбери один из вариантов на клавиатуре",
+    msg_reply(
+        update,
+        render_html_message("askbot_input_without_command_error.html"),
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
 
 
 def error_fallback(update: Update, context: CallbackContext) -> int:
-    update.message.reply_text(
-        "Что-то пошло не так. Попробуй пожалуйста начать сначала."
+    msg_reply(
+        update,
+        render_html_message("askbot_error_fallback.html")
     )
     return ConversationHandler.END
 
@@ -305,7 +308,8 @@ class QuestionHandler(ConversationHandler):
                     MessageHandler(
                         Filters.text & ~Filters.command,
                         fallback
-                    )
+                    ),
+                    CommandHandler("start", start),
                 ],
                 State.INPUT_RESPONSE: [
                     MessageHandler(
