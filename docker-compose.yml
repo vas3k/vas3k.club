@@ -74,12 +74,12 @@ services:
 #      - postgres
 #      - redis
 
-# Uncomment these lines if you want to test the askbot locally
-#  askbot:
+# Uncomment these lines if you want to test the helpdeskbot locally
+#  helpdeskbot:
 #    build:
 #      dockerfile: Dockerfile
 #      context: .
-#    command: make docker-run-askbot
+#    command: make docker-run-helpdeskbot
 #    environment:
 #      - MODE=dev
 #      - DEBUG=true

@@ -64,10 +64,10 @@ services:
       options:
         max-size: "100M"
 
-  askbot:
+  helpdeskbot:
     <<: *app
-    command: make docker-run-askbot
-    container_name: club_ask_bot
+    command: make docker-run-helpdeskbot
+    container_name: club_help_desk_bot
     depends_on:
       - club_app
       - postgres

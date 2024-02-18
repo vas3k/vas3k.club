@@ -8,7 +8,7 @@ def send_msg(chat_id: int,
              reply_to_message_id: int = None,
              parse_mode: ParseMode = ParseMode.HTML
              ):
-    bot = Bot(token=settings.TELEGRAM_ASK_BOT_TOKEN)
+    bot = Bot(token=settings.TELEGRAM_HELP_DESK_BOT_TOKEN)
     return bot.send_message(chat_id=chat_id, text=text, reply_to_message_id=reply_to_message_id, parse_mode=parse_mode)
 
 
@@ -27,7 +27,7 @@ def msg_reply(update: Update,
 
 
 def channel_msg_link(message_id: str) -> str:
-    channel_link_id = str(settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID).replace("-100", "")
+    channel_link_id = str(settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID).replace("-100", "")
     return chat_msg_link(channel_link_id, message_id)
 
 

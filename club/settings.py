@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "simple_history",
     "django_q",
     "webpack_loader",
-    "askbot.apps.AskBotConfig",
+    "helpdeskbot.apps.HelpDeskBotConfig",
 ]
 
 MIDDLEWARE = [
@@ -70,7 +70,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "notifications/telegram/templates"),
-            os.path.join(BASE_DIR, "askbot/templates"),
+            os.path.join(BASE_DIR, "helpdeskbot/templates"),
             os.path.join(BASE_DIR, "frontend/html"),
         ],
         "APP_DIRS": True,
@@ -275,12 +275,12 @@ TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
 
-TELEGRAM_ASK_BOT_TOKEN = os.getenv("TELEGRAM_ASK_BOT_TOKEN")
-TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID = os.getenv("TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID")
-TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID = os.getenv("TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID")
-TELEGRAM_ASK_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/askbot/webhook/"
-TELEGRAM_ASK_BOT_WEBHOOK_HOST = "0.0.0.0"
-TELEGRAM_ASK_BOT_WEBHOOK_PORT = 8817
+TELEGRAM_HELP_DESK_BOT_TOKEN = os.getenv("TELEGRAM_HELP_DESK_BOT_TOKEN")
+TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID = os.getenv("TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID")
+TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID = os.getenv("TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID")
+TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/helpdeskbot/webhook/"
+TELEGRAM_HELP_DESK_BOT_WEBHOOK_HOST = "0.0.0.0"
+TELEGRAM_HELP_DESK_BOT_WEBHOOK_PORT = 8817
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""

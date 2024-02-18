@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from askbot.models import UserAskBan
+from helpdeskbot.models import HelpDeskUser
 
 
-class UserAskBanAdmin(admin.ModelAdmin):
+class HelpDeskUserAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "banned_until",
@@ -12,4 +12,4 @@ class UserAskBanAdmin(admin.ModelAdmin):
     search_fields = ["user"]
 
 
-admin.site.register(UserAskBan, UserAskBanAdmin)
+admin.site.register(HelpDeskUser, HelpDeskUserAdmin)

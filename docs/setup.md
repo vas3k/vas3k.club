@@ -75,7 +75,7 @@ $ pipenv run python manage.py migrate
 $ pipenv run python manage.py runserver 0.0.0.0:8000
 ```
 
-## Telegram bot or ask-bot
+## Telegram bot or help-desk-bot
 
 To run telegram bot you have to:
   1. Copy env.exmaple file: `cp ./club/.env.example ./club/.env`

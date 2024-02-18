@@ -21,14 +21,14 @@ class Question(models.Model):
         db_table = "questions"
 
 
-class UserAskBan(models.Model):
+class HelpDeskUser(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     banned_until = models.DateTimeField(null=True)
     ban_reason = models.CharField(max_length=512, null=True)
 
     class Meta:
-        db_table = "ask_bans"
+        db_table = "help_desk_users"
 
     @property
     def is_banned(self) -> bool:

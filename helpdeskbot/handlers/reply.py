@@ -3,9 +3,9 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from askbot.ask_common import channel_msg_link, send_msg
-from askbot.room import get_rooms
-from askbot.models import Question
+from helpdeskbot.help_desk_common import channel_msg_link, send_msg
+from helpdeskbot.room import get_rooms
+from helpdeskbot.models import Question
 from club import settings
 
 log = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ def handle_reply_from_room_chat(update: Update) -> None:
     message_text = f"💬 {reply_chat_link} от {from_user_link} из чата {room_invite_link}:\n\n" \
                    f"{update.message.text}"
 
-    chat_id = settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID
+    chat_id = settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID
     send_msg(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
 
 
@@ -113,7 +113,7 @@ def on_reply_message(update: Update, context: CallbackContext) -> None:
     reply_to = update.message.reply_to_message
 
     if reply_to.forward_from_chat:
-        if reply_to.forward_from_chat.id == int(settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID):
+        if reply_to.forward_from_chat.id == int(settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
             handle_reply_from_channel(update)
             return None
     else:

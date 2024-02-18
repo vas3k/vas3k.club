@@ -6,9 +6,9 @@ from typing import Dict
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
-from askbot.ask_common import channel_msg_link, send_msg, chat_msg_link, msg_reply
-from askbot.models import Question, UserAskBan
-from askbot.room import get_rooms
+from helpdeskbot.help_desk_common import channel_msg_link, send_msg, chat_msg_link, msg_reply
+from helpdeskbot.models import Question, HelpDeskUser
+from helpdeskbot.room import get_rooms
 from bot.handlers.common import get_club_user
 from club import settings
 from notifications.telegram.common import render_html_message
@@ -81,9 +81,9 @@ def start(update: Update, context: CallbackContext) -> State:
     if not user:
         return ConversationHandler.END
 
-    user_ask_ban = UserAskBan.objects.filter(user=user).first()
-    if user_ask_ban and user_ask_ban.is_banned:
-        msg_reply(update, render_html_message("askbot_ban.html"))
+    help_desk_user_ban = HelpDeskUser.objects.filter(user=user).first()
+    if help_desk_user_ban and help_desk_user_ban.is_banned:
+        msg_reply(update, render_html_message("helpdeskbot_ban.html"))
         return ConversationHandler.END
 
     yesterday = datetime.utcnow() - timedelta(hours=24)
@@ -93,14 +93,14 @@ def start(update: Update, context: CallbackContext) -> State:
 
     question_limit = 3
     if question_number >= question_limit:
-        msg_reply(update, render_html_message("askbot_question_limit.html"))
+        msg_reply(update, render_html_message("helpdeskbot_question_limit.html"))
         return ConversationHandler.END
 
     context.user_data.clear()
 
     msg_reply(
         update,
-        render_html_message("askbot_welcome.html"),
+        render_html_message("helpdeskbot_welcome.html"),
         reply_markup=question_markup,
     )
 
@@ -112,7 +112,7 @@ def request_text_value(update: Update, context: CallbackContext) -> State:
     context.user_data[CUR_FIELD_KEY] = text
     msg_reply(
         update,
-        render_html_message("askbot_request_text_value.html", field_name=text),
+        render_html_message("helpdeskbot_request_text_value.html", field_name=text),
         reply_markup=ReplyKeyboardRemove()
     )
 
@@ -128,7 +128,7 @@ def input_response(update: Update, context: CallbackContext) -> State:
 
     msg_reply(
         update,
-        render_html_message("askbot_question_current_state.html", question=QuestionDto.from_user_data(user_data)),
+        render_html_message("helpdeskbot_question_current_state.html", question=QuestionDto.from_user_data(user_data)),
         reply_markup=question_markup,
     )
 
@@ -139,7 +139,7 @@ def request_room_choose(update: Update, context: CallbackContext) -> State:
     context.user_data[CUR_FIELD_KEY] = QKeyboard.ROOM.value
     msg_reply(
         update,
-        render_html_message("askbot_request_room_choose.html"),
+        render_html_message("helpdeskbot_request_room_choose.html"),
         reply_markup=room_choose_markup,
     )
     return State.INPUT_RESPONSE
@@ -151,22 +151,22 @@ def review_question(update: Update, context: CallbackContext) -> State:
     title = user_data.get(QKeyboard.TITLE.value, None)
     body = user_data.get(QKeyboard.BODY.value, None)
     if not title or not body:
-        msg_reply(update, render_html_message("askbot_title_body_empty_error.html"))
+        msg_reply(update, render_html_message("helpdeskbot_title_body_empty_error.html"))
         return edit_question(update, context)
 
     title_len_limit = 150
     body_len_limit = 2500
     if len(title) > title_len_limit:
-        msg_reply(update, render_html_message("askbot_title_max_len_error.html", limit=title_len_limit))
+        msg_reply(update, render_html_message("helpdeskbot_title_max_len_error.html", limit=title_len_limit))
         return edit_question(update, context)
 
     if len(body) > body_len_limit:
-        msg_reply(update, render_html_message("askbot_body_max_len_error.html", limit=body_len_limit))
+        msg_reply(update, render_html_message("helpdeskbot_body_max_len_error.html", limit=body_len_limit))
         return edit_question(update, context)
 
     msg_reply(
         update,
-        render_html_message("askbot_review_question.html", question=QuestionDto.from_user_data(user_data)),
+        render_html_message("helpdeskbot_review_question.html", question=QuestionDto.from_user_data(user_data)),
         reply_markup=ReplyKeyboardMarkup([
             ["Опубликовать", "Отредактировать"],
             ["Отменить"]
@@ -225,7 +225,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
                             hyperlink_format(href=group_msg_link, text="Ссылка на вопрос в тематическом чате"))
 
     channel_msg = send_msg(
-        chat_id=settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID,
+        chat_id=settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
         text=channel_msg_text
     )
 
@@ -238,7 +238,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
 def edit_question(update: Update, context: CallbackContext) -> State:
     msg_reply(
         update,
-        render_html_message("askbot_edit_question.html"),
+        render_html_message("helpdeskbot_edit_question.html"),
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
@@ -252,7 +252,7 @@ def finish_review(update: Update, context: CallbackContext) -> State:
         link = publish_question(update, user_data)
         msg_reply(
             update,
-            render_html_message("askbot_question_is_published.html", link=link),
+            render_html_message("helpdeskbot_question_is_published.html", link=link),
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
@@ -261,7 +261,7 @@ def finish_review(update: Update, context: CallbackContext) -> State:
     elif text == "Отменить":
         msg_reply(
             update,
-            render_html_message("askbot_edit_canceled.html"),
+            render_html_message("helpdeskbot_edit_canceled.html"),
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
@@ -272,7 +272,7 @@ def finish_review(update: Update, context: CallbackContext) -> State:
 def fallback(update: Update, context: CallbackContext) -> State:
     msg_reply(
         update,
-        render_html_message("askbot_input_without_command_error.html"),
+        render_html_message("helpdeskbot_input_without_command_error.html"),
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
@@ -281,7 +281,7 @@ def fallback(update: Update, context: CallbackContext) -> State:
 def error_fallback(update: Update, context: CallbackContext) -> int:
     msg_reply(
         update,
-        render_html_message("askbot_error_fallback.html")
+        render_html_message("helpdeskbot_error_fallback.html")
     )
     return ConversationHandler.END
 

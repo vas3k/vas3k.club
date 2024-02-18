@@ -11,8 +11,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "club.settings")
 django.setup()
 # THE END
 
-from askbot.handlers.question import update_discussion_message_id, QuestionHandler
-from askbot.handlers.reply import on_reply_message
+from helpdeskbot.handlers.question import update_discussion_message_id, QuestionHandler
+from helpdeskbot.handlers.reply import on_reply_message
 
 from django.conf import settings
 from telegram import Update, ParseMode
@@ -39,16 +39,16 @@ def on_telegram_admin_bot_message(update: Update, context: CallbackContext) -> N
         return None
 
     message = update.message
-    if message.chat.id == int(settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_DISCUSSION_ID) \
+    if message.chat.id == int(settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID) \
         and message.forward_from_chat \
-        and message.forward_from_chat.id == int(settings.TELEGRAM_ASK_BOT_QUESTION_CHANNEL_ID) \
+        and message.forward_from_chat.id == int(settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID) \
         and message.forward_from_message_id:
         update_discussion_message_id(update)
 
 
 def main() -> None:
     # Initialize telegram
-    updater = Updater(settings.TELEGRAM_ASK_BOT_TOKEN, use_context=True)
+    updater = Updater(settings.TELEGRAM_HELP_DESK_BOT_TOKEN, use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
