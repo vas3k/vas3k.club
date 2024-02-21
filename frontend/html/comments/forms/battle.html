@@ -1,3 +1,5 @@
+{% load comments %}
+
 <form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
     <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
     <div class="comment-form">
@@ -8,7 +10,7 @@
             <div class="comment-form-body-battle-side">Я за
                 <select name="{{ form.battle_side.name }}" id="{{ form.battle_side.id_for_label }}">
                     {% for code, side in post.metadata.battle.sides.items %}
-                        <option value="{{ code }}">{{ side.name }}</option>
+                        <option value="{{ code }}" {% selected_battle_side %}>{{ side.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -22,7 +24,7 @@
             <div class="comment-form-subscribe">
                 {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
             </div>
-            <button type="submit" class="button comment-form-button">Отправить</button>
+            <button type="submit" class="button comment-form-button"> {{save_message}} </button>
         </div>
     </div>
 </form>

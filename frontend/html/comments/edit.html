@@ -1,21 +1,13 @@
 {% extends "layout.html" %}
 {% load text_filters %}
+{% load comments %}
 
 {% block content %}
     <div class="content comment">
         <form action="{% url "edit_comment" comment.id %}" method="post" class="form comment-form-form">
             <div class="comment-form">
-                <div class="comment-form-avatar">
-                    <div class="avatar"><img src="{% if form.instance.author.avatar %}{{ form.instance.author.get_avatar }}{% else %}{{ me.get_avatar }}{% endif %}" alt="Аватар" /></div>
-                </div>
                 <div class="comment-form-body">
-                    <comment-markdown-editor post-slug="{{ post.slug }}">
-                        {{ form.text }}
-                    </comment-markdown-editor>
-                    {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
-                </div>
-                <div class="comment-form-footer">
-                    <button type="submit" class="button">Сохранить</button>
+                    {% include form|edit_form with post=post form=form comment=comment save_message="Сохранить" %}
                 </div>
             </div>
         </form>
