@@ -197,7 +197,7 @@ PRODUCTS = {
     },
     "club50_recurrent_yearly": {
         "code": "club50_recurrent_yearly",
-        "stripe_id": "price_1M5rpuKgJMaF2rHthbAI2p4v" if not IS_TEST_STRIPE else "price_1H74BCKgJMaF2rHtRhUtbn3C",
+        "stripe_id": "price_1OmKAFKgJMaF2rHtxoB6YQB6" if not IS_TEST_STRIPE else "price_1H74BCKgJMaF2rHtRhUtbn3C",
         "coinbase_id": "ff0df23f-06d8-473f-9ad8-74039a62aeb1",
         "description": "Членство в Клубе на 50 лет (автопополнение каждый год)",
         "amount": 250,
