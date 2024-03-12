@@ -295,6 +295,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/game_tournament_org_1.png",
         "style": "background-color: #929292; font-size: 120%;",
     }),
+    ("music_jam_6", {
+        "name": "Medley",
+        "description": "За участие в зимнем музыкальном челлендже 2024",
+        "image": "https://vas3k.club/static/images/achievements/music_jam_6.png",
+        "style": "background-color: #49D6AC; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
