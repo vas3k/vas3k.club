@@ -4,6 +4,7 @@ import "../css/index.css";
 
 import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
+import "./input.inline-attachment";
 
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
