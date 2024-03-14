@@ -30,14 +30,13 @@ def stripe_camp_webhook(request):
 
         user = User.objects.filter(email=session["customer_details"]["email"].lower()).first()
 
+        # the user with the specified e-mail address does not necessarily exist
         if user:
             camp_achievement = Achievement.objects.filter(code="vas3k_camp_2024").first()
-            user_achievement, is_created = UserAchievement.objects.get_or_create(
+            UserAchievement.objects.get_or_create(
                 user=user,
                 achievement=camp_achievement,
             )
-            if is_created:
-                async_create_or_update_achievement(user_achievement)
 
         # send confirmation email
         camp_confirmation_template = loader.get_template("emails/camp_confirmation.html")
