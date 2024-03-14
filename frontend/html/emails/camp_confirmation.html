@@ -1,0 +1,47 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    🔥 Ждём вас на Вастрик Кэмпе 2024
+{% endblock %}
+
+{% block body %}
+    <p>
+        👋 Это тестовое письмо пока не будет готово настоящее
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "login" %}" class="button">Кнопка входа в чат</a>
+    </p>
+
+    <p>
+        Кек пук
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

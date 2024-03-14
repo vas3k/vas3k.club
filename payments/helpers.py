@@ -10,6 +10,25 @@ from users.models.user import User
 log = logging.getLogger(__name__)
 
 
+def parse_stripe_webhook_event(request, webhook_secret):
+    payload = request.body
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
+
+    if not payload or not sig_header:
+        raise BadRequest(code=400, message="[invalid payload]")
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_secret
+        )
+    except ValueError:
+        raise BadRequest(code=400, message="[invalid payload]")
+    except stripe.error.SignatureVerificationError:
+        raise BadRequest(code=400, message="[invalid signature]")
+
+    return event
+
+
 def cancel_all_stripe_subscriptions(stripe_id: str) -> bool:
     if not stripe_id:
         return False

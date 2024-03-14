@@ -49,6 +49,7 @@ jobs:
           secret_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
           secret_STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
           secret_STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          secret_STRIPE_CAMP_WEBHOOK_SECRET: ${{ secrets.STRIPE_CAMP_WEBHOOK_SECRET }}
           secret_COINBASE_WEBHOOK_SECRET: ${{ secrets.COINBASE_WEBHOOK_SECRET }}
           secret_PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}
           secret_PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}

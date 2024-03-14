@@ -301,6 +301,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/music_jam_6.png",
         "style": "background-color: #49D6AC; font-size: 120%;",
     }),
+    ("vas3k_camp_2024", {
+        "name": "Вастрик 🔥 Кэмп 2024",
+        "description": "Участник клубного Кэмпа в Сербии летом 2024",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2024.jpg",
+        "style": "background-color: #F1DFC5; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png

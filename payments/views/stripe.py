@@ -6,7 +6,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from authn.decorators.auth import require_auth
+from club.exceptions import BadRequest
 from payments.exceptions import PaymentException
+from payments.helpers import parse_stripe_webhook_event
 from payments.models import Payment
 from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
 from payments.service import stripe
@@ -156,22 +158,10 @@ def stop_subscription(request, subscription_id):
 
 
 def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
-
-    if not payload or not sig_header:
-        return HttpResponse("[invalid payload]", status=400)
-
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-        )
-    except ValueError:
-        return HttpResponse("[invalid payload]", status=400)
-    except stripe.error.SignatureVerificationError:
-        return HttpResponse("[invalid signature]", status=400)
-
-    log.info("Stripe webhook event: " + event["type"])
+        event = parse_stripe_webhook_event(request, settings.STRIPE_WEBHOOK_SECRET)
+    except BadRequest as ex:
+        return HttpResponse(ex.message, status=ex.code)
 
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
@@ -214,3 +204,4 @@ def stripe_webhook(request):
         return HttpResponse("[ok]", status=200)
 
     return HttpResponse("[unknown event]", status=400)
+
