@@ -6,7 +6,7 @@
             <div class="block login-service">
                 <div class="login-service-title">Вход по почте или нику</div>
                 <div class="login-service-form">
-                    <form action="{% url "email_login" %}" method="post">
+                    <form action="{% url "email_login" %}" method="post" novalidate>
                         <input type="email" name="email_or_login" value="{{ email|default:"" }}" placeholder="your@gmail.com" class="login-email" required>
                         {% if goto %}<input type="hidden" name="goto" value="{{ goto }}">{% endif %}
                         <button type="submit" class="button login-button" style="min-width: 200px;">🤙 Войти</button>
