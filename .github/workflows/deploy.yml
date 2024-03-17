@@ -3,7 +3,7 @@ name: Deploy production
 on:
   push:
     branches:
-      - master
+      - club
 
 jobs:
   build:
@@ -11,10 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+        with:
+          ref: club
       - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
-      - run: docker build -t ghcr.io/$GITHUB_ACTOR/club:latest -t ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA .
-      - run: docker image push ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA
-      - run: docker image push ghcr.io/$GITHUB_ACTOR/club:latest
+      - run: docker pull ghcr.io/career-workshop/club:latest || true
+      - run: docker build --cache-from=ghcr.io/career-workshop/club -t ghcr.io/career-workshop/club:latest -t ghcr.io/career-workshop/club:$GITHUB_SHA .
+      - run: docker image push ghcr.io/career-workshop/club:$GITHUB_SHA
+      - run: docker image push ghcr.io/career-workshop/club:latest
 
   deploy:
     name: Deploy
@@ -24,7 +27,9 @@ jobs:
       SSH_KEY_PATH: /tmp/ssh_key
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
+        with:
+          ref: club
       - name: Make envfile
         run: export | grep "secret_" | sed "s/declare -x secret_//" > .env
         env:
@@ -49,7 +54,6 @@ jobs:
           secret_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
           secret_STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
           secret_STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-          secret_STRIPE_CAMP_WEBHOOK_SECRET: ${{ secrets.STRIPE_CAMP_WEBHOOK_SECRET }}
           secret_COINBASE_WEBHOOK_SECRET: ${{ secrets.COINBASE_WEBHOOK_SECRET }}
           secret_PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}
           secret_PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}
@@ -57,6 +61,12 @@ jobs:
           secret_WEBHOOK_SECRETS: ${{ secrets.WEBHOOK_SECRETS }}
       - run: echo "GITHUB_SHA=$GITHUB_SHA" >> .env
       - run: echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ${{ env.SSH_KEY_PATH }} && chmod 600 ${{ env.SSH_KEY_PATH }}
-      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/vas3k/vas3k.club/.env
-      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/home/vas3k/vas3k.club/docker-compose.production.yml
-      - run: ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} "cd /home/vas3k/vas3k.club && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} && docker pull ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA && docker-compose -f docker-compose.production.yml --env-file=.env up -d && docker system prune --all --force"
+      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} .env ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/club/.env
+      - run: scp -o StrictHostKeyChecking=no -i ${{ env.SSH_KEY_PATH }} docker-compose.production.yml ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }}:/var/www/club/docker-compose.production.yml
+      - run: |
+          ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} \
+            "cd /var/www/club \
+            && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} \
+            && docker pull ghcr.io/career-workshop/club:$GITHUB_SHA \
+            && docker compose -f docker-compose.production.yml --env-file=.env up -d \
+            && docker system prune --all --force"
