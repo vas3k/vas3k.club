@@ -20,7 +20,7 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
 from common.feature_flags import feature_switch
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite
-from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
+from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
 from rooms.views import redirect_to_room_chat, list_rooms
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
     email_digest_switch, link_telegram
@@ -123,6 +123,7 @@ urlpatterns = [
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
     path("achievements/", RedirectView.as_view(url="/stats", permanent=True), name="achievements"),
+    path("achievements/<slug:achievement_code>/", show_achievement, name="show_achievement"),
     path("stats/", stats, name="stats"),
 
     path("profile/tag/<str:tag_code>/toggle/", toggle_tag, name="toggle_tag"),

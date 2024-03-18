@@ -166,6 +166,30 @@
         }
     }
 
+.stats-achievement-details {
+    display: flex;
+    justify-content: center;
+}
+
+    .stats-achievement-details .user-achievement {
+        width: 250px;
+        height: 350px;
+        font-size: 180%;
+    }
+
+    .stats-achievement-details .user-badge-image {
+        max-height: 180px;
+    }
+
+    .stats-achievement-details__info {
+        max-width: 60%;
+        font-size: 150%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+    }
+
 .stats-badges-latest {
     display: flex;
     flex-direction: row;

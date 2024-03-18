@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load users %}
+{% load text_filters %}
+
+{% block title %}
+    Ачивка «{{ achievement.name }}» — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="stats">
+        <div class="stats-achievement-details">
+            {% include "achievements/widgets/achievement.html" %}
+            <div class="stats-achievement-details__info">
+                <span><strong>Название:</strong> {{ achievement.name }}</span>
+                <span><strong>Описание:</strong> {{ achievement.description }}</span>
+                <span><strong>Награждено:</strong> {{ users|length }} {{ users|length|rupluralize:"человек,человека,человек" }}</span>
+                <span><strong>Редкость:</strong> {{ rarity }}%</span>
+                {% if rarity > 75 %}
+                    <span>Легендарная и редкая ачивка. Тут только самые лучшие!</span>
+                {% elif rarity > 45 %}
+                    <span>Довольно сложная ачивка. Нужно было постараться, чтобы ее заслужить.</span>
+                {% elif rarity > 10 %}
+                    <span>Хорошая ачивка за хорошую работу!</span>
+                {% else %}
+                    <span>Довольно популярная ачивка, много у кого есть.</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="stats-achievements-users">
+            {% for user in users %}
+                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
+                    <span class="avatar top-user-avatar">
+                        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
+                    </span>
+                    <span class="top-user-name">{{ user.full_name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

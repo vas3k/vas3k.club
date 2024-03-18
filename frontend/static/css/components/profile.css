@@ -243,6 +243,11 @@
             perspective: 1000px;
         }
 
+            .user-achievement:hover {
+                color: #FFF;
+                text-decoration: none;
+            }
+
             .user-achievement:hover .user-achievement-wrapper {
                 transform: rotateY(180deg);
             }

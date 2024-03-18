@@ -3,15 +3,15 @@ from urllib.parse import urlencode
 
 import pytz
 from django.db.models import Count, Q, Sum
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_GET
 from icalendar import Calendar, Event
 
 from authn.decorators.auth import require_auth
 from badges.models import UserBadge
 from misc.models import NetworkGroup
-from users.models.achievements import Achievement
+from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 
 
@@ -55,6 +55,34 @@ def stats(request):
         "top_users": top_users,
         "moderators": moderators,
         "parliament": parliament,
+    })
+
+
+@require_auth
+def show_achievement(request, achievement_code):
+    achievement = get_object_or_404(Achievement, code=achievement_code)
+    if not achievement.is_visible:
+        raise Http404()
+
+    users = User.objects.filter(achievements__achievement_id=achievement_code)
+
+    # calculate rarity of the achievement
+    achievement_stats = dict(
+        UserAchievement.objects.all()
+        .values("achievement_id")
+        .annotate(total=Count("achievement_id"))
+        .order_by("-total")
+        .values_list("achievement_id", "total")
+    )
+
+    total_count = len(achievement_stats.values())
+    index = list(achievement_stats.keys()).index(achievement_code)
+    rarity = (index / total_count) * 100
+
+    return render(request, "achievements/show_achievement.html", {
+        "achievement": achievement,
+        "users": users,
+        "rarity": round(rarity, 1)
     })
 
 

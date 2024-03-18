@@ -1,0 +1,11 @@
+<a href="{% url "show_achievement" achievement.code %}" class="user-achievement">
+    <span class="user-achievement-wrapper">
+        <span class="user-achievement-front" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+            <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
+            <span class="user-achievement-name">{{ achievement.name }}</span>
+        </span>
+        <span class="user-achievement-back" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+            {{ achievement.description }}
+        </span>
+    </span>
+</a>
