@@ -26,7 +26,7 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
             send_telegram_image(
                 chat=Chat(id=user.telegram_id),
                 image_url=achievement.image,
-                text=render_html_message("show_achievement.html", user=user, achievement=achievement),
+                text=render_html_message("achievement.html", user=user, achievement=achievement),
             )
 
     # emails
