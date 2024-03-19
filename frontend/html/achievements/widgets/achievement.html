@@ -1,5 +1,6 @@
 {% if skip_achievement_link %}
-    <span class="user-achievement">
+    <!-- Empty touchStart event for allow to hover with touch event on mobile -->
+    <span class="user-achievement" ontouchstart="">
 {% else %}
     <a href="{% url "show_achievement" achievement.code %}" class="user-achievement">
 {% endif %}
