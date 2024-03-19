@@ -46,7 +46,7 @@
                 {% if group.rooms %}
                     <div class="network-channels">
                         {% for room in group.rooms.all %}
-                            {% if room.get_private_url %}
+                            {% if room.is_visible and room.get_private_url %}
                                 <a href="{{ room.get_private_url }}" target="_blank" class="network-channel">
                                     {% if room.image %}
                                         <span class="avatar network-channel-icon"><img src="{{ room.image }}" alt="{{ room.title }}"></span>
