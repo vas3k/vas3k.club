@@ -4,9 +4,13 @@ from django.views.decorators.http import require_http_methods
 
 from authn.decorators.auth import require_auth
 from authn.models.session import Session
+from club import features
 
 
 def join(request):
+    if features.FREE_MEMBERSHIP:
+        return redirect("index", request.me.slug)
+
     if request.me:
         return redirect("profile", request.me.slug)
 

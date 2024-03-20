@@ -11,3 +11,6 @@ PRIVATE_FEED = True
 # Enable auth and payment via Patreon
 #   See settings.py for more configs (PATREON_ - prefixed)
 PATREON_AUTH_ENABLED = True
+
+# Payments are not required
+FREE_MEMBERSHIP = True
