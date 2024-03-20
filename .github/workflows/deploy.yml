@@ -14,10 +14,10 @@ jobs:
         with:
           ref: club
       - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
-      - run: docker pull ghcr.io/career-workshop/club:latest || true
-      - run: docker build --cache-from=ghcr.io/career-workshop/club -t ghcr.io/career-workshop/club:latest -t ghcr.io/career-workshop/club:$GITHUB_SHA .
-      - run: docker image push ghcr.io/career-workshop/club:$GITHUB_SHA
-      - run: docker image push ghcr.io/career-workshop/club:latest
+      - run: docker pull ghcr.io/careerfactory/club:latest || true
+      - run: docker build --cache-from=ghcr.io/careerfactory/club -t ghcr.io/careerfactory/club:latest -t ghcr.io/careerfactory/club:$GITHUB_SHA .
+      - run: docker image push ghcr.io/careerfactory/club:$GITHUB_SHA
+      - run: docker image push ghcr.io/careerfactory/club:latest
 
   deploy:
     name: Deploy
@@ -67,6 +67,6 @@ jobs:
           ssh -i ${{ env.SSH_KEY_PATH }} ${{ secrets.PRODUCTION_SSH_USERNAME }}@${{ secrets.PRODUCTION_SSH_HOST }} \
             "cd /var/www/club \
             && docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }} \
-            && docker pull ghcr.io/career-workshop/club:$GITHUB_SHA \
+            && docker pull ghcr.io/careerfactory/club:$GITHUB_SHA \
             && docker compose -f docker-compose.production.yml --env-file=.env up -d \
             && docker system prune --all --force"

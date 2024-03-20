@@ -1,15 +1,13 @@
 version: "3"
 services:
   club_app: &app
-    image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    image: ghcr.io/careerfactory/club:${GITHUB_SHA:-latest}
     command: make docker-run-production
     container_name: club_app
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
       - DEBUG=false
-      - APP_HOST=https://vas3k.club
-      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
       - POSTGRES_PASSWORD=vas3k
@@ -87,7 +85,7 @@ services:
       POSTGRES_PASSWORD: vas3k
       POSTGRES_DB: vas3k_club
     volumes:
-      - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
+      - pgdata:/var/lib/postgresql/data:rw
     ports:
       - "127.0.0.1:54333:5432"
 
@@ -97,3 +95,6 @@ services:
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+volumes:
+  pgdata:
