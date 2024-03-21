@@ -20,6 +20,9 @@ run-bot:  ## Runs telegram bot
 docker-run-bot:
 	python3 bot/main.py
 
+docker-run-helpdeskbot:
+	python3 helpdeskbot/main.py
+
 docker-run-cron:
 	env >> /etc/environment
 	cron -f -l 2
