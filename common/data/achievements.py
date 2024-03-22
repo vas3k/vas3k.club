@@ -236,7 +236,7 @@ ACHIEVEMENTS = [
         "style": "background-color: #FFCE30;",
     }),
     ("astrophoto", {
-        "name": "Космо-папарации",
+        "name": "Космо-папарацци",
         "description": "За участие в мероприятии астрофотографов",
         "image": "https://vas3k.club/static/images/achievements/astrophoto.png",
         "style": "background-color: #200836; font-size: 120%;",
