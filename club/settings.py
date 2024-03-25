@@ -20,7 +20,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
     ("admin", "club@club.careerfactory.ru"),
-    ("vas3k", "me@club.careerfactory.ru"),
+    ("me", "me@club.careerfactory.ru"),
 ]
 
 INSTALLED_APPS = [
@@ -270,7 +270,7 @@ TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
-TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
+TELEGRAM_BOT_WEBHOOK_URL = "https://club.careerfactory.ru/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
 
