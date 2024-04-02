@@ -4,7 +4,7 @@
 {% load render_bundle from webpack_loader %}
 <html lang="ru" theme="dark">
 <head>
-    <title>{% block title %}Вастрик.Клуб ✖️‍{% endblock %}</title>
+    <title>{% block title %}Клуб Карьерного Цеха‍{% endblock %}</title>
     {% block fonts %}
         {% include "common/fonts.html" %}
     {% endblock %}
@@ -24,7 +24,7 @@
         <div class="landing-block landing-block-limited">
             <img src="{% static "images/logo/logo-1024.png" %}" alt="">
             <div class="landing-title">
-                <h1>Вастрик.Клуб</h1>
+                <h1>Клуб Карьерного Цеха</h1>
                 <p>Всё самое интересное происходит за закрытыми дверями</p>
                 <a href="{% url "login" %}" class="button button-black">Войти</a>
             </div>
@@ -257,9 +257,7 @@
 {% block footer %}
     <footer class="footer">
         <div class="footer-left" style="text-align: center; font-size: 130%;">
-            &copy; <a href="https://vas3k.ru" target="_blank">Вастрик</a> {% now "Y" %}
-            &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
-            <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
+            <a href="{% url "docs" "contact" %}">Связаться с нами</a>
         </div>
     </footer>
 {% endblock %}

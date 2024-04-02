@@ -6,7 +6,7 @@
 {% load emails %}
 
 {% block og_meta %}
-    <meta property="og:site_name" content="Вастрик.Клуб" />
+    <meta property="og:site_name" content="Клуб Карьерного Цеха" />
     <meta property="og:title" content="Клубный журнал. Итоги недели. Выпуск #{{ issue_number }}" />
     <meta property="og:type" content="article" />
     <meta property="og:description" content="{{ og_description }}" />
@@ -98,7 +98,7 @@
 {% endblock %}
 
 {% block title %}
-    Журнал Вастрик.Клуба<br>
+    Журнал Клуба Карьерного Цеха<br>
 
     {% if not digest_title %}
         <span class="issue">Итоги недели. Выпуск #{{ issue_number }}</span>
