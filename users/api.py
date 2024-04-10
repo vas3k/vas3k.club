@@ -41,12 +41,3 @@ def api_profile_by_telegram_id(request, telegram_id):
     return JsonResponse({
         "user": user.to_dict()
     })
-
-
-@api(require_auth=True)
-def api_profile_tags_by_telegram_id(request, telegram_id):
-    user = get_object_or_404(User, telegram_id=telegram_id)
-
-    return JsonResponse({
-        "tags": [tag.tag.code for tag in UserTag.objects.filter(user=user)]
-    })
