@@ -41,7 +41,7 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
     toggle_post_subscription, delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
-from users.api import api_profile, api_profile_by_telegram_id, api_profile_tags, api_profile_tags_by_telegram_id
+from users.api import api_profile, api_profile_by_telegram_id, api_profile_tags
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
