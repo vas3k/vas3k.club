@@ -10,6 +10,7 @@
 
 {% block og_tags %}
     {% if post %}
+        {% if not post.is_public %}<meta name="robots" content="noindex, nofollow">{% endif %}
         <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
         <meta property="og:site_name" content="{{ settings.APP_NAME }}">
         <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
