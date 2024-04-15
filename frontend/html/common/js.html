@@ -5,4 +5,8 @@
     window.imageUploadUrl = "{{ settings.MEDIA_UPLOAD_URL }}";
     window.imageUploadCode = "{{ settings.MEDIA_UPLOAD_CODE }}";
 </script>
+
 {% render_bundle "main" "js" %}
+
+{# special hack for emoji support on windows/linux #}
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js" crossorigin="anonymous" async></script>

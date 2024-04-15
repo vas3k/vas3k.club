@@ -34,7 +34,6 @@
     "lightense-images": "^1.0.9",
     "mapbox-gl": "^1.13.2",
     "normalize.css": "^8.0.1",
-    "twemoji": "^13.0.2",
     "vue": "^2.6.11",
     "vue-mapbox-ho": "^0.6.2",
     "vue-select": "^3.18.3"
