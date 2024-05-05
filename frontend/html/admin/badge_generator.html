@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block title %}
+    Генератор бейджиков — {{ block.super }}
+{% endblock %}
+
+{% block css %}
+    <style>
+        .badge-generator {
+            max-width: 800px;  /* good for A4 printing */
+            margin: 0 auto;
+        }
+
+        .badge-generator-results {
+        }
+
+            .badge-generator-table {
+                table-layout: fixed;
+            }
+
+                .badge-generator-table td {
+                    width: 50%;
+                    padding: 10px;
+                }
+
+        .user-stats {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            font-size: 80%;
+            gap: 10px;
+            display: flex;
+            justify-content: flex-start;
+            padding-top: 15px;
+            padding-bottom: 0;
+        }
+
+        .profile-card {
+            color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            grid-template-columns: 90px auto;
+            column-gap: 15px;
+            grid-template-rows: auto auto;
+            box-shadow: none;
+            margin-bottom: 0;
+            padding: 20px;
+        }
+
+        .profile-card-info {
+            font-size: 80%;
+            padding-top: 0;
+        }
+
+            .profile-user-fullname {
+                margin-right: 0;
+            }
+
+            .profile-user-nickname {
+                position: relative;
+                top: -0.2em;
+                font-size: 60%;
+            }
+
+        .user-stats {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+            .user-stats-item {
+                font-size: 90%;
+                display: flex;
+                flex-direction: row;
+                gap: 3px;
+                line-height: 1.1em;
+                text-align: center;
+                border-radius: 5px;
+                min-width: 25px;
+                padding: 6px 5px 6px;
+                color: var(--text-color);
+                background-color: var(--bg-color);
+            }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="badge-generator">
+    <div class="content-header">Генератор бейджиков</div>
+
+    <div class="block">
+        <form action="." method="post">
+            <span class="form-row">
+                <textarea name="users">{{ requested_users }}</textarea>
+            </span>
+
+            <span class="form-row">
+                <label><input type="checkbox" name="hide_bio" value="1" {% if hide_bio %}checked{% endif %}> Спрятать био</label>
+            </span>
+
+            <span class="form-row">
+                <label><input type="checkbox" name="hide_badges" value="1" {% if hide_badges %}checked{% endif %}> Спрятать бейджики</label>
+            </span>
+
+            <span class="form-row">
+                <label><input type="checkbox" name="hide_stats" value="1" {% if hide_stats %}checked{% endif %}> Спрятать стаж</label>
+            </span>
+
+            <span class="form-row">
+                <label>Повторить каждый бейджик N раз <input type="label" name="repeat" value="{{ repeat|default:1 }}"></label>
+            </span>
+
+            <span class="form-row">
+                <input type="submit" value="Генерировать">
+            </span>
+        </form>
+    </div>
+
+    <div class="badge-generator-results">
+        <table class="badge-generator-table">
+            <tr>
+                {% for user in users %}
+                    <td>
+                        <div class="block profile-card h-card">
+                            <div class="profile-card-photo u-photo">
+                                <div class="avatar profile-user-avatar"><img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" /></div>
+                            </div>
+                            <div class="profile-card-info">
+                                <a href="{% url "profile" user.slug %}" class="profile-user-name u-url">
+                                    <span class="profile-user-fullname {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %} p-name">{{ user.full_name }}</span>
+                                    <span class="profile-user-nickname p-nickname">@{{ user.slug }}</span>
+                                </a>
+
+                                {% if user.position or user.company %}
+                                    <div class="profile-user-job">
+                                        <span class="profile-user-job-position p-job-title">{{ user.position }}</span>
+                                        {% if user.company %}— <span class="profile-user-job-company p-org">{{ user.company }}</span>{% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if user.city or user.country %}
+                                    <div class="profile-user-location">
+                                        📍{% if user.city %}<span class="p-locality">{{ user.city }}</span>, {% endif %}<span class="p-country-name">{{ user.country }}</span>
+                                    </div>
+                                {% endif %}
+
+                                {% if not hide_bio and user.bio %}
+                                    <div class="profile-user-bio">
+                                        {{ user.bio | markdown }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="user-stats">
+                                {% if not hide_stats %}
+                                    <div class="user-stats-item">
+                                        {% if user.membership_created_days < 40 %}
+                                            <span class="profile-status-number">{{ user.membership_created_days | ceil | cool_number }}</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }}</span>
+                                        {% elif user.membership_created_days <= 360 %}
+                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_months | cool_number  }}</span>
+                                            <span class="profile-status-text">мес.</span>
+                                        {% else %}
+                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_years | cool_number }}</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="user-stats-item">
+                                        <div class="profile-status-number">+{{ user.upvotes | cool_number }}</div>
+                                    </div>
+
+                                    {% if user.hat %}
+                                        {% include "users/widgets/hat.html" with hat=user.hat %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if not hide_badges and user.badges %}
+                                    {% include "badges/widgets/badges.html" with badges=user.badges badge_size="small" %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    {% if forloop.counter|divisibleby:2 %}</tr><tr>{% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

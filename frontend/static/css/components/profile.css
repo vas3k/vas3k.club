@@ -6,6 +6,7 @@
 }
 
     .profile-card {
+        break-inside: avoid;
         vertical-align: middle;
         color: var(--opposite-text-color);
         background-color: var(--opposite-bg-color);
@@ -35,8 +36,8 @@
 
         .profile-user-avatar {
             display: block;
-            width: 200px;
-            height: 200px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
             margin: 0 auto;
         }
 
