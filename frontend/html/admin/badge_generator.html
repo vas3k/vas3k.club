@@ -8,6 +8,10 @@
 
 {% block css %}
     <style>
+        body, html {
+            background-color: white; /* for printing */
+        }
+
         .badge-generator {
             max-width: 800px;  /* good for A4 printing */
             margin: 0 auto;
@@ -25,17 +29,6 @@
                     padding: 10px;
                 }
 
-        .user-stats {
-            grid-column-start: 1;
-            grid-column-end: 3;
-            font-size: 80%;
-            gap: 10px;
-            display: flex;
-            justify-content: flex-start;
-            padding-top: 15px;
-            padding-bottom: 0;
-        }
-
         .profile-card {
             color-adjust: exact;
             -webkit-print-color-adjust: exact;
@@ -45,13 +38,22 @@
             grid-template-rows: auto auto;
             box-shadow: none;
             margin-bottom: 0;
-            padding: 20px;
+            padding: 30px 20px 20px;
         }
 
         .profile-card-info {
-            font-size: 80%;
+            font-size: 85%;
             padding-top: 0;
         }
+
+            .profile-user-name {
+                padding-bottom: 7px;
+                line-height: 1.1em;
+            }
+
+            .profile-user-job {
+                font-size: 110%;
+            }
 
             .profile-user-fullname {
                 margin-right: 0;
@@ -59,31 +61,44 @@
 
             .profile-user-nickname {
                 position: relative;
-                top: -0.2em;
-                font-size: 60%;
+                top: -0.1em;
+                font-size: 70%;
+                opacity: 1;
+                color: #777;
             }
 
-        .user-stats {
+        .user-badges {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            font-size: 80%;
+            gap: 10px;
             display: flex;
+            justify-content: center;
+            padding-top: 9px;
+            padding-bottom: 0;
+
             flex-direction: row;
             flex-wrap: wrap;
-            gap: 10px;
             align-items: center;
         }
 
-            .user-stats-item {
-                font-size: 90%;
-                display: flex;
-                flex-direction: row;
-                gap: 3px;
-                line-height: 1.1em;
-                text-align: center;
-                border-radius: 5px;
-                min-width: 25px;
-                padding: 6px 5px 6px;
-                color: var(--text-color);
-                background-color: var(--bg-color);
-            }
+        .user-age {
+            font-size: 70%;
+            max-width: 50%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 3px;
+            line-height: 1.1em;
+            border-radius: 5px;
+            min-width: 25px;
+            padding: 6px 5px 6px;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            position: relative;
+            top: -5px;
+        }
 
     </style>
 {% endblock %}
@@ -94,7 +109,7 @@
     <div class="content-header">Генератор бейджиков</div>
 
     <div class="block">
-        <form action="." method="post">
+        <form action="." method="get">
             <span class="form-row">
                 <textarea name="users">{{ requested_users }}</textarea>
             </span>
@@ -129,6 +144,21 @@
                         <div class="block profile-card h-card">
                             <div class="profile-card-photo u-photo">
                                 <div class="avatar profile-user-avatar"><img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" /></div>
+
+                                {% if not hide_stats %}
+                                    <div class="user-age">
+                                        {% if user.membership_created_days < 40 %}
+                                            <span class="profile-status-number">{{ user.membership_created_days | ceil | cool_number }}</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }}</span>
+                                        {% elif user.membership_created_days <= 360 %}
+                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_months | cool_number  }}</span>
+                                            <span class="profile-status-text">мес.</span>
+                                        {% else %}
+                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_years | cool_number }}</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }}</span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="profile-card-info">
                                 <a href="{% url "profile" user.slug %}" class="profile-user-name u-url">
@@ -155,30 +185,7 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="user-stats">
-                                {% if not hide_stats %}
-                                    <div class="user-stats-item">
-                                        {% if user.membership_created_days < 40 %}
-                                            <span class="profile-status-number">{{ user.membership_created_days | ceil | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }}</span>
-                                        {% elif user.membership_created_days <= 360 %}
-                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_months | cool_number  }}</span>
-                                            <span class="profile-status-text">мес.</span>
-                                        {% else %}
-                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_years | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }}</span>
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="user-stats-item">
-                                        <div class="profile-status-number">+{{ user.upvotes | cool_number }}</div>
-                                    </div>
-
-                                    {% if user.hat %}
-                                        {% include "users/widgets/hat.html" with hat=user.hat %}
-                                    {% endif %}
-                                {% endif %}
-
+                            <div class="user-badges">
                                 {% if not hide_badges and user.badges %}
                                     {% include "badges/widgets/badges.html" with badges=user.badges badge_size="small" %}
                                 {% endif %}
