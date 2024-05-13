@@ -138,7 +138,10 @@
         /**
          * Allowed MIME types
          */
-        allowedTypes: ["image/jpeg", "image/png", "image/jpg", "image/gif"],
+        allowedTypes: [
+            "image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp", "image/avif",
+            "video/mp4", "video/webm", "video/quicktime",
+        ],
 
         /**
          * Text which will be inserted when dropping or pasting a file.
