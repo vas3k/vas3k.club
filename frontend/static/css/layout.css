@@ -326,7 +326,7 @@
         }
 
             .comment-form-body-battle-side #id_battle_side {
-                width: auto;
+                width: 100%;
                 max-width: 60%;
             }
 
