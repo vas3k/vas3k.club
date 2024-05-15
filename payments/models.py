@@ -76,3 +76,27 @@ class Payment(models.Model):
             except (KeyError, AttributeError):
                 return None
         return None
+
+
+class Subscription(models.Model):
+    STATUS_ACTIVE = "active"
+    STATUS_STOPPED = "stopped"
+    STATUSES = [
+        (STATUS_ACTIVE, STATUS_ACTIVE),
+        (STATUS_STOPPED, STATUS_STOPPED),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+
+    user = models.ForeignKey(User, related_name="payment_subscriptions", null=True, on_delete=models.SET_NULL, db_index=True)
+    subscription_id = models.CharField(max_length=256, db_index=True)
+    reference = models.CharField(max_length=256, db_index=True)
+    product_code = models.CharField(max_length=64)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    amount = models.FloatField(default=0.0)
+    status = models.CharField(choices=STATUSES, default=STATUS_ACTIVE, max_length=32)
+    data = models.TextField(null=True)
+
+    class Meta:
+        db_table = "subscriptions"

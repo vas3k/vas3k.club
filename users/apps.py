@@ -2,7 +2,7 @@ import logging
 
 from django.apps import AppConfig
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 class UsersConfig(AppConfig):

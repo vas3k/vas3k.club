@@ -15,7 +15,7 @@ from notifications.email.users import send_auth_email
 from notifications.telegram.users import notify_user_auth
 from users.models.user import User
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def email_login(request):

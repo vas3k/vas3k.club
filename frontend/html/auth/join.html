@@ -12,7 +12,7 @@
             Если вам не подходят наши <a href="{% url "docs" "about" %}" target="_blank">правила</a>, вы боитесь деанона или пришли «просто почитать посты» рекомендуем сэкономить нам всем время и пойти на <a href="https://ok.ru/" rel="nofollow">Одноклассники</a>, там как-то с этим попроще.
         </div>
 
-        <form action="{% url "pay" %}" method="get">
+        <form action="{% url "cloudpayments_pay" %}" method="get">
 
         <div class="join-subtitle" id="select_package">Пакет брать будем?</div>
 
@@ -33,8 +33,8 @@
         </form>
 
         <div class="block pay-warning" style="margin-top: 100px;">
-            ⚠️ Платежи из <strong>России и некоторых банков Беларуси</strong> больше не проходят из-за санкций.
-            Альтернативные опции оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
+            ⚠️ “Если вы хотите оплатить клуб откуда-то, откуда не работают российские карты,
+            <a href="{% url "docs" "blocked_dolor" %}">напишите нам</a>, выставим счет со Stripe.
         </div>
     </div>
 {% endblock %}

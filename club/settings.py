@@ -280,6 +280,9 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET") or ""
 STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 
+CLOUDPAYMENTS_API_ID = os.getenv("CLOUDPAYMENTS_API_ID") or ""
+CLOUDPAYMENTS_API_PASSWORD = os.getenv("CLOUDPAYMENTS_API_PASSWORD") or ""
+
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 DEFAULT_AVATAR = "https://i.club.careerfactory.ru/v.png"

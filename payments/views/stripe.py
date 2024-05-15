@@ -14,7 +14,7 @@ from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
 from payments.service import stripe
 from users.models.user import User
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def done(request):
@@ -204,4 +204,3 @@ def stripe_webhook(request):
         return HttpResponse("[ok]", status=200)
 
     return HttpResponse("[unknown event]", status=400)
-

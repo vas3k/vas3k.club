@@ -45,7 +45,7 @@
             Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.
         </div>
 
-        <form action="{% url "pay" %}" method="get">
+        <form action="{% url "cloudpayments_pay" %}" method="get">
 
         <div class="block-header" id="select_package">На сколько еще пополняем?</div>
 
@@ -125,7 +125,7 @@
         </div>
 
         <div class="block invite-friend">
-            <form action="{% url "pay" %}" method="get">
+            <form action="{% url "cloudpayments_pay" %}" method="get">
                 {% csrf_token %}
                 <input type="hidden" name="product_code" value="club1_invite">
                 <input type="hidden" name="is_invite" value="true">

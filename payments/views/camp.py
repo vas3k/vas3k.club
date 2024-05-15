@@ -13,7 +13,7 @@ from payments.helpers import parse_stripe_webhook_event
 from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 STRIPE_CAMP_WEBHOOK_SECRET = os.getenv("STRIPE_CAMP_WEBHOOK_SECRET")
 

@@ -13,7 +13,7 @@ from payments.models import Payment
 from payments.products import PRODUCTS, find_by_coinbase_id
 from users.models.user import User
 
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def crypto(request):

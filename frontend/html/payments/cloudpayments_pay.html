@@ -14,25 +14,18 @@
                 </small>
             </div>
 
-            <stripe-checkout-button
-                public-key="{{ settings.STRIPE_PUBLIC_KEY }}"
-                session-id="{{ session.id }}"
-                class="button button-big pay-button">
+            <a href="{{ invoice.url }}" class="button button-big join-button">
                 Перейти к оплате
-            </stripe-checkout-button>
+            </a>
 
             <p style="font-size: 300%; margin: 20px 0;">
                 ☝️
             </p>
 
-            <div class="block pay-warning">
-                <p style="font-size: 90%;">
-                    Платежи для нас процессит <a href="https://cloudpayments.ru" target="_blank">CloudPayments</a>.
-                    Клуб не хочет даже видеть данные вашей карты, потому вот вам ссылка на их форму оплаты.
-                </p>
-            </div>
+            <p style="font-size: 90%;">
+                Платежи для нас процессит <a href="https://cloudpayments.ru" target="_blank">CloudPayments</a>.
+                Клуб не хочет даже видеть данные вашей карты, потому вот вам ссылка на их форму оплаты.
+            </p>
         </div>
-
-
     </div>
 {% endblock %}
