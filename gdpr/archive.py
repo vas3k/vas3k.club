@@ -12,13 +12,12 @@ from badges.models import UserBadge
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from gdpr.serializers import post_to_json, post_to_md, user_to_json, comments_to_json, user_tags_to_json, \
-    user_expertises_to_json, comment_to_md, comment_to_json, bookmarks_to_json, upvotes_to_json, badges_to_json, \
+    comment_to_md, comment_to_json, bookmarks_to_json, upvotes_to_json, badges_to_json, \
     achievements_to_json
 from notifications.email.users import send_data_archive_ready_email
 from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
-from users.models.expertise import UserExpertise
 from tags.models import UserTag
 
 
@@ -65,10 +64,6 @@ def dump_user_profile(user_dir, user):
     user_tags = UserTag.objects.filter(user=user)
     with open(os.path.join(user_dir, "tags.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(user_tags_to_json(user_tags), ensure_ascii=False))
-
-    user_expertises = UserExpertise.objects.filter(user=user)
-    with open(os.path.join(user_dir, "expertise.json"), "w", encoding="utf-8") as f:
-        f.write(json.dumps(user_expertises_to_json(user_expertises), ensure_ascii=False))
 
 
 def dump_user_posts(user_dir, user):

@@ -7,7 +7,6 @@ from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.achievements import UserAchievement
-from users.models.expertise import UserExpertise
 from users.models.friends import Friend
 from users.models.mute import Muted
 from tags.models import UserTag
@@ -75,7 +74,6 @@ def delete_user_data(user: User):
     # drop related data
     UserAchievement.objects.filter(user=user).delete()
     UserTag.objects.filter(user=user).delete()
-    UserExpertise.objects.filter(user=user).delete()
     Session.objects.filter(user=user).delete()
     Code.objects.filter(user=user).delete()
     PostBookmark.objects.filter(user=user).delete()

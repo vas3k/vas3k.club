@@ -47,8 +47,7 @@ from users.views.friends import toggle_friend, friends
 from users.views.messages import on_review, rejected, banned
 from users.views.muted import toggle_mute, muted
 from users.views.notes import edit_note
-from users.views.profile import profile, toggle_tag, add_expertise, delete_expertise, profile_comments, profile_posts, \
-    profile_badges
+from users.views.profile import profile, toggle_tag, profile_comments, profile_posts, profile_badges
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
     edit_bot, edit_data, request_data
 from users.views.intro import intro
@@ -127,8 +126,6 @@ urlpatterns = [
     path("stats/", stats, name="stats"),
 
     path("profile/tag/<str:tag_code>/toggle/", toggle_tag, name="toggle_tag"),
-    path("profile/expertise/add/", add_expertise, name="add_expertise"),
-    path("profile/expertise/<slug:expertise>/delete/", delete_expertise, name="delete_expertise"),
     path("profile/on_review/", on_review, name="on_review"),
     path("profile/rejected/", rejected, name="rejected"),
     path("profile/banned/", banned, name="banned"),
