@@ -11,9 +11,7 @@ from common.pagination import paginate
 from authn.decorators.api import api
 from posts.models.post import Post
 from search.models import SearchIndex
-from users.forms.profile import ExpertiseForm
 from users.models.achievements import UserAchievement
-from users.models.expertise import UserExpertise
 from users.models.friends import Friend
 from users.models.mute import Muted
 from tags.models import Tag, UserTag
@@ -62,7 +60,6 @@ def profile(request, user_slug):
     projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
     badges = UserBadge.user_badges_grouped(user=user)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
-    expertises = UserExpertise.objects.filter(user=user).all()
     posts = Post.objects_for_user(request.me).filter(is_visible=True)\
         .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
@@ -98,7 +95,6 @@ def profile(request, user_slug):
         "active_tags": active_tags,
         "collectible_tags": collectible_tags,
         "achievements": [ua.achievement for ua in achievements],
-        "expertises": expertises,
         "comments": comments[:3] if comments else [],
         "comments_total": comments.count() if comments else 0,
         "posts": posts[:15],
@@ -187,44 +183,3 @@ def toggle_tag(request, tag_code):
         "status": "created" if is_created else "deleted",
         "tag": {"code": tag.code, "name": tag.name, "color": tag.color},
     }
-
-
-@api(require_auth=True)
-def add_expertise(request):
-    if request.method == "POST":
-        form = ExpertiseForm(request.POST)
-        if form.is_valid():
-            user_expertise = form.save(commit=False)
-            user_expertise.user = request.me
-            UserExpertise.objects.filter(
-                user=request.me, expertise=user_expertise.expertise
-            ).delete()
-            user_expertise.save()
-
-            return {
-                "status": "created",
-                "expertise": {
-                    "name": user_expertise.name,
-                    "expertise": user_expertise.expertise,
-                    "value": user_expertise.value,
-                },
-            }
-
-    return {"status": "ok"}
-
-
-@api(require_auth=True)
-def delete_expertise(request, expertise):
-    if request.method == "POST":
-        UserExpertise.objects.filter(user=request.me, expertise=expertise).delete()
-
-        return {
-            "status": "deleted",
-            "expertise": {
-                "expertise": expertise,
-            },
-        }
-
-    return {"status": "ok"}
-
-

@@ -74,16 +74,6 @@ new Vue({
                 window.scrollBy(0, commentPosition.top);
             }
         },
-        deleteExpertise(event) {
-            // FIXME: please refactor this code to a proper list component with ajax CRUD actions
-            const href = event.target.getAttribute("href");
-            if (href == null) return;
-            return ClubApi.ajaxify(href, (data) => {
-                if (data.status === "deleted") {
-                    document.getElementById("expertise-" + data.expertise.expertise).outerHTML = "";
-                }
-            });
-        },
         showReplyForm(commentId, username, withSelection) {
             // First, hide all other reply forms
             const replyForms = document.querySelectorAll(".reply-form-form");

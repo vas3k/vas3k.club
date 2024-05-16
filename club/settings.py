@@ -80,7 +80,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.contrib.auth.context_processors.auth",
                 "club.context_processors.settings_processor",
-                "club.context_processors.data_processor",
                 "club.context_processors.features_processor",
                 "authn.context_processors.users.me",
                 "posts.context_processors.rooms.rooms",
