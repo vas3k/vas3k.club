@@ -98,7 +98,7 @@ def godmode_invite(request):
     if request.method == "POST":
         form = GodmodeInviteForm(request.POST, request.FILES)
         if form.is_valid():
-            email = form.cleaned_data["email"]
+            email = form.cleaned_data["email"].lower()
             days = form.cleaned_data["days"]
             now = datetime.utcnow()
 
