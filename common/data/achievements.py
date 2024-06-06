@@ -309,9 +309,15 @@ ACHIEVEMENTS = [
     }),
     ("vas3k_quest_2024", {
         "name": "Золотая говнотерка",
-        "description": "Победитель первого Вастрик.Квеста, проходившего в Сербии в 2024 году",
+        "description": "Призёр первого Вастрик.Квеста, проходившего в Сербии в 2024 году",
         "image": "https://vas3k.club/static/images/achievements/vas3k_quest_2024.png",
         "style": "background-color: #F1DFC5; font-size: 120%;",
+    }),
+    ("pokerface", {
+        "name": "Покерфейс",
+        "description": "Играл в покер с соклубниками",
+        "image": "https://vas3k.club/static/images/achievements/pokerface.png",
+        "style": "background-color: #fbf0dc; font-size: 140%;",
     }),
 ]
 
