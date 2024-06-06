@@ -307,6 +307,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2024.jpg",
         "style": "background-color: #F1DFC5; font-size: 130%;",
     }),
+    ("vas3k_quest_2024", {
+        "name": "Золотая говнотерка",
+        "description": "Победитель первого Вастрик.Квеста, проходившего в Сербии в 2024 году",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quest_2024.png",
+        "style": "background-color: #F1DFC5; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
