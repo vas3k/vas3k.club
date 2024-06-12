@@ -12,9 +12,9 @@ from notifications.telegram.common import send_telegram_message, Chat
 log = logging.getLogger(__name__)
 
 TELEGRAM_CHANNEL_ID = -1001814814883
-TIME_INTERVAL = timedelta(days=4)
-LIMIT = 40
-MIN_UPVOTES = 25
+TIME_INTERVAL = timedelta(days=3)
+SELECT_LIMIT = 40
+MIN_UPVOTES = 30
 
 
 class Command(BaseCommand):
@@ -25,12 +25,12 @@ class Command(BaseCommand):
             created_at__gte=datetime.utcnow() - TIME_INTERVAL,
             post__is_approved_by_moderator=True,
             upvotes__gte=MIN_UPVOTES,
-        ).order_by("-upvotes")[:LIMIT]
+        ).order_by("-upvotes")[:SELECT_LIMIT]
 
         new_badges = UserBadge.objects.filter(
             created_at__gte=datetime.utcnow() - TIME_INTERVAL,
             comment__isnull=False,
-        ).order_by("-created_at")[:LIMIT]
+        ).order_by("-created_at")[:SELECT_LIMIT]
 
         comments_with_badges = [b.comment for b in new_badges]
 
