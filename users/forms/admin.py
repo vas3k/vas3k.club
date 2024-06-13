@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from common.data.achievements import ACHIEVEMENTS
+from common.data.ban import TEMPORARY_BAN_REASONS, PERMANENT_BAN_REASONS
 from common.data.hats import HATS
 from common.forms import ImageUploadField
 from users.models.user import User
@@ -58,22 +59,55 @@ class UserAdminForm(forms.Form):
         required=False,
     )
 
-    is_banned = forms.BooleanField(
-        label="Забанить",
+    is_temporarily_banned = forms.BooleanField(
+        label="Забанить временно",
         required=False
     )
 
-    ban_days = forms.IntegerField(
+    temporary_ban_reason = forms.ChoiceField(
+        label="Причина",
+        choices=[(key, f"{reason.name} ({reason.min_duration}+ дней)") for key, reason in TEMPORARY_BAN_REASONS.items()],
+        required=False,
+    )
+
+    is_permanently_banned = forms.BooleanField(
+        label="Забанить навечно",
+        required=False
+    )
+
+    permanent_ban_reason = forms.ChoiceField(
+        label="Причина",
+        choices=[(key, reason.name) for key, reason in PERMANENT_BAN_REASONS.items()],
+        required=False,
+    )
+
+    is_custom_banned = forms.BooleanField(
+        label="Забанить кастомно",
+        required=False
+    )
+
+    custom_ban_days = forms.IntegerField(
         label="Бан истечет через N дней",
         initial=5,
         required=False
     )
 
-    ban_reason = forms.CharField(
-        label="Причина бана",
+    custom_ban_name = forms.CharField(
+        label="Короткая причина",
+        max_length=80,
+        required=False,
+    )
+
+    custom_ban_reason = forms.CharField(
+        label="Развернутый комментарий и ссылки (опционально)",
         max_length=5000,
         required=False,
         widget=forms.Textarea(attrs={"maxlength": 5000}),
+    )
+
+    is_unbanned = forms.BooleanField(
+        label="Разбанить",
+        required=False
     )
 
     is_rejected = forms.BooleanField(

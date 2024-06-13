@@ -114,6 +114,8 @@ class User(models.Model, ModelDiffMixin):
 
     deleted_at = models.DateTimeField(null=True)
 
+    metadata = models.JSONField(null=True)
+
     class Meta:
         db_table = "users"
 

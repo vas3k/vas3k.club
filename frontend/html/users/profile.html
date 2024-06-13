@@ -110,6 +110,20 @@
                     {% if user.is_banned %}
                         <span class="profile-status-icon">👮‍♀️</span>
                         <span class="profile-status-text">забанен</span>
+                        {% if user.metadata.last_ban %}
+                            <span class="profile-status-text-small">
+                                {% if user.metadata.last_ban.days %}
+                                    {% if user.metadata.last_ban.days > 999 %}
+                                        навечно
+                                    {% else %}
+                                        на {{ user.metadata.last_ban.days }} {{ user.metadata.last_ban.days|rupluralize:"день,дня,дней" }}
+                                    {% endif %}
+                                {% endif %}
+                                {% if user.metadata.last_ban.reason %}
+                                    | причина: {{ user.metadata.last_ban.reason }}
+                                {% endif %}
+                            </span>
+                        {% endif %}
                     {% elif user.deleted_at %}
                         <span class="profile-status-icon">🏃‍♀️</span>
                         <span class="profile-status-text">удалился из Клуба</span>

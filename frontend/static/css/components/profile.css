@@ -179,6 +179,11 @@
             font-size: 100%;
         }
 
+        .profile-status-text-small {
+            display: block;
+            font-size: 60%;
+        }
+
         .profile-status-status {
             display: block;
             font-size: 90%;

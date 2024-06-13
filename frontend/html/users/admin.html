@@ -179,30 +179,107 @@
             </form>
         </div>
 
-        <div class="profile-header">Наказать</div>
+        <div class="profile-header">Забанить временно</div>
+
         <div class="block">
             <form action="." method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="form-row">
-                    {{ form.is_banned.label_tag }}
-                    {{ form.is_banned }}
-                    {% if form.is_banned.errors %}<span class="form-row-errors">{{ form.is_banned.errors }}</span>{% endif %}
+                    {{ form.is_temporarily_banned.label_tag }}
+                    {{ form.is_temporarily_banned }}
+                    {% if form.is_temporarily_banned.errors %}<span class="form-row-errors">{{ form.is_temporarily_banned.errors }}</span>{% endif %}
                 </div>
 
                 <div class="form-row">
-                    {{ form.ban_reason.label_tag }}
-                    {{ form.ban_reason }}
-                    {% if form.ban_reason.errors %}<span class="form-row-errors">{{ form.ban_reason.errors }}</span>{% endif %}
+                    {{ form.temporary_ban_reason.label_tag }}
+                    {{ form.temporary_ban_reason }}
+                    {% if form.temporary_ban_reason.errors %}<span class="form-row-errors">{{ form.temporary_ban_reason.errors }}</span>{% endif %}
                 </div>
 
                 <div class="form-row">
-                    {{ form.ban_days.label_tag }}
-                    {{ form.ban_days }}
-                    {% if form.ban_days.errors %}<span class="form-row-errors">{{ form.ban_days.errors }}</span>{% endif %}
+                    Количества дней бана начисляется прогрессивно и автоматически по следующей шкале: {{ ban_progression }}<br><br>
+
+                    {% if user.metadata.last_ban %}
+                        ☢️ Пользователь уже был забанен ранее на <strong>{{ user.metadata.last_ban.days }} дней</strong> по причине <strong>«{{ user.metadata.last_ban.reason }}»</strong>, так что ему будет выдано большее по величине количество дней из списка выше (или максимальное).
+                    {% else %}
+                        ☝️ У этого пользователя еще не было банов, так что ему будет выдано минимальное количество дней из описания.
+                    {% endif %}
                 </div>
 
-                <button type="submit" class="button">Забанить</button>
+                <button type="submit" class="button">Забанить временно</button>
+            </form>
+        </div>
+
+        <div class="profile-header">Забанить кастомно</div>
+
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.is_custom_banned.label_tag }}
+                    {{ form.is_custom_banned }}
+                    {% if form.is_custom_banned.errors %}<span class="form-row-errors">{{ form.is_custom_banned.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.custom_ban_name.label_tag }}
+                    {{ form.custom_ban_name }}
+                    {% if form.custom_ban_name.errors %}<span class="form-row-errors">{{ form.custom_ban_name.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.custom_ban_reason.label_tag }}
+                    {{ form.custom_ban_reason }}
+                    {% if form.custom_ban_reason.errors %}<span class="form-row-errors">{{ form.custom_ban_reason.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.custom_ban_days.label_tag }}
+                    {{ form.custom_ban_days }}
+                    {% if form.custom_ban_days.errors %}<span class="form-row-errors">{{ form.custom_ban_days.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Забанить кастомно</button>
+            </form>
+        </div>
+
+        <div class="profile-header">Забанить навечно (ОПАСНО)</div>
+
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.is_permanently_banned.label_tag }}
+                    {{ form.is_permanently_banned }}
+                    {% if form.is_permanently_banned.errors %}<span class="form-row-errors">{{ form.is_permanently_banned.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    {{ form.permanent_ban_reason.label_tag }}
+                    {{ form.permanent_ban_reason }}
+                    {% if form.permanent_ban_reason.errors %}<span class="form-row-errors">{{ form.permanent_ban_reason.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button" onclick="return confirm('Точно баним юзера навсегда?')">Забанить навечно</button>
+            </form>
+        </div>
+
+        <div class="profile-header">Разбанить</div>
+
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    {{ form.is_unbanned.label_tag }}
+                    {{ form.is_unbanned }}
+                    {% if form.is_unbanned.errors %}<span class="form-row-errors">{{ form.is_unbanned.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button">Разбанить юзера</button>
             </form>
         </div>
 

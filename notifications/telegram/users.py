@@ -74,6 +74,15 @@ def notify_user_ping(user, message):
         )
 
 
+def notify_user_ban(user, days, reason):
+    if user.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=user.telegram_id),
+            text=f"⛔ <b>К сожалению, вы получили бан в Клубе на {days} дней</b>.\n\n"
+                 f"<b>Причина:</b> {reason}"
+        )
+
+
 def notify_admin_user_ping(user, message):
     send_telegram_message(
         chat=ADMIN_CHAT,

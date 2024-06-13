@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from authn.decorators.auth import require_auth, require_moderator_role
 from authn.models.session import Session
 from club.exceptions import AccessDenied
+from common.data.ban import BanReason, TEMPORARY_BAN_REASONS, PERMANENT_BAN_REASONS, PROGRESSIVE_BAN_DAYS
 from common.data.hats import HATS
 from notifications.email.users import send_banned_email, send_unmoderated_email, send_delete_account_confirm_email, \
     send_ping_email
@@ -14,6 +15,7 @@ from notifications.telegram.users import notify_admin_user_on_ban, notify_admin_
     notify_admin_user_ping
 from payments.helpers import cancel_all_stripe_subscriptions, gift_membership_days
 from users.forms.admin import UserAdminForm, UserInfoAdminForm
+from users.helpers import custom_ban_user, temporary_ban_user, unban_user, permanently_ban_user
 from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 from users.utils import is_role_manageable_by_user
@@ -38,7 +40,12 @@ def admin_profile(request, user_slug):
         form = UserAdminForm()
         info_form = UserInfoAdminForm(instance=user)
 
-    return render(request, "users/admin.html", {"user": user, "form": form, "info_form": info_form})
+    return render(request, "users/admin.html", {
+        "user": user,
+        "form": form,
+        "info_form": info_form,
+        "ban_progression": PROGRESSIVE_BAN_DAYS,
+    })
 
 
 def do_user_admin_actions(request, user, data):
@@ -84,20 +91,33 @@ def do_user_admin_actions(request, user, data):
                 achievement=achievement,
             )
 
-    # Ban
-    if data["is_banned"]:
-        if not user.is_god:
-            user.is_banned_until = datetime.utcnow() + timedelta(days=data["ban_days"])
-            user.save()
+    # Unban
+    if data["is_unbanned"]:
+        unban_user(user)
 
-            # send email and other notifs
-            if data["ban_days"] > 0:
-                send_banned_email(user, days=data["ban_days"], reason=data["ban_reason"])
-                notify_admin_user_on_ban(user, days=data["ban_days"], reason=data["ban_reason"])
+    # Temporary ban
+    if data["is_temporarily_banned"]:
+        reason = TEMPORARY_BAN_REASONS.get(data["temporary_ban_reason"])
+        temporary_ban_user(
+            user=user,
+            reason=reason
+        )
 
-            # cancel subscriptions for long bans
-            if data["ban_days"] > 30 and user.is_banned_until > user.membership_expires_at:
-                cancel_all_stripe_subscriptions(user.stripe_id)
+    # Custom ban
+    if data["is_custom_banned"]:
+        custom_ban_user(
+            user=user,
+            days=data["custom_ban_days"],
+            reason=BanReason(name=data["custom_ban_name"], description=data["custom_ban_reason"], min_duration=data["custom_ban_days"])
+        )
+
+    # Permanent ban
+    if data["is_permanently_banned"]:
+        reason = PERMANENT_BAN_REASONS.get(data["permanent_ban_reason"])
+        permanently_ban_user(
+            user=user,
+            reason=reason
+        )
 
     # Unmoderate
     if data["is_rejected"]:
