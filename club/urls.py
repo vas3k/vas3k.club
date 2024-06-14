@@ -22,8 +22,8 @@ from landing.views import landing, docs, godmode_network_settings, godmode_diges
     godmode_invite, badge_generator
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
 from rooms.views import redirect_to_room_chat, list_rooms
-from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, render_daily_digest, \
-    email_digest_switch, link_telegram
+from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
+    link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
 from payments.api import api_gift_days
@@ -178,7 +178,6 @@ urlpatterns = [
     path("notifications/switch/<str:digest_type>/<str:user_id>/<str:secret>/", email_digest_switch,
          name="email_digest_switch"),
     path("notifications/renderer/digest/weekly/", render_weekly_digest, name="render_weekly_digest"),
-    path("notifications/renderer/digest/daily/<slug:user_slug>/", render_daily_digest, name="render_daily_digest"),
     path("notifications/webhook/<slug:event_type>", webhook_event, name="webhook_event"),
 
     path("docs/<slug:doc_slug>/", docs, name="docs"),

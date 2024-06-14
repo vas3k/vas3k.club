@@ -91,17 +91,6 @@ def email_digest_switch(request, digest_type, user_id, secret):
         })
 
 
-def render_daily_digest(request, user_slug):
-    user = get_object_or_404(User, slug=user_slug)
-
-    try:
-        digest = generate_daily_digest(user)
-    except NotFound:
-        raise Http404()
-
-    return HttpResponse(digest)
-
-
 def render_weekly_digest(request):
     try:
         digest, _ = generate_weekly_digest()
