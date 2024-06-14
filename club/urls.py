@@ -16,7 +16,7 @@ from badges.views import create_badge_for_post, create_badge_for_comment
 from club import features
 from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
-    retract_comment_vote, pin_comment
+    retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite, badge_generator
@@ -167,6 +167,7 @@ urlpatterns = [
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
     path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete/", delete_comment, name="delete_comment"),
+    path("comment/<uuid:comment_id>/delete_thread/", delete_comment_thread, name="delete_comment_thread"),
     path("comment/<uuid:comment_id>/badge/", create_badge_for_comment,
          name="create_badge_for_comment"),
 

@@ -674,3 +674,10 @@
     .mention-autocomplete-hint__option--suggested span {
         color: #fff;
     }
+
+
+.comment-moderation {
+    max-width: 500px;
+    margin: 50px auto;
+    text-align: center;
+}

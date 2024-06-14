@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -200,6 +201,24 @@ def delete_comment(request, comment_id):
     Comment.update_post_counters(comment.post, update_activity=False)
 
     return redirect("show_comment", comment.post.slug, comment.id)
+
+
+@require_auth
+def delete_comment_thread(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if not request.me.is_moderator:
+        # only moderator can delete whole threads
+        raise AccessDenied(
+            title="Нельзя!",
+            message="Только модератор может удалять треды"
+        )
+
+    # delete child comments completely
+    Comment.objects.filter(Q(reply_to=comment) | Q(reply_to__reply_to=comment)).delete()
+    Comment.objects.filter(id=comment_id).delete()
+
+    return redirect("show_post", comment.post.type, comment.post.slug)
 
 
 @require_auth
