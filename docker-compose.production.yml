@@ -64,6 +64,21 @@ services:
       options:
         max-size: "100M"
 
+  helpdeskbot:
+    <<: *app
+    command: make docker-run-helpdeskbot
+    container_name: club_help_desk_bot
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+    ports:
+      - "8817:8817"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+
   cron:
     <<: *app
     command: make docker-run-cron

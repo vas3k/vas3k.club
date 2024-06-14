@@ -1,5 +1,4 @@
 import os
-import random
 from datetime import timedelta, datetime
 
 import sentry_sdk
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     "simple_history",
     "django_q",
     "webpack_loader",
+    "helpdeskbot.apps.HelpDeskBotConfig",
 ]
 
 MIDDLEWARE = [
@@ -70,6 +70,7 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "notifications/telegram/templates"),
+            os.path.join(BASE_DIR, "helpdeskbot/templates"),
             os.path.join(BASE_DIR, "frontend/html"),
         ],
         "APP_DIRS": True,
@@ -272,6 +273,13 @@ TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
 TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
+
+TELEGRAM_HELP_DESK_BOT_TOKEN = os.getenv("TELEGRAM_HELP_DESK_BOT_TOKEN")
+TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID = os.getenv("TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID")
+TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID = os.getenv("TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID")
+TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/helpdeskbot/webhook/"
+TELEGRAM_HELP_DESK_BOT_WEBHOOK_HOST = "0.0.0.0"
+TELEGRAM_HELP_DESK_BOT_WEBHOOK_PORT = 8817
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""

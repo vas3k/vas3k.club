@@ -75,11 +75,11 @@ $ pipenv run python manage.py migrate
 $ pipenv run python manage.py runserver 0.0.0.0:8000
 ```
 
-## Telegram bot
+## Telegram bot or help-desk-bot
 
 To run telegram bot you have to:
   1. Copy env.exmaple file: `cp ./club/.env.example ./club/.env`
-  2. Fill all the requirement fields in `./club/env`, such as `TELEGRAM_TOKEN` etc.
+  2. Fill all the requirement fields in `./club/.env`, such as `TELEGRAM_TOKEN` etc.
       - `TELEGRAM_TOKEN` you can get from [@BotFather](https://t.me/BotFather)
       - To get `TELEGRAM_CLUB_CHANNEL_URL`, `TELEGRAM_ADMIN_CHAT_ID` etc Just Simply Forward a message from your group/channel to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
   3. Rebuild application: `docker-compose up --build`
