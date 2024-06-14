@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 def ban_user_in_all_chats(user: User):
     if not user.telegram_id:
-        log.warning("User has no telegram_id, can't ban")
+        log.warning(f"User {user.slug} has no telegram_id, can't ban")
         return
 
     for room in Room.objects.filter(chat_id__isnull=False):
@@ -27,7 +27,7 @@ def ban_user_in_all_chats(user: User):
 
 def unban_user_in_all_chats(user: User):
     if not user.telegram_id:
-        log.warning("User has no telegram_id, can't unban")
+        log.warning(f"User {user.slug} has no telegram_id, can't unban")
         return
 
     for room in Room.objects.filter(chat_id__isnull=False):
