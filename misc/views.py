@@ -76,7 +76,12 @@ def show_achievement(request, achievement_code):
     )
 
     total_count = len(achievement_stats.values())
-    index = list(achievement_stats.keys()).index(achievement_code)
+
+    try:
+        index = list(achievement_stats.keys()).index(achievement_code)
+    except ValueError:
+        index = 0
+
     rarity = (index / total_count) * 100
 
     return render(request, "achievements/show_achievement.html", {

@@ -5,6 +5,10 @@ def parse_ip_address(request):
 
     if "," in ipaddress:  # multiple ips in the header
         ipaddress = ipaddress.split(",", 1)[0]
+
+    if "." not in ipaddress:  # malformed ip, maybe vpn
+        ipaddress = "0.0.0.0"
+
     return ipaddress
 
 
