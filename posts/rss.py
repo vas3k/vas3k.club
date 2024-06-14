@@ -24,4 +24,6 @@ class NewPostsRss(Feed):
         return title
 
     def item_description(self, item):
+        if not item.is_public:
+            return "🔒"
         return item.description
