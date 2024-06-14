@@ -65,12 +65,12 @@ def main() -> None:
         # ^ polling is useful for development since you don't need to expose webhook endpoints
     else:
         updater.start_webhook(
-            listen=settings.TELEGRAM_BOT_WEBHOOK_HOST,
-            port=settings.TELEGRAM_BOT_WEBHOOK_PORT,
-            url_path=settings.TELEGRAM_TOKEN,
+            listen=settings.TELEGRAM_HELP_DESK_BOT_WEBHOOK_HOST,
+            port=settings.TELEGRAM_HELP_DESK_BOT_WEBHOOK_PORT,
+            url_path=settings.TELEGRAM_HELP_DESK_BOT_TOKEN
         )
-        log.info(f"Set webhook: {settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN}")
-        updater.bot.set_webhook(settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN)
+        log.info(f"Set webhook: {settings.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + settings.TELEGRAM_HELP_DESK_BOT_TOKEN}")
+        updater.bot.set_webhook(settings.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + settings.TELEGRAM_HELP_DESK_BOT_TOKEN)
 
     # Wait all threads
     updater.idle()
