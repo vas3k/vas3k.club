@@ -3,13 +3,26 @@ from telegram import Bot, ParseMode, Update, ReplyMarkup
 from club import settings
 
 
+def get_bot():
+    return Bot(token=settings.TELEGRAM_HELP_DESK_BOT_TOKEN)
+
+
 def send_msg(chat_id: int,
              text: str,
              reply_to_message_id: int = None,
              parse_mode: ParseMode = ParseMode.HTML
              ):
-    bot = Bot(token=settings.TELEGRAM_HELP_DESK_BOT_TOKEN)
+    bot = get_bot()
     return bot.send_message(chat_id=chat_id, text=text, reply_to_message_id=reply_to_message_id, parse_mode=parse_mode)
+
+
+def edit_msg(chat_id: int,
+             message_id: int,
+             new_text: str,
+             parse_mode: ParseMode = ParseMode.HTML
+             ):
+    bot = get_bot()
+    return bot.edit_message_text(text=new_text, chat_id=chat_id, message_id=message_id, parse_mode=parse_mode)
 
 
 def msg_reply(update: Update,

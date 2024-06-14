@@ -6,7 +6,7 @@ from typing import Dict
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
-from helpdeskbot.help_desk_common import channel_msg_link, send_msg, chat_msg_link, msg_reply
+from helpdeskbot.help_desk_common import channel_msg_link, send_msg, edit_msg, chat_msg_link, msg_reply
 from helpdeskbot.models import Question, HelpDeskUser
 from helpdeskbot.room import get_rooms
 from bot.handlers.common import get_club_user
@@ -232,7 +232,12 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     question.channel_msg_id = channel_msg.message_id
     question.save()
 
-    return channel_msg_link(channel_msg.message_id)
+    msg_link = channel_msg_link(channel_msg.message_id)
+    if room_chat_msg:
+        room_chat_msg_text = (f"{room_chat_msg_text}\n\n" +
+                              hyperlink_format(href=msg_link, text="🔗 Ответы на вопрос в канале"))
+        edit_msg(chat_id=room.chat_id, message_id=room_chat_msg.message_id, new_text=room_chat_msg_text)
+    return msg_link
 
 
 def edit_question(update: Update, context: CallbackContext) -> State:
