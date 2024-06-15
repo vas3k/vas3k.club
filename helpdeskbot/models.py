@@ -18,7 +18,30 @@ class Question(models.Model):
     room_chat_msg_id = models.CharField(max_length=32, null=True, blank=True)
 
     class Meta:
-        db_table = "questions"
+        db_table = "help_desk_questions"
+
+
+class Answer(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    user_name = models.CharField(max_length=255, null=True)
+    question = models.ForeignKey(Question, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+    text = models.TextField()
+    telegram_data = models.JSONField()
+
+    class Meta:
+        db_table = "help_desk_answers"
+
+    @classmethod
+    def create_from_update(cls, question, update):
+        return cls(
+            user=User.objects.filter(telegram_id=update.message.from_user.id).first(),
+            user_name=update.message.from_user.first_name,
+            question=question,
+            text=update.message.text,
+            telegram_data=update.to_json()
+        ).save()
 
 
 class HelpDeskUser(models.Model):

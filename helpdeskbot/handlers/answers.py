@@ -5,7 +5,7 @@ from telegram.ext import CallbackContext
 
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message
-from helpdeskbot.models import Question
+from helpdeskbot.models import Question, Answer
 from helpdeskbot.room import get_rooms
 from notifications.telegram.common import render_html_message
 
@@ -38,9 +38,12 @@ def handle_answer_from_channel(update: Update) -> None:
         .filter(channel_msg_id=channel_msg_id) \
         .select_related("user", "room") \
         .first()
+
     if not question:
         log.warning(f"Question with channel_msg_id: {channel_msg_id} is not found")
         return None
+
+    Answer.create_from_update(question, update)
 
     notify_user_about_answer(update, question, from_room_chat=False)
 
@@ -58,9 +61,12 @@ def handle_answer_from_room_chat(update: Update) -> None:
         .filter(room=room, room_chat_msg_id=room_chat_msg_id) \
         .select_related("user", "room") \
         .first()
+
     if not question:
         log.warning(f"Question with room_chat_msg_id: {room_chat_msg_id} is not found")
         return None
+
+    Answer.create_from_update(question, update)
 
     notify_user_about_answer(update, question, from_room_chat=True)
 
