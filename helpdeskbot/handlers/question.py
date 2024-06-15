@@ -8,11 +8,11 @@ from django.utils.html import strip_tags
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
+from bot.handlers.common import get_club_user
 from helpdeskbot import config
-from helpdeskbot.help_desk_common import get_channel_message_link, send_message, edit_message, get_chat_message_link, send_reply
+from helpdeskbot.help_desk_common import get_channel_message_link, send_message, send_reply
 from helpdeskbot.models import Question, HelpDeskUser
 from helpdeskbot.room import get_rooms
-from bot.handlers.common import get_club_user
 from notifications.telegram.common import render_html_message
 
 log = logging.getLogger(__name__)
@@ -103,13 +103,14 @@ def start(update: Update, context: CallbackContext) -> State:
         send_reply(update, "🙈 Вас забанили от пользования Вастрик Справочной")
         return ConversationHandler.END
 
-    question_count_24h = Question.objects.filter(user=user) \
-        .filter(created_at__gte=datetime.utcnow() - timedelta(hours=24)) \
-        .count()
+    if not user.is_moderator:
+        question_count_24h = Question.objects.filter(user=user) \
+            .filter(created_at__gte=datetime.utcnow() - timedelta(hours=24)) \
+            .count()
 
-    if question_count_24h >= config.DAILY_QUESTION_LIMIT:
-        send_reply(update, "🙅‍♂️ Вы достигли своего дневного лимита вопросов. Приходите завтра!")
-        return ConversationHandler.END
+        if question_count_24h >= config.DAILY_QUESTION_LIMIT:
+            send_reply(update, "🙅‍♂️ Упс, кажется вы превысили свой лимит вопросов в день. Приходите завтра!")
+            return ConversationHandler.END
 
     context.user_data.clear()
 
@@ -142,7 +143,7 @@ def request_title_value(update: Update, context: CallbackContext) -> State:
     context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.TITLE.value
     send_reply(
         update,
-        f"Введите заголовок вашего вопроса. Постарайтесь быть краткими и понятными. "
+        f"Введите заголовок вашего вопроса. Постарайтесь сделать его кратким и понятным. "
         f"Максимум {config.QUESTION_TITLE_MAX_LEN} символов.",
         reply_markup=ReplyKeyboardRemove()
     )

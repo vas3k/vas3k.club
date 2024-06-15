@@ -5,8 +5,8 @@ from telegram.ext import CallbackContext
 
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message
-from helpdeskbot.room import get_rooms
 from helpdeskbot.models import Question
+from helpdeskbot.room import get_rooms
 
 log = logging.getLogger(__name__)
 
@@ -19,9 +19,9 @@ def handle_reply_from_channel(update: Update) -> None:
         log.error(f"forward_from_message_id is null")
         return None
 
-    question = Question.objects\
-        .filter(channel_msg_id=channel_msg_id)\
-        .select_related("user", "room")\
+    question = Question.objects \
+        .filter(channel_msg_id=channel_msg_id) \
+        .select_related("user", "room") \
         .first()
     if not question:
         log.warning(f"Question with channel_msg_id: {channel_msg_id} is not found")
@@ -39,9 +39,9 @@ def handle_reply_from_room_chat(update: Update) -> None:
     room_chat_id = str(update.message.chat.id)
     room = rooms[room_chat_id]
 
-    question = Question.objects\
+    question = Question.objects \
         .filter(room=room, room_chat_msg_id=room_chat_msg_id) \
-        .select_related("user", "room")\
+        .select_related("user", "room") \
         .first()
     if not question:
         log.warning(f"Question with room_chat_msg_id: {room_chat_msg_id} is not found")

@@ -2,7 +2,6 @@ from telegram import Bot, ParseMode, Update, ReplyMarkup
 
 from helpdeskbot import config
 
-
 bot = Bot(token=config.TELEGRAM_HELP_DESK_BOT_TOKEN)
 
 

@@ -20,8 +20,6 @@ from telegram.ext import Updater, CommandHandler, CallbackContext, Filters, Mess
 
 log = logging.getLogger(__name__)
 
-TELEGRAM_ADMIN_BOT_ID = 777000
-
 
 def on_help_command(update: Update, context: CallbackContext) -> None:
     update.effective_chat.send_message(
@@ -57,7 +55,7 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("help", on_help_command))
     dispatcher.add_handler(QuestionHandler("start"))
     dispatcher.add_handler(MessageHandler(Filters.reply & ~Filters.command, on_reply_message))
-    dispatcher.add_handler(MessageHandler(Filters.user(TELEGRAM_ADMIN_BOT_ID), on_telegram_admin_bot_message))
+    dispatcher.add_handler(MessageHandler(Filters.user(config.TELEGRAM_ADMIN_BOT_ID), on_telegram_admin_bot_message))
 
     # Start the bot
     if settings.DEBUG:
