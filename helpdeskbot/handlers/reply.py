@@ -92,12 +92,12 @@ def notify_user_about_reply(update: Update, question: Question, from_room_chat: 
         room = question.room
         room_chat_link = f"<a href=\"{room.chat_url}\">{room.title}</a>"
         message_text = \
-            f"💬 Новый {reply_link} на твой вопрос \"{question_title}\" от {from_user_link} из чата {room_chat_link}:\n\n" \
+            f"💬 Новый {reply_link} на вопрос \"{question_title}\" от {from_user_link} из чата {room_chat_link}:\n\n" \
             f"{reply_text}\n\n" \
             f"{question_link}"
     else:
         message_text = \
-            f"💬 Новый {reply_link} на твой вопрос \"{question_title}\" от {from_user_link} из чата канала:\n\n" \
+            f"💬 Новый {reply_link} на вопрос \"{question_title}\" от {from_user_link} из чата канала:\n\n" \
             f"{reply_text}\n\n" \
             f"{question_link}"
 
