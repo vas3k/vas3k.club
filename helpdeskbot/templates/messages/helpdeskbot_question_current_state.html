@@ -1,10 +1,7 @@
-{% if question.title %}
-Заголовок:
-{{ question.title }}
+{% if question.title %}Заголовок: {{ question.title }}
 {% endif %}
 Текст вопроса:
 {{ question.body }}
 
-{% if question.tags %} Теги: {{ question.tags }} {% endif %}
 {% if question.room %} Комната: {{ question.room }} {% endif %}
 

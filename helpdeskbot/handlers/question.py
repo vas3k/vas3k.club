@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum, auto
 from typing import Dict
@@ -31,15 +32,14 @@ class ReviewKeyboard(Enum):
 
 
 review_markup = ReplyKeyboardMarkup([
-    [ReviewKeyboard.CREATE, ReviewKeyboard.EDIT],
-    [ReviewKeyboard.CANCEL]
+    [ReviewKeyboard.CREATE.value, ReviewKeyboard.EDIT.value],
+    [ReviewKeyboard.CANCEL.value]
 ])
 
 
 class QuestionKeyboard(Enum):
     TITLE = "👉 Заголовок"
     BODY = "📝 Текст вопроса"
-    TAGS = "#️⃣ Теги"
     ROOM = "💬 Комната"
     REVIEW = "✅ Запостить"
 
@@ -48,7 +48,6 @@ question_markup = ReplyKeyboardMarkup([
     [QuestionKeyboard.TITLE.value],
     [QuestionKeyboard.BODY.value],
     [QuestionKeyboard.ROOM.value],
-    [QuestionKeyboard.TAGS.value],
     [QuestionKeyboard.REVIEW.value],
 ])
 
@@ -72,19 +71,17 @@ room_choose_markup = ReplyKeyboardMarkup(get_rooms_markup())
 hyperlink_format = "<a href=\"{href}\">{text}</a>".format
 
 
+@dataclass
 class QuestionDto:
-    def __init__(self, title="", body="", tags="", room=""):
-        self.title = title
-        self.body = body
-        self.tags = tags
-        self.room = room
+    title: str
+    body: str
+    room: str = ""
 
     @classmethod
     def from_user_data(cls, user_data: Dict[str, str]) -> "QuestionDto":
         return QuestionDto(
             title=user_data.get(QuestionKeyboard.TITLE.value, ""),
             body=user_data.get(QuestionKeyboard.BODY.value, ""),
-            tags=user_data.get(QuestionKeyboard.TAGS.value, ""),
             room=user_data.get(QuestionKeyboard.ROOM.value, "")
         )
 
@@ -119,18 +116,6 @@ def start(update: Update, context: CallbackContext) -> State:
     return State.REQUEST_FOR_INPUT
 
 
-def request_text_value(update: Update, context: CallbackContext) -> State:
-    text = update.message.text
-    context.user_data[CUR_FIELD_KEY] = text
-    msg_reply(
-        update,
-        render_html_message("helpdeskbot_request_text_value.html", field_name=text),
-        reply_markup=ReplyKeyboardRemove()
-    )
-
-    return State.INPUT_RESPONSE
-
-
 def input_response(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
     text = update.message.text
@@ -145,6 +130,31 @@ def input_response(update: Update, context: CallbackContext) -> State:
     )
 
     return State.REQUEST_FOR_INPUT
+
+
+def request_title_value(update: Update, context: CallbackContext) -> State:
+    context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.TITLE.value
+    msg_reply(
+        update,
+        f"Введите заголовок вопроса. Он должен коротко и понятно описывать ваш запрос. "
+        f"Максимум {config.QUESTION_TITLE_MAX_LEN} символов.",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    return State.INPUT_RESPONSE
+
+
+def request_body_value(update: Update, context: CallbackContext) -> State:
+    context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.BODY.value
+    msg_reply(
+        update,
+        f"Введите текст вопроса. Опишите побольше деталей и контекста. "
+        f"Например, ваш город/страну или уже опробованные варианты решений."
+        f"Максимум {config.QUESTION_BODY_MAX_LEN} символов.",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    return State.INPUT_RESPONSE
 
 
 def request_room_choose(update: Update, context: CallbackContext) -> State:
@@ -196,9 +206,6 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         "title": title,
         "body": body
     }
-    tags = user_data.get(QuestionKeyboard.TAGS.value, None)
-    if tags:
-        json_text["tags"] = tags
 
     room_title = user_data.get(QuestionKeyboard.ROOM.value, None)
     if room_title and room_title != DO_NOT_SEND_ROOM:
@@ -216,9 +223,6 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     room_chat_msg_text = \
         f"<b>{title}</b> от {user_link}\n\n" \
         f"{body}"
-
-    if tags:
-        room_chat_msg_text = f"{room_chat_msg_text}\n\n{tags}"
 
     room = rooms[room_title] if room_title and room_title != DO_NOT_SEND_ROOM else None
     room_chat_msg = None
@@ -312,8 +316,12 @@ class QuestionHandler(ConversationHandler):
             states={
                 State.REQUEST_FOR_INPUT: [
                     MessageHandler(
-                        Filters.regex(f"^({QuestionKeyboard.TITLE.value}|{QuestionKeyboard.BODY.value}|{QuestionKeyboard.TAGS.value})$"),
-                        request_text_value
+                        Filters.regex(f"^{QuestionKeyboard.TITLE.value}$"),
+                        request_title_value
+                    ),
+                    MessageHandler(
+                        Filters.regex(f"^{QuestionKeyboard.BODY.value}$"),
+                        request_body_value
                     ),
                     MessageHandler(
                         Filters.regex(f"^{QuestionKeyboard.ROOM.value}$"),

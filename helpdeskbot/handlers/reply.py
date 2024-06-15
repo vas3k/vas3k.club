@@ -101,7 +101,7 @@ def notify_user_about_reply(update: Update, question: Question, from_room_chat: 
             f"{reply_text}\n\n" \
             f"{question_link}"
 
-    send_msg(chat_id=user_id, text=message_text)
+    send_msg(chat_id=int(user_id), text=message_text)
 
 
 def on_reply_message(update: Update, context: CallbackContext) -> None:
