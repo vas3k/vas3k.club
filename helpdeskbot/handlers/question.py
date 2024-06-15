@@ -184,14 +184,16 @@ def review_question(update: Update, context: CallbackContext) -> State:
     if len(data.title) > config.QUESTION_TITLE_MAX_LEN:
         send_reply(
             update,
-            f"😬 Заголовок не должен быть длиннее {config.QUESTION_TITLE_MAX_LEN} символов (у вас {len(title)})"
+            f"😬 Заголовок не должен быть длиннее {config.QUESTION_TITLE_MAX_LEN} символов "
+            f"(у вас {len(data.title)})"
         )
         return edit_question(update, context)
 
     if len(data.body) > config.QUESTION_BODY_MAX_LEN:
         send_reply(
             update,
-            f"😬 Текст вопроса не может быть длиннее {config.QUESTION_BODY_MAX_LEN} символов (у вас {len(body)})"
+            f"😬 Текст вопроса не может быть длиннее {config.QUESTION_BODY_MAX_LEN} символов "
+            f"(у вас {len(data.body)})"
         )
         return edit_question(update, context)
 
