@@ -30,6 +30,10 @@ class ReviewKeyboard(Enum):
     CANCEL = "❌ Отменить"
 
 
+start_markup = ReplyKeyboardMarkup(
+    [["/start"]], resize_keyboard=True
+)
+
 review_markup = ReplyKeyboardMarkup([
     [ReviewKeyboard.CREATE.value, ReviewKeyboard.EDIT.value],
     [ReviewKeyboard.CANCEL.value]
@@ -275,7 +279,7 @@ def finish_review(update: Update, context: CallbackContext) -> State:
         send_reply(
             update,
             f"🎉 Вопрос опубликован: <a href=\"{link}\">ссылка и ответы в канале</a>",
-            reply_markup=ReplyKeyboardRemove(),
+            reply_markup=start_markup,
         )
         return ConversationHandler.END
 
@@ -286,7 +290,7 @@ def finish_review(update: Update, context: CallbackContext) -> State:
         send_reply(
             update,
             "🫡 Создание вопроса отменено. Можно начать заново — /start",
-            reply_markup=ReplyKeyboardRemove(),
+            reply_markup=start_markup,
         )
         return ConversationHandler.END
 
