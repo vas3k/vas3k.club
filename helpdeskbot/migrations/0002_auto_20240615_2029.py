@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('users', '0030_auto_20240615_2021'),
         ('helpdeskbot', '0001_initial'),
     ]
 
