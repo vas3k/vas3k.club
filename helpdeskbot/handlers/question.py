@@ -3,9 +3,11 @@ from datetime import datetime, timedelta
 from enum import Enum, auto
 from typing import Dict
 
+from django.utils.html import strip_tags
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
+from helpdeskbot import config
 from helpdeskbot.help_desk_common import channel_msg_link, send_msg, edit_msg, chat_msg_link, msg_reply
 from helpdeskbot.models import Question, HelpDeskUser
 from helpdeskbot.room import get_rooms
@@ -22,28 +24,39 @@ class State(Enum):
     FINISH_REVIEW = auto()
 
 
-class QKeyboard(Enum):
-    TITLE = "Заголовок"
-    BODY = "Текст вопроса"
-    TAGS = "Теги"
-    ROOM = "Комната"
-    REVIEW = "Завершить"
+class ReviewKeyboard(Enum):
+    CREATE = "✅ Опубликовать"
+    EDIT = "⏮️ Отредактировать"
+    CANCEL = "❌ Отменить"
 
 
-question_keyboard = [
-    [QKeyboard.TITLE.value],
-    [QKeyboard.BODY.value],
-    [QKeyboard.ROOM.value],
-    [QKeyboard.TAGS.value],
-    [QKeyboard.REVIEW.value],
-]
-question_markup = ReplyKeyboardMarkup(question_keyboard)
+review_markup = ReplyKeyboardMarkup([
+    [ReviewKeyboard.CREATE, ReviewKeyboard.EDIT],
+    [ReviewKeyboard.CANCEL]
+])
+
+
+class QuestionKeyboard(Enum):
+    TITLE = "👉 Заголовок"
+    BODY = "📝 Текст вопроса"
+    TAGS = "#️⃣ Теги"
+    ROOM = "💬 Комната"
+    REVIEW = "✅ Запостить"
+
+
+question_markup = ReplyKeyboardMarkup([
+    [QuestionKeyboard.TITLE.value],
+    [QuestionKeyboard.BODY.value],
+    [QuestionKeyboard.ROOM.value],
+    [QuestionKeyboard.TAGS.value],
+    [QuestionKeyboard.REVIEW.value],
+])
 
 # It can be either a keyboard key, or the input text from the user
 CUR_FIELD_KEY = "cur_field"
+DO_NOT_SEND_ROOM = "✖ Без комнаты"
 
-DO_NOT_SEND_ROOM = "Не отправлять"
-rooms = {r.title: r for r in get_rooms()}
+rooms = {f"{strip_tags(r.icon)} {r.title}": r for r in get_rooms()}
 
 
 def get_rooms_markup() -> list:
@@ -69,10 +82,10 @@ class QuestionDto:
     @classmethod
     def from_user_data(cls, user_data: Dict[str, str]) -> "QuestionDto":
         return QuestionDto(
-            title=user_data.get(QKeyboard.TITLE.value, ""),
-            body=user_data.get(QKeyboard.BODY.value, ""),
-            tags=user_data.get(QKeyboard.TAGS.value, ""),
-            room=user_data.get(QKeyboard.ROOM.value, "")
+            title=user_data.get(QuestionKeyboard.TITLE.value, ""),
+            body=user_data.get(QuestionKeyboard.BODY.value, ""),
+            tags=user_data.get(QuestionKeyboard.TAGS.value, ""),
+            room=user_data.get(QuestionKeyboard.ROOM.value, "")
         )
 
 
@@ -83,7 +96,7 @@ def start(update: Update, context: CallbackContext) -> State:
 
     help_desk_user_ban = HelpDeskUser.objects.filter(user=user).first()
     if help_desk_user_ban and help_desk_user_ban.is_banned:
-        msg_reply(update, render_html_message("helpdeskbot_ban.html"))
+        msg_reply(update, "🙈 Вас забанили от пользования Вастрик Справочной")
         return ConversationHandler.END
 
     yesterday = datetime.utcnow() - timedelta(hours=24)
@@ -91,16 +104,15 @@ def start(update: Update, context: CallbackContext) -> State:
         .filter(created_at__gte=yesterday) \
         .count()
 
-    question_limit = 3
-    if question_number >= question_limit:
-        msg_reply(update, render_html_message("helpdeskbot_question_limit.html"))
+    if question_number >= config.DAILY_QUESTION_LIMIT:
+        msg_reply(update, "🙅‍♂️ Вы достигли своего дневного лимита вопросов. Приходите завтра!")
         return ConversationHandler.END
 
     context.user_data.clear()
 
     msg_reply(
         update,
-        render_html_message("helpdeskbot_welcome.html"),
+        render_html_message("helpdeskbot_welcome.html", user=user),
         reply_markup=question_markup,
     )
 
@@ -136,10 +148,11 @@ def input_response(update: Update, context: CallbackContext) -> State:
 
 
 def request_room_choose(update: Update, context: CallbackContext) -> State:
-    context.user_data[CUR_FIELD_KEY] = QKeyboard.ROOM.value
+    context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.ROOM.value
     msg_reply(
         update,
-        render_html_message("helpdeskbot_request_room_choose.html"),
+        "Выберите один из чатов, в который бот перепостит ваш вопрос. "
+        "Это не обязательно, но увеличивает возможность того, что вам кто-то ответит.",
         reply_markup=room_choose_markup,
     )
     return State.INPUT_RESPONSE
@@ -148,45 +161,46 @@ def request_room_choose(update: Update, context: CallbackContext) -> State:
 def review_question(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
 
-    title = user_data.get(QKeyboard.TITLE.value, None)
-    body = user_data.get(QKeyboard.BODY.value, None)
+    title = user_data.get(QuestionKeyboard.TITLE.value, None)
+    body = user_data.get(QuestionKeyboard.BODY.value, None)
     if not title or not body:
-        msg_reply(update, render_html_message("helpdeskbot_title_body_empty_error.html"))
+        msg_reply(update, "☝️ Заголовок и текст вопроса обязательны для заполнения")
         return edit_question(update, context)
 
-    title_len_limit = 150
-    body_len_limit = 2500
-    if len(title) > title_len_limit:
-        msg_reply(update, render_html_message("helpdeskbot_title_max_len_error.html", limit=title_len_limit))
+    if len(title) > config.QUESTION_TITLE_MAX_LEN:
+        msg_reply(
+            update,
+            f"😬 Заголовок не должен быть длиннее {config.QUESTION_TITLE_MAX_LEN} символов (у вас {len(title)})"
+        )
         return edit_question(update, context)
 
-    if len(body) > body_len_limit:
-        msg_reply(update, render_html_message("helpdeskbot_body_max_len_error.html", limit=body_len_limit))
+    if len(body) > config.QUESTION_BODY_MAX_LEN:
+        msg_reply(
+            update,
+            f"😬 Текст вопроса не может быть длиннее {config.QUESTION_BODY_MAX_LEN} символов (у вас {len(body)})"
+        )
         return edit_question(update, context)
 
     msg_reply(
         update,
         render_html_message("helpdeskbot_review_question.html", question=QuestionDto.from_user_data(user_data)),
-        reply_markup=ReplyKeyboardMarkup([
-            ["Опубликовать", "Отредактировать"],
-            ["Отменить"]
-        ]),
+        reply_markup=review_markup,
     )
     return State.FINISH_REVIEW
 
 
 def publish_question(update: Update, user_data: Dict[str, str]) -> str:
-    title = user_data[QKeyboard.TITLE.value]
-    body = user_data[QKeyboard.BODY.value]
+    title = user_data[QuestionKeyboard.TITLE.value]
+    body = user_data[QuestionKeyboard.BODY.value]
     json_text = {
         "title": title,
         "body": body
     }
-    tags = user_data.get(QKeyboard.TAGS.value, None)
+    tags = user_data.get(QuestionKeyboard.TAGS.value, None)
     if tags:
         json_text["tags"] = tags
 
-    room_title = user_data.get(QKeyboard.ROOM.value, None)
+    room_title = user_data.get(QuestionKeyboard.ROOM.value, None)
     if room_title and room_title != DO_NOT_SEND_ROOM:
         json_text["room"] = room_title
 
@@ -200,8 +214,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     user_link = hyperlink_format(href=f"tg://user?id={user_id}", text=user_name)
 
     room_chat_msg_text = \
-        f"Вопрос от {user_link}\n\n" \
-        f"<b>{title}</b>\n\n" \
+        f"<b>{title}</b> от {user_link}\n\n" \
         f"{body}"
 
     if tags:
@@ -222,7 +235,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
             room.chat_id.replace("-100", ""),
             room_chat_msg.message_id)
         channel_msg_text = (f"{channel_msg_text}\n\n" +
-                            hyperlink_format(href=group_msg_link, text="Ссылка на вопрос в тематическом чате"))
+                            hyperlink_format(href=group_msg_link, text="🔗 Ссылка на вопрос в чате"))
 
     channel_msg = send_msg(
         chat_id=settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
@@ -243,7 +256,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
 def edit_question(update: Update, context: CallbackContext) -> State:
     msg_reply(
         update,
-        render_html_message("helpdeskbot_edit_question.html"),
+        "Окей, что редактируем?",
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
@@ -253,25 +266,25 @@ def finish_review(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
     text = update.message.text
 
-    if text == "Опубликовать":
+    if text == ReviewKeyboard.CREATE:
         link = publish_question(update, user_data)
         msg_reply(
             update,
-            render_html_message("helpdeskbot_question_is_published.html", link=link),
+            f"🎉 Вопрос опубликован: <a href=\"{link}\">ссылка и ответы</a>",
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
-    elif text == "Отредактировать":
+    elif text == ReviewKeyboard.EDIT:
         return edit_question(update, context)
-    elif text == "Отменить":
+    elif text == ReviewKeyboard.CANCEL:
         msg_reply(
             update,
-            render_html_message("helpdeskbot_edit_canceled.html"),
+            "🫡 Создание вопроса отменено",
             reply_markup=ReplyKeyboardRemove(),
         )
         return ConversationHandler.END
     else:
-        raise Exception("Неожиданная команда: " + text)
+        raise Exception("😱 Неожиданная команда: " + text)
 
 
 def fallback(update: Update, context: CallbackContext) -> State:
@@ -286,7 +299,7 @@ def fallback(update: Update, context: CallbackContext) -> State:
 def error_fallback(update: Update, context: CallbackContext) -> int:
     msg_reply(
         update,
-        render_html_message("helpdeskbot_error_fallback.html")
+        "Что-то пошло не так. Придётся начать всё заново :("
     )
     return ConversationHandler.END
 
@@ -299,15 +312,15 @@ class QuestionHandler(ConversationHandler):
             states={
                 State.REQUEST_FOR_INPUT: [
                     MessageHandler(
-                        Filters.regex(f"^({QKeyboard.TITLE.value}|{QKeyboard.BODY.value}|{QKeyboard.TAGS.value})$"),
+                        Filters.regex(f"^({QuestionKeyboard.TITLE.value}|{QuestionKeyboard.BODY.value}|{QuestionKeyboard.TAGS.value})$"),
                         request_text_value
                     ),
                     MessageHandler(
-                        Filters.regex(f"^{QKeyboard.ROOM.value}$"),
+                        Filters.regex(f"^{QuestionKeyboard.ROOM.value}$"),
                         request_room_choose
                     ),
                     MessageHandler(
-                        Filters.regex(f"^{QKeyboard.REVIEW.value}$"),
+                        Filters.regex(f"^{QuestionKeyboard.REVIEW.value}$"),
                         review_question
                     ),
                     MessageHandler(
