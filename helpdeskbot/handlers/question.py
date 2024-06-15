@@ -12,7 +12,7 @@ from bot.handlers.common import get_club_user
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message, send_reply
 from helpdeskbot.models import Question, HelpDeskUser
-from helpdeskbot.rooms import get_rooms
+from helpdeskbot.room import get_rooms
 from notifications.telegram.common import render_html_message
 
 log = logging.getLogger(__name__)
