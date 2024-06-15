@@ -40,7 +40,7 @@ class Answer(models.Model):
             user_name=update.message.from_user.first_name,
             question=question,
             text=update.message.text,
-            telegram_data=update.to_json()
+            telegram_data=update.to_dict()
         ).save()
 
 
