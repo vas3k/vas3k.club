@@ -43,7 +43,8 @@ review_markup = ReplyKeyboardMarkup([
 class QuestionKeyboard(Enum):
     TITLE = "👉 Заголовок"
     BODY = "📝 Текст вопроса"
-    ROOM = "💬 Комната"
+    ROOM = "💬 Выбрать комнату"
+    CANCEL = "❌ Отменить"
     REVIEW = "✅ Запостить"
 
 
@@ -51,7 +52,7 @@ question_markup = ReplyKeyboardMarkup([
     [QuestionKeyboard.TITLE.value],
     [QuestionKeyboard.BODY.value],
     [QuestionKeyboard.ROOM.value],
-    [QuestionKeyboard.REVIEW.value],
+    [QuestionKeyboard.CANCEL.value, QuestionKeyboard.REVIEW.value],
 ])
 
 # It can be either a keyboard key, or the input text from the user
@@ -178,6 +179,15 @@ def request_room_choose(update: Update, context: CallbackContext) -> State:
     return State.INPUT_RESPONSE
 
 
+def cancel_question(update: Update, context: CallbackContext) -> State:
+    send_reply(
+        update,
+        "🫡 Создание вопроса отменено. Можно начать заново — /start",
+        reply_markup=start_markup,
+    )
+    return ConversationHandler.END
+
+
 def review_question(update: Update, context: CallbackContext) -> State:
     data = QuestionDto.from_user_data(context.user_data)
 
@@ -286,16 +296,8 @@ def finish_review(update: Update, context: CallbackContext) -> State:
     elif text == ReviewKeyboard.EDIT.value:
         return edit_question(update, context)
 
-    elif text == ReviewKeyboard.CANCEL.value:
-        send_reply(
-            update,
-            "🫡 Создание вопроса отменено. Можно начать заново — /start",
-            reply_markup=start_markup,
-        )
-        return ConversationHandler.END
-
     else:
-        raise Exception("😱 Неожиданная команда: " + text)
+        raise Exception(f"😱 Неожиданная команда. Можем начать заново - /start")
 
 
 def fallback(update: Update, context: CallbackContext) -> State:
@@ -333,6 +335,10 @@ class QuestionHandler(ConversationHandler):
                     MessageHandler(
                         Filters.regex(f"^{QuestionKeyboard.ROOM.value}$"),
                         request_room_choose
+                    ),
+                    MessageHandler(
+                        Filters.regex(f"^{QuestionKeyboard.CANCEL.value}|{ReviewKeyboard.CANCEL.value}$"),
+                        cancel_question
                     ),
                     MessageHandler(
                         Filters.regex(f"^{QuestionKeyboard.REVIEW.value}$"),
