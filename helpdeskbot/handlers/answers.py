@@ -3,10 +3,10 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from helpdeskbot.help_desk_common import channel_msg_link, send_msg
+from helpdeskbot import config
+from helpdeskbot.help_desk_common import get_channel_message_link, send_message
 from helpdeskbot.room import get_rooms
 from helpdeskbot.models import Question
-from club import settings
 
 log = logging.getLogger(__name__)
 
@@ -62,8 +62,8 @@ def handle_reply_from_room_chat(update: Update) -> None:
     message_text = f"💬 {reply_chat_link} от {from_user_link} из чата {room_invite_link}:\n\n" \
                    f"{update.message.text}"
 
-    chat_id = settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID
-    send_msg(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
+    chat_id = config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID
+    send_message(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
 
 
 def notify_user_about_reply(update: Update, question: Question, from_room_chat: bool) -> None:
@@ -86,7 +86,7 @@ def notify_user_about_reply(update: Update, question: Question, from_room_chat: 
     from_user_link = f"<a href=\"tg://user?id={from_user.id}\">{from_user.first_name}</a>"
     reply_text = message.text
 
-    question_link = f"<a href=\"{channel_msg_link(question.channel_msg_id)}\">❓ Ссылка на твой вопрос</a>"
+    question_link = f"<a href=\"{get_channel_message_link(question.channel_msg_id)}\">❓ Ссылка на твой вопрос</a>"
 
     if from_room_chat:
         room = question.room
@@ -101,7 +101,7 @@ def notify_user_about_reply(update: Update, question: Question, from_room_chat: 
             f"{reply_text}\n\n" \
             f"{question_link}"
 
-    send_msg(chat_id=int(user_id), text=message_text)
+    send_message(chat_id=int(user_id), text=message_text)
 
 
 def on_reply_message(update: Update, context: CallbackContext) -> None:
@@ -113,7 +113,7 @@ def on_reply_message(update: Update, context: CallbackContext) -> None:
     reply_to = update.message.reply_to_message
 
     if reply_to.forward_from_chat:
-        if reply_to.forward_from_chat.id == int(settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
+        if reply_to.forward_from_chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
             handle_reply_from_channel(update)
             return None
     else:
