@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from helpdeskbot.models import HelpDeskUser
+from helpdeskbot.models import HelpDeskUser, Answer, Question
 
 
 class HelpDeskUserAdmin(admin.ModelAdmin):
@@ -29,7 +29,7 @@ class HelpDeskQuestionAdmin(admin.ModelAdmin):
     search_fields = ["json_text"]
 
 
-admin.site.register(HelpDeskUser, HelpDeskQuestionAdmin)
+admin.site.register(Question, HelpDeskQuestionAdmin)
 
 
 class HelpDeskAnswerAdmin(admin.ModelAdmin):
@@ -44,4 +44,4 @@ class HelpDeskAnswerAdmin(admin.ModelAdmin):
     search_fields = ["user_name", "text"]
 
 
-admin.site.register(HelpDeskUser, HelpDeskAnswerAdmin)
+admin.site.register(Answer, HelpDeskAnswerAdmin)
