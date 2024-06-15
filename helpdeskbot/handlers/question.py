@@ -222,7 +222,6 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         user=user,
         json_text=data.to_json()
     )
-    question.save()
 
     channel_message = send_message(
         chat_id=config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
@@ -239,7 +238,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     question.save()
 
     if room and room.chat_id:
-        send_message(
+        room_message = send_message(
             chat_id=room.chat_id,
             text=render_html_message(
                 "helpdeskbot_question_in_room.html",
@@ -250,6 +249,11 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
                 channel_message_link=get_channel_message_link(channel_message.message_id),
             )
         )
+
+        question.room_chat_msg_id = room_message.message_id
+        question.save()
+
+    return get_channel_message_link(channel_message.message_id)
 
 
 def edit_question(update: Update, context: CallbackContext) -> State:
