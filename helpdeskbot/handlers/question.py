@@ -250,6 +250,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
             )
         )
 
+        question.room = room
         question.room_chat_msg_id = room_message.message_id
         question.save()
 

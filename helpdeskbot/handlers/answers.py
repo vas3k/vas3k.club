@@ -73,6 +73,7 @@ def handle_answer_from_room_chat(update: Update) -> None:
             reply_msg_id=update.message.message_id,
             from_user=update.message.from_user,
             room=room,
+            text=update.message.text,
         ),
         reply_to_message_id=question.discussion_msg_id
     )
@@ -100,5 +101,6 @@ def notify_user_about_answer(update: Update, question: Question, from_room_chat:
             reply_msg_id=message.message_id,
             channel_message_link=get_channel_message_link(question.channel_msg_id),
             from_user=message.from_user,
+            text=update.message.text,
         )
     )
