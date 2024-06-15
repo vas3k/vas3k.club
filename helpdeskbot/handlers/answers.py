@@ -6,14 +6,29 @@ from telegram.ext import CallbackContext
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message
 from helpdeskbot.models import Question
-from helpdeskbot.room import get_rooms
+from helpdeskbot.rooms import get_rooms
+from notifications.telegram.common import render_html_message
 
 log = logging.getLogger(__name__)
 
 rooms = {r.chat_id: r for r in get_rooms()}
 
 
-def handle_reply_from_channel(update: Update) -> None:
+def on_reply_message(update: Update, context: CallbackContext) -> None:
+    if not update.message or not update.message.reply_to_message or not update.message.text:
+        return None
+
+    reply_to = update.message.reply_to_message
+
+    if reply_to.forward_from_chat:
+        if reply_to.forward_from_chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
+            return handle_answer_from_channel(update)
+    else:
+        if str(reply_to.chat.id) in rooms.keys():
+            return handle_answer_from_room_chat(update)
+
+
+def handle_answer_from_channel(update: Update) -> None:
     channel_msg_id = update.message.reply_to_message.forward_from_message_id
     if not channel_msg_id:
         log.error(f"forward_from_message_id is null")
@@ -27,10 +42,10 @@ def handle_reply_from_channel(update: Update) -> None:
         log.warning(f"Question with channel_msg_id: {channel_msg_id} is not found")
         return None
 
-    notify_user_about_reply(update, question, False)
+    notify_user_about_answer(update, question, from_room_chat=False)
 
 
-def handle_reply_from_room_chat(update: Update) -> None:
+def handle_answer_from_room_chat(update: Update) -> None:
     room_chat_msg_id = update.message.reply_to_message.message_id
     if not room_chat_msg_id:
         log.error(f"reply_to_message.message_id is null")
@@ -47,26 +62,23 @@ def handle_reply_from_room_chat(update: Update) -> None:
         log.warning(f"Question with room_chat_msg_id: {room_chat_msg_id} is not found")
         return None
 
-    notify_user_about_reply(update, question, True)
+    notify_user_about_answer(update, question, from_room_chat=True)
 
-    # Forward message
-    from_user = update.message.from_user
-    from_user_link = f"<a href=\"tg://user?id={from_user.id}\">{from_user.first_name}</a>"
-
-    reply_chat_id = room_chat_id.replace("-100", "")
-    reply_msg_id = update.message.message_id
-    reply_chat_link = f"<a href=\"https://t.me/c/{reply_chat_id}/{reply_msg_id}\">Ответ</a>"
-
-    room_invite_link = f"<a href=\"{room.chat_url}\">{room.title}</a>"
-
-    message_text = f"💬 {reply_chat_link} от {from_user_link} из чата {room_invite_link}:\n\n" \
-                   f"{update.message.text}"
-
-    chat_id = config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID
-    send_message(chat_id=chat_id, text=message_text, reply_to_message_id=question.discussion_msg_id)
+    # Forward message to the main channel
+    send_message(
+        chat_id=config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID,
+        text=render_html_message(
+            template="helpdeskbot_answer_from_room.html",
+            reply_chat_id=room_chat_id.replace("-100", ""),
+            reply_msg_id=update.message.message_id,
+            from_user=update.message.from_user,
+            room=room,
+        ),
+        reply_to_message_id=question.discussion_msg_id
+    )
 
 
-def notify_user_about_reply(update: Update, question: Question, from_room_chat: bool) -> None:
+def notify_user_about_answer(update: Update, question: Question, from_room_chat: bool) -> None:
     if not question.user:
         log.info(f"User is null for question {question.id}")
         return None
@@ -78,45 +90,15 @@ def notify_user_about_reply(update: Update, question: Question, from_room_chat: 
         log.debug("Reply from the same user, skipping notification")
         return None
 
-    reply_chat_id = str(message.chat.id).replace("-100", "")
-    reply_msg_id = message.message_id
-    reply_link = f"<a href=\"https://t.me/c/{reply_chat_id}/{reply_msg_id}\">ответ</a>"
-    question_title = question.json_text["title"]
-
-    from_user_link = f"<a href=\"tg://user?id={from_user.id}\">{from_user.first_name}</a>"
-    reply_text = message.text
-
-    question_link = f"<a href=\"{get_channel_message_link(question.channel_msg_id)}\">❓ Ссылка на твой вопрос</a>"
-
-    if from_room_chat:
-        room = question.room
-        room_chat_link = f"<a href=\"{room.chat_url}\">{room.title}</a>"
-        message_text = \
-            f"💬 Новый {reply_link} на вопрос \"{question_title}\" от {from_user_link} из чата {room_chat_link}:\n\n" \
-            f"{reply_text}\n\n" \
-            f"{question_link}"
-    else:
-        message_text = \
-            f"💬 Новый {reply_link} на вопрос \"{question_title}\" от {from_user_link} из чата канала:\n\n" \
-            f"{reply_text}\n\n" \
-            f"{question_link}"
-
-    send_message(chat_id=int(user_id), text=message_text)
-
-
-def on_reply_message(update: Update, context: CallbackContext) -> None:
-    if not update.message \
-        or not update.message.reply_to_message \
-        or not update.message.text:
-        return None
-
-    reply_to = update.message.reply_to_message
-
-    if reply_to.forward_from_chat:
-        if reply_to.forward_from_chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
-            handle_reply_from_channel(update)
-            return None
-    else:
-        if str(reply_to.chat.id) in rooms.keys():
-            handle_reply_from_room_chat(update)
-            return None
+    # Send notification to the user
+    send_message(
+        chat_id=int(user_id),
+        text=render_html_message(
+            template="helpdeskbot_answer_notification.html",
+            question=question,
+            reply_chat_id=str(message.chat.id).replace("-100", ""),
+            reply_msg_id=message.message_id,
+            channel_message_link=get_channel_message_link(question.channel_msg_id),
+            from_user=message.from_user,
+        )
+    )

@@ -12,7 +12,7 @@ from bot.handlers.common import get_club_user
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message, send_reply
 from helpdeskbot.models import Question, HelpDeskUser
-from helpdeskbot.room import get_rooms
+from helpdeskbot.rooms import get_rooms
 from notifications.telegram.common import render_html_message
 
 log = logging.getLogger(__name__)
@@ -175,22 +175,20 @@ def request_room_choose(update: Update, context: CallbackContext) -> State:
 
 
 def review_question(update: Update, context: CallbackContext) -> State:
-    user_data = context.user_data
+    data = QuestionDto.from_user_data(context.user_data)
 
-    title = user_data.get(QuestionKeyboard.TITLE.value, None)
-    body = user_data.get(QuestionKeyboard.BODY.value, None)
-    if not title or not body:
+    if not data.title or not data.body:
         send_reply(update, "☝️ Заголовок и текст вопроса обязательны для заполнения")
         return edit_question(update, context)
 
-    if len(title) > config.QUESTION_TITLE_MAX_LEN:
+    if len(data.title) > config.QUESTION_TITLE_MAX_LEN:
         send_reply(
             update,
             f"😬 Заголовок не должен быть длиннее {config.QUESTION_TITLE_MAX_LEN} символов (у вас {len(title)})"
         )
         return edit_question(update, context)
 
-    if len(body) > config.QUESTION_BODY_MAX_LEN:
+    if len(data.body) > config.QUESTION_BODY_MAX_LEN:
         send_reply(
             update,
             f"😬 Текст вопроса не может быть длиннее {config.QUESTION_BODY_MAX_LEN} символов (у вас {len(body)})"
@@ -199,9 +197,9 @@ def review_question(update: Update, context: CallbackContext) -> State:
 
     send_reply(
         update,
-        render_html_message(
-            "helpdeskbot_review_question.html",
-            question=QuestionDto.from_user_data(user_data),
+        "<b>Создание вопроса завершено, давайте проверим, что все верно ⬇️</b>\n\n" + render_html_message(
+            "helpdeskbot_question_in_channel.html",
+            question=data,
             user=get_club_user(update),
             telegram_user=update.effective_user,
         ),
@@ -227,7 +225,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     channel_message = send_message(
         chat_id=config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
         text=render_html_message(
-            "helpdeskbot_channel_question.html",
+            "helpdeskbot_question_in_channel.html",
             question=data,
             room=room,
             user=user,
@@ -242,7 +240,7 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
         send_message(
             chat_id=room.chat_id,
             text=render_html_message(
-                "helpdeskbot_room_question.html",
+                "helpdeskbot_question_in_room.html",
                 question=data,
                 room=room,
                 user=user,
