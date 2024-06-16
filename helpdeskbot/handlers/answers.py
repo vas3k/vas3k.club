@@ -45,7 +45,7 @@ def handle_answer_from_channel(update: Update) -> None:
 
     Answer.create_from_update(question, update)
 
-    notify_user_about_answer(update, question, from_room_chat=False)
+    notify_user_about_answer(update, question)
 
 
 def handle_answer_from_room_chat(update: Update) -> None:
@@ -68,7 +68,7 @@ def handle_answer_from_room_chat(update: Update) -> None:
 
     Answer.create_from_update(question, update)
 
-    notify_user_about_answer(update, question, from_room_chat=True)
+    notify_user_about_answer(update, question)
 
     # Forward message to the main channel
     send_message(
@@ -84,8 +84,17 @@ def handle_answer_from_room_chat(update: Update) -> None:
         reply_to_message_id=question.discussion_msg_id
     )
 
+    # Send confirmation to the room
+    send_message(
+        chat_id=int(room_chat_id),
+        text=f"➜ <a "
+             f"href=\"https://t.me/c/{config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID}/{question.channel_msg_id}\">"
+             f"Отвечено</a> 👍",
+        reply_to_message_id=room_chat_msg_id
+    )
 
-def notify_user_about_answer(update: Update, question: Question, from_room_chat: bool) -> None:
+
+def notify_user_about_answer(update: Update, question: Question) -> None:
     if not question.user:
         log.info(f"User is null for question {question.id}")
         return None
