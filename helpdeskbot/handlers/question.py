@@ -57,7 +57,7 @@ question_markup = ReplyKeyboardMarkup([
 
 # It can be either a keyboard key, or the input text from the user
 CUR_FIELD_KEY = "cur_field"
-DO_NOT_SEND_ROOM = "✖ Без комнаты"
+DO_NOT_SEND_ROOM = "❌ Без комнаты"
 
 rooms = {f"{strip_tags(r.icon)} {r.title}": r for r in get_rooms()}
 
