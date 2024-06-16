@@ -23,10 +23,10 @@ log = logging.getLogger(__name__)
 
 def on_help_command(update: Update, context: CallbackContext) -> None:
     update.effective_chat.send_message(
-        "🤔 <b>Справочная Вастрик.Клуба</b>\n\n"
-        "Здесь ты можешь задать свой вопрос и получить ответы.\n\n\n"
+        "🤔 <b>Я бот Вастрик Справочной.</b>\n\n"
+        "Через меня задать вопрос и получить ответы от других членов коммьюнити.\n\n\n"
         "Список команд:\n\n"
-        "/start - Заполнение и отправка вопроса\n"
+        "/start - Создание и отправка вопроса\n"
         "/help - Справка",
         parse_mode=ParseMode.HTML
     )
@@ -69,7 +69,8 @@ def main() -> None:
         )
         log.info(f"Set webhook: {config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN}")
         updater.bot.set_webhook(
-            config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN)
+            url=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN
+        )
 
     # Wait all threads
     updater.idle()
