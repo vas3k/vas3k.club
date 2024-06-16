@@ -252,21 +252,24 @@ def publish_question(update: Update, user_data: Dict[str, str]) -> str:
     question.save()
 
     if room and room.chat_id:
-        room_message = send_message(
-            chat_id=room.chat_id,
-            text=render_html_message(
-                "helpdeskbot_question_in_room.html",
-                question=data,
-                room=room,
-                user=user,
-                telegram_user=update.effective_user,
-                channel_message_link=get_channel_message_link(channel_message.message_id),
+        try:
+            room_message = send_message(
+                chat_id=room.chat_id,
+                text=render_html_message(
+                    "helpdeskbot_question_in_room.html",
+                    question=data,
+                    room=room,
+                    user=user,
+                    telegram_user=update.effective_user,
+                    channel_message_link=get_channel_message_link(channel_message.message_id),
+                )
             )
-        )
 
-        question.room = room
-        question.room_chat_msg_id = room_message.message_id
-        question.save()
+            question.room = room
+            question.room_chat_msg_id = room_message.message_id
+            question.save()
+        except Exception as ex:
+            log.warning(f"Failed to send message to room: {data.room}. Pls add bot there.", exc_info=ex)
 
     return get_channel_message_link(channel_message.message_id)
 
@@ -297,7 +300,11 @@ def finish_review(update: Update, context: CallbackContext) -> State:
         return edit_question(update, context)
 
     else:
-        raise Exception(f"😱 Неожиданная команда. Можем начать заново - /start")
+        send_reply(
+            update,
+            f"😱 Неожиданная команда. Можем начать заново - /start",
+            reply_markup=start_markup
+        )
 
 
 def fallback(update: Update, context: CallbackContext) -> State:
