@@ -90,8 +90,7 @@ def handle_answer_from_room_chat(update: Update) -> None:
         chat_id=int(room_chat_id),
         text=f"➜ <a "
              f"href=\"https://t.me/c/{question_channel_id}/{question.channel_msg_id}\">"
-             f"<b>Отвечено</b></a> 👍",
-        reply_to_message_id=room_chat_msg_id
+             f"Отвечено</a> 👍"
     )
 
 
