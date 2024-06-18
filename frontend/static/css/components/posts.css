@@ -219,8 +219,10 @@
     }
 
     .post-project-link {
-        font-size: 200%;
+        font-size: 180%;
         font-weight: 600;
+        word-break: break-all;
+        overflow: hidden;
     }
 
 .text-body {
