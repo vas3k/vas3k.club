@@ -212,6 +212,17 @@
         max-width: 100%;
     }
 
+    .post-project-image .post-image {
+        padding-top: 0;
+        margin-bottom: 30px;
+        max-height: none;
+    }
+
+    .post-project-link {
+        font-size: 200%;
+        font-weight: 600;
+    }
+
 .text-body {
     position: relative;
     font-style: normal;

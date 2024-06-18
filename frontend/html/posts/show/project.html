@@ -3,7 +3,7 @@
 {% load posts %}
 {% load text_filters %}
 
-{# this type in inherited from "post" #}
+{# this type is inherited from "post" #}
 {% block post_header %}
     <header class="post-header">
         <div class="post-title p-name">
@@ -42,10 +42,15 @@
             {% endif %}
 
             {% if post.image %}
-                <div class="post-image">
-                    <a href="{{ post.url }}" target="_blank" rel="noopener">
-                        <img src="{{ post.image }}" alt="{{ post.title }}">
-                    </a>
+                <div class="post-project-image block">
+                    <div class="post-image">
+                        <a href="{{ post.url }}" target="_blank" rel="noopener">
+                            <img src="{{ post.image }}" alt="{{ post.title }}">
+                        </a>
+                    </div>
+                    <div class="post-project-link">
+                        <a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.url }}</a>
+                    </div>
                 </div>
             {% endif %}
         </div>
