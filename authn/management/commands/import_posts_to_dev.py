@@ -49,12 +49,12 @@ class Command(BaseCommand):
             url = "https://vas3k.club/feed.json?page={}".format(x + 1)
             self.stdout.write("📁 {}".format(url))
             req = urllib.request.Request(url)
-            req.add_header('User-Agent', 'Mozilla/5.0')
+            req.add_header('User-Agent', 'posts-to-dev')
             response = urllib.request.urlopen(req)
             data = json.load(response)
             for item in data['items']:
                 # приватные нафиг
-                if not (item['_club']['is_public']):
+                if not item['_club']['is_public']:
                     continue
 
                 author, created = create_user(item['authors'][0])
@@ -111,8 +111,7 @@ class Command(BaseCommand):
 
 
 def create_user(author):
-    split = author['url'].split('/')
-    slug = split[-2]
+    *_, slug, _ = author['url'].split('/')
 
     defaults = dict(
         slug=slug,
@@ -124,13 +123,11 @@ def create_user(author):
         balance=10000,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
-        membership_started_at=datetime.now(),
+        membership_started_at=datetime.utcnow(),
         membership_expires_at=datetime.utcnow() + timedelta(days=365 * 100),
         is_email_verified=True,
         moderation_status=User.MODERATION_STATUS_APPROVED,
         roles=[],
     )
 
-    user, created = User.objects.get_or_create(slug=slug, defaults=defaults)
-
-    return user, created
+    return User.objects.get_or_create(slug=slug, defaults=defaults)
