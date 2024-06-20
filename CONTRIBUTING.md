@@ -14,20 +14,20 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 ## 🙋‍♂️ How to report a bug or propose a feature?
 
-- 🆕Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new). 
+- 🆕Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new).
   - 🔦 Please, **use a search**, to check, if there is already exied issue!
-- Explain your idea or proposal in all the details: 
+- Explain your idea or proposal in all the details:
   - If it's a **new feature**:
     - 🖼 If it's **UI/UX** related: attach a screenshot or wireframe.
     - Please mark this issues with prefix **"Фича:"**
   - 🐞 If it's a **bug**:
-    - make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers. 
+    - make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers.
     - **For minor fixes** please just open a PR.
     - *Please mark this issues with prefix **"Баг:"***
 
 ## 😎 I want to write some code!
 
-- Open our [Issues page](https://github.com/vas3k/vas3k.club/issues) to see the most important tickets at top. 
+- Open our [Issues page](https://github.com/vas3k/vas3k.club/issues) to see the most important tickets at top.
 - Pick one issue you like and **leave a comment** inside that you're getting it.
 
 **For big changes** open an issues first or (if it's already opened) leave a comment with brief explanation what and why you're going to change. Many tickets hang open not because they cannot be done, but because they cause many logical contradictions that you may not know. It's better to clarify them in comments before sending a PR.
@@ -43,7 +43,7 @@ We also run the public [Github Project Board](https://github.com/vas3k/vas3k.clu
 
 ##### 🟨 Discussion is needed
 
-- **new feature** —  completely new features. Usually they're too hard for newbies, leave them **for experienced contributors.** 
+- **new feature** —  completely new features. Usually they're too hard for newbies, leave them **for experienced contributors.**
 
 - **idea** — **discussion is needed**. Those tickets look adequate, but waiting for real proposals how they will be done. Don't implement them right away.
 
@@ -72,3 +72,20 @@ We try to keep our stack as simple and stupid as possible. Because we're not ver
 
 Basically `docker-compose up`. See [README.md](README.md) for details.
 
+## Pre-commit hooks
+
+`pre-commit` can be used to run Git hooks before submitting the code to review.
+These hook scripts perform simple tasks before each commit (code formatting mostly).
+To activate the hooks, simply run the following command in your terminal.
+
+```sh
+pre-commit install
+```
+
+If you try to commit a non-compliant (i.e. badly formatted) file, `pre-commit` will modify this file and make the commit fail.
+However you need to stage the new changes **yourself** as `pre-commit` will not do that for you (this is by design; see [here](https://github.com/pre-commit/pre-commit/issues/806) or [here](https://github.com/pre-commit/pre-commit/issues/747)).
+Fortunately, `pre-commit` outputs useful messages.
+
+The list of hooks (and their options) can be found in [`.pre-commit-config.yaml`](.pre-commit-config.yaml).
+For more information, see [their website](https://pre-commit.com/).
+If you want to manually run all pre-commit hooks on a repository, run `pre-commit run --all-files`. To run individual hooks use `pre-commit run <hook_id>`.
