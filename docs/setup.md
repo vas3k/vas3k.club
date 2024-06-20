@@ -87,3 +87,25 @@ To run telegram bot you have to:
 ## Docker-compose
 
 Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
+
+## Load posts from main vas3k.club to dev/local database
+
+Sometimes you need fill saome posts/users data from real project. For this case you can use `import_posts_to_dev` command.
+
+Command fetch https://vas3k.club/feed.json and copy `is_public=True` posts to your database:
+```bash
+# fetch first page
+$ python3 manage.py import_posts_to_dev
+
+# fetch first 10 pages
+$ python3 manage.py import_posts_to_dev --pages 10
+
+# fetch 10 pages, starts from page 5
+$ python3 manage.py import_posts_to_dev --pages 10 --skip 5
+
+# fetch 10 pages, starts from page 5 and update exists posts
+$ python3 manage.py import_posts_to_dev --pages 10 --skip 5 --force
+
+# if use docker-compose
+$ docker exec -it club_app python3 manage.py import_posts_to_dev --pages 2
+```

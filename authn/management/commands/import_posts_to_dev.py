@@ -19,7 +19,7 @@ class Command(BaseCommand):
             "--pages",
             type=int,
             default=1,
-            help="Количество страниц, забираемых и фида",
+            help="Количество страниц, забираемых из фида",
         )
 
         parser.add_argument(
@@ -57,12 +57,12 @@ class Command(BaseCommand):
                 if not (item['_club']['is_public']):
                     continue
 
-                [created, author] = create_user(item['authors'][0])
+                author, created = create_user(item['authors'][0])
                 if created:
                     result['user_created'] += 1
                     self.stdout.write(" 👤 \"{}\" пользователь создан".format(author.full_name))
 
-                post_data = dict(
+                defaults = dict(
                     id=item['id'],
                     title=item['title'],
                     type=item['_club']['type'],
@@ -71,7 +71,6 @@ class Command(BaseCommand):
                     html=markdown_text(item['content_text']),
                     image=author.avatar,  # хак для постов типа "проект", чтобы не лазить по вастрику лишний раз
                     created_at=item['date_published'],
-                    last_activity_at=item['date_modified'],
                     comment_count=item['_club']['comment_count'],
                     view_count=item['_club']['view_count'],
                     upvotes=item['_club']['upvotes'],
@@ -86,18 +85,20 @@ class Command(BaseCommand):
                     coauthors=[]
                 )
 
-                if Post.objects.filter(pk=item['id']).exists():
-                    if options['force']:
-                        Post.objects.filter(pk=item['id']).update(**post_data)
-                    else:
-                        result['post_exists'] += 1
-                        self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
-                        continue
-                else:
-                    post = Post.objects.create(**post_data)
-                    post.created_at = item['date_published']
-                    post.last_activity_at = item['date_modified']
-                    post.save()
+                exists = False
+                try:
+                    post = Post.objects.get(id=item['id'])
+                    exists = True
+                except Post.DoesNotExist:
+                    post = Post.objects.create(**defaults)
+
+                if exists and not options['force']:
+                    result['post_exists'] += 1
+                    self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
+                    continue
+
+                post.__dict__.update(defaults)
+                post.save()
 
                 result['post_created'] += 1
                 self.stdout.write(" 📄 \"{}\" запись создана".format(item['title']))
@@ -113,10 +114,7 @@ def create_user(author):
     split = author['url'].split('/')
     slug = split[-2]
 
-    if User.objects.filter(slug=slug).count() > 0:
-        return [False, User.objects.get(slug=slug)]
-
-    user = User.objects.create(
+    defaults = dict(
         slug=slug,
         avatar=author['avatar'],
         email=random_string(30),
@@ -124,14 +122,15 @@ def create_user(author):
         company="FAANG",
         position="Team Lead конечно",
         balance=10000,
-        membership_started_at=datetime.utcnow(),
-        membership_expires_at=datetime.utcnow() + timedelta(days=365 * 100),
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
+        membership_started_at=datetime.now(),
+        membership_expires_at=datetime.utcnow() + timedelta(days=365 * 100),
         is_email_verified=True,
         moderation_status=User.MODERATION_STATUS_APPROVED,
         roles=[],
     )
-    user.save()
 
-    return [True, user]
+    user, created = User.objects.get_or_create(slug=slug, defaults=defaults)
+
+    return user, created
