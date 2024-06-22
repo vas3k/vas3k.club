@@ -1,16 +1,18 @@
 import logging
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum, auto
 from typing import Dict
 
+from django.utils.html import strip_tags
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
-from helpdeskbot.help_desk_common import channel_msg_link, send_msg, edit_msg, chat_msg_link, msg_reply
+from bot.handlers.common import get_club_user
+from helpdeskbot import config
+from helpdeskbot.help_desk_common import get_channel_message_link, send_message, send_reply
 from helpdeskbot.models import Question, HelpDeskUser
 from helpdeskbot.room import get_rooms
-from bot.handlers.common import get_club_user
-from club import settings
 from notifications.telegram.common import render_html_message
 
 log = logging.getLogger(__name__)
@@ -22,34 +24,47 @@ class State(Enum):
     FINISH_REVIEW = auto()
 
 
-class QKeyboard(Enum):
-    TITLE = "Заголовок"
-    BODY = "Текст вопроса"
-    TAGS = "Теги"
-    ROOM = "Комната"
-    REVIEW = "Завершить"
+class ReviewKeyboard(Enum):
+    CREATE = "✅ Опубликовать"
+    EDIT = "⏮️ Отредактировать"
+    CANCEL = "❌ Отменить"
 
 
-question_keyboard = [
-    [QKeyboard.TITLE.value],
-    [QKeyboard.BODY.value],
-    [QKeyboard.ROOM.value],
-    [QKeyboard.TAGS.value],
-    [QKeyboard.REVIEW.value],
-]
-question_markup = ReplyKeyboardMarkup(question_keyboard)
+start_markup = ReplyKeyboardMarkup(
+    [["/start"]], resize_keyboard=True
+)
+
+review_markup = ReplyKeyboardMarkup([
+    [ReviewKeyboard.CREATE.value, ReviewKeyboard.EDIT.value],
+    [ReviewKeyboard.CANCEL.value]
+])
+
+
+class QuestionKeyboard(Enum):
+    TITLE = "👉 Заголовок"
+    BODY = "📝 Текст вопроса"
+    ROOM = "💬 Выбрать комнату"
+    CANCEL = "❌ Отменить"
+    REVIEW = "✅ Запостить"
+
+
+question_markup = ReplyKeyboardMarkup([
+    [QuestionKeyboard.TITLE.value],
+    [QuestionKeyboard.BODY.value],
+    [QuestionKeyboard.ROOM.value],
+    [QuestionKeyboard.CANCEL.value, QuestionKeyboard.REVIEW.value],
+])
 
 # It can be either a keyboard key, or the input text from the user
 CUR_FIELD_KEY = "cur_field"
+DO_NOT_SEND_ROOM = "❌ Без комнаты"
 
-DO_NOT_SEND_ROOM = "Не отправлять"
-rooms = {r.title: r for r in get_rooms()}
+rooms = {f"{strip_tags(r.icon)} {r.title}": r for r in get_rooms()}
 
 
 def get_rooms_markup() -> list:
     room_names = list(rooms.keys())
     room_names.append(DO_NOT_SEND_ROOM)
-
     num_columns = 2
     return [room_names[i:i + num_columns] for i in range(0, len(room_names), num_columns)]
 
@@ -59,21 +74,28 @@ room_choose_markup = ReplyKeyboardMarkup(get_rooms_markup())
 hyperlink_format = "<a href=\"{href}\">{text}</a>".format
 
 
+@dataclass
 class QuestionDto:
-    def __init__(self, title="", body="", tags="", room=""):
-        self.title = title
-        self.body = body
-        self.tags = tags
-        self.room = room
+    title: str
+    body: str
+    room: str = ""
 
     @classmethod
     def from_user_data(cls, user_data: Dict[str, str]) -> "QuestionDto":
         return QuestionDto(
-            title=user_data.get(QKeyboard.TITLE.value, ""),
-            body=user_data.get(QKeyboard.BODY.value, ""),
-            tags=user_data.get(QKeyboard.TAGS.value, ""),
-            room=user_data.get(QKeyboard.ROOM.value, "")
+            title=user_data.get(QuestionKeyboard.TITLE.value, ""),
+            body=user_data.get(QuestionKeyboard.BODY.value, ""),
+            room=user_data.get(QuestionKeyboard.ROOM.value, "")
+            if user_data.get(QuestionKeyboard.ROOM.value, "") != DO_NOT_SEND_ROOM
+            else None
         )
+
+    def to_json(self):
+        return {
+            "title": self.title,
+            "body": self.body,
+            "room": self.room,
+        }
 
 
 def start(update: Update, context: CallbackContext) -> State:
@@ -83,40 +105,27 @@ def start(update: Update, context: CallbackContext) -> State:
 
     help_desk_user_ban = HelpDeskUser.objects.filter(user=user).first()
     if help_desk_user_ban and help_desk_user_ban.is_banned:
-        msg_reply(update, render_html_message("helpdeskbot_ban.html"))
+        send_reply(update, "🙈 Вас забанили от пользования Вастрик Справочной")
         return ConversationHandler.END
 
-    yesterday = datetime.utcnow() - timedelta(hours=24)
-    question_number = Question.objects.filter(user=user) \
-        .filter(created_at__gte=yesterday) \
-        .count()
+    if not user.is_moderator:
+        question_count_24h = Question.objects.filter(user=user) \
+            .filter(created_at__gte=datetime.utcnow() - timedelta(hours=24)) \
+            .count()
 
-    question_limit = 3
-    if question_number >= question_limit:
-        msg_reply(update, render_html_message("helpdeskbot_question_limit.html"))
-        return ConversationHandler.END
+        if question_count_24h >= config.DAILY_QUESTION_LIMIT:
+            send_reply(update, "🙅‍♂️ Упс, кажется вы превысили свой лимит вопросов в день. Приходите завтра!")
+            return ConversationHandler.END
 
     context.user_data.clear()
 
-    msg_reply(
+    send_reply(
         update,
-        render_html_message("helpdeskbot_welcome.html"),
+        render_html_message("helpdeskbot_welcome.html", user=user),
         reply_markup=question_markup,
     )
 
     return State.REQUEST_FOR_INPUT
-
-
-def request_text_value(update: Update, context: CallbackContext) -> State:
-    text = update.message.text
-    context.user_data[CUR_FIELD_KEY] = text
-    msg_reply(
-        update,
-        render_html_message("helpdeskbot_request_text_value.html", field_name=text),
-        reply_markup=ReplyKeyboardRemove()
-    )
-
-    return State.INPUT_RESPONSE
 
 
 def input_response(update: Update, context: CallbackContext) -> State:
@@ -126,124 +135,149 @@ def input_response(update: Update, context: CallbackContext) -> State:
     user_data[field] = text
     del user_data[CUR_FIELD_KEY]
 
-    msg_reply(
+    send_reply(
         update,
-        render_html_message("helpdeskbot_question_current_state.html", question=QuestionDto.from_user_data(user_data)),
+        "Принято 👌 Что дальше?",
         reply_markup=question_markup,
     )
 
     return State.REQUEST_FOR_INPUT
 
 
-def request_room_choose(update: Update, context: CallbackContext) -> State:
-    context.user_data[CUR_FIELD_KEY] = QKeyboard.ROOM.value
-    msg_reply(
+def request_title_value(update: Update, context: CallbackContext) -> State:
+    context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.TITLE.value
+    send_reply(
         update,
-        render_html_message("helpdeskbot_request_room_choose.html"),
+        f"Введите заголовок вашего вопроса. Постарайтесь сделать его кратким и понятным. "
+        f"Максимум {config.QUESTION_TITLE_MAX_LEN} символов.",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    return State.INPUT_RESPONSE
+
+
+def request_body_value(update: Update, context: CallbackContext) -> State:
+    context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.BODY.value
+    send_reply(
+        update,
+        f"Введите текст вопроса. Опишите побольше деталей и контекста. "
+        f"Например, ваш город/страну и уже опробованные варианты решений.",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+    return State.INPUT_RESPONSE
+
+
+def request_room_choose(update: Update, context: CallbackContext) -> State:
+    context.user_data[CUR_FIELD_KEY] = QuestionKeyboard.ROOM.value
+    send_reply(
+        update,
+        "Выберите один из чатов, в который бот перепостит ваш вопрос. "
+        "Это не обязательно, но может увеличить вероятность того, что там найдётся кто-то, кто знает ответ.",
         reply_markup=room_choose_markup,
     )
     return State.INPUT_RESPONSE
 
 
-def review_question(update: Update, context: CallbackContext) -> State:
-    user_data = context.user_data
-
-    title = user_data.get(QKeyboard.TITLE.value, None)
-    body = user_data.get(QKeyboard.BODY.value, None)
-    if not title or not body:
-        msg_reply(update, render_html_message("helpdeskbot_title_body_empty_error.html"))
-        return edit_question(update, context)
-
-    title_len_limit = 150
-    body_len_limit = 2500
-    if len(title) > title_len_limit:
-        msg_reply(update, render_html_message("helpdeskbot_title_max_len_error.html", limit=title_len_limit))
-        return edit_question(update, context)
-
-    if len(body) > body_len_limit:
-        msg_reply(update, render_html_message("helpdeskbot_body_max_len_error.html", limit=body_len_limit))
-        return edit_question(update, context)
-
-    msg_reply(
+def cancel_question(update: Update, context: CallbackContext) -> State:
+    send_reply(
         update,
-        render_html_message("helpdeskbot_review_question.html", question=QuestionDto.from_user_data(user_data)),
-        reply_markup=ReplyKeyboardMarkup([
-            ["Опубликовать", "Отредактировать"],
-            ["Отменить"]
-        ]),
+        "🫡 Создание вопроса отменено. Можно начать заново — /start",
+        reply_markup=start_markup,
+    )
+    return ConversationHandler.END
+
+
+def review_question(update: Update, context: CallbackContext) -> State:
+    data = QuestionDto.from_user_data(context.user_data)
+
+    if not data.title or not data.body:
+        send_reply(update, "☝️ Заголовок и текст вопроса обязательны для заполнения")
+        return edit_question(update, context)
+
+    if len(data.title) > config.QUESTION_TITLE_MAX_LEN:
+        send_reply(
+            update,
+            f"😬 Заголовок не должен быть длиннее {config.QUESTION_TITLE_MAX_LEN} символов "
+            f"(у вас {len(data.title)})"
+        )
+        return edit_question(update, context)
+
+    if len(data.body) > config.QUESTION_BODY_MAX_LEN:
+        send_reply(
+            update,
+            f"😬 Текст вопроса не может быть длиннее {config.QUESTION_BODY_MAX_LEN} символов "
+            f"(у вас {len(data.body)})"
+        )
+        return edit_question(update, context)
+
+    send_reply(
+        update,
+        "<b>Создание вопроса завершено, давайте проверим, что все верно ⬇️</b>\n\n" + render_html_message(
+            "helpdeskbot_question_in_channel.html",
+            question=data,
+            user=get_club_user(update),
+            telegram_user=update.effective_user,
+        ),
+        reply_markup=review_markup,
     )
     return State.FINISH_REVIEW
 
 
 def publish_question(update: Update, user_data: Dict[str, str]) -> str:
-    title = user_data[QKeyboard.TITLE.value]
-    body = user_data[QKeyboard.BODY.value]
-    json_text = {
-        "title": title,
-        "body": body
-    }
-    tags = user_data.get(QKeyboard.TAGS.value, None)
-    if tags:
-        json_text["tags"] = tags
+    user = get_club_user(update)
+    if not user:
+        return ConversationHandler.END
 
-    room_title = user_data.get(QKeyboard.ROOM.value, None)
-    if room_title and room_title != DO_NOT_SEND_ROOM:
-        json_text["room"] = room_title
+    data = QuestionDto.from_user_data(user_data)
+    room = rooms[data.room] if data.room else None
 
     question = Question(
-        user=get_club_user(update),
-        json_text=json_text)
-    question.save()
-
-    user_id = update.effective_user.id
-    user_name = update.effective_user.first_name
-    user_link = hyperlink_format(href=f"tg://user?id={user_id}", text=user_name)
-
-    room_chat_msg_text = \
-        f"Вопрос от {user_link}\n\n" \
-        f"<b>{title}</b>\n\n" \
-        f"{body}"
-
-    if tags:
-        room_chat_msg_text = f"{room_chat_msg_text}\n\n{tags}"
-
-    room = rooms[room_title] if room_title and room_title != DO_NOT_SEND_ROOM else None
-    room_chat_msg = None
-    if room and room.chat_id:
-        room_chat_msg = send_msg(room.chat_id, room_chat_msg_text)
-
-    channel_msg_text = room_chat_msg_text
-
-    if room_chat_msg:
-        question.room = room
-        question.room_chat_msg_id = room_chat_msg.message_id
-
-        group_msg_link = chat_msg_link(
-            room.chat_id.replace("-100", ""),
-            room_chat_msg.message_id)
-        channel_msg_text = (f"{channel_msg_text}\n\n" +
-                            hyperlink_format(href=group_msg_link, text="Ссылка на вопрос в тематическом чате"))
-
-    channel_msg = send_msg(
-        chat_id=settings.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
-        text=channel_msg_text
+        user=user,
+        json_text=data.to_json()
     )
 
-    question.channel_msg_id = channel_msg.message_id
+    channel_message = send_message(
+        chat_id=config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
+        text=render_html_message(
+            "helpdeskbot_question_in_channel.html",
+            question=data,
+            room=room,
+            user=user,
+            telegram_user=update.effective_user,
+        )
+    )
+
+    question.channel_msg_id = channel_message.message_id
     question.save()
 
-    msg_link = channel_msg_link(channel_msg.message_id)
-    if room_chat_msg:
-        room_chat_msg_text = (f"{room_chat_msg_text}\n\n" +
-                              hyperlink_format(href=msg_link, text="🔗 Ответы на вопрос в канале"))
-        edit_msg(chat_id=room.chat_id, message_id=room_chat_msg.message_id, new_text=room_chat_msg_text)
-    return msg_link
+    if room and room.chat_id:
+        try:
+            room_message = send_message(
+                chat_id=room.chat_id,
+                text=render_html_message(
+                    "helpdeskbot_question_in_room.html",
+                    question=data,
+                    room=room,
+                    user=user,
+                    telegram_user=update.effective_user,
+                    channel_message_link=get_channel_message_link(channel_message.message_id),
+                )
+            )
+
+            question.room = room
+            question.room_chat_msg_id = room_message.message_id
+            question.save()
+        except Exception as ex:
+            log.warning(f"Failed to send message to room: {data.room}. Pls add bot there.", exc_info=ex)
+
+    return get_channel_message_link(channel_message.message_id)
 
 
 def edit_question(update: Update, context: CallbackContext) -> State:
-    msg_reply(
+    send_reply(
         update,
-        render_html_message("helpdeskbot_edit_question.html"),
+        "Окей, что редактируем?",
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
@@ -253,40 +287,39 @@ def finish_review(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
     text = update.message.text
 
-    if text == "Опубликовать":
+    if text == ReviewKeyboard.CREATE.value:
         link = publish_question(update, user_data)
-        msg_reply(
+        send_reply(
             update,
-            render_html_message("helpdeskbot_question_is_published.html", link=link),
-            reply_markup=ReplyKeyboardRemove(),
+            f"🎉 Вопрос опубликован: <a href=\"{link}\">ссылка и ответы в канале</a>",
+            reply_markup=start_markup,
         )
         return ConversationHandler.END
-    elif text == "Отредактировать":
+
+    elif text == ReviewKeyboard.EDIT.value:
         return edit_question(update, context)
-    elif text == "Отменить":
-        msg_reply(
-            update,
-            render_html_message("helpdeskbot_edit_canceled.html"),
-            reply_markup=ReplyKeyboardRemove(),
-        )
-        return ConversationHandler.END
+
     else:
-        raise Exception("Неожиданная команда: " + text)
+        send_reply(
+            update,
+            f"😱 Неожиданная команда. Можем начать заново - /start",
+            reply_markup=start_markup
+        )
 
 
 def fallback(update: Update, context: CallbackContext) -> State:
-    msg_reply(
+    send_reply(
         update,
-        render_html_message("helpdeskbot_input_without_command_error.html"),
+        "Вы не выбрали действие. Пожалуйста, кликните на один из пунктов меню 👇",
         reply_markup=question_markup,
     )
     return State.REQUEST_FOR_INPUT
 
 
 def error_fallback(update: Update, context: CallbackContext) -> int:
-    msg_reply(
+    send_reply(
         update,
-        render_html_message("helpdeskbot_error_fallback.html")
+        "Что-то пошло не так. Придётся начать всё заново — /start"
     )
     return ConversationHandler.END
 
@@ -299,15 +332,23 @@ class QuestionHandler(ConversationHandler):
             states={
                 State.REQUEST_FOR_INPUT: [
                     MessageHandler(
-                        Filters.regex(f"^({QKeyboard.TITLE.value}|{QKeyboard.BODY.value}|{QKeyboard.TAGS.value})$"),
-                        request_text_value
+                        Filters.regex(f"^{QuestionKeyboard.TITLE.value}$"),
+                        request_title_value
                     ),
                     MessageHandler(
-                        Filters.regex(f"^{QKeyboard.ROOM.value}$"),
+                        Filters.regex(f"^{QuestionKeyboard.BODY.value}$"),
+                        request_body_value
+                    ),
+                    MessageHandler(
+                        Filters.regex(f"^{QuestionKeyboard.ROOM.value}$"),
                         request_room_choose
                     ),
                     MessageHandler(
-                        Filters.regex(f"^{QKeyboard.REVIEW.value}$"),
+                        Filters.regex(f"^{QuestionKeyboard.CANCEL.value}|{ReviewKeyboard.CANCEL.value}$"),
+                        cancel_question
+                    ),
+                    MessageHandler(
+                        Filters.regex(f"^{QuestionKeyboard.REVIEW.value}$"),
                         review_question
                     ),
                     MessageHandler(
