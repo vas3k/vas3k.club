@@ -122,3 +122,23 @@ services:
     volumes:
       - .:/app:delegated
     working_dir: /app/frontend
+
+  manticore:
+    container_name: manticore
+    image: manticoresearch/manticore
+    environment:
+      - EXTRA=1
+    restart: always
+    ports:
+      - 9306:9306
+      - 9308:9308
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./data:/var/lib/manticore
