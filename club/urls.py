@@ -22,7 +22,7 @@ from landing.views import landing, docs, godmode_network_settings, godmode_diges
     godmode_invite
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite
 from rooms.views import redirect_to_room_chat, list_rooms
-from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, link_telegram
+from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
 from payments.api import api_gift_days
