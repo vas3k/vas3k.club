@@ -18,7 +18,7 @@
 
     <link rel="alternate" type="application/rss+xml"
           title="Клуб Карьерного Цеха: Новые посты"
-          href="{{ settings.APP_HOST }}{% url "rss" %}{% if me %}?hash={{ me.secret_hash }}{% endif %}" />
+          href="{{ settings.APP_HOST }}{% url "rss" %}{% if me %}{% endif %}" />
 
     <link rel="alternate" title="Клуб Карьерного Цеха: JSON Feed"
           type="application/feed+json"

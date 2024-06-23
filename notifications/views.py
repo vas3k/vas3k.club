@@ -8,11 +8,9 @@ from django.core.cache import cache
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
-from authn.decorators.auth import require_auth
-from club.exceptions import AccessDenied, NotFound
-
 from authn.decorators.api import api
-from notifications.digests import generate_daily_digest, generate_weekly_digest
+from club.exceptions import AccessDenied, NotFound
+from notifications.digests import generate_weekly_digest
 from users.models.user import User
 
 
@@ -89,17 +87,6 @@ def email_digest_switch(request, digest_type, user_id, secret):
             "title": "👍 Данные подписки изменены",
             "message": ""
         })
-
-
-def render_daily_digest(request, user_slug):
-    user = get_object_or_404(User, slug=user_slug)
-
-    try:
-        digest = generate_daily_digest(user)
-    except NotFound:
-        raise Http404()
-
-    return HttpResponse(digest)
 
 
 def render_weekly_digest(request):
