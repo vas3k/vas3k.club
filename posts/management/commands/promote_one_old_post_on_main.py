@@ -32,9 +32,12 @@ class Command(BaseCommand):
             .order_by("-upvotes")\
             .first()
 
-        self.stdout.write(f"Promoting post '{random_good_post.title}'")
+        if random_good_post:
+            self.stdout.write(f"Promoting post '{random_good_post.title}'")
 
-        random_good_post.last_activity_at = datetime.utcnow()
-        random_good_post.save()
+            random_good_post.last_activity_at = datetime.utcnow()
+            random_good_post.save()
+        else:
+            self.stdout.write("No posts found")
 
         self.stdout.write("Done 🥙")
