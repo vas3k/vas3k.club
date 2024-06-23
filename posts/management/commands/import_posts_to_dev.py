@@ -42,6 +42,7 @@ class Command(BaseCommand):
         result = {
             'post_exists': 0,
             'post_created': 0,
+            'post_updated': 0,
             'user_created': 0
         }
 
@@ -71,6 +72,7 @@ class Command(BaseCommand):
                     html=markdown_text(item['content_text']),
                     image=author.avatar,  # хак для постов типа "проект", чтобы не лазить по вастрику лишний раз
                     created_at=item['date_published'],
+                    last_activity_at=item['date_modified'],
                     comment_count=item['_club']['comment_count'],
                     view_count=item['_club']['view_count'],
                     upvotes=item['_club']['upvotes'],
@@ -85,28 +87,26 @@ class Command(BaseCommand):
                     coauthors=[]
                 )
 
-                exists = False
                 try:
                     post = Post.objects.get(id=item['id'])
-                    exists = True
+                    if options['force']:
+                        post.__dict__.update(**defaults)
+                        post.save()
+                        result['post_updated'] += 1
+                        self.stdout.write(" 📝 \"{}\" запись отредактирована".format(item['title']))
+                    else:
+                        result['post_exists'] += 1
+                        self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
                 except Post.DoesNotExist:
-                    post = Post.objects.create(**defaults)
-
-                if exists and not options['force']:
-                    result['post_exists'] += 1
-                    self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
-                    continue
-
-                post.__dict__.update(defaults)
-                post.save()
-
-                result['post_created'] += 1
-                self.stdout.write(" 📄 \"{}\" запись создана".format(item['title']))
+                    Post.objects.create(**defaults)
+                    result['post_created'] += 1
+                    self.stdout.write(" 📄 \"{}\" запись создана".format(item['title']))
 
         self.stdout.write("")
         self.stdout.write("Итого:")
         self.stdout.write("📄 Новых постов: {}".format(result['post_created']))
         self.stdout.write("📌 Уже существовало: {}".format(result['post_exists']))
+        self.stdout.write("📝 Отредактировано: {}".format(result['post_updated']))
         self.stdout.write("👤 Новых пользователей: {}".format(result['user_created']))
 
 
