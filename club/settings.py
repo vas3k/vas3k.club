@@ -186,7 +186,7 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Карьерный цех 
 APP_HOST = os.environ.get("APP_HOST") or "https://club.careerfactory.ru"
 APP_NAME = "Карьерный цех"
 APP_DESCRIPTION = "Всё интересное происходит за закрытыми дверями"
-LAUNCH_DATE = datetime(2020, 4, 13)
+LAUNCH_DATE = datetime(2024, 6, 20)
 
 AUTH_CODE_LENGTH = 6
 AUTH_CODE_EXPIRATION_TIMEDELTA = timedelta(minutes=10)
