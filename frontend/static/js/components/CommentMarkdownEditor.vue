@@ -57,7 +57,6 @@ export default {
     data() {
         return {
             selectedUserIndex: null,
-            postSlug: null,
             users: [],
             autocomplete: null,
             autocompleteCache: {
