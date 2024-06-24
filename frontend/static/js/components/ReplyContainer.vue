@@ -29,7 +29,27 @@
 <script>
 export default {
     name: 'ReplyContainer',
-    props: ["replyTo", "commentOrder", "avatarUrl", "username", "createCommentUrl"],
+    props: {
+        replyTo: {
+            type: Object
+        },
+        commentOrder: {
+            type: String,
+            required: true
+        },
+        avatarUrl: {
+            type: String,
+            required: true
+        },
+        username: {
+            type: String,
+            required: true
+        },
+        createCommentUrl: {
+            type: String,
+            required: true
+        },
+    },
     computed: {
         avatarAlt: function() {
             return `Аватар ${this.$props.username}`
