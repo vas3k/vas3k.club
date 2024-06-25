@@ -27,6 +27,7 @@ Vue.component("comment-markdown-editor", () => import("./components/CommentMarkd
 Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
+Vue.component("reply-container", () => import("./components/ReplyContainer.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.
@@ -43,6 +44,7 @@ new Vue({
     },
     data: {
         shownWindow: null,
+        replyTo: null,
     },
     methods: {
         toggleCommentThread(event) {
@@ -75,51 +77,7 @@ new Vue({
             }
         },
         showReplyForm(commentId, username, withSelection) {
-            // First, hide all other reply forms
-            const replyForms = document.querySelectorAll(".reply-form-form");
-            for (let i = 0; i < replyForms.length; i++) {
-                // replyForms[i].removeEventListener('keydown', handleCommentHotkey); // FIXME???
-                replyForms[i].style.display = "none";
-            }
-
-            // Then show one for commentId
-            const commentReplyForm = document.getElementById("reply-form-" + commentId);
-            // commentReplyForm.addEventListener('keydown', (event) => handleCommentHotkey(event, commentReplyForm));  // FIXME???
-            commentReplyForm.style.display = null;
-
-            // Define helper function
-            function appendMarkdownTextareaValue(textarea, value) {
-                textarea.focus(); // on mobile
-                textarea.value = textarea.value + value;
-
-                // On mobile the next element sibling is undefined
-                if (textarea.nextElementSibling) {
-                    const codeMirrorEditor =
-                        textarea.nextElementSibling.CodeMirror ||
-                        textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
-                    if (codeMirrorEditor !== undefined) {
-                        codeMirrorEditor.setValue(codeMirrorEditor.getValue() + value);
-                        codeMirrorEditor.focus();
-                        codeMirrorEditor.setCursor(codeMirrorEditor.lineCount(), 0);
-                    }
-                }
-            }
-
-            // Add username to reply
-            const commentReplyTextarea = commentReplyForm.querySelector("textarea");
-            if (username !== null && username !== "") {
-                appendMarkdownTextareaValue(commentReplyTextarea, "@" + username + ", ");
-            }
-
-            // Add selected text as quote
-            if (withSelection) {
-                const selectedText = window.getSelection().toString();
-                if (selectedText !== null && selectedText !== "") {
-                    appendMarkdownTextareaValue(commentReplyTextarea, "\n> " + selectedText + "\n\n");
-                }
-            }
-
-            appendMarkdownTextareaValue(commentReplyTextarea, "");
+            this.replyTo = { commentId, username, withSelection }
         },
     },
 });
