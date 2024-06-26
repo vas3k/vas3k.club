@@ -91,7 +91,7 @@
             {% endif %}
 
             {% if me and me.is_active_membership and comment.post.is_commentable %}
-                <span class="comment-footer-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+                <span class="comment-footer-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}')"><i class="fas fa-reply"></i>&nbsp;ответить</span>
             {% endif %}
         </div>
     </div>
