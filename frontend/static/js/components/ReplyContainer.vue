@@ -30,6 +30,7 @@
 export default {
     name: 'ReplyContainer',
     props: {
+        // type { commentId: string, username: string, draftKey?: string }
         replyTo: {
             type: Object
         },
@@ -65,7 +66,7 @@ export default {
         replyTo: async function(newReplyTo, oldReplyTo) {
             this.replyTo = newReplyTo;
             if (oldReplyTo) {
-                this.saveDraft(oldReplyTo.commentId);
+                this.saveDraft(getDraftKey(oldReplyTo));
             }
         }
     },
@@ -76,9 +77,10 @@ export default {
             const newCommentEl = this.$el.querySelector(`#comment-${this.replyTo.commentId}`)
             newCommentEl.after(replyForm)
             const editor = this.getEditor()
+            const draftKey = getDraftKey(this.replyTo)
 
-            if (this.replyTo.commentId in this.drafts) {
-                const text = this.drafts[this.replyTo.commentId]
+            if (draftKey in this.drafts) {
+                const text = this.drafts[draftKey]
                 const textarea = replyForm.querySelector("textarea")
                 textarea.value = text
                 editor.setValue(text)
@@ -138,5 +140,9 @@ export default {
             return this.editor
         }
     }
+}
+
+function getDraftKey(replyTo) {
+    return replyTo?.draftKey || replyTo?.commentId
 }
 </script>

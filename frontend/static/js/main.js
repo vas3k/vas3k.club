@@ -76,8 +76,8 @@ new Vue({
                 window.scrollBy(0, commentPosition.top);
             }
         },
-        showReplyForm(commentId, username) {
-            this.replyTo = { commentId, username }
+        showReplyForm(commentId, username, draftKey) {
+            this.replyTo = { commentId, username, draftKey }
         },
     },
 });
