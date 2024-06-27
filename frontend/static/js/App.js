@@ -70,7 +70,14 @@ const App = {
         setFaviconHref(mediaQueryList);
         mediaQueryList.addListener(setFaviconHref);
     },
-
+    /**
+     * Initializes markdown editor with toolbar **for server-side rendered pages**
+     * e.g. Create post page
+     *
+     * Simple editors are initialized in the `CommentMarkdownEditor` Vue component
+     *
+     * @returns {CodeMirrorEditor[]}
+     */
     initializeMarkdownEditor() {
         if (isMobile()) return []; // we don't need fancy features on mobiles
 

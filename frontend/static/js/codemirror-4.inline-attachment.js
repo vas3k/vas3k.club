@@ -70,6 +70,7 @@
             inlineattach = new inlineAttachment(options, editor),
             el = codeMirror.getWrapperElement();
 
+        const fileInput = options.fileInputEl || el.closest("form").querySelector("input[type=file]")
         el.addEventListener(
             "paste",
             function (e) {
@@ -87,6 +88,13 @@
                 return false;
             }
         });
+
+        fileInput && fileInput.addEventListener("change", function (e) {
+            e.stopPropagation()
+            e.preventDefault()
+
+            return inlineattach.onFileInputUpload(e);
+        })
     };
 
     inlineAttachment.editors.codemirror4 = codeMirrorEditor4;
