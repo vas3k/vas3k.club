@@ -8,12 +8,17 @@
                 <div class="reply-form-avatar">
                     <div class="avatar"><img :src="avatarUrl" :alt="avatarAlt" loading="lazy" /></div>
                 </div>
-
-                <div class="reply-form-body">
+                <div class="reply-form-body comment-form-editor-container">
                     <comment-markdown-editor>
                         <textarea name="text" maxlength="20000" placeholder="Напишите ответ..." class="markdown-editor-invisible" required>
                         </textarea>
                     </comment-markdown-editor>
+                    <div class="reply-form-footer">
+                        <div class="reply-form-attach-image">
+                            <i class="fa fa-paperclip"></i>
+                            <input type="file" alt="Добавить картинку" />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="reply-form-button">

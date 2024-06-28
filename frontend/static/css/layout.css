@@ -292,17 +292,20 @@
         flex: 1;
     }
 
-    .comment-form-editor-container {
+    .comment-form-editor-container,
+    .reply-form-editor-container {
         box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
         border-radius: var(--form-border-radius);
         overflow: hidden;
     }
 
-    .comment-form-editor-container:focus-within {
+    .comment-form-editor-container:focus-within,
+    .reply-form-editor-container:focus-within {
         box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
     }
 
-    .comment-form-footer {
+    .comment-form-footer,
+    .reply-form-footer {
         background-color: #fff;
         display: flex;
         align-items: center;
@@ -316,6 +319,7 @@
 
     .comment-form-attach-image {
         position: relative;
+        top: 1px; /* visual center adjustment */
         font-size: 1.125rem;
         padding: 3px 9px;
         border-radius: var(--form-border-radius);
@@ -325,7 +329,6 @@
 
     .comment-form-attach-image:hover,
     .comment-form-attach-image:focus-within {
-        cursor: pointer;
         border-color: inherit;
     }
 
@@ -400,6 +403,34 @@
         align-self: end;
     }
 
+    .reply-form-attach-image {
+        position: relative;
+        font-size: 1rem;
+        padding: 0 6px;
+        border: var(--button-border);
+        border-color: transparent;
+    }
+
+    .reply-form-attach-image:hover,
+    .reply-form-attach-image:focus-within {
+        border-color: inherit;
+    }
+
+    .reply-form-attach-image input[type=file] {
+        position: absolute;
+        padding: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+    }
+
+    .reply-form-attach-image input[type=file]:hover,
+    .reply-form-attach-image input[type=file]:focus {
+        cursor: pointer;
+    }
+
     @media only screen and (max-width : 570px) {
         .reply-form {
             display: grid;
@@ -409,10 +440,12 @@
         }
 
             .reply-form-button {
-                grid-column-start: 1;
+                margin-bottom: 6px;
+                margin-right: 6px;
+                grid-column-start: 2;
                 grid-column-end: 3;
-                grid-row-start: 2;
-                grid-row-end: 3;
+                grid-row-start: 1;
+                grid-row-end: 2;
                 justify-self: end;
                 align-self: end;
             }
