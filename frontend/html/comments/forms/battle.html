@@ -15,16 +15,23 @@
                 </select>
             </div>
             <div class="comment-form-body-title">{{ form.title }}</div>
-            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}">
-                {{ form.text }}
-            </comment-markdown-editor>
+            <div class="comment-form-editor-container">
+                <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}">
+                    {{ form.text }}
+                </comment-markdown-editor>
+                <div class="comment-form-footer">
+                    <div class="comment-form-attach-image">
+                        <i class="fa fa-paperclip"></i>
+                        <input type="file" alt="Добавить картинку" />
+                    </div>
+                    <div class="comment-form-subscribe">
+                        {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+                    </div>
+                    <button type="submit" class="button comment-form-button"> {{save_message}} </button>
+                </div>
+            </div>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
-        <div class="comment-form-footer">
-            <div class="comment-form-subscribe">
-                {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
-            </div>
-            <button type="submit" class="button comment-form-button"> {{save_message}} </button>
-        </div>
+
     </div>
 </form>

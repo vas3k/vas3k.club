@@ -290,12 +290,15 @@
 
     .comment-form-body {
         flex: 1;
+    }
+
+    .comment-form-editor-container {
         box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
         border-radius: var(--form-border-radius);
         overflow: hidden;
     }
 
-    .comment-form-body:focus-within {
+    .comment-form-editor-container:focus-within {
         box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
     }
 
