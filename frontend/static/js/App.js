@@ -84,8 +84,6 @@ const App = {
      * @returns {CodeMirrorEditor[]}
      */
     initializeMarkdownEditor() {
-        if (isMobile()) return []; // we don't need fancy features on mobiles
-
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
                 const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes })
