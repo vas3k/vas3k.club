@@ -280,38 +280,65 @@
     }
 
 .comment-form {
-    display: grid;
-    grid-template-columns: min-content minmax(auto, 1fr);
-    grid-template-rows: auto 60px;
-    justify-content: stretch;
+    display: flex;
+    --form-border-radius: 5px;
 }
 
     .comment-form-avatar {
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 1;
-        grid-row-end: 3;
-        justify-self: start;
+        width: min-content;
     }
 
     .comment-form-body {
-        grid-column-start: 2;
-        grid-column-end: 3;
-        grid-row-start: 1;
-        grid-row-end: 2;
-        justify-self: stretch;
+        flex: 1;
+        box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
+        border-radius: var(--form-border-radius);
+        overflow: hidden;
+    }
+
+    .comment-form-body:focus-within {
+        box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
     }
 
     .comment-form-footer {
-        grid-column-start: 1;
-        grid-column-end: 3;
-        grid-row-start: 2;
-        grid-row-end: 3;
-        justify-self: end;
-        align-self: end;
+        background-color: #fff;
         display: flex;
-        flex-direction: row;
         align-items: center;
+        padding: 6px;
+    }
+
+    .comment-form-footer .button {
+        padding: 10px 16px;
+        border-radius: var(--form-border-radius, var(--button-border-radius));
+    }
+
+    .comment-form-attach-image {
+        position: relative;
+        font-size: 1.125rem;
+        padding: 3px 9px;
+        border-radius: var(--form-border-radius);
+        border: var(--button-border);
+        border-color: transparent;
+    }
+
+    .comment-form-attach-image:hover,
+    .comment-form-attach-image:focus-within {
+        cursor: pointer;
+        border-color: inherit;
+    }
+
+    .comment-form-attach-image input[type=file] {
+        position: absolute;
+        padding: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+    }
+
+    .comment-form-attach-image input[type=file]:hover,
+    .comment-form-attach-image input[type=file]:focus {
+        cursor: pointer;
     }
 
     .comment-form-body {

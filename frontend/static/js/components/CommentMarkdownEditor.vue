@@ -23,29 +23,27 @@
 
 <script>
 import { isMobile, throttle } from "../common/utils";
-import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../common/markdown-editor";
+import {
+    createFileInput,
+    createMarkdownEditor,
+    handleFormSubmissionShortcuts,
+    imageUploadOptions
+} from "../common/markdown-editor";
 
 export default {
     mounted() {
         const $markdownElementDiv = this.$el.children[0];
-        const $fileInputElement = document.createElement("input")
-        $fileInputElement.type = "file"
-        $fileInputElement.accept = imageUploadOptions.allowedTypes.join()
+        const $fileInputElement = this.$el.querySelector(".comment-form-attach-image input[type=file]")
+        if ($fileInputElement) {
+            $fileInputElement.accept = imageUploadOptions.allowedTypes.join()
+        }
 
         this.editor = createMarkdownEditor($markdownElementDiv, {
-            toolbar: [{
-                name: "upload-file",
-                action: (editor) => {
-                    $fileInputElement.click()
-                },
-                className: "fa fa-paperclip",
-                text: "Upload image",
-                title: "Upload image",
-            }],
+            toolbar: false,
         });
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
-        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, { ...imageUploadOptions, fileInputEl: $fileInputElement }, $fileInputElement);
+        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, { ...imageUploadOptions, fileInputEl: $fileInputElement });
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
@@ -233,28 +231,12 @@ export default {
 </script>
 
 <style>
-.comment-markdown-editor .EasyMDEContainer {
-    --editor-border-radius: 5px;
-    display: flex;
-    flex-direction: column-reverse;
-    isolation: isolate;
-    box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
-    border-radius: var(--editor-border-radius);
+.comment-markdown-editor .CodeMirror {
+    resize: none;
 }
-
-.comment-markdown-editor .EasyMDEContainer:focus-within {
-    box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
-}
-
 
 .comment-markdown-editor .EasyMDEContainer .CodeMirror {
-    border-radius: var(--editor-border-radius) var(--editor-border-radius) 0 0;
-    box-shadow: none;
-    border: none;
-}
-
-.comment-markdown-editor .EasyMDEContainer .editor-toolbar {
-    border-radius: 0 0 var(--editor-border-radius) var(--editor-border-radius);
+    border-radius: 0;
     box-shadow: none;
     border: none;
 }
