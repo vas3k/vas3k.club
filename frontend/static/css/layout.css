@@ -307,6 +307,7 @@
     .comment-form-footer,
     .reply-form-footer {
         background-color: #fff;
+        color: #333;
         display: flex;
         align-items: center;
         padding: 6px;
