@@ -1,4 +1,5 @@
 import EasyMDE from "easymde";
+import { findParentForm, isCommunicationForm } from "./utils";
 
 const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
@@ -77,7 +78,7 @@ export function handleFormSubmissionShortcuts(event) {
         return;
     }
 
-    const form = findParentForm(e.target);
+    const form = findParentForm(event.target);
     if (!form || !isCommunicationForm(form)) {
         return;
     }

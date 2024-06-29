@@ -1007,6 +1007,15 @@
             }
         }
 
+    .battle-comments-list {
+        display: grid;
+        grid-template-columns: 10% 1fr 10%;
+        grid-template-areas:
+            "prefix prefix prefix"
+            "left center right"
+            "replies replies replies"
+    }
+
     .post-comments-form {
         padding-top: 30px;
         padding-left: 10px;

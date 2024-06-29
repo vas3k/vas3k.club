@@ -57,6 +57,10 @@
         padding: 0 20px;
     }
 
+    .reply-form-form {
+        scroll-margin-top: 20px;
+    }
+
 .reply-form {
     margin-top: 0;
     margin-left: 25px;
@@ -433,6 +437,9 @@
 
         .comment-type-battle-side-a {
             background: rgba(76, 152, 213, 0.3);
+            /* from left border to the end of the center column */
+            grid-area: auto / left-start / auto / center-end;
+            justify-self: start;
         }
 
             .comment-type-battle-side-a:target {
@@ -445,6 +452,9 @@
 
         .comment-type-battle-side-b {
             background: rgba(83, 170, 104, 0.3);
+            /* from center column to the end of the right column */
+            grid-area: auto / center-start / auto / right-end;
+            justify-self: end;
         }
 
             .comment-type-battle-side-b:target {
@@ -464,6 +474,7 @@
         top: 0.7em;
         opacity: 0.5;
         font-weight: 500;
+        grid-area: prefix;
     }
 
         .battle-comment-prefix-side-a {
@@ -474,6 +485,10 @@
             color: #53AA68;
             text-align: right;
         }
+
+    .replies-type-battle {
+        grid-area: replies;
+    }
 
 .reply {
     margin: 10px 0 15px 0;

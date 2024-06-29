@@ -9,8 +9,4 @@
     {% else %}
         {% include "comments/types/normal.html" with comment=tree.comment replies=tree.replies %}
     {% endif %}
-
-    {% if post.is_commentable and me %}
-        {% include "comments/forms/reply.html" with comment=tree.comment reply_form=reply_form %}
-    {% endif %}
 {% endfor %}

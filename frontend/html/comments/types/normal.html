@@ -104,7 +104,7 @@
         {% endif %}
 
         {% if me and me.is_active_membership and comment.post.is_commentable %}
-            <span class="comment-footer-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+            <span class="comment-footer-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}')"><i class="fas fa-reply"></i>&nbsp;ответить</span>
         {% endif %}
     </div>
 
@@ -113,10 +113,6 @@
             <div class="replies">
                 {% for reply_tree in replies %}
                     {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
-
-                    {% if post.is_commentable and me %}
-                        {% include "comments/forms/reply.html" with comment=reply_tree.comment reply_form=reply_form %}
-                    {% endif %}
                 {% endfor %}
             </div>
             <div class="clearfix20"></div>
