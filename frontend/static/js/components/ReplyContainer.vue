@@ -96,17 +96,6 @@ export default {
                 if (username !== null && username !== "") {
                     this.appendMarkdownTextareaValue("@" + username + ", ");
                 }
-
-                // Add selected text as quote
-                const withSelection = this.replyTo.withSelection
-                if (withSelection) {
-                    const selectedText = window.getSelection().toString();
-                    if (selectedText !== null && selectedText !== "") {
-                        this.appendMarkdownTextareaValue("\n> " + selectedText + "\n\n");
-                    }
-                }
-
-                this.appendMarkdownTextareaValue("");
             }
 
             editor.focus()

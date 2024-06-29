@@ -22,9 +22,8 @@
 </template>
 
 <script>
-import { isMobile, throttle } from "../common/utils";
+import { throttle } from "../common/utils";
 import {
-    createFileInput,
     createMarkdownEditor,
     handleFormSubmissionShortcuts,
     imageUploadOptions
