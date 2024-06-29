@@ -6,7 +6,7 @@
             :multiple="allowMultiple"
 
             label="title"
-            placeholder=""
+            placeholder="Тег не выбран"
 
             v-model="selectValue"
 
