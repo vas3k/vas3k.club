@@ -35,6 +35,12 @@ class Command(BaseCommand):
             help="Заменять посты, если они уже существуют",
         )
 
+        parser.add_argument(
+            "--with-comments",
+            action="store_true",
+            help="В том числе парсить комменты",
+        )
+
     def handle(self, *args, **options):
         if not settings.DEBUG:
             return self.stdout.write("☢️  Только для запуска в DEBUG режиме")
@@ -43,7 +49,10 @@ class Command(BaseCommand):
             'post_exists': 0,
             'post_created': 0,
             'post_updated': 0,
-            'user_created': 0
+            'user_created': 0,
+            'comment_created': 0,
+            'comment_updated': 0,
+            'comment_exists': 0,
         }
 
         for x in range(options['skip'], options['pages'] + options['skip']):
@@ -89,18 +98,25 @@ class Command(BaseCommand):
 
                 try:
                     post = Post.objects.get(id=item['id'])
-                    if options['force']:
+                    if not options['force']:
+                        result['post_exists'] += 1
+                        self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
+                        continue
+                    else:
                         post.__dict__.update(**defaults)
                         post.save()
                         result['post_updated'] += 1
                         self.stdout.write(" 📝 \"{}\" запись отредактирована".format(item['title']))
-                    else:
-                        result['post_exists'] += 1
-                        self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
+
                 except Post.DoesNotExist:
                     Post.objects.create(**defaults)
                     result['post_created'] += 1
                     self.stdout.write(" 📄 \"{}\" запись создана".format(item['title']))
+
+                if options['with_comments']:
+                    comments = parse_comments(item['id'], item['url'])
+                    self.stdout.write("  💬 к посту \"{}\" спаршено {} комментов".format(item['title'], comments))
+
 
         self.stdout.write("")
         self.stdout.write("Итого:")
@@ -131,3 +147,12 @@ def create_user(author):
     )
 
     return User.objects.get_or_create(slug=slug, defaults=defaults)
+
+
+def parse_comments(post_id, url):
+    req = urllib.request.Request(url)
+    req.add_header('User-Agent', 'posts-to-dev')
+    response = urllib.request.urlopen(req)
+    content = response.read().decode(response.headers.get_content_charset())
+    print(content)
+    exit()
