@@ -109,3 +109,11 @@ $ python3 manage.py import_posts_to_dev --pages 10 --skip 5 --force
 # if use docker-compose
 $ docker exec -it club_app python3 manage.py import_posts_to_dev --pages 2
 ```
+You can also import private posts and comments, but you will need to create an application (https://vas3k.club/apps/create/) and use `service_token` to do this.
+```bash
+# fetch first page with comments
+$ python3 manage.py import_posts_to_dev --with-comments --service-token XXX
+
+# fetch first page with private posts and comments
+$ python3 manage.py import_posts_to_dev --with-private --with-comments --service-token XXX
+```
