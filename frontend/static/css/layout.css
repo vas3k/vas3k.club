@@ -319,6 +319,7 @@
     }
 
     .comment-form-attach-image {
+        display: block;
         position: relative;
         top: 1px; /* visual center adjustment */
         font-size: 1.125rem;
@@ -331,21 +332,19 @@
     .comment-form-attach-image:hover,
     .comment-form-attach-image:focus-within {
         border-color: inherit;
+        cursor: pointer;
     }
 
     .comment-form-attach-image input[type=file] {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
         position: absolute;
+        white-space: nowrap;
+        width: 1px;
         padding: 0;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0;
-    }
-
-    .comment-form-attach-image input[type=file]:hover,
-    .comment-form-attach-image input[type=file]:focus {
-        cursor: pointer;
+        resize: none;
     }
 
     .comment-form-body {
@@ -405,6 +404,7 @@
     }
 
     .reply-form-attach-image {
+        display: block;
         position: relative;
         font-size: 1rem;
         padding: 0 6px;
@@ -415,16 +415,19 @@
     .reply-form-attach-image:hover,
     .reply-form-attach-image:focus-within {
         border-color: inherit;
+        cursor: pointer;
     }
 
     .reply-form-attach-image input[type=file] {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
         position: absolute;
+        white-space: nowrap;
+        width: 1px;
         padding: 0;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0;
+        resize: none;
     }
 
     .reply-form-attach-image input[type=file]:hover,

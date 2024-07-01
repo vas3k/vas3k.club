@@ -14,10 +14,10 @@
                         </textarea>
                     </comment-markdown-editor>
                     <div class="reply-form-footer">
-                        <div class="reply-form-attach-image">
-                            <i class="fa fa-paperclip"></i>
+                        <label class="reply-form-attach-image">
                             <input type="file" alt="Добавить картинку" />
-                        </div>
+                            <i class="fa fa-paperclip"></i>
+                        </label>
                     </div>
                 </div>
 
