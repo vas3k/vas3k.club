@@ -379,13 +379,32 @@
 
     /**
      * Called when a drop event occures
-     * @param  {Event} e
+     * @param  {DragEvent} e
      * @return {Boolean} if the event was handled
      */
     inlineAttachment.prototype.onDrop = function (e) {
         var result = false;
         for (var i = 0; i < e.dataTransfer.files.length; i++) {
             var file = e.dataTransfer.files[i];
+            if (this.isFileAllowed(file)) {
+                result = true;
+                this.onFileInserted(file);
+                this.uploadFile(file);
+            }
+        }
+
+        return result;
+    };
+
+    /**
+     * Called when user selects a file
+     * @param  {Event} e
+     * @return {Boolean} whether or not the event was handled
+     */
+    inlineAttachment.prototype.onFileInputUpload = function (e) {
+        let result = false;
+        for (let i = 0; i < e.target.files.length; i++) {
+            const file = e.target.files[i];
             if (this.isFileAllowed(file)) {
                 result = true;
                 this.onFileInserted(file);

@@ -22,22 +22,27 @@
 </template>
 
 <script>
-import { isMobile, throttle } from "../common/utils";
-import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../common/markdown-editor";
+import { throttle } from "../common/utils";
+import {
+    createMarkdownEditor,
+    handleFormSubmissionShortcuts,
+    imageUploadOptions
+} from "../common/markdown-editor";
 
 export default {
     mounted() {
-        if (isMobile()) {
-            return;
+        const $markdownElementDiv = this.$el.children[0];
+        const $fileInputElement = this.$el.querySelector(".comment-form-attach-image input[type=file]")
+        if ($fileInputElement) {
+            $fileInputElement.accept = imageUploadOptions.allowedTypes.join()
         }
 
-        const $markdownElementDiv = this.$el.children[0];
         this.editor = createMarkdownEditor($markdownElementDiv, {
             toolbar: false,
         });
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
-        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, imageUploadOptions);
+        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, { ...imageUploadOptions, fileInputEl: $fileInputElement });
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
@@ -223,3 +228,16 @@ export default {
     },
 };
 </script>
+
+<style>
+.comment-markdown-editor .CodeMirror {
+    resize: none;
+}
+
+.comment-markdown-editor .EasyMDEContainer .CodeMirror {
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+}
+
+</style>
