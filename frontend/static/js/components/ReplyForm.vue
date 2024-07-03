@@ -70,15 +70,6 @@ export default {
             }
         }
     },
-    mounted: function() {
-        if (window.location.hash) {
-            const anchorEl = document.getElementById(window.location.hash.substring(1))
-            if (anchorEl) {
-                window.location = window.location
-                anchorEl.scrollIntoView()
-            }
-        }
-    },
     updated: function() {
         if (this.replyTo !== null && this.getEditor()) {
             // move the reply form under the comment
