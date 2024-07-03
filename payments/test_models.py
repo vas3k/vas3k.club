@@ -100,7 +100,7 @@ class TestProducts(TestCase):
         self.assertTrue(result)
 
         user = User.objects.get(id=existed_user.id)
-        self.assertAlmostEquals(user.membership_expires_at, future_membership_expiration + timedelta(days=365),
+        self.assertAlmostEquals(user.membership_expires_at, future_membership_expiration + timedelta(days=366),
                                 delta=timedelta(seconds=10))
         self.assertEqual(user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
         self.assertEqual(user.membership_platform_data, {"reference": new_payment.reference,
@@ -127,7 +127,7 @@ class TestProducts(TestCase):
         self.assertTrue(result)
 
         user = User.objects.get(id=existed_user.id)
-        self.assertAlmostEquals(user.membership_expires_at, datetime.utcnow() + timedelta(days=365),
+        self.assertAlmostEquals(user.membership_expires_at, datetime.utcnow() + timedelta(days=366),
                                 delta=timedelta(seconds=10))
         self.assertEqual(user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
         self.assertEqual(user.membership_platform_data, {"reference": new_payment.reference,

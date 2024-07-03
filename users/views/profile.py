@@ -21,7 +21,7 @@ from users.utils import calculate_similarity
 
 
 def profile(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("profile", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -109,7 +109,7 @@ def profile(request, user_slug):
 
 @require_auth
 def profile_comments(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("profile_comments", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -126,7 +126,7 @@ def profile_comments(request, user_slug):
 
 
 def profile_posts(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("profile_posts", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -147,7 +147,7 @@ def profile_posts(request, user_slug):
 
 
 def profile_badges(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("profile_badges", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)

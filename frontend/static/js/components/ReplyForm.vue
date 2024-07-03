@@ -28,7 +28,7 @@
 
 <script>
 export default {
-    name: 'ReplyContainer',
+    name: 'ReplyForm',
     props: {
         // type { commentId: string, username: string, draftKey?: string }
         replyTo: {
@@ -73,8 +73,8 @@ export default {
     updated: function() {
         if (this.replyTo !== null && this.getEditor()) {
             // move the reply form under the comment
-            const replyForm = this.$el.querySelector("#comment-reply-form")
-            const newCommentEl = this.$el.querySelector(`#comment-${this.replyTo.commentId}`)
+            const replyForm = document.getElementById("comment-reply-form")
+            const newCommentEl = document.getElementById(`comment-${this.replyTo.commentId}`)
             newCommentEl.after(replyForm)
             const editor = this.getEditor()
             const draftKey = getDraftKey(this.replyTo)
@@ -101,7 +101,7 @@ export default {
     },
     methods: {
         appendMarkdownTextareaValue: function(value) {
-            const textarea = this.$el.querySelector("#comment-reply-form textarea")
+            const textarea = document.querySelector("#comment-reply-form textarea")
             textarea.focus(); // on mobile
             textarea.value = textarea.value + value;
 
@@ -119,7 +119,7 @@ export default {
         },
         getEditor: function() {
             if (!this.editor) {
-                const textarea = this.$el.querySelector("#comment-reply-form textarea")
+                const textarea = document.querySelector("#comment-reply-form textarea")
 
                 textarea.focus(); // on mobile
                 if (!textarea.nextElementSibling) {
