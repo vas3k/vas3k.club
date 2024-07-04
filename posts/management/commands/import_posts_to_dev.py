@@ -88,8 +88,8 @@ class Command(BaseCommand):
         }
 
         for x in range(options['skip'], options['pages'] + options['skip']):
-            url = "https://vas3k.club/feed.json?page={}".format(x + 1)
-            self.stdout.write("📁 {}".format(url))
+            url = f"https://vas3k.club/feed.json?page={x + 1}"
+            self.stdout.write(f"📁 {url}")
             req = urllib.request.Request(url, headers=headers)
             response = urllib.request.urlopen(req)
             data = json.load(response)
@@ -101,7 +101,7 @@ class Command(BaseCommand):
                 author, created = create_user(item['authors'][0])
                 if created:
                     result['user_created'] += 1
-                    self.stdout.write(" 👤 \"{}\" пользователь создан".format(author.full_name))
+                    self.stdout.write(f" 👤 \"{author.full_name}\" пользователь создан")
 
                 *_, slug, _ = item['url'].split('/')
 
@@ -135,33 +135,33 @@ class Command(BaseCommand):
                     post = Post.objects.get(id=item['id'])
                     if not options['force']:
                         result['post_exists'] += 1
-                        self.stdout.write(" 📌 \"{}\" уже существует".format(item['title']))
+                        self.stdout.write(f" 📌 \"{item['title']}\" уже существует")
                         continue
                     else:
                         post.__dict__.update(**defaults)
                         post.save()
                         result['post_updated'] += 1
-                        self.stdout.write(" 📝 \"{}\" запись отредактирована".format(item['title']))
+                        self.stdout.write(f" 📝 \"{item['title']}\" запись отредактирована")
 
                 except Post.DoesNotExist:
                     post = Post.objects.create(**defaults)
                     post.last_activity_at=item['date_modified']
                     post.save()
                     result['post_created'] += 1
-                    self.stdout.write(" 📄 \"{}\" запись создана".format(item['title']))
+                    self.stdout.write(f" 📄 \"{item['title']}\" запись создана")
 
                 if options['with_comments']:
                     comments = parse_comments(item['id'], item['url'])
                     result['comment_created'] += comments
-                    self.stdout.write("  💬 к посту \"{}\" спаршено {} комментов".format(item['title'], comments))
+                    self.stdout.write(f"  💬 к посту \"{item['title']}\" спаршено {comments} комментов")
 
         self.stdout.write("")
         self.stdout.write("Готово 🌮")
-        self.stdout.write("📄 Новых постов: {}".format(result['post_created']))
-        self.stdout.write("📌 Уже существовало: {}".format(result['post_exists']))
-        self.stdout.write("📝 Отредактировано: {}".format(result['post_updated']))
-        self.stdout.write("👤 Новых пользователей: {}".format(result['user_created']))
-        self.stdout.write("💬 Новых комментов: {}".format(result['comment_created']))
+        self.stdout.write(f"📄 Новых постов: {result['post_created']}")
+        self.stdout.write(f"📌 Уже существовало: {result['post_exists']}")
+        self.stdout.write(f"📝 Отредактировано: {result['post_updated']}")
+        self.stdout.write(f"👤 Новых пользователей: {result['user_created']}")
+        self.stdout.write(f"💬 Новых комментов: {result['comment_created']}")
 
 
 def create_user(author):
@@ -191,7 +191,7 @@ def create_user(author):
         defaults.update(slug=slug)
 
         if 'X-Service-Token' in headers.keys():
-            req = urllib.request.Request("https://vas3k.club/user/{}.json".format(slug), headers=headers)
+            req = urllib.request.Request(f"https://vas3k.club/user/{slug}.json", headers=headers)
             response = urllib.request.urlopen(req)
             data = json.load(response)
             defaults.update(**data['user'])
@@ -208,7 +208,7 @@ def create_user(author):
 
 
 def parse_comments(post_id, url):
-    req = urllib.request.Request("{}comments.json".format(url), headers=headers)
+    req = urllib.request.Request(f"{url}comments.json", headers=headers)
     response = urllib.request.urlopen(req)
     data = json.load(response)
     comments = []
