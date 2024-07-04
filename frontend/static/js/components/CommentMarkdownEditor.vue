@@ -22,15 +22,11 @@
 </template>
 
 <script>
-import { isMobile, throttle } from "../common/utils";
+import { throttle } from "../common/utils";
 import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../common/markdown-editor";
 
 export default {
     mounted() {
-        if (isMobile()) {
-            return;
-        }
-
         const $markdownElementDiv = this.$el.children[0];
         this.editor = createMarkdownEditor($markdownElementDiv, {
             toolbar: false,
