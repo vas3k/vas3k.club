@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import { throttle } from "../common/utils";
-import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../common/markdown-editor";
+import { throttle } from "../../common/utils";
+import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../../common/markdown-editor";
 
 export default {
     mounted() {
