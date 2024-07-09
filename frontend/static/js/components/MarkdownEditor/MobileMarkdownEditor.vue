@@ -6,8 +6,7 @@
             maxlength="20000"
             placeholder="Напишите ответ..."
             v-bind:value="value"
-            v-on:input="$emit('input', $event.target.value)"
-            v-on:blur="$emit('blur', $event)"
+            v-on:blur="handleBlur"
             ref="textarea"
         >
         </textarea>
@@ -33,6 +32,9 @@ export default {
         }
     },
     methods: {
+        handleBlur: function (event) {
+            this.$emit("blur", this.$refs["textarea"].value)
+        },
         focusTextareaIfNeeded: function(shouldFocus) {
             this.$nextTick(() => {
                 shouldFocus && this.$refs["textarea"].focus();

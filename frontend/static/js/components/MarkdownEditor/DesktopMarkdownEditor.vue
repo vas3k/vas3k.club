@@ -1,6 +1,14 @@
 <template>
     <div class="comment-markdown-editor">
-        <slot></slot>
+        <textarea
+            required
+            name="text"
+            maxlength="20000"
+            placeholder="Напишите ответ..."
+            class="markdown-editor-invisible"
+            ref="textarea"
+        >
+        </textarea>
         <div
             class="mention-autocomplete-hint"
             v-show="users.length > 0"
@@ -26,9 +34,16 @@ import { throttle } from "../../common/utils";
 import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../../common/markdown-editor";
 
 export default {
+    props: {
+        value: {
+            type: String
+        },
+        focused: {
+            type: Boolean
+        }
+    },
     mounted() {
-        const $markdownElementDiv = this.$el.children[0];
-        this.editor = createMarkdownEditor($markdownElementDiv, {
+        this.editor = createMarkdownEditor(this.$refs["textarea"], {
             toolbar: false,
         });
 
@@ -37,8 +52,14 @@ export default {
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
+        this.editor.codemirror.on("blur", (editor, event) => {
+            this.$emit("blur", editor.getValue())
+        })
 
         this.populateCacheWithCommentAuthors();
+
+        this.editor.value(this.value)
+        this.focusIfNeeded(this.focused)
     },
     watch: {
         users: function (val, oldVal) {
@@ -49,10 +70,18 @@ export default {
                 document.removeEventListener("keydown", this.handleKeydown, true);
             }
         },
+        focused: function (value) {
+            this.focusIfNeeded(value)
+        },
+        value: function (value) {
+            this.editor.value(value)
+            this.focusIfNeeded(true)
+        }
     },
     data() {
         return {
             selectedUserIndex: null,
+            editor: null,
             users: [],
             autocomplete: null,
             autocompleteCache: {
@@ -216,6 +245,14 @@ export default {
             this.users = [];
             this.editor.codemirror.focus();
         },
+        focusIfNeeded: function(shouldFocus) {
+            this.$nextTick(() => {
+                if (shouldFocus) {
+                    this.editor.codemirror.focus();
+                    this.editor.codemirror.execCommand("goDocEnd")
+                }
+            })
+        }
     },
 };
 </script>

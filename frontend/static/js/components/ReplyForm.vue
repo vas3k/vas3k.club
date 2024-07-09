@@ -12,7 +12,7 @@
                 <comment-markdown-editor
                     v-model="text"
                     :focused="isFocused"
-                    v-on:blur="isFocused = false"
+                    v-on:blur="handleBlur"
                 >
                 </comment-markdown-editor>
             </div>
@@ -89,56 +89,20 @@ export default {
             const newCommentEl = document.getElementById(`comment-${this.replyTo.commentId}`)
             if (replyForm.previousSibling !== newCommentEl) {
                 newCommentEl.after(replyForm)
-
-                // editor.focus()
-                // !isMobile() && editor.execCommand("goDocEnd")
-
                 replyForm.scrollIntoView({ behavior: "smooth", block: "center" })
             }
         }
     },
     methods: {
-        // appendMarkdownTextareaValue: function(value) {
-        //     const textarea = document.querySelector("#comment-reply-form textarea")
-        //     textarea.focus(); // on mobile
-        //     textarea.value = value;
-        //
-        //     const editor = this.getEditor()
-        //     if (editor && !isMobile()) {
-        //         editor.setValue(editor.getValue() + value);
-        //     }
-        // },
         saveDraft: function(commentId) {
             if (this.text.length > 0) {
                 this.drafts[commentId] = this.text;
             }
         },
-        // getEditor: function() {
-        //     if (!this.editor) {
-        //         const textarea = document.querySelector("#comment-reply-form textarea")
-        //
-        //         if (isMobile()) {
-        //             this.editor = textarea
-        //             textarea.focus(); // on mobile
-        //         } else {
-        //             if (!textarea.nextElementSibling) {
-        //                 console.error(`Couldn't find CodeMirror editor for ${textarea}`)
-        //                 return
-        //             }
-        //
-        //             const codeMirrorEditor = textarea.nextElementSibling.CodeMirror ||
-        //                 textarea.nextElementSibling.querySelector(".CodeMirror").CodeMirror;
-        //
-        //             if (codeMirrorEditor === undefined) {
-        //                 console.error(`Couldn't find CodeMirror editor for ${textarea}`)
-        //             }
-        //
-        //             this.editor = codeMirrorEditor
-        //         }
-        //     }
-        //
-        //     return this.editor
-        // }
+        handleBlur: function(textValue) {
+            this.isFocused = false
+            this.text = textValue
+        }
     }
 }
 

@@ -1,13 +1,18 @@
 <template>
     <mobile-editor
+        v-if="isMobile()"
         v-bind:value="value"
         v-on:input="$emit('input', $event)"
         v-on:blur="$emit('blur', $event)"
         :focused="focused"
-        v-if="isMobile()"></mobile-editor>
-    <desktop-editor :value="value" v-else>
-        <slot></slot>
-    </desktop-editor>
+    ></mobile-editor>
+    <desktop-editor
+        v-else
+        v-bind:value="value"
+        v-on:input="$emit('input', $event)"
+        v-on:blur="$emit('blur', $event)"
+        :focused="focused"
+    ></desktop-editor>
 </template>
 
 <script>
@@ -17,6 +22,10 @@ import { isMobile } from "../../common/utils";
 Vue.component("mobile-editor", () => import("./MobileMarkdownEditor.vue"));
 Vue.component("desktop-editor", () => import("./DesktopMarkdownEditor.vue"));
 
+/**
+ * The component is a facade for external use.
+ * It chooses which version of the editor to show
+ */
 export default {
     props: {
         value: {
