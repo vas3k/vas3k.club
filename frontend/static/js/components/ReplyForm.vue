@@ -12,7 +12,7 @@
                 <comment-markdown-editor
                     v-model="text"
                     :focused="isFocused"
-                    v-on:blur="handleBlur"
+                    @blur="handleBlur"
                 >
                 </comment-markdown-editor>
             </div>

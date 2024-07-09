@@ -1,17 +1,15 @@
 <template>
     <mobile-editor
         v-if="isMobile()"
-        v-bind:value="value"
-        v-on:input="$emit('input', $event)"
-        v-on:blur="$emit('blur', $event)"
+        :value="value"
         :focused="focused"
+        @blur="$emit('blur', $event)"
     ></mobile-editor>
     <desktop-editor
         v-else
-        v-bind:value="value"
-        v-on:input="$emit('input', $event)"
-        v-on:blur="$emit('blur', $event)"
+        :value="value"
         :focused="focused"
+        @blur="$emit('blur', $event)"
     ></desktop-editor>
 </template>
 

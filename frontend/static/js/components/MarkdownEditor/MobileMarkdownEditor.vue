@@ -5,9 +5,9 @@
             name="text"
             maxlength="20000"
             placeholder="Напишите ответ..."
-            v-bind:value="value"
-            v-on:blur="handleBlur"
             ref="textarea"
+            :value="value"
+            @blur="emitCustomBlur"
         >
         </textarea>
     </div>
@@ -32,7 +32,7 @@ export default {
         }
     },
     methods: {
-        handleBlur: function (event) {
+        emitCustomBlur: function () {
             this.$emit("blur", this.$refs["textarea"].value)
         },
         focusTextareaIfNeeded: function(shouldFocus) {

@@ -52,9 +52,7 @@ export default {
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
-        this.editor.codemirror.on("blur", (editor, event) => {
-            this.$emit("blur", editor.getValue())
-        })
+        this.editor.codemirror.on("blur", this.emitCustomBlur)
 
         this.populateCacheWithCommentAuthors();
 
@@ -252,6 +250,9 @@ export default {
                     this.editor.codemirror.execCommand("goDocEnd")
                 }
             })
+        },
+        emitCustomBlur: function (editor) {
+            this.$emit("blur", editor.getValue())
         }
     },
 };
