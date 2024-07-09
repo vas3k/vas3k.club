@@ -24,21 +24,21 @@ export default {
         }
     },
     mounted: function() {
-            this.focusTextareaIfNeeded(this.focused)
+            this.focusTextareaIfNeeded(this.focused);
     },
     watch: {
         focused: function (value) {
-            this.focusTextareaIfNeeded(value)
+            this.focusTextareaIfNeeded(value);
         }
     },
     methods: {
         emitCustomBlur: function () {
-            this.$emit("blur", this.$refs["textarea"].value)
+            this.$emit("blur", this.$refs["textarea"].value);
         },
         focusTextareaIfNeeded: function(shouldFocus) {
             this.$nextTick(() => {
                 shouldFocus && this.$refs["textarea"].focus();
-            })
+            });
         }
     }
 }

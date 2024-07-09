@@ -52,15 +52,15 @@ export default {
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
-        this.editor.codemirror.on("blur", this.emitCustomBlur)
+        this.editor.codemirror.on("blur", this.emitCustomBlur);
 
         this.populateCacheWithCommentAuthors();
 
-        this.editor.value(this.value)
-        this.focusIfNeeded(this.focused)
+        this.editor.value(this.value);
+        this.focusIfNeeded(this.focused);
     },
     watch: {
-        users: function (val, oldVal) {
+        users: function (val) {
             if (val.length > 0) {
                 this.selectedUserIndex = 0;
                 document.addEventListener("keydown", this.handleKeydown, true);
@@ -69,11 +69,11 @@ export default {
             }
         },
         focused: function (value) {
-            this.focusIfNeeded(value)
+            this.focusIfNeeded(value);
         },
         value: function (value) {
-            this.editor.value(value)
-            this.focusIfNeeded(true)
+            this.editor.value(value);
+            this.focusIfNeeded(true);
         }
     },
     data() {
@@ -247,12 +247,12 @@ export default {
             this.$nextTick(() => {
                 if (shouldFocus) {
                     this.editor.codemirror.focus();
-                    this.editor.codemirror.execCommand("goDocEnd")
+                    this.editor.codemirror.execCommand("goDocEnd");
                 }
-            })
+            });
         },
         emitCustomBlur: function (editor) {
-            this.$emit("blur", editor.getValue())
+            this.$emit("blur", editor.getValue());
         }
     },
 };

@@ -26,7 +26,7 @@
 
 <script>
 export default {
-    name: 'ReplyForm',
+    name: "ReplyForm",
     props: {
         // type { commentId: string, username: string, draftKey?: string }
         replyTo: {
@@ -51,7 +51,7 @@ export default {
     },
     computed: {
         avatarAlt: function() {
-            return `Аватар ${this.$props.username}`
+            return `Аватар ${this.$props.username}`;
         }
     },
     data: function () {
@@ -60,7 +60,7 @@ export default {
             editor: undefined,
             text: "",
             isFocused: false,
-        }
+        };
     },
     watch: {
         replyTo: function(newReplyTo, oldReplyTo) {
@@ -68,28 +68,28 @@ export default {
                 this.saveDraft(getDraftKey(oldReplyTo));
             }
 
-            const newDraftKey = getDraftKey(newReplyTo)
+            const newDraftKey = getDraftKey(newReplyTo);
             if (newDraftKey in this.drafts) {
-                this.text = this.drafts[newDraftKey]
+                this.text = this.drafts[newDraftKey];
             } else {
-                this.text = "@" + newReplyTo.username + ", "
+                this.text = "@" + newReplyTo.username + ", ";
             }
 
             this.replyTo = newReplyTo;
-            this.isFocused = true
+            this.isFocused = true;
         }
     },
     mounted: function() {
-        this.isFocused = true
+        this.isFocused = true;
     },
     updated: function() {
         if (this.replyTo !== null) {
             // move the reply form under the comment
-            const replyForm = document.getElementById("comment-reply-form")
-            const newCommentEl = document.getElementById(`comment-${this.replyTo.commentId}`)
+            const replyForm = document.getElementById("comment-reply-form");
+            const newCommentEl = document.getElementById(`comment-${this.replyTo.commentId}`);
             if (replyForm.previousSibling !== newCommentEl) {
-                newCommentEl.after(replyForm)
-                replyForm.scrollIntoView({ behavior: "smooth", block: "center" })
+                newCommentEl.after(replyForm);
+                replyForm.scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
     },
@@ -100,13 +100,13 @@ export default {
             }
         },
         handleBlur: function(textValue) {
-            this.isFocused = false
-            this.text = textValue
+            this.isFocused = false;
+            this.text = textValue;
         }
     }
 }
 
 function getDraftKey(replyTo) {
-    return replyTo?.draftKey || replyTo?.commentId
+    return replyTo?.draftKey || replyTo?.commentId;
 }
 </script>
