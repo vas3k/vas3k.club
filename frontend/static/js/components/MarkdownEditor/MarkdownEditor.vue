@@ -23,6 +23,9 @@ Vue.component("desktop-editor", () => import("./DesktopMarkdownEditor.vue"));
 /**
  * The component is a facade for external use.
  * It chooses which version of the editor to show
+ *
+ * The value passed via prop used as the value setter for the editor.
+ * When the user moves the focus from the editor, `blur` event with an updated value is sent
  */
 export default {
     props: {

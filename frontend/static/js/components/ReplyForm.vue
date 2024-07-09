@@ -10,7 +10,7 @@
 
             <div class="reply-form-body">
                 <comment-markdown-editor
-                    v-model="text"
+                    :value="text"
                     :focused="isFocused"
                     @blur="handleBlur"
                 >
