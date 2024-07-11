@@ -16,6 +16,7 @@
         }
     </script>
 
+    {% block rss %}
     <link rel="alternate" type="application/rss+xml"
           title="Вастрик.Клуб: Новые посты"
           href="{{ settings.APP_HOST }}{% url "rss" %}" />
@@ -23,6 +24,7 @@
     <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
           type="application/feed+json"
           href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
+    ‍{% endblock %}
 
     {% block og_tags %}
         {% include "common/og.html" %}

@@ -10,6 +10,12 @@
     {{ user.full_name }} — {{ block.super }}
 {% endblock %}
 
+{% block rss %}
+    <link rel="alternate" type="application/rss+xml"
+          title="Вастрик.Клуб: Посты {{ user.slug }}"
+          href="{{ settings.APP_HOST }}{% url "user_rss" user.slug %}" />
+‍{% endblock %}
+
 {% block og_tags %}
     <meta property="og:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">

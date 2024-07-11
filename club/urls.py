@@ -205,6 +205,7 @@ urlpatterns = [
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("posts.rss", NewPostsRss(), name="rss"),
+    path("user/<slug:user_slug>/posts.rss", NewPostsRss(), name="user_rss"),
     path("feed.json", json_feed, name="json_feed"),
     re_path(r"^{}/{}/feed.json$".format(POST_TYPE_RE, ORDERING_RE), json_feed, name="json_feed_ordering"),
 
