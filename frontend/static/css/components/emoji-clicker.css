@@ -1,0 +1,25 @@
+.emoji-clicker {
+    display: block;
+    margin: 0 auto;
+    font-size: 100px;
+    padding-bottom: 35px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.bounce-enter-active {
+    cursor: pointer;
+    animation: bounce-in 0.5s;
+}
+
+@keyframes bounce-in {
+    0% {
+        transform: scale(0.25);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

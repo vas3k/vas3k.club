@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="not-found container">
+        <div class="not-found__close"></div>
+        <h1 class="not-found__logo">vas404k</h1>
+        <p class="not-found__description">Запрошеная страница выгорела и уехала в отпуск</p>
+
+        <emoji-clicker></emoji-clicker>
+
+        <a href="{% url "index" %}" class="button not-found__button">На главную</a>
+    </div>
+{% endblock %}
