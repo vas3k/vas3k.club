@@ -10,8 +10,6 @@ class NewPostsRss(Feed):
     limit = 20
 
     def get_object(self, _, user_slug=None):
-        print("newsPostsRss {}".format(user_slug))
-
         if user_slug is None:
             return None
         
@@ -21,23 +19,21 @@ class NewPostsRss(Feed):
         if user is None:
             return "/posts.rss"
         
-        return "/user/{}/posts.rss".format(user.slug)
+        return f"/user/{user.slug}/posts.rss"
     
     def title(self, user):
         if user is None:
             return "Вастрик.Клуб: Новые посты"
         
-        return "Вастрик.Клуб: Посты {}".format(user.slug)
+        return f"Вастрик.Клуб: Посты {user.slug}"
 
     def items(self, user):
-        res = Post.visible_objects()\
-           .filter(is_approved_by_moderator=True)
+        res = Post.visible_objects().filter(is_approved_by_moderator=True)
         
         if user is not None:
             res = res.filter(author=user)
            
-        return res.exclude(type=Post.TYPE_INTRO)\
-           .order_by("-published_at", "-created_at")[:self.limit]
+        return res.exclude(type=Post.TYPE_INTRO).order_by("-published_at", "-created_at")[:self.limit]
 
     def item_title(self, item):
         title = item.title
