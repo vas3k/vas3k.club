@@ -33,6 +33,7 @@ from payments.views.crypto import crypto, coinbase_webhook
 from posts.api import md_show_post, api_show_post, json_feed
 from posts.models.post import Post
 from posts.rss import NewPostsRss
+from posts.user_rss import UserPostsRss
 from posts.sitemaps import sitemaps
 from posts.views.admin_actions import admin_post, announce_post, curate_post
 from posts.views.api import toggle_post_bookmark
@@ -205,7 +206,7 @@ urlpatterns = [
     # feeds
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("posts.rss", NewPostsRss(), name="rss"),
-    path("user/<slug:user_slug>/posts.rss", NewPostsRss(), name="user_rss"),
+    path("user/<slug:user_slug>/posts.rss", UserPostsRss(), name="user_rss"),
     path("feed.json", json_feed, name="json_feed"),
     re_path(r"^{}/{}/feed.json$".format(POST_TYPE_RE, ORDERING_RE), json_feed, name="json_feed_ordering"),
 
