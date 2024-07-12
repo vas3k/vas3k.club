@@ -71,8 +71,10 @@ export default {
             const newDraftKey = getDraftKey(newReplyTo);
             if (newDraftKey in this.drafts) {
                 this.text = this.drafts[newDraftKey];
+            } else if (newReplyTo.username) {
+                this.text = `@${newReplyTo.username}, `;
             } else {
-                this.text = "@" + newReplyTo.username + ", ";
+                this.text = ""
             }
 
             this.replyTo = newReplyTo;
