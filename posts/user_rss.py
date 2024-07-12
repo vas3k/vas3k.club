@@ -21,14 +21,3 @@ class UserPostsRss(NewPostsRss):
            .filter(author=user) \
            .exclude(type=Post.TYPE_INTRO)\
            .order_by("-published_at", "-created_at")[:self.limit]
-
-    def item_title(self, item):
-        title = item.title
-        if item.prefix:
-            title = f"{item.prefix} " + title
-        if not item.is_public:
-            title += " 🔒"
-        return title
-
-    def item_description(self, item):
-        return item.description
