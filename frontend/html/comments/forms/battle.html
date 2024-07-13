@@ -15,7 +15,11 @@
                 </select>
             </div>
             <div class="comment-form-body-title">{{ form.title }}</div>
-            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}" value="{{ comment.text }}" focused>
+            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
+                {% if comment.text %}
+                    value="{{ comment.text }}" focused
+                {% endif %}
+            >
             </comment-markdown-editor>
             {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
