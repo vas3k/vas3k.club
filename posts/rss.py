@@ -25,3 +25,6 @@ class NewPostsRss(Feed):
 
     def item_description(self, item):
         return item.description
+    
+    def item_pubdate(self, item):
+        return item.published_at
