@@ -76,17 +76,6 @@
         margin-left: 0;
     }
 
-    @media only screen and (max-width : 570px) {
-        .reply-form {
-            margin-top: 20px;
-        }
-
-        .reply-form-avatar .avatar {
-            width: 20px;
-            height: 20px;
-        }
-    }
-
     .reply-form textarea {
         width: 100%;
         height: 80px;
@@ -120,6 +109,27 @@
     .reply-form .button {
         margin-top: 10px;
     }
+
+@media only screen and (max-width: 570px) {
+    .reply-form {
+        margin-top: 20px;
+    }
+
+    .reply-form-avatar .avatar {
+        width: 20px;
+        height: 20px;
+    }
+
+    .comment-form textarea,
+    .reply-form textarea {
+        /*
+        Caveat!
+        increase font size for textareas on small screens, to avoid mobile Safari zoom-in
+        https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/
+        */
+        font-size: max(1.25rem, 16px);
+    }
+}
 
 .thread {
 
