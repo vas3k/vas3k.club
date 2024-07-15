@@ -123,9 +123,11 @@ body {
     color: var(--text-color);
     background-color: var(--bg-color);
     text-rendering: optimizeSpeed;
-    transition: 0.5s ease-out;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    &.loaded {
+        transition: 0.5s ease-out;
+    }
 }
 
     @media only screen and (min-device-width : 768px)

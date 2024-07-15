@@ -41,6 +41,7 @@ new Vue({
     },
     mounted() {
         App.onMount();
+        document.body.classList.add('loaded')
     },
     data: {
         shownWindow: null,
