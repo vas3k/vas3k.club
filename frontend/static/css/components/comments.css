@@ -127,7 +127,7 @@
         increase font size for textareas on small screens, to avoid mobile Safari zoom-in
         https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/
         */
-        font-size: max(125%, 16px)
+        font-size: max(1.25rem, 16px);
     }
 }
 
