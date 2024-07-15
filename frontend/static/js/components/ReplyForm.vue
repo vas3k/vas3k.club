@@ -91,8 +91,15 @@ export default {
             const newCommentEl = document.getElementById(`comment-${this.replyTo.commentId}`);
             if (replyForm.previousSibling !== newCommentEl) {
                 newCommentEl.after(replyForm);
-                replyForm.scrollIntoView({ behavior: "smooth", block: "center" });
             }
+
+            // Caveat
+            // the scroll is delayed to ensure the on-screen keyboard on mobile devices has opened
+            // to avoid the behavior on Safari for iOS, when the keyboard moves the content up
+            // (see more, https://stackoverflow.com/questions/56351216/ios-safari-unwanted-scroll-when-keyboard-is-opened-and-body-scroll-is-disabled)
+            setTimeout(() => {
+                replyForm.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 50);
         }
     },
     methods: {
