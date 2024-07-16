@@ -5,8 +5,11 @@
             <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" loading="lazy" /></div>
         </div>
         <div class="comment-form-body comment-form-editor-container">
-            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}">
-                {{ form.text }}
+            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
+                {% if comment.text %}
+                    value="{{ comment.text }}" focused
+                {% endif %}
+            >
             </comment-markdown-editor>
             <div class="comment-form-footer">
                 <label class="comment-form-attach-image">

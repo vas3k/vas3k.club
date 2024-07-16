@@ -168,6 +168,7 @@
         background-position: 50% 50%;
         border: solid 2px var(--block-bg-color);
         background-color: #CCC;
+        transition: 0.2s ease-out;
     }
 
         .people-map-user-marker:hover {

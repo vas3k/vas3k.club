@@ -8,7 +8,7 @@ from users.models.user import User
 
 @api(require_auth=True)
 def api_profile(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         user_slug = request.me.slug
 
     user = get_object_or_404(User, slug=user_slug)

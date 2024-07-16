@@ -6,6 +6,7 @@
     box-shadow: var(--block-shadow);
     background-color: var(--block-bg-color);
     border-radius: var(--block-border-radius);
+    transition: 0.1s ease-out;
 }
 
     .block-description {
@@ -178,6 +179,7 @@
     cursor: pointer;
     line-height: 1em;
     font-weight: 500;
+    transition: 0.2s ease-out;
 }
 
     .button-round {
@@ -785,6 +787,7 @@ img.emoji {
     }
 
     .big-radio-label:hover {
+        transition: 0.5s ease-out;
         box-shadow: 2px 2px 8px 0 rgba(69, 70, 70, 0.12);
     }
 
