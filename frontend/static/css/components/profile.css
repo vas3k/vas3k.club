@@ -252,6 +252,7 @@
             color: #FFF;
             height: 210px;
             perspective: 1000px;
+            transition: 0.2s ease-out;
         }
 
             .user-achievement:hover {
@@ -360,6 +361,7 @@
                 text-align: center;
                 opacity: 0.7;
                 z-index: 100;
+                transition: 0.2s ease-out;
             }
 
                 .user-tag:hover,

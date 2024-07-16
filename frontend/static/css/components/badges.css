@@ -107,6 +107,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     text-decoration: none;
+    transition: 0.5s ease-out;
 }
 
     .badge:hover {

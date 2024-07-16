@@ -262,6 +262,7 @@
     }
 
     .feed-post:hover {
+        transition: 0.2s ease-out;
         box-shadow: 0 0 40px rgba(94, 104, 125, 0.3);
     }
 
