@@ -47,9 +47,9 @@ export default {
         }
     },
     mounted() {
-        const $fileInputElement = this.$el.querySelector(".comment-form-attach-image input[type=file]")
-        if ($fileInputElement) {
-            $fileInputElement.accept = imageUploadOptions.allowedTypes.join()
+        const fileInputEl = this.$el.closest("form").querySelector("input[type=file][name=attach-image]")
+        if (fileInputEl) {
+            fileInputEl.accept = imageUploadOptions.allowedTypes.join()
         }
 
         this.editor = createMarkdownEditor(this.$refs["textarea"], {
@@ -57,7 +57,7 @@ export default {
         });
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
-        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, { ...imageUploadOptions, fileInputEl: $fileInputElement });
+        inlineAttachment.editors.codemirror4.attach(this.editor.codemirror, { ...imageUploadOptions, fileInputEl });
 
         this.editor.codemirror.on("change", this.handleAutocompleteHintTrigger);
         this.editor.codemirror.on("change", this.handleSuggest);
