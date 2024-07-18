@@ -16,8 +16,8 @@
                 </comment-markdown-editor>
                 <div class="reply-form-footer">
                     <label class="reply-form-attach-image">
-                        <input type="file" alt="Добавить картинку" />
-                        <i class="fa fa-paperclip"></i>
+                        <input type="file" name="attach-image" alt="Добавить картинку" />
+                        <i class="fa fa-image"></i>
                     </label>
                 </div>
             </div>
@@ -102,7 +102,7 @@ export default {
             // the scroll is delayed to ensure the on-screen keyboard on mobile devices has opened
             // to avoid the behavior on Safari for iOS, when the keyboard moves the content up
             // (see more, https://stackoverflow.com/questions/56351216/ios-safari-unwanted-scroll-when-keyboard-is-opened-and-body-scroll-is-disabled)
-            setTimeout(() => {
+            this.isFocused && setTimeout(() => {
                 replyForm.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 50);
         }
