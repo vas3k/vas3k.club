@@ -7,14 +7,19 @@
             <div class="reply-form-avatar">
                 <div class="avatar"><img :src="avatarUrl" :alt="avatarAlt" loading="lazy" /></div>
             </div>
-
-            <div class="reply-form-body">
+            <div class="reply-form-body comment-form-editor-container">
                 <comment-markdown-editor
                     :value="text"
                     :focused="isFocused"
                     @blur="handleBlur"
                 >
                 </comment-markdown-editor>
+                <div class="reply-form-footer">
+                    <label class="reply-form-attach-image">
+                        <input type="file" name="attach-image" alt="Добавить картинку" />
+                        <i class="fa fa-image"></i>
+                    </label>
+                </div>
             </div>
 
             <div class="reply-form-button">

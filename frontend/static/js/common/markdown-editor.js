@@ -70,6 +70,17 @@ export const imageUploadOptions = {
     },
 };
 
+export function createFileInput({ allowedTypes = [] }) {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.name = "attach-image"
+    if (allowedTypes) {
+        fileInput.accept = allowedTypes.join();
+    }
+
+    return fileInput;
+}
+
 export function handleFormSubmissionShortcuts(event) {
     const isEnter = event.key === "Enter";
     const isCtrlOrCmd = event.ctrlKey || event.metaKey;
