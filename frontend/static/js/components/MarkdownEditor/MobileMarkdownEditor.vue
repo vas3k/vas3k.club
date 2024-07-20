@@ -73,10 +73,12 @@ export default {
                             if (filename) {
                                 const urlMarkdown = settings.urlText.replace(settings.filenameTag, filename);
                                 textarea.value = replaceProgressTextOrAppend(textarea.value, settings.progressText, urlMarkdown);
+                                this.focusTextareaIfNeeded(true);
                             }
                         },
                         () => {
                             textarea.value = replaceProgressTextOrAppend(textarea.value, settings.progressText, settings.errorText);
+                            this.focusTextareaIfNeeded(true);
                         }
                     );
                 }
