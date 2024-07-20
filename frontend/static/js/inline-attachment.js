@@ -400,7 +400,18 @@ export function isFileAllowed(file, settings) {
             if (isFileAllowed(file, this.settings)) {
                 result = true;
                 this.onFileInserted(file);
-                uploadFile(file, this.settings, this.onFileUploadResponse.bind(this), this.onFileUploadError.bind(this));
+                uploadFile(
+                    file,
+                    this.settings,
+                    (xhr) => {
+                        this.onFileUploadResponse.call(this, xhr);
+                        this.editor.codeMirror.focus();
+                    },
+                    (xhr) => {
+                        this.onFileUploadError.call(this, xhr);
+                        this.editor.codeMirror.focus();
+                    }
+                );
             }
         }
 
