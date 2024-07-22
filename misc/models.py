@@ -27,6 +27,9 @@ class ProTip(models.Model):
     @classmethod
     def weekly_tip(cls, seed: int):
         tips = cls.objects.filter(is_visible=True)
+        if not tips:
+            return
+
         number = seed % tips.count()
         return tips[number]
 
