@@ -5,7 +5,7 @@ import hashlib
 import hmac
 import logging
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import timedelta, datetime
 from enum import Enum
 from uuid import uuid4
 
@@ -163,3 +163,30 @@ class CloudPaymentsService:
         log.info("Status %s", status)
 
         return status, {"code": 0}
+
+    @classmethod
+    def get_subscriptions(cls, email: str) -> list[dict]:
+        log.info("Try to get users's subscriptions %s", email)
+
+        payload = {"accountId": email}
+
+        response = requests.post(
+            "https://api.cloudpayments.ru/subscriptions/find",
+            auth=HTTPBasicAuth(settings.CLOUDPAYMENTS_API_ID, settings.CLOUDPAYMENTS_API_PASSWORD),
+            json=payload,
+        )
+
+        log.info("Subscriptions answer %s %s", response.status_code, response.text)
+
+        response.raise_for_status()
+
+        data = response.json()["Model"]
+        return [
+            dict(
+                id=row["Id"],
+                next_charge_at=datetime.fromisoformat(row["NextTransactionDateIso"]),
+                amount=row["Amount"],
+                interval=row["Interval"].lower(),
+            )
+            for row in data
+        ]

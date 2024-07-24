@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import stripe
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
@@ -9,6 +8,7 @@ from django_q.tasks import async_task
 from authn.decorators.auth import require_auth
 from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
+from payments.cloudpayments import CloudPaymentsService
 from search.models import SearchIndex
 from users.forms.profile import ProfileEditForm, NotificationsEditForm
 from users.models.geo import Geo
@@ -105,18 +105,8 @@ def edit_payments(request, user_slug):
         )\
         .order_by("-membership_expires_at")[:64]
 
-    subscriptions = []
-    if user.stripe_id:
-        try:
-            stripe_subscriptions = stripe.Subscription.list(customer=user.stripe_id, limit=100)
-            subscriptions = [dict(
-                id=s["id"],
-                next_charge_at=datetime.utcfromtimestamp(s["current_period_end"]),
-                amount=int(s["plan"]["amount"] / 100),
-                interval=s["plan"]["interval"],
-            ) for s in stripe_subscriptions["data"]]
-        except (stripe.error.InvalidRequestError, stripe.error.AuthenticationError):
-            subscriptions = []
+    pay_service = CloudPaymentsService()
+    subscriptions = pay_service.get_subscriptions(email=user.email)
 
     return render(request, "users/edit/payments.html", {
         "user": user,
