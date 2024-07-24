@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import timedelta, datetime
 from enum import Enum
 from uuid import uuid4
+from typing import List
 
 import requests
 from django.conf import settings
@@ -165,7 +166,7 @@ class CloudPaymentsService:
         return status, {"code": 0}
 
     @classmethod
-    def get_subscriptions(cls, email: str) -> list[dict]:
+    def get_subscriptions(cls, email: str) -> List[dict]:
         log.info("Try to get users's subscriptions %s", email)
 
         payload = {"accountId": email}
