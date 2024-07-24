@@ -27,7 +27,7 @@
 
         {% for subscription in subscriptions %}
             <div class="block pay-subscription">
-                🔥 Включено автопополнение на <strong>€{{ subscription.amount | floatformat }}</strong> каждый
+                🔥 Включено автопополнение на <strong>₽{{ subscription.amount | floatformat }}</strong> каждый
                 {% if subscription.interval == "month" %}
                     месяц <strong>{{ subscription.next_charge_at | date:"j" }} числа</strong>
                 {% else %}
@@ -36,7 +36,7 @@
 
                 <br><br>
 
-                <a href="{% url "stop_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
+                <a href="{% url "stop_cloudpayment_subscription" subscription.id %}" class="button button-small" onclick="return confirm('Точно отключаем?')">Отключить</a>
             </div>
         {% endfor %}
 

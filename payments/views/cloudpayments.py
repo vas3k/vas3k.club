@@ -1,8 +1,11 @@
 import json
 import logging
 from datetime import datetime
+
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
+
+from authn.decorators.auth import require_auth
 from payments.cloudpayments import CLOUDPAYMENTS_PRODUCTS, CloudPaymentsService, TransactionStatus
 from payments.models import Payment, Subscription
 from users.models.user import User
@@ -173,3 +176,21 @@ def cloudpayments_webhook(request):
         product["activator"](product, payment, payment.user)
 
     return HttpResponse(json.dumps(answer))
+
+
+@require_auth
+def stop_cloudpayment_subscription(request, subscription_id):
+    pay_service = CloudPaymentsService()
+
+    try:
+        pay_service.stop_subscription(subscription_id)
+    except Exception as e:
+        log.exception("Cannot stop subscription %s: %s", subscription_id, e)
+        return render(request, "error.html", {
+            "title": "Подписка не найдена",
+            "message": "В нашей базе нет подписки с таким ID"
+        })
+
+    Subscription.objects.filter(subscription_id=subscription_id).update(status=Subscription.STATUS_STOPPED)
+
+    return render(request, "payments/messages/subscription_stopped.html")

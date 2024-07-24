@@ -26,7 +26,7 @@ from notifications.views import render_weekly_digest, email_unsubscribe, email_c
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
 from payments.api import api_gift_days
-from payments.views.cloudpayments import cloudpayments_webhook, pay as cloudpayments_pay
+from payments.views.cloudpayments import cloudpayments_webhook, pay as cloudpayments_pay, stop_cloudpayment_subscription
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from payments.views.camp import stripe_camp_webhook
 from payments.views.crypto import crypto, coinbase_webhook
@@ -89,6 +89,7 @@ urlpatterns = [
     path("monies/cloudpayments", cloudpayments_pay, name="cloudpayments_pay"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
+    path("monies/cloudpayment_subscription/<str:subscription_id>/stop/", stop_cloudpayment_subscription, name="stop_cloudpayment_subscription"),
     path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
     path("monies/stripe/webhook_camp/", stripe_camp_webhook, name="stripe_camp_webhook"),
     path("monies/cloudpayments/webhook/", cloudpayments_webhook, name="cloudpayments_webhook"),

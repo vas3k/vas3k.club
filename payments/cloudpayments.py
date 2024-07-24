@@ -191,3 +191,19 @@ class CloudPaymentsService:
             )
             for row in data
         ]
+
+    @classmethod
+    def stop_subscription(cls, subscription_id: str) -> None:
+        log.info("Try to stop subscription %s", subscription_id)
+
+        payload = {"Id": subscription_id}
+
+        response = requests.post(
+            "https://api.cloudpayments.ru/subscriptions/cancel",
+            auth=HTTPBasicAuth(settings.CLOUDPAYMENTS_API_ID, settings.CLOUDPAYMENTS_API_PASSWORD),
+            json=payload,
+        )
+
+        log.info("Subscription stop answer %s %s", response.status_code, response.text)
+
+        response.raise_for_status()
