@@ -106,7 +106,11 @@ def edit_payments(request, user_slug):
         .order_by("-membership_expires_at")[:64]
 
     pay_service = CloudPaymentsService()
-    subscriptions = pay_service.get_subscriptions(email=user.email)
+    subscriptions = [
+        subscription
+        for subscription in pay_service.get_subscriptions(email=user.email)
+        if subscription["status"] == "active"
+    ]
 
     return render(request, "users/edit/payments.html", {
         "user": user,

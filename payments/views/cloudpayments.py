@@ -133,6 +133,10 @@ def cloudpayments_webhook(request):
 
     log.info("Webhook action %s, payload %s", action, payload)
 
+    if action == "recurrent" and payload["Status"] == "Cancelled":
+        Subscription.objects.filter(subscription_id=payload["Id"]).update(status=Subscription.STATUS_STOPPED)
+        return HttpResponse(json.dumps({"code": 0}))
+
     status, answer = pay_service.accept_payment(action, payload)
 
     if status != TransactionStatus.APPROVED:
@@ -190,7 +194,5 @@ def stop_cloudpayment_subscription(request, subscription_id):
             "title": "Подписка не найдена",
             "message": "В нашей базе нет подписки с таким ID"
         })
-
-    Subscription.objects.filter(subscription_id=subscription_id).update(status=Subscription.STATUS_STOPPED)
 
     return render(request, "payments/messages/subscription_stopped.html")

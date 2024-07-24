@@ -188,6 +188,7 @@ class CloudPaymentsService:
                 next_charge_at=datetime.fromisoformat(row["NextTransactionDateIso"]),
                 amount=row["Amount"],
                 interval=row["Interval"].lower(),
+                status=row["Status"].lower(),
             )
             for row in data
         ]
