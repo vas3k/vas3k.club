@@ -1,6 +1,8 @@
 {% load comments %}
 {% for tree in comments|comment_tree %}
-    {% if tree.comment.author_id in muted_user_ids %}
+    {% if not request.me and tree.comment.author.profile_publicity_level == "private" %}
+        {% include "comments/types/private.html" with comment=tree.comment replies=tree.replies %}
+    {% elif tree.comment.author_id in muted_user_ids %}
         {% include "comments/types/muted.html" with comment=tree.comment replies=tree.replies %}
     {% elif tree.comment.is_pinned %}
         {% include "comments/types/bold.html" with comment=tree.comment replies=tree.replies %}
