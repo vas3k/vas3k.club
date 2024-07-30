@@ -448,7 +448,7 @@
         @media only screen and (min-width : 800px) {
             .post-type-post .text-body figure {
                 width: 110%;
-                margin: 1em auto 1em -5%;
+                margin: 1em auto 1em -4%;
             }
         }
 
