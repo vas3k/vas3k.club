@@ -257,8 +257,6 @@ PRODUCTS = {
     },
 }
 
-TAX_RATE_VAT = "txr_1I82AfKgJMaF2rHtoUStb1cL" if not IS_TEST_STRIPE else None
-
 
 def find_by_stripe_id(price_id):
     for product in PRODUCTS.values():

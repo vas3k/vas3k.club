@@ -10,7 +10,7 @@ from club.exceptions import BadRequest
 from payments.exceptions import PaymentException
 from payments.helpers import parse_stripe_webhook_event
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
+from payments.products import PRODUCTS, find_by_stripe_id
 from payments.service import stripe
 from users.models.user import User
 
@@ -105,7 +105,13 @@ def pay(request):
 
     # reuse stripe customer ID if user already has it
     if user.stripe_id:
-        customer_data = dict(customer=user.stripe_id)
+        customer_data = dict(
+            customer=user.stripe_id,
+            customer_update={
+                "address": "auto",
+                "shipping": "auto",
+            }
+        )
     else:
         customer_data = dict(customer_email=user.email)
 
@@ -115,11 +121,11 @@ def pay(request):
         line_items=[{
             "price": product["stripe_id"],
             "quantity": 1,
-            # "tax_rates": [TAX_RATE_VAT] if TAX_RATE_VAT else [],
         }],
         **customer_data,
         mode="subscription" if is_recurrent else "payment",
         metadata=payment_data,
+        automatic_tax={"enabled": True},
         success_url=settings.STRIPE_SUCCESS_URL,
         cancel_url=settings.STRIPE_CANCEL_URL,
     )
