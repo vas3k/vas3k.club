@@ -115,7 +115,7 @@ def pay(request):
         line_items=[{
             "price": product["stripe_id"],
             "quantity": 1,
-            "tax_rates": [TAX_RATE_VAT] if TAX_RATE_VAT else [],
+            # "tax_rates": [TAX_RATE_VAT] if TAX_RATE_VAT else [],
         }],
         **customer_data,
         mode="subscription" if is_recurrent else "payment",
