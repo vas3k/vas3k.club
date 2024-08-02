@@ -29,8 +29,7 @@ def pay(request):
     is_invite = request.GET.get("is_invite")
     is_recurrent = request.GET.get("is_recurrent")
     if is_recurrent:
-        interval = request.GET.get("recurrent_interval") or "yearly"
-        product_code = f"{product_code}_recurrent_{interval}"
+        product_code = f"{product_code}_recurrent_yearly"
 
     # find product by code
     product = PRODUCTS.get(product_code)
