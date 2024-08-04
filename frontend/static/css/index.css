@@ -8,6 +8,7 @@
 @import "./theme.css";
 @import "./base.css";
 @import "./layout.css";
+@import "./not-found.css";
 @import "./components.css";
 @import "./components/menu.css";
 @import "./components/auth.css";
@@ -29,3 +30,4 @@
 @import "./components/select.css";
 @import "./components/intro.css";
 @import "./components/apps.css";
+@import "./components/emoji-clicker.css";
