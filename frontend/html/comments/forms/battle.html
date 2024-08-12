@@ -15,19 +15,25 @@
                 </select>
             </div>
             <div class="comment-form-body-title">{{ form.title }}</div>
-            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
-                {% if comment.text %}
-                    value="{{ comment.text }}" focused
-                {% endif %}
-            >
-            </comment-markdown-editor>
-            {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
-        </div>
-        <div class="comment-form-footer">
-            <div class="comment-form-subscribe">
-                {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+            <div class="comment-form-editor-container">
+                <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
+                    {% if comment.text %}
+                        value="{{ comment.text }}" focused
+                    {% endif %}
+                >
+                </comment-markdown-editor>
+                <div class="comment-form-footer">
+                    <label class="comment-form-attach-image">
+                        <input type="file" name="attach-image" alt="Добавить картинку" />
+                        <i class="fa fa-image"></i>
+                    </label>
+                    <div class="comment-form-subscribe">
+                        {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+                    </div>
+                    <button type="submit" class="button comment-form-button"> {{save_message}} </button>
+                </div>
             </div>
-            <button type="submit" class="button comment-form-button"> {{save_message}} </button>
+            {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
         </div>
     </div>
 </form>

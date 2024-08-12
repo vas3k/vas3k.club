@@ -26,26 +26,26 @@ def stripe_camp_webhook(request):
         return HttpResponse(ex.message, status=ex.code)
 
     if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
-
-        user = User.objects.filter(email=session["customer_details"]["email"].lower()).first()
-
-        # the user with the specified e-mail address does not necessarily exist
-        if user:
-            camp_achievement = Achievement.objects.filter(code="vas3k_camp_2024").first()
-            UserAchievement.objects.get_or_create(
-                user=user,
-                achievement=camp_achievement,
-            )
-
-        # send confirmation email
-        camp_confirmation_template = loader.get_template("emails/camp_confirmation.html")
-        async_task(
-            send_transactional_email,
-            recipient=session["customer_details"]["email"].lower(),
-            subject=f"🔥 Ждём вас на Вастрик Кэмпе 2024",
-            html=camp_confirmation_template.render({"user": user})
-        )
+    #     session = event["data"]["object"]
+    #
+    #     user = User.objects.filter(email=session["customer_details"]["email"].lower()).first()
+    #
+    #     # the user with the specified e-mail address does not necessarily exist
+    #     if user:
+    #         camp_achievement = Achievement.objects.filter(code="vas3k_camp_2024").first()
+    #         UserAchievement.objects.get_or_create(
+    #             user=user,
+    #             achievement=camp_achievement,
+    #         )
+    #
+    #     # send confirmation email
+    #     camp_confirmation_template = loader.get_template("emails/camp_confirmation.html")
+    #     async_task(
+    #         send_transactional_email,
+    #         recipient=session["customer_details"]["email"].lower(),
+    #         subject=f"🔥 Ждём вас на Вастрик Кэмпе 2024",
+    #         html=camp_confirmation_template.render({"user": user})
+    #     )
 
         return HttpResponse("[ok]", status=200)
 

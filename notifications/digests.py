@@ -159,6 +159,7 @@ def generate_weekly_digest(no_footer=False):
     top_video_comment = Comment.visible_objects()\
         .filter(**created_at_condition)\
         .filter(is_deleted=False)\
+        .filter(post__is_approved_by_moderator=True)\
         .filter(upvotes__gte=3)\
         .filter(Q(text__contains="https://youtu.be/") | Q(text__contains="youtube.com/watch"))\
         .order_by("-upvotes")\
@@ -168,6 +169,7 @@ def generate_weekly_digest(no_footer=False):
     if not top_video_comment:
         top_video_post = Post.visible_objects() \
             .filter(type=Post.TYPE_LINK, upvotes__gte=3) \
+            .filter(post__is_approved_by_moderator=True) \
             .filter(**published_at_condition) \
             .filter(Q(url__contains="https://youtu.be/") | Q(url__contains="youtube.com/watch")) \
             .order_by("-upvotes") \

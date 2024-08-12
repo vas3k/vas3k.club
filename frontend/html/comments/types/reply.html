@@ -2,7 +2,9 @@
 {% load posts %}
 {% load comments %}
 
-{% if comment.author_id in muted_user_ids %}
+{% if not request.me and comment.author.profile_publicity_level == "private" %}
+    {% include "comments/types/private.html" with comment=comment replies=replies %}
+{% elif comment.author_id in muted_user_ids %}
     {% include "comments/types/muted.html" with comment=comment replies=replies %}
 {% else %}
     <div class="reply {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} {% if comment.metadata.badges %}comment-is-badged{% endif %}" id="comment-{{ comment.id }}">

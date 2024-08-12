@@ -100,7 +100,9 @@
             {% endif %}
 
             <footer class="post-footer p-author">
-                {% include "users/widgets/card.html" with user=post.author %}
+                {% if request.me or post.author.profile_publicity_level != "private" %}
+                    {% include "users/widgets/card.html" with user=post.author %}
+                {% endif %}
 
                 {% if post.coauthors %}
                     {% for coauthor in post.coauthors_with_details %}

@@ -43,6 +43,15 @@ class User(models.Model, ModelDiffMixin):
         (ROLE_GOD, "Бог"),
     ]
 
+    PUBLICITY_LEVEL_PRIVATE = "private"
+    PUBLICITY_LEVEL_NORMAL = "normal"
+    PUBLICITY_LEVEL_PUBLIC = "public"
+    PUBLICITY_LEVELS = [
+        (PUBLICITY_LEVEL_PRIVATE, "Параноик"),
+        (PUBLICITY_LEVEL_NORMAL, "Обычный"),
+        (PUBLICITY_LEVEL_PUBLIC, "Публичный"),
+    ]
+
     MODERATION_STATUS_INTRO = "intro"
     MODERATION_STATUS_ON_REVIEW = "on_review"
     MODERATION_STATUS_REJECTED = "rejected"
@@ -99,7 +108,6 @@ class User(models.Model, ModelDiffMixin):
 
     stripe_id = models.CharField(max_length=128, null=True)
 
-    is_profile_public = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     is_email_unsubscribed = models.BooleanField(default=False)
     is_banned_until = models.DateTimeField(null=True)
@@ -108,6 +116,11 @@ class User(models.Model, ModelDiffMixin):
         max_length=32, choices=MODERATION_STATUSES,
         default=MODERATION_STATUS_INTRO, null=False,
         db_index=True
+    )
+
+    profile_publicity_level = models.CharField(
+        max_length=16, choices=PUBLICITY_LEVELS,
+        default=PUBLICITY_LEVEL_NORMAL, null=False
     )
 
     roles = ArrayField(models.CharField(max_length=32, choices=ROLES), default=list, null=False)
@@ -176,7 +189,7 @@ class User(models.Model, ModelDiffMixin):
         return self.avatar or settings.DEFAULT_AVATAR
 
     def can_view(self, user):
-        return user or self.is_profile_public
+        return user or self.profile_publicity_level == self.PUBLICITY_LEVEL_PUBLIC
 
     @property
     def is_banned(self):

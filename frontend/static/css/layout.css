@@ -280,38 +280,69 @@
     }
 
 .comment-form {
-    display: grid;
-    grid-template-columns: min-content minmax(auto, 1fr);
-    grid-template-rows: auto 60px;
-    justify-content: stretch;
+    display: flex;
+    --form-border-radius: 5px;
 }
 
     .comment-form-avatar {
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 1;
-        grid-row-end: 3;
-        justify-self: start;
+        width: min-content;
     }
 
     .comment-form-body {
-        grid-column-start: 2;
-        grid-column-end: 3;
-        grid-row-start: 1;
-        grid-row-end: 2;
-        justify-self: stretch;
+        flex: 1;
     }
 
-    .comment-form-footer {
-        grid-column-start: 1;
-        grid-column-end: 3;
-        grid-row-start: 2;
-        grid-row-end: 3;
-        justify-self: end;
-        align-self: end;
+    .comment-form-editor-container,
+    .reply-form-editor-container {
+        box-shadow: 0 4px 8px -2px rgba(9,30,66,.25),0 0 0 1px rgba(9,30,66,.08);
+        border-radius: var(--form-border-radius);
+        overflow: hidden;
+    }
+
+    .comment-form-editor-container:focus-within,
+    .reply-form-editor-container:focus-within {
+        box-shadow: 0 4px 12px -2px rgba(9,30,66,.45),0 0 0 1px rgba(9,30,66,.32);
+    }
+
+    .comment-form-footer,
+    .reply-form-footer {
+        background-color: var(--input-bg-color);
         display: flex;
-        flex-direction: row;
         align-items: center;
+        padding: 6px;
+    }
+
+    .comment-form-footer .button {
+        padding: 10px 16px;
+        border-radius: var(--form-border-radius, var(--button-border-radius));
+    }
+
+    .comment-form-attach-image {
+        display: block;
+        position: relative;
+        font-size: 1.125rem;
+        padding: 3px 9px;
+        border-radius: var(--form-border-radius);
+        border: var(--button-border);
+        border-color: transparent;
+    }
+
+    .comment-form-attach-image:hover,
+    .comment-form-attach-image:focus-within {
+        border-color: inherit;
+        cursor: pointer;
+    }
+
+    .comment-form-attach-image input[type=file] {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+        padding: 0;
+        resize: none;
     }
 
     .comment-form-body {
@@ -370,6 +401,38 @@
         align-self: end;
     }
 
+    .reply-form-attach-image {
+        display: block;
+        position: relative;
+        font-size: 1rem;
+        padding: 0 6px;
+        border: var(--button-border);
+        border-color: transparent;
+    }
+
+    .reply-form-attach-image:hover,
+    .reply-form-attach-image:focus-within {
+        border-color: inherit;
+        cursor: pointer;
+    }
+
+    .reply-form-attach-image input[type=file] {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+        padding: 0;
+        resize: none;
+    }
+
+    .reply-form-attach-image input[type=file]:hover,
+    .reply-form-attach-image input[type=file]:focus {
+        cursor: pointer;
+    }
+
     @media only screen and (max-width : 570px) {
         .reply-form {
             display: grid;
@@ -379,10 +442,12 @@
         }
 
             .reply-form-button {
-                grid-column-start: 1;
+                margin-bottom: 6px;
+                margin-right: 6px;
+                grid-column-start: 2;
                 grid-column-end: 3;
-                grid-row-start: 2;
-                grid-row-end: 3;
+                grid-row-start: 1;
+                grid-row-end: 2;
                 justify-self: end;
                 align-self: end;
             }

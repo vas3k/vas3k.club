@@ -3,7 +3,12 @@ import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
 import { isCommunicationForm, isMobile } from "./common/utils";
-import { imageUploadOptions, createMarkdownEditor, handleFormSubmissionShortcuts } from "./common/markdown-editor";
+import {
+    createFileInput,
+    createMarkdownEditor,
+    handleFormSubmissionShortcuts,
+    imageUploadOptions
+} from "./common/markdown-editor";
 import { getCollapsedCommentThreadsSet } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
@@ -70,12 +75,20 @@ const App = {
         setFaviconHref(mediaQueryList);
         mediaQueryList.addListener(setFaviconHref);
     },
-
+    /**
+     * Initializes markdown editor with toolbar **for server-side rendered pages**
+     * e.g. Create post page
+     *
+     * Simple editors are initialized in the `CommentMarkdownEditor` Vue component
+     *
+     * @returns {CodeMirrorEditor[]}
+     */
     initializeMarkdownEditor() {
         if (isMobile()) return []; // we don't need fancy features on mobiles
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
+                const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes })
                 const editor = createMarkdownEditor(element, {
                     autosave: {
                         enabled: false,
@@ -127,6 +140,15 @@ const App = {
                             title: "Insert an image",
                         },
                         {
+                            name: "upload-file",
+                            action: () => {
+                                fileInputEl.click()
+                            },
+                            className: "fa fa-paperclip",
+                            text: "Upload image",
+                            title: "Upload image",
+                        },
+                        {
                             name: "code",
                             action: EasyMDE.toggleCodeBlock,
                             className: "fas fa-code",
@@ -135,20 +157,15 @@ const App = {
                     ],
                 });
 
+                editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
+                inlineAttachment.editors.codemirror4.attach(editor.codemirror, { ...imageUploadOptions, fileInputEl });
+
                 return [...editors, editor];
             },
             []
         );
 
-        const allEditors = fullMarkdownEditors;
-
-        allEditors.forEach((editor) => {
-            editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
-
-            inlineAttachment.editors.codemirror4.attach(editor.codemirror, imageUploadOptions);
-        });
-
-        return allEditors;
+        return fullMarkdownEditors;
     },
     addTargetBlankToExternalLinks() {
         let internal = location.host.replace("www.", "");

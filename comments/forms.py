@@ -18,7 +18,7 @@ class CommentForm(forms.ModelForm):
         ),
     )
     subscribe_to_post = forms.BooleanField(
-        label="подписаться на новые комментарии",
+        label="подписаться на комментарии",
         label_suffix="",
         initial=True,
         required=False,
@@ -90,7 +90,7 @@ class BattleCommentForm(forms.ModelForm):
         ),
     )
     subscribe_to_post = forms.BooleanField(
-        label="подписаться на новые комментарии",
+        label="подписаться на комментарии",
         label_suffix="",
         initial=True,
         required=False,

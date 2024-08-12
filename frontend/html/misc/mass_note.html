@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block title %}
+    Массовые заметки — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+<div class="content">
+        <div class="block">
+            {% if status == "done" %}
+                <span class="block-header">✅</span>
+                <span class="block-description block-description-center">
+                    Заметка «{{ note }}» успешно прописана {{ updated_users|length }} юзерам. Можете заценить их внизу 👇
+                </span>
+
+                <div class="top-users">
+                    {% for user in updated_users %}
+                        <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
+                            <span class="avatar top-user-avatar">
+                                <img src="{{ user.get_avatar }}" loading="lazy" />
+                            </span>
+                            <span class="top-user-name">{{ user.full_name }}</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {% if not achievement and not users %}
+                    <form action="." method="get">
+                        <span class="block-header">
+                            Выберите ачивку:
+                        </span>
+                        <span class="form-row form-row-center">
+                            <select name="achievement_code" onchange="this.form.submit()">
+                                <option value="">---</option>
+                                {% for achievement in achievements %}
+                                    <option value="{{ achievement.code }}">{{ achievement.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </span>
+                        <span class="block-header">
+                            или впишите никнеймы через запятую:
+                        </span>
+                        <span class="form-row form-row-center">
+                            <textarea name="handpicked_users" placeholder="vas3k,huyastrik,pivastrik"></textarea>
+                        </span>
+                        <span class="form-row">
+                            <input type="submit" value="Следующий шаг ➡️" class="button">
+                        </span>
+                    </form>
+                {% else %}
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        <span class="block-header">
+                            Вот такую заметку:
+                        </span>
+
+                        <span class="form-row form-row-center">
+                            <textarea name="note" placeholder="❤️" maxlength="100" style="text-align: center;">{{ custom_note|default:achievement.name|default:"" }}</textarea>
+                        </span>
+
+                        <span class="block-header">
+                            мы щас пропишем вот этим юзерам:
+                        </span>
+
+                        <div class="top-users">
+                            {% for user in users %}
+                                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
+                                    <span class="avatar top-user-avatar">
+                                        <img src="{{ user.get_avatar }}" loading="lazy" />
+                                    </span>
+                                    <span class="top-user-name">{{ user.full_name }}</span>
+                                </a>
+                            {% endfor %}
+                        </div>
+
+                        <span class="form-row form-row-center">
+                            <label><input type="checkbox" name="only_new" value="1">&nbsp;&nbsp;прописать только тем, кому я еще не писал заметку ранее</label>
+                        </span>
+
+                        <span class="form-row form-row-center">
+                            <details style="width: 100%; text-align: center;">
+                                <summary>Редактируемый список</summary>
+                                <textarea name="users">{% for user in users %}{{ user.slug }},{% endfor %}</textarea>
+                                <small>☝️ из этого поля можно руками удалить людей, для которых вы не хотите прописывать заметку</small>
+                            </details>
+                        </span>
+
+                        <span class="form-row">
+                            <input type="submit" value="Прописывай!" class="button button-red">
+                        </span>
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+</div>
+{% endblock %}

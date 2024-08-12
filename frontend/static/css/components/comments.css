@@ -53,8 +53,9 @@
         }
 
     .comment-form-subscribe {
-        opacity: 0.5;
+        opacity: 0.75;
         padding: 0 20px;
+        margin-left: auto;
     }
 
     .reply-form-form {
@@ -382,7 +383,7 @@
     }
 
     .comment-body-muted {
-        font-size: 120%;
+        font-size: 110%;
         opacity: 0.5;
         padding-bottom: 20px;
     }
