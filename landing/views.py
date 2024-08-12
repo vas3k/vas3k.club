@@ -8,7 +8,6 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 
 from authn.decorators.auth import require_auth
-from badges.models import UserBadge
 from club.exceptions import AccessDenied
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings
@@ -142,33 +141,3 @@ def godmode_invite(request):
         form = GodmodeInviteForm()
 
     return render(request, "admin/simple_form.html", {"form": form})
-
-
-@require_auth
-def badge_generator(request):
-    requested_users = request.GET.get("users")
-    if requested_users:
-        requested_users = requested_users.split(",")
-    else:
-        requested_users = [request.me.slug]
-
-    users = User.registered_members().filter(slug__in=requested_users)
-
-    for user in users:
-        user.badges = UserBadge.user_badges_grouped(user=user)
-
-    repeat = int(request.GET.get("repeat") or 1)
-    if repeat > 1:
-        users = [u for u in users for _ in range(repeat)]
-
-    # sort by name
-    users = sorted(users, key=lambda u: u.full_name.lower())
-
-    return render(request, "admin/badge_generator.html", {
-        "users": users,
-        "requested_users": ",".join(requested_users),
-        "hide_bio": request.GET.get("hide_bio"),
-        "hide_stats": request.GET.get("hide_stats"),
-        "hide_badges": request.GET.get("hide_badges"),
-        "repeat": repeat,
-    })
