@@ -135,7 +135,7 @@ class SearchIndex(models.Model):
     def update_user_tags(cls, user):
         if user.moderation_status == User.MODERATION_STATUS_APPROVED:
             SearchIndex.objects.filter(user=user).update(
-                tags=list(UserTag.objects.filter(user=user).values_list("tag", flat=True)),
+                tags=list(UserTag.objects.filter(user=user).values_list("tag", flat=True))[:100],
             )
 
 
