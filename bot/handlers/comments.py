@@ -75,15 +75,15 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
             "telegram": update.to_dict()
         }
     )
-    Comment.update_post_counters(comment.post)
-    PostView.increment_unread_comments(comment)
+    Comment.update_post_counters(reply.post)
+    PostView.increment_unread_comments(reply)
     PostView.register_view(
         request=None,
         user=user,
-        post=comment.post,
+        post=reply.post,
     )
-    SearchIndex.update_comment_index(comment)
-    LinkedPost.create_links_from_text(comment.post, text)
+    SearchIndex.update_comment_index(reply)
+    LinkedPost.create_links_from_text(reply.post, text)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
@@ -141,13 +141,13 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
         }
     )
     Comment.update_post_counters(post)
-    PostView.increment_unread_comments(comment)
+    PostView.increment_unread_comments(reply)
     PostView.register_view(
         request=None,
         user=user,
         post=post,
     )
-    SearchIndex.update_comment_index(comment)
+    SearchIndex.update_comment_index(reply)
     LinkedPost.create_links_from_text(post, text)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
