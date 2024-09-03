@@ -13,7 +13,7 @@ oauth2_token_validator.register_token_validator(BearerTokenValidator(OAuth2Token
 
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     def save_authorization_code(self, code, request):
-        nonce = request.data.get("nonce")
+        nonce = request.data.get("nonce", None)
         client = request.client
         auth_code = OAuth2AuthorizationCode(
             code=code,
@@ -64,6 +64,8 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 
 class OpenIDCode(oidc_grants.OpenIDCode):
     def exists_nonce(self, nonce, request):
+        if nonce is None:
+            return False
         try:
             OAuth2AuthorizationCode.objects.get(
                 client_id=request.client_id, nonce=nonce
@@ -95,6 +97,6 @@ class OpenIDImplicitGrant(OpenIDCode, oidc_grants.OpenIDImplicitGrant):
     pass
 
 
-server.register_grant(AuthorizationCodeGrant, [OpenIDCode(require_nonce=True)])
+server.register_grant(AuthorizationCodeGrant, [OpenIDCode(require_nonce=False)])
 server.register_grant(OpenIDImplicitGrant)
 server.register_grant(RefreshTokenGrant)
