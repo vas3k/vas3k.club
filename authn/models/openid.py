@@ -145,7 +145,7 @@ class OAuth2AuthorizationCode(models.Model, AuthorizationCodeMixin):
         return self.scope or ""
 
     def get_nonce(self):
-        return self.nonce
+        return self.nonce if self.nonce else None
 
     def get_auth_time(self):
         return self.auth_time.timestamp()
