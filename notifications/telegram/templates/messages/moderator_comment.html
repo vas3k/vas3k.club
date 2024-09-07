@@ -1,3 +1,3 @@
 💬 <b>{% if not comment.reply_to_id %}Коммент{% else %}Реплай{% endif %} к «<a href="{{ settings.APP_HOST }}{% url "show_post" comment.post.type comment.post.slug %}#comment-{{ comment.id }}">{{ comment.post.title }}</a>»</b> от <a href="{{ settings.APP_HOST }}{% url "profile" comment.author.slug %}">{{ comment.author.slug }}</a>
 
-{% load posts %}{% if comment.title %}<b>{{ comment.title }}</b> {% endif %}{% render_plain comment 300 %}
+{% load posts %}{% if comment.title %}<b>{{ comment.title }}</b> {% endif %}{% render_tg comment 300 %}
