@@ -9,9 +9,8 @@ from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
 from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
-from common.markdown.markdown import markdown_tg
 from common.regexp import FAVICON_RE
-from common.markdown.markdown import markdown_text
+from common.markdown.markdown import markdown_text, markdown_plain, markdown_tg
 from posts.helpers import extract_any_image
 from posts.models.post import Post
 
@@ -46,6 +45,14 @@ def render_post(context, post):
             post.save()
 
     return mark_safe(post.html or "")
+
+
+@register.simple_tag(takes_context=True)
+def render_plain(context, post, truncate=None):
+    result = mark_safe(strip_tags(markdown_plain(post.text)))
+    if truncate:
+        result = truncatechars(result, truncate)
+    return result
 
 
 @register.simple_tag()
