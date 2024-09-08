@@ -3,8 +3,9 @@ from urllib.parse import urlencode
 from django import template
 from django.conf import settings
 from django.template import loader
-from django.template.defaultfilters import truncatechars_html
+from django.template.defaultfilters import truncatechars, truncatechars_html
 from django.urls import reverse
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
 from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
