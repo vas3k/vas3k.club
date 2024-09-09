@@ -17,4 +17,4 @@
 
 {{ top_comment.author.full_name }} к посту <a href="{{ settings.APP_HOST }}{% url "show_post" top_comment.post.type top_comment.post.slug %}">{{ top_comment.post.title }}</a> (+{{ top_comment.upvotes }})
 {% load posts %}
-{% render_plain top_comment 300 %}
+{% render_tg top_comment 300 %}
