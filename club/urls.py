@@ -55,7 +55,7 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.admin_actions import admin_profile
 from users.views.people import people
-from search.api import api_search_users, api_search_tags
+from search.api import api_search_users, api_search_tags, api_search_users_full
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))"
@@ -155,6 +155,7 @@ urlpatterns = [
 
     path("search/", search, name="search"),
     path("search/users.json", api_search_users, name="api_search_users"),
+    path("search/users_full.json", api_search_users_full, name="api_search_users_full"),
     path("search/tags.json", api_search_tags, name="api_search_tags"),
 
     path("rooms/", list_rooms, name="list_rooms"),
