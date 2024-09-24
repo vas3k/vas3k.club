@@ -262,9 +262,10 @@ OG_IMAGE_GENERATOR_DEFAULTS = {
 }
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL") or "https://t.me/vas3k_club_bot"
+TELEGRAM_BOT_URL = "https://t.me/careerfactory_club_bot"
 TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
-TELEGRAM_CLUB_CHANNEL_URL = os.getenv("TELEGRAM_CLUB_CHANNEL_URL")
+TELEGRAM_CLUB_CHANNEL_URL = "https://t.me/careerfactory_club_news"
+TELEGRAM_CLUB_ALL_NEWS_CHANNEL_URL = "https://t.me/careerfactory_club_news_all"
 TELEGRAM_CLUB_CHANNEL_ID = os.getenv("TELEGRAM_CLUB_CHANNEL_ID")
 TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
