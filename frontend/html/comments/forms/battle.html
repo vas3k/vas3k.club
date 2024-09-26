@@ -4,7 +4,11 @@
     <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
     <div class="comment-form">
         <div class="comment-form-avatar">
-            <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}" loading="lazy" /></div>
+            {% if comment %}
+                <div class="avatar"><img src="{{ comment.author.get_avatar }}" alt="Аватар" loading="lazy" /></div>
+            {% else %}
+                <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар" loading="lazy" /></div>
+            {% endif %}
         </div>
         <div class="comment-form-body comment-form-battle">
             <div class="comment-form-body-battle-side">Я за
@@ -28,12 +32,14 @@
                         <i class="fa fa-image"></i>
                     </label>
                     <div class="comment-form-subscribe">
-                        {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+                        {% if not comment %}
+                            {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+                        {% endif %}
                     </div>
-                    <button type="submit" class="button comment-form-button"> {{save_message}} </button>
+                    <button type="submit" class="button comment-form-button"> {{ save_message }} </button>
                 </div>
             </div>
-            {% if form.text.errors %}<span class="form-errors">{{ form.full_name.errors }}</span>{% endif %}
+            {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
         </div>
     </div>
 </form>

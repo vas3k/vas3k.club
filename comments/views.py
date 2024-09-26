@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
-from comments.forms import CommentForm, ReplyForm, BattleCommentForm
+from comments.forms import CommentForm, ReplyForm, BattleCommentForm, edit_form_class_for_comment
 from comments.models import Comment, CommentVote
 from common.request import parse_ip_address, parse_useragent
 from authn.decorators.api import api
@@ -130,11 +130,11 @@ def edit_comment(request, comment_id):
             raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post
+    FormClass = edit_form_class_for_comment(comment)
 
     if request.method == "POST":
-        form = CommentForm(request.POST, instance=comment)
-        if post.type == Post.TYPE_BATTLE:
-            form = BattleCommentForm(request.POST, instance=comment)
+        form = FormClass(request.POST, instance=comment)
+
         if form.is_valid():
             comment = form.save(commit=False)
             comment.is_deleted = False
@@ -147,9 +147,7 @@ def edit_comment(request, comment_id):
 
             return redirect("show_comment", post.slug, comment.id)
     else:
-        form = CommentForm(instance=comment)
-        if post.type == Post.TYPE_BATTLE:
-            form = BattleCommentForm(instance=comment)
+        form = FormClass(instance=comment)
 
     return render(request, "comments/edit.html", {
         "comment": comment,

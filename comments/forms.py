@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from comments.models import Comment
+from posts.models.post import Post
 
 
 class CommentForm(forms.ModelForm):
@@ -111,3 +112,12 @@ class BattleCommentForm(forms.ModelForm):
             }
         }
         return cleaned_data
+
+
+def edit_form_class_for_comment(comment):
+    if comment.reply_to:
+        return ReplyForm
+    elif comment.post.type == Post.TYPE_BATTLE:
+        return BattleCommentForm
+    else:
+        return CommentForm
