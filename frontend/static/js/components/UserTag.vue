@@ -1,12 +1,12 @@
 <template>
-    <a
-        :href="url"
+    <button
+        type="button"
         :class="{ 'user-tag-active': isActive }"
         :style="{ 'background-color': isActive ? tagColor : null }"
         @click.prevent="toggle"
     >
         {{ tagName }}
-    </a>
+    </button>
 </template>
 
 <script>
