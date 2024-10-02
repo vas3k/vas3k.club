@@ -323,7 +323,7 @@ ACHIEVEMENTS = [
         "name": "Вастрик ⛵ Флот 2024",
         "description": "Участник первого Вастрик Флота в Черногории осенью 2024",
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
-        "style": "background-color: #717576; font-size: 120%;",
+        "style": "background-color: #4c98d5; font-size: 120%;",
     }),
 ]
 
