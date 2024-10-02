@@ -185,7 +185,8 @@ class CloudPaymentsService:
         return [
             dict(
                 id=row["Id"],
-                next_charge_at=datetime.fromisoformat(row["NextTransactionDateIso"]),
+                next_charge_at=datetime.fromisoformat(row["NextTransactionDateIso"])
+                if row["NextTransactionDateIso"] else None,
                 amount=row["Amount"],
                 interval=row["Interval"].lower(),
                 status=row["Status"].lower(),
