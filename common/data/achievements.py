@@ -319,6 +319,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/pokerface.png",
         "style": "background-color: #F1DFC5; font-size: 140%;",
     }),
+    ("vas3k_flot_2024", {
+        "name": "Вастрик ⛵ Флот 2024",
+        "description": "Участник первого Вастрик Флота в Черногории осенью 2024",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
+        "style": "background-color: #E7FBFF; font-size: 110%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
