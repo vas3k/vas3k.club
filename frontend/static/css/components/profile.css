@@ -353,6 +353,8 @@
                 font-size: 110%;
                 font-weight: 300;
                 padding: 7px 20px;
+                color: inherit;
+                background: none;
                 border: var(--button-hover-border);
                 margin-right: 20px;
                 margin-bottom: 20px;
