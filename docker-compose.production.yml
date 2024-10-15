@@ -11,7 +11,7 @@ services:
       - APP_HOST=https://club.careerfactory.ru
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
-      - POSTGRES_PASSWORD=vas3k
+      - POSTGRES_PASSWORD=yHXmSlY2lDbb8TM
       - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
@@ -81,12 +81,12 @@ services:
     restart: always
     environment:
       POSTGRES_USER: vas3k
-      POSTGRES_PASSWORD: vas3k
+      POSTGRES_PASSWORD: yHXmSlY2lDbb8TM
       POSTGRES_DB: vas3k_club
     volumes:
       - pgdata:/var/lib/postgresql/data:rw
     ports:
-      - "127.0.0.1:54333:5432"
+      - "54333:5432"
 
   redis:
     image: redis:alpine
