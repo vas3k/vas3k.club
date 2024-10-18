@@ -66,7 +66,7 @@ def patreon_sync_callback(request):
                        "Проверьте, всё ли там у них в порядке."
         }, status=402)
 
-    if request.me.email.lower() != membership.email.lower():
+    if membership.email and request.me.email.lower() != membership.email.lower():
         # user and patreon emails do not match
         return render(request, "error.html", {
             "title": "⛔️ Ваш email не совпадает с патреоновским",
@@ -82,6 +82,14 @@ def patreon_sync_callback(request):
             "message": "Патреон — это старый метод входа. Он оставлен исключительно для олдов, "
                        "которые подписались много лет назад и не хотят никуда переезжать. "
                        "По нашим данным, вы уже перешли на более совершенный вид оплаты и вернуться назад не получится."
+        }, status=400)
+
+    if request.me.patreon_id != membership.user_id:
+        # wrong patreon id
+        return render(request, "error.html", {
+            "title": "⛔️ Кажется это не ваш патреон",
+            "message": "Ваш ID на патреоне не совпадает с тем, который записан у нас. "
+                       "Скорее всего вы используете не тот аккаунт."
         }, status=400)
 
     # update membership dates
