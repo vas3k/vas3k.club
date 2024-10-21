@@ -469,7 +469,7 @@
     @media only screen and (min-width : 1100px) {
         .text-body-image-full {
             max-width: none !important;
-            width: 160% !important;
+            width: 170% !important;
             position: relative;
             left: -30%;
         }

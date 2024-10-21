@@ -6,7 +6,7 @@ from slugify import slugify
 
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
-IMAGE_CSS_CLASSES = {
+SPECIAL_CSS_CLASSES = {
     "-": "text-body-image-full"
 }
 
@@ -67,8 +67,9 @@ class ClubRenderer(mistune.HTMLRenderer):
     def simple_image(self, src, alt="", title=None):
         css_classes = ""
         title = title or alt
-        if title in IMAGE_CSS_CLASSES:
-            css_classes = IMAGE_CSS_CLASSES[title]
+        if title in SPECIAL_CSS_CLASSES:
+            css_classes = SPECIAL_CSS_CLASSES[title]
+            title = ""
 
         image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
@@ -91,11 +92,17 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<figure>{video_tag}{caption}</figure>"
 
     def video(self, src, alt="", title=None):
+        css_classes = ""
+        title = title or alt
+        if title in SPECIAL_CSS_CLASSES:
+            css_classes = SPECIAL_CSS_CLASSES[title]
+            title = ""
+
         video_tag = (
             f'<video src="{escape_html(src)}" controls muted playsinline>{escape_html(alt)}</video>'
         )
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
-        return f"<figure>{video_tag}{caption}</figure>"
+        return f'<figure class="{css_classes}">{video_tag}{caption}</figure>'
 
     def tweet(self, src, alt="", title=None):
         tweet_match = TWITTER_RE.match(src)
