@@ -80,7 +80,6 @@ def robots(request):
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
-@require_auth
 def generate_ical_invite(request):
     event_title = request.GET.get("title")
     event_date = request.GET.get("date")
@@ -112,7 +111,6 @@ def generate_ical_invite(request):
     return response
 
 
-@require_auth
 def generate_google_invite(request):
     event_title = request.GET.get("title")
     event_date = request.GET.get("date")
