@@ -325,6 +325,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
     }),
+    ("grill_master", {
+        "name": "Гриль Мастер",
+        "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
+        "image": "https://vas3k.club/static/images/achievements/grill_master.png",
+        "style": "background-color: #EA780E; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
