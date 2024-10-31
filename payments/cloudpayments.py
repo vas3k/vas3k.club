@@ -30,6 +30,27 @@ CLOUDPAYMENTS_PRODUCTS = {
             "timedelta": timedelta(days=31),
         },
     },
+    "club799_month": {
+        "code": "club799_month",
+        "description": "1 месяц членства в Клубе",
+        "amount": 799,
+        "recurrent": False,
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=31),
+        },
+    },
+    "club799_month_recurrent": {
+        "code": "club799_month_recurrent",
+        "description": "1 месяц членства в Клубе",
+        "amount": 799,
+        "recurrent": True,
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=31),
+        },
+        "regular": "monthly",
+    },
     # "club1_year": {
     #     "code": "club1_year",
     #     "description": "1 год членства в Клубе",
@@ -114,12 +135,12 @@ class CloudPaymentsService:
                         "email": user.email,
                         "calculationPlace": "club.careerfactory.ru",
                         "amounts":
-                        {
-                            "electronic": product_data["amount"],
-                            "advancePayment": 0,
-                            "credit": 0,
-                            "provision": 0
-                        }
+                            {
+                                "electronic": product_data["amount"],
+                                "advancePayment": 0,
+                                "credit": 0,
+                                "provision": 0
+                            }
                     }
                 }
             }
