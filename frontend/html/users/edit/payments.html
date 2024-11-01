@@ -46,12 +46,7 @@
         </div>
 
         <form action="{% url "cloudpayments_pay" %}" method="get">
-
-        <div class="block-header" id="select_package">На сколько еще пополняем?</div>
-
         <br>
-
-        {% include "payments/blocks/packages.html" %}
 
         <button type="submit" class="button button-big join-button">Продлить членство 🤙</button>
 

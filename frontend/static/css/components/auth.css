@@ -18,17 +18,24 @@
         text-align: center;
         font-weight: 500;
         font-size: 180%;
-        padding-top: 100px;
-        padding-bottom: 40px;
+        padding-top: 30px;
+        padding-bottom: 20px;
     }
 
     .join-description {
-        text-align: center;
         padding: 50px 20px;
         max-width: 700px;
         margin: 0 auto;
         font-size: 110%;
     }
+
+        .join-description p {
+            text-align: left;
+            padding: 40px 20px 0px 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 110%;
+        }
 
     .join-email {
         display: block;
