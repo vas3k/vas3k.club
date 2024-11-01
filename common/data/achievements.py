@@ -331,6 +331,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/grill_master.png",
         "style": "background-color: #EA780E; font-size: 130%;",
     }),
+    ("spooky", {
+        "name": "Спуки",
+        "description": "За лучшие украшения на Хэллоуин",
+        "image": "https://vas3k.club/static/images/achievements/spooky.png",
+        "style": "background-color: #2E61F3; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
