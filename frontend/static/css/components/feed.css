@@ -184,6 +184,7 @@
             .feed-topic-header-toggle.is-active {
                 background-color: var(--button-bg-color);
                 border: var(--button-border);
+                border-color: var(--block-bg-color);
                 color: var(--button-color);
             }
 
