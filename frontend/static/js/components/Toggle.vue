@@ -1,8 +1,8 @@
 <template>
-    <div :class="{ 'is-subscribed': isActive }" @click.prevent="toggle">
-        <span v-if="isLoading">🤔</span>
-        <input v-else type="checkbox" id="post-subscribed" v-model="isActive" @change.prevent="toggle" />
-        <label for="post-subscribed">
+    <div :class="{ 'is-active': isActive }" @click.prevent="toggle">
+        <span v-if="isLoading">🤔 думаю...</span>
+        <label v-else style="cursor: pointer;">
+            <input type="checkbox" v-model="isActive" @change.prevent="toggle" />
             <slot></slot>
         </label>
     </div>
@@ -12,7 +12,7 @@
 import ClubApi from "../common/api.service";
 
 export default {
-    name: "PostSubscription",
+    name: "Toggle",
     props: {
         isActiveByDefault: {
             type: Boolean,

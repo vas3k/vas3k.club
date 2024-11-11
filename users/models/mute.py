@@ -6,7 +6,7 @@ from users.models.friends import Friend
 from users.models.user import User
 
 
-class Muted(models.Model):
+class UserMuted(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

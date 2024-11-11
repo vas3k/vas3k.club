@@ -1061,7 +1061,7 @@
         border: var(--button-border);
     }
 
-        .post-comments-subscription.is-subscribed {
+        .post-comments-subscription.is-active {
             background-color: var(--button-bg-color);
             border: var(--button-border);
             color: var(--button-color);

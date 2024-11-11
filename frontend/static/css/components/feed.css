@@ -159,6 +159,34 @@
         font-size: 115%;
     }
 
+    .feed-topic-header-settings {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: row;
+        gap: 20px;
+        padding-top: 40px;
+    }
+
+        .feed-topic-header-toggle {
+            display: inline-block;
+            position: relative;
+            padding: 6px 13px 7px;
+            cursor: pointer;
+            color: var(--text-color);
+            background-color: var(--block-bg-color);
+            border-radius: var(--button-border-radius);
+            border: var(--button-border);
+            border-width: 0;
+        }
+
+            .feed-topic-header-toggle.is-active {
+                background-color: var(--button-bg-color);
+                border: var(--button-border);
+                color: var(--button-color);
+            }
+
     .feed-ordering {
         display: flex;
         align-content: flex-start;

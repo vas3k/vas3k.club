@@ -22,7 +22,7 @@ from landing.views import landing, docs, godmode_network_settings, godmode_diges
     godmode_invite
 from misc.fun import badge_generator, mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
-from rooms.views import redirect_to_room_chat, list_rooms
+from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
     link_telegram
 from notifications.webhooks import webhook_event
@@ -160,6 +160,8 @@ urlpatterns = [
     path("rooms/", list_rooms, name="list_rooms"),
     path("room/<slug:room_slug>/", feed, name="feed_room"),
     path("room/<slug:room_slug>/chat/", redirect_to_room_chat, name="redirect_to_room_chat"),
+    path("room/<slug:room_slug>/subscribe/", toggle_room_subscription, name="toggle_room_subscription"),
+    path("room/<slug:room_slug>/mute/", toggle_room_mute, name="toggle_room_mute"),
     path("room/<slug:room_slug>/<slug:ordering>/", feed, name="feed_room_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
     path("label/<slug:label_code>/<slug:ordering>/", feed, name="feed_label_ordering"),
