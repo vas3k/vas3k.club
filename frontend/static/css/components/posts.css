@@ -148,7 +148,6 @@
         }
 
         .post-type-post .upvote:not(.upvote-disabled) {
-            padding-top: 30px !important;
             float: left;
             position: sticky;
             margin-left: -110px;
@@ -157,6 +156,7 @@
 
             @media only screen and (max-width : 1024px) {
                 .post-type-post .upvote, .post-type-post .upvote:not(.upvote-disabled) {
+                    top: 0;
                     left: auto;
                     right: 0;
                     z-index: 1;
@@ -164,7 +164,7 @@
                     display: block;
                     margin-bottom: 1.5em;
                     margin-left: 1.5em;
-                    position: sticky;
+                    position: relative;
                 }
             }
 
