@@ -469,7 +469,7 @@
     @media only screen and (min-width : 1100px) {
         .text-body-image-full {
             max-width: none !important;
-            width: 160% !important;
+            width: 170% !important;
             position: relative;
             left: -30%;
         }
@@ -1061,7 +1061,7 @@
         border: var(--button-border);
     }
 
-        .post-comments-subscription.is-subscribed {
+        .post-comments-subscription.is-active {
             background-color: var(--button-bg-color);
             border: var(--button-border);
             color: var(--button-color);

@@ -38,7 +38,10 @@ const App = {
     initializeEmojiForPoorPeople() {
         const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
         if (!isApple) {
-            document.body = twemoji.parse(document.body);
+            document.body = twemoji.parse(
+                document.body,
+                { base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/" }
+            );
         }
     },
     initializeThemeSwitcher() {

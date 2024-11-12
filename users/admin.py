@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from users.models.achievements import Achievement, UserAchievement
 from users.models.friends import Friend
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from users.models.notes import UserNote
 from users.models.user import User
 
@@ -82,7 +82,7 @@ class MutedAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
 
 
-admin.site.register(Muted, MutedAdmin)
+admin.site.register(UserMuted, MutedAdmin)
 
 
 class UserNotesAdmin(admin.ModelAdmin):

@@ -4,6 +4,7 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
+from rooms.models import RoomSubscription
 from tags.models import Tag, UserTag
 
 
@@ -95,3 +96,15 @@ def notify_post_collectible_tag_owners(post):
                         text=render_html_message("post_collectible_tag.html", post=post, tag=tag),
                         parse_mode=telegram.ParseMode.HTML,
                     )
+
+
+def notify_post_room_subscribers(post):
+    if post.room:
+        subscribers = RoomSubscription.room_subscribers(post.room)
+        for subscriber in subscribers:
+            if subscriber.user.telegram_id:
+                send_telegram_message(
+                    chat=Chat(id=subscriber.user.telegram_id),
+                    text=render_html_message("post_room_subscriber.html", post=post, room=post.room),
+                    parse_mode=telegram.ParseMode.HTML,
+                )

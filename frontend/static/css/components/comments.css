@@ -129,6 +129,7 @@
         https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/
         */
         font-size: max(1.25rem, 16px);
+        min-height: 300px;
     }
 }
 

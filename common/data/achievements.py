@@ -319,6 +319,24 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/pokerface.png",
         "style": "background-color: #F1DFC5; font-size: 140%;",
     }),
+    ("vas3k_flot_2024", {
+        "name": "Вастрик ⛵ Флот 2024",
+        "description": "Участник первого Вастрик Флота в Черногории осенью 2024",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
+        "style": "background-color: #4c98d5; font-size: 120%;",
+    }),
+    ("grill_master", {
+        "name": "Гриль Мастер",
+        "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
+        "image": "https://vas3k.club/static/images/achievements/grill_master.png",
+        "style": "background-color: #EA780E; font-size: 130%;",
+    }),
+    ("spooky", {
+        "name": "Спуки",
+        "description": "За лучшие украшения на Хэллоуин",
+        "image": "https://vas3k.club/static/images/achievements/spooky.png",
+        "style": "background-color: #2E61F3; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png

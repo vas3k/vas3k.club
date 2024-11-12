@@ -13,7 +13,6 @@ import vSelect from "vue-select";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
-Vue.component("post-subscription", () => import("./components/PostSubscription.vue"));
 Vue.component("post-rsvp", () => import("./components/PostRSVP.vue"));
 Vue.component("comment-upvote", () => import("./components/CommentUpvote.vue"));
 Vue.component("user-tag", () => import("./components/UserTag.vue"));
@@ -24,6 +23,7 @@ Vue.component("input-length-counter", () => import("./components/InputLengthCoun
 Vue.component("friend-button", () => import("./components/FriendButton.vue"));
 Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
 Vue.component("comment-markdown-editor", () => import("./components/MarkdownEditor/MarkdownEditor.vue"));
+Vue.component("toggle", () => import("./components/Toggle.vue"));
 Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));

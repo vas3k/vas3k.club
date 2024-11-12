@@ -12,10 +12,14 @@
 
 {% block post_text %}
     <section class="text-body text-body-type-post e-content">
-        {% if post.metadata %}
+        {% if post.metadata and post.metadata.url %}
             {% link_summary post %}
         {% else %}
-            &rarr;&nbsp;<a href="{{ post.url }}" target="_blank" rel="noopener">{{ post.url }}</a>
+            <div class="block post-link post-metadata-type-link">
+                <a href="{{ post.url }}" target="_blank" rel="noopener" class="post-link-a">
+                    <span class="post-link-title">{{ post.url|truncatechars:"80" }}</span>
+                </a>
+            </div>
         {% endif %}
 
         {% render_post post %}

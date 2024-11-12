@@ -10,7 +10,7 @@ from bot.handlers.common import UserRejectReason, PostRejectReason
 from bot.decorators import is_moderator
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
-    notify_post_rejected, notify_post_collectible_tag_owners
+    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -51,8 +51,12 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     # send notifications
     notify_post_approved(post)
     announce_in_club_chats(post)
+
     if post.collectible_tag_code:
         notify_post_collectible_tag_owners(post)
+
+    if post.room_id:
+        notify_post_room_subscribers(post)
 
     return None
 

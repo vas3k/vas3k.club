@@ -23,7 +23,14 @@ def api_profile(request, user_slug):
 
 @api(require_auth=True)
 def api_profile_by_telegram_id(request, telegram_id):
-    user = get_object_or_404(User, telegram_id=telegram_id)
+    try:
+        user = get_object_or_404(User, telegram_id=telegram_id)
+    except User.MultipleObjectsReturned:
+        same_telegram = list(User.objects.filter(telegram_id=telegram_id))
+        same_telegram.sort(
+            key=lambda user: user.moderation_status != User.MODERATION_STATUS_APPROVED,
+        )  # puts approved users first
+        user = same_telegram[0]
 
     return JsonResponse({
         "user": user.to_dict()

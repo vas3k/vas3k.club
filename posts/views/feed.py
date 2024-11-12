@@ -9,8 +9,8 @@ from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
 from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed
 from posts.models.post import Post
-from rooms.models import Room
-from users.models.mute import Muted
+from rooms.models import Room, RoomMuted
+from users.models.mute import UserMuted
 
 
 @feature_switch(features.PRIVATE_FEED, yes=require_auth, no=noop)
@@ -38,11 +38,24 @@ def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, orde
     if label_code:
         posts = posts.filter(label_code=label_code)
 
-    # hide muted users
+    # hide muted users and rooms
     if request.me:
-        muted = Muted.objects.filter(user_from=request.me).values_list("user_to_id").all()
-        if muted:
-            posts = posts.exclude(author_id__in=muted)
+        # exclude muted users
+        posts = posts.exclude(author__muted_from__user_from=request.me)
+
+        # exclude muted rooms (only if not in the room)
+        if not room:
+            posts = posts.exclude(room__muted_users__user=request.me)
+
+        # TODO: old code, let's check what works faster
+        # TODO: REMOVE IT in 2025 if no performance degradation detected
+        # muted_rooms = RoomMuted.muted_by_user(user=request.me).values_list("room_id").all()
+        # if muted_rooms:
+        #     posts = posts.exclude(room_id__in=muted_rooms)
+        #
+        # muted_users = UserMuted.objects.filter(user_from=request.me).values_list("user_to_id").all()
+        # if muted_users:
+        #     posts = posts.exclude(author_id__in=muted_users)
 
     # hide non-public posts and intros from unauthorized users
     if not request.me:

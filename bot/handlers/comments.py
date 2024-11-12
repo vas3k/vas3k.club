@@ -10,6 +10,8 @@ from club import settings
 from comments.models import Comment
 from posts.models.post import Post
 from posts.models.linked import LinkedPost
+from posts.models.views import PostView
+from search.models import SearchIndex
 
 log = logging.getLogger(__name__)
 
@@ -73,6 +75,16 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
             "telegram": update.to_dict()
         }
     )
+    Comment.update_post_counters(reply.post)
+    PostView.increment_unread_comments(reply)
+    PostView.register_view(
+        request=None,
+        user=user,
+        post=reply.post,
+    )
+    SearchIndex.update_comment_index(reply)
+    LinkedPost.create_links_from_text(reply.post, text)
+
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
         "comment_id": reply.id
@@ -108,11 +120,11 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
             f"😣 Сорян, я пока умею только в текстовые реплаи"
         )
         return None
-        
+
     for skip_word in ("/skip","#skip","#ignore"):
         if skip_word in text:
             return None
-            
+
     if len(text) < MIN_COMMENT_LEN:
         update.message.reply_text(
             f"😋 Твой коммент слишком короткий. Не буду постить его в Клуб, пускай остается в чате"
@@ -128,6 +140,14 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
             "telegram": update.to_dict()
         }
     )
+    Comment.update_post_counters(post)
+    PostView.increment_unread_comments(reply)
+    PostView.register_view(
+        request=None,
+        user=user,
+        post=post,
+    )
+    SearchIndex.update_comment_index(reply)
     LinkedPost.create_links_from_text(post, text)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={

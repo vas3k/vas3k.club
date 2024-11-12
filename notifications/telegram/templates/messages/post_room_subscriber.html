@@ -1,0 +1,4 @@
+🏷 Новый пост в комнате <b>«<a href="{{ settings.APP_HOST }}{% url "feed_room" room.slug %}">{{ room.title }}</a>»</b>. Вы подписались на эту комнату, так что мы уведомляем вас о нём.
+
+{% if post.emoji %}{{ post.emoji }} {% endif %}<b>{% if post.prefix %}{{ post.prefix }} {% endif %}<a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a></b>
+{% load posts %}{% render_tg post 350 %}

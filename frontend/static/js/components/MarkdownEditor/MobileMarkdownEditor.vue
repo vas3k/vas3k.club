@@ -7,6 +7,7 @@
             placeholder="Напишите ответ..."
             ref="textarea"
             :value="value"
+            @input="growTextareaIfNeeded"
             @blur="emitCustomBlur"
         >
         </textarea>
@@ -29,6 +30,7 @@ export default {
     mounted: function() {
         this.attachImageListener();
         this.focusTextareaIfNeeded(this.focused);
+        this.growTextareaIfNeeded();
 
     },
     watch: {
@@ -44,6 +46,10 @@ export default {
             this.$nextTick(() => {
                 shouldFocus && this.$refs["textarea"].focus();
             });
+        },
+        growTextareaIfNeeded: function() {
+            this.$refs["textarea"].style.height = 'auto';
+            this.$refs["textarea"].style.height = this.$refs["textarea"].scrollHeight + 'px';
         },
         attachImageListener: function() {
             // we reach outside the current component to get the filepicker. It is not a good practice,

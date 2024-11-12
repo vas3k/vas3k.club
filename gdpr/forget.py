@@ -6,9 +6,10 @@ from authn.models.session import Session, Code
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models.post import Post
+from rooms.models import RoomSubscription, RoomMuted
 from users.models.achievements import UserAchievement
 from users.models.friends import Friend
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from tags.models import UserTag
 from users.models.user import User
 from utils.strings import random_string
@@ -79,5 +80,7 @@ def delete_user_data(user: User):
     PostBookmark.objects.filter(user=user).delete()
     Friend.objects.filter(user_from=user).delete()
     Friend.objects.filter(user_to=user).delete()
-    Muted.objects.filter(user_from=user).delete()
-    Muted.objects.filter(user_to=user).delete()
+    UserMuted.objects.filter(user_from=user).delete()
+    UserMuted.objects.filter(user_to=user).delete()
+    RoomSubscription.objects.filter(user=user).delete()
+    RoomMuted.objects.filter(user=user).delete()
