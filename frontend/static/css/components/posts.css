@@ -148,11 +148,14 @@
         }
 
         .post-type-post .upvote:not(.upvote-disabled) {
-            padding-top: 30px !important;
+            float: left;
+            position: sticky;
+            margin-left: -110px;
+            margin-top: 30px;
         }
 
             @media only screen and (max-width : 1024px) {
-                .post-type-post .upvote {
+                .post-type-post .upvote, .post-type-post .upvote:not(.upvote-disabled) {
                     top: 0;
                     left: auto;
                     right: 0;
