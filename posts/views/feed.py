@@ -7,7 +7,7 @@ from authn.decorators.auth import require_auth
 from club import features
 from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
-from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed
+from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed, ORDERING_HOT
 from posts.models.post import Post
 from rooms.models import Room, RoomMuted
 from users.models.mute import UserMuted
@@ -41,10 +41,10 @@ def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, orde
     # hide muted users and rooms
     if request.me:
         # exclude muted users
-        posts = posts.exclude(author__muted_from__user_from=request.me)
+        posts = posts.exclude(author__muted_to__user_from=request.me)
 
         # exclude muted rooms (only if not in the room)
-        if not room:
+        if not room and ordering in [ORDERING_NEW, ORDERING_HOT, ORDERING_ACTIVITY]:
             posts = posts.exclude(room__muted_users__user=request.me)
 
         # TODO: old code, let's check what works faster
