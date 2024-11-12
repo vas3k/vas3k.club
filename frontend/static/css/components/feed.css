@@ -388,6 +388,8 @@
         text-decoration: none;
         color: #999;
         white-space: nowrap;
+        padding: 1em;
+        margin: -1em;
     }
 
     .feed-post-footer .bookmark-button {
@@ -424,6 +426,8 @@
         color: var(--link-color);
         text-decoration: none;
         white-space: nowrap;
+        padding: 1em;
+        margin: -1em;
     }
 
     @media only screen and (max-width : 570px) {
