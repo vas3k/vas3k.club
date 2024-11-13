@@ -19,10 +19,7 @@ MIN_COMMENT_LEN = 40
 
 
 def comment(update: Update, context: CallbackContext) -> None:
-    if not update.message \
-            or not update.message.reply_to_message \
-            or not update.message.reply_to_message.text \
-            or not update.message.reply_to_message.caption:
+    if not update.message or not update.message.reply_to_message:
         return None
 
     reply_text_start = (update.message.reply_to_message.text or update.message.reply_to_message.caption)[:10]
