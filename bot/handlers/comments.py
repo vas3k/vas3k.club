@@ -19,7 +19,7 @@ MIN_COMMENT_LEN = 40
 
 
 def comment(update: Update, context: CallbackContext) -> None:
-    log.info("Comment handler triggered: %s", update)
+    log.info("Comment handler triggered")
 
     if not update.message or not update.message.reply_to_message:
         log.info("No message or reply_to_message in update. Skipping.")
