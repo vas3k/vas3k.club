@@ -1016,8 +1016,16 @@
         grid-template-areas:
             "prefix prefix prefix"
             "left center right"
+            "reply-form reply-form reply-form"
             "replies replies replies"
     }
+
+        .battle-comments-list .comment-replies {
+            grid-area: replies;
+        }
+        .battle-comments-list #comment-reply-form {
+            grid-area: reply-form;
+        }
 
     .post-comments-form {
         padding-top: 30px;

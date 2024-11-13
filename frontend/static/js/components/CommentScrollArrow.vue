@@ -88,8 +88,10 @@ export default {
                      ".post-comments-list > .replies > .reply.comment-is-new",
                      // Новые реплаи на втором уровне к старым реплаям без родительского комментария
                      ".post-comments-list > .replies > .reply:not(.comment-is-new) > .reply.comment-is-new",
+                     // Новые реплаи бэтлов
+                     ".battle-comments-list .comment-replies > .replies > .reply.comment-is-new",
                      // Новые реплаи на втором уровне бэтлов
-                     ".battle-comments .post-comments-list > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
+                     ".battle-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
                  ].join()
              );
 

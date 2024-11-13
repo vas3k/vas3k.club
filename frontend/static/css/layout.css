@@ -583,6 +583,10 @@
         justify-self: stretch;
     }
 
+    .comment-layout-battle .comment-replies {
+        grid-area: replies;
+    }
+
     @media only screen and (max-width : 570px) {
         .comment-layout-normal {
             grid-template-columns: 35px minmax(auto, 1fr) 60px;
