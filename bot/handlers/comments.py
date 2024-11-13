@@ -22,7 +22,11 @@ def comment(update: Update, context: CallbackContext) -> None:
     if not update.message or not update.message.reply_to_message:
         return None
 
-    reply_text_start = (update.message.reply_to_message.text or update.message.reply_to_message.caption)[:10]
+    reply_text_start = (
+        update.message.reply_to_message.text or
+        update.message.reply_to_message.caption or
+        ""
+    )[:10]
 
     if COMMENT_EMOJI_RE.match(reply_text_start):
         return reply_to_comment(update, context)
