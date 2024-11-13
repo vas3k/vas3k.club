@@ -19,7 +19,10 @@ MIN_COMMENT_LEN = 40
 
 
 def comment(update: Update, context: CallbackContext) -> None:
+    log.info("Comment handler triggered: %s", update)
+
     if not update.message or not update.message.reply_to_message:
+        log.info("No message or reply_to_message in update. Skipping.")
         return None
 
     reply_text_start = (
@@ -28,6 +31,8 @@ def comment(update: Update, context: CallbackContext) -> None:
         ""
     )[:10]
 
+    log.info("Original message start: %s", reply_text_start)
+
     if COMMENT_EMOJI_RE.match(reply_text_start):
         return reply_to_comment(update, context)
 
@@ -35,17 +40,22 @@ def comment(update: Update, context: CallbackContext) -> None:
         return comment_to_post(update, context)
 
     # skip normal replies
+    log.info("Skipping...")
     return None
 
 
 @is_club_member
 def reply_to_comment(update: Update, context: CallbackContext) -> None:
+    log.info("Reply_to_comment handler triggered")
+
     user = get_club_user(update)
     if not user:
+        log.info("User not found")
         return None
 
     comment = get_club_comment(update)
     if not comment:
+        log.info("Original comment not found. Skipping.")
         return None
 
     is_ok = Comment.check_rate_limits(user)
@@ -101,8 +111,11 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
 
 @is_club_member
 def comment_to_post(update: Update, context: CallbackContext) -> None:
+    log.info("Reply_to_post handler triggered")
+
     user = get_club_user(update)
     if not user:
+        log.info("User not found")
         return None
 
     post = get_club_post(update)

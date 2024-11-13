@@ -41,6 +41,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
 
 def private_message(update: Update, context: CallbackContext) -> None:
+    log.info("Private message handler triggered")
+
     club_users = cached_telegram_users()
     if str(update.effective_user.id) not in set(club_users):
         update.effective_chat.send_message(
