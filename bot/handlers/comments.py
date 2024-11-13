@@ -16,6 +16,7 @@ from search.models import SearchIndex
 log = logging.getLogger(__name__)
 
 MIN_COMMENT_LEN = 40
+SKIP_COMMANDS = ("/skip", "#skip", "#ignore")
 
 
 def comment(update: Update, context: CallbackContext) -> None:
@@ -71,6 +72,10 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
             f"😣 Сорян, я пока умею только в текстовые реплаи"
         )
         return None
+
+    for skip_word in SKIP_COMMANDS:
+        if skip_word in text:
+            return None
 
     # max 3 levels of comments are allowed
     reply_to_id = comment.id
@@ -136,7 +141,7 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
         )
         return None
 
-    for skip_word in ("/skip","#skip","#ignore"):
+    for skip_word in SKIP_COMMANDS:
         if skip_word in text:
             return None
 
