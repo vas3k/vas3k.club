@@ -97,7 +97,7 @@ export default {
 
             if (comments.length < 1) {
                 // Новых нет, ищем начало блока комментариев и перебираем прочтённые комментарии
-                comments = document.querySelectorAll("#post-comments-title, .comment");
+                comments = document.querySelectorAll("#post-comments-title, .comment[id], .battle-comments-list");
             }
 
             if (comments.length < 1) {
