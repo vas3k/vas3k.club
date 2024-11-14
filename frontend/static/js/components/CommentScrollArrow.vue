@@ -92,6 +92,10 @@ export default {
                      ".battle-comments-list .comment-replies > .replies > .reply.comment-is-new",
                      // Новые реплаи на втором уровне бэтлов
                      ".battle-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
+                     // Новые реплаи к запиненым комментам (bold)
+                     ".block-comments-list .comment-replies > .replies > .reply.comment-is-new",
+                     // Новые реплаи на втором уровне запиненных комментов (bold)
+                     ".block-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
                  ].join()
              );
 

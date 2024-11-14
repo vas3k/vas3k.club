@@ -1,8 +1,8 @@
 {% load text_filters %}
 {% load posts %}
 {% load comments %}
-<div id="comment-{{ comment.id }}">
-    <div class="block comment comment-layout-block {% if comment.metadata.badges %}comment-is-badged{% endif %}">
+<div class="block-comments-list">
+    <div class="block {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} comment comment-layout-block {% if comment.metadata.badges %}comment-is-badged{% endif %}" id="comment-{{ comment.id }}">
         <div class="comment-side">
             <a class="avatar comment-side-avatar" href="{% url "profile" comment.author.slug %}">
                 <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
@@ -96,12 +96,14 @@
         </div>
     </div>
 
-    {% if replies %}
-        <div class="replies replies-indent-normal">
-            {% for reply_tree in replies %}
-                {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
-            {% endfor %}
-        </div>
-        <div class="clearfix20"></div>
-    {% endif %}
+    <div class="comment-replies thread-collapse-toggle">
+        {% if replies %}
+            <div class="replies replies-indent-normal">
+                {% for reply_tree in replies %}
+                    {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
+                {% endfor %}
+            </div>
+            <div class="clearfix20"></div>
+        {% endif %}
+    </div>
 </div>
