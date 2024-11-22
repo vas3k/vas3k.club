@@ -337,6 +337,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/spooky.png",
         "style": "background-color: #2E61F3; font-size: 130%;",
     }),
+    ("ai_art", {
+        "name": "AI master race",
+        "description": "За участие в ИИнктобере",
+        "image": "https://vas3k.club/static/images/achievements/ai_art.png",
+        "style": "background-color: #132F6E; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
