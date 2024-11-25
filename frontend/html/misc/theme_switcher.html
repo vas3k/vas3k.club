@@ -1,0 +1,90 @@
+<starlight-theme-select>
+  <label style='width: 6.25em'>
+    <span class="sr-only">Выберите тему</span>
+    <select value="auto" width="6.25em">
+      <option value="dark">Темная тема</option>
+      <option value="light">Светлая тема</option>
+      <option value="auto">Системная тема</option>
+    </select>
+  </label>
+</starlight-theme-select>
+
+
+<script>
+  const storageKey = 'theme';
+
+  const parseTheme = (theme) =>
+    theme === 'auto' || theme === 'dark' || theme === 'light' ? theme : 'auto';
+
+  const loadTheme = () =>
+    parseTheme(typeof localStorage !== 'undefined' && localStorage.getItem(storageKey));
+
+  function storeTheme(theme) {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(storageKey, theme === 'light' || theme === 'dark' ? theme : '');
+    }
+  }
+
+  const getPreferredColorScheme = () =>
+    matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+
+  matchMedia(`(prefers-color-scheme: light)`).addEventListener('change', () => {
+    if (loadTheme() === 'auto') onThemeChange('auto');
+  });
+
+  class StarlightThemeProvider {
+    storedTheme = loadTheme();
+
+    constructor() {
+      const theme = this.storedTheme ||
+        (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark';
+    }
+
+    updatePickers(theme = this.storedTheme || 'auto') {
+      document.querySelectorAll('starlight-theme-select').forEach((picker) => {
+        console.log('picker', picker);
+        const select = picker.querySelector('select');
+        if (select) select.value = theme;
+
+        /** @type {HTMLTemplateElement | null} */
+        const tmpl = document.querySelector(`#theme-icons`);
+        const newIcon = tmpl && tmpl.content.querySelector('.' + theme);
+        if (newIcon) {
+          const oldIcon = picker.querySelector('starlight-theme-select i.label-icon');
+          if (oldIcon) {
+            oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+          }
+        }
+      });
+    }
+  }
+
+
+  class StarlightThemeSelect extends HTMLElement {
+    themeProvider = new StarlightThemeProvider();
+
+    constructor() {
+      super();
+      this.onThemeChange(loadTheme());
+      this.querySelector('select')?.addEventListener('change', (e) => {
+        if (e.currentTarget instanceof HTMLSelectElement) {
+          this.onThemeChange(parseTheme(e.currentTarget.value));
+        }
+      });
+
+      this.themeProvider.updatePickers(loadTheme());
+
+      matchMedia(`(prefers-color-scheme: light)`).addEventListener('change', () => {
+        if (loadTheme() === 'auto') this.onThemeChange('auto');
+      });
+    }
+
+    onThemeChange(theme) {
+      this.themeProvider.updatePickers(theme);
+      document.documentElement.setAttribute("theme", theme === 'auto' ? getPreferredColorScheme() : theme);
+      storeTheme(theme);
+    }
+  }
+  customElements.define('starlight-theme-select', StarlightThemeSelect);
+</script>

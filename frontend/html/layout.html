@@ -9,12 +9,6 @@
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
-    <script>
-        const theme = localStorage.getItem('theme');
-        if (theme !== null) {
-            document.documentElement.setAttribute('theme', theme);
-        }
-    </script>
 
     {% block feeds %}
     <link rel="alternate" type="application/rss+xml"
@@ -62,10 +56,7 @@
             CC BY-SA
         </div>
         <div class="footer-right">
-            <label class="theme-switcher" for="checkbox">
-                <input type="checkbox" id="checkbox" />
-                <span class="slider round"></span>
-            </label>
+            {% include "misc/theme_switcher.html" %}
 
             {% if me %}
                 <form method="POST" action="{% url "logout" %}">
