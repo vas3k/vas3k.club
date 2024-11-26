@@ -56,7 +56,7 @@
             CC BY-SA
         </div>
         <div class="footer-right">
-            {% include "misc/theme_switcher.html" %}
+            <theme-switcher></theme-switcher>
 
             {% if me %}
                 <form method="POST" action="{% url "logout" %}">
