@@ -1,12 +1,11 @@
 <template>
-    <span
+    <button
         class="comment-scroll-arrow"
         :class="{
             'arrow-up': arrowDirection === 'Up'
         }"
         @click.prevent="onArrowClickHandler"
-    >
-    </span>
+    ></button>
 </template>
 
 <script>
