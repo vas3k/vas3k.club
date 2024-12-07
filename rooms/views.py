@@ -15,10 +15,10 @@ def list_rooms(request):
 @require_auth
 def redirect_to_room_chat(request, room_slug):
     room = get_object_or_404(Room, slug=room_slug)
-    if room.chat_url:
-        return redirect(room.chat_url, permanent=False)
-    elif room.url:
+    if room.url:
         return redirect(room.url, permanent=False)
+    elif room.chat_url:
+        return redirect(room.chat_url, permanent=False)
     else:
         raise Http404()
 

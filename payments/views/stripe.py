@@ -4,6 +4,7 @@ from datetime import datetime
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
+from stripe.error import InvalidRequestError
 
 from authn.decorators.auth import require_auth
 from club.exceptions import BadRequest
@@ -115,19 +116,27 @@ def pay(request):
         customer_data = dict(customer_email=user.email)
 
     # create stripe session and payment (to keep track of history)
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[{
-            "price": product["stripe_id"],
-            "quantity": 1,
-        }],
-        **customer_data,
-        mode="subscription" if is_recurrent else "payment",
-        metadata=payment_data,
-        automatic_tax={"enabled": True},
-        success_url=settings.STRIPE_SUCCESS_URL,
-        cancel_url=settings.STRIPE_CANCEL_URL,
-    )
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price": product["stripe_id"],
+                "quantity": 1,
+            }],
+            **customer_data,
+            mode="subscription" if is_recurrent else "payment",
+            metadata=payment_data,
+            automatic_tax={"enabled": True},
+            success_url=settings.STRIPE_SUCCESS_URL,
+            cancel_url=settings.STRIPE_CANCEL_URL,
+        )
+    except InvalidRequestError as ex:
+        log.exception(ex)
+        return render(request, "error.html", {
+            "title": "Ошибка при создании платежа",
+            "message": "Невалидный email или выбранный пакет не найден. "
+                       "Попробуйте обновить страницу. Если ошибка повторится, напишите нам в поддержку."
+        })
 
     payment = Payment.create(
         reference=session.id,
