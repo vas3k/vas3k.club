@@ -1,7 +1,7 @@
 <template>
     <label style="width: 6.25em">
         <span class="sr-only">Выберите тему</span>
-        <select value="auto" width="6.25em" @input="setTheme">
+        <select :value="theme" width="6.25em" @input="setTheme" ref="themeSelect">
             <option value="dark">Темная тема</option>
             <option value="light">Светлая тема</option>
             <option value="auto">Системная тема</option>
@@ -24,60 +24,34 @@ function storeTheme(theme) {
 
 const getPreferredColorScheme = () => (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
 
-matchMedia(`(prefers-color-scheme: light)`).addEventListener("change", () => {
-    if (loadTheme() === "auto") onThemeChange("auto");
-});
-
-// class ThemeProvider {
-//     storedTheme = loadTheme();
-
-//     constructor() {
-//         const theme =
-//             this.storedTheme || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-//         document.documentElement.dataset.theme = theme === "light" ? "light" : "dark";
-//     }
-
-//     updatePickers(theme = this.storedTheme || "auto") {
-//         document.querySelectorAll("starlight-theme-select").forEach((picker) => {
-//             console.log("picker", picker);
-//             const select = picker.querySelector("select");
-//             if (select) select.value = theme;
-
-//             /** @type {HTMLTemplateElement | null} */
-//             const tmpl = document.querySelector(`#theme-icons`);
-//             const newIcon = tmpl && tmpl.content.querySelector("." + theme);
-//             if (newIcon) {
-//                 const oldIcon = picker.querySelector("starlight-theme-select i.label-icon");
-//                 if (oldIcon) {
-//                     oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
-//                 }
-//             }
-//         });
-//     }
-// }
-
-// const themeProvider = new ThemeProvider();
+function onThemeChange(theme) {
+    document.documentElement.setAttribute("theme", theme === "auto" ? getPreferredColorScheme() : theme);
+    storeTheme(theme);
+}
 
 export default {
-    name: "PostUpvote",
+    name: "ThemeSwitcher",
     props: {},
+    mounted() {
+        matchMedia(`(prefers-color-scheme: light)`).addEventListener("change", () => {
+            if (loadTheme() === "auto") onThemeChange("auto");
+        });
+    },
     data() {
         const theme = loadTheme();
         onThemeChange(theme);
-        // themeProvider.updatePickers(theme);
+        return { theme };
     },
     methods: {
-        setTheme(option) {
-            if (!option) {
+        setTheme(event) {
+            if (!event.currentTarget) {
                 return;
             }
 
-            const theme = parseTheme(option.value);
+            const theme = parseTheme(event.currentTarget.value);
 
             onThemeChange(theme);
-            // themeProvider.updatePickers(theme);
-            document.documentElement.setAttribute("theme", theme === "auto" ? getPreferredColorScheme() : theme);
-            storeTheme(theme);
+            this.theme = theme;
         },
     },
 };
