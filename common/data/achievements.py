@@ -343,7 +343,7 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/ai_art.png",
         "style": "background-color: #132F6E; font-size: 130%;",
     }),
-    ("ai_art", {
+    ("birdwatcher", {
         "name": "Смотритель птиц",
         "description": "За победу на конкурсе бёрдвочинга. Для самых наблюдательных.",
         "image": "https://vas3k.club/static/images/achievements/birds.png",
