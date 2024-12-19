@@ -349,6 +349,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/birds.png",
         "style": "background-color: #6A98FF; font-size: 130%;",
     }),
+    ("couchsurfing", {
+        "name": "Гроза отелей",
+        "description": "За размещение у себя клубня на ночь",
+        "image": "https://vas3k.club/static/images/achievements/couchsurfing.png",
+        "style": "background-color: #33CCCC; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
