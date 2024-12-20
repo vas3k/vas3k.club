@@ -1,0 +1,60 @@
+.not-found {
+    position: relative;
+    padding-top: 75px;
+    padding-bottom: 75px;
+    text-align: center;
+    font-size: 110%;
+    max-width: var(--max-content-width);
+    margin: 0 auto;
+}
+
+.not-found__logo {
+    color: white;
+    font-size: 4em;
+    font-weight: 100;
+    mix-blend-mode: difference;
+}
+
+.not-found__close {
+    top: 13%;
+    left: 47%;
+    right: 0;
+    position: absolute;
+    display: block;
+    width: 125px;
+    height: 125px;
+    overflow: hidden;
+
+    &::before, &::after {
+        content: '';
+        position: absolute;
+        height: 40px;
+        width: 100%;
+        top: 40%;
+        left: 0;
+        margin-top: -1px;
+        background: #000;
+    }
+
+    &::before {
+        transform: rotate(45deg);
+    }
+
+    &::after {
+        transform: rotate(-45deg);
+
+    }
+}
+
+.not-found__description {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    max-width: 50%;
+    margin: 0 auto;
+    font-size: 2em;
+}
+
+.not-found__button {
+    width: 100%;
+    max-width: 200px;
+}
