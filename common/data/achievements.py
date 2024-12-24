@@ -115,6 +115,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/2023.png",
         "style": "background-color: #f87c56; font-size: 190%;",
     }),
+    ("2024", {
+        "name": "2024",
+        "description": "Призовое место в итогах 2024 года",
+        "image": "https://vas3k.club/static/images/achievements/2024.png",
+        "style": "background-color: #ff8a3d; font-size: 190%;",
+    }),
     ("mic", {
         "name": "Золотой микрофон",
         "description": "За выступление на АМА  и митапах в качестве оратора",
