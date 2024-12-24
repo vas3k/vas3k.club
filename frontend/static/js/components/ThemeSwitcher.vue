@@ -1,58 +1,114 @@
 <template>
-    <label style="width: 6.25em">
-        <span class="sr-only">Выберите тему</span>
-        <select :value="theme" width="6.25em" @input="setTheme" ref="themeSelect">
-            <option value="dark">Темная тема</option>
-            <option value="light">Светлая тема</option>
-            <option value="auto">Системная тема</option>
-        </select>
-    </label>
+    <div :data-value="theme" :data-real="realTheme()">
+        <label class="light"><input type="radio" v-model="theme" value="light" /></label>
+        <label class="auto"><input type="radio" v-model="theme" value="auto" /></label>
+        <label class="dark"><input type="radio" v-model="theme" value="dark" /></label>
+    </div>
 </template>
 
 <script>
-const storageKey = "theme";
-
-const parseTheme = (theme) => (theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto");
-
-const loadTheme = () => parseTheme(typeof localStorage !== "undefined" && localStorage.getItem(storageKey));
-
-function storeTheme(theme) {
-    if (typeof localStorage !== "undefined") {
-        localStorage.setItem(storageKey, theme === "light" || theme === "dark" ? theme : "");
-    }
-}
-
-const getPreferredColorScheme = () => (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-
-function onThemeChange(theme) {
-    document.documentElement.setAttribute("theme", theme === "auto" ? getPreferredColorScheme() : theme);
-    storeTheme(theme);
-}
-
 export default {
     name: "ThemeSwitcher",
-    props: {},
-    mounted() {
-        matchMedia(`(prefers-color-scheme: light)`).addEventListener("change", () => {
-            if (loadTheme() === "auto") onThemeChange("auto");
-        });
-    },
     data() {
-        const theme = loadTheme();
-        onThemeChange(theme);
-        return { theme };
+        return {
+            theme: "auto",
+        };
+    },
+    watch: {
+        theme() {
+            this.changeTheme();
+        },
+    },
+    computed: {
+        $media() {
+            return matchMedia("(prefers-color-scheme: light)");
+        },
+    },
+    mounted() {
+        this.$media.addEventListener("change", this.changeTheme);
+        if (typeof localStorage !== "undefined") {
+            const localTheme = localStorage.getItem("theme");
+            if (["light", "auto", "dark"].includes(localTheme)) {
+                this.theme = localTheme;
+            }
+        }
     },
     methods: {
-        setTheme(event) {
-            if (!event.currentTarget) {
-                return;
+        changeTheme() {
+            document.documentElement.setAttribute("theme", this.realTheme());
+            this.$el.dataset.value = this.theme;
+            if (typeof localStorage !== "undefined") {
+                localStorage.setItem("theme", this.theme);
             }
-
-            const theme = parseTheme(event.currentTarget.value);
-
-            onThemeChange(theme);
-            this.theme = theme;
+            this.$forceUpdate();
+        },
+        realTheme() {
+            return this.theme === "auto" ? (this.$media.matches ? "light" : "dark") : this.theme;
         },
     },
 };
 </script>
+
+<style scoped>
+div {
+    display: inline-block;
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 17px;
+    padding: 3px;
+
+    &:before {
+        content: "";
+        position: absolute;
+        left: 36px;
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+        transition: ease 0.3s all;
+    }
+    &[data-value="light"]:before {
+        transform: translateX(-33px);
+    }
+    &[data-value="auto"]:before {
+        transform: translateX(0px);
+    }
+    &[data-value="dark"]:before {
+        transform: translateX(33px);
+    }
+    &[data-real="dark"] {
+        background: #ffffff22;
+        &:before {
+            background: #00000099;
+        }
+    }
+    &[data-real="light"] {
+        background: #30303080;
+        &:before {
+            background: #ffffff66;
+        }
+    }
+    label {
+        width: 30px;
+        position: relative;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        &:after {
+            font-size: 17px;
+        }
+    }
+    label.light:after {
+        content: "☀️";
+    }
+    label.dark:after {
+        content: "🌙";
+    }
+    label.auto:after {
+        content: "🌗";
+    }
+    input {
+        display: none;
+    }
+}
+</style>
