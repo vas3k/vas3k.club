@@ -24,7 +24,7 @@
                 <button type="submit" class="button">🎁 Купить инвайт-код</button>
             </form>
 
-            {% if request.me.is_god %}
+            {% if me.is_god %}
                 <br>
                 <form action="{% url "godmode_generate_invite_code" %}" method="post">
                     <button class="button">💣 Сгенерировать инвайт</button>
