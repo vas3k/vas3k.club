@@ -10,7 +10,7 @@ def send_invite_purchase_confirmation(from_user: User, invite: Invite):
     send_transactional_email(
         recipient=from_user.email,
         subject=f"🎁 Вы купили инвайт",
-        html=invite_template.render({"from_user": from_user, invite: invite}),
+        html=invite_template.render({"from_user": from_user, "invite": invite}),
         tags=["invited"]
     )
 
