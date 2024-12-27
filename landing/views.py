@@ -9,11 +9,15 @@ from django.shortcuts import render, redirect
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
+from invites.models import Invite
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings
 from notifications.email.invites import send_invited_email, send_account_renewed_email
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
+from payments.models import Payment
+from payments.products import PRODUCTS
 from users.models.user import User
+from utils.strings import random_string
 
 EXISTING_DOCS = [
     os.path.splitext(f)[0]  # get only filenames
@@ -147,3 +151,24 @@ def godmode_invite(request):
         form = GodmodeInviteForm()
 
     return render(request, "admin/simple_form.html", {"form": form})
+
+
+@require_auth
+def godmode_generate_invite_code(request):
+    if request.method != "POST":
+        raise Http404()
+
+    if not request.me.is_god:
+        raise AccessDenied()
+
+    Invite.objects.create(
+        user=request.me,
+        payment=Payment.create(
+            reference="god-" + random_string(length=16),
+            user=request.me,
+            product=PRODUCTS["club1_invite"],
+            status=Payment.STATUS_SUCCESS,
+        )
+    )
+
+    return redirect("invites")

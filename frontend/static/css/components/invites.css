@@ -15,6 +15,7 @@
         display: flex;
         flex-wrap: wrap;
         flex-direction: row;
+        align-items: center;
         gap: 20px;
         justify-content: space-between;
     }
@@ -29,5 +30,6 @@
 }
 
     .badge-invite-used, .badge-invite-expired {
+        color: var(--opposite-text-color);
         background-color: var(--opposite-block-bg-color);
     }
