@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django_q.tasks import async_task
 
-from notifications.email.invites import send_invited_email, send_invite_confirmation, send_invite_renewed_email
+from invites.models import Invite
+from notifications.email.invites import send_invite_purchase_confirmation
 from notifications.email.users import send_registration_email, send_renewal_email
 from users.models.user import User
 
@@ -40,26 +41,15 @@ def club_subscription_activator(product, payment, user):
 
 
 def club_invite_activator(product, payment, user):
-    friend_email = payment.invited_user_email()
-    if not friend_email:
-        log.error(f"Friend email not set in payment: {payment.id}")
-        return club_subscription_activator(product, payment, user)
-
-    friend = User.objects.filter(email=friend_email).first()
-    if not friend:
-        log.error(f"Friend not found: {friend_email}")
-        return club_subscription_activator(product, payment, user)
-
-    # notify invited user
-    if friend.moderation_status == User.MODERATION_STATUS_INTRO:
-        async_task(send_invited_email, user, friend)
-    else:
-        async_task(send_invite_renewed_email, user, friend)
+    invite = Invite.objects.create(
+        user=user,
+        payment=payment,
+    )
 
     # send notification to author
-    async_task(send_invite_confirmation, user, friend)
+    async_task(send_invite_purchase_confirmation, user, invite)
 
-    return club_subscription_activator(product, payment, friend)
+    return True
 
 
 PRODUCTS = {
@@ -175,7 +165,7 @@ PRODUCTS = {
         "code": "club1_invite",
         "stripe_id": "price_1QZtjxKgJMaF2rHt8e3VWP0V" if not IS_TEST_STRIPE else "price_1IX9QuKgJMaF2rHtJnrSs0Ud",
         "coinbase_id": None,
-        "description": "Пригласить друга в Клуб",
+        "description": "Инвайт в Клуб",
         "amount": 25,
         "recurrent": False,
         "activator": club_invite_activator,

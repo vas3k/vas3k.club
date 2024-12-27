@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block title %}
+    Инвайты в Клуб — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">💌<br>Инвайты</div>
+
+        <div class="block-description block-description-center">
+            <p>
+                Здесь можно купить инвайт-код и подарить его своему другу, чтобы он смог зарегистрироваться в Клубе или продлил имеющийся аккаунт.
+            </p>
+
+            <br>
+
+            <form action="{% url "pay" %}" method="get">
+                {% csrf_token %}
+                <input type="hidden" name="product_code" value="club1_invite">
+                <input type="hidden" name="is_invite" value="true">
+                <button type="submit" class="button">🎁 Купить инвайт-код</button>
+            </form>
+
+            <div class="invites-list">
+                {% for invite in invites %}
+                    <a href="{% url "show_invite" invite.code %}" class="block invites-list-item zoom-on-hover">
+                        <strong>
+                            Инвайт {{ invite.code|slice:":3" }}...{{ invite.code|slice:"-3:" }}
+                        </strong>
+                        <span>
+                            {% include "invites/widgets/status_badge.html" %}
+                        </span>
+                        <span>
+                            {% if invite.used_at %}
+                                ➡️ {{ invite.invited_user.full_name }}
+                            {% elif invite.is_expired %}
+                                истек {{ invite.expires_at | date:"j E Y" }}
+                            {% else %}
+                                истекает {{ invite.expires_at | date:"j E Y" }}
+                            {% endif %}
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

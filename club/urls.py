@@ -18,6 +18,7 @@ from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
+from invites.views import show_invite, list_invites, activate_invite
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite
 from misc.fun import badge_generator, mass_note
@@ -165,6 +166,10 @@ urlpatterns = [
     path("room/<slug:room_slug>/<slug:ordering>/", feed, name="feed_room_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
     path("label/<slug:label_code>/<slug:ordering>/", feed, name="feed_label_ordering"),
+
+    path("invites/", list_invites, name="invites"),
+    path("invites/<slug:invite_code>/", show_invite, name="show_invite"),
+    path("invites/<slug:invite_code>/activate/", activate_invite, name="activate_invite"),
 
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
     path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),

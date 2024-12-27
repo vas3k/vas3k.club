@@ -11,7 +11,7 @@ from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings
-from notifications.email.invites import send_invited_email
+from notifications.email.invites import send_invited_email, send_account_renewed_email
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from users.models.user import User
 
@@ -125,12 +125,19 @@ def godmode_invite(request):
                     ),
                 )
 
-            send_invited_email(request.me, user)
+            if user.moderation_status == User.MODERATION_STATUS_INTRO:
+                send_invited_email(request.me, user)
+                send_telegram_message(
+                    chat=ADMIN_CHAT,
+                    text=f"🎁 <b>Юзера '{email}' заинвайтили за донат</b>",
+                )
+            else:
+                send_account_renewed_email(request.me, user)
+                send_telegram_message(
+                    chat=ADMIN_CHAT,
+                    text=f"🎁 <b>Юзеру '{email}' продлили аккаунт за донат</b>",
+                )
 
-            send_telegram_message(
-                chat=ADMIN_CHAT,
-                text=f"🎁 <b>Юзера '{email}' заинвайтили за донат</b>",
-            )
 
             return render(request, "message.html", {
                 "title": "🎁 Юзер приглашен",

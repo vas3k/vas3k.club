@@ -116,31 +116,7 @@
         <div class="block-header">💌<br>Пригласить друга</div>
 
         <div class="block-description block-description-center">
-            У вас есть хороший знакомый, который тоже хочет в Клуб, но не может заплатить долор?
-        </div>
-
-        <div class="block-description block-description-center">
-            Здесь вы можете ввести почту любого человека и подарить ему аккаунт на год!
-            Не забудьте предупредить друга, что собираетесь выслать ему инвайт, ведь интро ему всё равно придётся написать самостоятельно.
-        </div>
-
-        <div class="block invite-friend">
-            <form action="{% url "pay" %}" method="get">
-                {% csrf_token %}
-                <input type="hidden" name="product_code" value="club1_invite">
-                <input type="hidden" name="is_invite" value="true">
-
-                <label>
-                    <strong>Адрес почты</strong>
-                    <input type="email" name="email" placeholder="friend@gmail.com" required>
-                </label>
-
-                <button type="submit" class="button">Позвать в Клуб</button>
-            </form>
-        </div>
-
-        <div class="block-description block-description-center">
-            💡 <strong>Лайфхак:</strong> указав здесь почту существующего члена Клуба, вы продлите ему аккаунт. Только спросите его точный адрес.
+            <a href="{% url "invites" %}" class="button">🎁 Инвайты переехали сюда</a>
         </div>
     </div>
 {% endblock %}

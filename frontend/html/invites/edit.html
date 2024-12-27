@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Инвайт {{ invite.code }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="block">
+            <div class="block-header">💌<br>Инвайт {{ invite.code }}</div>
+
+            <div class="block-description block-description-center">
+                <p>
+                    {% include "invites/widgets/status_badge.html" %}
+                </p>
+
+                {% if invite.is_used %}
+                    <p>
+                        Пользователь «{{ invite.invited_user.full_name }}» зарегистрировался или продлил свой аккаунт по этому инвайту {{ invite.used_at | date:"j E Y" }} 👇
+                    </p>
+
+                    {% if invite.invited_user %}
+                        {% include "users/widgets/card.html" with user=invite.invited_user %}
+                    {% endif %}
+                {% elif invite.is_expired %}
+                    <p>
+                        К сожалению, этот инвайт истёк и никто по нему никто так и не зарегистрировался. Больше его использовать не получится.
+                    </p>
+                {% else %}
+                    <p>
+                        Создан <strong>{{ invite.created_at | date:"j E Y" }}</strong>
+                    </p>
+
+                    <p>
+                        Нужно активировать до <strong>{{ invite.expires_at | date:"j E Y" }}</strong>
+                    </p>
+
+                    <br>
+
+                    <p>
+                        Секретная ссылка, чтобы подарить её другу 👇
+                    </p>
+
+                    <p>
+                        <input type="text" value="{{ settings.APP_HOST }}{% url "show_invite" invite.code %}" style="font-size: 140%; width: 100%;" readonly>
+                    </p>
+
+                    <p>
+                        По ней можно зарегистрироваться в Клубе, либо продлить уже существующий аккаунт.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
