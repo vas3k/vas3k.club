@@ -11,7 +11,7 @@ from club.exceptions import BadRequest
 from payments.exceptions import PaymentException
 from payments.helpers import parse_stripe_webhook_event
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_stripe_id
+from payments.products import PRODUCTS, find_by_stripe_id, IS_TEST_STRIPE
 from payments.service import stripe
 from users.models.user import User
 
@@ -53,7 +53,7 @@ def pay(request):
     # parse email
     email = request.GET.get("email") or ""
     if email:
-        email = email.lower()
+        email = email.lower().strip()
 
     # who's paying?
     if not request.me:  # scenario 1: new user
@@ -75,36 +75,11 @@ def pay(request):
                 moderation_status=User.MODERATION_STATUS_INTRO,
             ),
         )
-    elif is_invite:  # scenario 2: invite a friend
-        if not email or "@" not in email:
-            return render(request, "error.html", {
-                "title": "Плохой e-mail адрес друга 😣",
-                "message": "Нам ведь нужно будет куда-то выслать инвайт"
-            })
-
-        _, is_created = User.objects.get_or_create(
-            email=email,
-            defaults=dict(
-                membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
-                full_name=email[:email.find("@")],
-                membership_started_at=now,
-                membership_expires_at=now,
-                created_at=now,
-                updated_at=now,
-                moderation_status=User.MODERATION_STATUS_INTRO,
-            ),
-        )
-
-        user = request.me
-        payment_data = {
-            "invite": email,
-            "is_created": is_created,
-        }
-    else:  # scenario 3: account renewal
+    else:  # scenario 2: account renewal or invite purchase
         user = request.me
 
     # reuse stripe customer ID if user already has it
-    if user.stripe_id:
+    if user.stripe_id and not IS_TEST_STRIPE:
         customer_data = dict(
             customer=user.stripe_id,
             customer_update={

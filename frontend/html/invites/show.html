@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">🎁<br>Вам подарили 1 год в Клубе</div>
+
+        <div class="block">
+            <div class="block-description block-description-center">
+                <p>
+                    Ого! Пользователь <strong>{{ invite.user.full_name }}</strong> подарил вам 1 год в Вастрик Клубе. Должно быть, вы это заслужили! 🥳
+                </p>
+
+                {% if request.me %}
+                    <p>Нажмите на кнопку ниже, чтобы мы начислили его на ваш аккаунт 👇</p>
+
+                    {% include "users/widgets/card.html" with user=request.me %}
+
+                    <br><br>
+
+                    <form action="{% url "activate_invite" invite.code %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="email" value="{{ request.me.email }}">
+                        <div class="form-row">
+                            <button type="submit" class="button">🔥 Активировать инвайт</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p>
+                        Введите адрес своей электронной почты, чтобы мы накинули на него подарочных дней. Если у вас уже есть аккаунт в Клубе — укажите email, который к нему привязан, либо сначала <a href="{% url "login" %}"><strong>войдите</strong></a>.
+                    </p>
+
+                    <div class="block-description block-description-center">
+                        <form action="{% url "activate_invite" invite.code %}" method="post">
+                            {% csrf_token %}
+
+                            <div class="form-row">
+                                <label for="invited-email" class="form-label"><strong>Ваша почта 👇</strong></label>
+                                <input type="email" name="email" id="invited-email" placeholder="your@gmail.com" {% if request.me %}value="{{ request.me.email }}"{% endif %} required>
+                            </div>
+
+                            <div class="form-row">
+                                <button type="submit" class="button">🔥 Активировать инвайт</button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
