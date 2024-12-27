@@ -36,7 +36,7 @@
 
 {% block body %}
     <p>
-        {{ user_badge.from_user.full_name }} подарил вам награду
+        <a href="{% url "profile" user_badge.from_user.slug %}">{{ user_badge.from_user.full_name }}</a> подарил вам награду
         {% if user_badge.comment %}
             за комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
         {% else %}
