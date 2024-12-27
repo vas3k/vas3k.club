@@ -70,6 +70,7 @@ def activate_invite(request, invite_code):
 
     # create or find existing user
     now = datetime.utcnow()
+    email = email.lower().strip()
     user, _ = User.objects.get_or_create(
         email=email,
         defaults=dict(
@@ -84,7 +85,7 @@ def activate_invite(request, invite_code):
     )
 
     # activate subscription
-    club_subscription_activator(PRODUCTS["club1_invite"], invite.payment, user)
+    club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, user)
 
     # expire the invite
     invite.used_at = now

@@ -96,7 +96,7 @@ def godmode_invite(request):
     if request.method == "POST":
         form = GodmodeInviteForm(request.POST, request.FILES)
         if form.is_valid():
-            email = form.cleaned_data["email"]
+            email = form.cleaned_data["email"].lower().strip()
             days = form.cleaned_data["days"]
             now = datetime.utcnow()
 
@@ -137,7 +137,6 @@ def godmode_invite(request):
                     chat=ADMIN_CHAT,
                     text=f"🎁 <b>Юзеру '{email}' продлили аккаунт за донат</b>",
                 )
-
 
             return render(request, "message.html", {
                 "title": "🎁 Юзер приглашен",

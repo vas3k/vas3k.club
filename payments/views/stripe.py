@@ -53,7 +53,7 @@ def pay(request):
     # parse email
     email = request.GET.get("email") or ""
     if email:
-        email = email.lower()
+        email = email.lower().strip()
 
     # who's paying?
     if not request.me:  # scenario 1: new user
