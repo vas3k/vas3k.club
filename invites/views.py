@@ -20,6 +20,7 @@ def list_invites(request):
 
 def show_invite(request, invite_code):
     invite = get_object_or_404(Invite, code=invite_code)
+
     if invite.user == request.me:
         return render(request, "invites/edit.html", {
             "invite": invite,

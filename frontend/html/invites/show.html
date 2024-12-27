@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
+{% block title %}
+    Вам подарили инвайт! — {{ block.super }}
+{% endblock %}
+
 {% block content %}
     <div class="content user-edit">
         <div class="form-title">🎁<br>Вам подарили 1 год в Клубе</div>
@@ -29,20 +33,20 @@
                         Введите адрес своей электронной почты, чтобы мы накинули на него подарочных дней. Если у вас уже есть аккаунт в Клубе — укажите email, который к нему привязан, либо сначала <a href="{% url "login" %}"><strong>войдите</strong></a>.
                     </p>
 
-                    <div class="block-description block-description-center">
-                        <form action="{% url "activate_invite" invite.code %}" method="post">
-                            {% csrf_token %}
+                    <br>
 
-                            <div class="form-row">
-                                <label for="invited-email" class="form-label"><strong>Ваша почта 👇</strong></label>
-                                <input type="email" name="email" id="invited-email" placeholder="your@gmail.com" {% if request.me %}value="{{ request.me.email }}"{% endif %} required>
-                            </div>
+                    <form action="{% url "activate_invite" invite.code %}" method="post">
+                        {% csrf_token %}
 
-                            <div class="form-row">
-                                <button type="submit" class="button">🔥 Активировать инвайт</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="form-row">
+                            <label for="invited-email" class="form-label"><strong>Ваша почта 👇</strong></label>
+                            <input type="email" name="email" id="invited-email" placeholder="your@gmail.com" {% if request.me %}value="{{ request.me.email }}"{% endif %} required>
+                        </div>
+
+                        <div class="form-row">
+                            <button type="submit" class="button">🔥 Активировать инвайт</button>
+                        </div>
+                    </form>
                 {% endif %}
             </div>
 

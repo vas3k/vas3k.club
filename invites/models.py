@@ -49,5 +49,5 @@ class Invite(models.Model):
 
     @classmethod
     def for_user(cls, user):
-        return cls.objects.filter(user=user).order_by("-created_at")
+        return cls.objects.filter(user=user).select_related("invited_user").order_by("-created_at")
 
