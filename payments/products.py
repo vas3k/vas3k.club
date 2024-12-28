@@ -78,7 +78,7 @@ PRODUCTS = {
         },
     },
     "legacy_club1_recurrent_yearly_02": {
-        "code": "club1_recurrent_yearly",
+        "code": "legacy_club1_recurrent_yearly_02",
         "stripe_id": "price_1M5rx4KgJMaF2rHtR2i0Dfo8",
         "coinbase_id": "e69b2ee9-d363-42c1-9f5d-64366922121f",
         "description": "Год членства в Клубе (автопополнение каждый год)",
@@ -90,7 +90,7 @@ PRODUCTS = {
         },
     },
     "legacy_club1_recurrent_yearly_01": {
-        "code": "club1_recurrent_yearly",
+        "code": "legacy_club1_recurrent_yearly_01",
         "stripe_id": "price_1H73kbKgJMaF2rHtTS3clmtv",
         "coinbase_id": "e69b2ee9-d363-42c1-9f5d-64366922121f",
         "description": "Год членства в Клубе  (автопродление, легаси)",
@@ -174,7 +174,7 @@ PRODUCTS = {
         },
     },
     "legacy_club50_recurrent_yearly_02": {
-        "code": "club50_recurrent_yearly",
+        "code": "legacy_club50_recurrent_yearly_02",
         "stripe_id": "price_1OmKAFKgJMaF2rHtxoB6YQB6" if not IS_TEST_STRIPE else "price_1H74BCKgJMaF2rHtRhUtbn3C",
         "coinbase_id": "ff0df23f-06d8-473f-9ad8-74039a62aeb1",
         "description": "Членство в Клубе на 50 лет (автопополнение каждый год)",
