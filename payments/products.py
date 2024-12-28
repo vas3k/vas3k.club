@@ -106,7 +106,7 @@ PRODUCTS = {
         "stripe_id": "price_1QZtmZKgJMaF2rHtMfWJ5QFs" if not IS_TEST_STRIPE else "price_1H5cChKgJMaF2rHtugvlcjKR",
         "coinbase_id": "84c507f9-0a21-471f-8d10-acf0a154db0d",
         "description": "Членство в Клубе на 3 года",
-        "amount": 55,
+        "amount": 70,
         "recurrent": False,
         "activator": club_subscription_activator,
         "data": {
@@ -118,7 +118,31 @@ PRODUCTS = {
         "stripe_id": "price_1QZtmqKgJMaF2rHtjP9aT80d" if not IS_TEST_STRIPE else "price_1H74BCKgJMaF2rHtRhUtbn3C",
         "coinbase_id": "84c507f9-0a21-471f-8d10-acf0a154db0d",
         "description": "+3 года членства в Клубе (автопродление)",
+        "amount": 70,
+        "recurrent": "yearly",
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=365 * 3),
+        },
+    },
+    "legacy_club3_recurrent_yearly_02": {
+        "code": "legacy_club3_recurrent_yearly_02",
+        "stripe_id": "price_1M5rvEKgJMaF2rHtvnZ064m8",
+        "coinbase_id": "84c507f9-0a21-471f-8d10-acf0a154db0d",
+        "description": "+3 года членства в Клубе (автопродление, легаси)",
         "amount": 55,
+        "recurrent": "yearly",
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=365 * 3),
+        },
+    },
+    "legacy_club3_recurrent_yearly_01": {
+        "code": "legacy_club3_recurrent_yearly_01",
+        "stripe_id": "price_1H73n7KgJMaF2rHtZtU9dvJT",
+        "coinbase_id": "84c507f9-0a21-471f-8d10-acf0a154db0d",
+        "description": "+3 года членства в Клубе (автопополнение каждый год)",
+        "amount": 45,
         "recurrent": "yearly",
         "activator": club_subscription_activator,
         "data": {
