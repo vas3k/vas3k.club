@@ -62,7 +62,7 @@ class Command(BaseCommand):
             if result:
                 self.stdout.write(f"Sending email to {customer_email}, period ends {current_period_end}...")
 
-                email = render_to_string("emails/price_increase.html", {
+                email = render_to_string("emails/price_increase_3.html", {
                     "old_price": old_stripe_price.unit_amount // 100,
                     "new_price": new_stripe_price.unit_amount // 100,
                     "current_period_end": current_period_end,
@@ -138,10 +138,10 @@ def update_subscription_price(
             subscription.id,
             automatic_tax={"enabled": True},
             proration_behavior="none",  # apply only from the next billing cycle
-            items=[{
-                'id': sub_item.id,
-                'price': new_price_id,
-            }]
+            items=[
+                {"id": sub_item.id, "deleted": True},
+                {"price": new_price_id}
+            ],
         )
 
         logging.info(
