@@ -15,8 +15,6 @@ from users.models.mute import UserMuted
 
 @feature_switch(features.PRIVATE_FEED, yes=require_auth, no=noop)
 def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
-    post_type = post_type or Post
-
     if request.me:
         request.me.update_last_activity()
         posts = Post.objects_for_user(request.me)
