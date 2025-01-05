@@ -40,6 +40,12 @@
             </div>
         {% endfor %}
 
+        {% if me.membership_platform_type == "direct" %}
+            <div class="block-description block-description-center">
+                Для обновления данных карточки, просмотра или отмены активных подписок можно еще использовать <a href="{{ settings.STRIPE_CUSTOMER_PORTAL_URL }}" target="_blank">Stripe Customer Portal</a> (email тот же что в Клубе).
+            </div>
+        {% endif %}
+
         <div class="block-description block-description-center">
             О любых проблемах с оплатой сразу пишите на <a href="mailto:monies@vas3k.club">monies@vas3k.club</a>.<br>
             Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.

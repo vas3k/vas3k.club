@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
+from common.dates import random_date_in_range
 from invites.models import Invite
 from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
 from landing.models import GodSettings
@@ -16,6 +17,7 @@ from notifications.email.invites import send_invited_email, send_account_renewed
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from payments.models import Payment
 from payments.products import PRODUCTS
+from posts.models.post import Post
 from users.models.user import User
 from utils.strings import random_string
 
@@ -172,3 +174,30 @@ def godmode_generate_invite_code(request):
     )
 
     return redirect("invites")
+
+
+@require_auth
+def godmode_sunday_posts(request):
+    new_posts_cutoff = timedelta(days=200)
+    days_range = 15
+    posts = []
+
+    while len(posts) < 20:
+        random_date_in_the_past = random_date_in_range(settings.LAUNCH_DATE, datetime.utcnow() - new_posts_cutoff)
+        top_old_post = Post.visible_objects() \
+            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
+            .filter(is_approved_by_moderator=True) \
+            .filter(
+                published_at__gte=random_date_in_the_past,
+                published_at__lte=random_date_in_the_past + timedelta(days=days_range)
+            ) \
+            .order_by("-upvotes") \
+            .first()
+
+        if top_old_post:
+            posts.append(top_old_post)
+
+    return render(request, "misc/sunday_posts.html", {
+        "posts": posts
+    })
+
