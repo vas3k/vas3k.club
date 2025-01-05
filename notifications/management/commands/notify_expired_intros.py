@@ -69,6 +69,8 @@ class Command(BaseCommand):
                             chat=Chat(id=user.telegram_id),
                             text=message,
                         )
+
+                        continue
                     except Exception as ex:
                         self.stdout.write(f"Telegram to {user.email} failed: {ex}")
 

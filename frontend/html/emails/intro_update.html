@@ -47,7 +47,7 @@ p {
     </p>
 
     <p>
-        Наш хитрый всевидящий искусственный интеллект заметил, что вы не обновляли <a href="{{ settings.APP_HOST }}{% url "show_post" intro.type intro.slug %}">свое интро</a> вот уже как {{ years }} {{ years | rupluralize:"год,года,лет" }}!
+        Наш хитрый всевидящий искусственный интеллект заметил, что вы не обновляли <a href="{{ settings.APP_HOST }}{% url "show_post" intro.type intro.slug %}">свое интро</a> вот уже как <strong>{{ years }} {{ years | rupluralize:"год,года,лет" }}</strong>!
     </p>
 
     <p>
