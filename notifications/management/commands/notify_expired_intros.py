@@ -41,7 +41,7 @@ class Command(BaseCommand):
             ).select_related("author")
 
             self.stdout.write(f"Scanning {scan_date}. Found {len(expired_intros)} outdated intros...")
-            self.stdout.write(str([intro.author.slug for intro in expired_intros]))
+            # self.stdout.write(str([intro.author.slug for intro in expired_intros]))
 
             # debug mode — send everything to vas3k
             if not options.get("production"):
