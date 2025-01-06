@@ -1,7 +1,9 @@
 from datetime import timedelta, datetime
 from uuid import uuid4
 
+from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 from utils.strings import random_string
 
@@ -51,3 +53,10 @@ class Invite(models.Model):
     def for_user(cls, user):
         return cls.objects.filter(user=user).select_related("invited_user").order_by("-created_at")
 
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "url": settings.APP_HOST + reverse("show_invite", kwargs={"code": self.code}),
+            "created_at": self.created_at,
+            "expires_at": self.expires_at,
+        }

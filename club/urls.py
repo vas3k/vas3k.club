@@ -28,7 +28,7 @@ from notifications.views import render_weekly_digest, email_unsubscribe, email_c
     link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
-from payments.api import api_gift_days
+from payments.api import api_gift_days, api_gift_invite_link
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from payments.views.camp import stripe_camp_webhook
 from payments.views.crypto import crypto, coinbase_webhook
@@ -170,6 +170,7 @@ urlpatterns = [
     path("invites/", list_invites, name="invites"),
     path("invites/<slug:invite_code>/", show_invite, name="show_invite"),
     path("invites/<slug:invite_code>/activate/", activate_invite, name="activate_invite"),
+    path("invites.json", api_gift_invite_link, name="api_gift_invite_link"),
 
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
     path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),
