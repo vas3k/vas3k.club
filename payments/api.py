@@ -51,6 +51,10 @@ def api_gift_invite_link(request):
             user=request.me,
             product=PRODUCTS["club1_invite"],
             status=Payment.STATUS_SUCCESS,
+            data={
+                "source": "bank",
+                "telegram_user_id": API.get_str(request, "telegram_user_id")
+            }
         )
     )
 
