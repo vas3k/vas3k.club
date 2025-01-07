@@ -56,7 +56,7 @@ class Invite(models.Model):
     def to_dict(self):
         return {
             "code": self.code,
-            "url": settings.APP_HOST + reverse("show_invite", kwargs={"code": self.code}),
+            "url": settings.APP_HOST + reverse("show_invite", kwargs={"invite_code": self.code}),
             "created_at": self.created_at,
             "expires_at": self.expires_at,
         }
