@@ -9,6 +9,13 @@
 
 <div class="content compose">
     <div class="content-header">Админим</div>
+
+    <div class="content-header">({{ request.headers.cf_ipcountry }})</div>
+
+    {% if request.headers.cf_ipcountry == "RU" %}
+        ПУК!
+    {% endif %}
+
     <div class="block compose-types">
         <a href="{% url "godmode_digest_settings" %}" class="compose-type">
             <span class="compose-type-icon">📰</span>
