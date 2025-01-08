@@ -28,7 +28,8 @@ from notifications.views import render_weekly_digest, email_unsubscribe, email_c
     link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
-from payments.api import api_gift_days, api_gift_invite_link
+from payments.api import api_gift_days
+from invites.api import api_gift_invite_link
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from payments.views.camp import stripe_camp_webhook
 from payments.views.crypto import crypto, coinbase_webhook

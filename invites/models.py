@@ -59,4 +59,6 @@ class Invite(models.Model):
             "url": settings.APP_HOST + reverse("show_invite", kwargs={"invite_code": self.code}),
             "created_at": self.created_at,
             "expires_at": self.expires_at,
+            "used_at": self.used_at,
+            "invited_user": self.invited_user.to_dict() if self.invited_user else None,
         }
