@@ -25,7 +25,6 @@ class Command(BaseCommand):
         parser.add_argument("--production", nargs=1, type=bool, required=False, default=False)
 
     def handle(self, *args, **options):
-        # render digest using a special html endpoint
         try:
             digest_template, _ = generate_weekly_digest()
         except NotFound:
@@ -92,15 +91,24 @@ class Command(BaseCommand):
                 continue
 
         if options.get("production"):
-            # flush digest intro and title for next time
-            GodSettings.objects.update(digest_intro=None, digest_title=None)
+            # get title and description
+            god_settings = GodSettings.objects.first()
 
             # announce on channel
             send_telegram_message(
                 chat=CLUB_CHANNEL,
-                text=render_html_message("weekly_digest_announce.html", post=post),
+                text=render_html_message(
+                    "weekly_digest_announce.html",
+                    post=post,
+                    issue_number=issue,
+                    digest_title=god_settings.digest_title,
+                    digest_intro=god_settings.digest_intro
+                ),
                 disable_preview=False,
                 parse_mode=telegram.ParseMode.HTML,
             )
+
+            # flush digest intro and title for next time
+            GodSettings.objects.update(digest_intro=None, digest_title=None)
 
         self.stdout.write("Done 🥙")

@@ -1,1 +1,7 @@
-💌 Вышел клубный журнал с итогами прошлой недели: {{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}
+{% load posts %}🤘 Клубный журнал. Итоги недели. Выпуск #{{ issue_number }}
+
+{% if digest_title %}<b><a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ digest_title }}</a></b>{% endif %}
+
+{% if digest_intro %}{% render_tg digest_intro 3000 %}{% endif %}
+
+👉 {{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}

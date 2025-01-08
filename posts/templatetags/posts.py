@@ -56,8 +56,8 @@ def render_plain(context, post, truncate=None):
 
 
 @register.simple_tag()
-def render_tg(post_or_comment, truncate=None):
-    result = mark_safe(markdown_tg(post_or_comment.text))
+def render_tg(text, truncate=None):
+    result = mark_safe(markdown_tg(text))
     if truncate:
         # HACK: `truncatechars_html` ignores HTML tag length, but Telegram counts it
         # ensure the total length (including tags) stays within Telegram's limit
