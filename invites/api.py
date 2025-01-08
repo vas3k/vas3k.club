@@ -1,5 +1,4 @@
 from django.http import JsonResponse, HttpResponseNotAllowed
-from django.views.decorators.http import require_POST
 
 from authn.decorators.api import api
 from club.exceptions import ApiAccessDenied
@@ -41,5 +40,3 @@ def api_gift_invite_link(request):
         })
 
     return HttpResponseNotAllowed(permitted_methods=["GET", "POST"])
-
-
