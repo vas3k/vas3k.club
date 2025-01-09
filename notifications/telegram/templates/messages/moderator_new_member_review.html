@@ -2,10 +2,10 @@
 
 <b>Имя:</b> <pre>{{ user.full_name }}</pre>
 <b>E-mail:</b> {{ user.email }}
+<b>Аватар:</b> {{ user.avatar }}
 <b>Работа:</b> {{ user.position }}{% if user.company %} — {{ user.company }}{% endif %}
 <b>Город:</b> {{ user.city }} {{ user.country }}
 <b>Контакты и био:</b> <pre>{{ user.bio }}</pre>
-<b>Аватар:</b> {{ user.avatar }}
 
 <b>Интро:</b>
-{% render_tg intro.text 2000 %}
+<pre>{{ intro.text | truncatechars:2000 }}</pre>
