@@ -28,6 +28,7 @@ Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
 Vue.component("reply-form", () => import("./components/ReplyForm.vue"));
+Vue.component("location-select", () => import("./components/LocationSelect.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
 // We have no other choice but to completely turn off template matching and leave it on only for components.
