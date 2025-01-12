@@ -15,8 +15,8 @@
             <div class="location-select-target">📍</div>
             <slot></slot>
         </MglMap>
-        <input type="text" v-model="latitude" :name="latitudeFieldName" readonly>
-        <input type="text" v-model="longitude" :name="longitudeFieldName" readonly>
+        <input type="hidden" v-model="latitude" :name="latitudeFieldName" readonly>
+        <input type="hidden" v-model="longitude" :name="longitudeFieldName" readonly>
     </div>
 </template>
 
@@ -53,7 +53,7 @@ export default {
     data() {
         return {
             accessToken: "pk.eyJ1IjoidmFzM2siLCJhIjoiY2thZ254NXVwMDhkbjJ5dDk5eGh5Y21wbyJ9.wYXG58PrErQfRHTflvdSfA",
-            mapStyle: "mapbox://styles/mapbox/outdoors-v11?optimize=true",
+            mapStyle: "mapbox://styles/mapbox/streets-v12",
             latitude: this.defaultLatitude,
             longitude: this.defaultLongitude,
             map: null,
