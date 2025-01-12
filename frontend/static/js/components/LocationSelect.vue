@@ -67,7 +67,7 @@ export default {
             event.map.on('movestart', this.onUserInteraction);
 
             if (this.defaultLatitude && this.defaultLongitude) {
-                event.map.setZoom(4);
+                event.map.setZoom(8);
             }
         },
         onMapMove(event) {

@@ -2,6 +2,6 @@
 
 {% if digest_title %}<b><a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ digest_title }}</a></b>{% endif %}
 
-{% if digest_intro %}{% render_tg digest_intro 3000 %}{% endif %}
+{% if digest_intro %}{% render_tg digest_intro 3500 %}{% endif %}
 
 👉 {{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}
