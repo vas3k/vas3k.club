@@ -515,28 +515,3 @@
             .profile-note-extended .profile-note-form {
                 display: flex;
             }
-
-.location-select {
-    position: relative;
-    margin: 0 auto;
-    max-width: 550px;
-}
-
-    .location-select .mapboxgl-map,
-    .location-select .mgl-map-wrapper {
-        position: relative;
-        width: 100%;
-        height: 300px;
-        max-width: 550px;
-    }
-
-    .location-select-target {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -95%);
-        font-size: 40px;
-        line-height: 1em;
-        width: 40px;
-        height: 40px;
-    }

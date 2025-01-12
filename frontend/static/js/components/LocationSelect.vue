@@ -53,28 +53,26 @@ export default {
     data() {
         return {
             accessToken: "pk.eyJ1IjoidmFzM2siLCJhIjoiY2thZ254NXVwMDhkbjJ5dDk5eGh5Y21wbyJ9.wYXG58PrErQfRHTflvdSfA",
-            mapStyle: "mapbox://styles/mapbox/streets-v12",
+            mapStyle: "mapbox://styles/mapbox/outdoors-v12",
             latitude: this.defaultLatitude,
             longitude: this.defaultLongitude,
-            map: null,
             zoom: 1,
             userInteracted: false,
         };
     },
     methods: {
         onMapLoaded(event) {
-            this.map = event.map;
-            this.map.setCenter([this.defaultLongitude, this.defaultLatitude]);
+            event.map.setCenter([this.defaultLongitude, this.defaultLatitude]);
             this.updateCoordinates(this.defaultLatitude, this.defaultLongitude);
-            this.map.on('movestart', this.onUserInteraction);
+            event.map.on('movestart', this.onUserInteraction);
 
             if (this.defaultLatitude && this.defaultLongitude) {
-                this.map.setZoom(4);
+                event.map.setZoom(4);
             }
         },
-        onMapMove() {
-            if (this.map && this.userInteracted) {
-                const center = this.map.getCenter();
+        onMapMove(event) {
+            if (event.map && this.userInteracted) {
+                const center = event.map.getCenter();
                 this.updateCoordinates(center.lat, center.lng);
             }
         },
@@ -89,3 +87,30 @@ export default {
     },
 };
 </script>
+
+<style>
+.location-select {
+    position: relative;
+    margin: 0 auto;
+    max-width: 550px;
+}
+
+    .location-select .mapboxgl-map,
+    .location-select .mgl-map-wrapper {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        max-width: 550px;
+    }
+
+    .location-select-target {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -95%);
+        font-size: 40px;
+        line-height: 1em;
+        width: 40px;
+        height: 40px;
+    }
+</style>
