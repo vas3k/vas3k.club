@@ -1,0 +1,7 @@
+{% if invite.is_used %}
+    <span class="badge-invite badge-invite-used">☑️ Использован</span>
+{% elif invite.is_expired %}
+    <span class="badge-invite badge-invite-expired">🕓 Истёк</span>
+{% else %}
+    <span class="badge-invite badge-invite-new">🎁 Активен</span>
+{% endif %}

@@ -148,11 +148,14 @@
         }
 
         .post-type-post .upvote:not(.upvote-disabled) {
-            padding-top: 30px !important;
+            float: left;
+            position: sticky;
+            margin-left: -110px;
+            margin-top: 30px;
         }
 
             @media only screen and (max-width : 1024px) {
-                .post-type-post .upvote {
+                .post-type-post .upvote, .post-type-post .upvote:not(.upvote-disabled) {
                     top: 0;
                     left: auto;
                     right: 0;
@@ -469,7 +472,7 @@
     @media only screen and (min-width : 1100px) {
         .text-body-image-full {
             max-width: none !important;
-            width: 160% !important;
+            width: 170% !important;
             position: relative;
             left: -30%;
         }
@@ -1013,8 +1016,16 @@
         grid-template-areas:
             "prefix prefix prefix"
             "left center right"
+            "reply-form reply-form reply-form"
             "replies replies replies"
     }
+
+        .battle-comments-list .comment-replies {
+            grid-area: replies;
+        }
+        .battle-comments-list #comment-reply-form {
+            grid-area: reply-form;
+        }
 
     .post-comments-form {
         padding-top: 30px;
@@ -1061,7 +1072,7 @@
         border: var(--button-border);
     }
 
-        .post-comments-subscription.is-subscribed {
+        .post-comments-subscription.is-active {
             background-color: var(--button-bg-color);
             border: var(--button-border);
             color: var(--button-color);

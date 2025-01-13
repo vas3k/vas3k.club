@@ -418,6 +418,10 @@
 
     .comment-type-battle {}
 
+        .comment-type-battle.comment {
+            scroll-margin-top: 40px;
+        }
+
         .comment-type-battle .comment-header {
             flex-direction: column;
         }

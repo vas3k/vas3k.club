@@ -115,6 +115,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/2023.png",
         "style": "background-color: #f87c56; font-size: 190%;",
     }),
+    ("2024", {
+        "name": "2024",
+        "description": "Призовое место в итогах 2024 года",
+        "image": "https://vas3k.club/static/images/achievements/2024.png",
+        "style": "background-color: #ff8a3d; font-size: 190%;",
+    }),
     ("mic", {
         "name": "Золотой микрофон",
         "description": "За выступление на АМА  и митапах в качестве оратора",
@@ -228,6 +234,36 @@ ACHIEVEMENTS = [
         "description": "Участник первого Вастрик Флота в Черногории осенью 2024",
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
+    }),
+    ("grill_master", {
+        "name": "Гриль Мастер",
+        "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
+        "image": "https://vas3k.club/static/images/achievements/grill_master.png",
+        "style": "background-color: #EA780E; font-size: 130%;",
+    }),
+    ("spooky", {
+        "name": "Спуки",
+        "description": "За лучшие украшения на Хэллоуин",
+        "image": "https://vas3k.club/static/images/achievements/spooky.png",
+        "style": "background-color: #2E61F3; font-size: 130%;",
+    }),
+    ("ai_art", {
+        "name": "AI master race",
+        "description": "За участие в ИИнктобере",
+        "image": "https://vas3k.club/static/images/achievements/ai_art.png",
+        "style": "background-color: #132F6E; font-size: 130%;",
+    }),
+    ("birdwatcher", {
+        "name": "Смотритель птиц",
+        "description": "За победу на конкурсе бёрдвочинга. Для самых наблюдательных.",
+        "image": "https://vas3k.club/static/images/achievements/birds.png",
+        "style": "background-color: #6A98FF; font-size: 130%;",
+    }),
+    ("couchsurfing", {
+        "name": "Гроза отелей",
+        "description": "За размещение у себя клубня на ночь",
+        "image": "https://vas3k.club/static/images/achievements/couchsurfing.png",
+        "style": "background-color: #33CCCC; font-size: 130%;",
     }),
 ]
 

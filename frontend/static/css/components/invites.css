@@ -1,0 +1,35 @@
+.invites-list {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    gap: 20px;
+    margin: 40px 0;
+}
+
+    .invites-list-item {
+        text-decoration: none;
+        font-weight: normal !important;
+        width: 100%;
+        padding: 15px 20px;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        justify-content: space-between;
+    }
+
+.badge-invite {
+    display: inline-block;
+    background-color: var(--badge-color);
+    color: #FFFFFF;
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 5px 10px;
+}
+
+    .badge-invite-used, .badge-invite-expired {
+        color: var(--opposite-text-color);
+        background-color: var(--opposite-block-bg-color);
+    }

@@ -55,9 +55,23 @@
         <div class="footer-left">
             <a href="{% url "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "contact" %}">Связаться с нами</a> &nbsp;&middot;&nbsp;
+            <a href="{{ settings.VALUES_GUIDE_URL }}">Наши ценности</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a><br><br>
+            <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a> &nbsp;&middot;&nbsp;
+
+            <a href="{% url "docs" "contact" %}">Связаться с нами</a>
+
+            <br><br>
+
+            {% if request.me %}
+                <a href="{% url "invites" %}">Пригласить друга</a> &nbsp;&middot;&nbsp;
+            {% endif %}
+
+            <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a> &nbsp;&middot;&nbsp;
+
+            <a href="{% url "docs" "blocked_dolor" %}">Оплата из России</a>
+
+            <br><br>
 
             CC BY-SA
         </div>

@@ -91,4 +91,9 @@ export default {
 .user-avatar-input {
     display: inline-block;
 }
+
+    .user-avatar-input .avatar {
+        min-width: 200px;
+        min-height: 200px;
+    }
 </style>

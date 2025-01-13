@@ -2,15 +2,38 @@
 
 {% block content %}
     <div class="content pay">
+        {% if request.headers.cf_ipcountry == "RU" or settings.DEBUG %}
+            <div class="block pay-warning pay-description">
+                <div class="pay-title">О, кажется вы из России 🌚</div>
+
+                <p>
+                    Ну штош, санкции, VPN'ы, блокировки карточек, все дела...
+                </p>
+
+                <p>
+                    Потому ребята из коммьюнити сделали специального телеграм-бота, через которого можно заплатить рублями.
+                    Правда только на 1 год и без автопродления, но это всяко лучше, чем ничего.
+                </p>
+
+                <p>
+                    <a href="{{ settings.TELEGRAM_PAY_BOT_URL }}" class="button pay-button">
+                        Оплатить рублями через телеграм-бота
+                    </a>
+                </p>
+
+                <p>
+                    <br><br>
+                    Но если вдруг вы счастливый обладатель любой иностранной банковской карты —
+                    рекомендуем использовать наш стандартный способ оплаты ниже. Это будет дешевле 👇
+                </p>
+            </div>
+        {% endif %}
+
         <div class="block pay-description">
             <div class="pay-title">
                 Платим 💰<br>
                 <small>
-                    {% if payment.invited_user_email %}
-                        за друга: <strong>{{ payment.invited_user_email }}</strong>
-                    {% else %}
-                        за аккаунт: <strong>{{ user.email }}</strong>
-                    {% endif %}
+                    ваш аккаунт: <strong>{{ user.email }}</strong>
                 </small>
             </div>
 
@@ -35,10 +58,10 @@
         <div class="block pay-warning">
             <p>
                 ⚠️ Платежи из <strong>России и некоторых банков Беларуси</strong> больше не проходят из-за санкций.
-                Альтернативные опции оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
+                Альтернативные способы оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
             </p>
             <p>
-                🤔 За другими вариантами заходите на почту <a href="mailto:club@pmi.moscow"><strong>club@pmi.moscow</strong></a>
+                🤔 За другими вариантами заходите на почту <a href="mailto:sergey.sidorov@pmi.moscow"><strong>Написать</strong></a>
             </p>
         </div>
     </div>

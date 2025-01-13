@@ -73,8 +73,9 @@ def get_club_user(update: Update):
 
 
 def get_club_comment(update: Update) -> Optional[Comment]:
+    entities = update.message.reply_to_message.entities or update.message.reply_to_message.caption_entities or []
     url_entities = [
-        entity["url"] for entity in update.message.reply_to_message.entities if entity["type"] == "text_link"
+        entity["url"] for entity in entities if entity["type"] == "text_link"
     ]
 
     for url_entity in url_entities:
@@ -84,7 +85,7 @@ def get_club_comment(update: Update) -> Optional[Comment]:
             if comment_id:
                 break
     else:
-        log.warning(f"Comment URL not found: {update.message.reply_to_message}")
+        log.warning(f"Comment URL not found in message: {update.message.reply_to_message}")
         return None
 
     comment = Comment.objects.filter(id=comment_id).first()
@@ -96,8 +97,9 @@ def get_club_comment(update: Update) -> Optional[Comment]:
 
 
 def get_club_post(update: Update) -> Optional[Post]:
+    entities = update.message.reply_to_message.entities or update.message.reply_to_message.caption_entities or []
     url_entities = [
-        entity["url"] for entity in update.message.reply_to_message.entities if entity["type"] == "text_link"
+        entity["url"] for entity in entities if entity["type"] == "text_link"
     ]
 
     for url_entity in url_entities:
@@ -107,7 +109,7 @@ def get_club_post(update: Update) -> Optional[Post]:
             if post_id:
                 break
     else:
-        log.warning(f"Post URL not found: {update.message.reply_to_message}")
+        log.warning(f"Post URL not found in message: {update.message.reply_to_message}")
         return None
 
     post = Post.objects.filter(slug=post_id).first()
