@@ -14,16 +14,20 @@ log = logging.getLogger(__name__)
 
 @is_club_member
 def upvote(update: Update, context: CallbackContext) -> None:
-    if not update.message \
-            or not update.message.reply_to_message \
-            or not update.message.reply_to_message.text:
+    log.info("Upvote handler triggered")
+
+    if not update.message or not update.message.reply_to_message:
         return None
 
     user = get_club_user(update)
     if not user:
         return None
 
-    reply_text_start = update.message.reply_to_message.text[:10]
+    reply_text_start = (
+        update.message.reply_to_message.text or
+        update.message.reply_to_message.caption or
+        ""
+    )[:10]
 
     if COMMENT_EMOJI_RE.match(reply_text_start):
         comment = get_club_comment(update)
@@ -47,6 +51,8 @@ def upvote(update: Update, context: CallbackContext) -> None:
 
 
 def upvote_comment(update: Update, context: CallbackContext) -> None:
+    log.info("Upvote_comment handler triggered")
+
     user = get_club_user(update)
     if not user:
         return None
@@ -54,6 +60,7 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
     _, comment_id = update.callback_query.data.split(":", 1)
     comment = Comment.objects.filter(id=comment_id).select_related("post").first()
     if not comment:
+        log.info("Original comment not found. Skipping.")
         return None
 
     _, is_created = CommentVote.upvote(
@@ -70,6 +77,8 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
 
 
 def upvote_post(update: Update, context: CallbackContext) -> None:
+    log.info("Upvote_post handler triggered")
+
     user = get_club_user(update)
     if not user:
         return None
@@ -77,6 +86,7 @@ def upvote_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
     post = Post.objects.filter(id=post_id).first()
     if not post:
+        log.info("Original post not found. Skipping.")
         return None
 
     _, is_created = PostVote.upvote(

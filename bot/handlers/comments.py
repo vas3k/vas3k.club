@@ -16,15 +16,23 @@ from search.models import SearchIndex
 log = logging.getLogger(__name__)
 
 MIN_COMMENT_LEN = 40
+SKIP_COMMANDS = ("/skip", "#skip", "#ignore")
 
 
 def comment(update: Update, context: CallbackContext) -> None:
-    if not update.message \
-            or not update.message.reply_to_message \
-            or not update.message.reply_to_message.text:
+    log.info("Comment handler triggered")
+
+    if not update.message or not update.message.reply_to_message:
+        log.info("No message or reply_to_message in update. Skipping.")
         return None
 
-    reply_text_start = update.message.reply_to_message.text[:10]
+    reply_text_start = (
+        update.message.reply_to_message.text or
+        update.message.reply_to_message.caption or
+        ""
+    )[:10]
+
+    log.info("Original message start: %s", reply_text_start)
 
     if COMMENT_EMOJI_RE.match(reply_text_start):
         return reply_to_comment(update, context)
@@ -33,17 +41,22 @@ def comment(update: Update, context: CallbackContext) -> None:
         return comment_to_post(update, context)
 
     # skip normal replies
+    log.info("Skipping...")
     return None
 
 
 @is_club_member
 def reply_to_comment(update: Update, context: CallbackContext) -> None:
+    log.info("Reply_to_comment handler triggered")
+
     user = get_club_user(update)
     if not user:
+        log.info("User not found")
         return None
 
     comment = get_club_comment(update)
     if not comment:
+        log.info("Original comment not found. Skipping.")
         return None
 
     is_ok = Comment.check_rate_limits(user)
@@ -59,6 +72,10 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
             f"😣 Сорян, я пока умею только в текстовые реплаи"
         )
         return None
+
+    for skip_word in SKIP_COMMANDS:
+        if skip_word in text:
+            return None
 
     # max 3 levels of comments are allowed
     reply_to_id = comment.id
@@ -99,8 +116,11 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
 
 @is_club_member
 def comment_to_post(update: Update, context: CallbackContext) -> None:
+    log.info("Reply_to_post handler triggered")
+
     user = get_club_user(update)
     if not user:
+        log.info("User not found")
         return None
 
     post = get_club_post(update)
@@ -121,7 +141,7 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
         )
         return None
 
-    for skip_word in ("/skip","#skip","#ignore"):
+    for skip_word in SKIP_COMMANDS:
         if skip_word in text:
             return None
 

@@ -2,11 +2,11 @@
 {% load text_filters %}
 {% load battle %}
 {% load posts %}
-<div class="battle-comments-list" id="comment-{{ comment.id }}">
+<div class="battle-comments-list">
     <div class="battle-comment-prefix battle-comment-prefix-side-{{ comment.metadata.battle.side }}">
         за «{{ comment.battle_side }}»
     </div>
-    <div class="block comment comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}">
+    <div class="block comment {% if comment.created_at > post_last_view_at %}comment-is-new{% endif %} comment-type-battle comment-type-battle-side-{{ comment.metadata.battle.side }}" id="comment-{{ comment.id }}">
         <div class="comment-header">
             <div class="comment-title">{{ comment.title | rutypography }}</div>
             <div  class="comment-type-battle-userinfo">
@@ -57,11 +57,13 @@
         </div>
     </div>
 
-    {% if replies %}
-        <div class="replies replies-type-battle replies-indent-normal">
-            {% for reply_tree in replies %}
-                {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div class="comment-replies thread-collapse-toggle">
+        {% if replies %}
+            <div class="replies replies-type-battle replies-indent-normal">
+                {% for reply_tree in replies %}
+                    {% include "comments/types/reply.html" with comment=reply_tree.comment reply_to=reply_tree.comment replies=reply_tree.replies %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 </div>

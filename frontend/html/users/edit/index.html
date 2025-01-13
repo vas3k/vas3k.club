@@ -27,6 +27,11 @@
                 <span class="dashboard-item-title">Уведомления</span>
             </a>
 
+            <a href="{% url "invites" %}" class="dashboard-item">
+                <span class="dashboard-item-icon">🎁</span>
+                <span class="dashboard-item-title">Инвайты</span>
+            </a>
+
             <a href="{% url "edit_data" user.slug %}" class="dashboard-item">
                 <span class="dashboard-item-icon">💾</span>
                 <span class="dashboard-item-title">Мои данные</span>
@@ -34,7 +39,7 @@
 
             <a href="{% url "apps" %}" class="dashboard-item">
                 <span class="dashboard-item-icon">🤖</span>
-                <span class="dashboard-item-title">API</span>
+                <span class="dashboard-item-title">API и приложения</span>
             </a>
 
             <a href="{% url "edit_account" user.slug %}" class="dashboard-item">

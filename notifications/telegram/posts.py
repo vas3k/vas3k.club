@@ -4,6 +4,7 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
+from rooms.models import RoomSubscription
 from tags.models import Tag, UserTag
 
 
@@ -27,18 +28,6 @@ def announce_in_club_channel(post, announce_text=None, image=None):
 
 
 def announce_in_club_chats(post):
-    post_url = settings.APP_HOST + reverse("show_post", kwargs={
-        "post_type": post.type,
-        "post_slug": post.slug
-    })
-    post_reply_markup = telegram.InlineKeyboardMarkup([
-        [
-            telegram.InlineKeyboardButton("👍", callback_data=f"upvote_post:{post.id}"),
-            telegram.InlineKeyboardButton("🔗", url=post_url),
-            telegram.InlineKeyboardButton("🔔", callback_data=f"subscribe:{post.id}"),
-        ],
-    ])
-
     # announce to public chat
     if post.is_visible_in_feeds or not post.room or not post.room.chat_id:
         send_telegram_message(
@@ -46,7 +35,7 @@ def announce_in_club_chats(post):
             text=render_html_message("channel_post_announce.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
             disable_preview=True,
-            reply_markup=post_reply_markup,
+            reply_markup=post_reply_markup(post),
         )
 
     if post.room and post.room.chat_id and post.room.send_new_posts_to_chat:
@@ -56,7 +45,7 @@ def announce_in_club_chats(post):
             text=render_html_message("channel_post_announce.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
             disable_preview=True,
-            reply_markup=post_reply_markup,
+            reply_markup=post_reply_markup(post),
         )
 
 
@@ -94,4 +83,33 @@ def notify_post_collectible_tag_owners(post):
                         chat=Chat(id=tag_user.user.telegram_id),
                         text=render_html_message("post_collectible_tag.html", post=post, tag=tag),
                         parse_mode=telegram.ParseMode.HTML,
+                        reply_markup=post_reply_markup(post),
                     )
+
+
+def notify_post_room_subscribers(post):
+    if post.room:
+        subscribers = RoomSubscription.room_subscribers(post.room)
+        for subscriber in subscribers:
+            if subscriber.user.telegram_id:
+                send_telegram_message(
+                    chat=Chat(id=subscriber.user.telegram_id),
+                    text=render_html_message("post_room_subscriber.html", post=post, room=post.room),
+                    parse_mode=telegram.ParseMode.HTML,
+                    reply_markup=post_reply_markup(post),
+                )
+
+
+def post_reply_markup(post):
+    post_url = settings.APP_HOST + reverse("show_post", kwargs={
+        "post_type": post.type,
+        "post_slug": post.slug
+    })
+
+    return telegram.InlineKeyboardMarkup([
+        [
+            telegram.InlineKeyboardButton("👍", callback_data=f"upvote_post:{post.id}"),
+            telegram.InlineKeyboardButton("🔗", url=post_url),
+            telegram.InlineKeyboardButton("🔔", callback_data=f"subscribe:{post.id}"),
+        ],
+    ])

@@ -5,7 +5,7 @@ from django_q.tasks import async_task
 
 from authn.decorators.api import api
 from club.exceptions import ApiAccessDenied
-from notifications.email.invites import send_invite_renewed_email
+from notifications.email.invites import send_account_renewed_email
 from payments.helpers import gift_membership_days
 from users.models.user import User
 
@@ -26,7 +26,7 @@ def api_gift_days(request, days, user_slug):
         deduct_from_original_user=True,
     )
 
-    async_task(send_invite_renewed_email, request.me, to_user)
+    async_task(send_account_renewed_email, request.me, to_user)
 
     return JsonResponse({
         "status": "success",

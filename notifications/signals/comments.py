@@ -10,7 +10,7 @@ from comments.models import Comment
 from common.regexp import USERNAME_RE
 from posts.models.subscriptions import PostSubscription
 from users.models.friends import Friend
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from users.models.user import User
 
 
@@ -25,7 +25,7 @@ def create_or_update_comment(sender, instance, created, **kwargs):
 def async_create_or_update_comment(comment):
     notified_user_ids = set()
     muted_author_user_ids = set(
-        Muted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)
+        UserMuted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)
     )
 
     comment_url = settings.APP_HOST + reverse("show_comment", kwargs={

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.template import loader
 from telegram import ParseMode
 
+from common.regexp import IMAGE_RE
 from notifications.telegram.bot import bot, log
 
 Chat = namedtuple("Chat", ["id"])
@@ -13,6 +14,9 @@ ADMIN_CHAT = Chat(id=settings.TELEGRAM_ADMIN_CHAT_ID)
 CLUB_CHAT = Chat(id=settings.TELEGRAM_CLUB_CHAT_ID)
 CLUB_CHANNEL = Chat(id=settings.TELEGRAM_CLUB_CHANNEL_ID)
 CLUB_ONLINE = Chat(id=settings.TELEGRAM_ONLINE_CHANNEL_ID)
+
+NORMAL_TEXT_LIMIT = 4096
+PHOTO_TEXT_LIMIT = 1024
 
 
 def send_telegram_message(
@@ -28,14 +32,25 @@ def send_telegram_message(
 
     log.info(f"Telegram: sending message to chat_id {chat.id}, starting with {text[:10]}...")
 
+    images_in_message = IMAGE_RE.findall(text)
+
     try:
-        return bot.send_message(
-            chat_id=chat.id,
-            text=text[:4096],
-            parse_mode=parse_mode,
-            disable_web_page_preview=disable_preview,
-            **kwargs
-        )
+        if len(images_in_message) == 1 and len(text) < PHOTO_TEXT_LIMIT:
+            return bot.send_photo(
+                chat_id=chat.id,
+                photo=images_in_message[0],
+                caption=text[:PHOTO_TEXT_LIMIT],
+                parse_mode=parse_mode,
+                **kwargs
+            )
+        else:
+            return bot.send_message(
+                chat_id=chat.id,
+                text=text[:NORMAL_TEXT_LIMIT],
+                parse_mode=parse_mode,
+                disable_web_page_preview=disable_preview,
+                **kwargs
+            )
     except telegram.error.TelegramError as ex:
         log.warning(f"Telegram error: {ex}")
 
@@ -57,7 +72,7 @@ def send_telegram_image(
         return bot.send_photo(
             chat_id=chat.id,
             photo=image_url,
-            caption=text[:1024],
+            caption=text[:PHOTO_TEXT_LIMIT],
             parse_mode=parse_mode,
             **kwargs
         )

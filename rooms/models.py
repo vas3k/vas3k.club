@@ -1,8 +1,11 @@
 import re
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 from django.db import models
 from django.urls import reverse
+
+from users.models.user import User
 
 
 class Room(models.Model):
@@ -55,3 +58,76 @@ class Room(models.Model):
         if self.url or self.chat_url:
             return reverse("redirect_to_room_chat", kwargs={"room_slug": self.slug})
         return None
+
+
+class RoomSubscription(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+
+    user = models.ForeignKey(User, related_name="room_subscriptions", db_index=True, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name="subscriptions", db_index=True, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "room_subscriptions"
+
+    @classmethod
+    def get(cls, user, room):
+        return cls.objects.filter(user=user, room=room).first()
+
+    @classmethod
+    def subscribe(cls, user, room):
+        return cls.objects.update_or_create(user=user, room=room)
+
+    @classmethod
+    def unsubscribe(cls, user, room):
+        return cls.objects.filter(user=user, room=room).delete()
+
+    @classmethod
+    def is_subscribed(cls, user, room):
+        return cls.objects.filter(
+            user=user,
+            room=room,
+        ).exists()
+
+    @classmethod
+    def room_subscribers(cls, room):
+        return cls.objects.filter(room=room).select_related("user")
+
+
+class RoomMuted(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    user = models.ForeignKey(User, related_name="muted_room", db_index=True, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, related_name="muted_users", db_index=True, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "room_muted"
+        unique_together = [["user", "room"]]
+
+    @classmethod
+    def mute(cls, user, room):
+        return cls.objects.get_or_create(
+            user=user,
+            room=room,
+        )
+
+    @classmethod
+    def unmute(cls, user, room):
+        return cls.objects.filter(
+            user=user,
+            room=room,
+        ).delete()
+
+    @classmethod
+    def is_muted(cls, user, room):
+        return cls.objects.filter(
+            user=user,
+            room=room,
+        ).exists()
+
+    @classmethod
+    def muted_by_user(cls, user):
+        return cls.objects.filter(user=user)
+
