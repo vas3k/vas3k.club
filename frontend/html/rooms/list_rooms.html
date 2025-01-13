@@ -27,12 +27,20 @@
                 <span class="room-icon feed-topic-header-icon"><img src="{{ room.image }}" alt="Иконка комнаты {{ room.title }}" loading="lazy" /></span>
                 <a href="{% url "feed_room" room.slug %}" class="feed-topic-header-name">{{ room.title }}</a>
             </div>
+
             <span class="feed-topic-header-desctiption">
                 {{ room.description | markdown }}
             </span>
+
+            {% if room.url %}
+                <span class="feed-topic-header-footer">
+                    <i class="fas fa-link"></i>&nbsp;<strong>URL:</strong> <a href="{{ room.url }}" rel="noreferrer" target="_blank">{{ room.url }}</a>
+                </span>
+            {% endif %}
+
             {% if room.chat_url and room.chat_name %}
                 <span class="feed-topic-header-footer">
-                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Официальный чат:</strong> <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
+                    <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Чат:</strong> <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
                 </span>
             {% endif %}
         </div>

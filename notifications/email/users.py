@@ -10,7 +10,7 @@ def send_registration_email(user: User):
     registration_template = loader.get_template("emails/registration.html")
     send_transactional_email(
         recipient=user.email,
-        subject=f"Ваше приглашение 🪪",
+        subject=f"Ваша Клубная Карта 🪪",
         html=registration_template.render({"user": user}),
         tags=["registration"]
     )

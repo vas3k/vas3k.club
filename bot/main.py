@@ -41,6 +41,8 @@ def command_help(update: Update, context: CallbackContext) -> None:
 
 
 def private_message(update: Update, context: CallbackContext) -> None:
+    log.info("Private message handler triggered")
+
     club_users = cached_telegram_users()
     if str(update.effective_user.id) not in set(club_users):
         update.effective_chat.send_message(
@@ -50,8 +52,8 @@ def private_message(update: Update, context: CallbackContext) -> None:
         )
     else:
         update.effective_chat.send_message(
-            "Йо! Полный список моих команд покажет /help, "
-            "а еще мне можно отвечать на посты и уведомления, всё это будет поститься прямо в Клуб!",
+            "Не понял. Полный список моих команд покажет /help, "
+            "а еще через меня можно отвечать на посты и комментарии и всё это будет поститься прямо в Клуб!",
             parse_mode=ParseMode.HTML
         )
 

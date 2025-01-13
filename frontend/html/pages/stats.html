@@ -136,7 +136,7 @@
                     {% include "achievements/widgets/achievement.html" %}
                 </div>
                 <div class="stats-achievements-users">
-                    {% for user in achievement.achievement_users|slice:":25" %}
+                    {% for user in achievement.achievement_users|slice:":15" %}
                         <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
                             <span class="avatar top-user-avatar">
                                 <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
@@ -144,8 +144,8 @@
                             <span class="top-user-name">{{ user.full_name }}</span>
                         </a>
                     {% endfor %}
-                    {% if achievement.user_count > 25 %}
-                       <span class="top-user-more">...и ещё {{ achievement.user_count|add:-25 }} {{ achievement.user_count|add:-25|rupluralize:"пользователь,пользователя,пользователей" }}</span>
+                    {% if achievement.user_count > 15 %}
+                       <span class="top-user-more">...и ещё {{ achievement.user_count|add:-15 }} {{ achievement.user_count|add:-15|rupluralize:"пользователь,пользователя,пользователей" }}</span>
                     {% endif %}
                 </div>
             </div>

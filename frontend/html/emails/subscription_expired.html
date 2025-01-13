@@ -53,7 +53,7 @@ p {
     </p>
 
     <p>
-        <a href="{% url "edit_payments" user.slug %}" class="button">Продлить подписку</a>
+        <a href="{{ settings.APP_HOST }}{% url "edit_payments" user.slug %}" class="button">Продлить подписку</a>
     </p>
 
     <p>
@@ -66,7 +66,7 @@ p {
     </p>
 
     <p>
-        Ну а если вам у нас не понравилось, вы можете <a href="{% url "edit_account" user.slug %}">удалить аккаунт</a> и мы сотрем ваш профиль насовсем.
+        Ну а если вам у нас не понравилось, вы можете <a href="{{ settings.APP_HOST }}{% url "edit_account" user.slug %}">удалить аккаунт</a> и мы сотрем ваш профиль насовсем.
     </p>
 
     <p>

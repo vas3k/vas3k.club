@@ -64,13 +64,13 @@
 
                     <div class="post-comments-title-left">
                         {% if me and me.is_active_membership %}
-                            <post-subscription
+                            <toggle
                                 url="{% url "toggle_post_subscription" post.slug %}"
                                 {% if subscription %}is-active-by-default{% endif %}
                                 class="post-comments-subscription"
                             >
                                 подписка на комментарии
-                            </post-subscription>
+                            </toggle>
                         {% endif %}
                     </div>
                 </div>

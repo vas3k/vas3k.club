@@ -27,6 +27,10 @@ def search(request):
     else:
         content_type = None
 
+    # hack: exclude intros from posts page
+    if content_type == "post":
+        results = results.exclude(post__type="intro")
+
     # exclude all deleted comments
     results = results.exclude(comment__isnull=False, comment__is_deleted=True)
 

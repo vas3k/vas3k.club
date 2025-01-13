@@ -9,7 +9,7 @@ from bookmarks.models import PostBookmark
 from posts.models.subscriptions import PostSubscription
 from posts.models.votes import PostVote
 from tags.models import Tag, UserTag
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from users.models.notes import UserNote
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
@@ -27,7 +27,7 @@ def render_post(request, post, context=None):
         is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
         upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
         subscription = PostSubscription.get(request.me, post)
-        muted_user_ids = list(Muted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True).all())
+        muted_user_ids = list(UserMuted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True).all())
         user_notes = dict(UserNote.objects.filter(user_from=request.me).values_list("user_to", "text").all()[:100])
         collectible_tag = Tag.objects.filter(code=post.collectible_tag_code).first() if post.collectible_tag_code else None
         is_collectible_tag_collected = UserTag.objects.filter(tag=collectible_tag, user=request.me).exists() if collectible_tag else False

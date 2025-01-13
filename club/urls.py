@@ -18,16 +18,18 @@ from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
+from invites.views import show_invite, list_invites, activate_invite
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
-    godmode_invite
+    godmode_invite, godmode_generate_invite_code, godmode_sunday_posts
 from misc.fun import badge_generator, mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
-from rooms.views import redirect_to_room_chat, list_rooms
+from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
     link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
 from payments.api import api_gift_days
+from invites.api import api_gift_invite_link
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from payments.views.camp import stripe_camp_webhook
 from payments.views.crypto import crypto, coinbase_webhook
@@ -160,9 +162,16 @@ urlpatterns = [
     path("rooms/", list_rooms, name="list_rooms"),
     path("room/<slug:room_slug>/", feed, name="feed_room"),
     path("room/<slug:room_slug>/chat/", redirect_to_room_chat, name="redirect_to_room_chat"),
+    path("room/<slug:room_slug>/subscribe/", toggle_room_subscription, name="toggle_room_subscription"),
+    path("room/<slug:room_slug>/mute/", toggle_room_mute, name="toggle_room_mute"),
     path("room/<slug:room_slug>/<slug:ordering>/", feed, name="feed_room_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
     path("label/<slug:label_code>/<slug:ordering>/", feed, name="feed_label_ordering"),
+
+    path("invites/", list_invites, name="invites"),
+    path("invites/<slug:invite_code>/", show_invite, name="show_invite"),
+    path("invites/<slug:invite_code>/activate/", activate_invite, name="activate_invite"),
+    path("invites.json", api_gift_invite_link, name="api_gift_invite_link"),
 
     path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
     path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),
@@ -195,6 +204,8 @@ urlpatterns = [
     path("godmode/network/", godmode_network_settings, name="godmode_network_settings"),
     path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
     path("godmode/invite/", godmode_invite, name="godmode_invite"),
+    path("godmode/generate_invite_code/", godmode_generate_invite_code, name="godmode_generate_invite_code"),
+    path("godmode/sunday_posts/", godmode_sunday_posts, name="godmode_sunday_posts"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
     path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),

@@ -13,7 +13,7 @@ from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.achievements import UserAchievement
 from users.models.friends import Friend
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from tags.models import Tag, UserTag
 from users.models.notes import UserNote
 from users.models.user import User
@@ -71,7 +71,7 @@ def profile(request, user_slug):
             .order_by("-created_at")\
             .select_related("post")
         friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
-        muted = Muted.objects.filter(user_from=request.me, user_to=user).first()
+        muted = UserMuted.objects.filter(user_from=request.me, user_to=user).first()
         note = UserNote.objects.filter(user_from=request.me, user_to=user).first()
     else:
         comments = None
