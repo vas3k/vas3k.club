@@ -27,6 +27,9 @@ class PostView(models.Model):
     class Meta:
         db_table = "post_views"
         unique_together = [["user", "post"]]
+        indexes = [
+            models.Index(fields=["post", "ipaddress"])
+        ]
 
     @classmethod
     def register_view(cls, request, user, post):
@@ -60,6 +63,7 @@ class PostView(models.Model):
             ipaddress=parse_ip_address(request),
         ).first()
 
+        # use this instead get_or_create because multiple objects can be returned
         if not post_view:
             post_view = PostView.objects.create(
                 post=post,
