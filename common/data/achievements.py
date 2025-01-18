@@ -91,6 +91,12 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/3d1.png",
         "style": "background-color: #F04393; font-size: 100%;",
     }),
+    ("post_of_month", {
+        "name": "Пост месяца!",
+        "description": "Написал пост, который стал лучшим по итогам месяца",
+        "image": "https://vas3k.club/static/images/achievements/post_of_month.png",
+        "style": "background-color: #FF5B19; font-size: 130%;",
+    }),
     ("2020", {
         "name": "2020",
         "description": "Призовое место в итогах 2020 года",
