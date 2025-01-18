@@ -50,7 +50,28 @@ services:
       - postgres
       - redis
 
-# Uncomment these lines if you want to test the bot locally
+  postgres:
+    image: postgres:14
+    container_name: club_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=vas3k_club
+
+  redis:
+    image: redis:alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  webpack:
+    image: node:14-slim
+    command: npm run watch
+    restart: always
+    volumes:
+      - .:/app:delegated
+    working_dir: /app/frontend
+
+# Uncomment these lines if you want to test the Club bot locally
 #  bot:
 #    build:
 #      dockerfile: Dockerfile
@@ -74,7 +95,7 @@ services:
 #      - postgres
 #      - redis
 
-# Uncomment these lines if you want to test the helpdeskbot locally
+# Uncomment these lines if you want to test the Helpdeskbot locally
 #  helpdeskbot:
 #    build:
 #      dockerfile: Dockerfile
@@ -97,28 +118,3 @@ services:
 #      - club_app
 #      - postgres
 #      - redis
-
-  postgres:
-    image: postgres:11
-    container_name: club_postgres
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=vas3k_club
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:alpine
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - "6379:6379"
-
-  webpack:
-    image: node:14-slim
-    command: npm run watch
-    restart: always
-    volumes:
-      - .:/app:delegated
-    working_dir: /app/frontend

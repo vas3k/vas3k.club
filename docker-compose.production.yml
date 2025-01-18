@@ -10,12 +10,12 @@ services:
       - DEBUG=false
       - APP_HOST=https://vas3k.club
       - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
-      - POSTGRES_DB=vas3k_club
-      - POSTGRES_USER=vas3k
-      - POSTGRES_PASSWORD=vas3k
-      - POSTGRES_HOST=postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=vas3k
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PASSWORD
       - EMAIL_HOST
       - EMAIL_PORT
       - DEFAULT_FROM_EMAIL
@@ -26,7 +26,6 @@ services:
       - ./frontend/static:/tmp/static
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
-      - postgres
       - redis
       - queue
     ports:
@@ -41,7 +40,6 @@ services:
     command: make docker-run-queue
     container_name: club_queue
     depends_on:
-      - postgres
       - redis
     ports: []
     logging:
@@ -49,62 +47,46 @@ services:
       options:
         max-size: "100M"
 
-  bot:
-    <<: *app
-    command: make docker-run-bot
-    container_name: club_bot
-    depends_on:
-      - club_app
-      - postgres
-      - redis
-    ports:
-      - "8816:8816"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-
-  helpdeskbot:
-    <<: *app
-    command: make docker-run-helpdeskbot
-    container_name: club_help_desk_bot
-    depends_on:
-      - club_app
-      - postgres
-      - redis
-    ports:
-      - "8817:8817"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-
-  cron:
-    <<: *app
-    command: make docker-run-cron
-    container_name: club_cron
-    depends_on:
-      - club_app
-      - postgres
-      - redis
-    ports: []
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-
-  postgres:
-    image: postgres:12
-    container_name: club_postgres
-    restart: always
-    environment:
-      POSTGRES_USER: vas3k
-      POSTGRES_PASSWORD: vas3k
-      POSTGRES_DB: vas3k_club
-    volumes:
-      - /home/vas3k/pgdata:/var/lib/postgresql/data:rw
-    ports:
-      - "127.0.0.1:54333:5432"
+#  bot:
+#    <<: *app
+#    command: make docker-run-bot
+#    container_name: club_bot
+#    depends_on:
+#      - club_app
+#      - redis
+#    ports:
+#      - "8816:8816"
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "100M"
+#
+#  helpdeskbot:
+#    <<: *app
+#    command: make docker-run-helpdeskbot
+#    container_name: club_help_desk_bot
+#    depends_on:
+#      - club_app
+#      - redis
+#    ports:
+#      - "8817:8817"
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "100M"
+#
+#  cron:
+#    <<: *app
+#    command: make docker-run-cron
+#    container_name: club_cron
+#    depends_on:
+#      - club_app
+#      - redis
+#    ports: []
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "100M"
 
   redis:
     image: redis:alpine
