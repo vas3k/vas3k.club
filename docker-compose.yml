@@ -99,21 +99,17 @@ services:
 #      - redis
 
   postgres:
-    image: postgres:11
+    image: postgres:12
     container_name: club_postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=vas3k_club
-    ports:
-      - "5432:5432"
 
   redis:
     image: redis:alpine
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - "6379:6379"
 
   webpack:
     image: node:14-slim
