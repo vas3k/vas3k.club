@@ -22,7 +22,7 @@ PHOTO_TEXT_LIMIT = 1024
 def send_telegram_message(
     chat: Chat,
     text: str,
-    parse_mode: str = ParseMode.HTML,
+    parse_mode: ParseMode = telegram.ParseMode.HTML,
     disable_preview: bool = True,
     **kwargs
 ):
@@ -59,7 +59,7 @@ def send_telegram_image(
     chat: Chat,
     image_url: str,
     text: str,
-    parse_mode: ParseMode = ParseMode.HTML,
+    parse_mode: ParseMode = telegram.ParseMode.HTML,
     **kwargs
 ):
     if not bot:

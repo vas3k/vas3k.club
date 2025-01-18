@@ -2,9 +2,9 @@ import base64
 import logging
 from datetime import datetime, timedelta
 
+import telegram
 from django.conf import settings
 from django.core.management import BaseCommand
-from telegram import ParseMode
 
 from club.exceptions import NotFound
 from notifications.digests import generate_weekly_digest
@@ -105,7 +105,7 @@ class Command(BaseCommand):
                     digest_intro=god_settings.digest_intro
                 ),
                 disable_preview=False,
-                parse_mode=ParseMode.HTML,
+                parse_mode=telegram.ParseMode.HTML,
             )
 
             # flush digest intro and title for next time

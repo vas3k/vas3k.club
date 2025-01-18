@@ -2,7 +2,6 @@ import telegram
 from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.urls import reverse
-from telegram import ParseMode
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
 from rooms.models import RoomSubscription
@@ -24,7 +23,7 @@ def announce_in_club_channel(post, announce_text=None, image=None):
             chat=CLUB_CHANNEL,
             text=announce_text,
             disable_preview=False,
-            parse_mode=ParseMode.HTML,
+            parse_mode=telegram.ParseMode.HTML,
         )
 
 
@@ -34,7 +33,7 @@ def announce_in_club_chats(post):
         send_telegram_message(
             chat=CLUB_CHAT,
             text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=ParseMode.HTML,
+            parse_mode=telegram.ParseMode.HTML,
             disable_preview=True,
             reply_markup=post_reply_markup(post),
         )
@@ -44,7 +43,7 @@ def announce_in_club_chats(post):
         send_telegram_message(
             chat=Chat(id=post.room.chat_id),
             text=render_html_message("channel_post_announce.html", post=post),
-            parse_mode=ParseMode.HTML,
+            parse_mode=telegram.ParseMode.HTML,
             disable_preview=True,
             reply_markup=post_reply_markup(post),
         )
@@ -55,7 +54,7 @@ def notify_post_approved(post):
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_approved.html", post=post),
-            parse_mode=ParseMode.HTML,
+            parse_mode=telegram.ParseMode.HTML,
         )
 
 
@@ -69,7 +68,7 @@ def notify_post_rejected(post, reason):
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=text,
-            parse_mode=ParseMode.HTML,
+            parse_mode=telegram.ParseMode.HTML,
         )
 
 
@@ -83,7 +82,7 @@ def notify_post_collectible_tag_owners(post):
                     send_telegram_message(
                         chat=Chat(id=tag_user.user.telegram_id),
                         text=render_html_message("post_collectible_tag.html", post=post, tag=tag),
-                        parse_mode=ParseMode.HTML,
+                        parse_mode=telegram.ParseMode.HTML,
                         reply_markup=post_reply_markup(post),
                     )
 
@@ -96,7 +95,7 @@ def notify_post_room_subscribers(post):
                 send_telegram_message(
                     chat=Chat(id=subscriber.user.telegram_id),
                     text=render_html_message("post_room_subscriber.html", post=post, room=post.room),
-                    parse_mode=ParseMode.HTML,
+                    parse_mode=telegram.ParseMode.HTML,
                     reply_markup=post_reply_markup(post),
                 )
 

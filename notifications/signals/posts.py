@@ -3,7 +3,6 @@ import telegram
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django_q.tasks import async_task
-from telegram import ParseMode
 
 from notifications.telegram.common import ADMIN_CHAT, send_telegram_message, render_html_message, CLUB_ONLINE, Chat
 from common.regexp import USERNAME_RE
@@ -113,7 +112,7 @@ def async_create_or_update_post(post, is_created):
     send_telegram_message(
         chat=CLUB_ONLINE,
         text=render_html_message("channel_post_announce.html", post=post),
-        parse_mode=ParseMode.HTML,
+        parse_mode=telegram.ParseMode.HTML,
         disable_preview=True,
     )
 
@@ -149,13 +148,13 @@ def async_label_changed(post):
     send_telegram_message(
         chat=ADMIN_CHAT,
         text=render_html_message(moderator_template, post=post),
-        parse_mode=ParseMode.HTML,
+        parse_mode=telegram.ParseMode.HTML,
     )
     if post.label_code is not None and post.label['notify'] and post.author.telegram_id:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_label.html", post=post),
-            parse_mode=ParseMode.HTML,
+            parse_mode=telegram.ParseMode.HTML,
         )
 
 
