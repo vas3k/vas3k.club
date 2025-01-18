@@ -33,7 +33,7 @@ services:
       - 6379
 
   postgres:
-    image: postgres:12
+    image: postgres:11
     container_name: club_postgres
     environment:
       - POSTGRES_USER=postgres
