@@ -14,7 +14,7 @@ services:
       - REDIS_HOST=redis
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
-      - POSTGRES_HOST=localhost
+      - POSTGRES_HOST=172.17.0.1  # host machine IP
       - POSTGRES_PASSWORD
       - EMAIL_HOST
       - EMAIL_PORT

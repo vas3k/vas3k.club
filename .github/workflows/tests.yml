@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-python@v4
         id: setup-python
         with:
-          python-version: '3.8'
+          python-version: '3.12'
 
       - name: Install requirements
         run: |
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:12-alpine
+        image: postgres:14-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -64,7 +64,7 @@ jobs:
       - uses: actions/setup-python@v4
         id: setup-python
         with:
-          python-version: '3.8'
+          python-version: '3.12'
 
       - uses: actions/setup-node@v3
         with:
@@ -101,7 +101,7 @@ jobs:
         run: |
           python -m venv venv
           . venv/bin/activate
-          pip install --upgrade pip pipenv==2021.5.29
+          pip install --upgrade pip
           pipenv lock --dev --requirements > requirements.txt
           pip install -r requirements.txt
 
