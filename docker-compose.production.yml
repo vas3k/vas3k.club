@@ -1,9 +1,12 @@
-version: "3"
+version: "3.8"
+
 services:
   club_app: &app
     image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
     command: make docker-run-production
     container_name: club_app
+    networks:
+      - club_network
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
@@ -14,83 +17,77 @@ services:
       - REDIS_HOST=redis
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
-      - POSTGRES_HOST=172.17.0.1  # host machine IP
+      - POSTGRES_HOST=host.docker.internal
       - POSTGRES_PASSWORD
       - EMAIL_HOST
       - EMAIL_PORT
       - DEFAULT_FROM_EMAIL
     env_file:
       - .env
-    restart: always
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./frontend/static:/tmp/static
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - redis
-      - queue
     ports:
       - "127.0.0.1:8814:8814"
     logging:
       driver: "json-file"
       options:
         max-size: "100M"
+        max-file: "3"
 
   queue:
     <<: *app
     command: make docker-run-queue
     container_name: club_queue
-    depends_on:
-      - redis
+    networks:
+      - club_network
     ports: []
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
 
   bot:
     <<: *app
     command: make docker-run-bot
     container_name: club_bot
-    depends_on:
-      - club_app
-      - redis
+    networks:
+      - club_network
     ports:
       - "8816:8816"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
 
   helpdeskbot:
     <<: *app
     command: make docker-run-helpdeskbot
     container_name: club_help_desk_bot
-    depends_on:
-      - club_app
-      - redis
+    networks:
+      - club_network
     ports:
       - "8817:8817"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
 
   cron:
     <<: *app
     command: make docker-run-cron
     container_name: club_cron
-    depends_on:
-      - club_app
-      - redis
+    networks:
+      - club_network
     ports: []
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
 
   redis:
     image: redis:alpine
     container_name: club_redis
-    restart: always
+    restart: unless-stopped
+    networks:
+      - club_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+networks:
+  club_network:
+    driver: bridge
