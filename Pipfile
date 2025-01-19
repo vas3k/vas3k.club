@@ -20,7 +20,7 @@ mistune = "==2.0.0a4"
 click = "*"
 pillow = ">=9.0.1"
 django-simple-history = "==3.7.0"
-python-telegram-bot = "==13.15"
+python-telegram-bot = "==12.5.1"
 django-q2 = {extras = ["sentry"], version = "==1.7.6"}
 redis = "==5.2.1"
 python-dotenv = ">=0.12"
