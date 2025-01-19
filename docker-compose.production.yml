@@ -74,19 +74,19 @@ services:
 #      driver: "json-file"
 #      options:
 #        max-size: "100M"
-#
-#  cron:
-#    <<: *app
-#    command: make docker-run-cron
-#    container_name: club_cron
-#    depends_on:
-#      - club_app
-#      - redis
-#    ports: []
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "100M"
+
+  cron:
+    <<: *app
+    command: make docker-run-cron
+    container_name: club_cron
+    depends_on:
+      - club_app
+      - redis
+    ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
 
   redis:
     image: redis:alpine
