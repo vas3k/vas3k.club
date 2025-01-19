@@ -102,8 +102,8 @@ jobs:
           python -m venv venv
           . venv/bin/activate
           pip install --upgrade pip pipenv
-          pipenv lock --dev --requirements > requirements.txt
-          pip install -r requirements.txt
+          pipenv requirements --dev > requirements.txt
+          pip install --ignore-installed -r requirements.txt
 
       - name: Run tests
         env:
