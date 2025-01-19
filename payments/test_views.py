@@ -143,8 +143,8 @@ class TestPayView(TestCase):
         self.assertEqual(created_user.email, email)
         self.assertEqual(created_user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
         self.assertEqual(created_user.full_name, email.replace("@email.com", ""))
-        self.assertAlmostEquals(created_user.membership_started_at, datetime.utcnow(), delta=timedelta(seconds=5))
-        self.assertAlmostEquals(created_user.membership_expires_at, datetime.utcnow(), delta=timedelta(seconds=5))
+        self.assertAlmostEqual(created_user.membership_started_at, datetime.utcnow(), delta=timedelta(seconds=5))
+        self.assertAlmostEqual(created_user.membership_expires_at, datetime.utcnow(), delta=timedelta(seconds=5))
         self.assertEqual(created_user.moderation_status, User.MODERATION_STATUS_INTRO)
 
         self.assertTrue(Payment.get(reference=session.id))
@@ -170,7 +170,7 @@ class TestPayView(TestCase):
         self.assertEqual(user_after.membership_platform_type, self.existed_user.membership_platform_type)
         self.assertEqual(user_after.full_name, self.existed_user.full_name)
         self.assertEqual(user_after.membership_started_at, self.existed_user.membership_started_at)
-        self.assertAlmostEquals(user_after.membership_expires_at, self.existed_user.membership_expires_at)
+        self.assertAlmostEqual(user_after.membership_expires_at, self.existed_user.membership_expires_at)
         self.assertEqual(user_after.moderation_status, self.existed_user.moderation_status)
 
         self.assertTrue(Payment.get(reference=session.id))
@@ -255,7 +255,7 @@ class TestStripeWebhookView(TestCase):
             self.assertEqual(response.status_code, 200)
             # subscription prolongated
             user = User.objects.get(id=self.existed_user.id)
-            self.assertAlmostEquals(user.membership_expires_at,
+            self.assertAlmostEqual(user.membership_expires_at,
                                     self.existed_user.membership_expires_at + product['data']['timedelta'],
                                     delta=timedelta(seconds=10))
 
@@ -337,7 +337,7 @@ class TestStripeWebhookView(TestCase):
             self.assertEqual(response.status_code, 200)
             # subscription prolonged
             user = User.objects.get(id=self.existed_user.id)
-            self.assertAlmostEquals(user.membership_expires_at,
+            self.assertAlmostEqual(user.membership_expires_at,
                                     self.existed_user.membership_expires_at + product['data']['timedelta'],
                                     delta=timedelta(seconds=10))
 
