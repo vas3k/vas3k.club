@@ -70,5 +70,5 @@ We try to keep our stack as simple and stupid as possible. Because we're not ver
 
 ## 🔮 Installing and running locally for development
 
-Basically `docker-compose up`. See [README.md](README.md) for details.
+Basically `docker compose up`. See [README.md](README.md) for details.
 
