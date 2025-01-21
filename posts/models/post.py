@@ -337,6 +337,7 @@ class Post(models.Model, ModelDiffMixin):
     def publish(self):
         self.is_visible = True
         self.published_at = datetime.utcnow()
+        self.last_activity_at = datetime.utcnow()
         self.save()
 
     def unpublish(self):
