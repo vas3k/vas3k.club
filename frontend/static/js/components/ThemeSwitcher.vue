@@ -26,20 +26,16 @@ export default {
     },
     mounted() {
         this.$media.addEventListener("change", this.changeTheme);
-        if (typeof localStorage !== "undefined") {
-            const localTheme = localStorage.getItem("theme");
-            if (["light", "auto", "dark"].includes(localTheme)) {
-                this.theme = localTheme;
-            }
+        const localTheme = localStorage.getItem("theme");
+        if (["light", "auto", "dark"].includes(localTheme)) {
+            this.theme = localTheme;
         }
     },
     methods: {
         changeTheme() {
             document.documentElement.setAttribute("theme", this.realTheme());
             this.$el.dataset.value = this.theme;
-            if (typeof localStorage !== "undefined") {
-                localStorage.setItem("theme", this.theme);
-            }
+            localStorage.setItem("theme", this.theme);
             this.$forceUpdate();
         },
         realTheme() {
