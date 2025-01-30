@@ -5,6 +5,10 @@
     Редактирование профиля — {{ block.super }}
 {% endblock %}
 
+{% block css %}
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="content user-edit">
         <div class="form-title">😎<br>Редактирование профиля</div>
@@ -30,8 +34,8 @@
 
             <div class="block-description">
                 Сменить их можно, только <a href="mailto:club@vas3k.club">написав нам</a> на почту.
-                От частой смены этих настроек могут поломаться комментарии и уведомления у других пользователей,
-                потому пока мы предпочитаем делать это руками.
+                От смены этих настроек могут поломаться комментарии и всякие уведомления,
+                потому мы предпочитаем делать это руками.
             </div>
         </div>
 
@@ -65,16 +69,6 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="{{ form.country.id_for_label }}" class="form-label">
-                        Страна и город
-                    </label>
-                    {{ form.country }} {{ form.city }}
-                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
-                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
-                    <span class="form-row-help">Вдруг мы решим собраться на митап или типа того</span>
-                </div>
-
-                <div class="form-row">
                     <label for="{{ form.bio.id_for_label }}" class="form-label">
                         Ссылочки на себя и всякое такое
                     </label>
@@ -83,6 +77,30 @@
                     <span class="form-row-help">
                         Используйте Markdown и Эмодзи чтобы сделать красиво. Всё зависит от вашего воображения
                     </span>
+                </div>
+
+                <div class="form-row">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">
+                        Страна и город
+                    </label>
+                    {{ form.country }} {{ form.city }}
+                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
+                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label">
+                        Где отображать вас на общей <strong><a href="{% url "people" %}">карте</a></strong>?
+                    </label>
+                    <location-select
+                        latitude-field-name="latitude"
+                        longitude-field-name="longitude"
+                        :default-latitude="{{ user.latitude | default:0.0 | stringformat:"f" }}"
+                        :default-longitude="{{ user.longitude | default:0.0 | stringformat:"f" }}"
+                    ></location-select>
+                    {% if form.latitude.errors %}<span class="form-row-errors">Latitude: {{ form.latitude.errors }}</span>{% endif %}
+                    {% if form.longitude.errors %}<span class="form-row-errors">Longitude: {{ form.longitude.errors }}</span>{% endif %}
+                    {% if form.geo.errors %}<span class="form-row-errors">Geo: {{ form.geo.errors }}</span>{% endif %}
                 </div>
 
                 <button type="submit" class="button button-big" name="profile_publicity_level" value="{{ user.profile_publicity_level }}">Сохранить изменения</button>

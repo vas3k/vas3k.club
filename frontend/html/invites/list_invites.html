@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block title %}
+    Инвайты — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">💌<br>Инвайты</div>
+
+        <div class="block-description block-description-center">
+            <p>
+                Здесь можно купить инвайт и подарить его своему другу, чтобы он смог зарегистрироваться в Клубе или продлил уже имеющийся аккаунт.
+            </p>
+
+            <br>
+
+            <form action="{% url "pay" %}" method="get">
+                {% csrf_token %}
+                <input type="hidden" name="product_code" value="club1_invite">
+                <input type="hidden" name="is_invite" value="true">
+                <button type="submit" class="button">🎁 Купить инвайт-код</button>
+            </form>
+
+            {% if me.is_god %}
+                <br>
+                <form action="{% url "godmode_generate_invite_code" %}" method="post">
+                    <button class="button">💣 Сгенерировать инвайт</button>
+                </form>
+            {% endif %}
+
+            <div class="invites-list">
+                {% for invite in invites %}
+                    <a href="{% url "show_invite" invite.code %}" class="block invites-list-item zoom-on-hover">
+                        <strong>
+                            Инвайт {{ invite.code|slice:":3" }}...{{ invite.code|slice:"-3:" }}
+                        </strong>
+                        <span>
+                            {% include "invites/widgets/status_badge.html" %}
+                        </span>
+                        <span>
+                            {% if invite.used_at %}
+                                ➡️ {{ invite.invited_user.full_name }}
+                            {% elif invite.is_expired %}
+                                истек {{ invite.expires_at | date:"j E Y" }}
+                            {% else %}
+                                истекает {{ invite.expires_at | date:"j E Y" }}
+                            {% endif %}
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <small>
+                После покупки код действителен год. Дни в Клубе начинают считаться только со дня его активации.
+                До активации инвайт можно переподарить любому другому человеку.
+            </small>
+        </div>
+    </div>
+{% endblock %}

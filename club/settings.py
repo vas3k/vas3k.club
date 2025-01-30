@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "tags.apps.TagsConfig",
     "rooms.apps.RoomsConfig",
     "misc.apps.MiscConfig",
+    "invites.apps.InvitesConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -270,6 +271,7 @@ TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
+TELEGRAM_PAY_BOT_URL = "https://t.me/vas3kpaybot"
 TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
@@ -279,6 +281,7 @@ STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET") or ""
 STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
+STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWIbII"
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 

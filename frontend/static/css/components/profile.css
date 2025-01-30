@@ -118,6 +118,7 @@
         display: block;
         text-align: right;
         padding-bottom: 20px;
+        font-size: 120%;
     }
 
     .profile-statuses {

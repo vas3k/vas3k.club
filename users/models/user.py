@@ -1,3 +1,4 @@
+import random
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -7,7 +8,6 @@ from django.db import models
 from django.db.models import F
 from django.urls import reverse
 
-from users.models.geo import Geo
 from common.models import ModelDiffMixin
 from utils.slug import generate_unique_slug
 from utils.strings import random_string
@@ -77,7 +77,7 @@ class User(models.Model, ModelDiffMixin):
     position = models.TextField(null=True)
     city = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
-    geo = models.ForeignKey(Geo, on_delete=models.SET_NULL, null=True)
+    geo = models.JSONField(null=True)
     bio = models.TextField(null=True)
     contact = models.CharField(max_length=256, null=True)
     hat = models.JSONField(null=True)
@@ -191,6 +191,14 @@ class User(models.Model, ModelDiffMixin):
     def can_view(self, user):
         return user or self.profile_publicity_level == self.PUBLICITY_LEVEL_PUBLIC
 
+    def get_roles_display(self):
+        # FIXME: wtf is this function doing? it must be much easier
+        d = dict(User.ROLES)
+        roles = []
+        for role in self.roles:
+            roles.append(d[role])
+        return ", ".join(roles)
+
     @property
     def is_banned(self):
         if self.is_god:
@@ -232,13 +240,22 @@ class User(models.Model, ModelDiffMixin):
         return f"{self.email}|-{self.secret_hash}"
 
     @property
-    def get_roles_display(self):
-        d = dict(User.ROLES)
+    def latitude(self):
+        if self.geo and self.geo.get("latitude"):
+            if self.geo.get("precise"):
+                return self.geo["latitude"]
+            else:
+                return self.geo["latitude"] + random.uniform(-0.12, 0.12)
+        return None
 
-        roles = []
-        for role in self.roles:
-            roles.append(d[role])
-        return ", ".join(roles)
+    @property
+    def longitude(self):
+        if self.geo and self.geo.get("longitude"):
+            if self.geo.get("precise"):
+                return self.geo["longitude"]
+            else:
+                return self.geo["longitude"] + random.uniform(-0.25, 0.25)
+        return None
 
     @classmethod
     def registered_members(cls):

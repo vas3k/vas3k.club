@@ -44,7 +44,6 @@ def edit_profile(request, user_slug):
             user.save()
 
             SearchIndex.update_user_index(user)
-            Geo.update_for_user(user, fuzzy=True)
     else:
         form = ProfileEditForm(instance=user)
 

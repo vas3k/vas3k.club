@@ -28,3 +28,6 @@ class NewPostsRss(Feed):
     
     def item_pubdate(self, item):
         return item.published_at
+
+    def item_author_name(self, item):
+        return item.author.slug

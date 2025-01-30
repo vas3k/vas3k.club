@@ -1,0 +1,74 @@
+{% extends "emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    h1, h2, h3, header {
+        text-align: left;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 17px 30px;
+        box-sizing: border-box;
+        text-decoration: none;
+        border-radius: 20px;
+        background-color: #000;
+        border: solid 2px #000;
+        color: #FFF;
+        text-align: center;
+        cursor: pointer;
+        line-height: 1em;
+        font-size: 25px;
+        margin: 20px 0 30px;
+    }
+
+        .button:hover {
+            color: #000 !important;
+            background-color: #FFF !important;
+            border-color: #000 !important;
+        }
+
+p {
+    font-size: 19px;
+}
+
+</style>
+{% endblock %}
+
+{% block title %}
+     👨‍🦳 Время обновлять интро!
+{% endblock %}
+
+{% block body %}
+    <p>
+        Привет, {{ user.full_name }}! 👋
+    </p>
+
+    <p>
+        Наш хитрый всевидящий искусственный интеллект заметил, что вы не обновляли <a href="{{ settings.APP_HOST }}{% url "show_post" intro.type intro.slug %}">свое интро</a> вот уже как <strong>{{ years }} {{ years | rupluralize:"год,года,лет" }}</strong>!
+    </p>
+
+    <p>
+        Наверняка с тех пор многое изменилось, так что пришло время перечитать его и поправить! Актуальное интро — залог того, что вас найдут нужные и полезные люди в Клубе 🎯
+    </p>
+
+    <p>
+        Ну и просто никто не любит старые дохлые интры! Так что давайте 👇
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "edit_post" intro.slug %}" class="button">Обновить интро</a>
+    </p>
+
+    <p>
+        Также еще не забудьте проверить, что данные по локейшену и месту работы <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">в вашем профиле</a> всё еще актуальны. А то сейчас время такое, что они в среднем меняются чаще обычного :)
+    </p>
+
+    <p>
+        Поцелуйчики 😘
+    </p>
+
+    <br><br><br>
+{% endblock %}

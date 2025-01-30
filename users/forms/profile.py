@@ -24,6 +24,17 @@ class ProfileEditForm(ModelForm):
         choices=COUNTRIES,
         required=True
     )
+    latitude = forms.FloatField(
+        label="Широта",
+        required=True,
+    )
+    longitude = forms.FloatField(
+        label="Долгота",
+        required=True,
+    )
+    geo = forms.JSONField(
+        required=False
+    )
     bio = forms.CharField(
         label="Ссылочки на себя и всякое такое",
         required=True,
@@ -57,8 +68,25 @@ class ProfileEditForm(ModelForm):
             "city",
             "country",
             "bio",
+            "geo",
             "profile_publicity_level",
         ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        latitude = cleaned_data.get("latitude")
+        longitude = cleaned_data.get("longitude")
+
+        if latitude and longitude:
+            cleaned_data["geo"] = {
+                "latitude": latitude,
+                "longitude": longitude,
+                "precise": True,
+            }
+        else:
+            cleaned_data["geo"] = None
+
+        return cleaned_data
 
     def clean_profile_publicity_level(self):
         new_value = self.cleaned_data["profile_publicity_level"]

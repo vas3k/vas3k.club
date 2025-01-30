@@ -115,6 +115,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/2023.png",
         "style": "background-color: #f87c56; font-size: 190%;",
     }),
+    ("2024", {
+        "name": "2024",
+        "description": "Призовое место в итогах 2024 года",
+        "image": "https://vas3k.club/static/images/achievements/2024.png",
+        "style": "background-color: #ff8a3d; font-size: 190%;",
+    }),
     ("mic", {
         "name": "Золотой микрофон",
         "description": "За выступление на АМА  и митапах в качестве оратора",
@@ -342,6 +348,18 @@ ACHIEVEMENTS = [
         "description": "За участие в ИИнктобере",
         "image": "https://vas3k.club/static/images/achievements/ai_art.png",
         "style": "background-color: #132F6E; font-size: 130%;",
+    }),
+    ("birdwatcher", {
+        "name": "Смотритель птиц",
+        "description": "За победу на конкурсе бёрдвочинга. Для самых наблюдательных.",
+        "image": "https://vas3k.club/static/images/achievements/birds.png",
+        "style": "background-color: #6A98FF; font-size: 130%;",
+    }),
+    ("couchsurfing", {
+        "name": "Гроза отелей",
+        "description": "За размещение у себя клубня на ночь",
+        "image": "https://vas3k.club/static/images/achievements/couchsurfing.png",
+        "style": "background-color: #33CCCC; font-size: 130%;",
     }),
 ]
 

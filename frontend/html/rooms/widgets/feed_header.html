@@ -12,6 +12,12 @@
         {{ room.description | markdown }}
     </span>
 
+    {% if room.url %}
+        <span class="feed-topic-header-footer">
+            <i class="fas fa-link"></i>&nbsp;<strong>URL:</strong> <a href="{{ room.url }}" rel="noreferrer" target="_blank">{{ room.url }}</a>
+        </span>
+    {% endif %}
+
     {% if room.chat_url and room.chat_name %}
         <span class="feed-topic-header-footer">
             <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Чат:</strong> <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
