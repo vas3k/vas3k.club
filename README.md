@@ -38,7 +38,7 @@ Feel free to propose "state of the art" refactorings for UI or backend code if y
 3. Run
 
     ```sh
-    $ docker-compose up
+    $ docker compose up
     ```
 
 This will start the application in development mode on [http://127.0.0.1:8000/](http://127.0.0.1:8000/), as well as other necessary services: postgres database, queue with workers, redis and webpack. 
