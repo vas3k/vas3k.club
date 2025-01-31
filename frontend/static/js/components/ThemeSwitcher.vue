@@ -1,8 +1,8 @@
 <template>
     <div :data-value="theme" :data-real="realTheme()">
-        <label class="light"><input type="radio" v-model="theme" value="light" /></label>
-        <label class="auto"><input type="radio" v-model="theme" value="auto" /></label>
-        <label class="dark"><input type="radio" v-model="theme" value="dark" /></label>
+        <label class="light" aria-label="Светлая тема"><input type="radio" v-model="theme" value="light" /></label>
+        <label class="auto" aria-label="Автоматически определять тему"><input type="radio" v-model="theme" value="auto" /></label>
+        <label class="dark" aria-label="Тёмная тема"><input type="radio" v-model="theme" value="dark" /></label>
     </div>
 </template>
 
@@ -47,30 +47,33 @@ export default {
 
 <style scoped>
 div {
-    display: inline-block;
+    --padding: 4px;
+    display: flex;
+    flex-wrap: nowrap;
     position: relative;
-    height: 30px;
-    line-height: 30px;
-    border-radius: 17px;
-    padding: 3px;
+    height: 2rem;
+    line-height: 2rem;
+    border-radius: calc(var(--block-border-radius) + var(--padding));
+    padding: var(--padding);
 
     &:before {
         content: "";
         position: absolute;
-        left: 36px;
-        width: 30px;
-        height: 30px;
-        border-radius: 15px;
+        left: 2.25rem;
+        width: 2rem;
+        height: 2rem;
+        border-radius: var(--block-border-radius);
         transition: ease 0.3s all;
     }
+
     &[data-value="light"]:before {
-        transform: translateX(-33px);
+        transform: translateX(-2rem);
     }
     &[data-value="auto"]:before {
-        transform: translateX(0px);
+        transform: translateX(0);
     }
     &[data-value="dark"]:before {
-        transform: translateX(33px);
+        transform: translateX(2rem);
     }
     &[data-real="dark"] {
         background: #ffffff22;
@@ -85,13 +88,13 @@ div {
         }
     }
     label {
-        width: 30px;
+        width: 2rem;
         position: relative;
         display: inline-block;
         text-align: center;
         cursor: pointer;
         &:after {
-            font-size: 17px;
+            font-size: 1rem;
         }
     }
     label.light:after {

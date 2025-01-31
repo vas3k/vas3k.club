@@ -73,9 +73,9 @@
             <theme-switcher></theme-switcher>
 
             {% if me %}
-                <form method="POST" action="{% url "logout" %}">
+                <form method="POST" action="{% url "logout" %}" class="footer-logout">
                     {% csrf_token %}
-                    <button type="submit" class="footer-logout">Выйти&nbsp;<i class="fas fa-sign-out-alt"></i></button>
+                    <button type="submit" class="footer-logout-button">Выйти&nbsp;<i class="fas fa-sign-out-alt"></i></button>
                 </form>
             {% endif %}
         </div>
