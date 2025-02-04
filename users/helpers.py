@@ -22,7 +22,8 @@ def permanently_ban_user(user: User, reason: BanReason):
     cancel_all_stripe_subscriptions(user.stripe_id)
     async_task(
         ban_user_in_all_chats,
-        user=user
+        user=user,
+        is_permanent=True,
     )
 
     return custom_ban_user(

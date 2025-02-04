@@ -45,7 +45,7 @@ def delete_user_data(user: User):
     user.save()
 
     # delete from chats
-    ban_user_in_all_chats(user=user)
+    ban_user_in_all_chats(user=user, is_permanent=False)
 
     # delete intro
     Post.objects.filter(author=user, type=Post.TYPE_INTRO).delete()
