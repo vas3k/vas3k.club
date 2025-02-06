@@ -7,7 +7,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from bot.handlers.common import UserRejectReason, PostRejectReason
-from bot.decorators import is_moderator
+from bot.decorators import is_moderator, ensure_fresh_db_connection
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
     notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers
@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 
 
 @is_moderator
+@ensure_fresh_db_connection
 def approve_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
@@ -62,6 +63,7 @@ def approve_post(update: Update, context: CallbackContext) -> None:
 
 
 @is_moderator
+@ensure_fresh_db_connection
 def forgive_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
@@ -88,6 +90,7 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
 
 
 @is_moderator
+@ensure_fresh_db_connection
 def reject_post(update: Update, context: CallbackContext) -> None:
     code, post_id = update.callback_query.data.split(":", 1)
     reason = {
@@ -131,6 +134,7 @@ def reject_post(update: Update, context: CallbackContext) -> None:
 
 
 @is_moderator
+@ensure_fresh_db_connection
 def approve_user_profile(update: Update, context: CallbackContext) -> None:
     _, user_id = update.callback_query.data.split(":", 1)
 
@@ -179,6 +183,7 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
 
 
 @is_moderator
+@ensure_fresh_db_connection
 def reject_user_profile(update: Update, context: CallbackContext):
     code, user_id = update.callback_query.data.split(":", 1)
     reason = {
