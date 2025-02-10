@@ -84,7 +84,8 @@ TEMPLATES = [
                 "club.context_processors.settings_processor",
                 "club.context_processors.features_processor",
                 "authn.context_processors.users.me",
-                "posts.context_processors.rooms.rooms",
+                "posts.context_processors.feed.rooms",
+                "posts.context_processors.feed.ordering",
             ]
         },
     }

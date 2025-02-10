@@ -192,8 +192,8 @@
         display: flex;
         align-content: flex-start;
         justify-content: flex-end;
-        font-size: 100%;
-        padding: 0 10px 10px;
+        font-size: 110%;
+        padding: 10px;
         width: 100%;
         box-sizing: border-box;
     }

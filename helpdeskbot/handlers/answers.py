@@ -3,6 +3,7 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
+from bot.decorators import ensure_fresh_db_connection
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message
 from helpdeskbot.models import Question, Answer
@@ -14,6 +15,7 @@ log = logging.getLogger(__name__)
 rooms = {r.chat_id: r for r in get_rooms()}
 
 
+@ensure_fresh_db_connection
 def on_reply_message(update: Update, context: CallbackContext) -> None:
     if not update.message or not update.message.reply_to_message or not update.message.text:
         return None

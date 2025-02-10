@@ -9,12 +9,18 @@ from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
 from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed, ORDERING_HOT
 from posts.models.post import Post
-from rooms.models import Room, RoomMuted
-from users.models.mute import UserMuted
+from rooms.models import Room
 
 
 @feature_switch(features.PRIVATE_FEED, yes=require_auth, no=noop)
-def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, ordering=ORDERING_ACTIVITY):
+def feed(
+    request,
+    post_type=POST_TYPE_ALL,
+    room_slug=None,
+    label_code=None,
+    ordering=ORDERING_ACTIVITY,
+    ordering_param=None
+):
     if request.me:
         request.me.update_last_activity()
         posts = Post.objects_for_user(request.me)
@@ -45,16 +51,6 @@ def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, orde
         if not room and ordering in [ORDERING_NEW, ORDERING_HOT, ORDERING_ACTIVITY]:
             posts = posts.exclude(room__muted_users__user=request.me)
 
-        # TODO: old code, let's check what works faster
-        # TODO: REMOVE IT in 2025 if no performance degradation detected
-        # muted_rooms = RoomMuted.muted_by_user(user=request.me).values_list("room_id").all()
-        # if muted_rooms:
-        #     posts = posts.exclude(room_id__in=muted_rooms)
-        #
-        # muted_users = UserMuted.objects.filter(user_from=request.me).values_list("user_to_id").all()
-        # if muted_users:
-        #     posts = posts.exclude(author_id__in=muted_users)
-
     # hide non-public posts and intros from unauthorized users
     if not request.me:
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
@@ -71,7 +67,7 @@ def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, orde
         posts = posts.filter(is_visible_in_feeds=True)
 
     # order posts by some metric
-    posts = sort_feed(posts, ordering)
+    posts = sort_feed(posts, ordering, ordering_param)
 
     # for main page — add pinned posts
     pinned_posts = []
@@ -82,6 +78,7 @@ def feed(request, post_type=POST_TYPE_ALL, room_slug=None, label_code=None, orde
     return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
         "ordering": ordering,
+        "ordering_full": ordering + (f":{ordering_param}" if ordering_param else ""),
         "room": room,
         "label_code": label_code,
         "posts": paginate(request, posts),

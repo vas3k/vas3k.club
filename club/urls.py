@@ -60,7 +60,7 @@ from users.views.people import people
 from search.api import api_search_users, api_search_tags
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
-ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))"
+ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))(?::(?P<ordering_param>[^/]+))?"
 urlpatterns = [
     path("", feature_switch(
         features.PRIVATE_FEED,                  # if private feed is enabled
@@ -164,9 +164,9 @@ urlpatterns = [
     path("room/<slug:room_slug>/chat/", redirect_to_room_chat, name="redirect_to_room_chat"),
     path("room/<slug:room_slug>/subscribe/", toggle_room_subscription, name="toggle_room_subscription"),
     path("room/<slug:room_slug>/mute/", toggle_room_mute, name="toggle_room_mute"),
-    path("room/<slug:room_slug>/<slug:ordering>/", feed, name="feed_room_ordering"),
+    re_path(r"room/(?P<room_slug>[^/]+)/{}/$".format(ORDERING_RE), feed, name="feed_room_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
-    path("label/<slug:label_code>/<slug:ordering>/", feed, name="feed_label_ordering"),
+    re_path(r"^label/(?P<label_code>[^/]+)/{}/$".format(ORDERING_RE), feed, name="feed_label_ordering"),
 
     path("invites/", list_invites, name="invites"),
     path("invites/<slug:invite_code>/", show_invite, name="show_invite"),
