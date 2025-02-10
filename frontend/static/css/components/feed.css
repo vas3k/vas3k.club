@@ -200,6 +200,7 @@
 
         @media only screen and (max-width : 570px) {
             .feed-ordering {
+                font-size: 100%;
                 justify-content: space-around;
             }
         }
@@ -223,6 +224,37 @@
             .feed-ordering-item-is-active {
                 font-weight: 700;
                 opacity: 1.0;
+            }
+
+    .feed-ordering-extra {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 120%;
+        padding: 10px;
+        justify-content: flex-end;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .feed-ordering-extra {
+                font-size: 100%;
+                justify-content: space-around;
+                gap: 0;
+            }
+        }
+
+        .feed-ordering-extra-item {
+            padding: 7px 10px;
+            text-decoration: none;
+        }
+
+        .feed-ordering-extra-item-selected {
+            color: var(--opposite-text-color);
+            background-color: var(--opposite-bg-color);
+        }
+
+            .feed-ordering-extra-item-selected:hover {
+                color: var(--opposite-text-color);
             }
 
 .feed-post {

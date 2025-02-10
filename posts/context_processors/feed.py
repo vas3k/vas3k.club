@@ -6,8 +6,7 @@ from django.utils.translation import gettext as _
 from posts.helpers import ORDERING_TOP, ORDERING_TOP_YEAR, ORDERING_TOP_MONTH, ORDERING_TOP_WEEK
 from rooms.models import Room
 
-ORDERING_LAST_YEARS = 7
-ORDERING_LAST_MONTHS = 7
+ORDERING_LAST_MONTHS = 12
 
 
 def rooms(request):
@@ -36,22 +35,24 @@ def ordering(request):
             {
                 "text": "за неделю",
                 "value": ORDERING_TOP_WEEK
-            },
+            }
+        ],
+        "feed_ordering_years": [
             {
-                "text": "———",
-                "value": "-",
-                "disabled": True,
+                "text": "за последний",
+                "value": ORDERING_TOP_YEAR,
             },
             *[
                 {
-                    "text": f"за {year}",
+                    "text": f"{year}",
                     "value": f"{ORDERING_TOP_YEAR}:{year}",
-                } for year in range(datetime.utcnow().year, settings.LAUNCH_DATE.year, -1)[:ORDERING_LAST_YEARS]
-            ],
+                } for year in range(datetime.utcnow().year, settings.LAUNCH_DATE.year, -1)
+            ]
+        ],
+        "feed_ordering_months": [
             {
-                "text": "———",
-                "value": "-",
-                "disabled": True,
+                "text": "за последний",
+                "value": ORDERING_TOP_MONTH,
             },
             *[
                 {

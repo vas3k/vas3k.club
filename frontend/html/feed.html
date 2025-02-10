@@ -63,16 +63,34 @@
         {% if ordering == "top" or ordering == "top_week" or ordering == "top_month" or ordering == "top_year" %}
             <select class="feed-ordering-item" onchange="location.href = location.protocol + '//' + location.host + location.pathname + '../' + event.target.value + '/'">
                 {% for option in feed_ordering_options %}
-                    <option value="{{ option.value }}"
-                            {% if ordering_full == option.value %}selected{% endif %}
-                            {% if option.disabled %}disabled{% endif %}
-                    >
+                    <option value="{{ option.value }}" {% if ordering == option.value %}selected{% endif %}>
                         {{ option.text }}
                     </option>
                 {% endfor %}
             </select>
         {% endif %}
     </div>
+
+
+    {% if ordering == "top_year" or ordering == "top_month" %}
+        <div class="feed-ordering-extra">
+            {% if ordering == "top_year" %}
+                {% for option in feed_ordering_years %}
+                    <a href="{% feed_ordering_url room label_code post_type option.value %}"
+                       class="feed-ordering-extra-item {% if ordering_full == option.value %}feed-ordering-extra-item-selected{% endif %}">
+                        {{ option.text }}
+                    </a>
+                {% endfor %}
+            {% elif ordering == "top_month" %}
+                {% for option in feed_ordering_months %}
+                    <a href="{% feed_ordering_url room label_code post_type option.value %}"
+                       class="feed-ordering-extra-item {% if ordering_full == option.value %}feed-ordering-extra-item-selected{% endif %}">
+                        {{ option.text }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
 
     {% for post in pinned_posts %}
         {% include "posts/items/items.html" %}
