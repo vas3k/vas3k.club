@@ -58,9 +58,13 @@
 
     .footer-right {
         text-align: right;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: end;
     }
 
-    .footer-logout {
+    .footer-logout-button {
         display: block;
         margin-top: 20px;
         appearance: none;
@@ -73,10 +77,30 @@
         transition: color linear .1s;
     }
 
-        .footer-logout i {
+        .footer-logout-button i {
             display: inline-block;
             vertical-align: middle;
         }
+
+@media only screen and (max-width : 570px) {
+    footer {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .footer-right {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .footer-logout {
+        margin-left: auto;
+    }
+
+    .footer-logout-button {
+        margin-top: 0;
+    }
+}
 
 .search {
     display: grid;

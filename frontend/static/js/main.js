@@ -28,6 +28,7 @@ Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
 Vue.component("reply-form", () => import("./components/ReplyForm.vue"));
+Vue.component("theme-switcher", () => import("./components/ThemeSwitcher.vue"));
 Vue.component("location-select", () => import("./components/LocationSelect.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
@@ -78,7 +79,12 @@ new Vue({
             }
         },
         showReplyForm(commentId, username, draftKey) {
-            this.replyTo = { commentId, username, draftKey }
+            this.replyTo = { commentId, username, draftKey };
         },
     },
+});
+
+// Отдельный инстанс для футера
+new Vue({
+    el: "#footer",
 });
