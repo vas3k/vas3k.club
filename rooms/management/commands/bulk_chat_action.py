@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 self.stderr.write(f"No such user: {email_or_slugs}")
 
             if action == "ban":
-                ban_user_in_all_chats(user)
+                ban_user_in_all_chats(user, is_permanent=True)
             elif action == "unban":
                 unban_user_in_all_chats(user)
             else:

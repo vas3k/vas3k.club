@@ -11,6 +11,7 @@ from club.exceptions import BadRequest, AccessDenied
 from gdpr.models import DataRequests
 from notifications.email.users import send_delete_account_request_email, send_delete_account_confirm_email
 from payments.helpers import cancel_all_stripe_subscriptions
+from rooms.helpers import ban_user_in_all_chats
 
 
 @require_auth
@@ -72,6 +73,13 @@ def confirm_delete_account(request):
         send_telegram_message,
         chat=ADMIN_CHAT,
         text=f"💀 Юзер удалился: {settings.APP_HOST}/user/{request.me.slug}/",
+    )
+
+    # kick from chats
+    async_task(
+        ban_user_in_all_chats,
+        user=request.me,
+        is_permanent=False,
     )
 
     # an actual deletion will be done in a cron task ("manage.py delete_users")

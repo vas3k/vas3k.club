@@ -1,4 +1,7 @@
+from functools import wraps
+
 from django.conf import settings
+from django.db import close_old_connections
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
@@ -40,4 +43,15 @@ def is_club_member(callback):
 
         return callback(update, context, *args, **kwargs)
 
+    return wrapper
+
+
+def ensure_fresh_db_connection(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        close_old_connections()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            close_old_connections()
     return wrapper

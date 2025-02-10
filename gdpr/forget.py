@@ -6,6 +6,7 @@ from authn.models.session import Session, Code
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models.post import Post
+from rooms.helpers import ban_user_in_all_chats
 from rooms.models import RoomSubscription, RoomMuted
 from users.models.achievements import UserAchievement
 from users.models.friends import Friend
@@ -42,6 +43,9 @@ def delete_user_data(user: User):
     user.telegram_data = None
     user.membership_platform_data = None
     user.save()
+
+    # delete from chats
+    ban_user_in_all_chats(user=user, is_permanent=False)
 
     # delete intro
     Post.objects.filter(author=user, type=Post.TYPE_INTRO).delete()
