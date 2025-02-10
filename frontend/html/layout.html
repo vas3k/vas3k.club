@@ -14,7 +14,7 @@
         // the component contains the same theme detection code as below. If you change this code, update the theme too
         const theme = localStorage.getItem('theme') ?? "auto";
         const currentTheme = theme === "auto" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : theme;
-        document.documentElement.setAttribute('theme', theme);
+        document.documentElement.setAttribute('theme', currentTheme);
     </script>
 
     {% block feeds %}
