@@ -133,6 +133,12 @@
                     {% elif user.deleted_at %}
                         <span class="profile-status-icon">🏃‍♀️</span>
                         <span class="profile-status-text">удалился из Клуба</span>
+                    {% elif not user.is_member %}
+                        <span class="profile-status-icon">⚖️</span>
+                        <span class="profile-status-text">на модерации</span>
+                        <span class="profile-status-text-small">
+                            интро ещё не прошло модерацию
+                        </span>
                     {% elif not user.is_active_member %}
                         <span class="profile-status-icon">️😴</span>
                         <span class="profile-status-text">аккаунт неактивен</span>
@@ -213,7 +219,7 @@
             </div>
         {% endif %}
 
-        {% if intro %}
+        {% if intro and (user.is_moderation_approved or (me and me.is_moderator)) %}
             <div class="block profile-intro">
                 <div class="profile-header">
                     <a href="{% url "show_post" "intro" intro.slug %}">Интро &rarr;</a>
