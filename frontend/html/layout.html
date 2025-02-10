@@ -9,6 +9,13 @@
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
+    <script>
+        // check and set theme before render. After render the theme switch is controlled by the <theme-switcher> component
+        // the component contains the same theme detection code as below. If you change this code, update the theme too
+        const theme = localStorage.getItem('theme') ?? "auto";
+        const currentTheme = theme === "auto" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : theme;
+        document.documentElement.setAttribute('theme', theme);
+    </script>
 
     {% block feeds %}
     <link rel="alternate" type="application/rss+xml"

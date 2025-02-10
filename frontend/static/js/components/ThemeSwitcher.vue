@@ -39,6 +39,8 @@ export default {
             this.$forceUpdate();
         },
         realTheme() {
+            // if you change this code, update the similar code in `html/layout.html`
+            // run on initialization to avoid background flickering
             return this.theme === "auto" ? (this.$media.matches ? "light" : "dark") : this.theme;
         },
     },
