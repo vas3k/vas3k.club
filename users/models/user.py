@@ -222,8 +222,12 @@ class User(models.Model, ModelDiffMixin):
         return (self.roles and self.ROLE_BANK in self.roles) or self.is_god
 
     @property
+    def is_moderation_approved(self):
+        return self.moderation_status == User.MODERATION_STATUS_APPROVED
+
+    @property
     def is_member(self):
-        return self.moderation_status == User.MODERATION_STATUS_APPROVED \
+        return self.is_moderation_approved \
                and not self.is_banned \
                and self.deleted_at is None
 
