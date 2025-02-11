@@ -15,6 +15,8 @@ class Achievement(models.Model):
     index = models.IntegerField(default=0)
     is_visible = models.BooleanField(default=True)
 
+    custom_message = models.TextField(null=True, blank=True)
+
     class Meta:
         db_table = "achievements"
         ordering = ["index"]

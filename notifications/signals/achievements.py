@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.template import loader
 from django_q.tasks import async_task
 
-from notifications.telegram.common import Chat, render_html_message, send_telegram_image
+from notifications.telegram.common import Chat, render_html_message, send_telegram_image, send_telegram_message
 from notifications.email.sender import send_transactional_email
 from users.models.achievements import UserAchievement
 
@@ -27,6 +27,12 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
                 chat=Chat(id=user.telegram_id),
                 image_url=achievement.image,
                 text=render_html_message("achievement.html", user=user, achievement=achievement),
+            )
+
+        if achievement.custom_message:
+            send_telegram_message(
+                chat=Chat(id=user.telegram_id),
+                text=achievement.custom_message,
             )
 
     # emails

@@ -39,7 +39,7 @@ def ordering(request):
         ],
         "feed_ordering_years": [
             {
-                "text": "за последний",
+                "text": "за 365 дней",
                 "value": ORDERING_TOP_YEAR,
             },
             *[
@@ -51,7 +51,7 @@ def ordering(request):
         ],
         "feed_ordering_months": [
             {
-                "text": "за последний",
+                "text": "за 30 дней",
                 "value": ORDERING_TOP_MONTH,
             },
             *[
