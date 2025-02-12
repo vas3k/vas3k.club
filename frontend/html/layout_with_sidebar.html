@@ -37,18 +37,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url "feed_label" "ama" %}" class="{% if label_code == "ama" %}feed-sidebar-menu-selected{% endif %}">
-                        ✋ AMA
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url "feed_label" "inside" %}" class="{% if label_code == "inside" %}feed-sidebar-menu-selected{% endif %}">
-                        💎️ Инсайды
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url "feed_type" "thread" %}" class="{% if post_type == "thread" %}feed-sidebar-menu-selected{% endif %}">
-                        🗄 Треды
+                    <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
+                        🏗 Проекты
                     </a>
                 </li>
                 <li>
@@ -62,18 +52,28 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url "feed_type" "link" %}" class="{% if post_type == "link" %}feed-sidebar-menu-selected{% endif %}">
-                        🔗 Ссылки
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
-                        🏗 Проекты
+                    <a href="{% url "feed_type" "thread" %}" class="{% if post_type == "thread" %}feed-sidebar-menu-selected{% endif %}">
+                        🗄 Треды
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_label" "approved" %}" class="{% if label_code == "approved" %}feed-sidebar-menu-selected{% endif %}">
                         👍 Офигенно
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_label" "inside" %}" class="{% if label_code == "inside" %}feed-sidebar-menu-selected{% endif %}">
+                        💎️ Инсайды
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_label" "post_of_month" %}" class="{% if label_code == "post_of_month" %}feed-sidebar-menu-selected{% endif %}">
+                        🏆 Посты месяца
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_label" "ama" %}" class="{% if label_code == "ama" %}feed-sidebar-menu-selected{% endif %}">
+                        ✋ AMA
                     </a>
                 </li>
             </ul>
