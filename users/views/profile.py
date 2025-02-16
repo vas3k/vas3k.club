@@ -65,12 +65,10 @@ def profile(request, user_slug):
             .filter(author=user, post__is_visible=True)\
             .order_by("-created_at")\
             .select_related("post")
-        friend = Friend.objects.filter(user_from=request.me, user_to=user).first()
         muted = UserMuted.objects.filter(user_from=request.me, user_to=user).first()
         note = UserNote.objects.filter(user_from=request.me, user_to=user).first()
     else:
         comments = None
-        friend = None
         muted = None
         note = None
 
@@ -95,7 +93,6 @@ def profile(request, user_slug):
         "posts": posts[:15],
         "posts_total": posts.count() if posts else 0,
         "similarity": similarity,
-        "friend": friend,
         "muted": muted,
         "note": note,
         "moderator_notes": moderator_notes,

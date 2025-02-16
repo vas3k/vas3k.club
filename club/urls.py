@@ -47,7 +47,7 @@ from bookmarks.views import bookmarks
 from search.views import search
 from users.api import api_profile, api_profile_by_telegram_id
 from users.views.delete_account import request_delete_account, confirm_delete_account
-from users.views.friends import toggle_friend, friends
+from users.views.friends import api_friend, friends
 from users.views.messages import on_review, rejected, banned
 from users.views.muted import toggle_mute, muted
 from users.views.notes import edit_note
@@ -102,7 +102,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
     path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),
-    path("user/<slug:user_slug>/friend/", toggle_friend, name="toggle_friend"),
+    path("user/<slug:user_slug>/friend/", api_friend, name="api_friend"),
     path("user/<slug:user_slug>/friends/", friends, name="friends"),
     path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
     path("user/<slug:user_slug>/muted/", muted, name="muted"),

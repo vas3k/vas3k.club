@@ -5,8 +5,7 @@
 
         {% if me and user != me %}
             <friend-button
-                url="{% url "toggle_friend" user.slug %}"
-                {% if friend %}is-friend-by-default{% endif %}>
+                url="{% url "api_friend" user.slug %}">
             </friend-button>
         {% endif %}
     </div>

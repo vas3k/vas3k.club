@@ -11,27 +11,34 @@ from users.models.user import User
 
 
 @api(require_auth=True)
-@require_http_methods(["POST"])
-def toggle_friend(request, user_slug):
-    if request.method != "POST":
-        raise Http404()
-
+@require_http_methods(["GET", "POST"])
+def api_friend(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
 
-    friend, is_created = Friend.add_friend(
-        user_from=request.me,
-        user_to=user_to,
-    )
+    if request.method == "GET":
+        friend = Friend.user_friends(request.me).filter(user_to=user_to).first()
+        if not friend:
+            raise Http404()
 
-    if not is_created:
-        Friend.delete_friend(
+        return {
+            "friend": friend.to_dict()
+        }
+
+    if request.method == "POST":
+        friend, is_created = Friend.add_friend(
             user_from=request.me,
             user_to=user_to,
         )
 
-    return {
-        "status": "created" if is_created else "deleted",
-    }
+        if not is_created:
+            Friend.delete_friend(
+                user_from=request.me,
+                user_to=user_to,
+            )
+
+        return {
+            "status": "created" if is_created else "deleted",
+        }
 
 
 @require_auth

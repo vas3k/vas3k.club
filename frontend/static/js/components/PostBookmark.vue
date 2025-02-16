@@ -32,7 +32,7 @@ export default {
     methods: {
         toggle() {
             this.isLoading = true;
-            return ClubApi.ajaxify(this.bookmarkUrl, (data) => {
+            return ClubApi.post(this.bookmarkUrl, (data) => {
                 this.isLoading = false;
                 this.isBookmarked = !this.isBookmarked;
             });

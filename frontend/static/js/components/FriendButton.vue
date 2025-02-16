@@ -1,5 +1,8 @@
 <template>
-    <a v-if="isFriend" class="button button-inverted friend-button" @click="toggle">
+    <a v-if="isLoading" class="button button-inverted friend-button">
+        <span class="friend-button-status">...</span>
+    </a>
+    <a v-else-if="isFriend" class="button button-inverted friend-button" @click="toggle">
         <span class="friend-button-icon">✅</span>
         <span class="friend-button-status">Мой чувак</span>
     </a>
@@ -32,10 +35,27 @@ export default {
             isLoading: false,
         };
     },
+    created() {
+        if (!this.isFriendByDefault) {
+            this.checkFriendshipStatus();
+        }
+    },
     methods: {
+        checkFriendshipStatus() {
+            this.isLoading = true;
+
+            return ClubApi.get(this.url, (data) => {
+                this.isLoading = false;
+                if (data.error) {
+                    this.isFriend = false;
+                } else {
+                    this.isFriend = true;
+                }
+            });
+        },
         toggle() {
             this.isLoading = true;
-            return ClubApi.ajaxify(this.url, (data) => {
+            return ClubApi.post(this.url, (data) => {
                 this.isLoading = false;
 
                 if (data.status === "created") {
