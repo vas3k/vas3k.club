@@ -31,6 +31,14 @@ class Badge(models.Model):
     def visible_objects(cls):
         return cls.objects.filter(is_visible=True)
 
+    @classmethod
+    def badges_for_post_or_comment(cls):
+        return cls.visible_objects().exclude(code="thanks").all()
+
+    @classmethod
+    def badges_for_intro(cls):
+        return cls.visible_objects().filter(code="thanks").all()
+
 
 class UserBadge(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

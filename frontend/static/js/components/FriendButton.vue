@@ -1,11 +1,11 @@
 <template>
-    <a v-if="isFriend" class="profile-status clickable" @click="toggle">
-        <span class="profile-status-icon">✅</span>
-        <span class="profile-status-status">Мой чувак</span>
+    <a v-if="isFriend" class="button button-inverted friend-button" @click="toggle">
+        <span class="friend-button-icon">✅</span>
+        <span class="friend-button-status">Мой чувак</span>
     </a>
-    <a v-else class="profile-status clickable" @click="toggle">
-        <span class="profile-status-icon">🤝</span>
-        <span class="profile-status-status">Добавить в мои чуваки</span>
+    <a v-else class="button button-inverted friend-button" @click="toggle">
+        <span class="friend-button-icon-big">+</span>
+        <span class="friend-button-status">Подписаться</span>
     </a>
 </template>
 

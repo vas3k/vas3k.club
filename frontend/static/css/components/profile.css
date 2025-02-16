@@ -12,17 +12,29 @@
         background-color: var(--opposite-bg-color);
     }
 
-        .profile-card a {
-            color: var(--opposite-text-color);
+        .profile-card-photo {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-            .profile-card a:hover {
-                color: var(--opposite-text-color);
-            }
-
-        .profile-card-photo {
-            display: block;
-            text-align: left;
+        .profile-card-age {
+            font-size: 90%;
+            max-width: 60%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 3px;
+            line-height: 1.1em;
+            border-radius: 5px;
+            min-width: 25px;
+            padding: 6px 5px 6px;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            position: relative;
+            top: -17px;
         }
 
         .profile-card-info {
@@ -63,12 +75,14 @@
 
             .profile-user-fullname {
                 margin-right: 15px;
+                color: var(--opposite-text-color);
             }
 
             .profile-user-nickname {
                 font-weight: 300;
                 opacity: 0.4;
                 font-size: 88%;
+                color: var(--opposite-text-color);
             }
 
         .profile-user-job {
@@ -94,6 +108,10 @@
 
             .profile-user-bio img {
                 max-width: 200px;
+            }
+
+            .profile-user-bio a {
+                color: var(--opposite-text-color);
             }
 
     .profile-header {
@@ -134,10 +152,6 @@
         margin-bottom: 30px;
         overflow: hidden;
     }
-
-        .profile-friend-button {
-
-        }
 
         .profile-friend-button-comment {
             font-size: 90%;
@@ -515,3 +529,20 @@
             .profile-note-extended .profile-note-form {
                 display: flex;
             }
+
+.friend-button {
+    position: relative;
+    top: -15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 17px;
+}
+
+    .friend-button-icon-big {
+        font-weight: 700;
+        font-size: 27px;
+        height: 20px;
+    }

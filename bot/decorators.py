@@ -15,6 +15,9 @@ def is_moderator(callback):
             update.effective_chat.send_message("❌ Для этого действия нужно быть в чате модераторов")
             return None
 
+        # HACK: remove when you figure out how to fix it
+        close_old_connections()
+
         moderator = User.objects.filter(telegram_id=update.effective_user.id).first()
         if not moderator or not moderator.is_moderator:
             update.effective_chat.send_message(

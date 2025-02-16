@@ -82,24 +82,6 @@
             align-items: center;
         }
 
-        .user-age {
-            font-size: 70%;
-            max-width: 50%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 3px;
-            line-height: 1.1em;
-            border-radius: 5px;
-            min-width: 25px;
-            padding: 6px 5px 6px;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            position: relative;
-            top: -5px;
-        }
-
     </style>
 {% endblock %}
 
@@ -146,16 +128,16 @@
                                 <div class="avatar profile-user-avatar"><img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" /></div>
 
                                 {% if not hide_stats %}
-                                    <div class="user-age">
+                                    <div class="profile-card-age">
                                         {% if user.membership_created_days < 40 %}
                                             <span class="profile-status-number">{{ user.membership_created_days | ceil | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }}</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
                                         {% elif user.membership_created_days <= 360 %}
                                             <span class="profile-status-number">{{ user.membership_created_days | days_to_months | cool_number  }}</span>
-                                            <span class="profile-status-text">мес.</span>
+                                            <span class="profile-status-text">мес. в Клубе</span>
                                         {% else %}
                                             <span class="profile-status-number">{{ user.membership_created_days | days_to_years | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }}</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
                                         {% endif %}
                                     </div>
                                 {% endif %}
