@@ -481,6 +481,7 @@
 .feed-post-type-intro,
 .feed-post-type-weekly_digest {
     display: flex;
+    justify-content: flex-start;
     font-size: 120%;
     padding: 0 0 20px 0;
     margin-left: 40px;
