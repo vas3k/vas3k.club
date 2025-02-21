@@ -35,7 +35,9 @@
                                 {% if user_badge.comment %}
                                     за комментарий к посту <strong><a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a></strong>.
                                 {% elif user_badge.post %}
-                                    за пост <strong><a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a></strong>
+                                    {% if user_badge.post.type != "intro" %}
+                                        за пост <strong><a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a></strong>
+                                    {% endif %}
                                 {% else %}
                                     за контент, который был удалён
                                 {% endif %}
