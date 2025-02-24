@@ -1,5 +1,5 @@
 from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.views.decorators.http import require_http_methods
 
@@ -44,13 +44,11 @@ def api_friend(request, user_slug):
 @require_auth
 def friends(request, user_slug):
     if request.me.slug != user_slug:
-        return HttpResponseForbidden()
+        return redirect("friends", user_slug=request.me.slug, permanent=False)
 
-    user = get_object_or_404(User, slug=user_slug)
-
-    user_friends = Friend.user_friends(user_from=user)
+    user_friends = Friend.user_friends(user_from=request.me)
 
     return render(request, "users/friends/index.html", {
-        "user": user,
+        "user": request.me,
         "friends_paginated": paginate(request, user_friends, page_size=settings.FRIENDS_PAGE_SIZE)
     })
