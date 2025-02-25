@@ -132,21 +132,26 @@ def pay(request):
 def stop_subscription(request, subscription_id):
     try:
         subscription = stripe.Subscription.retrieve(subscription_id)
+    except stripe.error.InvalidRequestError:
+        return render(request, "error.html", {
+            "title": "Подписка не найдена",
+            "message": "Подписка с таким ID не найдена. Возможно, она уже была отменена."
+        })
 
-        if subscription.status == "canceled":
-            return render(request, "payments/messages/subscription_stopped.html")
+    if subscription.status == "canceled":
+        return render(request, "payments/messages/subscription_stopped.html")
 
-        if subscription.status == "incomplete":
-            checkout_sessions = stripe.checkout.Session.list(
-                subscription=subscription_id,
-                status="open"
-            )
+    if subscription.status == "incomplete":
+        try:
+            checkout_sessions = stripe.checkout.Session.list(subscription=subscription_id)
+            for session in checkout_sessions.auto_paging_iter():
+                if session.status == "open":
+                    stripe.checkout.Session.expire(session.id)
+        except stripe.error.InvalidRequestError:
+            log.exception("Failed to expire checkout session", exc_info=True)
 
-            if checkout_sessions and checkout_sessions.data:
-                # expire the checkout session, otherwise Stripe throws and error
-                stripe.checkout.Session.expire(checkout_sessions.data[0].id)
-
-        stripe.Subscription.delete(subscription_id)
+    try:
+        stripe.Subscription.cancel(subscription_id)
     except stripe.error.InvalidRequestError as e:
         return render(request, "error.html", {
             "title": "Какая-то ошибочка",
