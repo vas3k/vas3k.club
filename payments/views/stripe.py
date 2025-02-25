@@ -131,16 +131,28 @@ def pay(request):
 @require_auth
 def stop_subscription(request, subscription_id):
     try:
+        subscription = stripe.Subscription.retrieve(subscription_id)
+
+        if subscription.status == "canceled":
+            return render(request, "payments/messages/subscription_stopped.html")
+
+        if subscription.status == "incomplete":
+            checkout_sessions = stripe.checkout.Session.list(
+                subscription=subscription_id,
+                status="open"
+            )
+
+            if checkout_sessions and checkout_sessions.data:
+                # expire the checkout session, otherwise Stripe throws and error
+                stripe.checkout.Session.expire(checkout_sessions.data[0].id)
+
         stripe.Subscription.delete(subscription_id)
-    except stripe.error.NameError:
+    except stripe.error.InvalidRequestError as e:
         return render(request, "error.html", {
-            "title": "Подписка не найдена",
-            "message": "В нашей базе нет подписки с таким ID"
-        })
-    except stripe.error.InvalidRequestError:
-        return render(request, "error.html", {
-            "title": "Подписка уже отменена 👌",
-            "message": "Stripe сказал, что эта подписка уже отменена, так что всё ок"
+            "title": "Какая-то ошибочка",
+            "message": f"Stripe сказал: {str(e)}. "
+                       f"Попробуйте отменить подписку через их Customer Portal: {settings.STRIPE_CUSTOMER_PORTAL_URL}"
+                       f" (email тот же, что и здесь)"
         })
 
     return render(request, "payments/messages/subscription_stopped.html")
