@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.utils.translation import gettext as _
 
@@ -59,7 +60,8 @@ def ordering(request):
                     "text": f"{_(d.strftime("%B"))} {d.year}".lower(),
                     "value": f"{ORDERING_TOP_MONTH}:{d.year}-{d.month}",
                 } for d in [
-                    datetime.now().replace(day=1) - timedelta(days=30 * i) for i in range(ORDERING_LAST_MONTHS)
+                    datetime.utcnow().replace(day=1) - relativedelta(months=i)
+                    for i in range(ORDERING_LAST_MONTHS)
                 ]
             ]
         ]
