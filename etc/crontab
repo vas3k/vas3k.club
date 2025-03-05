@@ -7,6 +7,7 @@
 0 12 * * * root cd /app && python3 manage.py send_subscription_expired --production true  >/proc/1/fd/1 2>/proc/1/fd/2
 0 2 * * 6 root cd /app && python3 manage.py cleanup_post_views  >/proc/1/fd/1 2>/proc/1/fd/2
 0 2 * * 7 root cd /app && python3 manage.py rebuild_search_index  >/proc/1/fd/1 2>/proc/1/fd/2
+0 0 * * 7 root cd /app && python3 manage.py count_chat_members  >/proc/1/fd/1 2>/proc/1/fd/2
 0 8 * * * root cd /app && python3 manage.py replay_stuck_reviews  >/proc/1/fd/1 2>/proc/1/fd/2
 0 4 * * * root find /app/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete >/proc/1/fd/1 2>/proc/1/fd/2
 13 * * * * root cd /app && python3 manage.py update_hotness  >/proc/1/fd/1 2>/proc/1/fd/2

@@ -23,6 +23,7 @@ class Room(models.Model):
     chat_name = models.CharField(max_length=128, null=True, blank=True)
     chat_url = models.URLField(null=True, blank=True)
     chat_id = models.CharField(max_length=32, null=True, blank=True)
+    chat_member_count = models.IntegerField(default=0)
     send_new_posts_to_chat = models.BooleanField(default=True)
     send_new_comments_to_chat = models.BooleanField(default=False)
 

@@ -63,6 +63,10 @@
                                     {% if room.subtitle %}
                                         <span class="network-channel-description">{{ room.subtitle | safe }}</span>
                                     {% endif %}
+
+                                    {% if room.chat_member_count %}
+                                        <span class="network-channel-count"><i class="fas fa-user"></i> {{ room.chat_member_count }}</span>
+                                    {% endif %}
                                 </a>
                             {% endif %}
                         {% endfor %}

@@ -41,6 +41,7 @@
             {% if room.chat_url and room.chat_name %}
                 <span class="feed-topic-header-footer">
                     <i class="fab fa-telegram-plane"></i>&nbsp;<strong>Чат:</strong> <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank">{{ room.chat_name }}</a>
+                    {% if room.chat_member_count %}<small>(~{{ room.chat_member_count }} человек)</small>{% endif %}
                 </span>
             {% endif %}
         </div>

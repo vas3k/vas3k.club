@@ -159,6 +159,10 @@
         font-size: 115%;
     }
 
+        .feed-topic-header-footer small {
+            font-size: 70%;
+        }
+
     .feed-topic-header-settings {
         display: flex;
         flex-wrap: wrap;
