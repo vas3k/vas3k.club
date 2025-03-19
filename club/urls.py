@@ -31,7 +31,6 @@ from payments.views.common import membership_expired
 from payments.api import api_gift_days
 from invites.api import api_gift_invite_link
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
-from payments.views.camp import stripe_camp_webhook
 from payments.views.crypto import crypto, coinbase_webhook
 from posts.api import md_show_post, api_show_post, json_feed
 from posts.models.post import Post
@@ -45,6 +44,7 @@ from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vo
     toggle_post_subscription, delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
+from tickets.views import stripe_ticket_sale_webhook
 from users.api import api_profile, api_profile_by_telegram_id
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import api_friend, friends
@@ -92,7 +92,7 @@ urlpatterns = [
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
     path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
-    path("monies/stripe/webhook_camp/", stripe_camp_webhook, name="stripe_camp_webhook"),
+    path("monies/stripe/webhook_tickets/", stripe_ticket_sale_webhook, name="stripe_tickets_webhook"),
     path("monies/coinbase/webhook/", coinbase_webhook, name="coinbase_webhook"),
     path("monies/gift/<int:days>/<slug:user_slug>.json", api_gift_days, name="api_gift_days"),
 

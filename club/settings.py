@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rooms.apps.RoomsConfig",
     "misc.apps.MiscConfig",
     "invites.apps.InvitesConfig",
+    "tickets.apps.TicketsConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
