@@ -40,7 +40,7 @@ def stripe_ticket_sale_webhook(request):
                 expand=["line_items", "line_items.data.price.product"]
             )
 
-            emails_to_send = set()
+            ticket_codes_processed = set()
 
             # Process each item in the purchase
             if session_with_items.line_items:
@@ -56,6 +56,7 @@ def stripe_ticket_sale_webhook(request):
                             limit_quantity=-1  # No limit by default
                         )
                     )
+                    ticket_codes_processed.add(ticket.code)
 
                     # Create ticket sales (one for each quantity)
                     for _ in range(item.quantity):
@@ -88,17 +89,19 @@ def stripe_ticket_sale_webhook(request):
                             achievement=ticket.achievement,
                         )
 
-                    # Handle emails
-                    if ticket.email_template:
-                        emails_to_send.add(ticket.email_template)
-
-            for email_template in emails_to_send:
-                confirmation_template = loader.get_template(email_template)
+            # Send confirmation emails (unique by ticket code)
+            emails_to_send = Ticket.objects.filter(code__in=ticket_codes_processed)
+            for ticket_email_template in emails_to_send:
+                confirmation_template = loader.get_template("emails/custom_markdown.html")
                 async_task(
                     send_transactional_email,
                     recipient=customer_email,
-                    subject=f"🔥 Ждём вас на Вастрик Кэмпе 2025",
-                    html=confirmation_template.render({"user": user})
+                    subject=ticket_email_template.send_email_title,
+                    html=confirmation_template.render({
+                        "user": user,
+                        "title": ticket_email_template.send_email_title,
+                        "body": ticket_email_template.send_email_markdown,
+                    })
                 )
 
             return HttpResponse("[ok]", status=200)
@@ -113,7 +116,7 @@ def stripe_ticket_sale_webhook(request):
 def deactivate_payment_link(payment_link_id):
     try:
         # Call Stripe API to deactivate the payment link
-        stripe.payment_link.modify(
+        stripe.PaymentLink.modify(
             payment_link_id,
             active=False
         )

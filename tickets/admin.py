@@ -10,7 +10,6 @@ class TicketsAdmin(admin.ModelAdmin):
         "stripe_product_id",
         "stripe_payment_link_id",
         "achievement",
-        "email_template",
         "tickets_sold",
         "limit_quantity",
     )

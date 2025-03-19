@@ -11,7 +11,9 @@ class Ticket(models.Model):
     stripe_payment_link_id = models.CharField(max_length=255, null=True, blank=True)
 
     achievement = models.ForeignKey("users.Achievement", on_delete=models.SET_NULL, null=True, blank=True)
-    email_template = models.CharField(max_length=255, null=True, blank=True)
+
+    send_email_title = models.CharField(max_length=255, null=True, blank=True)
+    send_email_markdown = models.TextField(null=True, blank=True)
 
     tickets_sold = models.IntegerField(default=0)
     limit_quantity = models.IntegerField(default=-1)
