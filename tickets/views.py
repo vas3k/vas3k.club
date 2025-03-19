@@ -4,11 +4,11 @@ import os
 from django.http import HttpResponse
 from django.template import loader
 from django_q.tasks import async_task
-import stripe
 
 from club.exceptions import BadRequest
 from notifications.email.sender import send_transactional_email
 
+from payments.service import stripe
 from payments.helpers import parse_stripe_webhook_event
 from tickets.models import Ticket, TicketSale
 from users.models.achievements import UserAchievement
@@ -16,10 +16,8 @@ from users.models.user import User
 
 log = logging.getLogger()
 
-STRIPE_CAMP_WEBHOOK_SECRET = os.getenv("STRIPE_CAMP_WEBHOOK_SECRET")
-STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
-
-# Configure Stripe API
+STRIPE_CAMP_WEBHOOK_SECRET = os.getenv("STRIPE_TICKETS_WEBHOOK_SECRET")
+STRIPE_API_KEY = os.getenv("STRIPE_TICKETS_API_KEY")
 stripe.api_key = STRIPE_API_KEY
 
 

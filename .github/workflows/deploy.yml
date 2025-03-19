@@ -50,9 +50,10 @@ jobs:
           secret_TELEGRAM_HELP_DESK_BOT_TOKEN: ${{ secrets.TELEGRAM_HELP_DESK_BOT_TOKEN }}
           secret_STRIPE_ACTIVE: ${{ secrets.STRIPE_ACTIVE }}
           secret_STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+          secret_STRIPE_TICKETS_API_KEY: ${{ secrets.STRIPE_TICKETS_API_KEY }}
           secret_STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
           secret_STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-          secret_STRIPE_CAMP_WEBHOOK_SECRET: ${{ secrets.STRIPE_CAMP_WEBHOOK_SECRET }}
+          secret_STRIPE_TICKETS_WEBHOOK_SECRET: ${{ secrets.STRIPE_TICKETS_WEBHOOK_SECRET }}
           secret_COINBASE_WEBHOOK_SECRET: ${{ secrets.COINBASE_WEBHOOK_SECRET }}
           secret_PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}
           secret_PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}
