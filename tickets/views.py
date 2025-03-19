@@ -6,7 +6,9 @@ from django.template import loader
 from django_q.tasks import async_task
 
 from club.exceptions import BadRequest
+from common.markdown.markdown import markdown_tg
 from notifications.email.sender import send_transactional_email
+from notifications.telegram.common import Chat, send_telegram_message
 
 from payments.service import stripe
 from payments.helpers import parse_stripe_webhook_event
@@ -101,6 +103,14 @@ def stripe_ticket_sale_webhook(request):
                         "body": ticket_email_template.send_email_markdown,
                     })
                 )
+
+                if user.telegram_id:
+                    async_task(
+                        send_telegram_message,
+                        chat=Chat(id=user.telegram_id),
+                        text=f"<b>{ticket_email_template.send_email_title}</b>\n\n"
+                             f"{markdown_tg(ticket_email_template.send_email_markdown)}",
+                    )
 
             return HttpResponse("[ok]", status=200)
 
