@@ -6,13 +6,15 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import render, redirect
+from django_q.tasks import async_task
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from common.dates import random_date_in_range
 from invites.models import Invite
-from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm
+from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm, GodmodeMassEmailForm
 from landing.models import GodSettings
+from notifications.email.custom import send_custom_mass_email
 from notifications.email.invites import send_invited_email, send_account_renewed_email
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from payments.models import Payment
@@ -201,3 +203,24 @@ def godmode_sunday_posts(request):
         "posts": posts
     })
 
+
+@require_auth
+def godmode_mass_email(request):
+    if not request.me.is_god:
+        raise AccessDenied()
+
+    if request.method == "POST":
+        form = GodmodeMassEmailForm(request.POST, request.FILES)
+        if form.is_valid():
+            async_task(
+                send_custom_mass_email,
+                emails_or_slugs=[u.strip().lstrip("@") for u in form.cleaned_data["recipients"].strip().split(",") if u.strip()],
+                title=form.cleaned_data["email_title"],
+                text=form.cleaned_data["email_text"],
+                is_promo=form.cleaned_data["is_promo"],
+            )
+            return redirect("godmode_settings")
+    else:
+        form = GodmodeMassEmailForm()
+
+    return render(request, "admin/simple_form.html", {"form": form})

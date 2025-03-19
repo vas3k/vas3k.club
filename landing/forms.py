@@ -60,3 +60,40 @@ class GodmodeInviteForm(forms.Form):
         required=True,
         initial=365,
     )
+
+
+class GodmodeMassEmailForm(forms.Form):
+    email_title = forms.CharField(
+        label="Заголовок",
+        required=True,
+        max_length=128,
+    )
+
+    email_text = forms.CharField(
+        label="Текст письма в Markdown",
+        required=True,
+        max_length=10000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 50000,
+                "class": "markdown-editor-full",
+            }
+        ),
+    )
+
+    recipients = forms.CharField(
+        label="Получатели: имейлы или ники в Клубе через запятую",
+        required=True,
+        max_length=10000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 50000,
+            }
+        ),
+    )
+
+    is_promo = forms.BooleanField(
+        label="Это промо?",
+        required=False,
+    )
+

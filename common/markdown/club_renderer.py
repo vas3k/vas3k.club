@@ -107,5 +107,5 @@ class ClubRenderer(mistune.HTMLRenderer):
                 classes, title = value.split(" ", 1)
             except ValueError:
                 classes, title = value, ""
-            return title, [c for c in classes.split(".") if c.strip()]
+            return title, [c for c in escape_html(classes).split(".") if c.strip()]
         return value, []
