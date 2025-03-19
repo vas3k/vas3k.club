@@ -22,6 +22,9 @@ class Ticket(models.Model):
         db_table = "tickets"
         ordering = ["code"]
 
+    def __str__(self):
+        return self.code
+
 
 class TicketSale(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

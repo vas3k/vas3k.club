@@ -18,8 +18,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--users", nargs=1, type=str, required=True)
-        parser.add_argument("--email-template", nargs=1, type=str, required=True)
-        parser.add_argument("--telegram-template", nargs=1, type=str, required=False)
+        parser.add_argument("--text", nargs=1, type=str, required=True)
         parser.add_argument("--title", nargs=1, type=str, required=True)
         parser.add_argument("--promo", nargs=1, type=bool, required=False, default=False)
 
@@ -27,6 +26,13 @@ class Command(BaseCommand):
         # get users by slugs or emails from the database
         emails_or_slugs = options.get("users")[0].split(",")
         users = User.objects.filter(Q(slug__in=emails_or_slugs) | Q(email__in=emails_or_slugs)).all()
+
+        is_promo = options.get("promo")
+        text = options.get("email_template")[0]
+        title = options.get("title")[0]
+        if not text or not title:
+            self.stdout.write("No text or title provided. Aborted")
+            return
 
         not_found_users = set(emails_or_slugs) - {user.email for user in users}
         self.stdout.write(
@@ -39,14 +45,7 @@ class Command(BaseCommand):
             self.stdout.write("Aborted")
             return
 
-        # find all necessary templates for email and telegram
-        email_template = loader.get_template(options.get("email_template")[0])
-
-        telegram_template = None
-        if options.get("telegram_template"):
-            telegram_template = loader.get_template(options.get("telegram_template")[0])
-
-        is_promo = options.get("promo")
+        email_template = loader.get_template("emails/custom_markdown.html")
 
         # send emails to existing users
         for user in users:
@@ -60,16 +59,20 @@ class Command(BaseCommand):
             sender = send_mass_email if is_promo else send_transactional_email
             sender(
                 recipient=user.email,
-                subject=options.get("title")[0],
-                html=email_template.render({"user": user}),
+                subject=title,
+                html=email_template.render({
+                    "user": user,
+                    "title": title,
+                    "body": text,
+                }),
                 unsubscribe_link=f"{settings.APP_HOST}/notifications/unsubscribe/{user.id}/{secret_code}/",
             )
 
-            if telegram_template and user.telegram_id:
+            if user.telegram_id:
                 self.stdout.write(f"Sending telegram message to {user.telegram_id}...")
                 send_telegram_message(
                     chat=Chat(id=user.telegram_id),
-                    text=telegram_template.render({"user": user}),
+                    text=f"<b>{title}</b>\n\n{text}",
                 )
 
         # send emails to not found users
@@ -77,8 +80,11 @@ class Command(BaseCommand):
             self.stdout.write(f"Sending email to {email}...")
             send_transactional_email(
                 recipient=email,
-                subject=options.get("title")[0],
-                html=email_template.render(),
+                subject=title,
+                html=email_template.render({
+                    "title": title,
+                    "body": text,
+                }),
             )
 
         self.stdout.write("Done 🥙")

@@ -6,10 +6,6 @@ from slugify import slugify
 
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
-SPECIAL_CSS_CLASSES = {
-    "-": "text-body-image-full"
-}
-
 
 class ClubRenderer(mistune.HTMLRenderer):
     def text(self, text):
@@ -33,12 +29,15 @@ class ClubRenderer(mistune.HTMLRenderer):
             if embed:
                 return embed
 
+        text, css_classes = self.split_title_and_css_classes(text or "")
+
         if text is None:
             text = link
 
         # here's some magic of unescape->unquote->escape
         # to fix cyrillic (and other non-latin) wikipedia URLs
-        return f'<a href="{self._safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>'
+        return (f'<a class="{' '.join(css_classes)}" '
+                f'href="{self._safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
 
     def image(self, src, alt="", title=None):
         embed = self.embed(src, alt, title)
@@ -65,15 +64,10 @@ class ClubRenderer(mistune.HTMLRenderer):
         return None
 
     def simple_image(self, src, alt="", title=None):
-        css_classes = ""
-        title = title or alt
-        if title in SPECIAL_CSS_CLASSES:
-            css_classes = SPECIAL_CSS_CLASSES[title]
-            title = ""
-
+        title, css_classes = self.split_title_and_css_classes(title or alt)
         image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
-        return f'<figure class="{css_classes}">{image_tag}{caption}</figure>'
+        return f'<figure class="{' '.join(css_classes)}">{image_tag}{caption}</figure>'
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
@@ -92,17 +86,12 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<figure>{video_tag}{caption}</figure>"
 
     def video(self, src, alt="", title=None):
-        css_classes = ""
-        title = title or alt
-        if title in SPECIAL_CSS_CLASSES:
-            css_classes = SPECIAL_CSS_CLASSES[title]
-            title = ""
-
+        title, css_classes = self.split_title_and_css_classes(title or alt)
         video_tag = (
             f'<video src="{escape_html(src)}" controls muted playsinline>{escape_html(alt)}</video>'
         )
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
-        return f'<figure class="{css_classes}">{video_tag}{caption}</figure>'
+        return f'<figure class="{' '.join(css_classes)}">{video_tag}{caption}</figure>'
 
     def tweet(self, src, alt="", title=None):
         tweet_match = TWITTER_RE.match(src)
@@ -110,3 +99,13 @@ class ClubRenderer(mistune.HTMLRenderer):
                       f'<a href="{tweet_match.group(1)}"></a></blockquote><br>' \
                       f'<a href="{src}" target="_blank">{src}</a>'
         return twitter_tag
+
+    @classmethod
+    def split_title_and_css_classes(cls, value) -> [str, list]:
+        if value.startswith("."):
+            try:
+                classes, title = value.split(" ", 1)
+            except ValueError:
+                classes, title = value, ""
+            return title, [c for c in classes.split(".") if c.strip()]
+        return value, []

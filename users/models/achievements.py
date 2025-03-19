@@ -21,6 +21,9 @@ class Achievement(models.Model):
         db_table = "achievements"
         ordering = ["index"]
 
+    def __str__(self):
+        return self.name
+
     def achievement_users(self):
         return User.objects\
             .filter(achievements__achievement_id=self.code)\

@@ -31,16 +31,14 @@ def stripe_ticket_sale_webhook(request):
         session = event["data"]["object"]
         session_id = session["id"]
         customer_email = session["customer_details"]["email"].lower()
-
         user = User.objects.filter(email=customer_email).first()
+        ticket_codes_processed = set()
 
         try:
             session_with_items = stripe.checkout.Session.retrieve(
                 session_id,
                 expand=["line_items", "line_items.data.price.product"]
             )
-
-            ticket_codes_processed = set()
 
             # Process each item in the purchase
             if session_with_items.line_items:
@@ -115,7 +113,6 @@ def stripe_ticket_sale_webhook(request):
 
 def deactivate_payment_link(payment_link_id):
     try:
-        # Call Stripe API to deactivate the payment link
         stripe.PaymentLink.modify(
             payment_link_id,
             active=False

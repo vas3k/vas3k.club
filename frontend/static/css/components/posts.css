@@ -470,7 +470,7 @@
     }
 
     @media only screen and (min-width : 1100px) {
-        .text-body-image-full {
+        .image-wide {
             max-width: none !important;
             width: 170% !important;
             position: relative;
