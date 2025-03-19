@@ -68,12 +68,16 @@ def stripe_ticket_sale_webhook(request):
                                 "price_paid": item.price.unit_amount / 100,  # Convert from cents
                                 "currency": item.price.currency,
                                 "purchased_at": session["created"],
-                            }
+                            },
+                            session=session,
                         )
 
                     # Check if number of sales is exceeded
+                    ticket_sales_count = TicketSale.objects.filter(ticket=ticket).count()
+                    Ticket.objects.filter(stripe_product_id=stripe_product_id).update(
+                        tickets_sold=ticket_sales_count
+                    )
                     if ticket.limit_quantity >= 0 and ticket.stripe_payment_link_id:
-                        ticket_sales_count = TicketSale.objects.filter(ticket=ticket).count()
                         if ticket_sales_count >= ticket.limit_quantity:
                             deactivate_payment_link(ticket.stripe_payment_link_id)
 

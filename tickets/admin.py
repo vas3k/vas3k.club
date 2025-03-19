@@ -11,6 +11,7 @@ class TicketsAdmin(admin.ModelAdmin):
         "stripe_payment_link_id",
         "achievement",
         "email_template",
+        "tickets_sold",
         "limit_quantity",
     )
     ordering = ("code",)

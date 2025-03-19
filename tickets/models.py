@@ -13,6 +13,7 @@ class Ticket(models.Model):
     achievement = models.ForeignKey("users.Achievement", on_delete=models.SET_NULL, null=True, blank=True)
     email_template = models.CharField(max_length=255, null=True, blank=True)
 
+    tickets_sold = models.IntegerField(default=0)
     limit_quantity = models.IntegerField(default=-1)
 
     class Meta:
@@ -29,6 +30,7 @@ class TicketSale(models.Model):
 
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="sales")
     metadata = models.JSONField(default=dict)
+    session = models.JSONField(default=dict)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
