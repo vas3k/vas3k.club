@@ -10,7 +10,7 @@ from users.models.user import User
 log = logging.getLogger(__name__)
 
 
-def parse_stripe_webhook_event(request, webhook_secret):
+def parse_stripe_webhook_event(request, webhook_secret, **kwargs):
     payload = request.body
     sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
 
@@ -19,7 +19,7 @@ def parse_stripe_webhook_event(request, webhook_secret):
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, sig_header, webhook_secret
+            payload, sig_header, webhook_secret, **kwargs
         )
     except ValueError:
         raise BadRequest(code=400, message="[invalid payload]")

@@ -1,6 +1,7 @@
 import logging
 import os
 
+import stripe
 from django.http import HttpResponse
 from django.template import loader
 from django_q.tasks import async_task
@@ -10,7 +11,6 @@ from common.markdown.markdown import markdown_tg
 from notifications.email.sender import send_transactional_email
 from notifications.telegram.common import Chat, send_telegram_message
 
-from payments.service import stripe
 from payments.helpers import parse_stripe_webhook_event
 from tickets.models import Ticket, TicketSale
 from users.models.achievements import UserAchievement
@@ -18,14 +18,17 @@ from users.models.user import User
 
 log = logging.getLogger()
 
-STRIPE_CAMP_WEBHOOK_SECRET = os.getenv("STRIPE_TICKETS_WEBHOOK_SECRET")
-STRIPE_API_KEY = os.getenv("STRIPE_TICKETS_API_KEY")
-stripe.api_key = STRIPE_API_KEY
+STRIPE_TICKETS_WEBHOOK_SECRET = os.getenv("STRIPE_TICKETS_WEBHOOK_SECRET")
+STRIPE_TICKETS_API_KEY = os.getenv("STRIPE_TICKETS_API_KEY")
 
 
 def stripe_ticket_sale_webhook(request):
     try:
-        event = parse_stripe_webhook_event(request, STRIPE_CAMP_WEBHOOK_SECRET)
+        event = parse_stripe_webhook_event(
+            request=request,
+            webhook_secret=STRIPE_TICKETS_WEBHOOK_SECRET,
+            api_key=STRIPE_TICKETS_API_KEY
+        )
     except BadRequest as ex:
         return HttpResponse(ex.message, status=ex.code)
 
@@ -39,7 +42,8 @@ def stripe_ticket_sale_webhook(request):
         try:
             session_with_items = stripe.checkout.Session.retrieve(
                 session_id,
-                expand=["line_items", "line_items.data.price.product"]
+                expand=["line_items", "line_items.data.price.product"],
+                api_key=STRIPE_TICKETS_API_KEY
             )
 
             # Process each item in the purchase
@@ -125,7 +129,8 @@ def deactivate_payment_link(payment_link_id):
     try:
         stripe.PaymentLink.modify(
             payment_link_id,
-            active=False
+            active=False,
+            api_key=STRIPE_TICKETS_API_KEY
         )
         log.info(f"Payment link {payment_link_id} has been deactivated due to sales limit")
         return True
