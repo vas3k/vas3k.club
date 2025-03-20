@@ -72,3 +72,9 @@ p {
 
     <br><br><br>
 {% endblock %}
+
+{% block unsubscribe %}
+    <p style="font-size: 12px;">
+        Если вам больше не хочется никогда получать никаких писем от Клуба,<br> нажмите <a href="{{ settings.APP_HOST }}/notifications/unsubscribe/%user_id%/%secret_code%/">отписаться вообще от всего</a>.
+    </p>
+{% endblock %}

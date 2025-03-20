@@ -4,6 +4,7 @@ from urllib.parse import unquote
 from mistune import escape_html
 from slugify import slugify
 
+from common.markdown.common import split_title_and_css_classes
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
 
@@ -29,7 +30,7 @@ class ClubRenderer(mistune.HTMLRenderer):
             if embed:
                 return embed
 
-        text, css_classes = self.split_title_and_css_classes(text or "")
+        text, css_classes = split_title_and_css_classes(text or "")
 
         if text is None:
             text = link
@@ -64,7 +65,7 @@ class ClubRenderer(mistune.HTMLRenderer):
         return None
 
     def simple_image(self, src, alt="", title=None):
-        title, css_classes = self.split_title_and_css_classes(title or alt)
+        title, css_classes = split_title_and_css_classes(title or alt)
         image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f'<figure class="{' '.join(css_classes)}">{image_tag}{caption}</figure>'
@@ -86,7 +87,7 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<figure>{video_tag}{caption}</figure>"
 
     def video(self, src, alt="", title=None):
-        title, css_classes = self.split_title_and_css_classes(title or alt)
+        title, css_classes = split_title_and_css_classes(title or alt)
         video_tag = (
             f'<video src="{escape_html(src)}" controls muted playsinline>{escape_html(alt)}</video>'
         )
@@ -99,13 +100,3 @@ class ClubRenderer(mistune.HTMLRenderer):
                       f'<a href="{tweet_match.group(1)}"></a></blockquote><br>' \
                       f'<a href="{src}" target="_blank">{src}</a>'
         return twitter_tag
-
-    @classmethod
-    def split_title_and_css_classes(cls, value) -> [str, list]:
-        if value.startswith("."):
-            try:
-                classes, title = value.split(" ", 1)
-            except ValueError:
-                classes, title = value, ""
-            return title, [c for c in escape_html(classes).split(".") if c.strip()]
-        return value, []

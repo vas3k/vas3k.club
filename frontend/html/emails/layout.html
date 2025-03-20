@@ -384,11 +384,7 @@
         {% if not is_footer_excluded %}
             <footer>
                 {% block footer %}{% endblock %}
-                {% block unsubscribe %}
-{#                    <p style="text-align: right;">#}
-{#                        Если вам больше не хочется никогда получать никаких писем от Клуба,<br> нажмите <a href="{{ settings.APP_HOST }}/notifications/unsubscribe/%user_id%/%secret_code%/">отписаться вообще от всего</a>.#}
-{#                    </p>#}
-                {% endblock %}
+                {% block unsubscribe %}{% endblock %}
             </footer>
         {% endif %}
 

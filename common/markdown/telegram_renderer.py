@@ -1,4 +1,8 @@
+import html
 import mistune
+from urllib.parse import unquote
+
+from common.markdown.common import split_title_and_css_classes
 
 LIST_BULLET_POINTS = {1: "• ", 2: "◦ ", 3: "▪ "}
 
@@ -20,6 +24,10 @@ def convert_bulet_to_ordered_list(text, level, start):
 
 
 class TelegramRenderer(mistune.HTMLRenderer):
+    def link(self, link, text=None, title=None):
+        text, _ = split_title_and_css_classes(text or "")
+        return super().link(link, text, title)
+
     def image(self, src, alt="", title=None):
         if alt:
             return f'<a href="{src}">🏞 «{alt}»</a>'
