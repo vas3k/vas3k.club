@@ -326,13 +326,13 @@ ACHIEVEMENTS = [
     ("vas3k_camp_2025", {
         "name": "Вастрик 🔥 Кэмп 2025",
         "description": "Участник Вастрик Кэмпа в Либерленде летом 2025",
-        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2024.jpg",
-        "style": "background-color: #F1DFC5; font-size: 130%;",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2025.webp",
+        "style": "background-color: #FF9F4B; font-size: 130%;",
     }),
     ("vas3k_quest_2024", {
         "name": "Золотая говнотерка",
         "description": "Призёр первого Вастрик.Квеста, проходившего в Сербии в 2024 году",
-        "image": "https://vas3k.club/static/images/achievements/vas3k_quest_2024.png",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quest_2024.webp",
         "style": "background-color: #F1DFC5; font-size: 120%;",
     }),
     ("pokerface", {
