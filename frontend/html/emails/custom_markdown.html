@@ -21,6 +21,62 @@ ul {
         padding-left: 15px;
     }
 
+.button {
+    display: inline-block;
+    padding: 15px 18px;
+    box-sizing: border-box;
+    text-decoration: none;
+    border-radius: var(--button-border-radius);
+    background-color: var(--button-bg-color);
+    border: var(--button-border);
+    color: var(--button-color);
+    text-align: center;
+    cursor: pointer;
+    line-height: 1em;
+    font-weight: 500;
+    transition: 0.2s ease-out;
+}
+
+    .button:hover {
+        color: var(--button-hover-color);
+        background-color: var(--button-hover-bg-color);
+        border: var(--button-hover-border);
+    }
+
+    .button:disabled {
+        background-color: var(--button-disabled-bg-color);
+        border-color: var(--button-disabled-bg-color);
+    }
+
+    .button:disabled:hover {
+        color: var(--button-color);
+        background-color: var(--button-disabled-bg-color);
+        border-color: var(--button-disabled-bg-color);
+    }
+
+    .button-big {
+        padding: 15px 30px;
+        font-size: 160%;
+        font-weight: bold;
+        margin: 50px auto 0;
+    }
+
+    .button-small {
+        padding: 5px 10px;
+        font-size: 90%;
+        font-weight: normal;
+    }
+
+    .button-red {
+        background-color: #ff1917;
+        border-color: #ff1917;
+    }
+
+    .button-blue {
+        background-color: #0088cc;
+        border-color: #0088cc;
+    }
+
 </style>
 {% endblock %}
 
