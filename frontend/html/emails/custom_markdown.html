@@ -9,7 +9,6 @@ p {
 }
 
 ul {
-    list-style: none;
     font-size: 19px;
     margin-left: 0;
     padding-left: 0;
@@ -27,7 +26,7 @@ ul {
     box-sizing: border-box;
     text-decoration: none;
     border-radius: var(--button-border-radius);
-    background-color: var(--button-bg-color);
+    background-color: #999999;
     border: var(--button-border);
     color: var(--button-color);
     text-align: center;
@@ -79,6 +78,9 @@ ul {
 
 </style>
 {% endblock %}
+
+
+{% block logo %}{% endblock %}
 
 {% block title %}
     {{ title }}
