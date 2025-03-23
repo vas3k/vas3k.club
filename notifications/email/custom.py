@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models import Q
 from django.template import loader
 
+from common.markdown.markdown import markdown_tg
 from notifications.email.sender import send_mass_email, send_transactional_email
 from notifications.telegram.common import send_telegram_message, Chat
 from users.models.user import User
@@ -46,7 +47,7 @@ def send_custom_mass_email(emails_or_slugs: list[str], title: str, text: str, is
             log.info(f"Sending telegram message to {user.telegram_id}...")
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
-                text=f"<b>{title}</b>\n\n{text}" if title else text,
+                text=f"<b>{title}</b>\n\n{markdown_tg(text)}" if title else markdown_tg(text),
             )
 
     # send emails to non club users
