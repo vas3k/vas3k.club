@@ -108,7 +108,7 @@ def stripe_ticket_sale_webhook(request):
                     })
                 )
 
-                if user.telegram_id:
+                if user and user.telegram_id:
                     async_task(
                         send_telegram_message,
                         chat=Chat(id=user.telegram_id),
