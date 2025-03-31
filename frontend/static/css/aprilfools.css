@@ -1,0 +1,647 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+
+
+:root {
+  /* Windows 98 colors */
+  --win98-bg: #008080;
+  --win98-desktop: #008080;
+  --win98-window: #c0c0c0;
+  --win98-window-inner: #ffffff;
+  --win98-text: #000000;
+  --win98-text-inverse: #ffffff;
+  --win98-button: #c0c0c0;
+  --win98-button-highlight: #ffffff;
+  --win98-button-shadow: #808080;
+  --win98-button-shadow-deep: #404040;
+  --win98-blue: #000080;
+  --win98-blue-highlight: #1084d0;
+  --win98-window-border: #dfdfdf;
+}
+
+/* Dark mode adjustments */
+html[theme="dark"] {
+  --win98-bg: #000000;
+  --win98-desktop: #000000;
+  --win98-window: #424242;
+  --win98-window-inner: #000000;
+  --win98-text: #ffffff;
+  --win98-text-inverse: #000000;
+  --win98-button: #626262;
+  --win98-button-highlight: #828282;
+  --win98-button-shadow: #222222;
+  --win98-button-shadow-deep: #000000;
+  --win98-blue: #0084d0;
+  --win98-blue-highlight: #00a5ff;
+  --win98-window-border: #626262;
+}
+
+/* Global Styles */
+body {
+  font-family: 'VT323', 'Courier New', monospace !important;
+  background-color: var(--win98-desktop) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z' fill='%23009090' fill-opacity='0.2'/%3E%3C/svg%3E") !important;
+  cursor: default;
+  color: var(--win98-text) !important;
+  font-size: 16px !important;
+  letter-spacing: 0.5px;
+}
+
+/* Block elements */
+.block, .window {
+  background-color: var(--win98-window) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  position: relative;
+}
+
+.block::before, .window::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: var(--win98-blue);
+  background: linear-gradient(90deg, var(--win98-blue) 0%, var(--win98-blue-highlight) 100%);
+  z-index: 0;
+  border-bottom: 1px solid var(--win98-button-shadow-deep);
+}
+
+.window::before {
+  height: 30px;
+}
+
+.block-header, .window-title {
+  color: var(--win98-text-inverse) !important;
+  font-weight: bold !important;
+  padding: 2px 5px !important;
+  text-align: left !important;
+  z-index: 1;
+  position: relative;
+  font-size: 16px !important;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+}
+
+/* Buttons */
+.button {
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  font-family: 'VT323', 'Courier New', monospace !important;
+  font-weight: normal !important;
+  text-transform: capitalize;
+  transition: all 0.05s ease !important;
+}
+
+.button:hover {
+  background-color: var(--win98-button) !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  transform: scale(1.02);
+}
+
+.button:active {
+  border-color: var(--win98-button-shadow-deep) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow-deep) !important;
+  box-shadow: -1px -1px 0 0 var(--win98-button-shadow) inset, 1px 1px 0 0 var(--win98-button) inset !important;
+  transform: translateY(1px);
+}
+
+/* Form elements */
+input[type=text],
+input[type=number],
+input[type=email],
+input[type=time],
+input[type=url],
+textarea,
+select {
+  background-color: var(--win98-window-inner) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-button-shadow) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow-deep) inset !important;
+  color: var(--win98-text) !important;
+  font-family: 'VT323', 'Courier New', monospace !important;
+}
+
+input[type=text]:focus,
+input[type=number]:focus,
+input[type=email]:focus,
+input[type=time]:focus,
+input[type=url]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--win98-blue) !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow-deep) inset !important;
+}
+
+/* Inset text areas */
+.block-description,
+.text-body {
+  background-color: var(--win98-window-inner) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-button-shadow) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow) !important;
+  padding: 8px !important;
+  margin: 10px 5px !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow-deep) inset !important;
+}
+
+/* Windows 98 taskbar */
+.footer {
+  background-color: var(--win98-window) !important;
+  border-top: 2px solid var(--win98-button-highlight) !important;
+  box-shadow: 0 -1px 0 var(--win98-button-shadow) !important;
+  padding: 5px 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Start button */
+.footer::before {
+  content: "🏠 Start";
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  padding: 2px 10px !important;
+  margin-right: 15px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+}
+
+
+/* Theme switcher */
+.theme-switcher {
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+}
+
+/* Windows 98 style avatars */
+.avatar {
+  border: 2px solid !important;
+  border-color: var(--win98-button-shadow-deep) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow-deep) !important;
+  border-radius: 0 !important;
+  background-color: var(--win98-window-inner) !important;
+}
+
+/* Tables and grid layouts */
+table {
+  border-collapse: separate !important;
+  border-spacing: 1px !important;
+}
+
+table, th, td {
+  border: 2px solid !important;
+  border-color: var(--win98-button-shadow) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow) !important;
+}
+
+th {
+  background-color: var(--win98-blue) !important;
+  color: var(--win98-text-inverse) !important;
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+/* Topic tags */
+.topic {
+  background-color: var(--win98-button) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+}
+
+/* Progress bars */
+progress {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid;
+  border-color: var(--win98-button-shadow) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow) !important;
+  background-color: var(--win98-window-inner);
+}
+
+progress::-webkit-progress-bar {
+  background-color: var(--win98-window-inner);
+}
+
+progress::-webkit-progress-value {
+  background-color: var(--win98-blue);
+}
+
+progress::-moz-progress-bar {
+  background-color: var(--win98-blue);
+}
+
+/* Windows 98 scrollbars */
+::-webkit-scrollbar {
+  width: 16px !important;
+  height: 16px !important;
+  background-color: var(--win98-window) !important;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--win98-window) !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--win98-button) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+}
+
+::-webkit-scrollbar-button {
+  display: block !important;
+  background-color: var(--win98-button) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  height: 16px !important;
+  width: 16px !important;
+}
+
+::-webkit-scrollbar-button:vertical:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath d='M 1 7 L 5 3 L 9 7 Z' fill='black'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cpath d='M 1 3 L 5 7 L 9 3 Z' fill='black'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Error Screen (Blue Screen of Death) */
+.error {
+  background-color: var(--win98-blue) !important;
+  color: var(--win98-text-inverse) !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-family: 'Courier New', monospace !important;
+  padding: 50px 30px !important;
+}
+
+.error::before {
+  content: "Windows 98";
+  display: block;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.error h1::before {
+  content: ":(";
+  display: block;
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+/* Window close button */
+.window-close-button {
+  background-color: var(--win98-button) !important;
+  border: 2px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  color: var(--win98-text) !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 16px !important;
+  text-align: center !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  z-index: 2 !important;
+  right: 5px !important;
+  top: 5px !important;
+}
+
+/* Windows 98 boot animation */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  z-index: 9999;
+  animation: bootscreen 2.5s forwards;
+  pointer-events: none;
+}
+
+@keyframes bootscreen {
+  0% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  21% {
+    background-color: var(--win98-desktop);
+  }
+  40% {
+    background-color: var(--win98-desktop);
+    opacity: 1;
+  }
+  99% {
+    opacity: 0.1;
+    z-index: 9999;
+  }
+  100% {
+    opacity: 0;
+    z-index: -1;
+  }
+}
+
+body::after {
+  content: "Windows 95 is booting...";
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+  font-family: 'VT323', 'Courier New', monospace !important;
+  z-index: 10000;
+  animation: bootmessage 2s forwards;
+  pointer-events: none;
+}
+
+@keyframes bootmessage {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  21% {
+    color: black;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Post actions buttons styling */
+.post-footer a,
+.comment-footer a,
+.reply-footer a,
+.post-actions-line a {
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  font-family: 'VT323', 'Courier New', monospace !important;
+  padding: 3px 8px !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  margin: 0 5px !important;
+  transition: all 0.05s ease !important;
+}
+
+.post-footer a:hover,
+.comment-footer a:hover,
+.reply-footer a:hover,
+.post-actions-line a:hover {
+  background-color: var(--win98-button) !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  transform: scale(1.02);
+}
+
+.post-footer a:active,
+.comment-footer a:active,
+.reply-footer a:active,
+.post-actions-line a:active {
+  border-color: var(--win98-button-shadow-deep) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow-deep) !important;
+  box-shadow: -1px -1px 0 0 var(--win98-button-shadow) inset, 1px 1px 0 0 var(--win98-button) inset !important;
+  transform: translateY(1px);
+}
+
+/* Feed sidebar blocks as Windows 98 buttons */
+.feed-sidebar-block {
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  font-family: 'VT323', 'Courier New', monospace !important;
+  margin-bottom: 10px !important;
+  transition: all 0.05s ease !important;
+  display: block !important;
+  text-decoration: none !important;
+}
+
+.feed-sidebar-block:hover {
+  background-color: var(--win98-button) !important;
+  transform: scale(1.02);
+}
+
+.feed-sidebar-block:active {
+  border-color: var(--win98-button-shadow-deep) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow-deep) !important;
+  box-shadow: -1px -1px 0 0 var(--win98-button-shadow) inset, 1px 1px 0 0 var(--win98-button) inset !important;
+  transform: translateY(1px);
+}
+
+/* Upvote button styling */
+.upvote {
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  font-family: 'VT323', 'Courier New', monospace !important;
+  padding: 7px 14px !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  transition: all 0.05s ease !important;
+  text-align: center !important;
+}
+
+.upvote:hover {
+  background-color: var(--win98-button) !important;
+  transform: scale(1.02);
+}
+
+.upvote:active, .upvote.upvote-voted {
+  border-color: var(--win98-button-shadow-deep) var(--win98-button-highlight) var(--win98-button-highlight) var(--win98-button-shadow-deep) !important;
+  box-shadow: -1px -1px 0 0 var(--win98-button-shadow) inset, 1px 1px 0 0 var(--win98-button) inset !important;
+  transform: translateY(1px);
+}
+
+/* Bold feed post titles */
+.feed-post-title {
+  font-weight: bold !important;
+  font-size: 140% !important;
+}
+
+/* Profile card text shadow for better visibility */
+.profile-card,
+.profile-card * {
+  color: var(--win98-text) !important;
+}
+
+/* Start button style for menu-logo */
+.menu-logo {
+  background-color: var(--win98-button) !important;
+  border: 3px solid !important;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight) !important;
+  border-radius: 0 !important;
+  box-shadow: 1px 1px 0 0 var(--win98-button-shadow) inset, -1px -1px 0 0 var(--win98-button) inset !important;
+  color: var(--win98-text) !important;
+  font-family: 'VT323', 'Courier New', monospace !important;
+  font-weight: bold !important;
+  padding: 2px 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 10px !important;
+}
+
+.menu-logo::before {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='80' height='80' fill='none' /%3E%3Crect x='10' y='10' width='37' height='37' fill='%2300ff00' /%3E%3Crect x='53' y='10' width='37' height='37' fill='%230000ff' /%3E%3Crect x='10' y='53' width='37' height='37' fill='%23ffff00' /%3E%3Crect x='53' y='53' width='37' height='37' fill='%23ff0000' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+}
+
+/* Improved text contrast for white text */
+.block-header,
+.window-title,
+th,
+.user-info,
+[class*="battle-side"] {
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.8) !important;
+}
+
+/* Additional special effects for the April Fools joke */
+
+/* Occasionally display "updating system" */
+@keyframes systemUpdate {
+  0%, 97% {
+    opacity: 0;
+    bottom: -50px;
+  }
+  98%, 99.5% {
+    opacity: 1;
+    bottom: 50px;
+  }
+  100% {
+    opacity: 0;
+    bottom: 50px;
+  }
+}
+
+body.logged-in::after {
+  content: "Updating system... Please do not turn off your computer.";
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -50px;
+  background-color: var(--win98-window);
+  border: 3px solid;
+  border-color: var(--win98-button-highlight) var(--win98-button-shadow-deep) var(--win98-button-shadow-deep) var(--win98-button-highlight);
+  padding: 15px;
+  z-index: 9998;
+  color: var(--win98-text);
+  font-family: 'VT323', 'Courier New', monospace;
+  animation: systemUpdate 20s infinite;
+  width: 350px;
+  text-align: center;
+}
+
+/* Special hover effect for blocks */
+.block:hover, .window:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+
+/* Windows 98 style comment thread lines */
+.comment-layout-normal .comment-side::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--win98-button-shadow);
+  left: 25px;
+}
+
+/* Emoji icon styles for system icons */
+.icon {
+  font-style: normal;
+  font-size: 14px !important;
+  opacity: 1 !important;
+}
+
+
+.upvote::before {
+  content: "";
+}
+
+.menu-search-label {
+  display: none;
+}
+
+.feed-sidebar-topics {
+    padding: 13px;
+}
+
+.feed-sidebar-menu {
+    font-weight: 800;
+}
+
+
+.post-text .upvote {
+    padding: 20px !important;
+}
+
+.feed-post-votes .upvote {
+    padding: 10px 19px !important;
+}
+
+.feed-post-type-intro .feed-post-title {
+    font-size: 110% !important;
+}
+
+.comment-header-author-name {
+    font-weight: 800;
+    font-size: 140%;
+}
+
+.reply-header {
+    justify-content: center;
+    align-items: center;
+}
+
+.feed-sidebar-header {
+    display: none;
+}
+
+.menu-center {
+    display: none;
+}
+

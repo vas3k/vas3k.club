@@ -91,5 +91,73 @@
 
 {% include "common/js.html" %}
 {% block js %}{% endblock %}
+
+<style>
+    /* === CRT Overlay Styles === */
+.crt-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: contrast(1.2) brightness(1.05);
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  overflow: hidden;
+}
+
+/* Animated Scanlines */
+.crt-overlay::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 200%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.08) 0px,
+    rgba(0, 0, 0, 0.08) 1px,
+    transparent 2px
+  );
+  animation: scanlines-scroll 180s linear infinite;
+  mix-blend-mode: overlay;
+}
+
+/* Subtle RGB vertical mask */
+.crt-overlay::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.03),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 3px 100%;
+  mix-blend-mode: screen;
+}
+
+/* Animation keyframes for upward motion */
+@keyframes scanlines-scroll {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-50%); }
+}
+
+</style>
+
+<script>
+    function applyCRTOverlay() {
+  const overlay = document.createElement('div');
+  overlay.className = 'crt-overlay';
+  document.body.appendChild(overlay);
+  console.log('🖥️ CRT overlay applied');
+}
+
+window.addEventListener('load', applyCRTOverlay);
+
+</script>
+
 </body>
 </html>
