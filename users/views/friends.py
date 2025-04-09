@@ -1,22 +1,29 @@
-from django.http import Http404, HttpResponseForbidden
+from http import HTTPMethod
+
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.views.decorators.http import require_http_methods
 
 from authn.decorators.auth import require_auth
 from authn.decorators.api import api
+from club.exceptions import ApiException
 from common.pagination import paginate
 from users.models.friends import Friend
 from users.models.user import User
 
 
 @api(require_auth=True)
-@require_http_methods(["GET", "POST"])
+@require_http_methods([HTTPMethod.GET, HTTPMethod.POST])
 def api_friend(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
+    user_from = request.me
 
-    if request.method == "GET":
-        friend = Friend.user_friends(request.me).filter(user_to=user_to).first()
+    if request.me == user_to:
+        raise ApiException(title="You can't add yourself as a friend")
+
+    if request.method == HTTPMethod.GET:
+        friend = Friend.user_friends(user_from).filter(user_to=user_to).first()
         if not friend:
             raise Http404()
 
@@ -24,15 +31,15 @@ def api_friend(request, user_slug):
             "friend": friend.to_dict()
         }
 
-    if request.method == "POST":
+    if request.method == HTTPMethod.POST:
         friend, is_created = Friend.add_friend(
-            user_from=request.me,
+            user_from=user_from,
             user_to=user_to,
         )
 
         if not is_created:
             Friend.delete_friend(
-                user_from=request.me,
+                user_from=user_from,
                 user_to=user_to,
             )
 
