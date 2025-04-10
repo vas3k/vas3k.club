@@ -1,10 +1,11 @@
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.views.decorators.http import require_http_methods
 
 from authn.decorators.auth import require_auth
 from authn.decorators.api import api
+from club.exceptions import ApiException
 from common.pagination import paginate
 from users.models.friends import Friend
 from users.models.user import User
@@ -14,6 +15,9 @@ from users.models.user import User
 @require_http_methods(["GET", "POST"])
 def api_friend(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
+
+    if request.me == user_to:
+        raise ApiException(title="You can't add yourself as a friend")
 
     if request.method == "GET":
         friend = Friend.user_friends(request.me).filter(user_to=user_to).first()
