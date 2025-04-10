@@ -17,9 +17,7 @@ class Friend(models.Model):
 
     class Meta:
         db_table = "friends"
-        constraints = [
-            models.UniqueConstraint(fields=["user_from", "user_to"], name="unique_friendship")
-        ]
+        unique_together = [["user_from", "user_to"]]
 
     @classmethod
     def add_friend(cls, user_from, user_to):
