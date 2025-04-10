@@ -19,7 +19,7 @@ def api_friend(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
     user_from = request.me
 
-    if request.me == user_to:
+    if user_from == user_to:
         raise ApiException(title="You can't add yourself as a friend")
 
     if request.method == HTTPMethod.GET:
