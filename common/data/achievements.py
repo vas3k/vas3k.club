@@ -377,6 +377,18 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/couchsurfing.png",
         "style": "background-color: #33CCCC; font-size: 130%;",
     }),
+    ("geoguessr_lite", {
+        "name": "Мидуэй атолл",
+        "description": "Различает Англию от Австралии по кенгуру, а Польшу от Перу — по надписям на стенах",
+        "image": "https://vas3k.club/static/images/achievements/geoguessr_lite.png",
+        "style": "background-color: #C4D9D7; font-size: 130%;",
+    }),
+    ("geoguessr_beast", {
+        "name": "Реюньон",
+        "description": "Знает индийские языки, все шоссе длиннее 300 км и цвет грязи на каждом континенте",
+        "image": "https://vas3k.club/static/images/achievements/geoguessr_beast.png",
+        "style": "background-color: #F37857; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
