@@ -379,7 +379,7 @@ ACHIEVEMENTS = [
     }),
     ("geoguessr_lite", {
         "name": "Мидуэй атолл",
-        "description": "Различает Англию от Австралии по кенгуру, а Польшу от Перу — по надписям на стенах",
+        "description": "Отличает Англию от Австралии по кенгуру, а Польшу от Перу — по надписям на стенах",
         "image": "https://vas3k.club/static/images/achievements/geoguessr_lite.png",
         "style": "background-color: #C4D9D7; font-size: 130%;",
     }),
