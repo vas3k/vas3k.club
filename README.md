@@ -31,7 +31,7 @@ Feel free to propose "state of the art" refactorings for UI or backend code if y
 2. Clone the repo
 
     ```sh
-    $ git clone https://github.com/vas3k/vas3k.club.git
+    $ git clone --depth 1 https://github.com/vas3k/vas3k.club.git
     $ cd vas3k.club
     ```
 
