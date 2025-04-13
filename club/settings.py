@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "misc.apps.MiscConfig",
     "invites.apps.InvitesConfig",
     "tickets.apps.TicketsConfig",
-    "ai.apps.AiConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
