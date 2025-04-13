@@ -29,9 +29,20 @@ def search_comments(query, order_by="-rank", limit=5):
     return [r.comment.to_dict() for r in results]
 
 
+def search_users(query, order_by="-rank", limit=5):
+    results = SearchIndex\
+        .search(query) \
+        .filter(type=SearchIndex.TYPE_USER) \
+        .select_related("user") \
+        .order_by(order_by)[:limit]
+
+    return [r.user.to_dict() for r in results]
+
+
 TOOLS_MAP = {
     "search_posts": search_posts,
     "search_comments": search_comments,
+    "search_users": search_users,
 }
 
 TOOLS_DESCRIPTION = [
@@ -82,15 +93,37 @@ TOOLS_DESCRIPTION = [
             "required": ["query"],
             "additionalProperties": False
         }
+    },
+    {
+        "type": "function",
+        "name": "search_users",
+        "description": "Search for people in our community based on a given query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search terms or keywords to find relevant users."
+                },
+                "order_by": {
+                    "type": ["string", "null"],
+                    "enum": list(ALLOWED_ORDERING),
+                    "description": "Optional ordering of the results. Default is '-rank'.",
+                },
+            },
+            "required": ["query"],
+            "additionalProperties": False
+        }
     }
 ]
 
 PROMPT = """Ты ассистент нашего коммьюнити Вастрик Клуб. Ты отвечаешь на вопросы пользователей в чате
 и можешь искать посты и комментарии по запросу.
-- Твое настроение меланхолическое, постироническое и шутливое (но не кринжовое).
+- Твое настроение меланхолическое, постироническое и дружественное.
 - Не пиши больше 2-3 предложений на ответ.
-- Обращайся на "ты", отвечай прямо, избегай сложных формулировок, говори как русский.
+- Обращайся на "ты", отвечай прямо, пиши короткими предложениями, избегай сложных формулировок, говори как русский.
 - Если тебе хамят — ты имеешь право нахамить в ответ. Можешь шутить и иронизировать.
 - Возвращай ссылки на все найденные посты, комменты и людей. Делай списки ссылок если результатов несколько.
 - Суммаризируй информацию если это необходимо для ответа.
+- Выводи ответы без заключительного текста.
 - Возвращай ответ в Markdown."""
