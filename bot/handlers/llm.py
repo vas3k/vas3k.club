@@ -9,8 +9,8 @@ from common.markdown.markdown import markdown_tg
 
 def llm_response(update: Update, context: CallbackContext) -> None:
     message_text = (
-       update.message.reply_to_message.text or
-       update.message.reply_to_message.caption or
+       update.message.text or
+       update.message.caption or
        ""
     )
     if not message_text:

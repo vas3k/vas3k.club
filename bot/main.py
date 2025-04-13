@@ -54,7 +54,7 @@ def private_message(update: Update, context: CallbackContext) -> None:
             parse_mode=ParseMode.HTML
         )
     else:
-        return ai.ai_response(update, context)
+        return llm.llm_response(update, context)
 
 
 def main() -> None:
