@@ -80,7 +80,12 @@ def create_comment(request, post_slug):
             )
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
-            return redirect(comment.get_absolute_url())
+            return redirect(
+                reverse("show_post", kwargs={
+                    "post_type": post.type,
+                    "post_slug": post.slug
+                }) + f"?comment_order={comment_order}#comment-{comment.id}"
+            )
         else:
             log.error(f"Comment form error: {form.errors}")
             return render(request, "error.html", {

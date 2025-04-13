@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-{% load text_filters %}
 
 {% block content %}
     <div class="message">
@@ -8,7 +7,7 @@
                 <h2>{{ title }}</h2>
             {% endif %}
 
-            <p>{{ message | markdown | safe }}</p>
+            <p>{{ message | safe }}</p>
 
             {% if data %}
                 <p>

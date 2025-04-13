@@ -288,11 +288,6 @@ STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWI
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_CHAT_MODEL = "gpt-4o-mini"
-OPENAI_EMBEDDINGS_MODEL = "text-embedding-3-small"
-OPENAI_EMBEDDINGS_VECTOR_DIM = 1536
-
 DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
 COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
