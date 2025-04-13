@@ -25,7 +25,7 @@ django-q2 = {extras = ["sentry"], version = "==1.7.6"}
 redis = "==5.2.1"
 python-dotenv = ">=0.12"
 django-redis = "==5.4.0"
-gunicorn = "==20.0.4"
+gunicorn = "==23.0.0"
 uvicorn = "*"
 uvloop = ">=0.21.0"
 premailer = "==3.6.1"
