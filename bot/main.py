@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import sys
 import django
 
@@ -16,9 +17,11 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContex
     CallbackQueryHandler
 
 from bot.cache import cached_telegram_users
-from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts
+from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts, ai
 
 log = logging.getLogger(__name__)
+
+BOT_MENTION_RE = re.compile(rf"@{settings.TELEGRAM_BOT_URL.rsplit("/", 1).pop()}\b", re.IGNORECASE)
 
 
 def command_help(update: Update, context: CallbackContext) -> None:
@@ -51,11 +54,7 @@ def private_message(update: Update, context: CallbackContext) -> None:
             parse_mode=ParseMode.HTML
         )
     else:
-        update.effective_chat.send_message(
-            "Не понял. Полный список моих команд покажет /help, "
-            "а еще через меня можно отвечать на посты и комментарии и всё это будет поститься прямо в Клуб!",
-            parse_mode=ParseMode.HTML
-        )
+        return ai.ai_response(update, context)
 
 
 def main() -> None:
@@ -84,6 +83,9 @@ def main() -> None:
     dispatcher.add_handler(CallbackQueryHandler(upvotes.upvote_comment, pattern=r"^upvote_comment:.+"))
     dispatcher.add_handler(
         MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
+    )
+    dispatcher.add_handler(
+        Filters.text & Filters.regex(BOT_MENTION_RE), ai.ai_response
     )
     dispatcher.add_handler(
         MessageHandler(Filters.reply & ~Filters.chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)

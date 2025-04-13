@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.db import models
 from django.db.models import F
+from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
 from club.exceptions import NotFound, BadRequest
@@ -65,6 +66,7 @@ class Comment(models.Model):
     def to_dict(self):
         return {
             "id": str(self.id),
+            "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "text": self.text,
             "author": self.author.to_dict(),
             "reply_to_id": self.reply_to_id,
@@ -88,6 +90,12 @@ class Comment(models.Model):
         self.is_deleted = False
         self.deleted_by = None
         self.save()
+
+    def get_absolute_url(self):
+        return reverse("show_post", kwargs={
+            "post_type": self.post.type,
+            "post_slug": self.post.slug
+        }) + f"#comment-{self.id}"
 
     def increment_vote_count(self):
         return Comment.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)

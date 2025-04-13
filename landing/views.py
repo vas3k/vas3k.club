@@ -8,11 +8,13 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django_q.tasks import async_task
 
+from ai.assistant import ask_assistant
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from common.dates import random_date_in_range
 from invites.models import Invite
-from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm, GodmodeMassEmailForm
+from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm, \
+    GodmodeMassEmailForm, LlmAgentForm
 from landing.models import GodSettings
 from notifications.email.custom import send_custom_mass_email
 from notifications.email.invites import send_invited_email, send_account_renewed_email
@@ -222,5 +224,26 @@ def godmode_mass_email(request):
             return redirect("godmode_settings")
     else:
         form = GodmodeMassEmailForm()
+
+    return render(request, "admin/simple_form.html", {"form": form})
+
+
+@require_auth
+def llm_agent_playground(request):
+    if not request.me.is_god:
+        raise AccessDenied()
+
+    if request.method == "POST":
+        form = LlmAgentForm(request.POST)
+        if form.is_valid():
+            user_input = form.cleaned_data["input"]
+            answer = ask_assistant(user_input)
+
+            return render(request, "message.html", {
+                "title": f"",
+                "message": "\n\n".join(answer),
+            })
+    else:
+        form = LlmAgentForm()
 
     return render(request, "admin/simple_form.html", {"form": form})
