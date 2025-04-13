@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from ai.assistant import ask_assistant
@@ -30,6 +30,10 @@ def llm_response(update: Update, context: CallbackContext) -> None:
 
     answer = ask_assistant(message_text)
     if answer:
-        update.effective_chat.send_message(markdown_tg("\n\n".join(answer)))
+        update.effective_chat.send_message(
+            markdown_tg("\n\n".join(answer)),
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
 
     return None
