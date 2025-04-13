@@ -28,9 +28,9 @@ def llm_response(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("Чот я устал отвечать на вопросы... давай потом")
         return None
 
-    answer = ask_assistant(message_text)
+    answer = ask_assistant(message_text[:1000])
     if answer:
-        update.effective_chat.send_message(
+        update.message.reply_text(
             markdown_tg("\n\n".join(answer)),
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True
