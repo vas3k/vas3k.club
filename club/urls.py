@@ -21,6 +21,7 @@ from common.feature_flags import feature_switch
 from invites.views import show_invite, list_invites, activate_invite
 from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite, godmode_generate_invite_code, godmode_sunday_posts, godmode_mass_email
+from ai.views import llm_agent_playground
 from misc.fun import badge_generator, mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
@@ -210,6 +211,7 @@ urlpatterns = [
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
     path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
+    path("godmode/ai/", llm_agent_playground, name="llm_agent_playground"),
 
     # misc
     path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),

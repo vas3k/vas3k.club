@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "misc.apps.MiscConfig",
     "invites.apps.InvitesConfig",
     "tickets.apps.TicketsConfig",
+    "ai.apps.AiConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -286,6 +287,11 @@ STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWIbII"
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_CHAT_MODEL = "gpt-4o-mini"
+OPENAI_EMBEDDINGS_MODEL = "text-embedding-3-small"
+OPENAI_EMBEDDINGS_VECTOR_DIM = 1536
 
 DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
