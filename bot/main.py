@@ -70,9 +70,6 @@ def main() -> None:
         MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
     )
     dispatcher.add_handler(
-        MessageHandler(Filters.text & Filters.regex(BOT_MENTION_RE), llm.llm_response)
-    )
-    dispatcher.add_handler(
         MessageHandler(Filters.reply & ~Filters.chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)
     )
 
@@ -81,6 +78,11 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
     dispatcher.add_handler(MessageHandler(Filters.forwarded & Filters.private, whois.command_whois))
     dispatcher.add_handler(MessageHandler(Filters.private, private_message))
+
+    # AI
+    dispatcher.add_handler(
+        MessageHandler(Filters.text & Filters.regex(BOT_MENTION_RE), llm.llm_response)
+    )
 
     # Start the bot
     if settings.DEBUG:
