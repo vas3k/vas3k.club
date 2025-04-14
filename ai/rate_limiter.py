@@ -10,7 +10,7 @@ redis_client = redis.StrictRedis(
     decode_responses=True
 )
 
-LIMIT = 100
+LIMIT = 30
 SLIDING_WINDOW_SECONDS = 3600  # 1 hour
 
 

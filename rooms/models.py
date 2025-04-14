@@ -2,6 +2,7 @@ import re
 from datetime import datetime, timedelta
 from uuid import uuid4
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
@@ -59,6 +60,17 @@ class Room(models.Model):
         if self.url or self.chat_url:
             return reverse("redirect_to_room_chat", kwargs={"room_slug": self.slug})
         return None
+
+    def to_dict(self):
+        return {
+            "slug": self.slug,
+            "title": self.title,
+            "subtitle": self.subtitle,
+            "description": self.description,
+            "chat_name": self.chat_name,
+            "chat_url": f"{settings.APP_HOST}{self.get_private_url()}" if self.url or self.chat_url else None,
+            "chat_member_count": self.chat_member_count,
+        }
 
 
 class RoomSubscription(models.Model):
