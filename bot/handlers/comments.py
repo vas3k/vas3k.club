@@ -4,7 +4,8 @@ from django.urls import reverse
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
-from bot.handlers.common import get_club_user, COMMENT_EMOJI_RE, POST_EMOJI_RE, get_club_comment, get_club_post
+from bot.config import MIN_COMMENT_LEN, SKIP_COMMANDS, COMMENT_EMOJI_RE, POST_EMOJI_RE
+from bot.handlers.common import get_club_user, get_club_comment, get_club_post
 from bot.decorators import is_club_member
 from club import settings
 from comments.models import Comment
@@ -15,16 +16,17 @@ from search.models import SearchIndex
 
 log = logging.getLogger(__name__)
 
-MIN_COMMENT_LEN = 40
-SKIP_COMMANDS = ("/skip", "#skip", "#ignore")
-
 
 def comment(update: Update, context: CallbackContext) -> None:
     log.info("Comment handler triggered")
 
     if not update.message or not update.message.reply_to_message:
-        log.info("No message or reply_to_message in update. Skipping.")
+        # skip non-replies
         return None
+
+    if update.message.reply_to_message.from_user.id != context.bot.id:
+        # skip replies to other users
+        return
 
     reply_text_start = (
         update.message.reply_to_message.text or

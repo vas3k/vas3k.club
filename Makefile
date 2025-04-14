@@ -55,7 +55,7 @@ migrate:  ## Migrate database to the latest version
 	pipenv run python3 manage.py migrate
 
 docker-migrate:
-	python3 manage.py migrate
+	python3 manage.py migrate --fake-initial
 
 build-frontend:  ## Runs webpack
 	npm run --prefix frontend build

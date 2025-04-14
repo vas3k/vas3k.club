@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 import sys
 import django
 
@@ -17,28 +16,15 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContex
     CallbackQueryHandler
 
 from bot.cache import cached_telegram_users
+from bot.config import WELCOME_MESSAGE, BOT_MENTION_RE, ANONYMOUS_MESSAGE
 from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts, llm
 
 log = logging.getLogger(__name__)
 
-BOT_MENTION_RE = re.compile(rf"@{settings.TELEGRAM_BOT_URL.rsplit("/", 1).pop()}\b", re.IGNORECASE)
-
 
 def command_help(update: Update, context: CallbackContext) -> None:
     update.effective_chat.send_message(
-        "✖️ <b>Я — твой личный бот для Вастрик.Клуба</b>\n\n"
-        "Через меня можно отвечать на комменты и посты — просто напиши "
-        "ответ реплаем на сообщение и я перепостю его в Клуб. "
-        "Так можно общаться в комментах даже не открывая сайт.\n\n"
-        "Добавь /skip, #skip или #ignore, чтобы реплай не запостился в Клуб.\n\n"
-        "Чтобы плюсануть — реплайни +.\n\n"
-        "Еще я знаю всякие команды:\n\n"
-        "/top - Топ событий в Клубе\n\n"
-        "/random - Почитать случайный пост (неплохо убивает время)\n\n"
-        "/whois - Узнать профиль по телеграму\n\n"
-        "/horo - Клубный гороскоп\n\n"
-        "/auth - Привязать бота к аккаунту в Клубе\n\n"
-        "/help - Справка",
+        WELCOME_MESSAGE,
         parse_mode=ParseMode.HTML
     )
 
@@ -49,8 +35,7 @@ def private_message(update: Update, context: CallbackContext) -> None:
     club_users = cached_telegram_users()
     if str(update.effective_user.id) not in set(club_users):
         update.effective_chat.send_message(
-            "Привет! Мы пока не знакомы. Привяжи меня к аккаунту командой /auth с "
-            "<a href=\"https://vas3k.club/user/me/edit/bot/\">кодом из профиля</a> через пробел",
+            ANONYMOUS_MESSAGE,
             parse_mode=ParseMode.HTML
         )
     else:

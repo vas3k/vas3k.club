@@ -10,9 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='tag',
-            name='group',
-            field=models.CharField(choices=[('personal', 'О себе'), ('tech', 'Технологии'), ('club', 'Для других членов Клуба я...'), ('hobbies', 'Хобби'), ('other', 'Остальное')], default='other', max_length=32),
-        ),
     ]

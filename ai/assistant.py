@@ -5,7 +5,8 @@ from django.conf import settings
 from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage
 
 from ai.openai import openai
-from ai.tools import PROMPT, TOOLS_DESCRIPTION, TOOLS_MAP
+from ai.tools import TOOLS_DESCRIPTION, TOOLS_MAP
+from ai.config import PROMPT, USER_INPUT_MAX_LEN
 
 log = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ log = logging.getLogger(__name__)
 def ask_assistant(user_input):
     input_messages = [
         {"role": "system", "content": PROMPT},
-        {"role": "user", "content": user_input}
+        {"role": "user", "content": user_input[:USER_INPUT_MAX_LEN]}
     ]
 
     chat_response = openai.responses.create(

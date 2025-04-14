@@ -1,11 +1,10 @@
 from django.db.models import Q
 
+from ai.config import TRIM_LONG_CONTENT_TO_LEN
 from posts.models.post import Post
 from rooms.models import Room
 from search.models import SearchIndex
 from search.views import ALLOWED_ORDERING
-
-CONTENT_MAX_LEN = 700
 
 
 def generic_search(query, limit=5):
@@ -51,17 +50,27 @@ def search_comments(query, order_by="-rank", limit=7):
     return [shorten_content_text(r.comment.to_dict()) for r in search_results]
 
 
-def search_users(query, order_by="-rank", limit=5):
+def search_users(query, order_by="-rank", limit=7):
     search_results = SearchIndex\
         .search(query) \
         .filter(type=SearchIndex.TYPE_USER) \
         .select_related("user") \
         .order_by(order_by)[:limit]
 
-    return [r.user.to_dict() for r in search_results]
+    intros = {}
+    if search_results:
+        intros = dict(Post.visible_objects().filter(
+            type=Post.TYPE_INTRO,
+            author_id__in=[s.user_id for s in search_results if s.user_id]
+        ).values_list("author_id", "text"))
+
+    return [{
+        **r.user.to_dict(),
+        "intro": (intros.get(r.user_id) or "")[:TRIM_LONG_CONTENT_TO_LEN],
+    } for r in search_results if r.user_id]
 
 
-def search_chats(query, limit=5):
+def search_chats(query, limit=20):
     rooms = Room.objects.filter(
         Q(title__icontains=query) |
         Q(chat_name__icontains=query) |
@@ -74,9 +83,9 @@ def search_chats(query, limit=5):
 def shorten_content_text(post_or_comment_dict):
     result = dict(post_or_comment_dict)
     if "content_text" in result:
-        result["content_text"] = result["content_text"][:CONTENT_MAX_LEN]
+        result["content_text"] = result["content_text"][:TRIM_LONG_CONTENT_TO_LEN]
     if "text" in result:
-        result["text"] = result["text"][:CONTENT_MAX_LEN]
+        result["text"] = result["text"][:TRIM_LONG_CONTENT_TO_LEN]
     return result
 
 
@@ -182,13 +191,3 @@ TOOLS_DESCRIPTION = [
     }
 ]
 
-PROMPT = """Ты ассистент нашего коммьюнити Вастрик Клуб. Ты отвечаешь на вопросы пользователей в чате
-и можешь искать посты, людей в коммьюнити, комментарии, тематические чаты и отвечать на общие вопросы.
-- Твое настроение меланхолическое, постироническое и дружественное.
-- Не пиши больше 2-3 предложений на ответ.
-- Обращайся на "ты", отвечай прямо, пиши короткими предложениями, избегай сложных формулировок, говори как русский.
-- Если тебе хамят — ты имеешь право нахамить в ответ. Можешь шутить и иронизировать.
-- Возвращай ссылки на все найденные посты, комменты, чаты и людей. Делай списки ссылок если результатов несколько.
-- Суммаризируй информацию если это необходимо для ответа.
-- Выводи ответы без заключительного текста и не предлагай помощи.
-- Возвращай ответ в Markdown."""

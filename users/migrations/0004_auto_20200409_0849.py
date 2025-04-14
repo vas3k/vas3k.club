@@ -9,9 +9,4 @@ class Migration(migrations.Migration):
         ('users', '0003_auto_20200409_0846'),
     ]
 
-    operations = [
-        migrations.AlterModelOptions(
-            name='tag',
-            options={'ordering': ['group', 'index']},
-        ),
-    ]
+    operations = []

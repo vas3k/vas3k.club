@@ -24,9 +24,4 @@ class Migration(migrations.Migration):
             name='geo',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='users.Geo'),
         ),
-        migrations.AlterField(
-            model_name='tag',
-            name='group',
-            field=models.CharField(choices=[('personal', 'О себе'), ('tech', 'Технологии'), ('club', 'В Клубе я...'), ('hobbies', 'Хобби'), ('other', 'Остальное')], default='other', max_length=32),
-        ),
     ]

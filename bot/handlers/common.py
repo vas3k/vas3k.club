@@ -1,20 +1,14 @@
 import logging
-import re
 from enum import Enum
 from typing import Optional
 
 from django.db import close_old_connections
 from telegram import Update, ParseMode
 
+from bot.config import COMMENT_URL_RE, POST_URL_RE
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
-
-COMMENT_EMOJI_RE = re.compile(r"^💬.*")
-POST_EMOJI_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🏗🙋‍♀️].*")
-
-COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
-POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
 
 log = logging.getLogger(__name__)
 

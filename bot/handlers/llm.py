@@ -8,6 +8,9 @@ from common.markdown.markdown import markdown_tg
 
 
 def llm_response(update: Update, context: CallbackContext) -> None:
+    if not update.message:
+        return None
+
     message_text = (
        update.message.text or
        update.message.caption or
@@ -16,6 +19,16 @@ def llm_response(update: Update, context: CallbackContext) -> None:
     if not message_text:
         return None
 
+    # get reply context
+    reply_to_text = ""
+    if update.message.reply_to_message:
+        reply_to_text = (
+           update.message.reply_to_message.text or
+           update.message.reply_to_message.caption or
+           ""
+        )
+
+    # only club members can use the bot
     user = get_club_user(update)
     if not user:
         update.message.reply_text("Я отвечаю только на вопросы членов Клуба")
@@ -28,7 +41,12 @@ def llm_response(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("Чот я устал отвечать на вопросы... давай потом")
         return None
 
-    answer = ask_assistant(message_text[:1000])
+    user_input = message_text
+    user_input = f"Я - {user.full_name}\n\n{user_input}"
+    if reply_to_text:
+        user_input = f"Контекст: {reply_to_text}\n\n{user_input}"
+
+    answer = ask_assistant(user_input)
     if answer:
         update.message.reply_text(
             markdown_tg("\n\n".join(answer)),
