@@ -389,6 +389,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/geoguessr_beast.png",
         "style": "background-color: #F37857; font-size: 130%;",
     }),
+    ("music_jam_7", {
+        "name": "Got kicked out for music",
+        "description": "За участие в зимнем музыкальном челлендже 2025",
+        "image": "https://vas3k.club/static/images/achievements/music_jam_7.png",
+        "style": "background-color: #CB562D; font-size: 120%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
