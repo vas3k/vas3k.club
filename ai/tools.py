@@ -56,7 +56,7 @@ def search_users(query, order_by="-rank", limit=7):
     search_results = SearchIndex\
         .search(query) \
         .filter(type=SearchIndex.TYPE_USER) \
-        .exclude(user__isnull=True, user__is_deleted=True) \
+        .exclude(user__isnull=True, user__deleted_at__isnull=True) \
         .exclude(user__profile_publicity_level=User.PUBLICITY_LEVEL_PRIVATE) \
         .filter(user__moderation_status=User.MODERATION_STATUS_APPROVED) \
         .select_related("user") \
