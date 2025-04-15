@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from ai.config import TRIM_LONG_CONTENT_TO_LEN
+from ai.config import TRIM_LONG_CONTENT_TO_LEN, CLUB_INFO_POST_SLUGS, CLUB_INFO_POST_LABEL
 from posts.models.post import Post
 from rooms.models import Room
 from search.models import SearchIndex
@@ -70,7 +70,7 @@ def search_users(query, order_by="-rank", limit=7):
     } for r in search_results if r.user_id]
 
 
-def search_chats(query, limit=20):
+def search_chats(query, limit=30):
     rooms = Room.objects.filter(
         Q(title__icontains=query) |
         Q(chat_name__icontains=query) |
@@ -78,6 +78,13 @@ def search_chats(query, limit=20):
     ).distinct()[:limit]
 
     return [r.to_dict() for r in rooms]
+
+
+def club_rules_and_info(query, limit=5):
+    search_results = SearchIndex\
+        .search(query)\
+        .filter(Q(post__slug__in=CLUB_INFO_POST_SLUGS) | Q(post__label_code=CLUB_INFO_POST_LABEL))[:limit]
+    return [shorten_content_text(r.post.to_dict()) for r in search_results]
 
 
 def shorten_content_text(post_or_comment_dict):
@@ -95,6 +102,7 @@ TOOLS_MAP = {
     "search_users": search_users,
     "search_chats": search_chats,
     "generic_search": generic_search,
+    "club_rules_and_info": club_rules_and_info,
 }
 
 TOOLS_DESCRIPTION = [
@@ -183,6 +191,22 @@ TOOLS_DESCRIPTION = [
                 "query": {
                     "type": "string",
                     "description": "Search terms or keywords to find relevant content."
+                },
+            },
+            "required": ["query"],
+            "additionalProperties": False
+        }
+    },
+    {
+        "type": "function",
+        "name": "club_rules_and_info",
+        "description": "Get information about club, its rules and guidelines.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search terms or keywords to find relevant content"
                 },
             },
             "required": ["query"],

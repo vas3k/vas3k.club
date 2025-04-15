@@ -24,18 +24,18 @@ def ask_assistant(user_input):
         tool_choice="auto"
     )
 
-    log.info(f"RESPONSE: {chat_response}")
+    log.info(f"CHATGPT: {chat_response}")
     answer = []
 
     for output in chat_response.output:
         if isinstance(output, ResponseFunctionToolCall):
-            log.info(f"Function call: {output.name}")
+            log.info(f"Tool called: {output.name}")
             tool = TOOLS_MAP.get(output.name)
             tool_args = json.loads(output.arguments)
 
             if not tool:
                 log.info(f"Tool {output.name} not found")
-                answer.append("Tool {output.function.name} not found")
+                answer.append(f"Tool {output.function.name} not found")
                 continue
 
             try:
@@ -63,7 +63,7 @@ def ask_assistant(user_input):
                 answer += [c.text for c in tool_output.content]
 
         elif isinstance(output, ResponseOutputMessage):
-            log.info(f"Message: {output}")
+            log.info(f"Simple text returned: {output}")
             answer += [c.text for c in output.content]
 
     return answer

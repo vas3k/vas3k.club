@@ -41,12 +41,14 @@ def llm_response(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("Чот я устал отвечать на вопросы... давай потом")
         return None
 
-    user_input = message_text
-    user_input = f"Я - {user.full_name}\n\n{user_input}"
+    user_input = [
+        f"Я — {user.full_name}",
+        message_text
+    ]
     if reply_to_text:
-        user_input = f"Контекст: {reply_to_text}\n\n{user_input}"
+        user_input = [f"Предыдущее сообщение: {reply_to_text}"] + user_input
 
-    answer = ask_assistant(user_input)
+    answer = ask_assistant("\n".join(user_input))
     if answer:
         update.message.reply_text(
             markdown_tg("\n\n".join(answer)),

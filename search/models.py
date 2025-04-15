@@ -62,6 +62,7 @@ class SearchIndex(models.Model):
             comment=comment,
             defaults=dict(
                 type=SearchIndex.TYPE_COMMENT,
+                post_id=comment.post_id,
                 index=Comment.objects
                 .annotate(vector=vector)
                 .filter(id=comment.id)
