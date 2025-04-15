@@ -54,10 +54,11 @@ now = datetime.utcnow()
 def create_moderator_user(apps, schema_editor):
     User = apps.get_model("users", "User")
     User.objects.get_or_create(
-        email="moderator@vas3k.club",
+        slug=MODERATOR_USERNAME,
         defaults=dict(
+            email="moderator@vas3k.club",
             membership_platform_type="direct",
-            full_name=MODERATOR_USERNAME,
+            full_name="Модератор",
             company="Вастрик.Клуб",
             position="Бдю",
             city="Берлин",
@@ -76,11 +77,13 @@ def create_moderator_user(apps, schema_editor):
 def create_deleted_user(apps, schema_editor):
     User = apps.get_model("users", "User")
     User.objects.get_or_create(
-        email="moderator@vas3k.club",
+        slug=DELETED_USERNAME,
         defaults=dict(
+            email="deleted@vas3k.club",
             membership_platform_type="direct",
-            full_name=DELETED_USERNAME,
-            company="💀 Юзер-зомби",
+            full_name="💀 Юзер-зомби",
+            company="[object Object]",
+            position="None",
             city=None,
             country="Россия",
             membership_started_at=now,
@@ -97,7 +100,9 @@ def insert_main_docs(apps, schema_editor):
     User = apps.get_model("users", "User")
     Post = apps.get_model("posts", "Post")
 
-    author = User.objects.filter(slug="moderator").first()
+    author = User.objects.filter(slug=MODERATOR_USERNAME).first()
+    if not author:
+        return
 
     for doc in DOCS:
         Post.objects.get_or_create(
