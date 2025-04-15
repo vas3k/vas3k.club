@@ -84,7 +84,7 @@ def club_rules_and_info(query, limit=5):
     search_results = SearchIndex\
         .search(query)\
         .filter(Q(post__slug__in=CLUB_INFO_POST_SLUGS) | Q(post__label_code=CLUB_INFO_POST_LABEL))[:limit]
-    return [shorten_content_text(r.post.to_dict()) for r in search_results]
+    return [shorten_content_text(r.post.to_dict(including_private=True)) for r in search_results]
 
 
 def shorten_content_text(post_or_comment_dict):
@@ -109,24 +109,24 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function",
         "name": "search_posts",
-        "description": "Search for posts in database that match a given query, optionally filtering by post type.",
+        "description": "Поиск постов соответствующих данному запросу, с возможностью фильтрации по типу и сортировки",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search terms or question to find relevant posts."
+                    "description": "Упрощенный поисковый запрос или ключевые слова для поиска постов"
                 },
                 "post_type": {
                     "type": ["string", "null"],
                     "enum": [t[0] for t in Post.TYPES],
-                    "description": f"Optional filter to only include posts of a specific type: {Post.TYPES}. "
+                    "description": f"Опциональный фильтр по типа поста из списка: {Post.TYPES}. "
                                    f"Pass null if not needed.",
                 },
                 "order_by": {
                     "type": ["string", "null"],
                     "enum": list(ALLOWED_ORDERING),
-                    "description": "Optional ordering of the results. Default is '-rank'.",
+                    "description": "Опциональная сортировка постов. Default is '-rank'.",
                 },
             },
             "required": ["query"],
@@ -136,13 +136,13 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function",
         "name": "search_comments",
-        "description": "Search through comments for relevant matches to a given query.",
+        "description": "Поиск комментариев пользователей по поисковому запросу или ключевым словам",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search terms or keywords to find relevant comments."
+                    "description": "Упрощенный поисковый запрос для поиска комментариев"
                 },
             },
             "required": ["query"],
@@ -152,13 +152,13 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function",
         "name": "search_users",
-        "description": "Search for people in our community based on a given query.",
+        "description": "Поиск людей в коммьюнити по имени, городам, месту работы, их биографии или увлечениям",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search terms or keywords to find relevant users."
+                    "description": "Упрощенный поисковый запрос или ключевые слова для поиска пользователей"
                 },
             },
             "required": ["query"],
@@ -168,13 +168,13 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function",
         "name": "search_chats",
-        "description": "Search for thematic chats in our community based on a given query.",
+        "description": "Поиск по тематическим чатам внутри коммьюнити по поисковому запросу или ключевым словам",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search terms or keywords to find relevant chats."
+                    "description": "Упрощенный поисковый запрос или ключевые слова для поиска релевантных чатов"
                 },
             },
             "required": ["query"],
@@ -184,13 +184,14 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function",
         "name": "generic_search",
-        "description": "Perform a generic search to find direct answers to questions.",
+        "description": "Общий поиск любой информации (из постов, комментариев, пользователей) внутри коммьюнити "
+                       "по поисковому запросу или ключевым словам",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search terms or keywords to find relevant content."
+                    "description": "Упрощенный поисковый запрос или ключевые слова для поиска релевантного контента"
                 },
             },
             "required": ["query"],
@@ -200,13 +201,14 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function",
         "name": "club_rules_and_info",
-        "description": "Get information about club, its rules and guidelines.",
+        "description": "Поиск ответов на вопросы о самом Клубе: правилах, инструкциях, модерации, ценностях, "
+                       "советах новичкам, вопросам членства, оплате и рефандах",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search terms or keywords to find relevant content"
+                    "description": "Ключевые слова для поиска информации о Клубе"
                 },
             },
             "required": ["query"],

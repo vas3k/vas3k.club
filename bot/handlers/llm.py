@@ -31,8 +31,10 @@ def llm_response(update: Update, context: CallbackContext) -> None:
     # only club members can use the bot
     user = get_club_user(update)
     if not user or not user.is_active_member:
-        update.message.reply_text("Я отвечаю только чувакам с активной подпиской в Клубе. "
-                                  "Иди продлевай! https://vas3k.club/user/me/")
+        update.message.reply_text(
+            "🙈 Я отвечаю только чувакам с активной подпиской в Клубе. Иди продлевай! https://vas3k.club/user/me/",
+            disable_web_page_preview=True
+        )
         return None
 
     # send typing action
