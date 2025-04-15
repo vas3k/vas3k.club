@@ -30,12 +30,17 @@ def llm_response(update: Update, context: CallbackContext) -> None:
 
     # only club members can use the bot
     user = get_club_user(update)
-    if not user:
-        update.message.reply_text("Я отвечаю только на вопросы членов Клуба")
+    if not user or not user.is_active_member:
+        update.message.reply_text("Я отвечаю только чувакам с активной подпиской в Клубе. "
+                                  "Иди продлевай! https://vas3k.club/user/me/")
         return None
 
     # send typing action
-    context.bot.send_chat_action(update.effective_chat.id, "typing")
+    context.bot.send_chat_action(
+        chat_id=update.effective_chat.id,
+        action="typing",
+        message_thread_id=update.message.message_thread_id
+    )
 
     if is_rate_limited("ai_bot"):
         update.message.reply_text("Чот я устал отвечать на вопросы... давай потом")

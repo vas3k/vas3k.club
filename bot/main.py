@@ -56,7 +56,7 @@ def main() -> None:
     dispatcher.add_handler(CallbackQueryHandler(moderation.approve_user_profile, pattern=r"^approve_user:.+"))
     dispatcher.add_handler(CallbackQueryHandler(moderation.reject_user_profile, pattern=r"^reject_user.+"))
 
-    # Public + private chats
+    # Commands and buttons
     dispatcher.add_handler(CommandHandler("help", command_help))
     dispatcher.add_handler(CommandHandler("horo", fun.command_horo))
     dispatcher.add_handler(CommandHandler("random", fun.command_random))
@@ -69,20 +69,22 @@ def main() -> None:
     dispatcher.add_handler(
         MessageHandler(Filters.reply & Filters.regex(r"^\+[+\d ]*$"), upvotes.upvote)
     )
-    dispatcher.add_handler(
-        MessageHandler(Filters.reply & ~Filters.chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)
-    )
-
-    # Only private chats
-    dispatcher.add_handler(CommandHandler("start", auth.command_auth, Filters.private))
-    dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
-    dispatcher.add_handler(MessageHandler(Filters.forwarded & Filters.private, whois.command_whois))
-    dispatcher.add_handler(MessageHandler(Filters.private, private_message))
 
     # AI
     dispatcher.add_handler(
         MessageHandler(Filters.text & Filters.regex(BOT_MENTION_RE), llm.llm_response)
     )
+
+    # Handle comments to posts and replies
+    dispatcher.add_handler(
+        MessageHandler(Filters.reply & ~Filters.chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)
+    )
+
+    # Private chat with bot
+    dispatcher.add_handler(CommandHandler("start", auth.command_auth, Filters.private))
+    dispatcher.add_handler(CommandHandler("auth", auth.command_auth, Filters.private))
+    dispatcher.add_handler(MessageHandler(Filters.forwarded & Filters.private, whois.command_whois))
+    dispatcher.add_handler(MessageHandler(Filters.private, private_message))
 
     # Start the bot
     if settings.DEBUG:

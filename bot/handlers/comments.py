@@ -5,6 +5,7 @@ from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from bot.config import MIN_COMMENT_LEN, SKIP_COMMANDS, COMMENT_EMOJI_RE, POST_EMOJI_RE
+from bot.handlers import llm
 from bot.handlers.common import get_club_user, get_club_comment, get_club_post
 from bot.decorators import is_club_member
 from club import settings
@@ -21,11 +22,11 @@ def comment(update: Update, context: CallbackContext) -> None:
     log.info("Comment handler triggered")
 
     if not update.message or not update.message.reply_to_message:
-        # skip non-replies
+        log.info("Not a reply. Skipping.")
         return None
 
     if update.message.reply_to_message.from_user.id != context.bot.id:
-        # skip replies to other users
+        log.info("Reply to another user. Skipping.")
         return
 
     reply_text_start = (
@@ -42,9 +43,7 @@ def comment(update: Update, context: CallbackContext) -> None:
     if POST_EMOJI_RE.match(reply_text_start):
         return comment_to_post(update, context)
 
-    # skip normal replies
-    log.info("Skipping...")
-    return None
+    return llm.llm_response(update, context)
 
 
 @is_club_member

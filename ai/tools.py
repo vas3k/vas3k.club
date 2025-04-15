@@ -15,7 +15,7 @@ def generic_search(query, limit=5):
     results = []
     for result in search_results:
         if result.type == SearchIndex.TYPE_POST and result.post:
-            results.append(result.post.to_dict())
+            results.append(result.post.to_dict(including_private=True))
         elif result.type == SearchIndex.TYPE_COMMENT and result.comment:
             results.append(result.comment.to_dict())
         elif result.type == SearchIndex.TYPE_USER and result.user:
@@ -36,7 +36,7 @@ def search_posts(query, post_type=None, order_by="-rank", limit=5):
 
     search_results = search_results.select_related("post").order_by(order_by)[:limit]
 
-    return [shorten_content_text(r.post.to_dict()) for r in search_results]
+    return [shorten_content_text(r.post.to_dict(including_private=True)) for r in search_results]
 
 
 def search_comments(query, order_by="-rank", limit=7):
