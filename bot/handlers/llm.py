@@ -36,11 +36,7 @@ def llm_response(update: Update, context: CallbackContext) -> None:
         return None
 
     # send typing action
-    context.bot.send_chat_action(
-        chat_id=update.effective_chat.id,
-        action="typing",
-        message_thread_id=update.message.message_thread_id
-    )
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
 
     if is_rate_limited("ai_bot"):
         update.message.reply_text("Чот я устал отвечать на вопросы... давай потом")
