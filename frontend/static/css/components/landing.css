@@ -23,8 +23,9 @@
             max-width: var(--normal-content-width);
         }
 
-        .landing-block div {
+        .landing-block > div {
             flex: 1;
+            min-width: 300px;
         }
 
         .landing-block p {

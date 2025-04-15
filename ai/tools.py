@@ -5,6 +5,7 @@ from posts.models.post import Post
 from rooms.models import Room
 from search.models import SearchIndex
 from search.views import ALLOWED_ORDERING
+from users.models.user import User
 
 
 def generic_search(query, limit=5):
@@ -19,7 +20,8 @@ def generic_search(query, limit=5):
         elif result.type == SearchIndex.TYPE_COMMENT and result.comment:
             results.append(result.comment.to_dict())
         elif result.type == SearchIndex.TYPE_USER and result.user:
-            results.append(result.user.to_dict())
+            if result.user.profile_publicity_level != User.PUBLICITY_LEVEL_PRIVATE:
+                results.append(result.user.to_dict())
 
     return results
 
@@ -54,6 +56,9 @@ def search_users(query, order_by="-rank", limit=7):
     search_results = SearchIndex\
         .search(query) \
         .filter(type=SearchIndex.TYPE_USER) \
+        .exclude(user__isnull=True, user__is_deleted=True) \
+        .exclude(user__profile_publicity_level=User.PUBLICITY_LEVEL_PRIVATE) \
+        .filter(user__moderation_status=User.MODERATION_STATUS_APPROVED) \
         .select_related("user") \
         .order_by(order_by)[:limit]
 

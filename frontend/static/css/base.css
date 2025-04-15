@@ -750,6 +750,7 @@ img.emoji {
     }
 
     .big-radio-item {
+        flex: 1;
         display: block;
         cursor: pointer;
         position: relative;
