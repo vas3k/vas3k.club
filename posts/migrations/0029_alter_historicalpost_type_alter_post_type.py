@@ -4,6 +4,7 @@ from datetime import datetime
 from django.db import migrations, models
 
 from club.settings import MODERATOR_USERNAME, DELETED_USERNAME
+from utils.strings import random_string
 
 DOCS = [
     {
@@ -57,6 +58,7 @@ def create_moderator_user(apps, schema_editor):
         slug=MODERATOR_USERNAME,
         defaults=dict(
             email="moderator@vas3k.club",
+            secret_hash=random_string(length=20),
             membership_platform_type="direct",
             full_name="Модератор",
             company="Вастрик.Клуб",
@@ -80,6 +82,7 @@ def create_deleted_user(apps, schema_editor):
         slug=DELETED_USERNAME,
         defaults=dict(
             email="deleted@vas3k.club",
+            secret_hash=random_string(length=20),
             membership_platform_type="direct",
             full_name="💀 Юзер-зомби",
             company="[object Object]",
