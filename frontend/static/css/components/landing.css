@@ -5,6 +5,7 @@
 
     .landing-block {
         display: flex;
+        gap: 30px;
         flex-wrap: wrap;
         justify-content: center;
         align-items: flex-start;
@@ -15,39 +16,15 @@
     }
 
         .landing-block-limited {
-            max-width: var(--max-content-width);
+            max-width: 1200px;
         }
 
         .landing-block-narrow {
             max-width: var(--normal-content-width);
         }
 
-        .landing-block-20 {
-            max-width: 30%;
-        }
-
-        .landing-block-30 {
-            max-width: 30%;
-        }
-
-        .landing-block-40 {
-            max-width: 40%;
-        }
-
-        .landing-block-50 {
-            max-width: 50%;
-        }
-
-        .landing-block-60 {
-            max-width: 60%;
-        }
-
-        .landing-block-70 {
-            max-width: 70%;
-        }
-
-        .landing-block-80 {
-            max-width: 80%;
+        .landing-block div {
+            flex: 1;
         }
 
         .landing-block p {
@@ -76,6 +53,7 @@
         }
 
 .landing-block-chats {
+    gap: 0;
     width: 100%;
     max-width: 2000px;
     padding-top: 30px;
@@ -133,6 +111,7 @@
         font-size: 180%;
         line-height: 1.24em;
         margin-bottom: 0;
+        text-align: center;
     }
 
     .feature-list {
@@ -256,6 +235,7 @@
     position: relative;
     width: 100%;
     min-height: 500px;
+    padding-left: 20px;
 }
 
     .landing-post {
