@@ -19,7 +19,7 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
     retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
 from invites.views import show_invite, list_invites, activate_invite
-from landing.views import landing, docs, godmode_network_settings, godmode_digest_settings, godmode_settings, \
+from landing.views import landing, godmode_network_settings, godmode_digest_settings, godmode_settings, \
     godmode_invite, godmode_generate_invite_code, godmode_sunday_posts, godmode_mass_email
 from ai.views import llm_agent_playground
 from misc.fun import badge_generator, mass_note
@@ -192,8 +192,6 @@ urlpatterns = [
          name="email_digest_switch"),
     path("notifications/renderer/digest/weekly/", render_weekly_digest, name="render_weekly_digest"),
     path("notifications/webhook/<slug:event_type>", webhook_event, name="webhook_event"),
-
-    path("docs/<slug:doc_slug>/", docs, name="docs"),
 
     path("network/", network, name="network"),
     path("network/chat/<slug:chat_id>/", RedirectView.as_view(url="/room/%(chat_id)s/chat/", permanent=True),

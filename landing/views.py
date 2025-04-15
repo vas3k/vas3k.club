@@ -23,12 +23,6 @@ from posts.models.post import Post
 from users.models.user import User
 from utils.strings import random_string
 
-EXISTING_DOCS = [
-    os.path.splitext(f)[0]  # get only filenames
-    for f in os.listdir(os.path.join(settings.BASE_DIR, "frontend/html/docs"))
-    if f.endswith(".html")
-]
-
 
 def landing(request):
     stats = cache.get("landing_stats")
@@ -43,13 +37,6 @@ def landing(request):
     return render(request, "landing.html", {
         "stats": stats
     })
-
-
-def docs(request, doc_slug):
-    if doc_slug not in EXISTING_DOCS:
-        raise Http404()
-
-    return render(request, f"docs/{doc_slug}.html")
 
 
 @require_auth

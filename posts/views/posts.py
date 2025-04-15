@@ -203,6 +203,9 @@ def edit_post(request, post_slug):
 def create_or_edit(request, post_type, post=None, mode="create"):
     FormClass = POST_TYPE_MAP.get(post_type) or PostTextForm
 
+    if post_type == Post.TYPE_DOCS and not request.me.is_god:
+        raise AccessDenied("Вы не можете создавать или редактировать доки :(")
+
     # show blank form on GET
     if request.method != "POST":
         form = FormClass(instance=post)

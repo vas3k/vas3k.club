@@ -54,13 +54,13 @@
 {% block footer %}
     <footer class="footer" id="footer">
         <div class="footer-left">
-            <a href="{% url "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
+            <a href="{% url "show_post" "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
 
             <a href="{{ settings.VALUES_GUIDE_URL }}">Наши ценности</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a> &nbsp;&middot;&nbsp;
+            <a href="{% url "show_post" "docs" "privacy_policy" %}">Политика приватности</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "contact" %}">Связаться с нами</a>
+            <a href="{% url "show_post" "docs" "contact" %}">Связаться с нами</a>
 
             <br><br>
 
@@ -70,7 +70,7 @@
 
             <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "blocked_dolor" %}">Оплата из России</a>
+            <a href="{% url "show_post" "docs" "blocked_dolor" %}">Оплата из России</a>
 
             <br><br>
 

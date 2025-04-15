@@ -51,7 +51,7 @@
 
         <div class="landing-block landing-block-limited">
             <div class="landing-block-40">
-                <h3 class="feature-title">Чужой опыт и инсайды</h3>
+                <h3 class="feature-title">Человеческий опыт и инсайды</h3>
 
                 <ul class="feature-list">
                     <li>В Клубе пишут статьи, просят советов, делятся идеями и показывают пет-проджекты</li>
@@ -163,6 +163,7 @@
                     <li>Сеть клубных чатиков в телеграме</li>
                     <li>Коммьюнити по городам и странам</li>
                     <li>АМА с экспертами и отзывчивые участники</li>
+                    <li>Оффлайн ивенты для нетворкинга</li>
                     <li>Место, в котором хорошо</li>
                 </ul>
             </div>
@@ -184,7 +185,7 @@
                     <li>Бартер, Справочная и другие p2p-сервисы</li>
                     <li>Коучинг и менторство между участниками Клуба</li>
                     <li>У нас запрещена анонимность и действует жесткая модерация. Так мы сохраняем здоровое коммьюнити без говна</li>
-                    <li>Подробнее о правилах можно почитать в разделе <a href="{% url "docs" "about" %}" target="_blank">О Клубе</a></li>
+                    <li>Подробнее о правилах можно почитать в разделе <a href="{% url "show_post" "docs" "about" %}" target="_blank">О Клубе</a></li>
                 </ul>
             </div>
 
@@ -257,9 +258,11 @@
 {% block footer %}
     <footer class="footer">
         <div class="footer-left" style="text-align: center; font-size: 130%;">
-            &copy; <a href="https://vas3k.ru" target="_blank">Вастрик</a> {% now "Y" %}
+            &copy; <a href="https://vas3k.blog" target="_blank">Вастрик</a> {% now "Y" %}
             &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
-            <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
+            <a href="{% url "show_post" "docs" "about" %}">О Клубе</a>
+            &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
+            <a href="{% url "show_post" "docs" "contact" %}">Связаться с нами</a><br><br>
         </div>
     </footer>
 {% endblock %}

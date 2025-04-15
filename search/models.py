@@ -60,8 +60,8 @@ class SearchIndex(models.Model):
 
         SearchIndex.objects.update_or_create(
             comment=comment,
+            type=SearchIndex.TYPE_COMMENT,
             defaults=dict(
-                type=SearchIndex.TYPE_COMMENT,
                 post_id=comment.post_id,
                 index=Comment.objects
                 .annotate(vector=vector)
@@ -83,8 +83,8 @@ class SearchIndex(models.Model):
         if post.is_searchable:
             SearchIndex.objects.update_or_create(
                 post=post,
+                type=SearchIndex.TYPE_POST,
                 defaults=dict(
-                    type=SearchIndex.TYPE_POST,
                     index=Post.objects
                     .annotate(vector=vector)
                     .filter(id=post.id)
@@ -122,8 +122,8 @@ class SearchIndex(models.Model):
         if user.moderation_status == User.MODERATION_STATUS_APPROVED:
             SearchIndex.objects.update_or_create(
                 user=user,
+                type=SearchIndex.TYPE_USER,
                 defaults=dict(
-                    type=SearchIndex.TYPE_USER,
                     index=(user_index or "") + " " + (intro_index or ""),
                     created_at=user.created_at,
                     updated_at=datetime.utcnow(),
