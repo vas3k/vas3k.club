@@ -289,7 +289,7 @@ STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWI
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_CHAT_MODEL = "gpt-4o-mini"
+OPENAI_CHAT_MODEL = "gpt-4.1-mini-2025-04-14"
 OPENAI_EMBEDDINGS_MODEL = "text-embedding-3-small"
 OPENAI_EMBEDDINGS_VECTOR_DIM = 1536
 
