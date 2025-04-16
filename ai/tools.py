@@ -88,7 +88,11 @@ def search_chats(query, limit=30):
 def club_rules_and_info(query, limit=5):
     search_results = SearchIndex\
         .search(query)\
-        .filter(Q(post__slug__in=CLUB_INFO_POST_SLUGS) | Q(post__label_code=CLUB_INFO_POST_LABEL))[:limit]
+        .filter(
+            Q(post__slug__in=CLUB_INFO_POST_SLUGS) |
+            Q(post__label_code=CLUB_INFO_POST_LABEL) |
+            Q(post__type=Post.TYPE_DOCS)
+        )[:limit]
     return [shorten_content_text(r.post.to_dict(including_private=True)) for r in search_results]
 
 
