@@ -45,7 +45,7 @@ def llm_response(update: Update, context: CallbackContext) -> None:
         return None
 
     user_input = [
-        f"Я — {user.full_name}",
+        f"Я — {user.full_name} {user.slug}",
         message_text
     ]
     if reply_to_text:
