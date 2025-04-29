@@ -93,7 +93,7 @@ def email_digest_switch(request, digest_type, user_id, secret):
 
 def render_weekly_digest(request):
     try:
-        digest, _ = generate_weekly_digest()
+        digest, _ = generate_weekly_digest(no_footer=True)
     except NotFound:
         raise Http404()
 
