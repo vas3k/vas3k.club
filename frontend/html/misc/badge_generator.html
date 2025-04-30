@@ -131,13 +131,13 @@
                                     <div class="profile-card-age">
                                         {% if user.membership_created_days < 40 %}
                                             <span class="profile-status-number">{{ user.membership_created_days | ceil | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }}</span>
                                         {% elif user.membership_created_days <= 360 %}
                                             <span class="profile-status-number">{{ user.membership_created_days | days_to_months | cool_number  }}</span>
-                                            <span class="profile-status-text">мес. в Клубе</span>
+                                            <span class="profile-status-text">мес.</span>
                                         {% else %}
                                             <span class="profile-status-number">{{ user.membership_created_days | days_to_years | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
+                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }}</span>
                                         {% endif %}
                                     </div>
                                 {% endif %}
