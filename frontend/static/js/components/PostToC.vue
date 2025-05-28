@@ -1,26 +1,29 @@
 <template>
     <div class="post-toc" v-if="headlines.length > 0">
-        <ul v-if="isOpen" class="post-toc-opened-list" @mouseleave.prevent="closeToc">
-            <li :class="{
+        <transition :name="transitionName" mode="out-in">
+            <ul v-if="isOpen" class="post-toc-opened-list" @mouseleave.prevent="closeToc" key="opened">
+                <li :class="{
                     'post-toc-item': true,
                     'post-toc-item-level-1': headline.level === 1,
                     'post-toc-item-level-2': headline.level === 2,
                     'post-toc-item-level-3': headline.level === 3,
                 }" v-for="headline in headlines">
-                <a href="#" @click.prevent="onHeadlineClick(headline)">{{ headline.text }}</a>
-            </li>
-        </ul>
-        <ul v-else class="post-toc-collapsed-list" @mouseover.prevent="openToc" @click.prevent="openToc">
-            <li v-for="headline in headlines"
-                :class="{
+                    <a href="#" @click.prevent="onHeadlineClick(headline)">{{ headline.text }}</a>
+                </li>
+            </ul>
+            <ul v-else class="post-toc-collapsed-list" @mouseover.prevent="openToc" @click.prevent="openToc"
+                key="closed">
+                <li v-for="headline in headlines"
+                    :class="{
                     'post-toc-collapsed-item': true,
                     'post-toc-collapsed-level-1': headline.level === 1,
                     'post-toc-collapsed-level-2': headline.level === 2,
                     'post-toc-collapsed-level-3': headline.level === 3,
                 }"
-            >
-            </li>
-        </ul>
+                >
+                </li>
+            </ul>
+        </transition>
     </div>
 </template>
 
@@ -32,6 +35,11 @@ export default {
             headlines: [],
             isOpen: false
         };
+    },
+    computed: {
+        transitionName() {
+            return this.isOpen ? "expand" : "";
+        }
     },
     methods: {
         onHeadlineClick(headline) {
@@ -62,3 +70,15 @@ function createHeadlineDescription(headline, index, headlines) {
     });
 }
 </script>
+
+<style>
+.expand-enter-active {
+    transition: all .1s ease;
+}
+
+.expand-enter {
+    transform: translateX(50px);
+    opacity: 0;
+}
+
+</style>

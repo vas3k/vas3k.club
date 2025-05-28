@@ -1096,6 +1096,8 @@
     max-height: 70dvh;
     max-width: 300px;
     border-radius: var(--form-border-radius);
+    overflow-y: auto;
+    overflow-x: clip;
 }
 
 @media only screen and (max-width: 800px) {
