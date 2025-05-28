@@ -1142,6 +1142,9 @@
     list-style-type: none;
     opacity: 0.5;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 
     .post-toc-collapsed-item {
         height: 4px;
@@ -1150,14 +1153,14 @@
     }
 
     .post-toc-collapsed-level-1 {
-        width: 2rem;
+        width: 24px;
     }
 
     .post-toc-collapsed-level-2 {
-        width: 1.5rem;
+        width: 18px;
     }
 
     .post-toc-collapsed-level-3 {
-        width: 1rem;
+        width: 12px;
     }
 }
