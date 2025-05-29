@@ -8,7 +8,7 @@
                     'post-toc-item-level-2': headline.level === 2,
                     'post-toc-item-level-3': headline.level === 3,
                 }" v-for="headline in headlines">
-                    <a href="#" @click.prevent="onHeadlineClick(headline)">{{ headline.text }}</a>
+                    <a :href="`#${headline.element.id}`" @click="onHeadlineClick">{{ headline.text }}</a>
                 </li>
             </ul>
             <ul v-else class="post-toc-collapsed-list" @mouseover.prevent="openToc" @click.prevent="openToc"
@@ -43,7 +43,10 @@ export default {
     },
     methods: {
         onHeadlineClick(headline) {
-            headline.element.scrollIntoView({ behavior: "smooth", block: "center" });
+            document.documentElement.style.scrollBehavior = "smooth";
+            document.addEventListener("scrollend", (event) => {
+                document.documentElement.style.scrollBehavior = "auto";
+            }, { once: true });
         },
         openToc() {
             this.isOpen = true;
