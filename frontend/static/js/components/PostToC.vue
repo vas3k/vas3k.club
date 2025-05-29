@@ -1,6 +1,6 @@
 <template>
     <div class="post-toc" v-if="headlines.length > 0">
-        <transition :name="transitionName" mode="out-in">
+        <transition name="expand" mode="out-in">
             <ul v-if="isOpen" class="post-toc-opened-list" @mouseleave.prevent="closeToc" key="opened">
                 <li :class="{
                     'post-toc-item': true,
@@ -35,11 +35,6 @@ export default {
             headlines: [],
             isOpen: false
         };
-    },
-    computed: {
-        transitionName() {
-            return this.isOpen ? "expand" : "expand";
-        }
     },
     methods: {
         onHeadlineClick(headline) {
