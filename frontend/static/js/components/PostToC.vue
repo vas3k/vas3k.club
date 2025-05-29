@@ -38,7 +38,7 @@ export default {
     },
     computed: {
         transitionName() {
-            return this.isOpen ? "expand" : "";
+            return this.isOpen ? "expand" : "expand";
         }
     },
     methods: {
@@ -73,10 +73,27 @@ function createHeadlineDescription(headline, index, headlines) {
 
 <style>
 .expand-enter-active {
-    transition: all .1s ease;
+    transition: all .2s ease;
+    pointer-events: none;
+}
+
+.expand-leave-active {
+    transition: all .2s ease-out;
+    pointer-events: none;
 }
 
 .expand-enter {
+    transform: translateX(50px);
+    opacity: 0;
+}
+
+.expand-leave {
+    transform: translateX(50px);
+    opacity: 0;
+}
+
+
+.expand-leave-to {
     transform: translateX(50px);
     opacity: 0;
 }
