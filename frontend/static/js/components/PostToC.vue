@@ -2,23 +2,26 @@
     <div class="post-toc" v-if="headlines.length > 0">
         <transition name="expand" mode="out-in">
             <ul v-if="isOpen" class="post-toc-opened-list" @mouseleave.prevent="closeToc" key="opened">
-                <li :class="{
+                <li v-for="(headline, index) in headlines"
+                    :class="{
                     'post-toc-item': true,
                     'post-toc-item-level-1': headline.level === 1,
                     'post-toc-item-level-2': headline.level === 2,
                     'post-toc-item-level-3': headline.level === 3,
-                }" v-for="headline in headlines">
+                    'post-toc-item-active': index === currentHeadingIndex
+                }">
                     <a :href="`#${headline.element.id}`" @click="onHeadlineClick">{{ headline.text }}</a>
                 </li>
             </ul>
             <ul v-else class="post-toc-collapsed-list" @mouseover.prevent="openToc" @click.prevent="openToc"
                 key="closed">
-                <li v-for="headline in headlines"
+                <li v-for="(headline, index) in headlines"
                     :class="{
                     'post-toc-collapsed-item': true,
                     'post-toc-collapsed-level-1': headline.level === 1,
                     'post-toc-collapsed-level-2': headline.level === 2,
                     'post-toc-collapsed-level-3': headline.level === 3,
+                    'post-toc-collapsed-active': index === currentHeadingIndex
                 }"
                 >
                 </li>
@@ -33,13 +36,14 @@ export default {
     data() {
         return {
             headlines: [],
-            isOpen: false
+            isOpen: false,
+            currentHeadingIndex: undefined
         };
     },
     methods: {
-        onHeadlineClick(headline) {
+        onHeadlineClick() {
             document.documentElement.style.scrollBehavior = "smooth";
-            document.addEventListener("scrollend", (event) => {
+            document.addEventListener("scrollend", () => {
                 document.documentElement.style.scrollBehavior = "auto";
             }, { once: true });
         },
@@ -54,6 +58,35 @@ export default {
         this.headlines = Array.from(document.querySelectorAll("article.post .text-body h1, article.post .text-body h2, article.post .text-body h3"))
             .filter(headline => !headline.classList.contains("post-title"))
             .map(createHeadlineDescription);
+
+        let prevScrollPosition = window.scrollY;
+        this.currentHeadingIndex = initActivePosition();
+
+        const headlineObserver = new IntersectionObserver((entries) => {
+            const firstIntersecting = entries.find(entry => entry.isIntersecting === true);
+            const scrollDirection = prevScrollPosition - window.scrollY > 0 ? "up" : "down";
+            prevScrollPosition = window.scrollY;
+
+            if (firstIntersecting) {
+                this.currentHeadingIndex = this.headlines.findIndex(headline => headline.element === firstIntersecting.target);
+            } else if (scrollDirection === "up" && entries.length === 1 && !entries[0].isIntersecting) {
+                // when we scroll up past the current headline and there is no headline visible, switch to the previous headline
+                this.currentHeadingIndex = this.currentHeadingIndex > 0 ? this.currentHeadingIndex - 1 : undefined;
+            }
+
+        }, { threshold: 1 });
+
+        for (const headline of this.headlines) {
+            headlineObserver.observe(headline.element);
+        }
+
+        // highlight nothing when a post is out of the screen
+        const postTextObserver = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) {
+                this.currentHeadingIndex = undefined;
+            }
+        });
+        postTextObserver.observe(document.querySelector("section.post-text"));
     }
 };
 
@@ -66,6 +99,17 @@ function createHeadlineDescription(headline, index, headlines) {
         element: headline,
         level: tagLevel - prevHeadlineLevel > 1 ? prevHeadlineLevel + 1 : tagLevel
     });
+}
+
+function initActivePosition() {
+    const viewportHeight = window.innerHeight;
+    return this.headlines.reduce((closestFromTopIndex, headline, index) => {
+            const headlinePosition = headline.element.getBoundingClientRect();
+            const isAboveViewport = headlinePosition.y <= 0;
+            const isWithinViewport = headlinePosition.bottom < viewportHeight;
+            return isAboveViewport || isWithinViewport ? index : closestFromTopIndex;
+        },
+        undefined);
 }
 </script>
 

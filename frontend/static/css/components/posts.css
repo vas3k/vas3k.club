@@ -1097,7 +1097,7 @@
     max-width: 300px;
     border-radius: var(--form-border-radius);
     overflow-y: auto;
-    overflow-x: clip;
+    overflow-x: hidden;
     z-index: 2;
 }
 
@@ -1122,6 +1122,10 @@
         text-wrap: pretty;
     }
 
+    .post-toc-item-active {
+        background-color: var(--block-bg-color);
+    }
+
     a {
         text-decoration: none;
         display: block;
@@ -1143,8 +1147,7 @@
 
 .post-toc-collapsed-list {
     list-style-type: none;
-    opacity: 0.5;
-    padding: 0;
+    padding: 0 2px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -1153,6 +1156,13 @@
         height: 4px;
         border-radius: 4px;
         background-color: var(--text-color);
+        opacity: .5;
+        transition: all .5s ease-in-out;
+    }
+
+    .post-toc-collapsed-active {
+        opacity: 1;
+        box-shadow: var(--text-color) 0 0 3px;
     }
 
     .post-toc-collapsed-level-1 {
