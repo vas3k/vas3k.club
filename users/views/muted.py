@@ -37,7 +37,14 @@ def toggle_mute(request, user_slug):
             })
 
     # else — process POST
-    if total_user_muted_count > settings.MAX_MUTE_COUNT:
+    # Check if user is already muted to determine if this is a mute or unmute operation
+    is_already_muted = UserMuted.is_muted(
+        user_from=request.me,
+        user_to=user_to,
+    )
+
+    # Only check mute limit when trying to create a new mute
+    if not is_already_muted and total_user_muted_count >= settings.MAX_MUTE_COUNT:
         raise AccessDenied(
             title="Вы замьютили слишком много людей",
             message="Рекомендуем притормозить и подумать о будущем..."
