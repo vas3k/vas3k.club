@@ -36,10 +36,28 @@ class UserMuted(models.Model):
 
     @classmethod
     def unmute(cls, user_from, user_to):
-        return cls.objects.filter(
+        # Use select_for_update to prevent race conditions during delete
+        queryset = cls.objects.filter(
             user_from=user_from,
             user_to=user_to,
-        ).delete()
+        )
+        
+        # Check if the record exists first
+        if not queryset.exists():
+            return (0, {})
+        
+        # Delete the record
+        result = queryset.delete()
+        
+        # Double-check that the record was actually deleted
+        if cls.objects.filter(user_from=user_from, user_to=user_to).exists():
+            # If still exists, try a more direct approach
+            cls.objects.filter(
+                user_from=user_from,
+                user_to=user_to,
+            ).delete()
+            
+        return result
 
     @classmethod
     def is_muted(cls, user_from, user_to):

@@ -63,10 +63,25 @@ def toggle_mute(request, user_slug):
         })
     else:
         # unmute this user
-        UserMuted.unmute(
+        deleted_count, _ = UserMuted.unmute(
             user_from=request.me,
             user_to=user_to,
         )
+        
+        # Verify the unmute actually worked
+        if deleted_count == 0:
+            # The mute record didn't exist or couldn't be deleted
+            # This shouldn't happen but let's handle it gracefully
+            is_still_muted = UserMuted.is_muted(
+                user_from=request.me,
+                user_to=user_to,
+            )
+            if is_still_muted:
+                # Force delete with a more targeted approach
+                UserMuted.objects.filter(
+                    user_from=request.me,
+                    user_to=user_to,
+                ).delete()
 
         return render(request, "users/messages/unmuted.html", {
             "user": user_to,
@@ -81,7 +96,14 @@ def muted(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
     muted_users = UserMuted.muted_by_user(user)
 
-    return render(request, "users/mute/index.html", {
+    response = render(request, "users/mute/index.html", {
         "user": user,
         "muted": muted_users,
     })
+    
+    # Prevent caching to ensure fresh data
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    
+    return response
