@@ -4,16 +4,6 @@
     --normal-content-width: 800px;
 }
 
-::-webkit-scrollbar {
-    background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: var(--opposite-bg-color);
-    border-radius: var(--block-border-radius);
-    height: 40px;
-}
-
 .content {
     margin: 0 auto;
     max-width: var(--normal-content-width);

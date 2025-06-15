@@ -1151,7 +1151,7 @@
 
 .post-toc-collapsed-list {
     list-style-type: none;
-    padding: 0 2px;
+    padding: 0 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
