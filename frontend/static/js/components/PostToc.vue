@@ -37,7 +37,8 @@ export default {
         return {
             headlines: [],
             isOpen: false,
-            currentHeadingIndex: undefined
+            currentHeadingIndex: undefined,
+            prevScrollPosition: undefined
         };
     },
     methods: {
@@ -54,18 +55,19 @@ export default {
             this.isOpen = false;
         }
     },
+    mounted() {
+        this.currentHeadingIndex = initActivePosition(this.headlines);
+        this.prevScrollPosition = window.scrollY;
+    },
     beforeMount() {
         this.headlines = Array.from(document.querySelectorAll("article.post .text-body h1, article.post .text-body h2, article.post .text-body h3"))
             .filter(headline => !headline.classList.contains("post-title"))
             .map(createHeadlineDescription);
 
-        let prevScrollPosition = window.scrollY;
-        this.currentHeadingIndex = initActivePosition();
-
         const headlineObserver = new IntersectionObserver((entries) => {
             const firstIntersecting = entries.find(entry => entry.isIntersecting === true);
-            const scrollDirection = prevScrollPosition - window.scrollY > 0 ? "up" : "down";
-            prevScrollPosition = window.scrollY;
+            const scrollDirection = this.prevScrollPosition - window.scrollY > 0 ? "up" : "down";
+            this.prevScrollPosition = window.scrollY;
 
             if (firstIntersecting) {
                 this.currentHeadingIndex = this.headlines.findIndex(headline => headline.element === firstIntersecting.target);
@@ -101,9 +103,9 @@ function createHeadlineDescription(headline, index, headlines) {
     });
 }
 
-function initActivePosition() {
+function initActivePosition(headlines) {
     const viewportHeight = window.innerHeight;
-    return this.headlines.reduce((closestFromTopIndex, headline, index) => {
+    return headlines.reduce((closestFromTopIndex, headline, index) => {
             const headlinePosition = headline.element.getBoundingClientRect();
             const isAboveViewport = headlinePosition.y <= 0;
             const isWithinViewport = headlinePosition.bottom < viewportHeight;
