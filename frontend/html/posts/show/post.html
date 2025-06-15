@@ -73,6 +73,10 @@
             </header>
         {% endblock %}
 
+        {% if post.text|length > 10000 %}
+            <post-toc comments-count={{post.comment_count}}></post-toc>
+        {% endif %}
+
         {% block post_text %}
             <section class="post-text">
                 {% block post_upvote %}

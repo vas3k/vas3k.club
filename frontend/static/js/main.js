@@ -14,6 +14,7 @@ import vSelect from "vue-select";
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
 Vue.component("post-rsvp", () => import("./components/PostRSVP.vue"));
+Vue.component("post-toc", () => import("./components/PostToC.vue"));
 Vue.component("comment-upvote", () => import("./components/CommentUpvote.vue"));
 Vue.component("user-tag", () => import("./components/UserTag.vue"));
 Vue.component("people-map", () => import("./components/PeopleMap.vue"));
