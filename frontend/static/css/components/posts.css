@@ -1143,6 +1143,10 @@
     .post-toc-item-level-3 {
         margin-left: 32px;
     }
+
+    .post-toc-item-comments {
+        padding-top: 8px;
+    }
 }
 
 .post-toc-collapsed-list {

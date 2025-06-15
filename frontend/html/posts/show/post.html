@@ -74,7 +74,7 @@
         {% endblock %}
 
         {% if post.text|length > 10000 %}
-                    <post-toc></post-toc>
+            <post-toc comments-count={{post.comment_count}}></post-toc>
         {% endif %}
 
         {% block post_text %}

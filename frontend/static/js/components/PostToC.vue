@@ -12,6 +12,10 @@
                 }">
                     <a :href="`#${headline.element.id}`" @click="onHeadlineClick">{{ headline.text }}</a>
                 </li>
+                <li class="post-toc-item-level-1 post-toc-item-comments">
+                    <a href="#comments" @click="onHeadlineClick">Комментарии
+                        {{ commentsCount > 0 ? `(${commentsCount})` : "" }}</a>
+                </li>
             </ul>
             <ul v-else class="post-toc-collapsed-list" @mouseover.prevent="openToc" @click.prevent="openToc"
                 key="closed">
@@ -33,6 +37,11 @@
 <script>
 export default {
     name: "PostToC",
+    props: {
+        commentsCount: {
+            type: Number
+        }
+    },
     data() {
         return {
             headlines: [],
@@ -116,30 +125,31 @@ function initActivePosition(headlines) {
 </script>
 
 <style>
-.expand-enter-active {
-    transition: all .2s ease;
-    pointer-events: none;
+@media (prefers-reduced-motion: no-preference) {
+    .expand-enter-active {
+        transition: all .2s ease;
+        pointer-events: none;
+    }
+
+    .expand-leave-active {
+        transition: all .1s ease-out;
+        pointer-events: none;
+    }
+
+    .expand-enter {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+
+    .expand-leave {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+
+
+    .expand-leave-to {
+        transform: translateX(50px);
+        opacity: 0;
+    }
 }
-
-.expand-leave-active {
-    transition: all .2s ease-out;
-    pointer-events: none;
-}
-
-.expand-enter {
-    transform: translateX(50px);
-    opacity: 0;
-}
-
-.expand-leave {
-    transform: translateX(50px);
-    opacity: 0;
-}
-
-
-.expand-leave-to {
-    transform: translateX(50px);
-    opacity: 0;
-}
-
 </style>
