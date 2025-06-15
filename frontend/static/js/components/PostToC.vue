@@ -65,7 +65,7 @@ export default {
         }
     },
     mounted() {
-        this.currentHeadingIndex = initActivePosition(this.headlines);
+        this.currentHeadingIndex = calcActivePosition(this.headlines);
         this.prevScrollPosition = window.scrollY;
     },
     beforeMount() {
@@ -74,17 +74,16 @@ export default {
             .map(createHeadlineDescription);
 
         const headlineObserver = new IntersectionObserver((entries) => {
-            const firstIntersecting = entries.find(entry => entry.isIntersecting === true);
+            const lastIntersecting = entries.findLast(entry => entry.isIntersecting === true);
             const scrollDirection = this.prevScrollPosition - window.scrollY > 0 ? "up" : "down";
             this.prevScrollPosition = window.scrollY;
 
-            if (firstIntersecting) {
-                this.currentHeadingIndex = this.headlines.findIndex(headline => headline.element === firstIntersecting.target);
+            if (lastIntersecting) {
+                this.currentHeadingIndex = this.headlines.findIndex(headline => headline.element === lastIntersecting.target);
             } else if (scrollDirection === "up" && entries.length === 1 && !entries[0].isIntersecting) {
                 // when we scroll up past the current headline and there is no headline visible, switch to the previous headline
-                this.currentHeadingIndex = this.currentHeadingIndex > 0 ? this.currentHeadingIndex - 1 : undefined;
+                this.currentHeadingIndex = calcActivePosition(this.headlines);
             }
-
         }, { threshold: 1 });
 
         for (const headline of this.headlines) {
@@ -111,12 +110,12 @@ function createHeadlineDescription(headline) {
     });
 }
 
-function initActivePosition(headlines) {
+function calcActivePosition(headlines) {
     const viewportHeight = window.innerHeight;
     return headlines.reduce((closestFromTopIndex, headline, index) => {
             const headlinePosition = headline.element.getBoundingClientRect();
             const isAboveViewport = headlinePosition.y <= 0;
-            const isWithinViewport = headlinePosition.bottom < viewportHeight;
+            const isWithinViewport = !isAboveViewport && headlinePosition.bottom < viewportHeight;
             return isAboveViewport || isWithinViewport ? index : closestFromTopIndex;
         },
         undefined);
