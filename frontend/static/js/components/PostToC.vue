@@ -39,7 +39,7 @@ export default {
     name: "PostToC",
     props: {
         commentsCount: {
-            type: Number
+            type: String
         }
     },
     data() {
@@ -101,14 +101,13 @@ export default {
     }
 };
 
-function createHeadlineDescription(headline, index, headlines) {
-    const tagLevel = parseInt(headline.tagName[headline.tagName.length - 1], 10);
-    const prevHeadlineLevel = index > 0 ? headlines[index - 1].level : 0;
+function createHeadlineDescription(headline) {
+    const tagLevel = getTagLevel(headline);
 
     return ({
         text: headline.innerText,
         element: headline,
-        level: tagLevel - prevHeadlineLevel > 1 ? prevHeadlineLevel + 1 : tagLevel
+        level: tagLevel
     });
 }
 
@@ -121,6 +120,10 @@ function initActivePosition(headlines) {
             return isAboveViewport || isWithinViewport ? index : closestFromTopIndex;
         },
         undefined);
+}
+
+function getTagLevel(headlineElement) {
+    return parseInt(headlineElement.tagName.slice(-1), 10);
 }
 </script>
 
