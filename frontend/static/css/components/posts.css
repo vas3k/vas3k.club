@@ -1123,7 +1123,7 @@
     }
 
     .post-toc-item-active {
-        background-color: var(--block-bg-color);
+        background-color: var(--input-border-color);
     }
 
     a {
@@ -1132,7 +1132,7 @@
         padding: 4px 12px;
     }
 
-    a:hover {
+    .post-toc-item:not(.post-toc-item-active) a:hover {
         background-color: var(--button-hover-bg-color);
     }
 
