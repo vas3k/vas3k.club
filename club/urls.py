@@ -39,10 +39,11 @@ from posts.rss import NewPostsRss
 from posts.user_rss import UserPostsRss
 from posts.sitemaps import sitemaps
 from posts.views.admin_actions import admin_post, announce_post, curate_post
-from posts.views.api import toggle_post_bookmark
+from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote, toggle_post_subscription, \
+    toggle_post_event_participation
 from posts.views.feed import feed
-from posts.views.posts import show_post, edit_post, upvote_post, retract_post_vote, compose, compose_type, \
-    toggle_post_subscription, delete_post, unpublish_post, clear_post
+from posts.views.posts import show_post, edit_post, compose, compose_type, \
+    delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
 from tickets.views import stripe_ticket_sale_webhook
@@ -147,6 +148,7 @@ urlpatterns = [
     path("post/<slug:post_slug>/upvote/", upvote_post, name="upvote_post"),
     path("post/<slug:post_slug>/retract_vote/", retract_post_vote, name="retract_post_vote"),
     path("post/<slug:post_slug>/subscription/", toggle_post_subscription, name="toggle_post_subscription"),
+    path("post/<slug:post_slug>/participate/", toggle_post_event_participation, name="toggle_post_event_participation"),
     path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
     path("post/<slug:post_slug>/curate/", curate_post, name="curate_post"),
     path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),

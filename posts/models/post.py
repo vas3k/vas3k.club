@@ -267,6 +267,19 @@ class Post(models.Model, ModelDiffMixin):
             else:
                 year = self.effective_published_at.year
             return datetime(year, month, day, hour, minute, second)
+        return datetime.utcnow()
+
+    @property
+    def event_participants(self):
+        participant_ids = self.metadata.get("event", {}).get("participants", [])
+        if not participant_ids:
+            return []
+
+        users = User.objects.filter(id__in=participant_ids)
+
+        # Create a mapping from ID to user to presercve order
+        user_map = {str(user.id): user for user in users}
+        return [user_map[uid] for uid in participant_ids if uid in user_map]
 
     @classmethod
     def check_duplicate(cls, user, title, ignore_post_id=None):

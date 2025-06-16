@@ -397,7 +397,7 @@ ACHIEVEMENTS = [
     }),
     ("naked", {
         "name": "Голый Мастер",
-        "description": "Был голеньким на кубном ивенте 🍆🍆🍆",
+        "description": "Был голеньким на клубном ивенте 🍆🍆🍆",
         "image": "https://vas3k.club/static/images/achievements/naked.webp",
         "style": "background-color: #DB4C77; font-size: 140%;",
     }),

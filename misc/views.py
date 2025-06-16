@@ -33,8 +33,8 @@ def stats(request):
         .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))
         .values_list("to_user")
         .annotate(sum_price=Sum("badge__price_days"))
-        .order_by("-sum_price")[:7]  # select more in case someone gets deleted
-    ]))[:5]  # filter None
+        .order_by("-sum_price")[:20]  # select more in case someone gets deleted
+    ]))[:15]  # filter None
 
     moderators = User.objects\
         .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))

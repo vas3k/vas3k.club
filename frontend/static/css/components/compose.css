@@ -118,29 +118,30 @@
 .compose-form-datetime {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px;
     justify-content: flex-start;
     align-items: center;
     font-size: 130%;
 }
 
-    .compose-form-datetime > * {
-        padding-left: 10px;
+    .compose-form-datetime-utc-offset, .compose-form-datetime-utc-offset select {
+        max-width: 250px;
     }
 
 .compose-form-location {
     display: flex;
     flex-wrap: wrap;
+    gap: 10px;
     justify-content: flex-start;
     align-items: center;
     font-size: 130%;
 }
 
-    .compose-form-location > * {
-        padding-left: 10px;
+    .compose-form-location-field {
+        flex: 1;
     }
 
     .compose-form-location input {
-        min-width: 580px;
         text-align: left !important;
     }
 

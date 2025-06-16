@@ -728,7 +728,7 @@
     align-items: stretch;
 
     max-width: var(--post-width);
-    margin-bottom: 60px;
+    margin-bottom: 40px;
 }
 
 .post-event-side {
@@ -806,6 +806,27 @@
     font-size: 90%;
     padding-top: 10px;
 }
+
+.post-event-participants {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 40px;
+}
+
+    .post-event-participants > * {
+        width: 50px;
+    }
+
+    .post-event-participants-text {
+        font-size: 120%;
+        font-weight: 500;
+        white-space: nowrap;
+        width: auto;
+        text-align: right;
+    }
 
 .post-event-rsvp {
     grid-column-start: 3;
