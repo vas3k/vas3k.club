@@ -408,8 +408,8 @@ ACHIEVEMENTS = [
         "style": "background-color: #3CA2C8; font-size: 140%;",
     }),
     ("intellectual", {
-        "name": "Интеллектуал",
-        "description": "Призовое место в клубном интеллектуальном турнире",
+        "name": "Уважаемые Знатоки",
+        "description": "Призовое место в клубном турнире интеллектуальных игр",
         "image": "https://vas3k.club/static/images/achievements/intellectual.webp",
         "style": "background-color: #535D94;",
     }),
@@ -420,7 +420,7 @@ ACHIEVEMENTS = [
         "style": "background-color: #006100; font-size: 130%;",
     }),
     ("vas3k_quiz", {
-        "name": "Вастрик Квиз",
+        "name": "Вастрик Квизер",
         "description": "Призовое место в одном из клубных квизов",
         "image": "https://vas3k.club/static/images/achievements/vas3k_quizz.webp",
         "style": "background-color: #FF5154; font-size: 130%;",

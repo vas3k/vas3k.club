@@ -135,6 +135,7 @@
 
 .stats-achievement-details {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
 }
 
