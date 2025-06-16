@@ -393,19 +393,19 @@ ACHIEVEMENTS = [
         "name": "Гриль Мастер",
         "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
         "image": "https://vas3k.club/static/images/achievements/grill_master.png",
-        "style": "background-color: #EA780E; font-size: 130%;",
+        "style": "background-color: #EA780E; font-size: 140%;",
     }),
     ("naked", {
         "name": "Голый Мастер",
-        "description": "Был голеньким на кубном ивенте",
+        "description": "Был голеньким на кубном ивенте 🍆🍆🍆",
         "image": "https://vas3k.club/static/images/achievements/naked.webp",
-        "style": "background-color: #DB4C77; font-size: 120%;",
+        "style": "background-color: #DB4C77; font-size: 140%;",
     }),
     ("barmen", {
         "name": "Клубный Бармен",
-        "description": "Поработал барменом на клубном ивенте",
+        "description": "Разливал напитки соклубням на одном из оффлайн ивентов",
         "image": "https://vas3k.club/static/images/achievements/barmen.webp",
-        "style": "background-color: #3CA2C8; font-size: 120%;",
+        "style": "background-color: #3CA2C8; font-size: 140%;",
     }),
     ("intellectual", {
         "name": "Интеллектуал",
@@ -417,13 +417,13 @@ ACHIEVEMENTS = [
         "name": "Вастрик Квест",
         "description": "Призовое место в одном из клубных квестов",
         "image": "https://vas3k.club/static/images/achievements/vas3k_quest.webp",
-        "style": "background-color: #006100; font-size: 120%;",
+        "style": "background-color: #006100; font-size: 130%;",
     }),
     ("vas3k_quiz", {
         "name": "Вастрик Квиз",
         "description": "Призовое место в одном из клубных квизов",
         "image": "https://vas3k.club/static/images/achievements/vas3k_quizz.webp",
-        "style": "background-color: #FF5154; font-size: 120%;",
+        "style": "background-color: #FF5154; font-size: 130%;",
     }),
 ]
 
