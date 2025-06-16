@@ -1,6 +1,7 @@
 from django import forms
 
 from landing.models import GodSettings
+from users.models.achievements import Achievement
 
 
 class GodmodeDigestEditForm(forms.ModelForm):
@@ -88,6 +89,7 @@ class GodmodeMassEmailForm(forms.Form):
         widget=forms.Textarea(
             attrs={
                 "maxlength": 50000,
+                "placeholder": "vas3k,pivas3k,me@vas3k.ru",
             }
         ),
     )
@@ -95,5 +97,25 @@ class GodmodeMassEmailForm(forms.Form):
     is_promo = forms.BooleanField(
         label="Это промо?",
         required=False,
+    )
+
+
+class GodmodeMassAchievementForm(forms.Form):
+    achievement = forms.ModelChoiceField(
+        label="Ачивка",
+        queryset=Achievement.objects.filter(is_visible=True),
+        empty_label="---",
+    )
+
+    recipients = forms.CharField(
+        label="Получатели: ники в Клубе через запятую",
+        required=True,
+        max_length=10000,
+        widget=forms.Textarea(
+            attrs={
+                "maxlength": 50000,
+                "placeholder": "vas3k,pivas3k,petrovich",
+            }
+        ),
     )
 

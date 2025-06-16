@@ -20,7 +20,7 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
 from common.feature_flags import feature_switch
 from invites.views import show_invite, list_invites, activate_invite
 from landing.views import landing, godmode_network_settings, godmode_digest_settings, godmode_settings, \
-    godmode_invite, godmode_generate_invite_code, godmode_sunday_posts, godmode_mass_email
+    godmode_invite, godmode_generate_invite_code, godmode_sunday_posts, godmode_mass_email, godmode_mass_achievement
 from ai.views import llm_agent_playground
 from misc.fun import badge_generator, mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
@@ -206,6 +206,7 @@ urlpatterns = [
     path("godmode/generate_invite_code/", godmode_generate_invite_code, name="godmode_generate_invite_code"),
     path("godmode/sunday_posts/", godmode_sunday_posts, name="godmode_sunday_posts"),
     path("godmode/mass_email/", godmode_mass_email, name="godmode_mass_email"),
+    path("godmode/mass_achievement/", godmode_mass_achievement, name="godmode_mass_achievement"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
     path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),

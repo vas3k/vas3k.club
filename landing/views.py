@@ -12,14 +12,17 @@ from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from common.dates import random_date_in_range
 from invites.models import Invite
-from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm, GodmodeMassEmailForm
+from landing.forms import GodmodeNetworkSettingsEditForm, GodmodeDigestEditForm, GodmodeInviteForm, \
+    GodmodeMassEmailForm, GodmodeMassAchievementForm
 from landing.models import GodSettings
 from notifications.email.custom import send_custom_mass_email
 from notifications.email.invites import send_invited_email, send_account_renewed_email
+from notifications.signals.achievements import async_create_or_update_achievement
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
 from payments.models import Payment
 from payments.products import PRODUCTS
 from posts.models.post import Post
+from users.models.achievements import UserAchievement
 from users.models.user import User
 from utils.strings import random_string
 
@@ -199,15 +202,50 @@ def godmode_mass_email(request):
     if request.method == "POST":
         form = GodmodeMassEmailForm(request.POST, request.FILES)
         if form.is_valid():
+            emails_or_slugs = [u.strip().lstrip("@") for u in form.cleaned_data["recipients"].strip().split(",") if u.strip()]
             async_task(
                 send_custom_mass_email,
-                emails_or_slugs=[u.strip().lstrip("@") for u in form.cleaned_data["recipients"].strip().split(",") if u.strip()],
+                emails_or_slugs=emails_or_slugs,
                 title=form.cleaned_data["email_title"],
                 text=form.cleaned_data["email_text"],
                 is_promo=form.cleaned_data["is_promo"],
             )
-            return redirect("godmode_settings")
+            return render(request, "message.html", {
+                "title": f"📧 Рассылка запущена на {len(emails_or_slugs)} получателей",
+                "message": "Вот этим людям щас будет отправлено письмо:\n" + ", ".join(emails_or_slugs)
+            })
     else:
         form = GodmodeMassEmailForm()
+
+    return render(request, "admin/simple_form.html", {"form": form})
+
+
+@require_auth
+def godmode_mass_achievement(request):
+    if not request.me.is_moderator:
+        raise AccessDenied()
+
+    if request.method == "POST":
+        form = GodmodeMassAchievementForm(request.POST, request.FILES)
+        if form.is_valid():
+            slugs = form.cleaned_data["recipients"].strip().split(",")
+            users = User.objects.filter(slug__in=slugs)
+            for user in users:
+                user_achievement, is_created = UserAchievement.objects.get_or_create(
+                    user=user,
+                    achievement=form.cleaned_data["achievement"],
+                )
+                if is_created:
+                    async_create_or_update_achievement(user_achievement)
+
+            some_user_not_found = len(slugs) != users.count()
+            return render(request, "message.html", {
+                "title": f"🏆 Ачивка '{form.cleaned_data['achievement'].name}' выдана {users.count()} юзерам",
+                "message": "Вот эти юзеры не найдены в Клубе, возможно ошибка в нике: " + ", ".join(
+                    list(set(slugs) - set([u.slug for u in users]))
+                ) if some_user_not_found else "Все юзеры получили ачивки!"
+            })
+    else:
+        form = GodmodeMassAchievementForm()
 
     return render(request, "admin/simple_form.html", {"form": form})

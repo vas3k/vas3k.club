@@ -133,7 +133,7 @@ ACHIEVEMENTS = [
     }),
     ("mic", {
         "name": "Золотой микрофон",
-        "description": "За выступление на АМА  и митапах в качестве оратора",
+        "description": "За выступление на клубных ивентах, митапах или АМА в качестве оратора",
         "image": "https://vas3k.club/static/images/achievements/mic.png",
         "style": "background-color: #9370D8; font-size: 130%;",
     }),
@@ -265,7 +265,7 @@ ACHIEVEMENTS = [
     }),
     ("cake_is_a_lie", {
         "name": "The cake is a lie",
-        "description": "За победу над Безумной Машиной в Квесте",
+        "description": "За победу над Безумной Машиной в Квесте 2024",
         "image": "https://vas3k.club/static/images/achievements/cake_is_a_lie.png",
         "style": "background-color: #FF7400; font-size: 120%;",
     }),
@@ -347,12 +347,6 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
     }),
-    ("grill_master", {
-        "name": "Гриль Мастер",
-        "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
-        "image": "https://vas3k.club/static/images/achievements/grill_master.png",
-        "style": "background-color: #EA780E; font-size: 130%;",
-    }),
     ("spooky", {
         "name": "Спуки",
         "description": "За лучшие украшения на Хэллоуин",
@@ -367,7 +361,7 @@ ACHIEVEMENTS = [
     }),
     ("birdwatcher", {
         "name": "Смотритель птиц",
-        "description": "За победу на конкурсе бёрдвочинга. Для самых наблюдательных.",
+        "description": "Ходил смотреть на птиц с клубняшами",
         "image": "https://vas3k.club/static/images/achievements/birds.png",
         "style": "background-color: #6A98FF; font-size: 130%;",
     }),
@@ -394,6 +388,42 @@ ACHIEVEMENTS = [
         "description": "За участие в зимнем музыкальном челлендже 2025",
         "image": "https://vas3k.club/static/images/achievements/music_jam_7.png",
         "style": "background-color: #CB562D; font-size: 120%;",
+    }),
+    ("grill_master", {
+        "name": "Гриль Мастер",
+        "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
+        "image": "https://vas3k.club/static/images/achievements/grill_master.png",
+        "style": "background-color: #EA780E; font-size: 130%;",
+    }),
+    ("naked", {
+        "name": "Голый Мастер",
+        "description": "Был голеньким на кубном ивенте",
+        "image": "https://vas3k.club/static/images/achievements/naked.webp",
+        "style": "background-color: #DB4C77; font-size: 120%;",
+    }),
+    ("barmen", {
+        "name": "Клубный Бармен",
+        "description": "Поработал барменом на клубном ивенте",
+        "image": "https://vas3k.club/static/images/achievements/barmen.webp",
+        "style": "background-color: #3CA2C8; font-size: 120%;",
+    }),
+    ("intellectual", {
+        "name": "Интеллектуал",
+        "description": "Призовое место в клубном интеллектуальном турнире",
+        "image": "https://vas3k.club/static/images/achievements/intellectual.webp",
+        "style": "background-color: #535D94;",
+    }),
+    ("vas3k_quest", {
+        "name": "Вастрик Квест",
+        "description": "Призовое место в одном из клубных квестов",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quest.webp",
+        "style": "background-color: #006100; font-size: 120%;",
+    }),
+    ("vas3k_quiz", {
+        "name": "Вастрик Квиз",
+        "description": "Призовое место в одном из клубных квизов",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quizz.webp",
+        "style": "background-color: #FF5154; font-size: 120%;",
     }),
 ]
 
