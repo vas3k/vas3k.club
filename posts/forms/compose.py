@@ -438,7 +438,7 @@ class PostEventForm(AbstractPostForm):
                     "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
                     .utcoffset().total_seconds() // 60,
                     "location": cleaned_data["event_location"],
-                    "participants": self.instance.metadata.get("participants", []),
+                    "participants": self.instance.metadata.get("event", {}).get("participants", []),
                 }
             }
         }
