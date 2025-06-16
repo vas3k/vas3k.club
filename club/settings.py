@@ -333,6 +333,7 @@ SUPPORTED_TIME_ZONES = [
 	("Europe/Vienna", "по Вене"),
 	("Europe/Vilnius", "по Вильнюсу"),
 	("Asia/Vladivostok", "по Владивостоку"),
+    ("Europe/Athens", "по Греции"),
 	("Asia/Hong_Kong", "по Гонконгу"),
 	("America/Denver", "по Денверу"),
 	("Asia/Dubai", "по Дубаю"),

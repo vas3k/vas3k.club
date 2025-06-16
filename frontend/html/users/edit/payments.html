@@ -82,37 +82,27 @@
     </div>
 
     <div class="block stats-top-users">
-        <div class="top-users">
+        <div class="top-users top-users-big">
             {% for user in top_users|slice:"0:5" %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-big">
-                    <span class="top-user-avatar-badge">🏆</span>
-                    <span class="avatar top-user-avatar">
+                <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+                    <span class="user-round-avatar-badge">🏆</span>
+                    <span class="avatar user-round-avatar">
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
-                    <span class="top-user-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
-                    <span class="top-user-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
+                    <span class="user-round-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
+                    <span class="user-round-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
                 </a>
             {% endfor %}
         </div>
 
-        <div class="top-users">
+        <div class="top-users top-users-medium">
             {% for user in top_users|slice:"5:25" %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium">
-                    <span class="avatar top-user-avatar">
+                <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+                    <span class="avatar user-round-avatar">
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
-                    <span class="top-user-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
-                    <span class="top-user-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
-                </a>
-            {% endfor %}
-        </div>
-
-        <div class="top-users">
-            {% for user in top_users|slice:"25:64" %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-small" title="до {{ user.membership_expires_at | date:"E Y" }} года">
-                    <span class="avatar top-user-avatar">
-                        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                    </span>
+                    <span class="user-round-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
+                    <span class="user-round-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
                 </a>
             {% endfor %}
         </div>
