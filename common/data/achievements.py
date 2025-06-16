@@ -339,7 +339,7 @@ ACHIEVEMENTS = [
         "name": "Покерфейс",
         "description": "Играл в покер с соклубниками",
         "image": "https://vas3k.club/static/images/achievements/pokerface.png",
-        "style": "background-color: #F1DFC5; font-size: 140%;",
+        "style": "background-color: #F1DFC5; font-size: 130%;",
     }),
     ("vas3k_flot_2024", {
         "name": "Вастрик ⛵ Флот 2024",
