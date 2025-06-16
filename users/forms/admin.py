@@ -173,6 +173,11 @@ class UserInfoAdminForm(ModelForm):
         choices=User.MEMBERSHIP_PLATFORMS,
         required=True,
     )
+    membership_expires_at = forms.DateTimeField(
+        label="Дата окончания членства",
+        help_text="Например: 23.01.2022 01:09:31",
+        required=False,
+    )
     email_digest_type = forms.ChoiceField(
         label="Тип email-дайджеста",
         required=True,
@@ -193,7 +198,7 @@ class UserInfoAdminForm(ModelForm):
         required=False
     )
     is_banned_until = forms.DateTimeField(
-        label="Бан истечет",
+        label="Забанен до",
         help_text="Например: 23.01.2022 01:09:31",
         required=False,
     )
@@ -208,6 +213,7 @@ class UserInfoAdminForm(ModelForm):
             "position",
             "contact",
             "membership_platform_type",
+            "membership_expires_at",
             "email_digest_type",
             "telegram_id",
             "stripe_id",

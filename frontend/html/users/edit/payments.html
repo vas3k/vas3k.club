@@ -102,7 +102,6 @@
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
                     <span class="user-round-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
-                    <span class="user-round-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
                 </a>
             {% endfor %}
         </div>

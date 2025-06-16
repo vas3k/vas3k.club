@@ -56,6 +56,12 @@
                 </div>
 
                 <div class="form-row">
+                    {{ info_form.membership_expires_at.label_tag }}
+                    {{ info_form.membership_expires_at }}
+                    {% if info_form.membership_expires_at.errors %}<span class="form-row-errors">{{ info_form.membership_expires_at.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
                     {{ info_form.email_digest_type.label_tag }}
                     {{ info_form.email_digest_type }}
                     {% if info_form.email_digest_type.errors %}<span class="form-row-errors">{{ info_form.email_digest_type.errors }}</span>{% endif %}
