@@ -89,7 +89,7 @@ class ClubRenderer(mistune.HTMLRenderer):
     def video(self, src, alt="", title=None):
         title, css_classes = split_title_and_css_classes(title or alt)
         video_tag = (
-            f'<video src="{escape_html(src)}" controls muted playsinline>{escape_html(alt)}</video>'
+            f'<video src="{escape_html(src)}" controls playsinline>{escape_html(alt)}</video>'
         )
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
         return f'<figure class="{' '.join(css_classes)}">{video_tag}{caption}</figure>'
