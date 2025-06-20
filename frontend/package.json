@@ -36,7 +36,7 @@
     "normalize.css": "^8.0.1",
     "portal-vue": "^2.1.7",
     "twemoji": "14.0.2",
-    "vue": "^2.6.11",
+    "vue": "^3.0.0",
     "vue-mapbox-ho": "^0.6.2",
     "vue-select": "^3.18.3"
   },
