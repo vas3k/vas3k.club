@@ -1,4 +1,5 @@
 import Vue from "vue";
+import PortalVue from 'portal-vue'
 
 import "../css/index.css";
 
@@ -10,6 +11,8 @@ import ClubApi from "./common/api.service.js";
 import { pluralize } from "./common/utils.js";
 import { handleCommentThreadCollapseToggle } from "./common/comments.js";
 import vSelect from "vue-select";
+
+Vue.use(PortalVue)
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));

@@ -1,31 +1,36 @@
 <template>
-    <div class="comment-markdown-editor">
-        <textarea
-            required
-            name="text"
-            maxlength="20000"
-            placeholder="Напишите ответ..."
-            class="markdown-editor-invisible"
-            ref="textarea"
-        >
-        </textarea>
-        <div
-            class="mention-autocomplete-hint"
-            v-show="users.length > 0"
-            :style="{
-                top: autocomplete ? autocomplete.top + 'px' : 0,
-                left: autocomplete ? autocomplete.left + 'px' : 0,
-            }"
-        >
-            <div
-                v-for="(user, index) in users.slice(0, 5)"
-                :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
-                @click="insertSuggestion(user)"
-                class="mention-autocomplete-hint__option"
+    <div>
+        <div class="comment-markdown-editor">
+            <textarea
+                required
+                name="text"
+                maxlength="20000"
+                placeholder="Напишите ответ..."
+                class="markdown-editor-invisible"
+                ref="textarea"
             >
-                {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
-            </div>
+            </textarea>
+            <portal to="popup">
+                <div
+                    class="mention-autocomplete-hint"
+                    v-show="users.length > 0"
+                    :style="{
+                    top: autocomplete ? autocomplete.top + 'px' : 0,
+                    left: autocomplete ? autocomplete.left + 'px' : 0,
+                }"
+                >
+                    <div
+                        v-for="(user, index) in users.slice(0, 5)"
+                        :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
+                        @click="insertSuggestion(user)"
+                        class="mention-autocomplete-hint__option"
+                    >
+                        {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
+                    </div>
+                </div>
+            </portal>
         </div>
+        <portal-target name="popup" style="position:absolute;z-index:1;"></portal-target>
     </div>
 </template>
 
@@ -73,8 +78,10 @@ export default {
             if (val.length > 0) {
                 this.selectedUserIndex = 0;
                 document.addEventListener("keydown", this.handleKeydown, true);
+                document.addEventListener("click", this.handleClickOnOpenAutocomplete, true);
             } else {
                 document.removeEventListener("keydown", this.handleKeydown, true);
+                document.removeEventListener("click", this.handleClickOnOpenAutocomplete, true);
             }
         },
         focused: function (value) {
@@ -103,7 +110,8 @@ export default {
                 event.code !== "ArrowDown" &&
                 event.code !== "ArrowUp" &&
                 event.code !== "Tab" &&
-                event.code !== "Enter"
+                event.code !== "Enter" &&
+                event.code !== "Escape"
             ) {
                 return;
             }
@@ -116,6 +124,13 @@ export default {
                 this.selectedUserIndex += 1;
             } else if (event.code === "ArrowUp" && this.selectedUserIndex - 1 >= 0) {
                 this.selectedUserIndex -= 1;
+            } else if (event.code === "Escape") {
+                this.resetAutocomplete()
+            }
+        },
+        handleClickOnOpenAutocomplete(event) {
+            if (!event.target.closest(".mention-autocomplete-hint")) {
+                this.resetAutocomplete();
             }
         },
         triggersAutocomplete(cm, event) {
@@ -210,8 +225,8 @@ export default {
 
                 this.autocomplete = {
                     ...event.from,
-                    top: cursorCoords.top + 36, // first line offset
-                    left: Math.floor(cursorCoords.left),
+                    top: cursorCoords.top + 36 - this.editor.codemirror.getWrapperElement().clientHeight, // first line offset
+                    left: Math.floor(cursorCoords.left)
                 };
             }
         },
