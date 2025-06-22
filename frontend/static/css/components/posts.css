@@ -47,10 +47,15 @@
     vertical-align: middle;
 }
 
+.post-title {
+    word-break: break-word;
+}
+
 .post-inline-title {
     margin: 0;
     font-size: 28px;
     display: inline-block;
+    word-break: break-word;
 }
 
 .post-type-post {
