@@ -39,7 +39,7 @@ sentry-sdk = "==2.20.0"
 newspaper4k = "==0.9.3.1"
 lxml = {extras = ["html_clean"], version = "==5.3.0"}
 django-webpack-loader = "==3.1.1"
-urllib3 = "<2.0.0"  # dirty hack, required for python-telegram-bot<20.0
+urllib3 = "<3.0.0"  # dirty hack, required for python-telegram-bot<20.0
 standard-imghdr = "*"  # was removed in Python 3.13 but needed for python-telegram-bot too
 openai = "*"
 
