@@ -10,27 +10,26 @@
                 ref="textarea"
             >
             </textarea>
-            <portal to="popup">
-                <div
-                    class="mention-autocomplete-hint"
-                    v-show="users.length > 0"
-                    :style="{
-                    top: autocomplete ? autocomplete.top + 'px' : 0,
-                    left: autocomplete ? autocomplete.left + 'px' : 0,
-                }"
-                >
-                    <div
-                        v-for="(user, index) in users.slice(0, 5)"
-                        :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
-                        @click="insertSuggestion(user)"
-                        class="mention-autocomplete-hint__option"
-                    >
-                        {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
-                    </div>
-                </div>
-            </portal>
         </div>
-        <portal-target name="popup" style="position:absolute;z-index:1;"></portal-target>
+        <div style="position:absolute;z-index:1;">
+            <div
+                class="mention-autocomplete-hint"
+                v-show="users.length > 0"
+                :style="{
+            top: autocomplete ? autocomplete.top + 'px' : 0,
+            left: autocomplete ? autocomplete.left + 'px' : 0,
+        }"
+            >
+                <div
+                    v-for="(user, index) in users.slice(0, 5)"
+                    :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
+                    @click="insertSuggestion(user)"
+                    class="mention-autocomplete-hint__option"
+                >
+                    {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -52,13 +51,13 @@ export default {
         }
     },
     mounted() {
-        const fileInputEl = this.$el.closest("form").querySelector("input[type=file][name=attach-image]")
+        const fileInputEl = this.$el.closest("form").querySelector("input[type=file][name=attach-image]");
         if (fileInputEl) {
-            fileInputEl.accept = imageUploadOptions.allowedTypes.join()
+            fileInputEl.accept = imageUploadOptions.allowedTypes.join();
         }
 
         this.editor = createMarkdownEditor(this.$refs["textarea"], {
-            toolbar: false,
+            toolbar: false
         });
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
@@ -74,7 +73,7 @@ export default {
         this.focusIfNeeded(this.focused);
     },
     watch: {
-        users: function (val) {
+        users: function(val) {
             if (val.length > 0) {
                 this.selectedUserIndex = 0;
                 document.addEventListener("keydown", this.handleKeydown, true);
@@ -84,10 +83,10 @@ export default {
                 document.removeEventListener("click", this.handleClickOnOpenAutocomplete, true);
             }
         },
-        focused: function (value) {
+        focused: function(value) {
             this.focusIfNeeded(value);
         },
-        value: function (value) {
+        value: function(value) {
             this.editor.value(value);
             this.focusIfNeeded(true);
         }
@@ -100,8 +99,8 @@ export default {
             autocomplete: null,
             autocompleteCache: {
                 samples: {},
-                users: {},
-            },
+                users: {}
+            }
         };
     },
     methods: {
@@ -125,7 +124,7 @@ export default {
             } else if (event.code === "ArrowUp" && this.selectedUserIndex - 1 >= 0) {
                 this.selectedUserIndex -= 1;
             } else if (event.code === "Escape") {
-                this.resetAutocomplete()
+                this.resetAutocomplete();
             }
         },
         handleClickOnOpenAutocomplete(event) {
@@ -142,7 +141,7 @@ export default {
             const prevSymbol = cm.getRange(
                 {
                     line: event.from.line,
-                    ch: event.from.ch - 1,
+                    ch: event.from.ch - 1
                 },
                 event.from
             );
@@ -163,15 +162,15 @@ export default {
                 `${user.slug} `,
                 {
                     line,
-                    ch: ch + 1,
+                    ch: ch + 1
                 },
                 {
                     line: cursor.line,
-                    ch: cursor.ch,
+                    ch: cursor.ch
                 }
             );
         },
-        populateCacheWithCommentAuthors: function () {
+        populateCacheWithCommentAuthors: function() {
             document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
                 const slug = linkEl.dataset.authorSlug;
                 const full_name = linkEl.innerText;
@@ -182,11 +181,11 @@ export default {
 
                 this.autocompleteCache.users[slug] = {
                     slug,
-                    full_name,
+                    full_name
                 };
             });
         },
-        fetchAutocompleteSuggestions: throttle(function (sample) {
+        fetchAutocompleteSuggestions: throttle(function(sample) {
             fetch(`/search/users.json?prefix=${sample}`)
                 .then((res) => {
                     if (!res.url.includes(`prefix=${sample}`)) {
@@ -275,10 +274,10 @@ export default {
                 }
             });
         },
-        emitCustomBlur: function (editor) {
+        emitCustomBlur: function(editor) {
             this.$emit("blur", editor.getValue());
         }
-    },
+    }
 };
 </script>
 
