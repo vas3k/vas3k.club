@@ -294,19 +294,19 @@ OPENAI_EMBEDDINGS_MODEL = "text-embedding-3-small"
 OPENAI_EMBEDDINGS_VECTOR_DIM = 1536
 
 DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
-COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
+COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=48)
 COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
 COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA = timedelta(days=14)
-RETRACT_VOTE_IN_HOURS = 3
+RETRACT_VOTE_IN_HOURS = 24
 RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
-RATE_LIMIT_POSTS_PER_DAY = 10
-RATE_LIMIT_COMMENTS_PER_DAY = 200
+RATE_LIMIT_POSTS_PER_DAY = 3
+RATE_LIMIT_COMMENTS_PER_DAY = 100
 RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY = "comments_per_day"
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
-MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
-MAX_MUTE_COUNT = 20  # maximum number of users allowed to mute
+MIN_DAYS_TO_GIVE_BADGES = 50  # minimum "days" balance to buy and gift any badge
+MAX_MUTE_COUNT = 25  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
