@@ -1,3 +1,5 @@
+{% load text_filters %}
+
 <form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
     <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
     <div class="comment-form">
@@ -15,6 +17,7 @@
                 {% endif %}
             >
             </comment-markdown-editor>
+
             <div class="comment-form-footer">
                 <label class="comment-form-attach-image">
                     <input type="file" name="attach-image" alt="Добавить картинку" />
@@ -27,7 +30,15 @@
                 </div>
                 <button type="submit" class="button comment-form-button">{{ save_message }}</button>
             </div>
+
             {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
+
+            {% if me and  me.get_custom_comment_limit %}
+                <div class="comment-form-restriction">
+                    🥴 На вас наложено ограничение: {{ me.get_custom_comment_limit }} {{ me.get_custom_comment_limit|rupluralize:"комментарий,комментария,комментариев" }} в сутки
+                </div>
+            {% endif %}
         </div>
     </div>
 </form>
+

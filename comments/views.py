@@ -38,8 +38,6 @@ def create_comment(request, post_slug):
     else:
         ProperCommentForm = CommentForm
 
-    comment_order = request.POST.get("post_comment_order", "created_at")
-
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
         if form.is_valid():

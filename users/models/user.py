@@ -172,6 +172,7 @@ class User(models.Model, ModelDiffMixin):
         now = datetime.utcnow()
         if self.last_activity_at < now - timedelta(minutes=5):
             return User.objects.filter(id=self.id).update(last_activity_at=now)
+        return None
 
     def membership_days_left(self):
         return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
@@ -198,6 +199,14 @@ class User(models.Model, ModelDiffMixin):
         for role in self.roles:
             roles.append(d[role])
         return ", ".join(roles)
+
+    def get_custom_comment_limit(self):
+        if self.metadata.get(settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY):
+            try:
+                return int(self.metadata[settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY])
+            except ValueError:
+                return None
+        return None
 
     @property
     def is_banned(self):

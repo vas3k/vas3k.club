@@ -712,3 +712,10 @@
     margin: 50px auto;
     text-align: center;
 }
+
+.comment-form-restriction {
+    border-top: dashed 1px #b31616;
+    color: #b31616;
+    padding: 10px;
+    margin-top: 20px;
+}

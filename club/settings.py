@@ -301,6 +301,7 @@ RETRACT_VOTE_IN_HOURS = 3
 RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
 RATE_LIMIT_POSTS_PER_DAY = 10
 RATE_LIMIT_COMMENTS_PER_DAY = 200
+RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY = "comments_per_day"
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
@@ -335,6 +336,7 @@ SUPPORTED_TIME_ZONES = [
 	("Asia/Vladivostok", "по Владивостоку"),
     ("Europe/Athens", "по Греции"),
 	("Asia/Hong_Kong", "по Гонконгу"),
+	("America/Denver", "по Денверу"),
 	("America/Denver", "по Денверу"),
 	("Asia/Dubai", "по Дубаю"),
 	("Europe/Dublin", "по Дублину"),
