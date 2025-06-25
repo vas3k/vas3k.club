@@ -9,6 +9,7 @@ from bot.handlers.common import get_club_user, get_club_comment, get_club_post
 from bot.decorators import is_club_member
 from club import settings
 from comments.models import Comment
+from comments.rate_limits import is_comment_rate_limit_exceeded
 from posts.models.post import Post
 from posts.models.linked import LinkedPost
 from posts.models.views import PostView
@@ -61,8 +62,7 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
         log.info("Original comment not found. Skipping.")
         return None
 
-    is_ok = Comment.check_rate_limits(user)
-    if not is_ok:
+    if is_comment_rate_limit_exceeded(comment.post, user):
         update.message.reply_text(
             f"🙅‍♂️ Извините, вы комментировали слишком часто и достигли дневного лимита"
         )
@@ -115,6 +115,8 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True
     )
 
+    return None
+
 
 @is_club_member
 def comment_to_post(update: Update, context: CallbackContext) -> None:
@@ -129,8 +131,7 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
     if not post or post.type in [Post.TYPE_BATTLE, Post.TYPE_WEEKLY_DIGEST]:
         return None
 
-    is_ok = Comment.check_rate_limits(user)
-    if not is_ok:
+    if is_comment_rate_limit_exceeded(post, user):
         update.message.reply_text(
             f"🙅‍♂️ Извините, вы комментировали слишком часто и достигли дневного лимита"
         )
@@ -182,3 +183,5 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True
     )
+
+    return None

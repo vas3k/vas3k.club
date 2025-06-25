@@ -168,23 +168,6 @@ class Comment(models.Model):
 
         raise NotFound(title="Родительский коммент не найден")
 
-    @classmethod
-    def check_rate_limits(cls, user):
-        if user.is_moderator:
-            return True
-
-        comments_per_day_limit = settings.RATE_LIMIT_COMMENTS_PER_DAY \
-            if user.get_custom_comment_limit() is None \
-            else user.get_custom_comment_limit()
-
-        day_comment_count = Comment.visible_objects()\
-            .filter(
-                author=user, created_at__gte=datetime.utcnow() - timedelta(hours=24)
-            )\
-            .count()
-
-        return day_comment_count < comments_per_day_limit
-
 
 class CommentVote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

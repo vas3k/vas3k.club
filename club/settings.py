@@ -337,7 +337,6 @@ SUPPORTED_TIME_ZONES = [
     ("Europe/Athens", "по Греции"),
 	("Asia/Hong_Kong", "по Гонконгу"),
 	("America/Denver", "по Денверу"),
-	("America/Denver", "по Денверу"),
 	("Asia/Dubai", "по Дубаю"),
 	("Europe/Dublin", "по Дублину"),
 	("Asia/Yekaterinburg", "по Екатеринбургу"),

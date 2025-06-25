@@ -11,6 +11,7 @@ from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm, edit_form_class_for_comment
 from comments.models import Comment, CommentVote
+from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.request import parse_ip_address, parse_useragent
 from authn.decorators.api import api
 from posts.models.linked import LinkedPost
@@ -41,8 +42,7 @@ def create_comment(request, post_slug):
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
         if form.is_valid():
-            is_ok = Comment.check_rate_limits(request.me)
-            if not is_ok:
+            if is_comment_rate_limit_exceeded(post, request.me):
                 raise RateLimitException(
                     title="🙅‍♂️ Вы комментируете слишком часто",
                     message="Кажется, вы достигли своего лимита на количество комментариев в день. "

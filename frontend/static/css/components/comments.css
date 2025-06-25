@@ -714,8 +714,7 @@
 }
 
 .comment-form-restriction {
-    border-top: dashed 1px #b31616;
-    color: #b31616;
+    border-top: dashed 1px #6e6e6e;
     padding: 10px;
     margin-top: 20px;
 }

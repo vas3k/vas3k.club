@@ -33,10 +33,16 @@
 
             {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
 
-            {% if me and  me.get_custom_comment_limit %}
-                <div class="comment-form-restriction">
-                    🥴 На вас наложено ограничение: {{ me.get_custom_comment_limit }} {{ me.get_custom_comment_limit|rupluralize:"комментарий,комментария,комментариев" }} в сутки
-                </div>
+            {% if me %}
+                {% if me.get_custom_comment_limit %}
+                    <div class="comment-form-restriction">
+                        🕓 На вас наложено ограничение: максимум {{ me.get_custom_comment_limit }} {{ me.get_custom_comment_limit|rupluralize:"комментарий,комментария,комментариев" }} в сутки
+                    </div>
+                {% elif post.get_custom_comment_limit %}
+                    <div class="comment-form-restriction">
+                        🕓 В этом посте действует слоу-мод: максимум {{ post.get_custom_comment_limit }} {{ post.get_custom_comment_limit|rupluralize:"комментарий,комментария,комментариев" }} в сутки
+                    </div>
+                {% endif %}
             {% endif %}
         </div>
     </div>

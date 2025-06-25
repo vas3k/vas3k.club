@@ -213,6 +213,14 @@ class Post(models.Model, ModelDiffMixin):
             return False
         return self.can_edit(user) or user.is_curator
 
+    def get_custom_comment_limit(self):
+        if self.metadata and self.metadata.get(settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY):
+            try:
+                return int(self.metadata[settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY])
+            except ValueError:
+                return None
+        return None
+
     @property
     def emoji(self):
         return self.TYPE_TO_EMOJI.get(self.type) or ""
