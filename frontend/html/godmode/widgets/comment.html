@@ -1,0 +1,17 @@
+{% with value as comment %}
+    {% if comment %}
+        <a href="{{ comment.get_absolute_url }}" class="godmode-table-comment">
+            {% if comment.author %}
+                <span class="avatar user-round-avatar godmode-table-user-avatar">
+                    <img src="{{ comment.author.get_avatar }}" loading="lazy" />
+                </span>
+            {% endif %}
+            <span>&rarr;</span>
+            {% if comment.post %}
+                <span class="godmode-table-comment-post">
+                    {{ comment.post.emoji }} {{ comment.post.prefix }} {{ comment.post.title }}
+                </span>
+            {% endif %}
+        </a>
+    {% endif %}
+{% endwith %}

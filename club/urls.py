@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include, re_path
 from django.views.generic import RedirectView
@@ -19,9 +18,10 @@ from comments.views import create_comment, edit_comment, delete_comment, show_co
     retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
 from invites.views import show_invite, list_invites, activate_invite
-from landing.views import landing, godmode_network_settings, godmode_digest_settings, godmode_settings, \
-    godmode_invite, godmode_generate_invite_code, godmode_sunday_posts, godmode_mass_email, godmode_mass_achievement
-from ai.views import llm_agent_playground
+from landing.views import landing
+from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, godmode_delete_model, godmode_create_model
+from godmode.views.custom import godmode_digest_settings, godmode_invite, godmode_generate_invite_code, \
+    godmode_sunday_posts, godmode_mass_email, godmode_mass_achievement
 from misc.fun import badge_generator, mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
@@ -200,9 +200,7 @@ urlpatterns = [
          name="network_chat"),
 
     # admin features
-    path("godmode/", godmode_settings, name="godmode_settings"),
-    path("godmode/admin/", admin.site.urls),
-    path("godmode/network/", godmode_network_settings, name="godmode_network_settings"),
+    path("godmode/", godmode, name="godmode_settings"),
     path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
     path("godmode/invite/", godmode_invite, name="godmode_invite"),
     path("godmode/generate_invite_code/", godmode_generate_invite_code, name="godmode_generate_invite_code"),
@@ -212,7 +210,10 @@ urlpatterns = [
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
     path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
-    path("godmode/ai/", llm_agent_playground, name="llm_agent_playground"),
+    path("godmode/<slug:model_name>/", godmode_list_model, name="godmode_list_model"),
+    path("godmode/<slug:model_name>/create/", godmode_create_model, name="godmode_create_model"),
+    path("godmode/<slug:model_name>/<str:item_id>/edit/", godmode_edit_model, name="godmode_edit_model"),
+    path("godmode/<slug:model_name>/<str:item_id>/delete/", godmode_delete_model, name="godmode_delete_model"),
 
     # misc
     path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),

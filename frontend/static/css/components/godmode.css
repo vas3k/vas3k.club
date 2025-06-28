@@ -1,0 +1,369 @@
+.godmode {
+    margin: 0 auto;
+    max-width: 1440px;
+    overflow: hidden;
+}
+
+.godmode-container {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.godmode-sidebar {
+    width: 280px;
+}
+
+.godmode-content {
+    flex: 1;
+    min-width: 500px;
+}
+
+.godmode-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+    .godmode-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+        .godmode-group-header {
+            font-weight: 500;
+            font-size: 120%;
+        }
+
+        .godmode-group-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 110%;
+            padding-left: 3px;
+        }
+
+.godmode-filters {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .godmode-filters-value {
+        flex: 1;
+    }
+
+    .godmode-filters-button {
+        padding: 10px 15px;
+    }
+
+.godmode-form {
+}
+
+.godmode-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.godmode-list-header,
+.godmode-edit-header,
+.godmode-form-simple-header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    font-size: 160%;
+}
+
+.godmode-create-button-spacer {
+    flex: 1;
+}
+
+.godmode-create-button {
+    font-size: 70%;
+    padding: 10px 15px;
+}
+
+.godmode-list-content {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.godmode-simple-form {
+    padding-top: 40px;
+}
+
+.godmode-table {
+    width: 100%;
+}
+
+    .godmode-table-header {
+        font-size: 90%;
+        font-weight: 600;
+        padding: 5px 10px;
+        background: var(--opposite-bg-color);
+        color: var(--opposite-text-color);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .godmode-table-header:hover {
+        opacity: 0.8;
+    }
+
+    .godmode-table td {
+        padding: 5px 10px;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .godmode-table tr:hover {
+        cursor: pointer;
+        background: var(--opposite-bg-color);
+        color: var(--opposite-text-color);
+    }
+
+    .godmode-table tr:hover a {
+        color: var(--opposite-text-color);
+    }
+
+.godmode-empty {
+    font-size: 200%;
+    padding: 100px 0;
+    text-align: center;
+    opacity: 0.5;
+    font-weight: 300;
+}
+
+.godmode-table-user {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+    .godmode-table-user-avatar {
+        min-width: 30px;
+        min-height: 30px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .godmode-table-user-avatar-big {
+        min-width: 50px;
+        min-height: 50px;
+        width: 50px;
+        height: 50px;
+    }
+
+.godmode-table-tag {
+    padding: 5px 10px;
+    border-radius: 10px;
+    color: white;
+}
+
+.godmode-table-image {
+    max-width: 100px;
+    max-height: 150px;
+}
+
+.godmode-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+    .godmode-edit-form-row {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .godmode-edit-form-label {
+        font-size: 120%;
+        font-weight: 500;
+        min-width: 150px;
+    }
+
+    .godmode-edit-form-input {
+        flex: 1;
+        width: 100%;
+    }
+
+    .godmode-edit-form-input input,
+    .godmode-edit-form-input textarea {
+        width: 100%;
+        min-width: 300px;
+    }
+
+    .godmode-edit-form-input input[type="checkbox"] {
+        width: auto;
+        min-width: 0;
+        scale: 1.5;
+    }
+
+    .godmode-edit-form-input input[readonly] {
+        background-color: #DDD;
+    }
+
+    .godmode-edit-form-input select {
+        -webkit-appearance: listbox;
+        appearance: auto;
+    }
+
+    .godmode-edit-form-errors {
+        width: 100%;
+        color: red;
+    }
+
+    .godmode-edit-form-actions {
+        display: flex;
+        gap: 10px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 30px;
+    }
+
+.godmode-message {
+    width:100%;
+    padding: 100px 30px;
+    font-size: 130%;
+    text-align: center;
+}
+
+    .godmode-message-title {
+        font-size: 120%;
+        font-weight: 500;
+    }
+
+    .godmode-message-text {
+        padding: 40px;
+    }
+
+.godmode-mobile-menu-toggle {
+    display: none;
+    background: var(--opposite-bg-color);
+    color: var(--opposite-text-color);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.godmode-mobile-menu-close {
+    display: none;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 700px) {
+    .godmode-container {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .godmode-sidebar {
+        width: 100%;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bg-color);
+        z-index: 1000;
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .godmode-group {
+        padding-top: 20px;
+    }
+
+    .godmode.mobile-menu-opened .godmode-sidebar {
+        display: block;
+    }
+
+    .godmode-content {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    .godmode-mobile-menu-toggle {
+        display: block;
+    }
+
+    .godmode-mobile-menu-close {
+        display: block;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--opposite-bg-color);
+        color: var(--opposite-text-color);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .godmode-filters {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+    .godmode-filters select,
+    .godmode-filters input {
+        width: 100%;
+    }
+
+    .godmode-table {
+        font-size: 14px;
+    }
+
+    .godmode-table td {
+        padding: 3px 5px;
+        max-width: 100px;
+    }
+
+    .godmode-table-header {
+        padding: 8px 5px;
+        font-size: 12px;
+    }
+
+    .godmode-edit-form-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 5px;
+    }
+
+    .godmode-edit-form-label {
+        min-width: auto;
+        font-size: 110%;
+    }
+
+    .godmode-edit-form-input input,
+    .godmode-edit-form-input textarea {
+        min-width: 100%;
+    }
+
+    .godmode-edit-form-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

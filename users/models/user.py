@@ -131,6 +131,7 @@ class User(models.Model, ModelDiffMixin):
 
     class Meta:
         db_table = "users"
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"User: {self.slug}"

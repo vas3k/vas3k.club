@@ -143,4 +143,3 @@ class RoomMuted(models.Model):
     @classmethod
     def muted_by_user(cls, user):
         return cls.objects.filter(user=user)
-

@@ -61,7 +61,7 @@ class Comment(models.Model):
 
     class Meta:
         db_table = "comments"
-        ordering = ["created_at"]
+        ordering = ["-created_at"]
 
     def to_dict(self):
         return {
@@ -129,6 +129,7 @@ class Comment(models.Model):
     def visible_objects(cls, show_deleted=False):
         comments = cls.objects\
             .filter(is_visible=True)\
+            .order_by("created_at")\
             .select_related("author", "post", "reply_to")
 
         if not show_deleted:

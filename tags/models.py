@@ -66,3 +66,4 @@ class UserTag(models.Model):
     class Meta:
         db_table = "user_tags"
         unique_together = [["tag", "user"]]
+        ordering = ["-created_at"]

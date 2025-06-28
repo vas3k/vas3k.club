@@ -59,6 +59,7 @@ class UserBadge(models.Model):
             ("from_user", "to_user", "badge", "post_id"),
             ("from_user", "to_user", "badge", "comment_id"),
         ]
+        ordering = ["-created_at"]
 
     @classmethod
     def create_user_badge(cls, badge, from_user, to_user, post=None, comment=None, note=None):

@@ -39,3 +39,4 @@ class UserAchievement(models.Model):
     class Meta:
         db_table = "user_achievements"
         unique_together = [["achievement", "user"]]
+        ordering = ["-created_at"]

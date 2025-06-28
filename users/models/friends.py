@@ -18,6 +18,7 @@ class Friend(models.Model):
     class Meta:
         db_table = "friends"
         unique_together = [["user_from", "user_to"]]
+        ordering = ["-created_at"]
 
     @classmethod
     def add_friend(cls, user_from, user_to):

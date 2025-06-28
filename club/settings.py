@@ -23,8 +23,7 @@ ADMINS = [
 ]
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
+    "django.contrib.auth",  # FIXME: do we need this?
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -46,6 +45,7 @@ INSTALLED_APPS = [
     "tags.apps.TagsConfig",
     "rooms.apps.RoomsConfig",
     "misc.apps.MiscConfig",
+    "godmode.apps.GodmodeConfig",
     "invites.apps.InvitesConfig",
     "tickets.apps.TicketsConfig",
     "ai.apps.AiConfig",
@@ -135,7 +135,6 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
@@ -173,7 +172,7 @@ CACHES = {
     }
 }
 
-LANDING_CACHE_TIMEOUT = 60 * 60 * 24
+LANDING_CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
 
 # Email
 

@@ -2,7 +2,6 @@ from datetime import datetime
 from uuid import uuid4
 
 from django.db import models
-from django.urls import reverse
 
 
 class ProTip(models.Model):
@@ -46,3 +45,6 @@ class NetworkGroup(models.Model):
     @classmethod
     def visible_objects(cls):
         return cls.objects.filter(is_visible=True)
+
+    def __str__(self):
+        return self.code
