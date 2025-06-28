@@ -26,6 +26,7 @@ class Invite(models.Model):
 
     class Meta:
         db_table = "invites"
+        ordering = ["-created_at"]
 
     @property
     def expires_at(self):
