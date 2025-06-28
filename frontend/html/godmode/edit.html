@@ -12,7 +12,11 @@
         <span class="godmode-edit-icon">{{ admin_model.icon }}</span>
         <span class="godmode-edit-title">{{ admin_model.title }}</span>
         <span>→</span>
-        <span class="godmode-edit-id">ID: {{ item|get_attr:primary_key_field }}</span>
+        {% if admin_model.title_field %}
+            <span class="godmode-edit-id">{{ item|get_attr:admin_model.title_field }}</span>
+        {% else %}
+            <span class="godmode-edit-id">ID: {{ item|get_attr:primary_key_field }}</span>
+        {% endif %}
     </div>
 
     <form action="." method="post" enctype="multipart/form-data">

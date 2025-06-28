@@ -72,6 +72,7 @@ ADMIN = ClubAdmin(
                     title="Юзеры",
                     icon="👤",
                     name="users",
+                    title_field="full_name",
                     list_fields=[
                         ClubAdminField(
                             name="avatar",
@@ -180,6 +181,7 @@ ADMIN = ClubAdmin(
                     title="Посты",
                     icon="📝",
                     name="posts",
+                    title_field="title",
                     list_fields=[
                         "slug",
                         "type",
@@ -237,6 +239,7 @@ ADMIN = ClubAdmin(
                     title="Ачивки",
                     icon="🥇",
                     name="achievements",
+                    title_field="name",
                     list_fields=[
                         ClubAdminField(
                             name="image",
@@ -279,6 +282,7 @@ ADMIN = ClubAdmin(
                     title="Теги",
                     icon="🔖",
                     name="tags",
+                    title_field="name",
                     list_fields=[
                         "name",
                         "code",
@@ -309,6 +313,7 @@ ADMIN = ClubAdmin(
                     title="Комнаты",
                     icon="📁",
                     name="rooms",
+                    title_field="title",
                     list_fields=[
                         "icon",
                         "title",

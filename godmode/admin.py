@@ -56,6 +56,7 @@ class ClubAdminModel:
     title: str = None
     icon: str = None
     name: str = None
+    title_field: str = None
 
     list_fields: list | ClubAdminField = field(default_factory=list)
     edit_fields: list = field(default_factory=list)
