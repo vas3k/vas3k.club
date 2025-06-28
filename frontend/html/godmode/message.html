@@ -6,12 +6,5 @@
 {% endblock %}
 
 {% block godmode_content %}
-    <div class="godmode-message">
-        {% if title %}
-            <div class="godmode-message-title">{{ title }}</div>
-        {% endif %}
-
-        <div class="godmode-message-text">
-            {{ message }}
-    </div>
+    {% include "godmode/pages/message.html" %}
 {% endblock %}

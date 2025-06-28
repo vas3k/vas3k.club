@@ -36,30 +36,26 @@
                 ≡ Админка
             </button>
             {% block godmode_content %}
-                 <div class="block compose-types">
-                    <a href="{% url "godmode_digest_settings" %}" class="compose-type">
+                 <div class="compose-types">
+                    <a href="{% url "godmode_show_page" "digest" %}" class="compose-type">
                         <span class="compose-type-icon">📰</span>
                         <span class="compose-type-name">Дайджест</span>
                     </a>
-                    <a href="{% url "godmode_invite" %}" class="compose-type">
+                    <a href="{% url "godmode_show_page" "invite" %}" class="compose-type">
                         <span class="compose-type-icon">🎁</span>
                         <span class="compose-type-name">Инвайты</span>
                     </a>
-                    <a href="{% url "badge_generator" %}" class="compose-type">
-                        <span class="compose-type-icon">🪪</span>
-                        <span class="compose-type-name">Генератор бейджиков</span>
+                    <a href="{% url "godmode_show_page" "mass_achievement" %}" class="compose-type">
+                        <span class="compose-type-icon">🥇</span>
+                        <span class="compose-type-name">Массовые ачивки</span>
                     </a>
-                    <a href="{% url "mass_note" %}" class="compose-type">
+                    <a href="{% url "godmode_show_page" "mass_note" %}" class="compose-type">
                         <span class="compose-type-icon">📝</span>
                         <span class="compose-type-name">Массовые заметки</span>
                     </a>
-                    <a href="{% url "godmode_mass_email" %}" class="compose-type">
+                    <a href="{% url "godmode_show_page" "mass_email" %}" class="compose-type">
                         <span class="compose-type-icon">💌</span>
                         <span class="compose-type-name">Массовые рассылки</span>
-                    </a>
-                    <a href="{% url "godmode_mass_achievement" %}" class="compose-type">
-                        <span class="compose-type-icon">🥇</span>
-                        <span class="compose-type-name">Массовые ачивки</span>
                     </a>
                 </div>
             {% endblock %}

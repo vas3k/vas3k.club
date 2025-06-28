@@ -17,12 +17,11 @@ from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
-from invites.views import show_invite, list_invites, activate_invite
+from invites.views import show_invite, list_invites, activate_invite, godmode_generate_invite_code
 from landing.views import landing
-from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, godmode_delete_model, godmode_create_model
-from godmode.views.custom import godmode_digest_settings, godmode_invite, godmode_generate_invite_code, \
-    godmode_sunday_posts, godmode_mass_email, godmode_mass_achievement
-from misc.fun import badge_generator, mass_note
+from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, godmode_delete_model, \
+    godmode_create_model, godmode_show_page
+from misc.fun import mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
@@ -172,6 +171,7 @@ urlpatterns = [
     re_path(r"^label/(?P<label_code>[^/]+)/{}/$".format(ORDERING_RE), feed, name="feed_label_ordering"),
 
     path("invites/", list_invites, name="invites"),
+    path("invites/generate_invite_code/", godmode_generate_invite_code, name="godmode_generate_invite_code"),
     path("invites/<slug:invite_code>/", show_invite, name="show_invite"),
     path("invites/<slug:invite_code>/activate/", activate_invite, name="activate_invite"),
     path("invites.json", api_gift_invite_link, name="api_gift_invite_link"),
@@ -201,15 +201,10 @@ urlpatterns = [
 
     # admin features
     path("godmode/", godmode, name="godmode_settings"),
-    path("godmode/digest/", godmode_digest_settings, name="godmode_digest_settings"),
-    path("godmode/invite/", godmode_invite, name="godmode_invite"),
-    path("godmode/generate_invite_code/", godmode_generate_invite_code, name="godmode_generate_invite_code"),
-    path("godmode/sunday_posts/", godmode_sunday_posts, name="godmode_sunday_posts"),
-    path("godmode/mass_email/", godmode_mass_email, name="godmode_mass_email"),
-    path("godmode/mass_achievement/", godmode_mass_achievement, name="godmode_mass_achievement"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
     path("godmode/random_login/", debug_random_login, name="debug_random_login"),
     path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
+    path("godmode/page/<slug:page_name>/", godmode_show_page, name="godmode_show_page"),
     path("godmode/<slug:model_name>/", godmode_list_model, name="godmode_list_model"),
     path("godmode/<slug:model_name>/create/", godmode_create_model, name="godmode_create_model"),
     path("godmode/<slug:model_name>/<str:item_id>/edit/", godmode_edit_model, name="godmode_edit_model"),
@@ -218,7 +213,6 @@ urlpatterns = [
     # misc
     path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),
     path("misc/calendar/google", generate_google_invite, name="generate_google_invite"),
-    path("misc/badge_generator/", badge_generator, name="badge_generator"),
     path("misc/mass_note/", mass_note, name="mass_note"),
 
     # feeds

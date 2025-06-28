@@ -72,8 +72,11 @@
     gap: 30px;
 }
 
+.godmode-page {}
+
 .godmode-list-header,
 .godmode-edit-header,
+.godmode-page-header,
 .godmode-form-simple-header {
     display: flex;
     flex-direction: row;

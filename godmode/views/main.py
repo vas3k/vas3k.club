@@ -195,3 +195,33 @@ def godmode_create_model(request, model_name):
         "admin_model": admin_model,
         "form": form,
     })
+
+
+def godmode_show_page(request, page_name):
+    if not ADMIN.has_access(request.me):
+        raise AccessDenied()
+
+    admin_page = ADMIN.get_page(page_name)
+    if not admin_page:
+        raise Http404()
+
+    if not admin_page.has_access(request.me):
+        return render(request, "godmode/message.html", {
+            "admin": ADMIN,
+            "title": "🥲 Вам сюда нельзя",
+            "message": f"У вас нет прав для просмотра страницы '{admin_page.title}', "
+                       f"это могут делать только админы с ролями {', '.join(admin_page.access_roles)}.",
+        })
+
+    if not admin_page.view:
+        return render(request, "godmode/message.html", {
+            "admin": ADMIN,
+            "title": "🥲 Страницу еще не напрограммировали",
+            "message": f"Вам нужно объявить view у страницы и написать функцию её обработки.",
+        })
+
+    return render(request, "godmode/page.html", {
+        "admin": ADMIN,
+        "admin_page": admin_page,
+        "page": admin_page.view(request, admin_page)
+    })

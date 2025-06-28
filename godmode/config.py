@@ -4,6 +4,12 @@ from comments.models import Comment
 from gdpr.models import DataRequests
 from godmode.models import ClubSettings
 from godmode.admin import ClubAdmin, ClubAdminGroup, ClubAdminModel, ClubAdminPage, ClubAdminField
+from godmode.pages.badge_generator import badge_generator
+from godmode.pages.digest import compose_weekly_digest
+from godmode.pages.invite import invite_user_by_email
+from godmode.pages.mass_achievement import mass_achievement
+from godmode.pages.mass_email import mass_email
+from godmode.pages.sunday_posts import sunday_posts
 from invites.models import Invite
 from misc.models import NetworkGroup, ProTip
 from posts.models.linked import LinkedPost
@@ -35,6 +41,7 @@ ADMIN = ClubAdmin(
                     title="Пригласить в Клуб",
                     icon="🎁",
                     name="invite",
+                    view=invite_user_by_email,
                 )
             ],
         ),
@@ -46,11 +53,13 @@ ADMIN = ClubAdmin(
                     title="Дайджест",
                     icon="📧",
                     name="digest",
+                    view=compose_weekly_digest
                 ),
                 ClubAdminPage(
                     title="Массовые рассылки",
                     icon="📬",
                     name="mass_email",
+                    view=mass_email,
                 )
             ]
         ),
@@ -257,6 +266,7 @@ ADMIN = ClubAdmin(
                     title="Массовые ачивки",
                     icon="🏅",
                     name="mass_achievement",
+                    view=mass_achievement,
                 )
             ],
         ),
@@ -374,11 +384,13 @@ ADMIN = ClubAdmin(
                     title="Генератор бейджиков",
                     icon="🪪",
                     name="badge_generator",
+                    view=badge_generator,
                 ),
                 ClubAdminPage(
                     title="Нетленки",
                     icon="💎",
                     name="sunday_posts",
+                    view=sunday_posts,
                 ),
             ],
         )

@@ -1,97 +1,86 @@
-{% extends "layout.html" %}
 {% load static %}
 {% load text_filters %}
 
-{% block title %}
-    Генератор бейджиков — {{ block.super }}
-{% endblock %}
+<style>
+    body, html {
+        background-color: white; /* for printing */
+    }
 
-{% block css %}
-    <style>
-        body, html {
-            background-color: white; /* for printing */
+    .badge-generator {
+        max-width: 800px;  /* good for A4 printing */
+        margin: 0 auto;
+    }
+
+    .badge-generator-results {
+    }
+
+        .badge-generator-table {
+            table-layout: fixed;
         }
 
-        .badge-generator {
-            max-width: 800px;  /* good for A4 printing */
-            margin: 0 auto;
-        }
-
-        .badge-generator-results {
-        }
-
-            .badge-generator-table {
-                table-layout: fixed;
+            .badge-generator-table td {
+                width: 50%;
+                padding: 10px;
             }
 
-                .badge-generator-table td {
-                    width: 50%;
-                    padding: 10px;
-                }
+    .profile-card {
+        color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        grid-template-columns: 90px auto;
+        column-gap: 15px;
+        grid-template-rows: auto auto;
+        box-shadow: none;
+        margin-bottom: 0;
+        padding: 30px 20px 20px;
+    }
 
-        .profile-card {
-            color-adjust: exact;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-            grid-template-columns: 90px auto;
-            column-gap: 15px;
-            grid-template-rows: auto auto;
-            box-shadow: none;
-            margin-bottom: 0;
-            padding: 30px 20px 20px;
+    .profile-card-info {
+        font-size: 85%;
+        padding-top: 0;
+    }
+
+        .profile-user-name {
+            padding-bottom: 7px;
+            line-height: 1.1em;
         }
 
-        .profile-card-info {
-            font-size: 85%;
-            padding-top: 0;
+        .profile-user-job {
+            font-size: 110%;
         }
 
-            .profile-user-name {
-                padding-bottom: 7px;
-                line-height: 1.1em;
-            }
-
-            .profile-user-job {
-                font-size: 110%;
-            }
-
-            .profile-user-fullname {
-                margin-right: 0;
-            }
-
-            .profile-user-nickname {
-                position: relative;
-                top: -0.1em;
-                font-size: 70%;
-                opacity: 1;
-                color: #777;
-            }
-
-        .user-badges {
-            grid-column-start: 1;
-            grid-column-end: 3;
-            font-size: 80%;
-            gap: 10px;
-            display: flex;
-            justify-content: center;
-            padding-top: 9px;
-            padding-bottom: 0;
-
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
+        .profile-user-fullname {
+            margin-right: 0;
         }
 
-    </style>
-{% endblock %}
+        .profile-user-nickname {
+            position: relative;
+            top: -0.1em;
+            font-size: 70%;
+            opacity: 1;
+            color: #777;
+        }
 
-{% block content %}
+    .user-badges {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        font-size: 80%;
+        gap: 10px;
+        display: flex;
+        justify-content: center;
+        padding-top: 9px;
+        padding-bottom: 0;
+
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+</style>
 
 <div class="badge-generator">
-    <div class="content-header">Генератор бейджиков</div>
-
     <div class="block">
-        <form action="." method="get">
+        <form action="../../misc" method="get">
             <span class="form-row">
                 <textarea name="users">{{ requested_users }}</textarea>
             </span>
@@ -180,4 +169,3 @@
         </table>
     </div>
 </div>
-{% endblock %}

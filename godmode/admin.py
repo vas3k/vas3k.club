@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+from typing import Callable
+
 from typing_extensions import Optional
 
 from django import forms
@@ -136,8 +138,15 @@ class ClubAdminPage:
     icon: str = None
     name: str = None
 
+    access_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
+
+    view: Callable = None
+
     def get_absolute_url(self):
-        return f"/godmode/{self.name}/" if self.name else None
+        return f"/godmode/page/{self.name}/" if self.name else None
+
+    def has_access(self, user: User) -> bool:
+        return bool(set(user.roles or []) & set(self.access_roles or []))
 
 @dataclass
 class ClubAdminGroup:
@@ -154,12 +163,20 @@ class ClubAdmin:
 
     access_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
 
-    def get_model(self, model_name: str) -> ClubAdminModel | ClubAdminPage | None:
+    def get_model(self, model_name: str) -> ClubAdminModel | None:
         for group in self.groups:
             for model in group.models:
-                if model.name == model_name:
+                if isinstance(model, ClubAdminModel) and model.name == model_name:
                     return model
         return None
+
+    def get_page(self, page_name: str) -> ClubAdminPage | None:
+        for group in self.groups:
+            for model in group.models:
+                if isinstance(model, ClubAdminPage) and model.name == page_name:
+                    return model
+        return None
+
 
     def has_access(self, user: User) -> bool:
         return bool(set(user.roles or []) & set(self.access_roles or []))
