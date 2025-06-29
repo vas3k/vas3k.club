@@ -28,7 +28,7 @@ def curate_post(request, post_slug):
     else:
         form = PostCuratorForm()
 
-    return render(request, "admin/simple_form.html", {
+    return render(request, "posts/admin.html", {
         "title": "Курирование поста",
         "post": post,
         "form": form
@@ -47,7 +47,7 @@ def admin_post(request, post_slug):
     else:
         form = PostAdminForm()
 
-    return render(request, "admin/simple_form.html", {
+    return render(request, "posts/admin.html", {
         "title": "Админить пост",
         "post": post,
         "form": form
@@ -78,7 +78,7 @@ def announce_post(request, post_slug):
     else:
         form = PostAnnounceForm(initial=initial)
 
-    return render(request, "admin/simple_form.html", {
+    return render(request, "posts/admin.html", {
         "title": "Анонсировать пост на канале",
         "post": post,
         "form": form

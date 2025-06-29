@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    {{ title | default:"Админим" }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="profile-header">{{ title | default:"Админим" }}</div>
+        <div class="block">
+            <form action="." method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for row in form %}
+                    <div class="form-row">
+                        {{ row.label_tag }}
+                        {{ row }}
+                        {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="button">Готово</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
