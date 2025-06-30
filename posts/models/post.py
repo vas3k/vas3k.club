@@ -214,7 +214,7 @@ class Post(models.Model, ModelDiffMixin):
         return self.can_edit(user) or user.is_curator
 
     def get_custom_comment_limit(self):
-        if self.metadata and self.metadata.get(settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY):
+        if self.metadata and self.metadata.get(settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY) is not None:
             try:
                 return int(self.metadata[settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY])
             except ValueError:

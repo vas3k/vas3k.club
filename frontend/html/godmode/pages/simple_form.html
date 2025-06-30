@@ -10,7 +10,9 @@
             {% csrf_token %}
             {% for row in form %}
                 <div class="form-row">
-                    {{ row.label_tag }} {{ row }} {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
+                    {{ row.label_tag }}
+                    {{ row }}
+                    {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
                 </div>
             {% endfor %}
 

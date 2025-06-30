@@ -718,3 +718,21 @@
     padding: 10px;
     margin-top: 20px;
 }
+
+
+.block-comments-restricted {
+    margin-top: 30px;
+    font-size: 120%;
+    text-align: center;
+}
+
+    .block-comments-restricted-icon {
+        font-size: 50px;
+        margin: 20px;
+        line-height: 1em;
+    }
+
+    .block-comments-restricted-message {
+        font-size: 130%;
+        font-weight: 500;
+    }
