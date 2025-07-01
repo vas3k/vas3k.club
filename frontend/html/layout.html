@@ -3,12 +3,15 @@
 <html lang="ru">
 <head>
     <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
+
     {% block fonts %}
         {% include "common/fonts.html" %}
     {% endblock %}
+
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
+
     <script>
         // check and set theme before render. After render the theme switch is controlled by the <theme-switcher> component
         // the component contains the same theme detection code as below. If you change this code, update the theme too
@@ -18,14 +21,14 @@
     </script>
 
     {% block feeds %}
-    <link rel="alternate" type="application/rss+xml"
-          title="Вастрик.Клуб: Новые посты"
-          href="{{ settings.APP_HOST }}{% url "rss" %}" />
+        <link rel="alternate" type="application/rss+xml"
+              title="Вастрик.Клуб: Новые посты"
+              href="{{ settings.APP_HOST }}{% url "rss" %}" />
 
-    <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
-          type="application/feed+json"
-          href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
-    ‍{% endblock %}
+        <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
+              type="application/feed+json"
+              href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
+    {% endblock %}
 
     {% block og_tags %}
         {% include "common/og.html" %}
