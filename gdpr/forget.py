@@ -88,3 +88,6 @@ def delete_user_data(user: User):
     UserMuted.objects.filter(user_to=user).delete()
     RoomSubscription.objects.filter(user=user).delete()
     RoomMuted.objects.filter(user=user).delete()
+
+    # delete from chats
+    ban_user_in_all_chats(user, is_permanent=True)
