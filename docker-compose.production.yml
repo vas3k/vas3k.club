@@ -179,6 +179,6 @@ services:
 
 networks:
   front:
-    name: pmi_network
+    external: true
   club:
-    name: club_network
+    external: true
