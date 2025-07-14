@@ -13,7 +13,7 @@ Consider next required conditions for running tests:
   
   Run postgres:
   ```sh
-  $ docker-compose -f docker-compose.yml up -d postgres
+  $ docker compose -f docker-compose.yml up -d postgres
   ```
   For first time run migrations (it needs only for fresh images) 
   ```sh 
@@ -22,7 +22,7 @@ Consider next required conditions for running tests:
 - **redis**
   Run redis:
   ```sh
-  $ docker-compose -f docker-compose.yml up -d redis
+  $ docker compose -f docker-compose.yml up -d redis
   ```
 - build **frontend**
   

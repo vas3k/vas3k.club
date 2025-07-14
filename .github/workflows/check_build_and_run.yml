@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Build the docker-compose stack
+      - name: Build the docker compose stack
         run: docker compose up -d
       - name: Sleep
         uses: jakejarvis/wait-action@master
