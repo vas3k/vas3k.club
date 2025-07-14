@@ -122,5 +122,5 @@ services:
     working_dir: /app/frontend
 
 networks:
-  default:
-      name: pmi_network
+  pmi_network:
+      external: true
