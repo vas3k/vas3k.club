@@ -38,6 +38,7 @@ services:
     networks:
       - front
       - club
+      - pmi_network
     logging:
       driver: "json-file"
       options:
@@ -81,6 +82,7 @@ services:
       - "8816:8816"
     networks:
       - club
+      - pmi_network
     logging:
       driver: "json-file"
       options:
@@ -109,6 +111,7 @@ services:
       - "8817:8817"
     networks:
       - club
+      - pmi_network
     logging:
       driver: "json-file"
       options:
@@ -180,3 +183,5 @@ services:
 networks:
   front:
   club:
+  pmi_network:
+    external: true
