@@ -179,6 +179,4 @@ services:
 
 networks:
   front:
-    external: true
   club:
-    external: true
