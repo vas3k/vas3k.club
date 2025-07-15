@@ -142,7 +142,7 @@ services:
       POSTGRES_PASSWORD: pmiclub
       POSTGRES_DB: pmi_club
     volumes:
-      - /root/pmi.moscow.club/pgdata:/var/lib/postgresql/data:rw
+      - /home/s-admin/pmi.moscow.club/pgdata:/var/lib/postgresql/data:rw
     ports:
       - "127.0.0.1:54333:5432"
     networks:
@@ -152,7 +152,7 @@ services:
     image: prodrigestivill/postgres-backup-local
     restart: always
     volumes:
-      - /root/pmi.moscow.club/backup/pmi/pgdata:/backups
+      - /home/s-admin/pmi.moscow.club/backup/pmi/pgdata:/backups
     links:
       - postgres
     depends_on:
