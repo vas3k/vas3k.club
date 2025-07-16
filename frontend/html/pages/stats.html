@@ -27,9 +27,8 @@
         <div class="stats-title">🏆<br>Статистика Клуба</div>
 
         <div class="stats-description">
-            Наша экспериментальная страничка со статистикой.
-            Пока тут всё о людях, но если вы умеете во фронтенд и графики, можете добавить сюда стату по плюсикам, постам и остальному.<br>
-            Предлагайте идеи <strong><a href="https://github.com/TopTuK/pmi.moscow.club" target="_blank">на наш гитхаб</a></strong>.
+            Клубная доска почёта.
+            Тут можно посмотреть выданные ачивки, награды, миллионеров Клуба и прочих достойных людей.
         </div>
 
         <div class="stats-header">💎 Миллионеры</div>
@@ -41,38 +40,34 @@
         </div>
 
         <div class="block stats-top-users">
-            <div class="top-users">
+            <div class="top-users top-users-big">
                 {% for user in top_users|slice:"0:5" %}
-                    <a href="{% url "profile" user.slug %}" class="top-user top-user-big zoom-on-hover">
-                        <span class="top-user-avatar-badge">🏆</span>
-                        <span class="avatar top-user-avatar">
+                    <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+                        <span class="user-round-avatar-badge">🏆</span>
+                        <span class="avatar user-round-avatar">
                             <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                         </span>
-                        <span class="top-user-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
-                        <span class="top-user-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
+                        <span class="user-round-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
+                        <span class="user-round-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
                     </a>
                 {% endfor %}
             </div>
 
-            <div class="top-users">
+            <div class="top-users top-users-medium">
                 {% for user in top_users|slice:"5:25" %}
-                    <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                        <span class="avatar top-user-avatar">
+                    <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+                        <span class="avatar user-round-avatar">
                             <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                         </span>
-                        <span class="top-user-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
-                        <span class="top-user-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
+                        <span class="user-round-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
+                        <span class="user-round-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
                     </a>
                 {% endfor %}
             </div>
 
-            <div class="top-users">
+            <div class="top-users top-users-small">
                 {% for user in top_users|slice:"25:64" %}
-                    <a href="{% url "profile" user.slug %}" class="top-user top-user-small" title="до {{ user.membership_expires_at | date:"E Y" }} года">
-                        <span class="avatar top-user-avatar">
-                            <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                        </span>
-                    </a>
+                    {% include "users/widgets/round.html" with user=user show_name=False %}
                 {% endfor %}
             </div>
         </div>
@@ -82,27 +77,47 @@
         <div class="stats-description">
             Награды дарят члены Клуба другим членам Клуба.
             Они стоят денег, потому каждая награда подчёркивает особый вклад по мнению коммьюнити.
-            Вот топ самых награждаемых юзеров за последний год 👇
+            Вот топ самых награждаемых юзеров за последние месяцы 👇
         </div>
 
         <div class="block stats-badges-top">
-            {% for user in top_badges %}
-                <a href="{% url "profile_badges" user.slug %}" class="top-user top-user-big zoom-on-hover">
-                    <span class="top-user-avatar-badge">🎖</span>
-                    <span class="avatar top-user-avatar">
-                        <img src="{{ user.get_avatar }}" alt="{{ user.full_name }}" loading="lazy" />
-                    </span>
-                    <span class="top-user-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
-                    <span class="top-user-info">
-                        {% for badge in user.to_badges.all|slice:":5" %}
-                            <img
-                                src="{% static "images/badges" %}/big/{{ badge.badge.code }}.png"
-                                alt="{{ badge.badge.title }}"
-                                class="stats-badge-image-tiny">
-                        {% endfor %}
-                    </span>
-                </a>
-            {% endfor %}
+            <div class="top-users top-users-big">
+                {% for user in top_badges|slice:":5" %}
+                    <a class="user user-round zoom-on-hover" href="{% url "profile_badges" user.slug %}">
+                        <span class="user-round-avatar-badge">🎖</span>
+                        <span class="avatar user-round-avatar">
+                            <img src="{{ user.get_avatar }}" alt="{{ user.full_name }}" loading="lazy" />
+                        </span>
+                        <span class="user-round-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
+                        <span class="user-round-info">
+                            {% for badge in user.to_badges.all|slice:":5" %}
+                                <img
+                                    src="{% static "images/badges" %}/big/{{ badge.badge.code }}.png"
+                                    alt="{{ badge.badge.title }}"
+                                    class="stats-badge-image-tiny">
+                            {% endfor %}
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="top-users top-users-medium">
+                {% for user in top_badges|slice:"5:12" %}
+                    <a class="user user-round zoom-on-hover" href="{% url "profile_badges" user.slug %}">
+                        <span class="avatar user-round-avatar">
+                            <img src="{{ user.get_avatar }}" alt="{{ user.full_name }}" loading="lazy" />
+                        </span>
+                        <span class="user-round-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
+                        <span class="user-round-info">
+                            {% for badge in user.to_badges.all|slice:":3" %}
+                                <img
+                                    src="{% static "images/badges" %}/big/{{ badge.badge.code }}.png"
+                                    alt="{{ badge.badge.title }}"
+                                    class="stats-badge-image-tiny">
+                            {% endfor %}
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="stats-subheader">
@@ -135,17 +150,12 @@
                 <div class="stats-achievements-badge">
                     {% include "achievements/widgets/achievement.html" %}
                 </div>
-                <div class="stats-achievements-users">
-                    {% for user in achievement.achievement_users|slice:":15" %}
-                        <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                            <span class="avatar top-user-avatar">
-                                <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                            </span>
-                            <span class="top-user-name">{{ user.full_name }}</span>
-                        </a>
+                <div class="top-users top-users-medium stats-achievements-users">
+                    {% for user in achievement.achievement_users|slice:":10" %}
+                        {% include "users/widgets/round.html" with user=user show_name=True %}
                     {% endfor %}
-                    {% if achievement.user_count > 15 %}
-                       <span class="top-user-more">...и ещё {{ achievement.user_count|add:-15 }} {{ achievement.user_count|add:-15|rupluralize:"пользователь,пользователя,пользователей" }}</span>
+                    {% if achievement.user_count > 10 %}
+                       <a class="top-users-more" href="{% url "show_achievement" achievement.code %}">+ ещё {{ achievement.user_count|add:-10 }} {{ achievement.user_count|add:-10|rupluralize:"клубень,клубня,клубней" }}</a>
                     {% endif %}
                 </div>
             </div>
@@ -158,14 +168,9 @@
             Зачем он нужен и как попасть — читайте <a href="{{ settings.PARLIAMENT_GUIDE_URL }}">в нашем гайде</a>.
         </div>
 
-        <div class="top-users">
+        <div class="top-users top-users-medium">
             {% for user in parliament %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                    <span class="avatar top-user-avatar">
-                        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                    </span>
-                    <span class="top-user-name">{{ user.full_name }}</span>
-                </a>
+                {% include "users/widgets/round.html" with user=user show_name=True %}
             {% endfor %}
         </div>
 
@@ -175,14 +180,9 @@
             Они обычно очень заняты, так что если хотите с ними связаться — пингуйте в комментах мета-аккаунт <a href="/user/moderator/"><strong>@moderator</strong></a> или пользуйтесь нашей почтой.
         </div>
 
-        <div class="top-users">
+        <div class="top-users top-users-medium">
             {% for user in moderators %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                    <span class="avatar top-user-avatar">
-                        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                    </span>
-                    <span class="top-user-name">{{ user.full_name }}</span>
-                </a>
+                {% include "users/widgets/round.html" with user=user show_name=True %}
             {% endfor %}
         </div>
     </div>

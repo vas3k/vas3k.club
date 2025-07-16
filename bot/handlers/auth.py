@@ -3,9 +3,11 @@ from telegram.error import Unauthorized
 from telegram.ext import CallbackContext
 
 from bot.cache import flush_users_cache, cached_telegram_users
+from bot.decorators import ensure_fresh_db_connection
 from users.models.user import User
 
 
+@ensure_fresh_db_connection
 def command_auth(update: Update, context: CallbackContext) -> None:
     if not update.message or not update.message.text or " " not in update.message.text:
         update.effective_chat.send_message(

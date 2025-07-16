@@ -73,6 +73,42 @@
             margin-left: 5px;
         }
 
+    .user-round {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        text-decoration: none;
+        text-align: center;
+        position: relative;
+    }
+
+        .user-round-avatar {
+            width: 90%;
+            aspect-ratio: 1 / 1;
+        }
+
+        .user-round-avatar-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 50px;
+        }
+
+        .user-round-name {
+            display: block;
+            font-size: 110%;
+            font-weight: 500;
+            padding: 10px 0 5px;
+            line-height: 1.2em;
+        }
+
+        .user-round-info {
+            display: block;
+            font-size: 80%;
+            opacity: 0.8;
+        }
+
     .user-name-is-banned {
         text-decoration: line-through;
     }

@@ -10,18 +10,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='tag',
-            options={'ordering': ['group', '?']},
-        ),
-        migrations.AddField(
-            model_name='tag',
-            name='index',
-            field=models.IntegerField(default=0),
-        ),
-        migrations.AlterField(
-            model_name='tag',
-            name='group',
-            field=models.CharField(choices=[('hobbies', 'Хобби'), ('personal', 'Личное'), ('other', 'Остальное')], default='other', max_length=32),
-        ),
     ]

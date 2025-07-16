@@ -37,6 +37,7 @@
             width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
+            overflow-wrap: break-word;
         }
 
         .user-badge-image {
@@ -91,6 +92,10 @@
 
         <div class="user-achievement-description" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>{{ achievement.description }}</div>
     </a>
+
+    {% if achievement.custom_message %}
+        <p>{{ achievement.custom_message }}</p>
+    {% endif %}
 
     <p>
         Поздравляем! Посмотрите как круто с ней смотрится <a href="{% url "profile" user.slug %}">ваш профиль</a>.

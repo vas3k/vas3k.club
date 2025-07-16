@@ -22,8 +22,7 @@ ADMINS = [
 ]
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
+    "django.contrib.auth",  # FIXME: do we need this?
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -45,7 +44,10 @@ INSTALLED_APPS = [
     "tags.apps.TagsConfig",
     "rooms.apps.RoomsConfig",
     "misc.apps.MiscConfig",
+    "godmode.apps.GodmodeConfig",
     "invites.apps.InvitesConfig",
+    "tickets.apps.TicketsConfig",
+    "ai.apps.AiConfig",
     "simple_history",
     "django_q",
     "webpack_loader",
@@ -83,7 +85,8 @@ TEMPLATES = [
                 "club.context_processors.settings_processor",
                 "club.context_processors.features_processor",
                 "authn.context_processors.users.me",
-                "posts.context_processors.rooms.rooms",
+                "posts.context_processors.feed.rooms",
+                "posts.context_processors.feed.ordering",
             ]
         },
     }
@@ -131,7 +134,6 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
@@ -143,7 +145,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/static")]
 REDIS_HOST = os.getenv("REDIS_HOST") or "localhost"
 REDIS_PORT = os.getenv("REDIS_PORT") or 6379
 Q_CLUSTER = {
-    "name": "vas3k_club",
+    "name": "pmi_club",
     "workers": 4,
     "recycle": 500,
     "timeout": 30,
@@ -169,7 +171,7 @@ CACHES = {
     }
 }
 
-LANDING_CACHE_TIMEOUT = 60 * 60 * 24
+LANDING_CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
 
 # Email
 
@@ -284,19 +286,25 @@ STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWI
 
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_CHAT_MODEL = "gpt-4.1-mini"
+OPENAI_EMBEDDINGS_MODEL = "text-embedding-3-small"
+OPENAI_EMBEDDINGS_VECTOR_DIM = 1536
+
 DEFAULT_AVATAR = "https://media.pmi.moscow/30095075d17a92786cfea143a73d68f5f1b3e71173e3f4ecf16f90d25834e45e.png"
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
 COMMENT_DELETABLE_TIMEDELTA = timedelta(days=10 * 365)
 COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA = timedelta(days=14)
-RETRACT_VOTE_IN_HOURS = 3
+RETRACT_VOTE_IN_HOURS = 24
 RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
-RATE_LIMIT_POSTS_PER_DAY = 10
-RATE_LIMIT_COMMENTS_PER_DAY = 200
+RATE_LIMIT_POSTS_PER_DAY = 3
+RATE_LIMIT_COMMENTS_PER_DAY = 100
+RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY = "comments_per_day"
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
-MIN_DAYS_TO_GIVE_BADGES = 35  # minimum "days" balance to buy and gift any badge
-MAX_MUTE_COUNT = 20  # maximum number of users allowed to mute
+MIN_DAYS_TO_GIVE_BADGES = 50  # minimum "days" balance to buy and gift any badge
+MAX_MUTE_COUNT = 25  # maximum number of users allowed to mute
 CLEARED_POST_TEXT = "```\n" \
     "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
     "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@pmi.moscow" \
@@ -312,6 +320,69 @@ POSTING_GUIDE_URL = "https://pmi.moscow/post/9/"
 CHATS_GUIDE_URL = "https://pmi.moscow/post/12/"
 PEOPLE_GUIDE_URL = "https://pmi.moscow/post/13/"
 PARLIAMENT_GUIDE_URL = "https://pmi.moscow/post/15/"
+
+SUPPORTED_TIME_ZONES = [
+	("UTC", "по UTC"),
+	("Asia/Almaty", "по Алматы"),
+	("Europe/Amsterdam", "по Амстердаму"),
+	("Europe/Belgrade", "по Белграду"),
+	("Europe/Berlin", "по Берлину"),
+	("America/Argentina/Buenos_Aires", "по Буэнос-Айресу"),
+	("America/Vancouver", "по Ванкуверу"),
+	("Europe/Warsaw", "по Варшаве"),
+	("Europe/Vienna", "по Вене"),
+	("Europe/Vilnius", "по Вильнюсу"),
+	("Asia/Vladivostok", "по Владивостоку"),
+    ("Europe/Athens", "по Греции"),
+	("Asia/Hong_Kong", "по Гонконгу"),
+	("America/Denver", "по Денверу"),
+	("Asia/Dubai", "по Дубаю"),
+	("Europe/Dublin", "по Дублину"),
+	("Asia/Yekaterinburg", "по Екатеринбургу"),
+	("Asia/Yerevan", "по Еревану"),
+	("Asia/Jerusalem", "по Израилю"),
+	("Asia/Irkutsk", "по Иркутску"),
+	("Asia/Kamchatka", "по Камчатке"),
+	("Africa/Johannesburg", "по Кейптауну"),
+	("Europe/Kyiv", "по Киеву"),
+	("Europe/Chisinau", "по Кишиневу"),
+	("Europe/Copenhagen", "по Копенгагену"),
+	("Asia/Krasnoyarsk", "по Красноярску"),
+	("Asia/Kuala_Lumpur", "по Куала-Лумпуру"),
+	("Europe/Lisbon", "по Лиссабону"),
+	("Europe/London", "по Лондону"),
+	("America/Los_Angeles", "по Лос-Анджелесу"),
+	("Asia/Magadan", "по Магадану"),
+	("Europe/Madrid", "по Мадриду/Барселоне"),
+	("America/Mexico_City", "по Мехико"),
+	("Europe/Moscow", "по Москве"),
+	("Asia/Novosibirsk", "по Новосибирску"),
+	("America/New_York", "по Нью-Йорку"),
+	("Pacific/Auckland", "по Окленду"),
+	("Asia/Omsk", "по Омску"),
+	("Europe/Paris", "по Парижу"),
+	("Europe/Prague", "по Праге"),
+	("Europe/Riga", "по Риге"),
+	("Europe/Rome", "по Риму"),
+	("Europe/Samara", "по Самаре"),
+	("America/Sao_Paulo", "по Сан-Паулу"),
+	("Asia/Seoul", "по Сеулу"),
+	("Australia/Sydney", "по Сиднею"),
+	("Asia/Singapore", "по Сингапуру"),
+	("Europe/Istanbul", "по Стамбулу"),
+	("Europe/Stockholm", "по Стокгольму"),
+	("Asia/Bangkok", "по Таиланду"),
+	("Europe/Tallinn", "по Таллину"),
+	("Asia/Samarkand", "по Ташкенту"),
+	("Asia/Tbilisi", "по Тбилиси"),
+	("Asia/Tokyo", "по Токио"),
+	("America/Toronto", "по Торонто"),
+	("Europe/Helsinki", "по Хельсинки"),
+	("Europe/Zurich", "по Цюриху"),
+	("America/Chicago", "по Чикаго"),
+	("Asia/Shanghai", "по Шанхаю"),
+	("Asia/Yakutsk", "по Якутску")
+]
 
 WEBPACK_LOADER = {
     "DEFAULT": {

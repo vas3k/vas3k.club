@@ -11,7 +11,7 @@ from icalendar import Calendar, Event
 from authn.decorators.auth import require_auth
 from badges.models import UserBadge
 from misc.models import NetworkGroup
-from users.models.achievements import Achievement, UserAchievement
+from users.models.achievements import Achievement
 from users.models.user import User
 
 
@@ -33,8 +33,8 @@ def stats(request):
         .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))
         .values_list("to_user")
         .annotate(sum_price=Sum("badge__price_days"))
-        .order_by("-sum_price")[:7]  # select more in case someone gets deleted
-    ]))[:5]  # filter None
+        .order_by("-sum_price")[:20]  # select more in case someone gets deleted
+    ]))[:15]  # filter None
 
     moderators = User.objects\
         .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
@@ -66,28 +66,9 @@ def show_achievement(request, achievement_code):
 
     users = User.objects.filter(achievements__achievement_id=achievement_code)
 
-    # calculate rarity of the achievement
-    achievement_stats = dict(
-        UserAchievement.objects.all()
-        .values("achievement_id")
-        .annotate(total=Count("achievement_id"))
-        .order_by("-total")
-        .values_list("achievement_id", "total")
-    )
-
-    total_count = len(achievement_stats.values())
-
-    try:
-        index = list(achievement_stats.keys()).index(achievement_code)
-    except ValueError:
-        index = 0
-
-    rarity = (index / total_count) * 100
-
     return render(request, "achievements/show_achievement.html", {
         "achievement": achievement,
         "users": users,
-        "rarity": round(rarity, 1)
     })
 
 

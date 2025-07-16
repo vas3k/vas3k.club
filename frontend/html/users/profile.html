@@ -14,7 +14,7 @@
     <link rel="alternate" type="application/rss+xml"
           title="Вастрик.Клуб: Посты {{ user.slug }}"
           href="{{ settings.APP_HOST }}{% url "user_rss" user.slug %}" />
-‍{% endblock %}
+{% endblock %}
 
 {% block og_tags %}
     <meta property="og:title" content="{{ user.full_name }} — {{ settings.APP_NAME }}">
@@ -58,6 +58,7 @@
                         {% endif %}
                     </span>
                 </div>
+
                 <a href="{% url "edit_payments" user.slug %}" class="profile-status">
                     {% if user.membership_days_left < 150 %}
                         <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
@@ -70,18 +71,19 @@
                         <span class="profile-status-text">{{ user.membership_days_left | days_to_years | rupluralize:"год,года,лет" }}</span>
                     {% endif %}
                 </a>
+
                 <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
-                    <span class="profile-status-icon">💌</span>
+                    <span class="profile-status-icon">🔔</span>
                     <span class="profile-status-status">
                         {% if user.is_email_unsubscribed %}
-                            Вы отписаны от всех писем 🙅‍♂️
+                            Здоровья погибшим ☠️
                         {% elif not user.is_email_verified %}
                             Вы не подтвердили e-mail 🚨
                         {% else %}
                             {% if user.email_digest_type == "daily" %}
                                 Ежедневный дайджест 🔥
                             {% elif user.email_digest_type == "weekly" %}
-                                Еженедельный журнал 💎
+                                Еженедельный журнал 💌
                             {% else %}
                                 Дайджест и журнал отключёны ❌
                             {% endif %}
@@ -133,6 +135,12 @@
                     {% elif user.deleted_at %}
                         <span class="profile-status-icon">🏃‍♀️</span>
                         <span class="profile-status-text">удалился из Клуба</span>
+                    {% elif not user.is_moderation_approved %}
+                        <span class="profile-status-icon">⚖️</span>
+                        <span class="profile-status-text">на модерации</span>
+                        <span class="profile-status-text-small">
+                            интро ещё не прошло модерацию
+                        </span>
                     {% elif not user.is_active_member %}
                         <span class="profile-status-icon">️😴</span>
                         <span class="profile-status-text">аккаунт неактивен</span>
@@ -150,12 +158,10 @@
                     {% endif %}
                 </div>
 
-                {% if me %}
-                    <friend-button
-                        url="{% url "toggle_friend" user.slug %}"
-                        {% if friend %}is-friend-by-default{% endif %}>
-                    </friend-button>
-                {% endif %}
+                <a href="{% url "create_badge_for_post" user.slug %}" class="profile-status clickable">
+                    <span class="profile-status-icon">🙏</span>
+                    <span class="profile-status-status">Сказать спасибо</span>
+                </a>
 
                 {% if not user.is_curator and not user.is_moderator %}
                     {% if muted %}
@@ -213,7 +219,7 @@
             </div>
         {% endif %}
 
-        {% if intro %}
+        {% if intro and user.is_moderation_approved or intro and me.is_moderator %}
             <div class="block profile-intro">
                 <div class="profile-header">
                     <a href="{% url "show_post" "intro" intro.slug %}">Интро &rarr;</a>

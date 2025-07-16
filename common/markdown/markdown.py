@@ -8,7 +8,7 @@ from common.markdown.telegram_renderer import TelegramRenderer
 
 def markdown_text(text, renderer=ClubRenderer):
     markdown = mistune.create_markdown(
-        escape=True, renderer=renderer(), plugins=["strikethrough", "url"]
+        escape=True, renderer=renderer(), plugins=["strikethrough", "url", "table"]
     )
     return (markdown(text) or "").strip()
 

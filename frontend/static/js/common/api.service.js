@@ -1,13 +1,40 @@
 const ClubApi = {
-    ajaxify(href, callback) {
+    post(href, callback) {
         const params = {
             method: "POST",
             credentials: "include",
         };
 
         fetch(href + "?is_ajax=true", params)
-            .then((response) => response.json())
-            .then((data) => callback(data));
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => callback(data))
+            .catch((error) => {
+                callback({ error: error.message });
+            });
+    },
+
+    get(href, callback) {
+        const params = {
+            method: "GET",
+            credentials: "include",
+        };
+
+        fetch(href + "?is_ajax=true", params)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => callback(data))
+            .catch((error) => {
+                callback({ error: error.message });
+            });
     },
 };
 

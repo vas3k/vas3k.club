@@ -131,6 +131,7 @@ class User(models.Model, ModelDiffMixin):
 
     class Meta:
         db_table = "users"
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"User: {self.slug}"
@@ -172,6 +173,7 @@ class User(models.Model, ModelDiffMixin):
         now = datetime.utcnow()
         if self.last_activity_at < now - timedelta(minutes=5):
             return User.objects.filter(id=self.id).update(last_activity_at=now)
+        return None
 
     def membership_days_left(self):
         return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
@@ -199,6 +201,14 @@ class User(models.Model, ModelDiffMixin):
             roles.append(d[role])
         return ", ".join(roles)
 
+    def get_custom_comment_limit(self):
+        if self.metadata and self.metadata.get(settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY) is not None:
+            try:
+                return int(self.metadata[settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY])
+            except ValueError:
+                return None
+        return None
+
     @property
     def is_banned(self):
         if self.is_god:
@@ -222,8 +232,12 @@ class User(models.Model, ModelDiffMixin):
         return (self.roles and self.ROLE_BANK in self.roles) or self.is_god
 
     @property
+    def is_moderation_approved(self):
+        return self.moderation_status == User.MODERATION_STATUS_APPROVED
+
+    @property
     def is_member(self):
-        return self.moderation_status == User.MODERATION_STATUS_APPROVED \
+        return self.is_moderation_approved \
                and not self.is_banned \
                and self.deleted_at is None
 

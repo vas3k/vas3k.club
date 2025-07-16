@@ -16,3 +16,4 @@ class PostBookmark(models.Model):
 
     class Meta:
         db_table = "post_bookmarks"
+        ordering = ["-created_at"]

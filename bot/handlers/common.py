@@ -1,19 +1,14 @@
 import logging
-import re
 from enum import Enum
 from typing import Optional
 
+from django.db import close_old_connections
 from telegram import Update, ParseMode
 
+from bot.config import COMMENT_URL_RE, POST_URL_RE
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
-
-COMMENT_EMOJI_RE = re.compile(r"^💬.*")
-POST_EMOJI_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🏗🙋‍♀️].*")
-
-COMMENT_URL_RE = re.compile(r"https?://pmi.moscow/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
-POST_URL_RE = re.compile(r"https?://pmi.moscow/[a-zA-Z]+/(.+?)/")
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +39,10 @@ class PostRejectReason(Enum):
 
 
 def get_club_user(update: Update):
+    # HACK: Django 5+ kills long-running db connections randomly,
+    # this could help, but I'm not sure
+    close_old_connections()
+
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
         if update.callback_query:

@@ -80,20 +80,3 @@
             .intro-form-counter.good {
                 color: #53AA68;
             }
-
-.post-join {
-    margin-top: 30px;
-    font-size: 120%;
-    text-align: center;
-}
-
-    .post-join-icon {
-        font-size: 50px;
-        margin: 20px;
-        line-height: 1em;
-    }
-
-    .post-join-message {
-        font-size: 130%;
-        font-weight: 500;
-    }

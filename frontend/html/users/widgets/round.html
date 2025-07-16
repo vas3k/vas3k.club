@@ -1,0 +1,13 @@
+<a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+    <span class="avatar user-round-avatar">
+        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
+    </span>
+
+    {% if show_name %}
+        <span class="user-round-name">{{ user.full_name }}</span>
+    {% endif %}
+
+    {% if additional_info %}
+        <span class="user-round-info">{{ additional_info }}</span>
+    {% endif %}
+</a>

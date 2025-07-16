@@ -23,9 +23,14 @@ def create_badge_for_post(request, post_slug):
         if request.me.membership_days_left() < settings.MIN_DAYS_TO_GIVE_BADGES:
             return render(request, "badges/messages/insufficient_funds.html")
 
+        if post.type == Post.TYPE_INTRO:
+            badges = Badge.badges_for_intro()
+        else:
+            badges = Badge.badges_for_post_or_comment()
+
         return render(request, "badges/create.html", {
             "post": post,
-            "badges": Badge.visible_objects().all(),
+            "badges": badges,
         })
 
     badge_code = request.POST.get("badge_code")
@@ -80,9 +85,11 @@ def create_badge_for_comment(request, comment_id):
         if request.me.membership_days_left() < settings.MIN_DAYS_TO_GIVE_BADGES:
             return render(request, "badges/messages/insufficient_funds.html")
 
+        badges = Badge.badges_for_post_or_comment()
+
         return render(request, "badges/create.html", {
             "comment": comment,
-            "badges": Badge.visible_objects().all(),
+            "badges": badges,
         })
 
     badge_code = request.POST.get("badge_code")

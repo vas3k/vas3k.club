@@ -11,7 +11,7 @@ from badges.models import UserBadge
 from club.exceptions import NotFound
 from comments.models import Comment, CommentVote
 from common.data.greetings import DUMB_GREETINGS
-from landing.models import GodSettings
+from godmode.models import ClubSettings
 from misc.models import ProTip
 from posts.models.post import Post
 from posts.models.votes import PostVote
@@ -198,9 +198,9 @@ def generate_weekly_digest(no_footer=False):
         .first()
 
     # Get intro and title
-    god_settings = GodSettings.objects.first()
-    digest_title = god_settings.digest_title
-    digest_intro = god_settings.digest_intro
+    club_settings = ClubSettings.objects.first()
+    digest_title = club_settings.digest_title
+    digest_intro = club_settings.digest_intro
 
     if not digest_intro and not posts and not comments:
         raise NotFound()

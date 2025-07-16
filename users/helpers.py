@@ -6,7 +6,7 @@ from common.data.ban import PERMANENT_BAN_DAYS, PROGRESSIVE_BAN_DAYS, BanReason
 from notifications.email.users import send_banned_email
 from notifications.telegram.users import notify_admin_user_on_ban, notify_user_ban
 from payments.helpers import cancel_all_stripe_subscriptions
-from rooms.helpers import ban_user_in_all_chats, unban_user_in_all_chats
+from rooms.helpers import ban_user_in_all_chats
 from users.models.user import User
 
 
@@ -22,7 +22,8 @@ def permanently_ban_user(user: User, reason: BanReason):
     cancel_all_stripe_subscriptions(user.stripe_id)
     async_task(
         ban_user_in_all_chats,
-        user=user
+        user=user,
+        is_permanent=True,
     )
 
     return custom_ban_user(

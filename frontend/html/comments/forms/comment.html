@@ -1,33 +1,52 @@
-<form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
-    <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
-    <div class="comment-form">
-        <div class="comment-form-avatar">
-            {% if comment %}
-                <div class="avatar"><img src="{{ comment.author.get_avatar }}" alt="Аватар" loading="lazy" /></div>
-            {% else %}
-                <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар" loading="lazy" /></div>
-            {% endif %}
-        </div>
-        <div class="comment-form-body comment-form-editor-container">
-            <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
-                {% if form.text.value %}
-                    value="{{ form.text.value }}"
+{% load text_filters %}
+{% load comments %}
+
+{% if me|is_comment_limit_exceeded:post  %}
+    {% include "comments/widgets/limit.html" %}
+{% else %}
+    <form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
+        <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
+        <div class="comment-form">
+            <div class="comment-form-avatar">
+                {% if comment %}
+                    <div class="avatar"><img src="{{ comment.author.get_avatar }}" alt="Аватар" loading="lazy" /></div>
+                {% else %}
+                    <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар" loading="lazy" /></div>
                 {% endif %}
-            >
-            </comment-markdown-editor>
-            <div class="comment-form-footer">
-                <label class="comment-form-attach-image">
-                    <input type="file" name="attach-image" alt="Добавить картинку" />
-                    <i class="fa fa-image"></i>
-                </label>
-                <div class="comment-form-subscribe">
-                    {% if not comment %}
-                        {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
-                    {% endif %}
-                </div>
-                <button type="submit" class="button comment-form-button">{{ save_message }}</button>
             </div>
-            {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
+            <div class="comment-form-body comment-form-editor-container">
+                <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
+                    {% if form.text.value %}
+                        value="{{ form.text.value }}"
+                    {% endif %}
+                >
+                </comment-markdown-editor>
+
+                <div class="comment-form-footer">
+                    <label class="comment-form-attach-image">
+                        <input type="file" name="attach-image" alt="Добавить картинку" />
+                        <i class="fa fa-image"></i>
+                    </label>
+                    <div class="comment-form-subscribe">
+                        {% if not comment %}
+                            {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="button comment-form-button">{{ save_message }}</button>
+                </div>
+
+                {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
+
+                {% if me.get_custom_comment_limit %}
+                    <div class="comment-form-restriction">
+                        🕓 На вас наложено ограничение: максимум {{ me.get_custom_comment_limit }} {{ me.get_custom_comment_limit|rupluralize:"комментарий,комментария,комментариев" }} в сутки
+                    </div>
+                {% elif post.get_custom_comment_limit %}
+                    <div class="comment-form-restriction">
+                        🕓 В этом посте действует слоу-мод: максимум {{ post.get_custom_comment_limit }} {{ post.get_custom_comment_limit|rupluralize:"комментарий,комментария,комментариев" }} в сутки
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
-</form>
+    </form>
+{% endif %}

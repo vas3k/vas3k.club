@@ -41,7 +41,7 @@ export default {
     },
     methods: {
         toggle() {
-            return ClubApi.ajaxify(this.url, (data) => {
+            return ClubApi.post(this.url, (data) => {
                 if (data.status === "created") {
                     this.isActive = true;
                 }

@@ -20,6 +20,7 @@ class LinkedPost(models.Model):
     class Meta:
         db_table = "linked_posts"
         unique_together = [["post_from", "post_to"]]
+        ordering = ["-created_at"]
 
     @classmethod
     def link(cls, user, post_from, post_to):

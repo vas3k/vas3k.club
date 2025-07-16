@@ -2,41 +2,10 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 from authn.decorators.auth import require_auth
-from badges.models import UserBadge
 from club.exceptions import BadRequest
 from users.models.notes import UserNote
 from users.models.user import User
 from users.models.achievements import Achievement
-
-
-@require_auth
-def badge_generator(request):
-    requested_users = request.GET.get("users")
-    if requested_users:
-        requested_users = requested_users.split(",")
-    else:
-        requested_users = [request.me.slug]
-
-    users = User.registered_members().filter(slug__in=requested_users)
-
-    for user in users:
-        user.badges = UserBadge.user_badges_grouped(user=user)
-
-    repeat = int(request.GET.get("repeat") or 1)
-    if repeat > 1:
-        users = [u for u in users for _ in range(repeat)]
-
-    # sort by name
-    users = sorted(users, key=lambda u: u.full_name.lower())
-
-    return render(request, "misc/badge_generator.html", {
-        "users": users,
-        "requested_users": ",".join(requested_users),
-        "hide_bio": request.GET.get("hide_bio"),
-        "hide_stats": request.GET.get("hide_stats"),
-        "hide_badges": request.GET.get("hide_badges"),
-        "repeat": repeat,
-    })
 
 
 @require_auth

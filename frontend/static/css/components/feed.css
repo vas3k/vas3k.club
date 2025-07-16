@@ -159,6 +159,10 @@
         font-size: 115%;
     }
 
+        .feed-topic-header-footer small {
+            font-size: 70%;
+        }
+
     .feed-topic-header-settings {
         display: flex;
         flex-wrap: wrap;
@@ -192,14 +196,15 @@
         display: flex;
         align-content: flex-start;
         justify-content: flex-end;
-        font-size: 100%;
-        padding: 0 10px 10px;
+        font-size: 110%;
+        padding: 10px;
         width: 100%;
         box-sizing: border-box;
     }
 
         @media only screen and (max-width : 570px) {
             .feed-ordering {
+                font-size: 100%;
                 justify-content: space-around;
             }
         }
@@ -223,6 +228,37 @@
             .feed-ordering-item-is-active {
                 font-weight: 700;
                 opacity: 1.0;
+            }
+
+    .feed-ordering-extra {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 120%;
+        padding: 10px;
+        justify-content: flex-end;
+    }
+
+        @media only screen and (max-width : 570px) {
+            .feed-ordering-extra {
+                font-size: 100%;
+                justify-content: space-around;
+                gap: 0;
+            }
+        }
+
+        .feed-ordering-extra-item {
+            padding: 7px 10px;
+            text-decoration: none;
+        }
+
+        .feed-ordering-extra-item-selected {
+            color: var(--opposite-text-color);
+            background-color: var(--opposite-bg-color);
+        }
+
+            .feed-ordering-extra-item-selected:hover {
+                color: var(--opposite-text-color);
             }
 
 .feed-post {
@@ -449,6 +485,7 @@
 .feed-post-type-intro,
 .feed-post-type-weekly_digest {
     display: flex;
+    justify-content: flex-start;
     font-size: 120%;
     padding: 0 0 20px 0;
     margin-left: 40px;

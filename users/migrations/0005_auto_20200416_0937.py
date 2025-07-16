@@ -12,17 +12,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name='tag',
-            options={'ordering': ['-group', 'index']},
-        ),
-        migrations.AlterModelOptions(
             name='userexpertise',
             options={'ordering': ['created_at']},
-        ),
-        migrations.AlterField(
-            model_name='tag',
-            name='group',
-            field=models.CharField(choices=[('personal', 'О себе'), ('tech', 'Технологии'), ('hobbies', 'Хобби'), ('other', 'Остальное')], default='other', max_length=32),
         ),
         migrations.AlterField(
             model_name='user',
