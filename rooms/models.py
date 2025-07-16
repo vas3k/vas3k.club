@@ -15,7 +15,7 @@ class Room(models.Model):
     title = models.CharField(max_length=64, null=False)
     subtitle = models.CharField(max_length=256, null=True, blank=True)
     image = models.URLField(null=True, blank=True)
-    icon = models.URLField(null=True, blank=True)
+    icon = models.CharField(max_length=256, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     color = models.CharField(max_length=16, null=False)
     style = models.CharField(max_length=256, default="", null=True, blank=True)
