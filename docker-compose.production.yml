@@ -133,7 +133,7 @@ services:
         max-size: "100M"
 
   postgres:
-    image: postgres:12
+    image: postgres:14
     container_name: club_postgres
     restart: always
     environment:
@@ -141,7 +141,7 @@ services:
       POSTGRES_PASSWORD: pmiclub
       POSTGRES_DB: pmi_club
     volumes:
-      - /home/s-admin/pmi.moscow.club/pgdata:/var/lib/postgresql/data:rw
+      - /home/s-admin/pmi.moscow.club/pgdata14:/var/lib/postgresql/data:rw
     ports:
       - "127.0.0.1:54333:5432"
     networks:
