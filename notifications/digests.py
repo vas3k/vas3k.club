@@ -198,9 +198,8 @@ def generate_weekly_digest(no_footer=False):
         .first()
 
     # Get intro and title
-    club_settings = ClubSettings.objects.first()
-    digest_title = club_settings.digest_title
-    digest_intro = club_settings.digest_intro
+    digest_title = ClubSettings.get("digest_title")
+    digest_intro = ClubSettings.get("digest_intro")
 
     if not digest_intro and not posts and not comments:
         raise NotFound()

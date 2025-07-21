@@ -92,7 +92,8 @@ class Command(BaseCommand):
 
         if options.get("production"):
             # get title and description
-            god_settings = ClubSettings.objects.first()
+            digest_title = ClubSettings.get("digest_title")
+            digest_intro = ClubSettings.get("digest_intro")
 
             # announce on channel
             send_telegram_message(
@@ -101,14 +102,15 @@ class Command(BaseCommand):
                     "weekly_digest_announce.html",
                     post=post,
                     issue_number=issue,
-                    digest_title=god_settings.digest_title,
-                    digest_intro=god_settings.digest_intro
+                    digest_title=digest_title,
+                    digest_intro=digest_intro
                 ),
                 disable_preview=False,
                 parse_mode=telegram.ParseMode.HTML,
             )
 
             # flush digest intro and title for next time
-            ClubSettings.objects.update(digest_intro=None, digest_title=None)
+            ClubSettings.set("digest_title", None)
+            ClubSettings.set("digest_intro", None)
 
         self.stdout.write("Done 🥙")

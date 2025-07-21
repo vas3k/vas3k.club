@@ -23,10 +23,7 @@ ADMINS = [
 ]
 
 INSTALLED_APPS = [
-    "django.contrib.auth",  # FIXME: do we need this?
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.sitemaps",
@@ -57,9 +54,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "club.middleware.me",
@@ -81,8 +75,6 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.messages.context_processors.messages",
-                "django.contrib.auth.context_processors.auth",
                 "club.context_processors.settings_processor",
                 "club.context_processors.features_processor",
                 "authn.context_processors.users.me",
