@@ -33,6 +33,9 @@ class Tag(models.Model):
         db_table = "tags"
         ordering = ["-group", "index"]
 
+    def __str__(self):
+        return f"{self.name}"
+
     def to_dict(self):
         return {
             "code": self.code,

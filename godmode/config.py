@@ -9,6 +9,7 @@ from godmode.actions.post_label import get_label_action, post_label_action
 from godmode.actions.post_owner import get_owner_action, post_owner_action
 from godmode.actions.post_pin import get_pin_action, post_pin_action
 from godmode.actions.post_view import view_post_action
+from godmode.actions.tag_join import get_join_tag_action, post_join_tag_action
 from godmode.actions.user_achievement import get_achievement_action, post_achievement_action
 from godmode.actions.user_ban import get_ban_action, post_ban_action
 from godmode.actions.user_delete import get_delete_action, post_delete_action
@@ -425,7 +426,14 @@ ADMIN = ClubAdmin(
                         "group",
                         "index",
                         "is_visible",
-                    ]
+                    ],
+                    actions={
+                        "join": ClubAdminAction(
+                            title="🔗 Объединить с другим тегом",
+                            get=get_join_tag_action,
+                            post=post_join_tag_action,
+                        ),
+                    }
                 ),
                 ClubAdminModel(
                     model=UserTag,
