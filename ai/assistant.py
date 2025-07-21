@@ -6,7 +6,7 @@ from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessa
 
 from ai.openai import openai
 from ai.tools import TOOLS_DESCRIPTION, TOOLS_MAP
-from ai.config import PROMPT, USER_INPUT_MAX_LEN
+from ai.config import PROMPT, USER_INPUT_MAX_LEN, OPENAI_CHAT_MODEL
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def ask_assistant(user_input):
     ]
 
     chat_response = openai.responses.create(
-        model=settings.OPENAI_CHAT_MODEL,
+        model=OPENAI_CHAT_MODEL,
         input=input_messages,
         tools=TOOLS_DESCRIPTION,
         tool_choice="auto"
@@ -53,7 +53,7 @@ def ask_assistant(user_input):
             })
 
             chat_response_after_tool = openai.responses.create(
-                model=settings.OPENAI_CHAT_MODEL,
+                model=OPENAI_CHAT_MODEL,
                 input=input_messages,
             )
             log.info(f"Output 2: {chat_response_after_tool}")
