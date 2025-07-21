@@ -90,6 +90,8 @@ ADMIN = ClubAdmin(
                     name="users",
                     title_field="full_name",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    delete_roles=set(),
+                    create_roles=set(),
                     list_fields=[
                         ClubAdminField(
                             name="avatar",
@@ -252,6 +254,8 @@ ADMIN = ClubAdmin(
                     title_field="title",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
                     edit_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    delete_roles=set(),
+                    create_roles=set(),
                     list_fields=[
                         "slug",
                         "type",
@@ -317,6 +321,8 @@ ADMIN = ClubAdmin(
                     icon="💭",
                     name="comments",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    delete_roles=set(),
+                    create_roles=set(),
                     list_fields=[
                         "post",
                         "author",
@@ -334,6 +340,8 @@ ADMIN = ClubAdmin(
                     icon="🔗",
                     name="linked_posts",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    delete_roles=set(),
+                    create_roles=set(),
                 ),
                 ClubAdminModel(
                     model=PostBookmark,
@@ -341,6 +349,8 @@ ADMIN = ClubAdmin(
                     icon="💙",
                     name="bookmarks",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    delete_roles=set(),
+                    create_roles=set(),
                 ),
             ],
         ),

@@ -31,7 +31,7 @@
                 <a href="{% url "bookmarks" %}" class="menu-button menu-button-bookmark">
                     <i class="fa fa-bookmark"></i>
                 </a>
-                {% if me.is_god %}
+                {% if me.is_moderator or me.is_curator %}
                     <a href="{% url "godmode_settings" %}" class="menu-button menu-button-godmode"><i class="fa fa-bomb"></i></a>
                 {% endif %}
             {% endif %}
