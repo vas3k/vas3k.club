@@ -52,12 +52,17 @@ ADMIN = ClubAdmin(
                     title="Настройки Клуба",
                     icon="⚙️",
                     name="settings",
+                    list_roles={User.ROLE_GOD},
+                    edit_roles={User.ROLE_GOD},
+                    delete_roles={User.ROLE_GOD},
+                    create_roles={User.ROLE_GOD},
                 ),
                 ClubAdminPage(
                     title="Пригласить в Клуб",
                     icon="🎁",
                     name="invite",
                     view=invite_user_by_email,
+                    access_roles={User.ROLE_GOD},
                 )
             ],
         ),
@@ -69,13 +74,15 @@ ADMIN = ClubAdmin(
                     title="Дайджест",
                     icon="📧",
                     name="digest",
-                    view=compose_weekly_digest
+                    view=compose_weekly_digest,
+                    access_roles={User.ROLE_GOD},
                 ),
                 ClubAdminPage(
                     title="Массовые рассылки",
                     icon="📬",
                     name="mass_email",
                     view=mass_email,
+                    access_roles={User.ROLE_GOD},
                 )
             ]
         ),
@@ -519,6 +526,10 @@ ADMIN = ClubAdmin(
                     title="Запросы данных",
                     icon="🗃️",
                     name="data_requests",
+                    list_roles={User.ROLE_GOD},
+                    edit_roles={User.ROLE_GOD},
+                    delete_roles={User.ROLE_GOD},
+                    create_roles={User.ROLE_GOD},
                 ),
                 ClubAdminPage(
                     title="Генератор бейджиков",

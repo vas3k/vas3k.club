@@ -32,7 +32,7 @@ def godmode_list_model(request, model_name):
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
             "message": f"У вас нет прав для просмотра раздела «{admin_model.title}», "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.list_roles)}.",
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.list_roles)}.",
         })
 
     # Get pagination parameters
@@ -102,7 +102,7 @@ def godmode_edit_model(request, model_name, item_id):
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
             "message": f"У вас нет прав для редактирования записей таблицы «{admin_model.title}», "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.edit_roles)}.",
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.edit_roles)}.",
         })
 
     # Get the model instance
@@ -145,7 +145,7 @@ def godmode_delete_model(request, model_name, item_id):
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
             "message": f"У вас нет прав для удаления записей из таблицы «{admin_model.title}», "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.delete_roles)}.",
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.delete_roles)}.",
         })
 
     # Get the primary key field name dynamically
@@ -175,7 +175,7 @@ def godmode_create_model(request, model_name):
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
             "message": f"У вас нет прав для создания записей в таблице «{admin_model.title}», "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.create_roles)}.",
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.create_roles)}.",
         })
 
     # Create a dynamic form for the model
@@ -210,7 +210,7 @@ def godmode_show_page(request, page_name):
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
             "message": f"У вас нет прав для просмотра страницы «{admin_page.title}», "
-                       f"это могут делать только админы с ролями {', '.join(admin_page.access_roles)}.",
+                       f"это могут делать только админы с ролями: {', '.join(admin_page.access_roles)}.",
         })
 
     if not admin_page.view:
@@ -245,7 +245,7 @@ def godmode_action(request, model_name, item_id, action_code):
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
             "message": f"У вас нет прав для выполнения действия «{admin_action.title}», "
-                       f"это могут делать только админы с ролями {', '.join(admin_action.access_roles)}.",
+                       f"это могут делать только админы с ролями: {', '.join(admin_action.access_roles)}.",
         })
 
     # Get the model instance
