@@ -74,10 +74,7 @@
 
 .godmode-page {}
 
-.godmode-list-header,
-.godmode-edit-header,
-.godmode-page-header,
-.godmode-form-simple-header {
+.godmode-header {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -104,6 +101,14 @@
 .godmode-simple-form {
     padding-top: 40px;
 }
+
+.godmode-action {
+}
+
+    .godmode-action-form {
+        padding: 20px 0;
+    }
+
 
 .godmode-table {
     width: 100%;
@@ -180,64 +185,77 @@
     max-height: 150px;
 }
 
-.godmode-edit-form {
+.godmode-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 20px;
 }
 
-    .godmode-edit-form-row {
+    .godmode-form-row {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
         align-items: center;
     }
 
-    .godmode-edit-form-label {
+    .godmode-form-label {
         font-size: 120%;
         font-weight: 500;
         min-width: 150px;
     }
 
-    .godmode-edit-form-input {
+    .godmode-form-input {
         flex: 1;
         width: 100%;
     }
 
-    .godmode-edit-form-input input,
-    .godmode-edit-form-input textarea {
+    .godmode-form-input input,
+    .godmode-form-input textarea {
         width: 100%;
-        min-width: 300px;
+        min-width: 320px;
     }
 
-    .godmode-edit-form-input input[type="checkbox"] {
+    .godmode-form-input input[type="checkbox"] {
         width: auto;
         min-width: 0;
         scale: 1.5;
     }
 
-    .godmode-edit-form-input input[readonly] {
+    .godmode-form-input input[readonly] {
         background-color: #DDD;
     }
 
-    .godmode-edit-form-input select {
+    .godmode-form-input select {
         -webkit-appearance: listbox;
         appearance: auto;
     }
 
-    .godmode-edit-form-errors {
+    .godmode-form-errors {
         width: 100%;
         color: red;
     }
 
-    .godmode-edit-form-actions {
+    .godmode-form-actions {
         display: flex;
         gap: 10px;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         padding-top: 30px;
+    }
+
+.godmode-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+    .godmode-actions .button {
+        padding: 10px 15px;
     }
 
 .godmode-message {
@@ -349,23 +367,23 @@
         font-size: 12px;
     }
 
-    .godmode-edit-form-row {
+    .godmode-form-row {
         flex-direction: column;
         align-items: stretch;
         gap: 5px;
     }
 
-    .godmode-edit-form-label {
+    .godmode-form-label {
         min-width: auto;
         font-size: 110%;
     }
 
-    .godmode-edit-form-input input,
-    .godmode-edit-form-input textarea {
+    .godmode-form-input input,
+    .godmode-form-input textarea {
         min-width: 100%;
     }
 
-    .godmode-edit-form-actions {
+    .godmode-form-actions {
         flex-direction: column;
         gap: 15px;
     }

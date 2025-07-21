@@ -38,7 +38,7 @@
         {% if me.id == user.id or me.is_moderator %}
             <div class="profile-user-edit">
                 {% if me.is_moderator %}
-                    <i class="fas fa-tools"></i>&nbsp;<a href="{% url "admin_profile" user.slug %}">Админка</a>&nbsp;&nbsp;&nbsp;
+                    <i class="fas fa-tools"></i>&nbsp;<a href="{% url "godmode_edit_model" "users" user.id %}">Админка</a>&nbsp;&nbsp;&nbsp;
                 {% endif %}
                 <i class="fas fa-cog"></i>&nbsp;<a href="{% url "profile_settings" user.slug %}">Настройки профиля</a>
             </div>

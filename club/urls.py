@@ -20,7 +20,7 @@ from common.feature_flags import feature_switch
 from invites.views import show_invite, list_invites, activate_invite, godmode_generate_invite_code
 from landing.views import landing
 from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, godmode_delete_model, \
-    godmode_create_model, godmode_show_page
+    godmode_create_model, godmode_show_page, godmode_action
 from misc.fun import mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
@@ -37,7 +37,6 @@ from posts.models.post import Post
 from posts.rss import NewPostsRss
 from posts.user_rss import UserPostsRss
 from posts.sitemaps import sitemaps
-from posts.views.admin_actions import admin_post, announce_post, curate_post
 from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote, toggle_post_subscription, \
     toggle_post_event_participation
 from posts.views.feed import feed
@@ -56,7 +55,6 @@ from users.views.profile import profile, toggle_tag, profile_comments, profile_p
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
     edit_bot, edit_data, request_data
 from users.views.intro import intro
-from users.views.admin_actions import admin_profile
 from users.views.people import people
 from search.api import api_search_users, api_search_tags
 
@@ -117,7 +115,6 @@ urlpatterns = [
     path("user/<slug:user_slug>/edit/monies/", edit_payments, name="edit_payments"),
     path("user/<slug:user_slug>/edit/data/", edit_data, name="edit_data"),
     path("user/<slug:user_slug>/edit/data/request/", request_data, name="request_user_data"),
-    path("user/<slug:user_slug>/admin/", admin_profile, name="admin_profile"),
 
     path("apps/", list_apps, name="apps"),
     path("apps/create/", create_app, name="create_app"),
@@ -148,9 +145,6 @@ urlpatterns = [
     path("post/<slug:post_slug>/retract_vote/", retract_post_vote, name="retract_post_vote"),
     path("post/<slug:post_slug>/subscription/", toggle_post_subscription, name="toggle_post_subscription"),
     path("post/<slug:post_slug>/participate/", toggle_post_event_participation, name="toggle_post_event_participation"),
-    path("post/<slug:post_slug>/admin/", admin_post, name="admin_post"),
-    path("post/<slug:post_slug>/curate/", curate_post, name="curate_post"),
-    path("post/<slug:post_slug>/announce/", announce_post, name="announce_post"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment"),
     path("post/<slug:post_slug>/badge/", create_badge_for_post, name="create_badge_for_post"),
@@ -209,6 +203,7 @@ urlpatterns = [
     path("godmode/<slug:model_name>/create/", godmode_create_model, name="godmode_create_model"),
     path("godmode/<slug:model_name>/<str:item_id>/edit/", godmode_edit_model, name="godmode_edit_model"),
     path("godmode/<slug:model_name>/<str:item_id>/delete/", godmode_delete_model, name="godmode_delete_model"),
+    path("godmode/<slug:model_name>/<str:item_id>/action/<str:action_code>/", godmode_action, name="godmode_action"),
 
     # misc
     path("misc/calendar/ical", generate_ical_invite, name="generate_ical_invite"),
