@@ -19,6 +19,9 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def css_classes(context, post):
+    if not post:
+        return ""
+
     classes = [f"feed-post-{post.type}"]
     me = context.get("me")
 

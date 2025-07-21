@@ -2,7 +2,7 @@
 {% load static %}
 <html lang="ru">
 <head>
-    <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
+    <title>{% block title %}{{ settings.APP_TITLE }}{% endblock %}</title>
 
     {% block fonts %}
         {% include "common/fonts.html" %}

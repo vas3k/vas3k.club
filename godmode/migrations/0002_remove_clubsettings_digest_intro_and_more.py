@@ -2,6 +2,34 @@
 
 from django.db import migrations, models
 
+def create_initial_settings(apps, schema_editor):
+    ClubSettings = apps.get_model('godmode', 'ClubSettings')
+
+    ClubSettings.objects.update_or_create(
+        code='digest_title',
+        defaults={'value': None}
+    )
+
+    ClubSettings.objects.update_or_create(
+        code='digest_intro',
+        defaults={'value': None}
+    )
+
+    ClubSettings.objects.update_or_create(
+        code='app_name',
+        defaults={'value': "Вастрик.Клуб"}
+    )
+
+    ClubSettings.objects.update_or_create(
+        code='app_title',
+        defaults={'value': "Вастрик.Клуб 🤘✖️👩‍💻"}
+    )
+
+    ClubSettings.objects.update_or_create(
+        code='app_description',
+        defaults={'value': "Всё интересное происходит за закрытыми дверями"}
+    )
+
 
 class Migration(migrations.Migration):
 
@@ -10,6 +38,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL("delete from settings"),
         migrations.RemoveField(
             model_name='clubsettings',
             name='digest_intro',
@@ -31,6 +60,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='clubsettings',
             name='value',
-            field=models.JSONField(null=True),
+            field=models.TextField(null=True),
         ),
+        migrations.RunPython(create_initial_settings),
     ]

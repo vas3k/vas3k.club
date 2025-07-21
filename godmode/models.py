@@ -3,7 +3,7 @@ from django.db import models
 
 class ClubSettings(models.Model):
     code = models.CharField(primary_key=True, max_length=32, null=False, unique=True)
-    value = models.JSONField(null=True)
+    value = models.TextField(null=True)
 
     class Meta:
         db_table = "settings"
@@ -14,7 +14,7 @@ class ClubSettings(models.Model):
     @classmethod
     def get(cls, code, default=None):
         try:
-            setting = cls.objects.get(code=code)
+            setting = cls.objects.get(code=code.strip().lower())
             return setting.value
         except cls.DoesNotExist:
             return default
@@ -22,7 +22,7 @@ class ClubSettings(models.Model):
     @classmethod
     def set(cls, code, value):
         setting, _ = cls.objects.update_or_create(
-            code=code,
+            code=code.strip().lower(),
             defaults=dict(
                 value=value
             )
