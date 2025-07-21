@@ -346,6 +346,7 @@
 
     .comment-body {
         padding-top: 10px;
+        padding-right: 15px;
         text-overflow: ellipsis;
         box-sizing: border-box;
         max-width: 100%;
@@ -412,6 +413,7 @@
             }
 
         .comment-body {
+            padding-right: 0;
             max-width: 100%;
         }
     }
