@@ -9,7 +9,11 @@ from users.models.user import User
 
 
 def notify_profile_needs_review(user, intro):
-    admin_profile_url = settings.APP_HOST + reverse("admin_profile", kwargs={"user_slug": user.slug})
+    admin_profile_url = settings.APP_HOST + reverse("godmode_action", kwargs={
+        "model_name": "users",
+        "item_id": user.id,
+        "action_code": "message"
+    })
 
     send_telegram_message(
         chat=ADMIN_CHAT,
