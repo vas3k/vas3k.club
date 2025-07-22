@@ -59,13 +59,13 @@
         <div class="search-results">
             {% if results %}
                 {% for result in results %}
-                    {% if result.type == "post" %}
+                    {% if result.type == "post" and result.post %}
                         {% include "posts/items/items.html" with post=result.post upvote_disabled=True %}
                     {% endif %}
-                    {% if result.type == "comment" %}
+                    {% if result.type == "comment" and result.comment %}
                         {% include "comments/types/snippet.html" with comment=result.comment %}
                     {% endif %}
-                    {% if result.type == "user" %}
+                    {% if result.type == "user" and result.user %}
                         {% include "users/widgets/card.html" with user=result.user %}
                     {% endif %}
                 {% endfor %}
