@@ -85,7 +85,6 @@ urlpatterns = [
     path("auth/openid/revoke", openid_revoke_token, name="openid_revoke_token"),
 
     path("monies/", pay, name="pay"),
-    path("monies/crypto/", crypto, name="crypto"),
     path("monies/done/", done, name="done"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
