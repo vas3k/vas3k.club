@@ -215,9 +215,6 @@ PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET")
 PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
 
-COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
-COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
-
 JWT_PRIVATE_KEY = (os.getenv("JWT_PRIVATE_KEY") or "").replace("\\n", "\n")
 JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvEDEGKL0b+okI6QBBMiu
@@ -243,7 +240,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 MEDIA_UPLOAD_URL = "https://i.vas3k.club/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
-IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
+IMAGE_EXTENSIONS = {"webp", "jpg", "jpeg", "png", "gif"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.vas3k.club/preview"
 OG_IMAGE_DEFAULT = "https://vas3k.club/static/images/share.png"

@@ -64,7 +64,7 @@ def json_feed(request, post_type=POST_TYPE_ALL, ordering=ORDERING_ACTIVITY):
 
     return JsonResponse({
         "version": "https://jsonfeed.org/version/1.1",
-        "title": settings.APP_NAME,
+        "title": "Вастрик Клуб — JSON Feed",
         "home_page_url": settings.APP_HOST,
         "feed_url": f"{settings.APP_HOST}{reverse('json_feed')}",
         "next_url": f"{settings.APP_HOST}{reverse('json_feed')}?page={page_number + 1}",

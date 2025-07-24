@@ -147,8 +147,8 @@ class Post(models.Model, ModelDiffMixin):
             "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "title": self.title,
             "content_text": self.text if self.is_public or including_private else "🔒",
-            "date_published": self.published_at.astimezone().isoformat(),
-            "date_modified": self.updated_at.astimezone().isoformat(),
+            "date_published": self.published_at.astimezone().isoformat() if self.published_at else None,
+            "date_modified": self.updated_at.astimezone().isoformat() if self.updated_at else None,
             "authors": [
                 {
                     "name": self.author.full_name,
