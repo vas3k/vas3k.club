@@ -11,7 +11,7 @@ class NewPostsRss(Feed):
 
     def items(self):
         return Post.visible_objects()\
-           .filter(is_approved_by_moderator=True)\
+           .filter(moderation_status=Post.MODERATION_APPROVED)\
            .exclude(type=Post.TYPE_INTRO)\
            .order_by("-published_at", "-created_at")[:self.limit]
 
@@ -25,7 +25,7 @@ class NewPostsRss(Feed):
 
     def item_description(self, item):
         return item.description
-    
+
     def item_pubdate(self, item):
         return item.published_at
 

@@ -20,21 +20,6 @@ class PostFeedsForm(forms.Form):
         required=False
     )
 
-    shadow_ban = forms.BooleanField(
-        label="Шадоу бан (редко!)",
-        required=False,
-    )
-
-    hide_from_feeds = forms.BooleanField(
-        label="Скрыть с главной",
-        required=False,
-    )
-
-    show_in_feeds = forms.BooleanField(
-        label="Вернуть на главную (или вытащить из комнаты)",
-        required=False,
-    )
-
     re_ping_collectible_tag_owners = forms.BooleanField(
         label="Перепингануть подписчиков коллективного тега",
         required=False,
@@ -68,21 +53,6 @@ def post_feeds_action(request, post: Post, **context):
         # Moving down
         if data["move_down"]:
             post.last_activity_at -= timedelta(days=3)
-            post.save()
-
-        # Shadow banning
-        if data["shadow_ban"]:
-            post.is_shadow_banned = True
-            post.save()
-
-        # Hide from feeds
-        if data["hide_from_feeds"]:
-            post.is_visible_in_feeds = False
-            post.save()
-
-        # Show back in feeds
-        if data["show_in_feeds"]:
-            post.is_visible_in_feeds = True
             post.save()
 
         # Ping collectible tag owners again

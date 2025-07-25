@@ -229,5 +229,6 @@ class CommentVote(models.Model):
                 comment.author.decrement_vote_count()
 
                 return True if is_vote_deleted > 0 else False
+            return False
         except CommentVote.DoesNotExist:
             return False

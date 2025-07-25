@@ -55,16 +55,9 @@ def feed(
     if not request.me:
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
 
-    # exclude shadow-banned posts from main feed, but show them in "new" tab
-    if ordering != ORDERING_NEW:
-        if request.me:
-            posts = posts.exclude(Q(is_shadow_banned=True) & ~Q(author_id=request.me.id))
-        else:
-            posts = posts.exclude(is_shadow_banned=True)
-
-    # hide no-feed posts (show only inside rooms and topics)
-    if not room and not label_code:
-        posts = posts.filter(is_visible_in_feeds=True)
+    # hide room-only posts
+    if not room:
+        posts = posts.exclude(is_room_only=True)
 
     # order posts by some metric
     posts = sort_feed(posts, ordering, ordering_param)

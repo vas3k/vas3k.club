@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from comments.views import create_comment
+from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 
 from posts.tests.test_views import ModelCreator
@@ -16,7 +17,6 @@ class TestComments(TestCase):
         self.creator = ModelCreator()
         subscr_creator = PostSubscriptionCreator()
         self.post = self.creator.create_post(
-            is_visible=True,
             is_public=True,
         )
         self.author_user = self.post.author

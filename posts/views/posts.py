@@ -111,7 +111,7 @@ def delete_post(request, post_slug):
 @require_auth
 def compose(request):
     drafts = Post.objects\
-        .filter(is_visible=False, deleted_at__isnull=True)\
+        .filter(visibility=Post.VISIBILITY_DRAFT, deleted_at__isnull=True)\
         .filter(Q(author=request.me) | Q(coauthors__contains=[request.me.slug]))[:100]
 
     return render(request, "posts/compose/compose.html", {

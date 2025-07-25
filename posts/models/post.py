@@ -4,7 +4,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Q
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -73,6 +73,26 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_DOCS: "",
     }
 
+    MODERATION_PENDING = "pending"
+    MODERATION_APPROVED = "approved"
+    MODERATION_FORGIVEN = "forgiven"
+    MODERATION_REJECTED = "rejected"
+    MODERATION_STATUSES = [
+        (MODERATION_PENDING, "🕓 Пост на модерации"),
+        (MODERATION_APPROVED, "👍 Хороший пост"),
+        (MODERATION_FORGIVEN, "☹️ Пост не одобрен, но оставлен на сайте"),
+        (MODERATION_REJECTED, "❌ Пост отклонен модератором"),
+    ]
+
+    VISIBILITY_DRAFT = "draft"
+    VISIBILITY_LINK_ONLY = "link_only"
+    VISIBILITY_EVERYWHERE = "everywhere"
+    VISIBILITY = [
+        (VISIBILITY_DRAFT, "Черновик"),
+        (VISIBILITY_LINK_ONLY, "Только по ссылке"),
+        (VISIBILITY_EVERYWHERE, "Виден везде"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     slug = models.CharField(max_length=128, unique=True, db_index=True)
 
@@ -103,13 +123,25 @@ class Post(models.Model, ModelDiffMixin):
     upvotes = models.IntegerField(default=0, db_index=True)
     hotness = models.IntegerField(default=0, db_index=True)
 
-    is_visible = models.BooleanField(default=False)  # published or draft
-    is_visible_in_feeds = models.BooleanField(default=True)  # hide post from main feeds (still visible in rooms)
+    moderation_status = models.CharField(
+        max_length=12,
+        choices=MODERATION_STATUSES,
+        default=MODERATION_PENDING
+    )
+
+    visibility = models.CharField(
+        max_length=16,
+        choices=VISIBILITY,
+        default=VISIBILITY_DRAFT,
+        db_index=True
+    )
+
+    is_room_only = models.BooleanField(default=False)  # post is visible only in the room
     is_commentable = models.BooleanField(default=True)  # allow comments
-    is_approved_by_moderator = models.BooleanField(default=False)  # post is exposed in newsletters, rss, etc
+    is_approved_by_moderator = models.BooleanField(default=False)  # DEPRECATED: use moderation_status instead
     is_public = models.BooleanField(default=False)  # post is visible for the outside world
     is_pinned_until = models.DateTimeField(null=True)  # pin on top on the main page
-    is_shadow_banned = models.BooleanField(default=False)  # hide from feeds but not for author
+    is_shadow_banned = models.BooleanField(default=False)  # DEPRECATED: use visibility instead
 
     history = HistoricalRecords(
         user_model=User,
@@ -125,9 +157,11 @@ class Post(models.Model, ModelDiffMixin):
             "upvotes",
             "hotness",
             "label_code",
+            "moderation_status",
+            "visibility",
+            "is_room_only",
             "is_approved_by_moderator",
             "is_commentable",
-            "is_visible_in_feeds",
             "is_pinned_until",
             "is_shadow_banned",
             "room",
@@ -172,7 +206,7 @@ class Post(models.Model, ModelDiffMixin):
         if not self.slug:
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
 
-        if not self.published_at and self.is_visible:
+        if not self.published_at and self.visibility != Post.VISIBILITY_DRAFT:
             self.published_at = datetime.utcnow()
 
         self.updated_at = datetime.utcnow()
@@ -233,7 +267,7 @@ class Post(models.Model, ModelDiffMixin):
     def label(self):
         lbl = LABELS.get(self.label_code)
         if lbl is not None:
-            lbl['code'] = self.label_code
+            lbl["code"] = self.label_code
         return lbl
 
     @property
@@ -241,16 +275,12 @@ class Post(models.Model, ModelDiffMixin):
         return User.objects.filter(slug__in=self.coauthors).all()
 
     @property
+    def is_visible(self):
+        return self.visibility not in [Post.VISIBILITY_DRAFT, Post.VISIBILITY_LINK_ONLY]
+
+    @property
     def is_pinned(self):
         return self.is_pinned_until and self.is_pinned_until > datetime.utcnow()
-
-    @property
-    def is_searchable(self):
-        return self.is_visible and not self.is_shadow_banned
-
-    @property
-    def is_approved(self):
-        return self.is_approved_by_moderator or self.upvotes >= settings.COMMUNITY_APPROVE_UPVOTES
 
     @property
     def is_safely_deletable_by_author(self):
@@ -299,14 +329,20 @@ class Post(models.Model, ModelDiffMixin):
 
     @classmethod
     def visible_objects(cls):
-        return cls.objects.filter(is_visible=True).select_related("room", "author")
+        return cls.objects\
+            .exclude(visibility=Post.VISIBILITY_LINK_ONLY)\
+            .exclude(visibility=Post.VISIBILITY_DRAFT)\
+            .select_related("room", "author")
 
     @classmethod
     def objects_for_user(cls, user):
         if not user:
             return cls.visible_objects()
 
-        return cls.visible_objects()\
+        return cls.objects\
+            .select_related("room", "author")\
+            .exclude(visibility=Post.VISIBILITY_DRAFT)\
+            .exclude(Q(visibility=Post.VISIBILITY_LINK_ONLY) & ~Q(author=user))\
             .extra({
                 "is_voted": "select 1 from post_votes "
                             "where post_votes.post_id = posts.id "
@@ -343,7 +379,7 @@ class Post(models.Model, ModelDiffMixin):
                 slug=user.slug,
                 title=f"#intro от @{user.slug}",
                 text=text,
-                is_visible=is_visible,
+                visibility=Post.VISIBILITY_EVERYWHERE if is_visible else Post.VISIBILITY_DRAFT,
                 is_public=False,
             ),
         )
@@ -360,17 +396,18 @@ class Post(models.Model, ModelDiffMixin):
         self.save()
 
     def publish(self):
-        self.is_visible = True
+        self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()
         self.save()
 
     def unpublish(self):
-        self.is_visible = False
+        self.visibility = Post.VISIBILITY_DRAFT
         self.published_at = None
         self.save()
 
     def delete(self, *args, **kwargs):
+        self.visibility = Post.VISIBILITY_DRAFT
         self.deleted_at = datetime.utcnow()
         self.save()
 

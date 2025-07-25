@@ -22,7 +22,7 @@ class Command(BaseCommand):
         indexed_user_count = 0
 
         for chunk in chunked_queryset(
-            Comment.visible_objects().filter(is_deleted=False, post__is_visible=True)
+            Comment.visible_objects().filter(is_deleted=False, post__visibility=Post.VISIBILITY_EVERYWHERE)
         ):
             for comment in chunk:
                 self.stdout.write(f"Indexing comment: {comment.id}")
@@ -35,9 +35,7 @@ class Command(BaseCommand):
 
                 indexed_comment_count += 1
 
-        for chunk in chunked_queryset(
-            Post.visible_objects().filter(is_shadow_banned=False)
-        ):
+        for chunk in chunked_queryset(Post.visible_objects()):
             for post in chunk:
                 self.stdout.write(f"Indexing post: {post.slug}")
 

@@ -12,7 +12,6 @@ from authn.decorators.api import api
 from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.achievements import UserAchievement
-from users.models.friends import Friend
 from users.models.mute import UserMuted
 from tags.models import Tag, UserTag
 from users.models.notes import UserNote
@@ -52,17 +51,18 @@ def profile(request, user_slug):
 
     # select other stuff from this user
     intro = Post.get_user_intro(user)
-    projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
+    projects = Post.visible_objects().filter(author=user, type=Post.TYPE_PROJECT).all()
     badges = UserBadge.user_badges_grouped(user=user)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
-    posts = Post.objects_for_user(request.me).filter(is_visible=True)\
+    posts = Post.objects_for_user(request.me)\
         .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
 
     if request.me:
         comments = Comment.visible_objects()\
-            .filter(author=user, post__is_visible=True)\
+            .filter(author=user)\
+            .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
             .order_by("-created_at")\
             .select_related("post")
         muted = UserMuted.objects.filter(user_from=request.me, user_to=user).first()
@@ -107,7 +107,8 @@ def profile_comments(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
     comments = Comment.visible_objects()\
-        .filter(author=user, post__is_visible=True)\
+        .filter(author=user)\
+        .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
         .order_by("-created_at")\
         .select_related("post")
 
@@ -127,7 +128,6 @@ def profile_posts(request, user_slug):
         return render(request, "auth/private_profile.html")
 
     posts = Post.objects_for_user(request.me) \
-        .filter(is_visible=True) \
         .filter(Q(author=user) | Q(coauthors__contains=[user.slug])) \
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST]) \
         .order_by("-published_at")

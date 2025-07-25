@@ -80,7 +80,7 @@ class SearchIndex(models.Model):
                  + _multi_search_vector("author__slug", weight="C") \
                  + _multi_search_vector("room__title", weight="C")
 
-        if post.is_searchable:
+        if post.is_visible:
             SearchIndex.objects.update_or_create(
                 post=post,
                 type=SearchIndex.TYPE_POST,

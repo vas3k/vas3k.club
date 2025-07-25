@@ -8,6 +8,7 @@ from club import settings
 from notifications.telegram.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE, ADMIN_CHAT
 from comments.models import Comment
 from common.regexp import USERNAME_RE
+from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from users.models.friends import Friend
 from users.models.mute import UserMuted
@@ -72,7 +73,7 @@ def async_create_or_update_comment(comment):
             notified_user_ids.add(thread_author.id)
 
     # post top level comments to "online" channel
-    if not comment.reply_to and comment.post.is_visible and comment.post.is_visible_in_feeds:
+    if not comment.reply_to and comment.post.visibility not in [Post.VISIBILITY_DRAFT, Post.VISIBILITY_LINK_ONLY]:
         send_telegram_message(
             chat=CLUB_ONLINE,
             text=render_html_message("channel_comment_announce.html", comment=comment),

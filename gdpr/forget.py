@@ -51,7 +51,7 @@ def delete_user_data(user: User):
     Post.objects.filter(author=user, type=Post.TYPE_INTRO).delete()
 
     # delete draft and unpublished posts
-    Post.objects.filter(author=user, is_visible=False).delete()
+    Post.objects.filter(author=user, visibility=Post.VISIBILITY_DRAFT).delete()
 
     # remove user from coauthors
     posts = Post.objects.filter(coauthors__contains=[old_slug])
@@ -65,7 +65,7 @@ def delete_user_data(user: User):
     # transfer visible post ownership to "@deleted" user
     deleted_user = User.objects.filter(slug=settings.DELETED_USERNAME).first()
     if deleted_user:
-        Post.objects.filter(author=user, is_visible=True).update(author=deleted_user)
+        Post.objects.filter(author=user).update(author=deleted_user)
 
     # replace nickname in replies
     new_slug = str(user.slug)

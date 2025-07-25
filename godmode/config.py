@@ -274,11 +274,9 @@ ADMIN = ClubAdmin(
                         "view_count",
                         "created_at",
                         "published_at",
-                        "is_visible",
                         "is_public",
-                        "is_commentable",
-                        "is_visible_in_feeds",
-                        "is_shadow_banned",
+                        "moderation_status",
+                        "visibility",
                     ],
                     hide_fields=["html", "deleted_at"],
                     actions={

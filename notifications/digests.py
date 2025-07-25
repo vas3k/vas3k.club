@@ -56,15 +56,13 @@ def generate_daily_digest(user):
     # New posts
     new_posts = Post.visible_objects()\
         .filter(**published_at_condition)\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-        .filter(is_visible_in_feeds=True)\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")[:3]
 
     # Hot posts
     hot_posts = Post.visible_objects()\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
         .exclude(id__in=[p.id for p in new_posts]) \
         .order_by("-hotness")[:3]
@@ -77,7 +75,7 @@ def generate_daily_digest(user):
     # Top post 1 year ago
     top_old_post = Post.visible_objects()\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(
             published_at__gte=start_date - timedelta(days=365),
             published_at__lte=end_date - timedelta(days=364)
@@ -144,12 +142,10 @@ def generate_weekly_digest(no_footer=False):
 
     posts = Post.visible_objects()\
         .filter(**published_at_condition)\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-        .filter(is_visible_in_feeds=True)\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
         .exclude(label_code__isnull=False, label_code="ad")\
-        .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")
 
     post_count = posts.count()
@@ -159,7 +155,7 @@ def generate_weekly_digest(no_footer=False):
     top_video_comment = Comment.visible_objects()\
         .filter(**created_at_condition)\
         .filter(is_deleted=False)\
-        .filter(post__is_approved_by_moderator=True)\
+        .filter(post__moderation_status=Post.MODERATION_APPROVED)\
         .filter(upvotes__gte=3)\
         .filter(Q(text__contains="https://youtu.be/") | Q(text__contains="youtube.com/watch"))\
         .order_by("-upvotes")\
@@ -169,7 +165,7 @@ def generate_weekly_digest(no_footer=False):
     if not top_video_comment:
         top_video_post = Post.visible_objects() \
             .filter(type=Post.TYPE_LINK, upvotes__gte=3) \
-            .filter(is_approved_by_moderator=True) \
+            .filter(moderation_status=Post.MODERATION_APPROVED) \
             .filter(**published_at_condition) \
             .filter(Q(url__contains="https://youtu.be/") | Q(url__contains="youtube.com/watch")) \
             .order_by("-upvotes") \
@@ -178,18 +174,17 @@ def generate_weekly_digest(no_footer=False):
     # Best comments
     comments = Comment.visible_objects() \
         .filter(**created_at_condition) \
-        .filter(is_deleted=False)\
+        .filter(is_deleted=False, post__moderation_status=Post.MODERATION_APPROVED)\
         .exclude(post__type=Post.TYPE_BATTLE)\
-        .exclude(post__is_visible=False)\
-        .exclude(post__is_approved_by_moderator=False)\
-        .exclude(post__is_visible_in_feeds=False)\
+        .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
+        .exclude(post__visibility=Post.VISIBILITY_LINK_ONLY)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
     # Best post 1 year ago
     top_old_post = Post.visible_objects()\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(
             published_at__gte=start_date - timedelta(days=365),
             published_at__lte=end_date - timedelta(days=365)

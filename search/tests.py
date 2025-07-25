@@ -42,7 +42,8 @@ class SearchViewsTests(TestCase):
             slug=kwargs.pop("slug", "test_{}".format(cls.ids_count)),
             title=kwargs.pop("title", "title_{}".format(cls.ids_count)),
             author=kwargs.pop("author", None) or cls.create_user(),
-            is_visible=True,
+            moderation_status=Post.MODERATION_APPROVED,
+            visibility=Post.VISIBILITY_EVERYWHERE,
             **kwargs,
         )
         SearchIndex.update_post_index(post)

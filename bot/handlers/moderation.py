@@ -25,12 +25,12 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
     post = Post.objects.get(id=post_id)
-    if post.is_approved_by_moderator:
+    if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_REJECTED]:
         update.effective_chat.send_message(f"Пост «{post.title}» уже одобрен")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return
 
-    post.is_approved_by_moderator = True
+    post.moderation_status = Post.MODERATION_APPROVED
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.save()
@@ -66,7 +66,8 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
     post = Post.objects.get(id=post_id)
-    post.is_approved_by_moderator = False
+    post.moderation_status = Post.MODERATION_FORGIVEN
+    post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.collectible_tag_code = None
     post.save()
@@ -109,11 +110,12 @@ def reject_post(update: Update, context: CallbackContext) -> None:
     }.get(code) or PostRejectReason.draft
 
     post = Post.objects.get(id=post_id)
-    if not post.is_visible:
+    if post.visibility == Post.VISIBILITY_DRAFT:
         update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
+    post.moderation_status = Post.MODERATION_REJECTED
     post.unpublish()
 
     SearchIndex.update_post_index(post)
@@ -153,8 +155,8 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
 
     # make intro visible
     intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
-    intro.is_approved_by_moderator = True
-    intro.is_visible = True
+    intro.moderation_status = Post.MODERATION_APPROVED
+    intro.visibility = Post.VISIBILITY_EVERYWHERE
     intro.last_activity_at = datetime.utcnow()
     if not intro.published_at:
         intro.published_at = datetime.utcnow()

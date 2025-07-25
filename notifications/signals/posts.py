@@ -82,14 +82,14 @@ def create_or_update_post(sender, instance, created, **kwargs):
     if instance.type in {Post.TYPE_WEEKLY_DIGEST}:
         return None  # skip emails
 
-    if not instance.is_visible:
+    if instance.visibility == Post.VISIBILITY_DRAFT:
         return None  # skip drafts too
 
     async_task(async_create_or_update_post, instance, created)
 
 
 def async_create_or_update_post(post, is_created):
-    if not post.is_approved_by_moderator:
+    if post.moderation_status != Post.MODERATION_APPROVED:
         send_telegram_message(
             chat=ADMIN_CHAT,
             text=render_html_message("moderator_new_post_review.html", post=post),

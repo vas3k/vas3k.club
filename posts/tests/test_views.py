@@ -19,6 +19,7 @@ class ModelCreator:
             slug='test_{}'.format(self._exist_posts),
             title='title_{}'.format(self._exist_posts),
             author=self.create_user(),
+            visibility=Post.VISIBILITY_EVERYWHERE,
             **kwargs,
         )
 
@@ -39,7 +40,6 @@ class TestPaymentModel(TestCase):
 
     def test_show_post(self):
         post = self.creator.create_post(
-            is_visible=True,
             is_public=True,
         )
         for user in [None, self.user]:
@@ -58,9 +58,11 @@ class TestPaymentModel(TestCase):
         scenarios = itertools.product([None, self.user], [True, False])
         for user, post_is_public in scenarios:
             post = self.creator.create_post(
-                is_visible=False,
                 is_public=post_is_public,
             )
+            post.visibility = Post.VISIBILITY_DRAFT
+            post.save()
+
             client = self._authorized_client(user)
 
             response = client.get(self._post_url(post))

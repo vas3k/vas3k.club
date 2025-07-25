@@ -4,6 +4,7 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
+from posts.models.post import Post
 from rooms.models import RoomSubscription
 from tags.models import Tag, UserTag
 
@@ -29,7 +30,7 @@ def announce_in_club_channel(post, announce_text=None, image=None):
 
 def announce_in_club_chats(post):
     # announce to public chat
-    if post.is_visible_in_feeds or not post.room or not post.room.chat_id:
+    if post.visibility == Post.VISIBILITY_EVERYWHERE or not post.room or not post.room.chat_id:
         send_telegram_message(
             chat=CLUB_CHAT,
             text=render_html_message("channel_post_announce.html", post=post),

@@ -169,7 +169,7 @@ def delete_comment(request, comment_id):
                         "Потом только автор или модератор может это сделать."
             )
 
-        if not comment.post.is_visible:
+        if comment.post.visibility == Post.VISIBILITY_DRAFT:
             raise AccessDenied(
                 title="Пост скрыт!",
                 message="Нельзя удалять комментарии к скрытому посту"
