@@ -7,7 +7,8 @@ from django_q.tasks import async_task
 from authn.helpers import check_user_permissions
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from notifications.telegram.posts import send_to_admin_chat, notify_author_friends, announce_in_online_channel
+from notifications.telegram.posts import send_published_post_to_moderators, notify_author_friends, \
+    announce_in_online_channel, send_intro_changes_to_moderators
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
@@ -195,11 +196,15 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         if action == "publish":
             post.publish()
 
-            async_task(send_to_admin_chat, post=post)
+            async_task(send_published_post_to_moderators, post=post)
             async_task(notify_author_friends, post=post)
             async_task(announce_in_online_channel, post=post)
 
             LinkedPost.create_links_from_text(post, post.text)
+
+        # track intro changes
+        if post.type == Post.TYPE_INTRO and post.is_visible:
+            async_task(send_intro_changes_to_moderators, post=post)
 
         return redirect("show_post", post.type, post.slug)
 

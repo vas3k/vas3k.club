@@ -396,6 +396,7 @@ class Post(models.Model, ModelDiffMixin):
         self.save()
 
     def publish(self):
+        self.moderation_status = Post.MODERATION_PENDING
         self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()

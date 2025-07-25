@@ -4,7 +4,6 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from common.regexp import USERNAME_RE
-from notifications.signals.posts import REJECT_POST_REASONS
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, \
     send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE
 from posts.models.post import Post
@@ -13,8 +12,56 @@ from tags.models import Tag, UserTag
 from users.models.friends import Friend
 from users.models.user import User
 
+REJECT_POST_REASONS = {
+    "post": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+        ("value", "Нет пользы/абстрактно"),
+        ("inside", "Нет инсайдов и опыта"),
+    ],
+    "event": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+    ],
+    "guide": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+    ],
+    "thread": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+        ("duplicate", "Дубликат"),
+    ],
+    "question": [
+        ("title", "Плохой заголовок"),
+        ("dyor", "Нет рисёрча, коротко"),
+        ("hot", "Провокация/срач"),
+        ("chat", "Лучше в чат"),
+        ("duplicate", "Дубликат"),
+    ],
+    "link": [
+        ("tldr", "Мало описания"),
+        ("value", "Бесполезно/непонятно"),
+    ],
+    "idea": [
+        ("title", "Плохой заголовок"),
+        ("tldr", "Мало описания"),
+        ("github", "Фича, на гитхаб"),
+    ],
+    "battle": [
+        ("hot", "Срач"),
+        ("false_dilemma", "Ложная дилемма"),
+        ("duplicate", "Дубликат"),
+        ("bias", "Предвзят к одному варианту"),
+    ],
+    "project": [
+        ("ad", "Похоже на рекламу"),
+        ("inside", "Нет инсайдов и опыта"),
+    ],
+}
 
-def send_to_admin_chat(post):
+
+def send_published_post_to_moderators(post):
     send_telegram_message(
         chat=ADMIN_CHAT,
         text=render_html_message("moderator_new_post_review.html", post=post),
@@ -32,6 +79,14 @@ def send_to_admin_chat(post):
             ],
         ])
     )
+
+
+def send_intro_changes_to_moderators(post):
+    if post.type == Post.TYPE_INTRO:
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=render_html_message("moderator_updated_intro.html", user=post.author, intro=post),
+        )
 
 
 def announce_in_online_channel(post):
