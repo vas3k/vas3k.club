@@ -73,11 +73,13 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_DOCS: "",
     }
 
+    MODERATION_NONE = "none"
     MODERATION_PENDING = "pending"
     MODERATION_APPROVED = "approved"
     MODERATION_FORGIVEN = "forgiven"
     MODERATION_REJECTED = "rejected"
     MODERATION_STATUSES = [
+        (MODERATION_NONE, "✍️ Еще не был на модерации"),
         (MODERATION_PENDING, "🕓 Пост на модерации"),
         (MODERATION_APPROVED, "👍 Хороший пост"),
         (MODERATION_FORGIVEN, "☹️ Пост не одобрен, но оставлен на сайте"),
@@ -126,7 +128,7 @@ class Post(models.Model, ModelDiffMixin):
     moderation_status = models.CharField(
         max_length=12,
         choices=MODERATION_STATUSES,
-        default=MODERATION_PENDING
+        default=MODERATION_NONE
     )
 
     visibility = models.CharField(
