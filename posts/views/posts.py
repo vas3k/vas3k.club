@@ -2,10 +2,12 @@ from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django_q.tasks import async_task
 
 from authn.helpers import check_user_permissions
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
+from notifications.telegram.posts import send_to_admin_chat, notify_author_friends, announce_in_online_channel
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
@@ -176,19 +178,27 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.html = None  # flush cache
         post.save()
 
+        # create new post
         if mode == "create" or not post.is_visible:
             PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
-        if post.is_visible:
+        # update existing post
+        if post.visibility != Post.VISIBILITY_DRAFT:
             if post.room:
                 post.room.update_last_activity()
 
             SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)
 
+        # publish post for the first time
         action = request.POST.get("action")
         if action == "publish":
             post.publish()
+
+            async_task(send_to_admin_chat, post=post)
+            async_task(notify_author_friends, post=post)
+            async_task(announce_in_online_channel, post=post)
+
             LinkedPost.create_links_from_text(post, post.text)
 
         return redirect("show_post", post.type, post.slug)

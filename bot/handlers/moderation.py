@@ -58,6 +58,9 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     if post.room_id:
         notify_post_room_subscribers(post)
 
+    # update search index
+    SearchIndex.update_post_index(post)
+
     return None
 
 
@@ -84,6 +87,9 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
 
     # hide buttons
     update.callback_query.edit_message_reply_markup(reply_markup=None)
+
+    # update search index
+    SearchIndex.update_post_index(post)
 
     return None
 
