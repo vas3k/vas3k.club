@@ -72,7 +72,7 @@ class AbstractPostForm(forms.ModelForm):
     )
     is_room_only = forms.BooleanField(
         label="Пост только для этой комнаты (не отображается на главной)",
-        initial=True,
+        initial=False,
         required=False
     )
     is_public = forms.ChoiceField(
