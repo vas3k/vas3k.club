@@ -136,12 +136,10 @@ class Post(models.Model, ModelDiffMixin):
         db_index=True
     )
 
-    is_room_only = models.BooleanField(default=False)  # post is visible only in the room
     is_commentable = models.BooleanField(default=True)  # allow comments
-    is_approved_by_moderator = models.BooleanField(default=False)  # DEPRECATED: use moderation_status instead
+    is_room_only = models.BooleanField(default=False)  # post is visible only in the room
     is_public = models.BooleanField(default=False)  # post is visible for the outside world
     is_pinned_until = models.DateTimeField(null=True)  # pin on top on the main page
-    is_shadow_banned = models.BooleanField(default=False)  # DEPRECATED: use visibility instead
 
     history = HistoricalRecords(
         user_model=User,
@@ -160,10 +158,8 @@ class Post(models.Model, ModelDiffMixin):
             "moderation_status",
             "visibility",
             "is_room_only",
-            "is_approved_by_moderator",
             "is_commentable",
             "is_pinned_until",
-            "is_shadow_banned",
             "room",
         ],
     )
@@ -240,7 +236,7 @@ class Post(models.Model, ModelDiffMixin):
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
     def can_view(self, user):
-        return self.is_visible or self.can_view_draft(user)
+        return self.visibility != Post.VISIBILITY_DRAFT or self.can_view_draft(user)
 
     def can_view_draft(self, user):
         if not user:
