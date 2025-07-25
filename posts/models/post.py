@@ -287,6 +287,10 @@ class Post(models.Model, ModelDiffMixin):
         return self.comment_count < settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR
 
     @property
+    def is_waiting_for_moderation(self):
+        return self.moderation_status == Post.MODERATION_PENDING and self.visibility != Post.VISIBILITY_DRAFT
+
+    @property
     def description(self):
         return truncatechars(strip_tags(self.html or ""), 400)
 
