@@ -1,7 +1,9 @@
 from django import forms
 from django.template.loader import render_to_string
+from django_q.tasks import async_task
 
-from notifications.signals.achievements import async_create_or_update_achievement
+from notifications.email.achievements import send_new_achievement_email
+from notifications.telegram.achievements import send_new_achievement_notification
 from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 
@@ -38,7 +40,8 @@ def mass_achievement(request, admin_page):
                     achievement=form.cleaned_data["achievement"],
                 )
                 if is_created:
-                    async_create_or_update_achievement(user_achievement)
+                    async_task(send_new_achievement_email, user_achievement)
+                    async_task(send_new_achievement_notification, user_achievement)
 
             some_user_not_found = len(slugs) != users.count()
             return render_to_string("godmode/pages/message.html", {

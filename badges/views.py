@@ -2,11 +2,14 @@ from datetime import datetime
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
+from django_q.tasks import async_task
 
 from authn.decorators.auth import require_auth
 from badges.models import Badge, UserBadge
 from club.exceptions import BadRequest
 from comments.models import Comment
+from notifications.email.badges import send_new_badge_email
+from notifications.telegram.badges import send_new_badge_message
 from posts.models.post import Post
 
 
@@ -49,6 +52,10 @@ def create_badge_for_post(request, post_slug):
         post=post,
         note=note,
     )
+
+    # send notifications
+    async_task(send_new_badge_email, user_badge)
+    async_task(send_new_badge_message, user_badge)
 
     # bump post on home page by updating its last_activity_at
     Post.objects.filter(id=post.id).update(last_activity_at=datetime.utcnow())
@@ -108,6 +115,10 @@ def create_badge_for_comment(request, comment_id):
         comment=comment,
         note=note,
     )
+
+    # send notifications
+    async_task(send_new_badge_email, user_badge)
+    async_task(send_new_badge_message, user_badge)
 
     # bump post on home page by updating its last_activity_at
     Post.objects.filter(id=comment.post_id).update(last_activity_at=datetime.utcnow())

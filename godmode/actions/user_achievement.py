@@ -2,6 +2,8 @@ from django import forms
 from django.shortcuts import render
 
 from common.data.achievements import ACHIEVEMENTS
+from notifications.email.achievements import send_new_achievement_email
+from notifications.telegram.achievements import send_new_achievement_notification
 from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 
@@ -31,10 +33,13 @@ def post_achievement_action(request, user: User, **context):
         if data["new_achievement"]:
             achievement = Achievement.objects.filter(code=data["new_achievement"]).first()
             if achievement:
-                UserAchievement.objects.get_or_create(
+                user_achievement, is_created = UserAchievement.objects.get_or_create(
                     user=user,
                     achievement=achievement,
                 )
+                if is_created:
+                    send_new_achievement_email(user_achievement)
+                    send_new_achievement_notification(user_achievement)
 
         return render(request, "godmode/message.html", {
             **context,

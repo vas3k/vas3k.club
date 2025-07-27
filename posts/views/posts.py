@@ -183,14 +183,6 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         if mode == "create" or not post.is_visible:
             PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
-        # update existing post
-        if post.visibility != Post.VISIBILITY_DRAFT:
-            if post.room:
-                post.room.update_last_activity()
-
-            SearchIndex.update_post_index(post)
-            LinkedPost.create_links_from_text(post, post.text)
-
         # publish post for the first time
         action = request.POST.get("action")
         if action == "publish":
@@ -200,6 +192,12 @@ def create_or_edit(request, post_type, post=None, mode="create"):
             async_task(notify_author_friends, post=post)
             async_task(announce_in_online_channel, post=post)
 
+        # update post and room stats
+        if post.visibility != Post.VISIBILITY_DRAFT:
+            if post.room:
+                post.room.update_last_activity()
+
+            SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)
 
         # track intro changes

@@ -8,7 +8,9 @@ from django_q.tasks import async_task
 
 from club.exceptions import BadRequest
 from common.markdown.markdown import markdown_tg
+from notifications.email.achievements import send_new_achievement_email
 from notifications.email.sender import send_transactional_email
+from notifications.telegram.achievements import send_new_achievement_notification
 from notifications.telegram.common import Chat, send_telegram_message
 
 from payments.helpers import parse_stripe_webhook_event
@@ -88,10 +90,13 @@ def stripe_ticket_sale_webhook(request):
 
                     # Handle achievements
                     if user and ticket.achievement:
-                        UserAchievement.objects.get_or_create(
+                        user_achievement, is_created = UserAchievement.objects.get_or_create(
                             user=user,
                             achievement=ticket.achievement,
                         )
+                        if is_created:
+                            async_task(send_new_achievement_email, user_achievement)
+                            async_task(send_new_achievement_notification, user_achievement)
 
             # Send confirmation emails (unique by ticket code)
             emails_to_send = Ticket.objects.filter(code__in=ticket_codes_processed)
