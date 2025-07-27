@@ -31,6 +31,7 @@ def approve_post(update: Update, context: CallbackContext) -> None:
         return
 
     post.moderation_status = Post.MODERATION_APPROVED
+    post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.save()
@@ -70,6 +71,7 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     post.moderation_status = Post.MODERATION_FORGIVEN
+    post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.collectible_tag_code = None
