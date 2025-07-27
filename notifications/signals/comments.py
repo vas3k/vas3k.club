@@ -80,7 +80,7 @@ def async_create_or_update_comment(comment):
         )
 
     # post top level comments to "rooms" (if necessary)
-    if not comment.reply_to and comment.post.is_visible:
+    if not comment.reply_to and not comment.post.is_draft:
         if comment.post.room_id and comment.post.room.chat_id and comment.post.room.send_new_comments_to_chat:
             send_telegram_message(
                 chat=Chat(id=comment.post.room.chat_id),

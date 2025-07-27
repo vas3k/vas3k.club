@@ -273,8 +273,8 @@ class Post(models.Model, ModelDiffMixin):
         return User.objects.filter(slug__in=self.coauthors).all()
 
     @property
-    def is_visible(self):
-        return self.visibility not in [Post.VISIBILITY_DRAFT, Post.VISIBILITY_LINK_ONLY]
+    def is_draft(self):
+        return self.visibility == Post.VISIBILITY_DRAFT
 
     @property
     def is_pinned(self):

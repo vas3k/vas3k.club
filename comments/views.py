@@ -120,7 +120,7 @@ def edit_comment(request, comment_id):
                 message=f"Комментарий можно редактировать только в течение {hours} часов после создания"
             )
 
-        if not comment.post.is_visible or not comment.post.is_commentable:
+        if comment.post.is_draft or not comment.post.is_commentable:
             raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post

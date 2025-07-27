@@ -57,7 +57,7 @@ def show_post(request, post_type, post_slug):
     }, key=lambda p: p.upvotes, reverse=True)
 
     # force cleanup deleted/hidden posts from linked
-    linked_posts = [p for p in linked_posts if p.is_visible]
+    linked_posts = [p for p in linked_posts if not p.is_draft]
 
     return render_post(request, post, {
         "post_last_view_at": last_view_at,
@@ -180,7 +180,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.save()
 
         # create new post
-        if mode == "create" or not post.is_visible:
+        if mode == "create" or post.is_draft:
             PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
         # publish post for the first time
@@ -201,7 +201,7 @@ def create_or_edit(request, post_type, post=None, mode="create"):
             LinkedPost.create_links_from_text(post, post.text)
 
         # track intro changes
-        if post.type == Post.TYPE_INTRO and post.is_visible:
+        if post.type == Post.TYPE_INTRO and not post.is_draft:
             async_task(send_intro_changes_to_moderators, post=post)
 
         return redirect("show_post", post.type, post.slug)
