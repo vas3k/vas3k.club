@@ -46,9 +46,10 @@ class Command(BaseCommand):
                 html=digest_without_footer,
                 text=digest_without_footer,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
-                is_visible=True,
-                is_public=False,
+                moderation_status=Post.MODERATION_APPROVED,
+                visibility=Post.VISIBILITY_EVERYWHERE,
                 metadata={"og_description": og_description},
+                is_public=False,
             )
         )
 
