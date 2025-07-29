@@ -42,7 +42,10 @@ def api_profile_tags(request, user_slug):
     for ut in user_tags:
         group = ut.tag.group
         if group in allowed_groups:
-            grouped_tags.setdefault(group, []).append(ut.tag.code)
+            grouped_tags.setdefault(group, []).append({
+                "code": ut.tag.code,
+                "name": ut.tag.name,
+            })
 
     return JsonResponse({"tags": grouped_tags})
 
