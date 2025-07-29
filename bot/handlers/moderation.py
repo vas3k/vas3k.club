@@ -41,10 +41,17 @@ def approve_post(update: Update, context: CallbackContext) -> None:
         "post_slug": post.slug,
     })
 
-    update.effective_chat.send_message(
-        f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}",
-        disable_web_page_preview=True
-    )
+    if post.room_id and post.is_room_only:
+        update.effective_chat.send_message(
+            f"😎 Пост «{post.title}» хорош для комнаты «{post.room.title}», "
+            f"но не будет отображаться на главной ({update.effective_user.full_name}): {post_url}",
+            disable_web_page_preview=True
+        )
+    else:
+        update.effective_chat.send_message(
+            f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}",
+            disable_web_page_preview=True
+        )
 
     # hide buttons
     update.callback_query.edit_message_reply_markup(reply_markup=None)

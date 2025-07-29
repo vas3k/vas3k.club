@@ -139,13 +139,24 @@ def announce_in_club_chats(post):
         )
 
 
-def notify_post_approved(post):
-    if post.author.telegram_id:
+def notify_post_approved(post: Post):
+    if not post.author.telegram_id:
+        return None
+
+    if post.room_id and post.is_room_only:
+        send_telegram_message(
+            chat=Chat(id=post.author.telegram_id),
+            text=render_html_message("post_approved_in_room.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+        )
+    else:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_approved.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
         )
+
+    return None
 
 
 def notify_post_rejected(post, reason):

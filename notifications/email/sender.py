@@ -25,7 +25,6 @@ def send_mass_email(recipient, subject, html, unsubscribe_link):
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
     email = EmailMultiAlternatives(
         subject=subject,
-        body=prepared_html,
         from_email=settings.DEFAULT_FROM_EMAIL,
         to=[recipient],
         headers={
