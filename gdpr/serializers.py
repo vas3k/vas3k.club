@@ -9,7 +9,6 @@ from comments.models import Comment
 from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
-from users.models.expertise import UserExpertise
 from tags.models import UserTag
 from users.models.user import User
 
@@ -119,23 +118,6 @@ def user_tag_to_json(user_tag: UserTag) -> dict:
         "user_id": str(user_tag.user_id),
         "name": user_tag.name,
         "created_at": user_tag.created_at.isoformat() if user_tag.created_at else None,
-    }
-
-
-def user_expertises_to_json(user_expertises: List[UserExpertise]) -> dict:
-    return {
-        "user_expertise": [
-            user_expertise_to_json(user_expertise) for user_expertise in user_expertises
-        ]
-    }
-
-
-def user_expertise_to_json(user_expertise: UserExpertise) -> dict:
-    return {
-        "user_id": str(user_expertise.user_id),
-        "name": user_expertise.name,
-        "value": user_expertise.value,
-        "created_at": user_expertise.created_at.isoformat() if user_expertise.created_at else None,
     }
 
 

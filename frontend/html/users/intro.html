@@ -19,7 +19,7 @@
                 </p>
 
                 <p>
-                    Для начала <strong>прочитайте <a href="{% url "docs" "about" %}">наши правила</a></strong> и <strong><a href="{{ settings.VALUES_GUIDE_URL }}">ценности</a></strong>. Потом налейте себе вина и заполните форму ниже.
+                    Для начала <strong>прочитайте <a href="{% url "show_post" "docs" "about" %}">наши правила</a></strong> и <strong><a href="{{ settings.VALUES_GUIDE_URL }}">ценности</a></strong>. Потом налейте себе вина и заполните форму ниже.
                     Если вы тут впервые, можете пойти почитать открытые посты <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank">на канале</a> и вернуться сюда позднее.
                 </p>
 
@@ -33,7 +33,7 @@
                 </p>
 
                 <p>
-                    Если вам всё это не нужно или хотите сохранить приватность — это тоже нормально. Можете <a href="{% url "docs" "contact" %}">написать нам</a> и мы вернем деньги.
+                    Если вам всё это не нужно или хотите сохранить приватность — это тоже нормально. Можете <a href="{% url "show_post" "docs" "contact" %}">написать нам</a> и мы вернем деньги.
                 </p>
             </div>
 
@@ -77,7 +77,6 @@
                 {{ form.country }} {{ form.city }}
                 {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
                 {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
-                <span class="form-row-help">Вдруг мы решим собраться на митап или типа того.</span>
             </div>
 
             <div class="form-row">
@@ -145,6 +144,9 @@
                 <p>
                     Вот примеры хороших интро: <a href="https://vas3k.club/intro/vas3k/" target="_blank">Вастрик</a>, <a href="https://vas3k.club/intro/lena/" target="_blank">Лена</a>, <a href="https://vas3k.club/intro/Sciannadev/" target="_blank">Анна</a>.
                 </p>
+                <p>
+                    А вот чуть более подробное описание с примерами: <a href="https://vas3k.club/post/28726/" target="_blank">Как не надо писать интро</a>.
+                </p>
             </div>
 
             <div class="form-row form-row-intro">
@@ -186,7 +188,7 @@
                     <div class="big-radio-item">
                         {{ form.email_digest_type.1.tag }}
                         <label for="{{ form.email_digest_type.1.id_for_label }}" class="big-radio-label">
-                            <i class="fas fa-envelope-open"></i>
+                            <i class="fas fa-robot"></i>
                             <span class="big-radio-title">Ежедневные дайджесты</span>
                             <span class="big-radio-description">Хочу быть в курсе всего!</span>
                         </label>
@@ -194,7 +196,7 @@
                     <div class="big-radio-item">
                         {{ form.email_digest_type.2.tag }}
                         <label for="{{ form.email_digest_type.2.id_for_label }}" class="big-radio-label">
-                            <i class="fas fa-calendar-week"></i>
+                            <i class="fas fa-envelope"></i>
                             <span class="big-radio-title">Журнал раз в неделю</span>
                             <span class="big-radio-description">Подборка лучшего по понедельникам</span>
                         </label>

@@ -1,19 +1,14 @@
 import logging
-import re
 from enum import Enum
 from typing import Optional
 
+from django.db import close_old_connections
 from telegram import Update, ParseMode
 
+from bot.config import COMMENT_URL_RE, POST_URL_RE
 from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
-
-COMMENT_EMOJI_RE = re.compile(r"^💬.*")
-POST_EMOJI_RE = re.compile(r"^[📝🔗❓💡🏢🤜🤛🗺🗄🔥🏗🙋‍♀️].*")
-
-COMMENT_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/.+?/#comment-([a-fA-F0-9\-]+)")
-POST_URL_RE = re.compile(r"https?://vas3k.club/[a-zA-Z]+/(.+?)/")
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +39,10 @@ class PostRejectReason(Enum):
 
 
 def get_club_user(update: Update):
+    # HACK: Django 5+ kills long-running db connections randomly,
+    # this could help, but I'm not sure
+    close_old_connections()
+
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
         if update.callback_query:
@@ -73,8 +72,9 @@ def get_club_user(update: Update):
 
 
 def get_club_comment(update: Update) -> Optional[Comment]:
+    entities = update.message.reply_to_message.entities or update.message.reply_to_message.caption_entities or []
     url_entities = [
-        entity["url"] for entity in update.message.reply_to_message.entities if entity["type"] == "text_link"
+        entity["url"] for entity in entities if entity["type"] == "text_link"
     ]
 
     for url_entity in url_entities:
@@ -84,7 +84,7 @@ def get_club_comment(update: Update) -> Optional[Comment]:
             if comment_id:
                 break
     else:
-        log.warning(f"Comment URL not found: {update.message.reply_to_message}")
+        log.warning(f"Comment URL not found in message: {update.message.reply_to_message}")
         return None
 
     comment = Comment.objects.filter(id=comment_id).first()
@@ -96,8 +96,9 @@ def get_club_comment(update: Update) -> Optional[Comment]:
 
 
 def get_club_post(update: Update) -> Optional[Post]:
+    entities = update.message.reply_to_message.entities or update.message.reply_to_message.caption_entities or []
     url_entities = [
-        entity["url"] for entity in update.message.reply_to_message.entities if entity["type"] == "text_link"
+        entity["url"] for entity in entities if entity["type"] == "text_link"
     ]
 
     for url_entity in url_entities:
@@ -107,7 +108,7 @@ def get_club_post(update: Update) -> Optional[Post]:
             if post_id:
                 break
     else:
-        log.warning(f"Post URL not found: {update.message.reply_to_message}")
+        log.warning(f"Post URL not found in message: {update.message.reply_to_message}")
         return None
 
     post = Post.objects.filter(slug=post_id).first()

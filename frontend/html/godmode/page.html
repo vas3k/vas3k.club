@@ -1,0 +1,16 @@
+{% extends "godmode/layout.html" %}
+{% load static %}
+
+{% block title %}
+    {{ admin_page.title }} — {{ block.super }}
+{% endblock %}
+
+{% block godmode_content %}
+    <div class="godmode-page">
+        {% if admin_page %}
+            <div class="godmode-header">{{ admin_page.icon }} {{ admin_page.title }}</div>
+        {% endif %}
+
+        {{ page|safe }}
+    </div>
+{% endblock %}

@@ -5,11 +5,22 @@
 {% block content %}
     <div class="content comment">
         <form action="{% url "edit_comment" comment.id %}" method="post" class="form comment-form-form">
+            {% if comment.reply_to_id %}
+                <input type="hidden" name="reply_to_id" value="{{ comment.reply_to_id }}">
+            {% endif %}
+
             <div class="comment-form">
                 <div class="comment-form-body">
                     {% include form|edit_form with post=post form=form comment=comment save_message="Сохранить" %}
                 </div>
             </div>
         </form>
+
+        {% if request.me.is_moderator %}
+            <div class="comment-moderation">
+                <div class="comment-title">Модерация</div>
+                <a href="{% url "delete_comment_thread" comment.id %}" class="button">Удалить весь тред</a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

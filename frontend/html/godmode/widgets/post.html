@@ -1,0 +1,7 @@
+{% with value as post %}
+    {% if post %}
+        <a href="{% url "show_post" post.type post.slug %}">
+            {{ post.emoji }} {{ post.prefix }} {{ post.title }}
+        </a>
+    {% endif %}
+{% endwith %}

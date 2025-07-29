@@ -1,0 +1,12 @@
+{% with value as user %}
+    {% if user %}
+        <a href="{% url "profile" user.slug %}" class="godmode-table-user">
+            <span class="avatar user-round-avatar godmode-table-user-avatar">
+                <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
+            </span>
+            <span class="godmode-table-user-info">
+                <span class="godmode-table-user-name {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %}">{{ user.full_name }}</span>
+            </span>
+        </a>
+    {% endif %}
+{% endwith %}

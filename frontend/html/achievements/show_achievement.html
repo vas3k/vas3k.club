@@ -30,27 +30,12 @@
                 <span><strong>Название:</strong> {{ achievement.name }}</span>
                 <span><strong>Описание:</strong> {{ achievement.description }}</span>
                 <span><strong>Награждено:</strong> {{ users|length }} {{ users|length|rupluralize:"человек,человека,человек" }}</span>
-                <span><strong>Редкость:</strong> {{ rarity }}%</span>
-                {% if rarity > 75 %}
-                    <span>Легендарная и редкая ачивка. Тут только самые лучшие!</span>
-                {% elif rarity > 45 %}
-                    <span>Довольно сложная ачивка. Нужно было постараться, чтобы ее заслужить.</span>
-                {% elif rarity > 10 %}
-                    <span>Хорошая ачивка за хорошую работу!</span>
-                {% else %}
-                    <span>Довольно популярная ачивка, много у кого есть.</span>
-                {% endif %}
             </div>
         </div>
 
-        <div class="stats-achievements-users">
+        <div class="top-users top-users-medium stats-achievements-users">
             {% for user in users %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                    <span class="avatar top-user-avatar">
-                        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                    </span>
-                    <span class="top-user-name">{{ user.full_name }}</span>
-                </a>
+                {% include "users/widgets/round.html" with user=user show_name=True %}
             {% endfor %}
         </div>
     </div>

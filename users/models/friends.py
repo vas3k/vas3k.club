@@ -18,6 +18,7 @@ class Friend(models.Model):
     class Meta:
         db_table = "friends"
         unique_together = [["user_from", "user_to"]]
+        ordering = ["-created_at"]
 
     @classmethod
     def add_friend(cls, user_from, user_to):
@@ -40,3 +41,11 @@ class Friend(models.Model):
     @classmethod
     def user_friends(cls, user_from):
         return cls.objects.filter(user_from=user_from).select_related("user_to")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "created_at": self.created_at,
+            "is_subscribed_to_posts": self.is_subscribed_to_posts,
+            "is_subscribed_to_comments": self.is_subscribed_to_comments,
+        }

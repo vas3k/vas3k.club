@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytz
 from django import forms
+from django.conf import settings
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
 from slugify import slugify_filename
@@ -9,7 +10,7 @@ from slugify import slugify_filename
 from common.regexp import EMOJI_RE
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
-from common.forms import ImageUploadField, ReverseBooleanField
+from common.forms import ImageUploadField
 from rooms.models import Room
 from tags.models import Tag
 from users.models.user import User
@@ -69,9 +70,9 @@ class AbstractPostForm(forms.ModelForm):
         max_length=32,
         required=False,
     )
-    is_visible_in_feeds = ReverseBooleanField(
+    is_room_only = forms.BooleanField(
         label="Пост только для этой комнаты (не отображается на главной)",
-        initial=True,
+        initial=False,
         required=False
     )
     is_public = forms.ChoiceField(
@@ -101,13 +102,13 @@ class AbstractPostForm(forms.ModelForm):
 
         return coauthors
 
-    def clean_is_visible_in_feeds(self):
-        new_value = self.cleaned_data.get("is_visible_in_feeds")
+    def clean_is_room_only(self):
+        new_value = self.cleaned_data.get("is_room_only")
 
         if new_value is None:
-            return self.instance.is_visible_in_feeds
+            return self.instance.is_room_only
 
-        if new_value and not self.instance.is_visible_in_feeds:
+        if new_value and self.instance.is_room_only:
             raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
 
         return new_value
@@ -169,7 +170,7 @@ class PostTextForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -212,7 +213,7 @@ class PostLinkForm(AbstractPostForm):
             "url",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -261,7 +262,7 @@ class PostQuestionForm(AbstractPostForm):
             "text",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public"
         ]
 
@@ -294,7 +295,7 @@ class PostIdeaForm(AbstractPostForm):
             "text",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -351,10 +352,7 @@ class PostEventForm(AbstractPostForm):
     event_timezone = forms.ChoiceField(
         label="Таймзона",
         required=True,
-        choices=[
-            ("Europe/Moscow", "по Москве"),
-            ("UTC", "UTC"),
-        ]
+        choices=settings.SUPPORTED_TIME_ZONES
     )
     event_location = forms.CharField(
         label="Локейшен",
@@ -407,7 +405,7 @@ class PostEventForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public"
         ]
 
@@ -440,6 +438,8 @@ class PostEventForm(AbstractPostForm):
                     "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
                     .utcoffset().total_seconds() // 60,
                     "location": cleaned_data["event_location"],
+                    "participants": self.instance.metadata.get("event", {}).get("participants", []) \
+                        if self.instance and self.instance.metadata else [],
                 }
             }
         }
@@ -518,7 +518,7 @@ class PostProjectForm(AbstractPostForm):
             "image",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -566,7 +566,7 @@ class PostBattleForm(AbstractPostForm):
             "text",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -681,7 +681,7 @@ class PostGuideForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -733,7 +733,7 @@ class PostThreadForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 

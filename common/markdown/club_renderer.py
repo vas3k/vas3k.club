@@ -4,11 +4,8 @@ from urllib.parse import unquote
 from mistune import escape_html
 from slugify import slugify
 
+from common.markdown.common import split_title_and_css_classes
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
-
-IMAGE_CSS_CLASSES = {
-    "-": "text-body-image-full"
-}
 
 
 class ClubRenderer(mistune.HTMLRenderer):
@@ -33,12 +30,15 @@ class ClubRenderer(mistune.HTMLRenderer):
             if embed:
                 return embed
 
+        text, css_classes = split_title_and_css_classes(text or "")
+
         if text is None:
             text = link
 
         # here's some magic of unescape->unquote->escape
         # to fix cyrillic (and other non-latin) wikipedia URLs
-        return f'<a href="{self._safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>'
+        return (f'<a class="{' '.join(css_classes)}" '
+                f'href="{self._safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
 
     def image(self, src, alt="", title=None):
         embed = self.embed(src, alt, title)
@@ -65,14 +65,10 @@ class ClubRenderer(mistune.HTMLRenderer):
         return None
 
     def simple_image(self, src, alt="", title=None):
-        css_classes = ""
-        title = title or alt
-        if title in IMAGE_CSS_CLASSES:
-            css_classes = IMAGE_CSS_CLASSES[title]
-
+        title, css_classes = split_title_and_css_classes(title or alt)
         image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
-        return f'<figure class="{css_classes}">{image_tag}{caption}</figure>'
+        return f'<figure class="{' '.join(css_classes)}">{image_tag}{caption}</figure>'
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
@@ -91,11 +87,12 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<figure>{video_tag}{caption}</figure>"
 
     def video(self, src, alt="", title=None):
+        title, css_classes = split_title_and_css_classes(title or alt)
         video_tag = (
-            f'<video src="{escape_html(src)}" controls muted playsinline>{escape_html(alt)}</video>'
+            f'<video src="{escape_html(src)}" controls playsinline>{escape_html(alt)}</video>'
         )
         caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
-        return f"<figure>{video_tag}{caption}</figure>"
+        return f'<figure class="{' '.join(css_classes)}">{video_tag}{caption}</figure>'
 
     def tweet(self, src, alt="", title=None):
         tweet_match = TWITTER_RE.match(src)

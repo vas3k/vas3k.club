@@ -1,4 +1,5 @@
 import json
+import random
 
 from django import template
 
@@ -27,7 +28,7 @@ def users_geo_json(users):
             },
             "geometry": {
                 "type": "Point",
-                "coordinates": user.geo.to_json_coordinates(randomize=True),
+                "coordinates": [user.longitude, user.latitude],
             }
         } for user in users if user.geo]
     })

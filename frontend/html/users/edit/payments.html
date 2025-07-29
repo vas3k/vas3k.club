@@ -40,6 +40,12 @@
             </div>
         {% endfor %}
 
+        {% if me.membership_platform_type == "direct" %}
+            <div class="block-description block-description-center">
+                Для обновления данных карточки, просмотра или отмены активных подписок можно еще использовать <a href="{{ settings.STRIPE_CUSTOMER_PORTAL_URL }}" target="_blank">Stripe Customer Portal</a> (email тот же что в Клубе).
+            </div>
+        {% endif %}
+
         <div class="block-description block-description-center">
             О любых проблемах с оплатой сразу пишите на <a href="mailto:monies@vas3k.club">monies@vas3k.club</a>.<br>
             Мы можем исправить или откатить любую транзакцию, так что не волнуйтесь.
@@ -76,37 +82,26 @@
     </div>
 
     <div class="block stats-top-users">
-        <div class="top-users">
+        <div class="top-users top-users-big">
             {% for user in top_users|slice:"0:5" %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-big">
-                    <span class="top-user-avatar-badge">🏆</span>
-                    <span class="avatar top-user-avatar">
+                <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+                    <span class="user-round-avatar-badge">🏆</span>
+                    <span class="avatar user-round-avatar">
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
-                    <span class="top-user-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
-                    <span class="top-user-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
+                    <span class="user-round-name">#{{ forloop.counter }}: {{ user.full_name }}</span>
+                    <span class="user-round-info">до {{ user.membership_expires_at | date:"E Y" }} года</span>
                 </a>
             {% endfor %}
         </div>
 
-        <div class="top-users">
+        <div class="top-users top-users-medium">
             {% for user in top_users|slice:"5:25" %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium">
-                    <span class="avatar top-user-avatar">
+                <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
+                    <span class="avatar user-round-avatar">
                         <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
                     </span>
-                    <span class="top-user-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
-                    <span class="top-user-info">{{ user.membership_expires_at | date:"F Y" | lower }}</span>
-                </a>
-            {% endfor %}
-        </div>
-
-        <div class="top-users">
-            {% for user in top_users|slice:"25:64" %}
-                <a href="{% url "profile" user.slug %}" class="top-user top-user-small" title="до {{ user.membership_expires_at | date:"E Y" }} года">
-                    <span class="avatar top-user-avatar">
-                        <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
-                    </span>
+                    <span class="user-round-name">#{{ forloop.counter|add:5 }}: {{ user.full_name }}</span>
                 </a>
             {% endfor %}
         </div>
@@ -116,31 +111,7 @@
         <div class="block-header">💌<br>Пригласить друга</div>
 
         <div class="block-description block-description-center">
-            У вас есть хороший знакомый, который тоже хочет в Клуб, но не может заплатить долор?
-        </div>
-
-        <div class="block-description block-description-center">
-            Здесь вы можете ввести почту любого человека и подарить ему аккаунт на год!
-            Не забудьте предупредить друга, что собираетесь выслать ему инвайт, ведь интро ему всё равно придётся написать самостоятельно.
-        </div>
-
-        <div class="block invite-friend">
-            <form action="{% url "pay" %}" method="get">
-                {% csrf_token %}
-                <input type="hidden" name="product_code" value="club1_invite">
-                <input type="hidden" name="is_invite" value="true">
-
-                <label>
-                    <strong>Адрес почты</strong>
-                    <input type="email" name="email" placeholder="friend@gmail.com" required>
-                </label>
-
-                <button type="submit" class="button">Позвать в Клуб</button>
-            </form>
-        </div>
-
-        <div class="block-description block-description-center">
-            💡 <strong>Лайфхак:</strong> указав здесь почту существующего члена Клуба, вы продлите ему аккаунт. Только спросите его точный адрес.
+            <a href="{% url "invites" %}" class="button">🎁 Инвайты переехали сюда</a>
         </div>
     </div>
 {% endblock %}

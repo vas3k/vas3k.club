@@ -29,7 +29,7 @@
                         <span class="label-title">Удалённый пост</span>
                     </span>
                 </div>
-            {% elif not post.is_visible %}
+            {% elif post.visibility == "draft" %}
                 <div class="post-label">
                     {% include "posts/widgets/draft_label.html" %}
                 </div>
@@ -68,7 +68,7 @@
         </div>
 
         <div class="post-event-title">
-            {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} по {% if post.metadata.event.timezone == "UTC" %}UTC{% else %}Москве{% endif %}
+            {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} {% if post.metadata.event.timezone %}{{ post.metadata.event.timezone|human_readable_timezone }}{% endif %}
         </div>
 
         <div class="post-event-location">
@@ -86,11 +86,20 @@
         <div class="post-event-rsvp">
             {% if me and me.is_active_membership %}
                 <post-rsvp
-                    url="{% url "toggle_post_subscription" post.slug %}"
-                    {% if subscription %}is-active-by-default{% endif %}
+                    url="{% url "toggle_post_event_participation" post.slug %}"
+                    {% if request.me.id|stringformat:"s" in post.metadata.event.participants %}is-active-by-default{% endif %}
                 >
                 </post-rsvp>
             {% endif %}
         </div>
+    </div>
+
+    <div class="post-event-participants">
+        {% if post.metadata.event.participants %}
+            <div class="post-event-participants-text">{{ post.metadata.event.participants | length }} {{ post.metadata.event.participants | length | rupluralize:"человек,человека,человек" }} хотят прийти 👉</div>
+            {% for user in post.event_participants %}
+                {% include "users/widgets/round.html" with user=user show_name=False %}
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}

@@ -37,7 +37,7 @@ ACHIEVEMENTS = [
     }),
     ("helper", {
         "name": "Твой Бро",
-        "description": "Пятюня за активную помощь другим участника Клуба в комментариях и в жизни",
+        "description": "Пятюня за активную помощь другим участника Клуба в интернете или в жизни",
         "image": "https://i.vas3k.club/3bo.png",
         "style": "background-color: #4D446F;",
     }),
@@ -91,6 +91,16 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/3d1.png",
         "style": "background-color: #F04393; font-size: 100%;",
     }),
+    ("post_of_month", {
+        "name": "Пост месяца",
+        "description": "Написал годный пост, который вошел в топ за месяц",
+        "image": "https://vas3k.club/static/images/achievements/post_of_month.png",
+        "style": "background-color: #4A4F9E;",
+        "custom_message": "Один из ваших постов заработал ачивку «Пост месяца»! "
+                          "Это очень почётно, ведь каждый месяц мы руками отбираем и награждаем тройку лучших. "
+                          "Вместе с красивой ачивкой вам в подарок летит еще +100 дней подписки на Клуб. "
+                          "Продолжайте в том же духе!"
+    }),
     ("2020", {
         "name": "2020",
         "description": "Призовое место в итогах 2020 года",
@@ -115,9 +125,15 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/2023.png",
         "style": "background-color: #f87c56; font-size: 190%;",
     }),
+    ("2024", {
+        "name": "2024",
+        "description": "Призовое место в итогах 2024 года",
+        "image": "https://vas3k.club/static/images/achievements/2024.png",
+        "style": "background-color: #ff8a3d; font-size: 190%;",
+    }),
     ("mic", {
         "name": "Золотой микрофон",
-        "description": "За выступление на АМА  и митапах в качестве оратора",
+        "description": "За выступление на клубных ивентах, митапах или АМА в качестве оратора",
         "image": "https://vas3k.club/static/images/achievements/mic.png",
         "style": "background-color: #9370D8; font-size: 130%;",
     }),
@@ -236,7 +252,7 @@ ACHIEVEMENTS = [
         "style": "background-color: #FFCE30;",
     }),
     ("astrophoto", {
-        "name": "Космо-папарации",
+        "name": "Космо-папарацци",
         "description": "За участие в мероприятии астрофотографов",
         "image": "https://vas3k.club/static/images/achievements/astrophoto.png",
         "style": "background-color: #200836; font-size: 120%;",
@@ -249,7 +265,7 @@ ACHIEVEMENTS = [
     }),
     ("cake_is_a_lie", {
         "name": "The cake is a lie",
-        "description": "За победу над Безумной Машиной в Квесте",
+        "description": "За победу над Безумной Машиной в Квесте 2024",
         "image": "https://vas3k.club/static/images/achievements/cake_is_a_lie.png",
         "style": "background-color: #FF7400; font-size: 120%;",
     }),
@@ -306,6 +322,108 @@ ACHIEVEMENTS = [
         "description": "Участник клубного Кэмпа в Сербии летом 2024",
         "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2024.jpg",
         "style": "background-color: #F1DFC5; font-size: 130%;",
+    }),
+    ("vas3k_camp_2025", {
+        "name": "Вастрик 🔥 Кэмп 2025",
+        "description": "Участник Вастрик Кэмпа в Либерленде летом 2025",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2025.webp",
+        "style": "background-color: #FF9F4B; font-size: 130%;",
+    }),
+    ("vas3k_quest_2024", {
+        "name": "Золотая говнотерка",
+        "description": "Призёр первого Вастрик.Квеста, проходившего в Сербии в 2024 году",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quest_2024.webp",
+        "style": "background-color: #F1DFC5; font-size: 120%;",
+    }),
+    ("pokerface", {
+        "name": "Покерфейс",
+        "description": "Играл в покер с соклубниками",
+        "image": "https://vas3k.club/static/images/achievements/pokerface.png",
+        "style": "background-color: #F1DFC5; font-size: 130%;",
+    }),
+    ("vas3k_flot_2024", {
+        "name": "Вастрик ⛵ Флот 2024",
+        "description": "Участник первого Вастрик Флота в Черногории осенью 2024",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
+        "style": "background-color: #4c98d5; font-size: 120%;",
+    }),
+    ("spooky", {
+        "name": "Спуки",
+        "description": "За лучшие украшения на Хэллоуин",
+        "image": "https://vas3k.club/static/images/achievements/spooky.png",
+        "style": "background-color: #2E61F3; font-size: 130%;",
+    }),
+    ("ai_art", {
+        "name": "AI master race",
+        "description": "За участие в ИИнктобере",
+        "image": "https://vas3k.club/static/images/achievements/ai_art.png",
+        "style": "background-color: #132F6E; font-size: 130%;",
+    }),
+    ("birdwatcher", {
+        "name": "Смотритель птиц",
+        "description": "Ходил смотреть на птиц с клубняшами",
+        "image": "https://vas3k.club/static/images/achievements/birds.png",
+        "style": "background-color: #6A98FF; font-size: 130%;",
+    }),
+    ("couchsurfing", {
+        "name": "Гроза отелей",
+        "description": "За размещение у себя клубня на ночь",
+        "image": "https://vas3k.club/static/images/achievements/couchsurfing.png",
+        "style": "background-color: #33CCCC; font-size: 130%;",
+    }),
+    ("geoguessr_lite", {
+        "name": "Мидуэй атолл",
+        "description": "Отличает Англию от Австралии по кенгуру, а Польшу от Перу — по надписям на стенах",
+        "image": "https://vas3k.club/static/images/achievements/geoguessr_lite.png",
+        "style": "background-color: #C4D9D7; font-size: 130%;",
+    }),
+    ("geoguessr_beast", {
+        "name": "Реюньон",
+        "description": "Знает индийские языки, все шоссе длиннее 300 км и цвет грязи на каждом континенте",
+        "image": "https://vas3k.club/static/images/achievements/geoguessr_beast.png",
+        "style": "background-color: #F37857; font-size: 130%;",
+    }),
+    ("music_jam_7", {
+        "name": "Got kicked out for music",
+        "description": "За участие в зимнем музыкальном челлендже 2025",
+        "image": "https://vas3k.club/static/images/achievements/music_jam_7.png",
+        "style": "background-color: #CB562D; font-size: 120%;",
+    }),
+    ("grill_master", {
+        "name": "Гриль Мастер",
+        "description": "Пожарил ребятам вкуснейших мяс на клубной сходке",
+        "image": "https://vas3k.club/static/images/achievements/grill_master.png",
+        "style": "background-color: #EA780E; font-size: 140%;",
+    }),
+    ("naked", {
+        "name": "Голый Мастер",
+        "description": "Был голеньким на клубном ивенте 🍆🍆🍆",
+        "image": "https://vas3k.club/static/images/achievements/naked.webp",
+        "style": "background-color: #DB4C77; font-size: 140%;",
+    }),
+    ("barmen", {
+        "name": "Клубный Бармен",
+        "description": "Разливал напитки соклубням на одном из оффлайн ивентов",
+        "image": "https://vas3k.club/static/images/achievements/barmen.webp",
+        "style": "background-color: #3CA2C8; font-size: 140%;",
+    }),
+    ("intellectual", {
+        "name": "Уважаемые Знатоки",
+        "description": "Призовое место в клубном турнире интеллектуальных игр",
+        "image": "https://vas3k.club/static/images/achievements/intellectual.webp",
+        "style": "background-color: #535D94;",
+    }),
+    ("vas3k_quest", {
+        "name": "Вастрик Квест",
+        "description": "Призовое место в одном из клубных квестов",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quest.webp",
+        "style": "background-color: #006100; font-size: 130%;",
+    }),
+    ("vas3k_quiz", {
+        "name": "Вастрик Квизер",
+        "description": "Призовое место в одном из клубных квизов",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_quizz.webp",
+        "style": "background-color: #FF5154; font-size: 130%;",
     }),
 ]
 

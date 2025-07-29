@@ -1,6 +1,8 @@
 {% load comments %}
 {% for tree in comments|comment_tree %}
-    {% if tree.comment.author_id in muted_user_ids %}
+    {% if not request.me and tree.comment.author.profile_publicity_level == "private" %}
+        {% include "comments/types/private.html" with comment=tree.comment replies=tree.replies %}
+    {% elif tree.comment.author_id in muted_user_ids %}
         {% include "comments/types/muted.html" with comment=tree.comment replies=tree.replies %}
     {% elif tree.comment.is_pinned %}
         {% include "comments/types/bold.html" with comment=tree.comment replies=tree.replies %}
@@ -8,9 +10,5 @@
         {% include "comments/types/battle.html" with comment=tree.comment replies=tree.replies %}
     {% else %}
         {% include "comments/types/normal.html" with comment=tree.comment replies=tree.replies %}
-    {% endif %}
-
-    {% if post.is_commentable and me %}
-        {% include "comments/forms/reply.html" with comment=tree.comment reply_form=reply_form %}
     {% endif %}
 {% endfor %}

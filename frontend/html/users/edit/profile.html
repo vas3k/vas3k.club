@@ -5,6 +5,10 @@
     Редактирование профиля — {{ block.super }}
 {% endblock %}
 
+{% block css %}
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div class="content user-edit">
         <div class="form-title">😎<br>Редактирование профиля</div>
@@ -30,8 +34,8 @@
 
             <div class="block-description">
                 Сменить их можно, только <a href="mailto:club@vas3k.club">написав нам</a> на почту.
-                От частой смены этих настроек могут поломаться комментарии и уведомления у других пользователей,
-                потому пока мы предпочитаем делать это руками.
+                От смены этих настроек могут поломаться комментарии и всякие уведомления,
+                потому мы предпочитаем делать это руками.
             </div>
         </div>
 
@@ -65,16 +69,6 @@
                 </div>
 
                 <div class="form-row">
-                    <label for="{{ form.country.id_for_label }}" class="form-label">
-                        Страна и город
-                    </label>
-                    {{ form.country }} {{ form.city }}
-                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
-                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
-                    <span class="form-row-help">Вдруг мы решим собраться на митап или типа того</span>
-                </div>
-
-                <div class="form-row">
                     <label for="{{ form.bio.id_for_label }}" class="form-label">
                         Ссылочки на себя и всякое такое
                     </label>
@@ -85,7 +79,31 @@
                     </span>
                 </div>
 
-                <button type="submit" class="button button-big" {% if user.is_profile_public %}name="is_profile_public" value="1"{% endif %}>Сохранить изменения</button>
+                <div class="form-row">
+                    <label for="{{ form.country.id_for_label }}" class="form-label">
+                        Страна и город
+                    </label>
+                    {{ form.country }} {{ form.city }}
+                    {% if form.country.errors %}<span class="form-row-errors">{{ form.country.errors }}</span>{% endif %}
+                    {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
+                </div>
+
+                <div class="form-row">
+                    <label class="form-label">
+                        Где отображать вас на общей <strong><a href="{% url "people" %}">карте</a></strong>?
+                    </label>
+                    <location-select
+                        latitude-field-name="latitude"
+                        longitude-field-name="longitude"
+                        :default-latitude="{{ user.latitude | default:0.0 | stringformat:"f" }}"
+                        :default-longitude="{{ user.longitude | default:0.0 | stringformat:"f" }}"
+                    ></location-select>
+                    {% if form.latitude.errors %}<span class="form-row-errors">Latitude: {{ form.latitude.errors }}</span>{% endif %}
+                    {% if form.longitude.errors %}<span class="form-row-errors">Longitude: {{ form.longitude.errors }}</span>{% endif %}
+                    {% if form.geo.errors %}<span class="form-row-errors">Geo: {{ form.geo.errors }}</span>{% endif %}
+                </div>
+
+                <button type="submit" class="button button-big" name="profile_publicity_level" value="{{ user.profile_publicity_level }}">Сохранить изменения</button>
 
                 <div class="clearfix50"></div>
             </div>
@@ -93,33 +111,62 @@
             <div class="block">
                 <div class="block-header">🥷 Публичность профиля</div>
 
-                <div class="block-description block-description-center">
-                    {% if form.is_profile_public.errors %}
-                        <span class="form-row-errors">{{ form.is_profile_public.errors }}</span>
-                    {% endif %}
+                <div class="block-description">
+                    <p>
+                        Эта настройка влияет только на то, как видят вас люди, не зарегистрированные в Клубе. Для членов Клуба ваш профиль, интро и контакты всегда доступны.
+                    </p>
 
-                    {% if user.is_profile_public %}
-                        <p>
+                    <p>
+                        {% if user.profile_publicity_level == 'public' %}
                             Сейчас ваш профиль <strong>ОТКРЫТ</strong> для большого интернета по ссылке: <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}" target="_blank">{{ settings.APP_HOST }}{% url "profile" user.slug %}</a>
-                        </p>
-                        <p>
-                            Его могут индексировать поисковики и видеть люди без регистрации в Клубе. Можете посмотреть как он выглядит со стороны через инкогнито-мод в вашем браузере.
-                        </p>
-                    {% else %}
-                        <p>
-                            Сейчас ваш профиль <strong>ЗАКРЫТ</strong> для большого интернета. Его могут просматривать только члены Клуба.
-                        </p>
-                        <p>
-                            Вы можете сделать его видимым наружу. Комментарии при этом останутся скрытыми, но ваши контакты, интро, посты и награды будут видны всем.
-                        </p>
+                        {% else %}
+                            Сейчас ваш профиль <strong>СКРЫТ</strong> от большого интернета.
+                        {% endif %}
+
+                        Ваши комментарии в публичных постах {% if user.profile_publicity_level == 'private' %}<strong>НЕ ВИДНЫ</strong>{% else %}<strong>ВИДНЫ</strong>{% endif %}.
+                    </p>
+                </div>
+
+                <div class="block-description block-description-center">
+                    {% if form.profile_publicity_level.errors %}
+                        <span class="form-row-errors">{{ form.profile_publicity_level.errors }}</span>
                     {% endif %}
 
-                    {% if user.is_profile_public %}
-                        <button type="submit" class="button">Нет, скройте меня от большого интернета!</button>
-                    {% else %}
-                        <button type="submit" class="button button-red" name="is_profile_public" value="1">Да, я хочу публичности!</button>
-                    {% endif %}
+                    <div class="form-row">
+                        <div class="big-radio">
+                            <div class="big-radio-item">
+                                {{ form.profile_publicity_level.0.tag }}
+                                <label for="{{ form.profile_publicity_level.0.id_for_label }}" class="big-radio-label">
+                                    <i class="fas fa-ambulance"></i>
+                                    <span class="big-radio-title">{{ form.profile_publicity_level.0.choice_label }}</span>
+                                    <span class="big-radio-description">Скрывает ваши комменты и био в публичных постах. Не дает находить вас через бота.</span>
+                                </label>
+                            </div>
+                            <div class="big-radio-item">
+                                {{ form.profile_publicity_level.1.tag }}
+                                <label for="{{ form.profile_publicity_level.1.id_for_label }}" class="big-radio-label">
+                                    <i class="fas fa-smile"></i>
+                                    <span class="big-radio-title">{{ form.profile_publicity_level.1.choice_label }}</span>
+                                    <span class="big-radio-description">Профиль скрыт от интернета, но ваши комментарии в публичных постах видны</span>
+                                </label>
+                            </div>
+                            <div class="big-radio-item">
+                                {{ form.profile_publicity_level.2.tag }}
+                                <label for="{{ form.profile_publicity_level.2.id_for_label }}" class="big-radio-label">
+                                    <i class="fas fa-star"></i>
+                                    <span class="big-radio-title">{{ form.profile_publicity_level.2.choice_label }}</span>
+                                    <span class="big-radio-description">Профиль и интро видны даже из большого интернета, прям как соцсетка!</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>
+                        ⚠️ Приватность профиля не означает, что ваши данные не смогут украсть злые люди. Эта опция лишь усложняет жизнь ботам, но вас всё так же могут спалить другие люди.
+                    </p>
                 </div>
+
+                <button type="submit" class="button button-big">Сохранить настройки публичности</button>
 
                 <div class="clearfix50"></div>
             </div>

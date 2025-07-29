@@ -1,0 +1,22 @@
+{% load static %}
+
+<div class="godmode-form godmode-form-simple">
+    {% if title %}
+        <div class="godmode-header">{{ title }}</div>
+    {% endif %}
+
+    <div class="godmode-simple-form">
+        <form action="." method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for row in form %}
+                <div class="form-row">
+                    {{ row.label_tag }}
+                    {{ row }}
+                    {% if row.errors %}<span class="form-row-errors">{{ row.errors }}</span>{% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="button">Готово</button>
+        </form>
+    </div>
+</div>

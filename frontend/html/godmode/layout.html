@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    {{ title | default:"Админим" }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="container godmode" id="godmode">
+        <div class="godmode-container">
+            <div class="block godmode-sidebar godmode-groups">
+                <button class="godmode-mobile-menu-close" onclick="document.getElementById('godmode').classList.remove('mobile-menu-opened')">
+                    ✕
+                </button>
+                {% for group in admin.groups %}
+                    <div class="godmode-group">
+                        <div class="godmode-group-header">
+                            <span class="godmode-group-icon">{{ group.icon }}</span>
+                            <span class="godmode-group-name">{{ group.title }}</span>
+                        </div>
+                        <div class="godmode-group-items">
+                            {% for item in group.models %}
+                                <span class="godmode-group-item">
+                                    <span>→ </span>
+                                    <span class="godmode-item-icon">{{ item.icon }}</span>
+                                    <a href="{{ item.get_absolute_url }}" class="godmode-item-name" onclick="document.getElementById('godmode').classList.remove('mobile-menu-opened')">{{ item.title }}</a>
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="block godmode-content">
+                <button class="godmode-mobile-menu-toggle" onclick="document.getElementById('godmode').classList.toggle('mobile-menu-opened')">
+                    ≡ Админка
+                </button>
+                {% block godmode_content %}
+                     <div class="compose-types">
+                        <a href="{% url "godmode_show_page" "digest" %}" class="compose-type">
+                            <span class="compose-type-icon">📰</span>
+                            <span class="compose-type-name">Дайджест</span>
+                        </a>
+                        <a href="{% url "godmode_show_page" "invite" %}" class="compose-type">
+                            <span class="compose-type-icon">🎁</span>
+                            <span class="compose-type-name">Инвайты</span>
+                        </a>
+                        <a href="{% url "godmode_show_page" "mass_achievement" %}" class="compose-type">
+                            <span class="compose-type-icon">🥇</span>
+                            <span class="compose-type-name">Массовые ачивки</span>
+                        </a>
+                        <a href="{% url "mass_note" %}" class="compose-type">
+                            <span class="compose-type-icon">📝</span>
+                            <span class="compose-type-name">Массовые заметки</span>
+                        </a>
+                        <a href="{% url "godmode_show_page" "mass_email" %}" class="compose-type">
+                            <span class="compose-type-icon">💌</span>
+                            <span class="compose-type-name">Массовые рассылки</span>
+                        </a>
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

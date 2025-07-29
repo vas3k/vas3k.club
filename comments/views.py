@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -8,8 +9,9 @@ from django.views.decorators.http import require_http_methods
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
-from comments.forms import CommentForm, ReplyForm, BattleCommentForm
+from comments.forms import CommentForm, ReplyForm, BattleCommentForm, edit_form_class_for_comment
 from comments.models import Comment, CommentVote
+from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.request import parse_ip_address, parse_useragent
 from authn.decorators.api import api
 from posts.models.linked import LinkedPost
@@ -37,16 +39,14 @@ def create_comment(request, post_slug):
     else:
         ProperCommentForm = CommentForm
 
-    comment_order = request.POST.get("post_comment_order", "created_at")
-
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
         if form.is_valid():
-            is_ok = Comment.check_rate_limits(request.me)
-            if not is_ok:
+            if is_comment_rate_limit_exceeded(post, request.me):
                 raise RateLimitException(
                     title="🙅‍♂️ Вы комментируете слишком часто",
-                    message="Подождите немного, вы достигли своего лимита на комментарии в день.",
+                    message="Кажется, вы достигли своего лимита на количество комментариев в день. "
+                            "Пора притормозить и подумать действительно ли они того стоят...",
                     data={"saved_text": request.POST.get("text")},
                 )
 
@@ -79,12 +79,7 @@ def create_comment(request, post_slug):
             )
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
-            return redirect(
-                reverse("show_post", kwargs={
-                    "post_type": post.type,
-                    "post_slug": post.slug
-                }) + f"?comment_order={comment_order}#comment-{comment.id}"
-            )
+            return redirect(comment.get_absolute_url())
         else:
             log.error(f"Comment form error: {form.errors}")
             return render(request, "error.html", {
@@ -125,15 +120,15 @@ def edit_comment(request, comment_id):
                 message=f"Комментарий можно редактировать только в течение {hours} часов после создания"
             )
 
-        if not comment.post.is_visible or not comment.post.is_commentable:
+        if comment.post.is_draft or not comment.post.is_commentable:
             raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post
+    FormClass = edit_form_class_for_comment(comment)
 
     if request.method == "POST":
-        form = CommentForm(request.POST, instance=comment)
-        if post.type == Post.TYPE_BATTLE:
-            form = BattleCommentForm(request.POST, instance=comment)
+        form = FormClass(request.POST, instance=comment)
+
         if form.is_valid():
             comment = form.save(commit=False)
             comment.is_deleted = False
@@ -146,9 +141,7 @@ def edit_comment(request, comment_id):
 
             return redirect("show_comment", post.slug, comment.id)
     else:
-        form = CommentForm(instance=comment)
-        if post.type == Post.TYPE_BATTLE:
-            form = BattleCommentForm(instance=comment)
+        form = FormClass(instance=comment)
 
     return render(request, "comments/edit.html", {
         "comment": comment,
@@ -176,7 +169,7 @@ def delete_comment(request, comment_id):
                         "Потом только автор или модератор может это сделать."
             )
 
-        if not comment.post.is_visible:
+        if comment.post.visibility == Post.VISIBILITY_DRAFT:
             raise AccessDenied(
                 title="Пост скрыт!",
                 message="Нельзя удалять комментарии к скрытому посту"
@@ -200,6 +193,24 @@ def delete_comment(request, comment_id):
     Comment.update_post_counters(comment.post, update_activity=False)
 
     return redirect("show_comment", comment.post.slug, comment.id)
+
+
+@require_auth
+def delete_comment_thread(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if not request.me.is_moderator:
+        # only moderator can delete whole threads
+        raise AccessDenied(
+            title="Нельзя!",
+            message="Только модератор может удалять треды"
+        )
+
+    # delete child comments completely
+    Comment.objects.filter(Q(reply_to=comment) | Q(reply_to__reply_to=comment)).delete()
+    Comment.objects.filter(id=comment_id).delete()
+
+    return redirect("show_post", comment.post.type, comment.post.slug)
 
 
 @require_auth

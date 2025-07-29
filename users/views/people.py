@@ -17,7 +17,7 @@ TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60  # 24 hours
 
 @require_auth
 def people(request):
-    users = User.registered_members().order_by("-created_at").select_related("geo")  # joining with "geo" for map
+    users = User.registered_members().order_by("-created_at")
 
     query = request.GET.get("query")
     if query:

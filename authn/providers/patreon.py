@@ -127,7 +127,7 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
                 platform=Platform.patreon,
                 user_id=user_data["data"]["id"],
                 full_name=user_data["data"]["attributes"]["full_name"],
-                email=user_data["data"]["attributes"]["email"],
+                email=user_data["data"]["attributes"].get("email"),  # since 2024 may be optional =/
                 image=None,  # user_data["data"]["attributes"]["image_url"],
                 started_at=membership_started_at,
                 charged_at=last_charged_at,

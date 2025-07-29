@@ -60,8 +60,9 @@ class SearchIndex(models.Model):
 
         SearchIndex.objects.update_or_create(
             comment=comment,
+            type=SearchIndex.TYPE_COMMENT,
             defaults=dict(
-                type=SearchIndex.TYPE_COMMENT,
+                post_id=comment.post_id,
                 index=Comment.objects
                 .annotate(vector=vector)
                 .filter(id=comment.id)
@@ -79,11 +80,11 @@ class SearchIndex(models.Model):
                  + _multi_search_vector("author__slug", weight="C") \
                  + _multi_search_vector("room__title", weight="C")
 
-        if post.is_searchable:
+        if not post.is_draft:
             SearchIndex.objects.update_or_create(
                 post=post,
+                type=SearchIndex.TYPE_POST,
                 defaults=dict(
-                    type=SearchIndex.TYPE_POST,
                     index=Post.objects
                     .annotate(vector=vector)
                     .filter(id=post.id)
@@ -121,8 +122,8 @@ class SearchIndex(models.Model):
         if user.moderation_status == User.MODERATION_STATUS_APPROVED:
             SearchIndex.objects.update_or_create(
                 user=user,
+                type=SearchIndex.TYPE_USER,
                 defaults=dict(
-                    type=SearchIndex.TYPE_USER,
                     index=(user_index or "") + " " + (intro_index or ""),
                     created_at=user.created_at,
                     updated_at=datetime.utcnow(),
@@ -135,7 +136,7 @@ class SearchIndex(models.Model):
     def update_user_tags(cls, user):
         if user.moderation_status == User.MODERATION_STATUS_APPROVED:
             SearchIndex.objects.filter(user=user).update(
-                tags=list(UserTag.objects.filter(user=user).values_list("tag", flat=True)),
+                tags=list(UserTag.objects.filter(user=user).values_list("tag", flat=True))[:100],
             )
 
 

@@ -29,7 +29,7 @@ def command_random(update: Update, context: CallbackContext) -> None:
 
         post = Post.visible_objects() \
             .filter(published_at__lte=random_date, published_at__gte=random_date - timedelta(days=2)) \
-            .filter(is_approved_by_moderator=True) \
+            .filter(moderation_status=Post.MODERATION_APPROVED) \
             .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
             .order_by("?") \
             .first()

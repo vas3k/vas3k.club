@@ -1,14 +1,14 @@
 {% if not form.instance.is_safely_deletable_by_author %}
-<div class="form-row form-row-space-between">
-    <div class="block form-warning">
-        💬 В посте уже набралось больше {{ settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR }} комментариев.
-        Из уважения к их авторам, кнопка удаления поста превратилась в очистку и анонимизацию.
+    <div class="form-row form-row-space-between">
+        <div class="block form-warning">
+            💬 В посте уже набралось больше {{ settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR }} комментариев.
+            Из уважения к их авторам, кнопка удаления поста превратилась в очистку и анонимизацию.
+        </div>
     </div>
-</div>
 {% endif %}
 
 <div class="form-row form-row-space-between">
-    {% if not form.instance.is_visible %}
+    {% if form.instance.visibility == "draft" %}
         <button type="submit" class="button button-inverted">
             Сохранить черновик
         </button>
@@ -28,6 +28,7 @@
                 Удалить пост
             </a>
         {% endif %}
+
         {% if not form.instance.is_safely_deletable_by_author or request.me.is_moderator %}
             <a href="{% url "clear_post" form.instance.slug %}" class="button button-inverted" onclick="return confirm('Очищаем пост?')">
                 Очистить пост

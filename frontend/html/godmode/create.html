@@ -1,0 +1,46 @@
+{% extends "godmode/layout.html" %}
+{% load static %}
+{% load godmode_filters %}
+
+{% block title %}
+Новый {{ admin_model.name }} — {{ block.super }}
+{% endblock %}
+
+{% block godmode_content %}
+    <div class="godmode-edit">
+        <div class="godmode-header">
+            <span class="godmode-icon">{{ admin_model.icon }}</span>
+            <span class="godmode-title">Новый {{ admin_model.name }}</span>
+        </div>
+
+        <form action="." method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="godmode-form">
+                {% for field in form %}
+                <div class="godmode-form-row">
+                    <div class="godmode-form-label">{{ field.label_tag }}</div>
+                    <div class="godmode-form-input">
+                        <div>{{ field }}</div>
+                        <div class="godmode-form-help">
+                            {% if field.help_text %}
+                            <span class="form-row-help">{{ field.help_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if field.errors %}
+                    <div class="godmode-form-errors">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="godmode-form-actions">
+                    <a href="{% url 'godmode_list_model' model_name=admin_model.name %}" class="button button-inverted">
+                        ← Назад к списку
+                    </a>
+                    <button type="submit" class="button">Создать</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

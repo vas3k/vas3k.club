@@ -42,7 +42,7 @@
                                 <span class="label-title">Удалённый пост</span>
                             </span>
                         </div>
-                    {% elif not post.is_visible %}
+                    {% elif post.visibility == "draft" %}
                         <div class="post-label">
                             {% include "posts/widgets/draft_label.html" %}
                         </div>

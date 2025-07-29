@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management import BaseCommand
+from django.db import OperationalError
 
 from comments.models import Comment
 from posts.models.post import Post
@@ -21,19 +22,29 @@ class Command(BaseCommand):
         indexed_user_count = 0
 
         for chunk in chunked_queryset(
-            Comment.visible_objects().filter(is_deleted=False, post__is_visible=True)
+            Comment.visible_objects().filter(is_deleted=False, post__visibility=Post.VISIBILITY_EVERYWHERE)
         ):
             for comment in chunk:
                 self.stdout.write(f"Indexing comment: {comment.id}")
-                SearchIndex.update_comment_index(comment)
+
+                try:
+                    SearchIndex.update_comment_index(comment)
+                except OperationalError as ex:
+                    log.exception("Failed to update comment index", exc_info=ex)
+                    continue
+
                 indexed_comment_count += 1
 
-        for chunk in chunked_queryset(
-            Post.visible_objects().filter(is_shadow_banned=False)
-        ):
+        for chunk in chunked_queryset(Post.visible_objects()):
             for post in chunk:
                 self.stdout.write(f"Indexing post: {post.slug}")
-                SearchIndex.update_post_index(post)
+
+                try:
+                    SearchIndex.update_post_index(post)
+                except OperationalError as ex:
+                    log.exception("Failed to update post index", exc_info=ex)
+                    continue
+
                 indexed_post_count += 1
 
         for chunk in chunked_queryset(
@@ -41,8 +52,19 @@ class Command(BaseCommand):
         ):
             for user in chunk:
                 self.stdout.write(f"Indexing user: {user.slug}")
-                SearchIndex.update_user_index(user)
-                SearchIndex.update_user_tags(user)
+
+                try:
+                    SearchIndex.update_user_index(user)
+                except OperationalError as ex:
+                    log.exception("Failed to update user index", exc_info=ex)
+                    continue
+
+                try:
+                    SearchIndex.update_user_tags(user)
+                except OperationalError as ex:
+                    log.exception("Failed to update user tags", exc_info=ex)
+                    continue
+
                 indexed_user_count += 1
 
         self.stdout.write(

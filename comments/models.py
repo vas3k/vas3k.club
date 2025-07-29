@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.db import models
 from django.db.models import F
+from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
 from club.exceptions import NotFound, BadRequest
@@ -60,11 +61,12 @@ class Comment(models.Model):
 
     class Meta:
         db_table = "comments"
-        ordering = ["created_at"]
+        ordering = ["-created_at"]
 
     def to_dict(self):
         return {
             "id": str(self.id),
+            "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "text": self.text,
             "author": self.author.to_dict(),
             "reply_to_id": self.reply_to_id,
@@ -88,6 +90,12 @@ class Comment(models.Model):
         self.is_deleted = False
         self.deleted_by = None
         self.save()
+
+    def get_absolute_url(self):
+        return reverse("show_post", kwargs={
+            "post_type": self.post.type,
+            "post_slug": self.post.slug
+        }) + f"#comment-{self.id}"
 
     def increment_vote_count(self):
         return Comment.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
@@ -121,6 +129,7 @@ class Comment(models.Model):
     def visible_objects(cls, show_deleted=False):
         comments = cls.objects\
             .filter(is_visible=True)\
+            .order_by("created_at")\
             .select_related("author", "post", "reply_to")
 
         if not show_deleted:
@@ -159,19 +168,6 @@ class Comment(models.Model):
                 return parent
 
         raise NotFound(title="Родительский коммент не найден")
-
-    @classmethod
-    def check_rate_limits(cls, user):
-        if user.is_moderator:
-            return True
-
-        day_comment_count = Comment.visible_objects()\
-            .filter(
-                author=user, created_at__gte=datetime.utcnow() - timedelta(hours=24)
-            )\
-            .count()
-
-        return day_comment_count < settings.RATE_LIMIT_COMMENTS_PER_DAY
 
 
 class CommentVote(models.Model):
@@ -233,5 +229,6 @@ class CommentVote(models.Model):
                 comment.author.decrement_vote_count()
 
                 return True if is_vote_deleted > 0 else False
+            return False
         except CommentVote.DoesNotExist:
             return False

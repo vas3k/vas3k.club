@@ -18,7 +18,7 @@ from utils.strings import random_hash
 
 @require_auth
 def profile_settings(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("profile_settings", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -30,7 +30,7 @@ def profile_settings(request, user_slug):
 
 @require_auth
 def edit_profile(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("edit_profile", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -44,7 +44,6 @@ def edit_profile(request, user_slug):
             user.save()
 
             SearchIndex.update_user_index(user)
-            Geo.update_for_user(user, fuzzy=True)
     else:
         form = ProfileEditForm(instance=user)
 
@@ -53,7 +52,7 @@ def edit_profile(request, user_slug):
 
 @require_auth
 def edit_account(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("edit_account", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -70,7 +69,7 @@ def edit_account(request, user_slug):
 
 @require_auth
 def edit_notifications(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("edit_notifications", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -91,7 +90,7 @@ def edit_notifications(request, user_slug):
 
 @require_auth
 def edit_payments(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("edit_payments", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -127,7 +126,7 @@ def edit_payments(request, user_slug):
 
 @require_auth
 def edit_bot(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("edit_bot", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)
@@ -139,7 +138,7 @@ def edit_bot(request, user_slug):
 
 @require_auth
 def edit_data(request, user_slug):
-    if user_slug == "me":
+    if user_slug == "me" and request.me:
         return redirect("edit_data", request.me.slug, permanent=False)
 
     user = get_object_or_404(User, slug=user_slug)

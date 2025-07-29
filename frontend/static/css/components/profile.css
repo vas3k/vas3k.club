@@ -6,22 +6,35 @@
 }
 
     .profile-card {
+        break-inside: avoid;
         vertical-align: middle;
         color: var(--opposite-text-color);
         background-color: var(--opposite-bg-color);
     }
 
-        .profile-card a {
-            color: var(--opposite-text-color);
+        .profile-card-photo {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-            .profile-card a:hover {
-                color: var(--opposite-text-color);
-            }
-
-        .profile-card-photo {
-            display: block;
-            text-align: left;
+        .profile-card-age {
+            font-size: 90%;
+            max-width: 60%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 3px;
+            line-height: 1.1em;
+            border-radius: 5px;
+            min-width: 25px;
+            padding: 6px 5px 6px;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            position: relative;
+            top: -17px;
         }
 
         .profile-card-info {
@@ -35,16 +48,21 @@
 
         .profile-user-avatar {
             display: block;
-            width: 200px;
-            height: 200px;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio (Safari doesn't support an actual property) */
             margin: 0 auto;
+            position: relative;
         }
 
-        .profile-user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+            .profile-user-avatar img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
 
         .profile-user-name {
             display: block;
@@ -57,12 +75,14 @@
 
             .profile-user-fullname {
                 margin-right: 15px;
+                color: var(--opposite-text-color);
             }
 
             .profile-user-nickname {
                 font-weight: 300;
                 opacity: 0.4;
                 font-size: 88%;
+                color: var(--opposite-text-color);
             }
 
         .profile-user-job {
@@ -90,6 +110,10 @@
                 max-width: 200px;
             }
 
+            .profile-user-bio a {
+                color: var(--opposite-text-color);
+            }
+
     .profile-header {
         font-size: 150%;
         font-weight: 700;
@@ -112,6 +136,7 @@
         display: block;
         text-align: right;
         padding-bottom: 20px;
+        font-size: 120%;
     }
 
     .profile-statuses {
@@ -127,10 +152,6 @@
         margin-bottom: 30px;
         overflow: hidden;
     }
-
-        .profile-friend-button {
-
-        }
 
         .profile-friend-button-comment {
             font-size: 90%;
@@ -171,6 +192,11 @@
         .profile-status-text {
             display: block;
             font-size: 100%;
+        }
+
+        .profile-status-text-small {
+            display: block;
+            font-size: 60%;
         }
 
         .profile-status-status {
@@ -241,6 +267,7 @@
             color: #FFF;
             height: 210px;
             perspective: 1000px;
+            transition: 0.2s ease-out;
         }
 
             .user-achievement:hover {
@@ -260,6 +287,7 @@
                 text-align: center;
                 transition: transform 0.8s;
                 transform-style: preserve-3d;
+                overflow-wrap: break-word;
             }
 
             .user-badge-image {
@@ -313,98 +341,6 @@
             opacity: 0.6;
         }
 
-
-    .profile-expertise {
-        padding-top: 30px;
-        padding-bottom: 30px;
-        text-align: center;
-    }
-
-        .profile-expertise-add-button {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .profile-expertise-rows {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding-top: 20px;
-        }
-
-        .user-expertise-row {
-            width: 45%;
-            padding-top: 20px;
-            padding-bottom: 30px;
-        }
-
-            @media only screen and (max-width : 570px) {
-                .user-expertise-row {
-                    width: 100%;
-                }
-            }
-
-            .user-expertise-row-name {
-                font-size: 120%;
-                font-weight: 500;
-                padding-bottom: 10px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-                .user-expertise-delete {
-                    display: none;
-                    font-size: 80%;
-                    text-decoration: none;
-                }
-
-                    .user-expertise-row:hover .user-expertise-delete {
-                        display: inline;
-                    }
-
-            .user-expertise-row-bar {
-                display: block;
-                position: relative;
-                width: 100%;
-                height: 20px;
-                border-radius: 20px;
-                overflow: hidden;
-                border: solid 2px var(--opposite-bg-color);
-            }
-
-                .user-expertise-row-bar-inner {
-                    display: block;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 20px;
-                    background-color: var(--opposite-bg-color);
-                }
-
-    .window-expertise {
-        width: 95%;
-        max-width: 500px;
-    }
-
-        .edit-expertise {
-            width: 80%;
-            margin: 0 auto;
-            text-align: center;
-            padding: 40px 20px 20px;
-        }
-
-        .edit-expertise-select,
-        .edit-expertise-custom {
-            width: 100%;
-            margin-bottom: 20px;
-            font-size: 140%;
-        }
-
-        .edit-expertise-value {
-            width: 100%;
-            font-size: 110%;
-        }
-
     .profile-tags {
         padding-top: 30px;
         padding-bottom: 30px;
@@ -441,6 +377,7 @@
                 text-align: center;
                 opacity: 0.7;
                 z-index: 100;
+                transition: 0.2s ease-out;
             }
 
                 .user-tag:hover,
@@ -593,3 +530,20 @@
             .profile-note-extended .profile-note-form {
                 display: flex;
             }
+
+.friend-button {
+    position: relative;
+    top: -15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 17px;
+}
+
+    .friend-button-icon-big {
+        font-weight: 700;
+        font-size: 27px;
+        height: 20px;
+    }

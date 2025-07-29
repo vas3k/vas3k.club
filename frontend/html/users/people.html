@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" media="print" onload="this.media='all'; this.onload=null;">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -106,7 +106,7 @@
 
                         <div class="people-filters-tag">
                             <input type="checkbox" name="filters" value="friends" id="filter_friends" {% if "friends" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
-                            <label for="filter_friends">🤝 Мои чуваки</label>
+                            <label for="filter_friends">🤝 Мои подписки</label>
                         </div>
 
                         <div class="people-filters-header">Путешествия</div>

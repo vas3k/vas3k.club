@@ -6,7 +6,7 @@ from users.models.friends import Friend
 from users.models.user import User
 
 
-class Muted(models.Model):
+class UserMuted(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -18,6 +18,7 @@ class Muted(models.Model):
     class Meta:
         db_table = "muted"
         unique_together = [["user_from", "user_to"]]
+        ordering = ["-created_at"]
 
     @classmethod
     def mute(cls, user_from, user_to, comment=None):

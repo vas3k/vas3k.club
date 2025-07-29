@@ -2,18 +2,18 @@ from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_http_methods
+from django_q.tasks import async_task
 
 from authn.helpers import check_user_permissions
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from authn.decorators.api import api
+from notifications.telegram.posts import send_published_post_to_moderators, notify_author_friends, \
+    announce_in_online_channel, send_intro_changes_to_moderators
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from posts.models.views import PostView
-from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
 
@@ -57,7 +57,7 @@ def show_post(request, post_type, post_slug):
     }, key=lambda p: p.upvotes, reverse=True)
 
     # force cleanup deleted/hidden posts from linked
-    linked_posts = [p for p in linked_posts if p.is_visible]
+    linked_posts = [p for p in linked_posts if not p.is_draft]
 
     return render_post(request, post, {
         "post_last_view_at": last_view_at,
@@ -111,71 +111,10 @@ def delete_post(request, post_slug):
     return redirect("compose")
 
 
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def upvote_post(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-
-    post_vote, is_vote_created = PostVote.upvote(
-        user=request.me,
-        post=post,
-        request=request,
-    )
-
-    return {
-        "post": {
-            "upvotes": post.upvotes + (1 if is_vote_created else 0),
-        },
-        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000) if post_vote else 0
-    }
-
-
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def retract_post_vote(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-
-    is_retracted = PostVote.retract_vote(
-        request=request,
-        user=request.me,
-        post=post,
-    )
-
-    return {
-        "success": is_retracted,
-        "post": {
-            "upvotes": post.upvotes - (1 if is_retracted else 0)
-        }
-    }
-
-
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def toggle_post_subscription(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-
-    subscription, is_created = PostSubscription.subscribe(
-        user=request.me,
-        post=post,
-        type=PostSubscription.TYPE_TOP_LEVEL_ONLY,
-    )
-
-    if not is_created:
-        # already exist? remove it
-        PostSubscription.unsubscribe(
-            user=request.me,
-            post=post,
-        )
-
-    return {
-        "status": "created" if is_created else "deleted"
-    }
-
-
 @require_auth
 def compose(request):
     drafts = Post.objects\
-        .filter(is_visible=False, deleted_at__isnull=True)\
+        .filter(visibility=Post.VISIBILITY_DRAFT, deleted_at__isnull=True)\
         .filter(Q(author=request.me) | Q(coauthors__contains=[request.me.slug]))[:100]
 
     return render(request, "posts/compose/compose.html", {
@@ -202,6 +141,9 @@ def edit_post(request, post_slug):
 
 def create_or_edit(request, post_type, post=None, mode="create"):
     FormClass = POST_TYPE_MAP.get(post_type) or PostTextForm
+
+    if post_type == Post.TYPE_DOCS and not request.me.is_god:
+        raise AccessDenied("Вы не можете создавать или редактировать доки :(")
 
     # show blank form on GET
     if request.method != "POST":
@@ -237,20 +179,30 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.html = None  # flush cache
         post.save()
 
-        if mode == "create" or not post.is_visible:
+        # create new post
+        if mode == "create" or post.is_draft:
             PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
-        if post.is_visible:
+        # publish post for the first time
+        action = request.POST.get("action")
+        if action == "publish":
+            post.publish()
+
+            async_task(send_published_post_to_moderators, post=post)
+            async_task(notify_author_friends, post=post)
+            async_task(announce_in_online_channel, post=post)
+
+        # update post and room stats
+        if post.visibility != Post.VISIBILITY_DRAFT:
             if post.room:
                 post.room.update_last_activity()
 
             SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)
 
-        action = request.POST.get("action")
-        if action == "publish":
-            post.publish()
-            LinkedPost.create_links_from_text(post, post.text)
+        # track intro changes
+        if post.type == Post.TYPE_INTRO and not post.is_draft:
+            async_task(send_intro_changes_to_moderators, post=post)
 
         return redirect("show_post", post.type, post.slug)
 

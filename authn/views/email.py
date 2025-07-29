@@ -22,46 +22,24 @@ def email_login(request):
 
     email_or_login = email_or_login.strip()
 
-    if "|-" in email_or_login:
-        # secret_hash login
-        email_part, secret_hash_part = email_or_login.split("|-", 1)
-        user = User.objects.filter(email=email_part, secret_hash=secret_hash_part).first()
-        if not user:
-            return render(request, "error.html", {
-                "title": "Такого юзера нет 🤔",
-                "message": "Пользователь с таким кодом не найден. "
-                           "Попробуйте авторизоваться по обычной почте или юзернейму.",
-            }, status=404)
+    user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
+    if not user:
+        return render(request, "error.html", {
+            "title": "Такого юзера нет 🤔",
+            "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
+                       "Попробуйте другую почту или никнейм. "
+                       "Если совсем ничего не выйдет, напишите нам, попробуем помочь.",
+        }, status=404)
 
-        if user.deleted_at:
-            # cancel user deletion
-            user.deleted_at = None
-            user.save()
+    code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
+    async_task(send_auth_email, user, code)
+    async_task(notify_user_auth, user, code)
 
-        session = Session.create_for_user(user)
-        redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
-        response = redirect(redirect_to)
-        return set_session_cookie(response, user, session)
-    else:
-        # email/nickname login
-        user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
-        if not user:
-            return render(request, "error.html", {
-                "title": "Такого юзера нет 🤔",
-                "message": "Пользователь с такой почтой не найден в списке членов Клуба. "
-                           "Попробуйте другую почту или никнейм. "
-                           "Если совсем ничего не выйдет, напишите нам, попробуем помочь.",
-            }, status=404)
-
-        code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
-        async_task(send_auth_email, user, code)
-        async_task(notify_user_auth, user, code)
-
-        return render(request, "auth/email.html", {
-            "email": user.email,
-            "goto": goto,
-            "restore": user.deleted_at is not None,
-        })
+    return render(request, "auth/email.html", {
+        "email": user.email,
+        "goto": goto,
+        "restore": user.deleted_at is not None,
+    })
 
 
 def email_login_code(request):

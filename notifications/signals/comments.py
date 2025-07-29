@@ -8,9 +8,10 @@ from club import settings
 from notifications.telegram.common import Chat, send_telegram_message, render_html_message, CLUB_ONLINE, ADMIN_CHAT
 from comments.models import Comment
 from common.regexp import USERNAME_RE
+from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from users.models.friends import Friend
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from users.models.user import User
 
 
@@ -25,7 +26,7 @@ def create_or_update_comment(sender, instance, created, **kwargs):
 def async_create_or_update_comment(comment):
     notified_user_ids = set()
     muted_author_user_ids = set(
-        Muted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)
+        UserMuted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)
     )
 
     comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
@@ -72,14 +73,14 @@ def async_create_or_update_comment(comment):
             notified_user_ids.add(thread_author.id)
 
     # post top level comments to "online" channel
-    if not comment.reply_to and comment.post.is_visible and comment.post.is_visible_in_feeds:
+    if not comment.reply_to and comment.post.visibility not in [Post.VISIBILITY_DRAFT, Post.VISIBILITY_LINK_ONLY]:
         send_telegram_message(
             chat=CLUB_ONLINE,
             text=render_html_message("channel_comment_announce.html", comment=comment),
         )
 
     # post top level comments to "rooms" (if necessary)
-    if not comment.reply_to and comment.post.is_visible:
+    if not comment.reply_to and not comment.post.is_draft:
         if comment.post.room_id and comment.post.room.chat_id and comment.post.room.send_new_comments_to_chat:
             send_telegram_message(
                 chat=Chat(id=comment.post.room.chat_id),

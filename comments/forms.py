@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from comments.models import Comment
+from posts.models.post import Post
 
 
 class CommentForm(forms.ModelForm):
@@ -18,7 +19,7 @@ class CommentForm(forms.ModelForm):
         ),
     )
     subscribe_to_post = forms.BooleanField(
-        label="подписаться на новые комментарии",
+        label="подписаться на комментарии",
         label_suffix="",
         initial=True,
         required=False,
@@ -90,7 +91,7 @@ class BattleCommentForm(forms.ModelForm):
         ),
     )
     subscribe_to_post = forms.BooleanField(
-        label="подписаться на новые комментарии",
+        label="подписаться на комментарии",
         label_suffix="",
         initial=True,
         required=False,
@@ -111,3 +112,12 @@ class BattleCommentForm(forms.ModelForm):
             }
         }
         return cleaned_data
+
+
+def edit_form_class_for_comment(comment):
+    if comment.reply_to:
+        return ReplyForm
+    elif comment.post.type == Post.TYPE_BATTLE:
+        return BattleCommentForm
+    else:
+        return CommentForm

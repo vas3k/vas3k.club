@@ -3,14 +3,14 @@ from urllib.parse import urlencode
 from django import template
 from django.conf import settings
 from django.template import loader
-from django.template.defaultfilters import truncatechars
+from django.template.defaultfilters import truncatechars, truncatechars_html
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
 from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
 from common.regexp import FAVICON_RE
-from common.markdown.markdown import markdown_text, markdown_plain
+from common.markdown.markdown import markdown_text, markdown_plain, markdown_tg
 from posts.helpers import extract_any_image
 from posts.models.post import Post
 
@@ -19,6 +19,9 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def css_classes(context, post):
+    if not post:
+        return ""
+
     classes = [f"feed-post-{post.type}"]
     me = context.get("me")
 
@@ -52,6 +55,29 @@ def render_plain(context, post, truncate=None):
     result = mark_safe(strip_tags(markdown_plain(post.text)))
     if truncate:
         result = truncatechars(result, truncate)
+    return result
+
+
+@register.simple_tag()
+def render_tg(text, truncate=None):
+    result = mark_safe(markdown_tg(text))
+    if truncate:
+        # HACK: `truncatechars_html` ignores HTML tag length, but Telegram counts it
+        # ensure the total length (including tags) stays within Telegram's limit
+        desired_length = truncate
+        attempt = 0
+        max_attempts = 30
+        while len(result) > int(desired_length):
+            attempt += 1
+            if attempt > max_attempts:
+                return result  # just to make sure we won't hang in an endless loop
+            result = truncatechars_html(result, truncate)
+            truncate -= 100
+
+    if "\n" in result:
+        # ensure visual separation from previous block when rendered multiline comments
+        result = mark_safe("\n" + result)
+
     return result
 
 
@@ -128,3 +154,7 @@ def og_image(post):
     })
 
     return f"{settings.OG_IMAGE_GENERATOR_URL}?{params}"
+
+@register.filter
+def human_readable_timezone(timezone):
+    return dict(settings.SUPPORTED_TIME_ZONES).get(timezone)

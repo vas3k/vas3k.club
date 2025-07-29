@@ -96,4 +96,12 @@ LABELS = {
         "color": "#f75990",
         "notify": False
     },
+    "post_of_month": {
+        "title": "Пост месяца",
+        "description": "Попал в топ-3 постов месяца",
+        "emoji": "🏆",
+        "color": "#4A4F9E",
+        "related_achievement": "post_of_month",
+        "notify": True
+    },
 }

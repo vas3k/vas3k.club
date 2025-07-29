@@ -6,10 +6,11 @@ from authn.models.session import Session, Code
 from bookmarks.models import PostBookmark
 from comments.models import Comment
 from posts.models.post import Post
+from rooms.helpers import ban_user_in_all_chats
+from rooms.models import RoomSubscription, RoomMuted
 from users.models.achievements import UserAchievement
-from users.models.expertise import UserExpertise
 from users.models.friends import Friend
-from users.models.mute import Muted
+from users.models.mute import UserMuted
 from tags.models import UserTag
 from users.models.user import User
 from utils.strings import random_string
@@ -43,11 +44,14 @@ def delete_user_data(user: User):
     user.membership_platform_data = None
     user.save()
 
+    # delete from chats
+    ban_user_in_all_chats(user=user, is_permanent=False)
+
     # delete intro
     Post.objects.filter(author=user, type=Post.TYPE_INTRO).delete()
 
     # delete draft and unpublished posts
-    Post.objects.filter(author=user, is_visible=False).delete()
+    Post.objects.filter(author=user, visibility=Post.VISIBILITY_DRAFT).delete()
 
     # remove user from coauthors
     posts = Post.objects.filter(coauthors__contains=[old_slug])
@@ -61,7 +65,7 @@ def delete_user_data(user: User):
     # transfer visible post ownership to "@deleted" user
     deleted_user = User.objects.filter(slug=settings.DELETED_USERNAME).first()
     if deleted_user:
-        Post.objects.filter(author=user, is_visible=True).update(author=deleted_user)
+        Post.objects.filter(author=user).update(author=deleted_user)
 
     # replace nickname in replies
     new_slug = str(user.slug)
@@ -75,11 +79,15 @@ def delete_user_data(user: User):
     # drop related data
     UserAchievement.objects.filter(user=user).delete()
     UserTag.objects.filter(user=user).delete()
-    UserExpertise.objects.filter(user=user).delete()
     Session.objects.filter(user=user).delete()
     Code.objects.filter(user=user).delete()
     PostBookmark.objects.filter(user=user).delete()
     Friend.objects.filter(user_from=user).delete()
     Friend.objects.filter(user_to=user).delete()
-    Muted.objects.filter(user_from=user).delete()
-    Muted.objects.filter(user_to=user).delete()
+    UserMuted.objects.filter(user_from=user).delete()
+    UserMuted.objects.filter(user_to=user).delete()
+    RoomSubscription.objects.filter(user=user).delete()
+    RoomMuted.objects.filter(user=user).delete()
+
+    # delete from chats
+    ban_user_in_all_chats(user, is_permanent=True)

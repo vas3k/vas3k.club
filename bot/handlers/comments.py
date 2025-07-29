@@ -4,25 +4,38 @@ from django.urls import reverse
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
-from bot.handlers.common import get_club_user, COMMENT_EMOJI_RE, POST_EMOJI_RE, get_club_comment, get_club_post
+from bot.config import MIN_COMMENT_LEN, SKIP_COMMANDS, COMMENT_EMOJI_RE, POST_EMOJI_RE
+from bot.handlers.common import get_club_user, get_club_comment, get_club_post
 from bot.decorators import is_club_member
 from club import settings
 from comments.models import Comment
+from comments.rate_limits import is_comment_rate_limit_exceeded
 from posts.models.post import Post
 from posts.models.linked import LinkedPost
+from posts.models.views import PostView
+from search.models import SearchIndex
 
 log = logging.getLogger(__name__)
 
-MIN_COMMENT_LEN = 40
-
 
 def comment(update: Update, context: CallbackContext) -> None:
-    if not update.message \
-            or not update.message.reply_to_message \
-            or not update.message.reply_to_message.text:
+    log.info("Comment handler triggered")
+
+    if not update.message or not update.message.reply_to_message:
+        log.info("Not a reply. Skipping.")
         return None
 
-    reply_text_start = update.message.reply_to_message.text[:10]
+    if update.message.reply_to_message.from_user.id != context.bot.id:
+        log.info("Reply to another user. Skipping.")
+        return
+
+    reply_text_start = (
+        update.message.reply_to_message.text or
+        update.message.reply_to_message.caption or
+        ""
+    )[:10]
+
+    log.info("Original message start: %s", reply_text_start)
 
     if COMMENT_EMOJI_RE.match(reply_text_start):
         return reply_to_comment(update, context)
@@ -31,21 +44,25 @@ def comment(update: Update, context: CallbackContext) -> None:
         return comment_to_post(update, context)
 
     # skip normal replies
+    log.info("Skipping...")
     return None
 
 
 @is_club_member
 def reply_to_comment(update: Update, context: CallbackContext) -> None:
+    log.info("Reply_to_comment handler triggered")
+
     user = get_club_user(update)
     if not user:
+        log.info("User not found")
         return None
 
     comment = get_club_comment(update)
     if not comment:
+        log.info("Original comment not found. Skipping.")
         return None
 
-    is_ok = Comment.check_rate_limits(user)
-    if not is_ok:
+    if is_comment_rate_limit_exceeded(comment.post, user):
         update.message.reply_text(
             f"🙅‍♂️ Извините, вы комментировали слишком часто и достигли дневного лимита"
         )
@@ -57,6 +74,10 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
             f"😣 Сорян, я пока умею только в текстовые реплаи"
         )
         return None
+
+    for skip_word in SKIP_COMMANDS:
+        if skip_word in text:
+            return None
 
     # max 3 levels of comments are allowed
     reply_to_id = comment.id
@@ -73,6 +94,16 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
             "telegram": update.to_dict()
         }
     )
+    Comment.update_post_counters(reply.post)
+    PostView.increment_unread_comments(reply)
+    PostView.register_view(
+        request=None,
+        user=user,
+        post=reply.post,
+    )
+    SearchIndex.update_comment_index(reply)
+    LinkedPost.create_links_from_text(reply.post, text)
+
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
         "comment_id": reply.id
@@ -84,19 +115,23 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
         disable_web_page_preview=True
     )
 
+    return None
+
 
 @is_club_member
 def comment_to_post(update: Update, context: CallbackContext) -> None:
+    log.info("Reply_to_post handler triggered")
+
     user = get_club_user(update)
     if not user:
+        log.info("User not found")
         return None
 
     post = get_club_post(update)
     if not post or post.type in [Post.TYPE_BATTLE, Post.TYPE_WEEKLY_DIGEST]:
         return None
 
-    is_ok = Comment.check_rate_limits(user)
-    if not is_ok:
+    if is_comment_rate_limit_exceeded(post, user):
         update.message.reply_text(
             f"🙅‍♂️ Извините, вы комментировали слишком часто и достигли дневного лимита"
         )
@@ -108,11 +143,11 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
             f"😣 Сорян, я пока умею только в текстовые реплаи"
         )
         return None
-        
-    for skip_word in ("/skip","#skip","#ignore"):
+
+    for skip_word in SKIP_COMMANDS:
         if skip_word in text:
             return None
-            
+
     if len(text) < MIN_COMMENT_LEN:
         update.message.reply_text(
             f"😋 Твой коммент слишком короткий. Не буду постить его в Клуб, пускай остается в чате"
@@ -128,6 +163,14 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
             "telegram": update.to_dict()
         }
     )
+    Comment.update_post_counters(post)
+    PostView.increment_unread_comments(reply)
+    PostView.register_view(
+        request=None,
+        user=user,
+        post=post,
+    )
+    SearchIndex.update_comment_index(reply)
     LinkedPost.create_links_from_text(post, text)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
@@ -140,3 +183,5 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True
     )
+
+    return None

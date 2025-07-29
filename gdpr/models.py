@@ -23,6 +23,7 @@ class DataRequests(models.Model):
 
     class Meta:
         db_table = "data_requests"
+        ordering = ["-created_at"]
 
     @classmethod
     def register_archive_request(cls, user):

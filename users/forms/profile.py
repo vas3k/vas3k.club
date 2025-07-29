@@ -1,12 +1,9 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 from common.data.countries import COUNTRIES
-from common.data.expertise import EXPERTISE
 from posts.models.post import Post
 from users.models.user import User
-from users.models.expertise import UserExpertise
 from common.forms import ImageUploadField
 
 
@@ -27,6 +24,17 @@ class ProfileEditForm(ModelForm):
         choices=COUNTRIES,
         required=True
     )
+    latitude = forms.FloatField(
+        label="Широта",
+        required=True,
+    )
+    longitude = forms.FloatField(
+        label="Долгота",
+        required=True,
+    )
+    geo = forms.JSONField(
+        required=False
+    )
     bio = forms.CharField(
         label="Ссылочки на себя и всякое такое",
         required=True,
@@ -43,8 +51,11 @@ class ProfileEditForm(ModelForm):
         required=True,
         max_length=128
     )
-    is_profile_public = forms.BooleanField(
-        label="Сделать мой профиль публичным",
+    profile_publicity_level = forms.ChoiceField(
+        label="Уровень публичности профиля",
+        choices=User.PUBLICITY_LEVELS,
+        initial=User.PUBLICITY_LEVEL_NORMAL,
+        widget=forms.RadioSelect(),
         required=False,
     )
 
@@ -57,16 +68,36 @@ class ProfileEditForm(ModelForm):
             "city",
             "country",
             "bio",
-            "is_profile_public",
+            "geo",
+            "profile_publicity_level",
         ]
 
-    def clean_is_profile_public(self):
-        new_value = self.cleaned_data["is_profile_public"]
-        old_value = self.instance.is_profile_public
+    def clean(self):
+        cleaned_data = super().clean()
+        latitude = cleaned_data.get("latitude")
+        longitude = cleaned_data.get("longitude")
+
+        if latitude and longitude:
+            cleaned_data["geo"] = {
+                "latitude": latitude,
+                "longitude": longitude,
+                "precise": True,
+            }
+        else:
+            cleaned_data["geo"] = None
+
+        return cleaned_data
+
+    def clean_profile_publicity_level(self):
+        new_value = self.cleaned_data["profile_publicity_level"]
+        old_value = self.instance.profile_publicity_level
 
         # update intro post visibility settings
         if new_value != old_value:
-            Post.objects.filter(author=self.instance, type=Post.TYPE_INTRO).update(is_public=new_value)
+            if new_value == User.PUBLICITY_LEVEL_PUBLIC:
+                Post.objects.filter(author=self.instance, type=Post.TYPE_INTRO).update(is_public=True)
+            else:
+                Post.objects.filter(author=self.instance, type=Post.TYPE_INTRO).update(is_public=False)
 
         return new_value
 
@@ -85,44 +116,3 @@ class NotificationsEditForm(ModelForm):
         fields = [
             "email_digest_type",
         ]
-
-
-class ExpertiseForm(ModelForm):
-    expertise = forms.ChoiceField(
-        label="Область",
-        required=True,
-        choices=EXPERTISE + [("custom", "[добавить своё]")],
-    )
-    expertise_custom = forms.CharField(
-        label="Свой вариант",
-        required=False,
-        max_length=32
-    )
-    value = forms.IntegerField(
-        label="Скилл",
-        min_value=0,
-        max_value=100,
-        required=True,
-        widget=forms.NumberInput(attrs={"type": "range", "step": "1"}),
-    )
-
-    class Meta:
-        model = UserExpertise
-        fields = ["expertise", "value"]
-
-    def clean(self):
-        super().clean()
-        custom_expertise = self.cleaned_data.get("expertise_custom")
-        if custom_expertise:
-            self.cleaned_data["expertise"] = UserExpertise.make_custom_expertise_slug(custom_expertise)
-
-        if not self.cleaned_data["expertise"]:
-            raise ValidationError("Name is required")
-
-    def save(self, commit=True):
-        instance = super().save(commit=commit)
-        custom_expertise = self.cleaned_data.get("expertise_custom")
-        if custom_expertise:
-            instance.name = custom_expertise
-        return instance
-

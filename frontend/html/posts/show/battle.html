@@ -18,7 +18,7 @@
                     <span class="label-title">Удалённый пост</span>
                 </span>
             </div>
-        {% elif not post.is_visible %}
+        {% elif post.visibility == "draft" %}
             <div class="post-label">
                 {% include "posts/widgets/draft_label.html" %}
             </div>
@@ -89,16 +89,16 @@
         {% battle_stats post comments %}
 
         {% if me and me.is_active_membership %}
-            <post-subscription
+            <toggle
                 url="{% url "toggle_post_subscription" post.slug %}"
                 {% if subscription %}is-active-by-default{% endif %}
                 class="post-comments-subscription"
             >
             подписка на аргументы
-            </post-subscription>
+            </toggle>
         {% endif %}
 
-        {% if not post.comment_count and post.is_commentable and post.is_visible %}
+        {% if post.is_commentable and not post.comment_count %}
             <div class="post-comments-title">
                 <a href="#comments" class="post-comments-count">
                     Аргументируйте первым 👇
@@ -107,12 +107,21 @@
         {% endif %}
 
         {% if comments %}
+            {% if post.is_commentable and me %}
+                <reply-form
+                    :reply-to="replyTo"
+                    comment-order="{{ comment_order }}"
+                    avatar-url="{{ me.get_avatar }}"
+                    username="{{ me.full_name }}"
+                    create-comment-url="{% url "create_comment" post.slug %}"
+                ></reply-form>
+            {% endif %}
             <div class="post-comments-list">
                 {% include "comments/list.html" with comments=comments reply_form=reply_form type="battle" %}
             </div>
         {% endif %}
 
-        {% if me and me.is_active_membership and post.is_commentable and post.is_visible or me.is_moderator %}
+        {% if me and me.is_active_membership and post.is_commentable or me.is_moderator %}
             <div class="post-comments-form">
                 {% include "comments/forms/battle.html" with post=post form=comment_form save_message="Отправить" %}
             </div>

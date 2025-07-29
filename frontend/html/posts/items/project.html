@@ -13,6 +13,10 @@
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
             {% endif %}
+
+            {% if post.is_waiting_for_moderation %}
+                {% include "posts/widgets/pending_moderation.html" %}
+            {% endif %}
         </div>
     </div>
 
@@ -62,6 +66,5 @@
         {% endif %}
 
         {% include "posts/widgets/bookmark_controls.html" %}
-
     </div>
 </article>

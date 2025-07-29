@@ -1,4 +1,7 @@
+from functools import wraps
+
 from django.conf import settings
+from django.db import close_old_connections
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
@@ -11,6 +14,9 @@ def is_moderator(callback):
         if update.effective_chat.id != int(settings.TELEGRAM_ADMIN_CHAT_ID):
             update.effective_chat.send_message("❌ Для этого действия нужно быть в чате модераторов")
             return None
+
+        # HACK: remove when you figure out how to fix it
+        close_old_connections()
 
         moderator = User.objects.filter(telegram_id=update.effective_user.id).first()
         if not moderator or not moderator.is_moderator:
@@ -40,4 +46,15 @@ def is_club_member(callback):
 
         return callback(update, context, *args, **kwargs)
 
+    return wrapper
+
+
+def ensure_fresh_db_connection(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        close_old_connections()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            close_old_connections()
     return wrapper

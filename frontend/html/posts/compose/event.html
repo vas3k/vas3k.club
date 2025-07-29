@@ -1,18 +1,22 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% if mode == "edit" %}
-        Событие — {{ block.super }}
-    {% else %}
+    {% if mode == "create" %}
         Новое событие — {{ block.super }}
+    {% else %}
+        Событие — {{ block.super }}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="content compose">
-        <div class="content-header">Событие</div>
-
         {% if mode == "create" %}
+            <div class="content-header">Новое событие</div>
+        {% else %}
+            <div class="content-header">Редактируем событие</div>
+        {% endif %}
+
+        {% if mode == "create" or form.instance.visibility == "draft" %}
             <div class="content-description">
                 <p>
                     🎉 Место для анонса событий внутри Клуба.
@@ -65,7 +69,7 @@
                 <div class="form-row">
                     <div class="compose-form-location">
                         <div>Где? </div>
-                        <div>{{ form.event_location }}</div>
+                        <div class="compose-form-location-field">{{ form.event_location }}</div>
                     </div>
                     {% if form.event_day.errors %}<span class="form-row-errors">{{ form.event_location.errors }}</span>{% endif %}
                 </div>

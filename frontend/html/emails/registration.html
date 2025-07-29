@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block title %}
-    Ваше приглашение 🪪
+    Ваша Клубная Карта 🪪
 {% endblock %}
 
 {% block body %}
@@ -22,7 +22,7 @@
     </p>
 
     <p>
-        <a href="{{ settings.APP_HOST }}{% url "login" %}?email={{ to_user.email }}" class="button">Начать писать интро</a>
+        <a href="{{ settings.APP_HOST }}{% url "login" %}?email={{ user.email }}" class="button">Начать писать интро</a>
     </p>
 
     <p>

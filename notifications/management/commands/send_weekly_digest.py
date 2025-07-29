@@ -7,9 +7,9 @@ from django.conf import settings
 from django.core.management import BaseCommand
 
 from club.exceptions import NotFound
+from godmode.models import ClubSettings
 from notifications.digests import generate_weekly_digest
 from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message
-from landing.models import GodSettings
 from notifications.email.sender import send_mass_email
 from posts.models.post import Post
 from search.models import SearchIndex
@@ -25,7 +25,6 @@ class Command(BaseCommand):
         parser.add_argument("--production", nargs=1, type=bool, required=False, default=False)
 
     def handle(self, *args, **options):
-        # render digest using a special html endpoint
         try:
             digest_template, _ = generate_weekly_digest()
         except NotFound:
@@ -47,9 +46,10 @@ class Command(BaseCommand):
                 html=digest_without_footer,
                 text=digest_without_footer,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
-                is_visible=True,
-                is_public=False,
+                moderation_status=Post.MODERATION_APPROVED,
+                visibility=Post.VISIBILITY_EVERYWHERE,
                 metadata={"og_description": og_description},
+                is_public=False,
             )
         )
 
@@ -92,15 +92,26 @@ class Command(BaseCommand):
                 continue
 
         if options.get("production"):
-            # flush digest intro and title for next time
-            GodSettings.objects.update(digest_intro=None, digest_title=None)
+            # get title and description
+            digest_title = ClubSettings.get("digest_title")
+            digest_intro = ClubSettings.get("digest_intro")
 
             # announce on channel
             send_telegram_message(
                 chat=CLUB_CHANNEL,
-                text=render_html_message("weekly_digest_announce.html", post=post),
+                text=render_html_message(
+                    "weekly_digest_announce.html",
+                    post=post,
+                    issue_number=issue,
+                    digest_title=digest_title,
+                    digest_intro=digest_intro
+                ),
                 disable_preview=False,
                 parse_mode=telegram.ParseMode.HTML,
             )
+
+            # flush digest intro and title for next time
+            ClubSettings.set("digest_title", None)
+            ClubSettings.set("digest_intro", None)
 
         self.stdout.write("Done 🥙")

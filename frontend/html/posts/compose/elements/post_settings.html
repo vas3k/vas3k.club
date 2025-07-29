@@ -30,11 +30,11 @@
     </div>
 
     <div class="form-row form-row-checkbox">
-        {{ form.is_visible_in_feeds }}
-        <label for="{{ form.is_visible_in_feeds.id_for_label }}">{{ form.is_visible_in_feeds.label }}</label>
+        {{ form.is_room_only }}
+        <label for="{{ form.is_room_only.id_for_label }}">{{ form.is_room_only.label }}</label>
 
-        {% if form.is_visible_in_feeds.errors %}
-            <span class="form-row-errors">{{ form.is_visible_in_feeds.errors }}</span>
+        {% if form.is_room_only.errors %}
+            <span class="form-row-errors">{{ form.is_room_only.errors }}</span>
         {% endif %}
     </div>
 </details>

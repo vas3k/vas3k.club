@@ -20,10 +20,11 @@ class LinkedPost(models.Model):
     class Meta:
         db_table = "linked_posts"
         unique_together = [["post_from", "post_to"]]
+        ordering = ["-created_at"]
 
     @classmethod
     def link(cls, user, post_from, post_to):
-        if not post_from.is_visible or not post_to.is_visible:
+        if post_from.is_draft or post_to.is_draft:
             return None, False
 
         if post_from.id == post_to.id:

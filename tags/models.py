@@ -33,6 +33,9 @@ class Tag(models.Model):
         db_table = "tags"
         ordering = ["-group", "index"]
 
+    def __str__(self):
+        return f"{self.name}"
+
     def to_dict(self):
         return {
             "code": self.code,
@@ -66,3 +69,4 @@ class UserTag(models.Model):
     class Meta:
         db_table = "user_tags"
         unique_together = [["tag", "user"]]
+        ordering = ["-created_at"]

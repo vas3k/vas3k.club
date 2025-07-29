@@ -4,13 +4,14 @@ from datetime import datetime
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
+from stripe.error import InvalidRequestError
 
 from authn.decorators.auth import require_auth
 from club.exceptions import BadRequest
 from payments.exceptions import PaymentException
 from payments.helpers import parse_stripe_webhook_event
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_stripe_id, TAX_RATE_VAT
+from payments.products import PRODUCTS, find_by_stripe_id, IS_TEST_STRIPE
 from payments.service import stripe
 from users.models.user import User
 
@@ -29,8 +30,7 @@ def pay(request):
     is_invite = request.GET.get("is_invite")
     is_recurrent = request.GET.get("is_recurrent")
     if is_recurrent:
-        interval = request.GET.get("recurrent_interval") or "yearly"
-        product_code = f"{product_code}_recurrent_{interval}"
+        product_code = f"{product_code}_recurrent_yearly"
 
     # find product by code
     product = PRODUCTS.get(product_code)
@@ -53,7 +53,7 @@ def pay(request):
     # parse email
     email = request.GET.get("email") or ""
     if email:
-        email = email.lower()
+        email = email.lower().strip()
 
     # who's paying?
     if not request.me:  # scenario 1: new user
@@ -75,54 +75,43 @@ def pay(request):
                 moderation_status=User.MODERATION_STATUS_INTRO,
             ),
         )
-    elif is_invite:  # scenario 2: invite a friend
-        if not email or "@" not in email:
-            return render(request, "error.html", {
-                "title": "Плохой e-mail адрес друга 😣",
-                "message": "Нам ведь нужно будет куда-то выслать инвайт"
-            })
-
-        _, is_created = User.objects.get_or_create(
-            email=email,
-            defaults=dict(
-                membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
-                full_name=email[:email.find("@")],
-                membership_started_at=now,
-                membership_expires_at=now,
-                created_at=now,
-                updated_at=now,
-                moderation_status=User.MODERATION_STATUS_INTRO,
-            ),
-        )
-
-        user = request.me
-        payment_data = {
-            "invite": email,
-            "is_created": is_created,
-        }
-    else:  # scenario 3: account renewal
+    else:  # scenario 2: account renewal or invite purchase
         user = request.me
 
     # reuse stripe customer ID if user already has it
-    if user.stripe_id:
-        customer_data = dict(customer=user.stripe_id)
+    if user.stripe_id and not IS_TEST_STRIPE:
+        customer_data = dict(
+            customer=user.stripe_id,
+            customer_update={
+                "address": "auto",
+                "shipping": "auto",
+            }
+        )
     else:
         customer_data = dict(customer_email=user.email)
 
     # create stripe session and payment (to keep track of history)
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[{
-            "price": product["stripe_id"],
-            "quantity": 1,
-            "tax_rates": [TAX_RATE_VAT] if TAX_RATE_VAT else [],
-        }],
-        **customer_data,
-        mode="subscription" if is_recurrent else "payment",
-        metadata=payment_data,
-        success_url=settings.STRIPE_SUCCESS_URL,
-        cancel_url=settings.STRIPE_CANCEL_URL,
-    )
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price": product["stripe_id"],
+                "quantity": 1,
+            }],
+            **customer_data,
+            mode="subscription" if is_recurrent else "payment",
+            metadata=payment_data,
+            automatic_tax={"enabled": True},
+            success_url=settings.STRIPE_SUCCESS_URL,
+            cancel_url=settings.STRIPE_CANCEL_URL,
+        )
+    except InvalidRequestError as ex:
+        log.exception(ex)
+        return render(request, "error.html", {
+            "title": "Ошибка при создании платежа",
+            "message": "Невалидный email или выбранный пакет не найден. "
+                       "Попробуйте обновить страницу. Если ошибка повторится, напишите нам в поддержку."
+        })
 
     payment = Payment.create(
         reference=session.id,
@@ -142,16 +131,33 @@ def pay(request):
 @require_auth
 def stop_subscription(request, subscription_id):
     try:
-        stripe.Subscription.delete(subscription_id)
-    except stripe.error.NameError:
-        return render(request, "error.html", {
-            "title": "Подписка не найдена",
-            "message": "В нашей базе нет подписки с таким ID"
-        })
+        subscription = stripe.Subscription.retrieve(subscription_id)
     except stripe.error.InvalidRequestError:
         return render(request, "error.html", {
-            "title": "Подписка уже отменена 👌",
-            "message": "Stripe сказал, что эта подписка уже отменена, так что всё ок"
+            "title": "Подписка не найдена",
+            "message": "Подписка с таким ID не найдена. Возможно, она уже была отменена."
+        })
+
+    if subscription.status == "canceled":
+        return render(request, "payments/messages/subscription_stopped.html")
+
+    if subscription.status == "incomplete":
+        try:
+            checkout_sessions = stripe.checkout.Session.list(subscription=subscription_id)
+            for session in checkout_sessions.auto_paging_iter():
+                if session.status == "open":
+                    stripe.checkout.Session.expire(session.id)
+        except stripe.error.InvalidRequestError:
+            log.exception("Failed to expire checkout session", exc_info=True)
+
+    try:
+        stripe.Subscription.cancel(subscription_id)
+    except stripe.error.InvalidRequestError as e:
+        return render(request, "error.html", {
+            "title": "Какая-то ошибочка",
+            "message": f"Stripe сказал: {str(e)}. "
+                       f"Попробуйте отменить подписку через их Customer Portal: {settings.STRIPE_CUSTOMER_PORTAL_URL}"
+                       f" (email тот же, что и здесь)"
         })
 
     return render(request, "payments/messages/subscription_stopped.html")

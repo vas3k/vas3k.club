@@ -9,7 +9,11 @@ from users.models.user import User
 
 
 def notify_profile_needs_review(user, intro):
-    admin_profile_url = settings.APP_HOST + reverse("admin_profile", kwargs={"user_slug": user.slug})
+    admin_profile_url = settings.APP_HOST + reverse("godmode_action", kwargs={
+        "model_name": "users",
+        "item_id": user.id,
+        "action_code": "message"
+    })
 
     send_telegram_message(
         chat=ADMIN_CHAT,
@@ -71,6 +75,15 @@ def notify_user_ping(user, message):
         send_telegram_message(
             chat=Chat(id=user.telegram_id),
             text=f"👋 <b>Вам письмо от модераторов Клуба:</b> {message}"
+        )
+
+
+def notify_user_ban(user, days, reason):
+    if user.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=user.telegram_id),
+            text=f"⛔ <b>К сожалению, вы получили бан в Клубе на {days} дней</b>.\n\n"
+                 f"<b>Причина:</b> {reason}"
         )
 
 

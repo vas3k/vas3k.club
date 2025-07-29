@@ -1,0 +1,10 @@
+{% load static %}
+{% with value as badge %}
+    <span class="badge">
+        <img
+            src="{% static "images/badges" %}/small/{{ badge.code }}.png"
+            alt="{{ badge.title }}"
+            class="badge-image">
+        <span>{{ badge.title }}</span>
+    </span>
+{% endwith %}

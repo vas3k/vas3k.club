@@ -31,6 +31,14 @@ class Badge(models.Model):
     def visible_objects(cls):
         return cls.objects.filter(is_visible=True)
 
+    @classmethod
+    def badges_for_post_or_comment(cls):
+        return cls.visible_objects().exclude(code="thanks").all()
+
+    @classmethod
+    def badges_for_intro(cls):
+        return cls.visible_objects().filter(code="thanks").all()
+
 
 class UserBadge(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -51,6 +59,7 @@ class UserBadge(models.Model):
             ("from_user", "to_user", "badge", "post_id"),
             ("from_user", "to_user", "badge", "comment_id"),
         ]
+        ordering = ["-created_at"]
 
     @classmethod
     def create_user_badge(cls, badge, from_user, to_user, post=None, comment=None, note=None):
@@ -83,7 +92,7 @@ class UserBadge(models.Model):
             except IntegrityError:
                 raise ContentDuplicated(
                     title="🛑 Вы уже дарили награду за этот пост или комментарий",
-                    message="Повторно награды дарить нельзя. Но вы можете подарить другую награду."
+                    message="Повторно ту же самую награду дарить нельзя. Но вы можете выбрать другую!"
                 )
 
             # deduct days balance from profile

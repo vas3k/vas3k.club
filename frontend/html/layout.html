@@ -2,27 +2,33 @@
 {% load static %}
 <html lang="ru">
 <head>
-    <title>{% block title %}Вастрик.Клуб 🤘✖️👩‍💻‍{% endblock %}</title>
+    <title>{% block title %}{{ settings.APP_TITLE }}{% endblock %}</title>
+
     {% block fonts %}
         {% include "common/fonts.html" %}
     {% endblock %}
+
     {% block meta %}
         {% include "common/meta.html" %}
     {% endblock %}
+
     <script>
-        const theme = localStorage.getItem('theme');
-        if (theme !== null) {
-            document.documentElement.setAttribute('theme', theme);
-        }
+        // check and set theme before render. After render the theme switch is controlled by the <theme-switcher> component
+        // the component contains the same theme detection code as below. If you change this code, update the theme too
+        const theme = localStorage.getItem('theme') ?? "auto";
+        const currentTheme = theme === "auto" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : theme;
+        document.documentElement.setAttribute('theme', currentTheme);
     </script>
 
-    <link rel="alternate" type="application/rss+xml"
-          title="Вастрик.Клуб: Новые посты"
-          href="{{ settings.APP_HOST }}{% url "rss" %}{% if me %}?hash={{ me.secret_hash }}{% endif %}" />
+    {% block feeds %}
+        <link rel="alternate" type="application/rss+xml"
+              title="Вастрик.Клуб: Новые посты"
+              href="{{ settings.APP_HOST }}{% url "rss" %}" />
 
-    <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
-          type="application/feed+json"
-          href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
+        <link rel="alternate" title="Вастрик.Клуб: JSON Feed"
+              type="application/feed+json"
+              href="{{ settings.APP_HOST }}{% url "json_feed" %}" />
+    {% endblock %}
 
     {% block og_tags %}
         {% include "common/og.html" %}
@@ -51,24 +57,35 @@
 {% block footer %}
     <footer class="footer" id="footer">
         <div class="footer-left">
-            <a href="{% url "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
+            <a href="{% url "show_post" "docs" "about" %}">О Клубе</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "contact" %}">Связаться с нами</a> &nbsp;&middot;&nbsp;
+            <a href="{{ settings.VALUES_GUIDE_URL }}">Наши ценности</a> &nbsp;&middot;&nbsp;
 
-            <a href="{% url "docs" "privacy_policy" %}">Политика приватности</a><br><br>
+            <a href="{% url "show_post" "docs" "privacy_policy" %}">Политика приватности</a> &nbsp;&middot;&nbsp;
+
+            <a href="{% url "show_post" "docs" "contact" %}">Связаться с нами</a>
+
+            <br><br>
+
+            {% if request.me %}
+                <a href="{% url "invites" %}">Пригласить друга</a> &nbsp;&middot;&nbsp;
+            {% endif %}
+
+            <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a> &nbsp;&middot;&nbsp;
+
+            <a href="{% url "show_post" "docs" "blocked_dolor" %}">Оплата из России</a>
+
+            <br><br>
 
             CC BY-SA
         </div>
         <div class="footer-right">
-            <label class="theme-switcher" for="checkbox">
-                <input type="checkbox" id="checkbox" />
-                <span class="slider round"></span>
-            </label>
+            <theme-switcher></theme-switcher>
 
             {% if me %}
-                <form method="POST" action="{% url "logout" %}">
+                <form method="POST" action="{% url "logout" %}" class="footer-logout">
                     {% csrf_token %}
-                    <button type="submit" class="footer-logout">Выйти&nbsp;<i class="fas fa-sign-out-alt"></i></button>
+                    <button type="submit" class="footer-logout-button">Выйти&nbsp;<i class="fas fa-sign-out-alt"></i></button>
                 </form>
             {% endif %}
         </div>

@@ -1,0 +1,128 @@
+{% extends "godmode/layout.html" %}
+{% load static %}
+{% load godmode_filters %}
+{% load paginator %}
+{% load query_params %}
+
+{% block title %}
+    {{ admin_model.title }} — {{ block.super }}
+{% endblock %}
+
+{% block godmode_content %}
+    <div class="godmode-list">
+        <div class="godmode-header">
+            <span>{{ admin_model.icon }}</span>
+            <span>{{ admin_model.title }}</span>
+            <span>({{ items.paginator.count }})</span>
+
+            {% if show_create_button %}
+                <span class="godmode-create-button-spacer"></span>
+                <a href="{% url 'godmode_create_model' model_name=admin_model.name %}" class="button godmode-create-button">
+                    + Создать
+                </a>
+            {% endif %}
+        </div>
+
+        <form method="get">
+            <div class="godmode-filters">
+                <!-- Preserve pagination and sorting -->
+                <input type="hidden" name="page" value="1">
+                <input type="hidden" name="sort_field" value="{{ current_sort.field }}">
+                <input type="hidden" name="sort_direction" value="{{ current_sort.direction }}">
+
+                <select name="filter_field" class="godmode-filters-field">
+                    {% for field in filters %}
+                        <option value="{{ field.value }}" {% if current_filters.field == field.value %}selected{% endif %}>
+                            {{ field.label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <select name="filter_operator" class="godmode-filters-operator">
+                    {% for operator in filter_operators %}
+                        <option value="{{ operator.value }}" {% if current_filters.operator == operator.value %}selected{% endif %}>
+                            {{ operator.label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <input type="text" name="filter_value" value="{{ current_filters.value }}" class="godmode-filters-value">
+
+                <button type="submit" class="button button-inverted godmode-filters-button">🔍 Найти</button>
+
+                {% if current_filters.value %}
+                    <a href="?page=1{% if current_sort.field %}&sort_field={{ current_sort.field }}&sort_direction={{ current_sort.direction }}{% endif %}" class="button button-inverted godmode-filters-button">❌ Очистить</a>
+                {% endif %}
+            </div>
+        </form>
+
+
+        <div class="godmode-list-content">
+            {% if columns and items %}
+                <table class="godmode-table">
+                    <thead>
+                        <tr>
+                            {% for column in columns %}
+                                <th class="godmode-table-header" onclick="toggleSort('{{ column.name }}')">
+                                    {{ column.display_name }}
+                                    {% if current_sort.field == column.name %}
+                                        {% if current_sort.direction == "asc" %}🔼{% elif current_sort.direction == "desc" %}🔽{% endif %}
+                                    {% endif %}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr class="godmode-table-row-clickable" {% if primary_key_field %}onclick="window.location.href='{% url 'godmode_edit_model' model_name=admin_model.name item_id=item|get_attr:primary_key_field %}'"{% endif %}>
+                                {% for column in columns %}
+                                    <td>
+                                        {{ item|render_list_field:column }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+                <div class="godmode-empty">
+                    <p>Ничего не нашлось :(</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="godmode-list-foter">
+            {% paginator items %}
+        </div>
+    </div>
+
+    <script>
+        function toggleSort(fieldName) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSortField = urlParams.get('sort_field');
+            const currentSortDirection = urlParams.get('sort_direction');
+
+            let newDirection = 'asc';
+
+            if (currentSortField === fieldName) {
+                if (currentSortDirection === 'asc') {
+                    newDirection = 'desc';
+                } else if (currentSortDirection === 'desc') {
+                    // Third click - remove sorting
+                    urlParams.delete('sort_field');
+                    urlParams.delete('sort_direction');
+                    urlParams.set('page', '1');
+                    window.location.href = '?' + urlParams.toString();
+                    return;
+                }
+            }
+
+            urlParams.set('sort_field', fieldName);
+            urlParams.set('sort_direction', newDirection);
+            urlParams.set('page', '1');
+
+            window.location.href = '?' + urlParams.toString();
+        }
+    </script>
+{% endblock %}

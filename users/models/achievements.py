@@ -15,9 +15,14 @@ class Achievement(models.Model):
     index = models.IntegerField(default=0)
     is_visible = models.BooleanField(default=True)
 
+    custom_message = models.TextField(null=True, blank=True)
+
     class Meta:
         db_table = "achievements"
         ordering = ["index"]
+
+    def __str__(self):
+        return self.name
 
     def achievement_users(self):
         return User.objects\
@@ -34,3 +39,4 @@ class UserAchievement(models.Model):
     class Meta:
         db_table = "user_achievements"
         unique_together = [["achievement", "user"]]
+        ordering = ["-created_at"]

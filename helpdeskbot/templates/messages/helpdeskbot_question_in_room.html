@@ -1,0 +1,7 @@
+<b>{{ question.title }}</b> от <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{{ user.full_name }}</a>
+
+<i>{{ question.body }}</i>
+
+{% if channel_message_link %}<a href="{{ channel_message_link }}">🔗 Ссылка на вопрос в канале</a>
+{% endif %}
+↩️ Вы можете ответить реплаем на это сообщение. Ваш ответ перешлётся в канал.

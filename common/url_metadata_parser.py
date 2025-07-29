@@ -3,9 +3,10 @@ from collections import namedtuple
 from typing import Optional
 from urllib.parse import urljoin, urlparse
 
+import newspaper
 import requests
 from django.utils.html import strip_tags
-from newspaper import ArticleException, Config, Article
+from newspaper import Article, ArticleException
 from requests import RequestException
 from urllib3.exceptions import InsecureRequestWarning
 
@@ -88,11 +89,8 @@ def load_page_safe(url: str) -> str:
 
 
 def load_and_parse_full_article_text_and_image(url: str) -> Article:
-    config = Config()
-    config.MAX_SUMMARY_SENT = 8
-
-    article = Article(url, config=config)
-    article.set_html(load_page_safe(url))  # safer than article.download()
+    article = Article(url)
+    article.download(input_html=load_page_safe(url))
     article.parse()
 
     return article

@@ -18,8 +18,8 @@ def command_top(update: Update, context: CallbackContext) -> None:
     # Top posts
     top_posts = Post.visible_objects()\
         .filter(published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
-         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:5]
 
     # Hot posts

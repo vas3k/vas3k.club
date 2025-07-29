@@ -1,0 +1,10 @@
+{% extends "godmode/layout.html" %}
+{% load static %}
+
+{% block title %}
+    {{ title }} — {{ block.super }}
+{% endblock %}
+
+{% block godmode_content %}
+    {% include "godmode/pages/message.html" %}
+{% endblock %}

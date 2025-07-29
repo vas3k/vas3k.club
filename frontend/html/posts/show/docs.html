@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{% block title %}
+    {{ post.title }} — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content doc">
+        <h1>{{ post.title }}</h1>
+
+        {% render_post post %}
+    </div>
+{% endblock %}

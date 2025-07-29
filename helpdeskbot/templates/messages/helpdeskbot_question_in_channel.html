@@ -1,0 +1,5 @@
+{% if question.room %}<a href="{{ settings.APP_HOST }}{{ room.get_private_url }}"><b>{{ question.room }}</b></a>
+
+{% endif %}<b>{{ question.title }}</b> от <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{{ user.full_name }}</a>
+
+<i>{{ question.body }}</i>

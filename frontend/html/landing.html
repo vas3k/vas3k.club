@@ -42,6 +42,10 @@
                     Мы не считаем себя элитарными, у нас нет великой цели и прочей идейной хрени.
                     Мы лишь собрались здесь чтобы наконец-то поговорить честно, открыто и без посторонних.
                 </p>
+
+                <p>
+                    Подробнее <a href="{% url "show_post" "docs" "about" %}">о Клубе</a> и <a href="{{ settings.VALUES_GUIDE_URL }}">наших ценностях</a>.
+                </p>
             </div>
         </div>
 
@@ -50,18 +54,18 @@
         </div>
 
         <div class="landing-block landing-block-limited">
-            <div class="landing-block-40">
-                <h3 class="feature-title">Чужой опыт и инсайды</h3>
+            <div>
+                <h3 class="feature-title">Живой человеческий опыт и инсайды</h3>
 
                 <ul class="feature-list">
                     <li>В Клубе пишут статьи, просят советов, делятся идеями и показывают пет-проджекты</li>
                     <li>Мы проводим АМА и интервью с классными ребятами, где они делятся своим опытом</li>
                     <li>Формат «только для своих» позволяет обсуждать темы без посторонних</li>
-                    <li>Комментарии больше не зашквар</li>
+                    <li>Комментарии больше не зашквар!</li>
                     <li>Никаких алгоритмических лент, охоты за вниманием и FOMO</li>
                 </ul>
             </div>
-            <div class="landing-block-60 landing-posts">
+            <div class="landing-posts">
                 <div class="landing-post">
                     <div class="avatar landing-post-avatar"><img src="https://i.vas3k.club/na.jpg" alt="Аватар" /></div>
                     <div class="landing-post-title">
@@ -152,16 +156,17 @@
         </div>
 
         <div class="landing-block landing-block-limited">
-            <div class="landing-block-50">
-                <img src="{% static "images/landing/rooms.png" %}" class="feature-image" alt="chats" style="padding-top: 40px;">
+            <div>
+                <img src="{% static "images/landing/rooms.webp" %}" class="feature-image" alt="chats" style="padding-top: 40px;">
             </div>
 
-            <div class="landing-block-50">
+            <div>
                 <h3 class="feature-title">Тусовки по интересам</h3>
 
                 <ul class="feature-list">
                     <li>Сеть клубных чатиков в телеграме</li>
-                    <li>Коммьюнити по городам и странам</li>
+                    <li>Локальные сообщества по городам и странам</li>
+                    <li>Оффлайн ивенты для тусовок и нетворкинга</li>
                     <li>АМА с экспертами и отзывчивые участники</li>
                     <li>Место, в котором хорошо</li>
                 </ul>
@@ -176,20 +181,20 @@
         </div>
 
         <div class="landing-block landing-block-limited">
-            <div class="landing-block-40">
+            <div style="flex: 0.7;">
                 <h3 class="feature-title">Движухи, фан и взаимопомощь</h3>
 
                 <ul class="feature-list">
-                    <li>Митапы и сходки в офлайне</li>
-                    <li>Бартер, Справочная и другие p2p-сервисы</li>
+                    <li>Митапы, сходки и <a href="https://www.youtube.com/watch?v=DYuxNbfyo_U" target="_blank">ивенты</a> в оффлайне</li>
+                    <li>Бартер, Справочная, VPN и другие коммьюнити-сервисы</li>
                     <li>Коучинг и менторство между участниками Клуба</li>
                     <li>У нас запрещена анонимность и действует жесткая модерация. Так мы сохраняем здоровое коммьюнити без говна</li>
-                    <li>Подробнее о правилах можно почитать в разделе <a href="{% url "docs" "about" %}" target="_blank">О Клубе</a></li>
+                    <li>Подробнее о правилах можно почитать в разделе <a href="{% url "show_post" "docs" "about" %}">О&nbsp;Клубе</a></li>
                 </ul>
             </div>
 
-            <div class="landing-block-60">
-                <img src="{% static "images/landing/activities.png" %}" class="feature-image" alt="chats">
+            <div>
+                <img src="{% static "images/landing/activities.webp" %}" class="feature-image" alt="chats">
             </div>
         </div>
 
@@ -198,7 +203,7 @@
         </div>
 
         <div class="landing-block landing-block-map">
-            <div class="map-background" style="background-image: url('{% static "images/landing/map.jpg" %}');">
+            <div class="map-background" style="background-image: url('{% static "images/landing/map.webp" %}');">
             </div>
 
             <div class="map-container">
@@ -224,7 +229,7 @@
                 <div class="map-counters">
                     <div class="map-counter">{{ stats.users }} {{ stats.users | rupluralize:"человек,человека,человек" }}</div>
                     <div class="map-counter">{{ stats.countries }} {{ stats.countries | rupluralize:"страна,страны,стран"  }}</div>
-                    <div class="map-counter">45+ чатов</div>
+                    <div class="map-counter">80+ чатов</div>
                 </div>
             </div>
         </div>
@@ -257,9 +262,11 @@
 {% block footer %}
     <footer class="footer">
         <div class="footer-left" style="text-align: center; font-size: 130%;">
-            &copy; <a href="https://vas3k.ru" target="_blank">Вастрик</a> {% now "Y" %}
+            &copy; <a href="https://vas3k.blog" target="_blank">Вастрик</a> {% now "Y" %}
             &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
-            <a href="{% url "docs" "contact" %}">Связаться с нами</a><br><br>
+            <a href="{% url "show_post" "docs" "about" %}">О Клубе</a>
+            &nbsp;&nbsp;&nbsp;&infin;&nbsp;&nbsp;&nbsp;
+            <a href="{% url "show_post" "docs" "contact" %}">Связаться с нами</a><br><br>
         </div>
     </footer>
 {% endblock %}

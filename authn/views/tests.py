@@ -172,24 +172,6 @@ class ViewEmailLoginTests(TestCase):
                                     data={"email_or_login": "not-existed@user.com", })
         self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=404)
 
-    def test_secret_hash_login(self):
-        response = self.client.post(reverse("email_login"),
-                                    data={"email_or_login": self.new_user.secret_auth_code, })
-
-        self.assertRedirects(response=response, expected_url=f"/user/{self.new_user.slug}/",
-                             fetch_redirect_response=False)
-        self.assertTrue(self.client.is_authorised())
-
-    def test_secret_hash_user_not_exist(self):
-        response = self.client.post(reverse("email_login"),
-                                    data={"email_or_login": "not-existed@user.com|-xxx", })
-        self.assertContains(response=response, text="Такого юзера нет 🤔", status_code=404)
-
-    @skip("todo")
-    def test_secret_hash_cancel_user_deletion(self):
-        # todo: mark user as deleted
-        self.assertTrue(False)
-
     def test_email_login_missed_input_data(self):
         response = self.client.post(reverse("email_login"), data={})
         self.assertRedirects(response=response, expected_url=f"/auth/login/",
