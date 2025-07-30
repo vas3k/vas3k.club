@@ -347,6 +347,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
     }),
+    ("vas3k_flot_2025", {
+        "name": "Вастрик ⛵ Флот 2025",
+        "description": "Участнику Вастрик Флота в Турции осенью 2025",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2025.png",
+        "style": "background-color: #4c98d5; font-size: 120%;",
+    }),
     ("spooky", {
         "name": "Спуки",
         "description": "За лучшие украшения на Хэллоуин",
