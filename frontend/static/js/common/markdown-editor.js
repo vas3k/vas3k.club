@@ -5,10 +5,8 @@ const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
     previewImagesInEditor: true,
     spellChecker: false,
-    nativeSpellcheck: true,
     forceSync: true,
     status: false,
-    inputStyle: "contenteditable",
     tabSize: 4,
 };
 export function createMarkdownEditor(element, options) {
