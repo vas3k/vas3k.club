@@ -53,7 +53,7 @@ def activate_invite(request, invite_code):
     invite = get_object_or_404(Invite, code=invite_code)
 
     if invite.is_used:
-        if request.me.is_moderator:
+        if request.me and request.me.is_moderator:
             return render(request, "error.html", {
                 "title": "Этот инвайт-код уже использован 🥲",
                 "message": f"Включен режим модератора. Пользователь: {invite.invited_user.slug}"
