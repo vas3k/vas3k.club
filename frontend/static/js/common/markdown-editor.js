@@ -3,6 +3,7 @@ import { findParentForm, isCommunicationForm } from "./utils";
 
 const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
+    previewImagesInEditor: true,
     spellChecker: false,
     nativeSpellcheck: true,
     forceSync: true,
@@ -10,14 +11,6 @@ const defaultMarkdownEditorOptions = {
     inputStyle: "contenteditable",
     tabSize: 4,
 };
-
-/**
- * Initialize EasyMDE editor
- *
- * @param {Element} element
- * @param {EasyMDE.Options} options
- * @return {EasyMDE}
- */
 export function createMarkdownEditor(element, options) {
     const editor = new EasyMDE({
         element,

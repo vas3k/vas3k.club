@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^1.11.0",
-    "easymde": "^2.11.0",
+    "easymde": "^2.20.0",
     "inline-attachment": "^2.0.3",
     "lightense-images": "^1.0.9",
     "mapbox-gl": "^2.15.0",

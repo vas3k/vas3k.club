@@ -53,19 +53,12 @@
         padding: 15px;
     }
 
-    .compose-form-text textarea.markdown-editor-full {
-        padding: 20px;
-        min-height: 500px;
-        font-family: var(--serif-font);
-        line-height: 1.4em;
+    .compose-form-text .CodeMirror,
+    .compose-form-text .CodeMirror-focused,
+    .compose-form-text .CodeMirror-scroll {
+        min-height: 400px !important;
+        transform: scale(1);
     }
-
-        .compose-form-text .CodeMirror,
-        .compose-form-text .CodeMirror-focused,
-        .compose-form-text .CodeMirror-scroll {
-            min-height: 400px !important;
-            transform: scale(1);
-        }
 
     /* Markdown editor styles */
     .compose-form .CodeMirror-code {
@@ -81,6 +74,10 @@
         .compose-form .cm-header {
             font-family: var(--sans-font);
         }
+
+    .CodeMirror span[data-img-src] {
+        --width: 100% !important;
+    }
 
     .compose-vs {
         display: inline-block;
