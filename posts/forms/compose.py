@@ -108,8 +108,10 @@ class AbstractPostForm(forms.ModelForm):
         if new_value is None:
             return self.instance.is_room_only
 
-        if new_value and self.instance.is_room_only:
-            raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
+        # already moderated posts cannot change "room-only" setting
+        if self.instance.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN]:
+            if new_value and self.instance.is_room_only:
+                raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
 
         return new_value
 
