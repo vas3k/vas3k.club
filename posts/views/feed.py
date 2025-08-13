@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 
 from authn.decorators.auth import require_auth
@@ -56,7 +55,7 @@ def feed(
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
 
     # hide room-only posts
-    if not room:
+    if not room and not label_code:
         posts = posts.exclude(is_room_only=True)
 
     # order posts by some metric
