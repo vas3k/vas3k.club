@@ -155,7 +155,7 @@
 .post-type-post .upvote:not(.upvote-disabled) {
     float: left;
     position: sticky;
-    margin-left: -110px;
+    margin-left: -125px;
     margin-top: 30px;
 }
 
