@@ -26,6 +26,7 @@ from godmode.pages.digest import compose_weekly_digest
 from godmode.pages.invite import invite_user_by_email
 from godmode.pages.mass_achievement import mass_achievement
 from godmode.pages.mass_email import mass_email
+from godmode.pages.moderation import moderation
 from godmode.pages.sunday_posts import sunday_posts
 from invites.models import Invite
 from misc.models import NetworkGroup, ProTip
@@ -57,6 +58,12 @@ ADMIN = ClubAdmin(
                     edit_roles={User.ROLE_GOD},
                     delete_roles={User.ROLE_GOD},
                     create_roles={User.ROLE_GOD},
+                ),
+                ClubAdminPage(
+                    title="Модерация",
+                    icon="👮",
+                    view=moderation,
+                    name="moderation",
                 ),
                 ClubAdminPage(
                     title="Пригласить в Клуб",
