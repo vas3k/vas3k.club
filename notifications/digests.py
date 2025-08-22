@@ -67,6 +67,17 @@ def generate_daily_digest(user):
         .exclude(id__in=[p.id for p in new_posts]) \
         .order_by("-hotness")[:3]
 
+    # Upcoming events
+    upcoming_events = Post.visible_objects()\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED))\
+        .filter(type=Post.TYPE_EVENT)\
+        .filter(
+            metadata__isnull=False,
+            published_at__gte=datetime.utcnow() - timedelta(days=300),
+            metadata__event__month=str(datetime.utcnow().month),
+            metadata__event__day__in=[str(datetime.utcnow().day + i) for i in range(0, 4)],
+        ).order_by("-upvotes")[:3]
+
     # New intros
     intros = Post.visible_objects()\
         .filter(type=Post.TYPE_INTRO, **published_at_condition)\
@@ -95,6 +106,7 @@ def generate_daily_digest(user):
         "intros": intros,
         "new_posts": new_posts,
         "hot_posts": hot_posts,
+        "upcoming_events": upcoming_events,
         "top_old_post": top_old_post,
         "stats": {
             "new_post_comments": new_post_comments,
