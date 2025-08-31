@@ -9,6 +9,7 @@ from posts.models.post import Post
 class PostPinForm(forms.Form):
     add_pin = forms.BooleanField(
         label="Запинить пост",
+        initial=True,
         required=False
     )
 
