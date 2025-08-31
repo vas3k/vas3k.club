@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from django import forms
 from django.conf import settings
 from django.shortcuts import render
-from future.backports.email.policy import default
 
 from authn.models.session import Session
 from notifications.email.users import send_delete_account_confirm_email
