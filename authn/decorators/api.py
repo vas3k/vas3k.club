@@ -15,25 +15,26 @@ def api(require_auth=True, scopes=None):
     def decorator(view):
         @functools.wraps(view)
         def wrapper(request, *args, **kwargs):
+            # try to authorize
+            # requests on behalf of apps (user == owner, for a simplicity)
+            service_token = request.headers.get("X-Service-Token") or request.GET.get("service_token")
+            if service_token:
+                request.me = user_by_service_token(service_token)
+
+            # oauth requests for API
+            oauth_access_token = request.headers.get("Authorization")
+            if oauth_access_token:
+                try:
+                    token = oauth2_token_validator.acquire_token(request, scopes)
+                except MissingAuthorizationError as ex:
+                    raise ApiAuthRequired(title="Missing OAuth token", message=str(ex))
+                except OAuth2Error as ex:
+                    raise ApiAuthRequired(title="OAuth token error", message=str(ex))
+
+                request.me = token.user
+
             # check auth if needed
             if require_auth:
-                # requests on behalf of apps (user == owner, for a simplicity)
-                service_token = request.headers.get("X-Service-Token") or request.GET.get("service_token")
-                if service_token:
-                    request.me = user_by_service_token(service_token)
-
-                # oauth requests for API
-                oauth_access_token = request.headers.get("Authorization")
-                if oauth_access_token:
-                    try:
-                        token = oauth2_token_validator.acquire_token(request, scopes)
-                    except MissingAuthorizationError as ex:
-                        raise ApiAuthRequired(title="Missing OAuth token", message=str(ex))
-                    except OAuth2Error as ex:
-                        raise ApiAuthRequired(title="OAuth token error", message=str(ex))
-
-                    request.me = token.user
-
                 # this user can also come from other types of auth (e.g. cookies)
                 if not request.me:
                     raise ApiAuthRequired()
