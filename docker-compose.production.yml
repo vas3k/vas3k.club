@@ -152,7 +152,7 @@ services:
     image: prodrigestivill/postgres-backup-local
     restart: always
     volumes:
-      - /root/pmi.moscow.club/backup/pmi/pgdata:/backups
+      - /home/s-admin/pmi.moscow.club/backup/pgdata:/backups
     links:
       - postgres
     depends_on:
