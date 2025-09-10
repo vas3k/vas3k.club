@@ -6,8 +6,6 @@ services:
       context: .
     command: make docker-run-production
     container_name: club_app
-    networks:
-      - club_network
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
