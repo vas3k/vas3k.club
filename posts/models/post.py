@@ -29,6 +29,7 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_WEEKLY_DIGEST = "weekly_digest"
     TYPE_GUIDE = "guide"
     TYPE_THREAD = "thread"
+    TYPE_DOCS = "docs"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
@@ -41,6 +42,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_WEEKLY_DIGEST, "Журнал Клуба"),
         (TYPE_GUIDE, "Путеводитель"),
         (TYPE_THREAD, "Тред"),
+        (TYPE_DOCS, "Доки"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -54,6 +56,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_BATTLE: "🤜🤛",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "🗄",
+        TYPE_DOCS: "📚",
     }
 
     TYPE_TO_PREFIX = {
@@ -67,6 +70,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_BATTLE: "Батл:",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "Тред:",
+        TYPE_DOCS: "",
     }
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -209,6 +213,14 @@ class Post(models.Model, ModelDiffMixin):
             return False
         return self.can_edit(user) or user.is_curator
 
+    def get_custom_comment_limit(self):
+        if self.metadata and self.metadata.get(settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY) is not None:
+            try:
+                return int(self.metadata[settings.RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY])
+            except ValueError:
+                return None
+        return None
+
     @property
     def emoji(self):
         return self.TYPE_TO_EMOJI.get(self.type) or ""
@@ -263,6 +275,19 @@ class Post(models.Model, ModelDiffMixin):
             else:
                 year = self.effective_published_at.year
             return datetime(year, month, day, hour, minute, second)
+        return datetime.utcnow()
+
+    @property
+    def event_participants(self):
+        participant_ids = self.metadata.get("event", {}).get("participants", [])
+        if not participant_ids:
+            return []
+
+        users = User.objects.filter(id__in=participant_ids)
+
+        # Create a mapping from ID to user to presercve order
+        user_map = {str(user.id): user for user in users}
+        return [user_map[uid] for uid in participant_ids if uid in user_map]
 
     @classmethod
     def check_duplicate(cls, user, title, ignore_post_id=None):
@@ -337,6 +362,7 @@ class Post(models.Model, ModelDiffMixin):
     def publish(self):
         self.is_visible = True
         self.published_at = datetime.utcnow()
+        self.last_activity_at = datetime.utcnow()
         self.save()
 
     def unpublish(self):

@@ -7,7 +7,7 @@ import {
     createFileInput,
     createMarkdownEditor,
     handleFormSubmissionShortcuts,
-    imageUploadOptions
+    imageUploadOptions,
 } from "./common/markdown-editor";
 import { getCollapsedCommentThreadsSet } from "./common/comments";
 
@@ -38,40 +38,17 @@ const App = {
     initializeEmojiForPoorPeople() {
         const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
         if (!isApple) {
-            document.body = twemoji.parse(
-                document.body,
-                { base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/" }
-            );
+            document.body = twemoji.parse(document.body, {
+                base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
+            });
         }
     },
     initializeThemeSwitcher() {
-        const themeSwitch = document.querySelector('.theme-switcher input[type="checkbox"]');
         const mediaQueryList = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
-
-        themeSwitch.addEventListener(
-            "change",
-            function (e) {
-                let theme = "light";
-                if (e.target.checked) {
-                    theme = "dark";
-                }
-                document.documentElement.setAttribute("theme", theme);
-                localStorage.setItem("theme", theme);
-            },
-            false
-        );
-
-        const theme = localStorage.getItem("theme");
-        themeSwitch.checked = theme ? theme === "dark" : mediaQueryList.matches;
 
         const setFaviconHref = (e) => {
             const svgFavicon = document.querySelector('link[type="image/svg+xml"]');
             const isDark = e.matches;
-
-            if (!theme) {
-                themeSwitch.checked = isDark;
-            }
-
             svgFavicon.href = isDark ? "/static/images/favicon/favicon-dark.svg" : "/static/images/favicon/favicon.svg";
         };
 
@@ -91,7 +68,7 @@ const App = {
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
-                const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes })
+                const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes });
                 const editor = createMarkdownEditor(element, {
                     autosave: {
                         enabled: false,
@@ -145,7 +122,7 @@ const App = {
                         {
                             name: "upload-file",
                             action: () => {
-                                fileInputEl.click()
+                                fileInputEl.click();
                             },
                             className: "fa fa-paperclip",
                             text: "Upload image",

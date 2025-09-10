@@ -81,8 +81,15 @@
 
             .network-channel-description {
                 display: block;
-                padding-top: 10px;
+                padding-top: 5px;
                 font-size: 70%;
+                opacity: 0.8;
+            }
+
+            .network-channel-count {
+                display: block;
+                font-size: 60%;
+                padding-top: 5px;
                 opacity: 0.8;
             }
 

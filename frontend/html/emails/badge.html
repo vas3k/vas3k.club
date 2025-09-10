@@ -39,7 +39,7 @@
         {{ user_badge.from_user.full_name }} подарил вам награду
         {% if user_badge.comment %}
             за комментарий к посту <strong>«<a href="{% url "show_post" user_badge.comment.post.type user_badge.comment.post.slug %}#comment-{{ user_badge.comment.id }}">{{ user_badge.comment.post.title }}</a>»</strong>.
-        {% else %}
+        {% elif user_badge.post and user_badge.post.type != "intro"  %}
             за пост <strong>«<a href="{% url "show_post" user_badge.post.type user_badge.post.slug %}">{{ user_badge.post.title }}</a>»</strong>.
         {% endif %}
     </p>
@@ -62,7 +62,7 @@
     </a>
 
     <p>
-        Поздравляем! Награда будет висеть <a href="{% url "profile" user_badge.to_user.slug %}">у вас в профиле</a> и каждый будет знать какой вы крутой.
+        Поздравляем! Награда будет висеть <a href="{% url "profile" user_badge.to_user.slug %}">у вас в профиле</a> и каждый будет знать какой вы сладкий пирожочек.
     </p>
 
     <br><br><br>

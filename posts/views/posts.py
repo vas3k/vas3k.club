@@ -2,18 +2,15 @@ from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_http_methods
 
 from authn.helpers import check_user_permissions
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from authn.decorators.api import api
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from posts.models.views import PostView
-from posts.models.votes import PostVote
 from posts.renderers import render_post
 from search.models import SearchIndex
 
@@ -111,67 +108,6 @@ def delete_post(request, post_slug):
     return redirect("compose")
 
 
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def upvote_post(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-
-    post_vote, is_vote_created = PostVote.upvote(
-        user=request.me,
-        post=post,
-        request=request,
-    )
-
-    return {
-        "post": {
-            "upvotes": post.upvotes + (1 if is_vote_created else 0),
-        },
-        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000) if post_vote else 0
-    }
-
-
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def retract_post_vote(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-
-    is_retracted = PostVote.retract_vote(
-        request=request,
-        user=request.me,
-        post=post,
-    )
-
-    return {
-        "success": is_retracted,
-        "post": {
-            "upvotes": post.upvotes - (1 if is_retracted else 0)
-        }
-    }
-
-
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def toggle_post_subscription(request, post_slug):
-    post = get_object_or_404(Post, slug=post_slug)
-
-    subscription, is_created = PostSubscription.subscribe(
-        user=request.me,
-        post=post,
-        type=PostSubscription.TYPE_TOP_LEVEL_ONLY,
-    )
-
-    if not is_created:
-        # already exist? remove it
-        PostSubscription.unsubscribe(
-            user=request.me,
-            post=post,
-        )
-
-    return {
-        "status": "created" if is_created else "deleted"
-    }
-
-
 @require_auth
 def compose(request):
     drafts = Post.objects\
@@ -202,6 +138,9 @@ def edit_post(request, post_slug):
 
 def create_or_edit(request, post_type, post=None, mode="create"):
     FormClass = POST_TYPE_MAP.get(post_type) or PostTextForm
+
+    if post_type == Post.TYPE_DOCS and not request.me.is_god:
+        raise AccessDenied("Вы не можете создавать или редактировать доки :(")
 
     # show blank form on GET
     if request.method != "POST":

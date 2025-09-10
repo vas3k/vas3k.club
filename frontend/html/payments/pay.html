@@ -37,28 +37,28 @@
                 </small>
             </div>
 
-            <stripe-checkout-button
+            <!--<stripe-checkout-button
                 public-key="{{ settings.STRIPE_PUBLIC_KEY }}"
                 session-id="{{ session.id }}"
                 class="button button-big pay-button">
                 Перейти к оплате
-            </stripe-checkout-button>
+            </stripe-checkout-button>-->
 
             <p style="font-size: 300%; margin: 20px 0;">
                 ☝️
             </p>
 
-            <p style="font-size: 90%;">
+            <!--<p style="font-size: 90%;">
                 Платежи для нас процессит <a href="https://stripe.com" target="_blank">Stripe</a>.
                 Кнопочка выше перенесёт вас на их специальную безопасную страницу оплаты.
                 Клуб не видит и не хранит никаких платёжных данных.
-            </p>
+            </p>-->
         </div>
 
         <div class="block pay-warning">
             <p>
                 ⚠️ Платежи из <strong>России и некоторых банков Беларуси</strong> больше не проходят из-за санкций.
-                Альтернативные способы оплаты ищите <strong><a href="{% url "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
+                Альтернативные способы оплаты ищите <strong><a href="{% url "show_post" "docs" "blocked_dolor" %}">в нашем гайде</a></strong>.
             </p>
             <p>
                 🤔 За другими вариантами заходите на почту <a href="mailto:sergey.sidorov@pmi.moscow"><strong>Написать</strong></a>

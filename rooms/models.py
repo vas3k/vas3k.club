@@ -2,6 +2,7 @@ import re
 from datetime import datetime, timedelta
 from uuid import uuid4
 
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
@@ -23,6 +24,7 @@ class Room(models.Model):
     chat_name = models.CharField(max_length=128, null=True, blank=True)
     chat_url = models.URLField(null=True, blank=True)
     chat_id = models.CharField(max_length=32, null=True, blank=True)
+    chat_member_count = models.IntegerField(default=0)
     send_new_posts_to_chat = models.BooleanField(default=True)
     send_new_comments_to_chat = models.BooleanField(default=False)
 
@@ -58,6 +60,17 @@ class Room(models.Model):
         if self.url or self.chat_url:
             return reverse("redirect_to_room_chat", kwargs={"room_slug": self.slug})
         return None
+
+    def to_dict(self):
+        return {
+            "slug": self.slug,
+            "title": self.title,
+            "subtitle": self.subtitle,
+            "description": self.description,
+            "chat_name": self.chat_name,
+            "chat_url": f"{settings.APP_HOST}{self.get_private_url()}" if self.url or self.chat_url else None,
+            "chat_member_count": self.chat_member_count,
+        }
 
 
 class RoomSubscription(models.Model):
@@ -130,4 +143,3 @@ class RoomMuted(models.Model):
     @classmethod
     def muted_by_user(cls, user):
         return cls.objects.filter(user=user)
-

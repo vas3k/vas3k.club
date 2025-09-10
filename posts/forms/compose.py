@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytz
 from django import forms
+from django.conf import settings
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
 from slugify import slugify_filename
@@ -351,10 +352,7 @@ class PostEventForm(AbstractPostForm):
     event_timezone = forms.ChoiceField(
         label="Таймзона",
         required=True,
-        choices=[
-            ("Europe/Moscow", "по Москве"),
-            ("UTC", "UTC"),
-        ]
+        choices=settings.SUPPORTED_TIME_ZONES
     )
     event_location = forms.CharField(
         label="Локейшен",
@@ -439,6 +437,8 @@ class PostEventForm(AbstractPostForm):
                     "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
                     .utcoffset().total_seconds() // 60,
                     "location": cleaned_data["event_location"],
+                    "participants": self.instance.metadata.get("event", {}).get("participants", []) \
+                        if self.instance and self.instance.metadata else [],
                 }
             }
         }

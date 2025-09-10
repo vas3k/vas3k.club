@@ -12,6 +12,7 @@ from posts.forms.admin import PostAdminForm, PostAnnounceForm, PostCuratorForm
 from posts.helpers import extract_any_image
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
+from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 
 
@@ -27,7 +28,7 @@ def curate_post(request, post_slug):
     else:
         form = PostCuratorForm()
 
-    return render(request, "admin/simple_form.html", {
+    return render(request, "posts/admin.html", {
         "title": "Курирование поста",
         "post": post,
         "form": form
@@ -46,7 +47,7 @@ def admin_post(request, post_slug):
     else:
         form = PostAdminForm()
 
-    return render(request, "admin/simple_form.html", {
+    return render(request, "posts/admin.html", {
         "title": "Админить пост",
         "post": post,
         "form": form
@@ -77,7 +78,7 @@ def announce_post(request, post_slug):
     else:
         form = PostAnnounceForm(initial=initial)
 
-    return render(request, "admin/simple_form.html", {
+    return render(request, "posts/admin.html", {
         "title": "Анонсировать пост на канале",
         "post": post,
         "form": form
@@ -132,6 +133,14 @@ def do_common_admin_and_curator_actions(request, post, data):
         if label:
             post.label_code = data["new_label"]
             post.save()
+
+            if label.get("related_achievement"):
+                achievement = Achievement.objects.filter(code=label["related_achievement"]).first()
+                if achievement:
+                    UserAchievement.objects.get_or_create(
+                        user=post.author,
+                        achievement=achievement,
+                    )
 
     if data["remove_label"]:
         post.label_code = None

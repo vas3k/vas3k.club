@@ -8,7 +8,7 @@ class BanReason:
     min_duration: int = 1
 
 
-PROGRESSIVE_BAN_DAYS = [0, 3, 7, 15, 30, 60, 90, 180, 365]  # in case of 0 it takes "min_duration" from ban reason
+PROGRESSIVE_BAN_DAYS = [0, 3, 10, 30, 90, 365]  # in case of 0 it takes "min_duration" from ban reason
 
 TEMPORARY_BAN_REASONS = {
     "flame": BanReason(

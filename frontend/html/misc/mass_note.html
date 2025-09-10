@@ -16,14 +16,9 @@
                     Заметка «{{ note }}» успешно прописана {{ updated_users|length }} юзерам. Можете заценить их внизу 👇
                 </span>
 
-                <div class="top-users">
+                <div class="top-users top-users-medium">
                     {% for user in updated_users %}
-                        <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                            <span class="avatar top-user-avatar">
-                                <img src="{{ user.get_avatar }}" loading="lazy" />
-                            </span>
-                            <span class="top-user-name">{{ user.full_name }}</span>
-                        </a>
+                        {% include "users/widgets/round.html" with user=user show_name=False %}
                     {% endfor %}
                 </div>
             {% else %}
@@ -65,14 +60,9 @@
                             мы щас пропишем вот этим юзерам:
                         </span>
 
-                        <div class="top-users">
+                        <div class="top-users top-users-medium">
                             {% for user in users %}
-                                <a href="{% url "profile" user.slug %}" class="top-user top-user-medium zoom-on-hover">
-                                    <span class="avatar top-user-avatar">
-                                        <img src="{{ user.get_avatar }}" loading="lazy" />
-                                    </span>
-                                    <span class="top-user-name">{{ user.full_name }}</span>
-                                </a>
+                                {% include "users/widgets/round.html" with user=user show_name=True %}
                             {% endfor %}
                         </div>
 

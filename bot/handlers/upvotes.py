@@ -3,7 +3,8 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from bot.handlers.common import get_club_user, COMMENT_EMOJI_RE, POST_EMOJI_RE, get_club_comment, get_club_post
+from bot.handlers.common import get_club_user, get_club_comment, get_club_post
+from bot.config import COMMENT_EMOJI_RE, POST_EMOJI_RE
 from bot.decorators import is_club_member
 from comments.models import CommentVote, Comment
 from posts.models.post import Post

@@ -4,6 +4,7 @@ from django import template
 from django.utils.safestring import mark_safe
 
 from club import settings
+from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.markdown.markdown import markdown_text
 
 from comments.forms import BattleCommentForm
@@ -83,3 +84,7 @@ def selected_battle_side(context):
         return "selected" if context['comment'].battle_side == context['side']['name'] else ""
     except Exception:
         return ""
+
+@register.filter
+def is_comment_limit_exceeded(user, post):
+    return is_comment_rate_limit_exceeded(post, user)

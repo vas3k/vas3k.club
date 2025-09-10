@@ -7,9 +7,9 @@ from django.conf import settings
 from django.core.management import BaseCommand
 
 from club.exceptions import NotFound
+from godmode.models import ClubSettings
 from notifications.digests import generate_weekly_digest
 from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message
-from landing.models import GodSettings
 from notifications.email.sender import send_mass_email
 from posts.models.post import Post
 from search.models import SearchIndex
@@ -92,7 +92,7 @@ class Command(BaseCommand):
 
         if options.get("production"):
             # get title and description
-            god_settings = GodSettings.objects.first()
+            god_settings = ClubSettings.objects.first()
 
             # announce on channel
             send_telegram_message(
@@ -109,6 +109,6 @@ class Command(BaseCommand):
             )
 
             # flush digest intro and title for next time
-            GodSettings.objects.update(digest_intro=None, digest_title=None)
+            ClubSettings.objects.update(digest_intro=None, digest_title=None)
 
         self.stdout.write("Done 🥙")

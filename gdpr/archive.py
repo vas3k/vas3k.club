@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import random
 import shutil
@@ -54,7 +55,10 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
 
 
 def delete_data_archive(archive_path):
-    os.remove(archive_path)
+    try:
+        os.remove(archive_path)
+    except FileNotFoundError:
+        logging.info(f"Archive already deleted: {archive_path}")
 
 
 def dump_user_profile(user_dir, user):

@@ -14,11 +14,12 @@ import vSelect from "vue-select";
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
 Vue.component("post-rsvp", () => import("./components/PostRSVP.vue"));
+Vue.component("post-toc", () => import("./components/PostToC.vue"));
 Vue.component("comment-upvote", () => import("./components/CommentUpvote.vue"));
 Vue.component("user-tag", () => import("./components/UserTag.vue"));
 Vue.component("people-map", () => import("./components/PeopleMap.vue"));
 Vue.component("user-avatar-input", () => import("./components/UserAvatarInput.vue"));
-Vue.component("stripe-checkout-button", () => import("./components/StripeCheckoutButton.vue"));
+//Vue.component("stripe-checkout-button", () => import("./components/StripeCheckoutButton.vue"));
 Vue.component("input-length-counter", () => import("./components/InputLengthCounter.vue"));
 Vue.component("friend-button", () => import("./components/FriendButton.vue"));
 Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
@@ -28,6 +29,7 @@ Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
 Vue.component("reply-form", () => import("./components/ReplyForm.vue"));
+Vue.component("theme-switcher", () => import("./components/ThemeSwitcher.vue"));
 Vue.component("location-select", () => import("./components/LocationSelect.vue"));
 
 // Since our pages have user-generated content, any fool can insert "{{" on the page and break it.
@@ -78,7 +80,12 @@ new Vue({
             }
         },
         showReplyForm(commentId, username, draftKey) {
-            this.replyTo = { commentId, username, draftKey }
+            this.replyTo = { commentId, username, draftKey };
         },
     },
+});
+
+// Отдельный инстанс для футера
+new Vue({
+    el: "#footer",
 });

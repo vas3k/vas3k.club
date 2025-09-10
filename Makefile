@@ -3,7 +3,7 @@
 # Makes shell non-interactive and exit on any error
 .SHELLFLAGS = -ec
 
-PROJECT_NAME=vas3k_club
+PROJECT_NAME=pmi_club
 
 run-dev:  ## Runs dev server
 	pipenv run python manage.py runserver 0.0.0.0:8000
@@ -67,7 +67,7 @@ test-ci:   ## Run tests (intended for CI usage)
 	python3 manage.py test
 
 psql:
-	psql -h localhost -p 5433 -d vas3k_club -U vas3k
+	psql -h localhost -p 5433 -d pmi_club -U pmiclub
 
 .PHONY: \
   docker-run-dev \

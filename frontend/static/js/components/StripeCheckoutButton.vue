@@ -5,7 +5,10 @@
 </template>
 
 <script>
-import { loadStripe } from "@stripe/stripe-js";
+//import { loadStripe } from "@stripe/stripe-js";
+
+const loadStripe = async () => {
+}
 
 export default {
     name: "StripeCheckoutButton",

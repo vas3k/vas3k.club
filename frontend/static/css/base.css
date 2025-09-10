@@ -211,6 +211,7 @@
         .button-inverted:hover {
             background-color: var(--button-bg-color);
             color: var(--button-color);
+            border: solid 2px var(--button-color);
         }
 
     .button-big {
@@ -749,6 +750,7 @@ img.emoji {
     }
 
     .big-radio-item {
+        flex: 1;
         display: block;
         cursor: pointer;
         position: relative;

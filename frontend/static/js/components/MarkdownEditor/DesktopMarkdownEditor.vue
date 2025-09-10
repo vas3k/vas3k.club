@@ -1,29 +1,33 @@
 <template>
-    <div class="comment-markdown-editor">
-        <textarea
-            required
-            name="text"
-            maxlength="20000"
-            placeholder="Напишите ответ..."
-            class="markdown-editor-invisible"
-            ref="textarea"
-        >
-        </textarea>
-        <div
-            class="mention-autocomplete-hint"
-            v-show="users.length > 0"
-            :style="{
-                top: autocomplete ? autocomplete.top + 'px' : 0,
-                left: autocomplete ? autocomplete.left + 'px' : 0,
-            }"
-        >
-            <div
-                v-for="(user, index) in users.slice(0, 5)"
-                :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
-                @click="insertSuggestion(user)"
-                class="mention-autocomplete-hint__option"
+    <div>
+        <div class="comment-markdown-editor">
+            <textarea
+                required
+                name="text"
+                maxlength="20000"
+                placeholder="Напишите ответ..."
+                class="markdown-editor-invisible"
+                ref="textarea"
             >
-                {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
+            </textarea>
+        </div>
+        <div style="position:absolute;z-index:1;">
+            <div
+                class="mention-autocomplete-hint"
+                v-show="users.length > 0"
+                :style="{
+            top: autocomplete ? autocomplete.top + 'px' : 0,
+            left: autocomplete ? autocomplete.left + 'px' : 0,
+        }"
+            >
+                <div
+                    v-for="(user, index) in users.slice(0, 5)"
+                    :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
+                    @click="insertSuggestion(user)"
+                    class="mention-autocomplete-hint__option"
+                >
+                    {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -47,13 +51,13 @@ export default {
         }
     },
     mounted() {
-        const fileInputEl = this.$el.closest("form").querySelector("input[type=file][name=attach-image]")
+        const fileInputEl = this.$el.closest("form").querySelector("input[type=file][name=attach-image]");
         if (fileInputEl) {
-            fileInputEl.accept = imageUploadOptions.allowedTypes.join()
+            fileInputEl.accept = imageUploadOptions.allowedTypes.join();
         }
 
         this.editor = createMarkdownEditor(this.$refs["textarea"], {
-            toolbar: false,
+            toolbar: false
         });
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
@@ -69,18 +73,20 @@ export default {
         this.focusIfNeeded(this.focused);
     },
     watch: {
-        users: function (val) {
+        users: function(val) {
             if (val.length > 0) {
                 this.selectedUserIndex = 0;
                 document.addEventListener("keydown", this.handleKeydown, true);
+                document.addEventListener("click", this.handleClickOnOpenAutocomplete, true);
             } else {
                 document.removeEventListener("keydown", this.handleKeydown, true);
+                document.removeEventListener("click", this.handleClickOnOpenAutocomplete, true);
             }
         },
-        focused: function (value) {
+        focused: function(value) {
             this.focusIfNeeded(value);
         },
-        value: function (value) {
+        value: function(value) {
             this.editor.value(value);
             this.focusIfNeeded(true);
         }
@@ -93,8 +99,8 @@ export default {
             autocomplete: null,
             autocompleteCache: {
                 samples: {},
-                users: {},
-            },
+                users: {}
+            }
         };
     },
     methods: {
@@ -103,7 +109,8 @@ export default {
                 event.code !== "ArrowDown" &&
                 event.code !== "ArrowUp" &&
                 event.code !== "Tab" &&
-                event.code !== "Enter"
+                event.code !== "Enter" &&
+                event.code !== "Escape"
             ) {
                 return;
             }
@@ -116,6 +123,13 @@ export default {
                 this.selectedUserIndex += 1;
             } else if (event.code === "ArrowUp" && this.selectedUserIndex - 1 >= 0) {
                 this.selectedUserIndex -= 1;
+            } else if (event.code === "Escape") {
+                this.resetAutocomplete();
+            }
+        },
+        handleClickOnOpenAutocomplete(event) {
+            if (!event.target.closest(".mention-autocomplete-hint")) {
+                this.resetAutocomplete();
             }
         },
         triggersAutocomplete(cm, event) {
@@ -127,7 +141,7 @@ export default {
             const prevSymbol = cm.getRange(
                 {
                     line: event.from.line,
-                    ch: event.from.ch - 1,
+                    ch: event.from.ch - 1
                 },
                 event.from
             );
@@ -148,15 +162,15 @@ export default {
                 `${user.slug} `,
                 {
                     line,
-                    ch: ch + 1,
+                    ch: ch + 1
                 },
                 {
                     line: cursor.line,
-                    ch: cursor.ch,
+                    ch: cursor.ch
                 }
             );
         },
-        populateCacheWithCommentAuthors: function () {
+        populateCacheWithCommentAuthors: function() {
             document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
                 const slug = linkEl.dataset.authorSlug;
                 const full_name = linkEl.innerText;
@@ -167,11 +181,11 @@ export default {
 
                 this.autocompleteCache.users[slug] = {
                     slug,
-                    full_name,
+                    full_name
                 };
             });
         },
-        fetchAutocompleteSuggestions: throttle(function (sample) {
+        fetchAutocompleteSuggestions: throttle(function(sample) {
             fetch(`/search/users.json?prefix=${sample}`)
                 .then((res) => {
                     if (!res.url.includes(`prefix=${sample}`)) {
@@ -210,8 +224,8 @@ export default {
 
                 this.autocomplete = {
                     ...event.from,
-                    top: cursorCoords.top + 36, // first line offset
-                    left: Math.floor(cursorCoords.left),
+                    top: cursorCoords.top + 36 - this.editor.codemirror.getWrapperElement().clientHeight, // first line offset
+                    left: Math.floor(cursorCoords.left)
                 };
             }
         },
@@ -260,10 +274,10 @@ export default {
                 }
             });
         },
-        emitCustomBlur: function (editor) {
+        emitCustomBlur: function(editor) {
             this.$emit("blur", editor.getValue());
         }
-    },
+    }
 };
 </script>
 

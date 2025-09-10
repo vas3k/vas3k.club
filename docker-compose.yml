@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   club_app: &app
     build:
@@ -14,7 +12,7 @@ services:
       - POSTGRES_DB=pmi_club
       - POSTGRES_USER=pmiclub
       - POSTGRES_PASSWORD=pmiclub
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=club_postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
     restart: always
@@ -40,64 +38,18 @@ services:
       - POSTGRES_DB=pmi_club
       - POSTGRES_USER=pmiclub
       - POSTGRES_PASSWORD=pmiclub
-      - POSTGRES_HOST=postgres
+      - POSTGRES_HOST=club_postgres
       - REDIS_DB=0
       - REDIS_HOST=redis
     restart: always
     volumes:
       - .:/app:delegated
     depends_on:
-      - postgres
-      - redis
-  
-  bot:
-    build:
-      dockerfile: Dockerfile
-      context: .
-    command: make docker-run-bot
-    environment:
-      - MODE=dev
-      - DEBUG=true
-      - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=pmi_club
-      - POSTGRES_USER=pmiclub
-      - POSTGRES_PASSWORD=pmiclub
-      - POSTGRES_HOST=postgres
-      - REDIS_DB=0
-      - REDIS_HOST=redis
-    restart: always
-    volumes:
-      - .:/app:delegated
-    depends_on:
-      - club_app
-      - postgres
-      - redis
-
-  helpdeskbot:
-    build:
-      dockerfile: Dockerfile
-      context: .
-    command: make docker-run-helpdeskbot
-    environment:
-      - MODE=dev
-      - DEBUG=true
-      - PYTHONUNBUFFERED=1
-      - POSTGRES_DB=pmi_club
-      - POSTGRES_USER=pmiclub
-      - POSTGRES_PASSWORD=pmiclub
-      - POSTGRES_HOST=postgres
-      - REDIS_DB=0
-      - REDIS_HOST=redis
-    restart: always
-    volumes:
-      - .:/app:delegated
-    depends_on:
-      - club_app
       - postgres
       - redis
 
   postgres:
-    image: postgres:11
+    image: postgres:14
     container_name: club_postgres
     environment:
       - POSTGRES_USER=pmiclub
@@ -120,6 +72,52 @@ services:
     volumes:
       - .:/app:delegated
     working_dir: /app/frontend
+
+  bot:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: make docker-run-bot
+    environment:
+      - MODE=dev
+      - DEBUG=true
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
+      - POSTGRES_HOST=club_postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    restart: always
+    volumes:
+      - .:/app:delegated
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+
+  helpdeskbot:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: make docker-run-helpdeskbot
+    environment:
+      - MODE=dev
+      - DEBUG=true
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
+      - POSTGRES_HOST=club_postgres
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+    restart: always
+    volumes:
+      - .:/app:delegated
+    depends_on:
+      - club_app
+      - postgres
+      - redis
 
 networks:
   pmi_network:

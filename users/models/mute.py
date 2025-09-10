@@ -18,6 +18,7 @@ class UserMuted(models.Model):
     class Meta:
         db_table = "muted"
         unique_together = [["user_from", "user_to"]]
+        ordering = ["-created_at"]
 
     @classmethod
     def mute(cls, user_from, user_to, comment=None):

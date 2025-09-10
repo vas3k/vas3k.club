@@ -1,45 +1,49 @@
 {% load comments %}
 
-<form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
-    <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
-    <div class="comment-form">
-        <div class="comment-form-avatar">
-            {% if comment %}
-                <div class="avatar"><img src="{{ comment.author.get_avatar }}" alt="Аватар" loading="lazy" /></div>
-            {% else %}
-                <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар" loading="lazy" /></div>
-            {% endif %}
-        </div>
-        <div class="comment-form-body comment-form-battle">
-            <div class="comment-form-body-battle-side">Я за
-                <select name="{{ form.battle_side.name }}" id="{{ form.battle_side.id_for_label }}">
-                    {% for code, side in post.metadata.battle.sides.items %}
-                        <option value="{{ code }}" {% selected_battle_side %}>{{ side.name }}</option>
-                    {% endfor %}
-                </select>
+{% if me|is_comment_limit_exceeded:post  %}
+    {% include "comments/widgets/limit.html" %}
+{% else %}
+    <form action="{% url "create_comment" post.slug %}" method="post" class="form comment-form-form">
+        <input type="hidden" name="post_comment_order" value="{{ comment_order }}">
+        <div class="comment-form">
+            <div class="comment-form-avatar">
+                {% if comment %}
+                    <div class="avatar"><img src="{{ comment.author.get_avatar }}" alt="Аватар" loading="lazy" /></div>
+                {% else %}
+                    <div class="avatar"><img src="{{ me.get_avatar }}" alt="Аватар" loading="lazy" /></div>
+                {% endif %}
             </div>
-            <div class="comment-form-body-title">{{ form.title }}</div>
-            <div class="comment-form-editor-container">
-                <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
-                    {% if comment.text %}
-                        value="{{ comment.text }}" focused
-                    {% endif %}
-                >
-                </comment-markdown-editor>
-                <div class="comment-form-footer">
-                    <label class="comment-form-attach-image">
-                        <input type="file" name="attach-image" alt="Добавить картинку" />
-                        <i class="fa fa-image"></i>
-                    </label>
-                    <div class="comment-form-subscribe">
-                        {% if not comment %}
-                            {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
-                        {% endif %}
-                    </div>
-                    <button type="submit" class="button comment-form-button"> {{ save_message }} </button>
+            <div class="comment-form-body comment-form-battle">
+                <div class="comment-form-body-battle-side">Я за
+                    <select name="{{ form.battle_side.name }}" id="{{ form.battle_side.id_for_label }}">
+                        {% for code, side in post.metadata.battle.sides.items %}
+                            <option value="{{ code }}" {% selected_battle_side %}>{{ side.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                <div class="comment-form-body-title">{{ form.title }}</div>
+                <div class="comment-form-editor-container">
+                    <comment-markdown-editor class="comment-form-body-text" post-slug="{{ post.slug }}"
+                        {% if comment.text %}
+                            value="{{ comment.text }}" focused
+                        {% endif %}
+                    >
+                    </comment-markdown-editor>
+                    <div class="comment-form-footer">
+                        <label class="comment-form-attach-image">
+                            <input type="file" name="attach-image" alt="Добавить картинку" />
+                            <i class="fa fa-image"></i>
+                        </label>
+                        <div class="comment-form-subscribe">
+                            {% if not comment %}
+                                {{ form.subscribe_to_post }} {{ form.subscribe_to_post.label_tag }}
+                            {% endif %}
+                        </div>
+                        <button type="submit" class="button comment-form-button"> {{ save_message }} </button>
+                    </div>
+                </div>
+                {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
             </div>
-            {% if form.errors %}<span class="form-errors">{{ form.errors }}</span>{% endif %}
         </div>
-    </div>
-</form>
+    </form>
+{% endif %}

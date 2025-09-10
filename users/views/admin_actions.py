@@ -8,10 +8,10 @@ from authn.models.session import Session
 from club.exceptions import AccessDenied
 from common.data.ban import BanReason, TEMPORARY_BAN_REASONS, PERMANENT_BAN_REASONS, PROGRESSIVE_BAN_DAYS
 from common.data.hats import HATS
-from notifications.email.users import send_banned_email, send_unmoderated_email, send_delete_account_confirm_email, \
+from notifications.email.users import send_unmoderated_email, send_delete_account_confirm_email, \
     send_ping_email
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
-from notifications.telegram.users import notify_admin_user_on_ban, notify_admin_user_unmoderate, notify_user_ping, \
+from notifications.telegram.users import notify_admin_user_unmoderate, notify_user_ping, \
     notify_admin_user_ping
 from payments.helpers import cancel_all_stripe_subscriptions, gift_membership_days
 from users.forms.admin import UserAdminForm, UserInfoAdminForm

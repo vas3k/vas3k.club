@@ -1,11 +1,14 @@
 <template>
-    <a v-if="isFriend" class="profile-status clickable" @click="toggle">
-        <span class="profile-status-icon">✅</span>
-        <span class="profile-status-status">Мой чувак</span>
+    <a v-if="isLoading" class="button button-inverted friend-button">
+        <span class="friend-button-status">...</span>
     </a>
-    <a v-else class="profile-status clickable" @click="toggle">
-        <span class="profile-status-icon">🤝</span>
-        <span class="profile-status-status">Добавить в мои чуваки</span>
+    <a v-else-if="isFriend" class="button button-inverted friend-button" @click="toggle">
+        <span class="friend-button-icon">✅</span>
+        <span class="friend-button-status">Мой чувак</span>
+    </a>
+    <a v-else class="button button-inverted friend-button" @click="toggle">
+        <span class="friend-button-icon-big">+</span>
+        <span class="friend-button-status">Подписаться</span>
     </a>
 </template>
 
@@ -32,10 +35,27 @@ export default {
             isLoading: false,
         };
     },
+    created() {
+        if (!this.isFriendByDefault) {
+            this.checkFriendshipStatus();
+        }
+    },
     methods: {
+        checkFriendshipStatus() {
+            this.isLoading = true;
+
+            return ClubApi.get(this.url, (data) => {
+                this.isLoading = false;
+                if (data.error) {
+                    this.isFriend = false;
+                } else {
+                    this.isFriend = true;
+                }
+            });
+        },
         toggle() {
             this.isLoading = true;
-            return ClubApi.ajaxify(this.url, (data) => {
+            return ClubApi.post(this.url, (data) => {
                 this.isLoading = false;
 
                 if (data.status === "created") {
