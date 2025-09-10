@@ -48,8 +48,6 @@ services:
     <<: *app
     command: make docker-run-queue
     container_name: club_queue
-    networks:
-      - club_network
     ports: []
     networks:
       - club
@@ -120,11 +118,7 @@ services:
     <<: *app
     command: make docker-run-cron
     container_name: club_cron
-    networks:
-      - club_network
     ports: []
-    # networks:
-    #   - club
     logging:
       driver: "json-file"
       options:
@@ -172,8 +166,6 @@ services:
     image: redis:alpine
     container_name: club_redis
     restart: unless-stopped
-    networks:
-      - club_network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
