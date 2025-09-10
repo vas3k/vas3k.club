@@ -22,7 +22,7 @@ services:
       - VIRTUAL_PORT=8814
       - VIRTUAL_PATH=/
     env_file:
-      - .env
+      - club/.env
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
