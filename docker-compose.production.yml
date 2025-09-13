@@ -60,6 +60,12 @@ services:
       - VIRTUAL_HOST=pmi.moscow
       - VIRTUAL_PATH=/telegram/webhook/
       - VIRTUAL_PORT=8816
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
+      - POSTGRES_HOST=postgres
     depends_on:
       - club_app
       - postgres
@@ -80,6 +86,8 @@ services:
       - POSTGRES_DB=pmi_club
       - POSTGRES_USER=pmiclub
       - POSTGRES_PASSWORD=pmiclub
+      - REDIS_DB=0
+      - REDIS_HOST=redis
       - VIRTUAL_HOST=pmi.moscow
       - VIRTUAL_PATH=/telegram/helpdeskbot/webhook/
       - VIRTUAL_PORT=8817
