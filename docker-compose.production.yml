@@ -75,6 +75,11 @@ services:
     command: make docker-run-helpdeskbot
     container_name: club_help_desk_bot
     environment:
+      - APP_HOST=https://pmi.moscow
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=pmi_club
+      - POSTGRES_USER=pmiclub
+      - POSTGRES_PASSWORD=pmiclub
       - VIRTUAL_HOST=pmi.moscow
       - VIRTUAL_PATH=/telegram/helpdeskbot/webhook/
       - VIRTUAL_PORT=8817
