@@ -77,7 +77,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "club.context_processors.settings_processor",
                 "club.context_processors.features_processor",
-                "authn.context_processors.users.me",
+                "users.context_processors.users.me",
                 "posts.context_processors.feed.rooms",
                 "posts.context_processors.feed.ordering",
             ]
@@ -160,8 +160,10 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+        "TIMEOUT": 3600,  # 5 hours max
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
         }
     }
 }

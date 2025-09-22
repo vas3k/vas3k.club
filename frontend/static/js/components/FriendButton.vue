@@ -35,36 +35,13 @@ export default {
             isLoading: false,
         };
     },
-    created() {
-        if (!this.isFriendByDefault) {
-            this.checkFriendshipStatus();
-        }
-    },
     methods: {
-        checkFriendshipStatus() {
-            this.isLoading = true;
-
-            return ClubApi.get(this.url, (data) => {
-                this.isLoading = false;
-                if (data.error) {
-                    this.isFriend = false;
-                } else {
-                    this.isFriend = true;
-                }
-            });
-        },
         toggle() {
             this.isLoading = true;
             return ClubApi.post(this.url, (data) => {
                 this.isLoading = false;
-
-                if (data.status === "created") {
-                    this.isFriend = true;
-                }
-
-                if (data.status === "deleted") {
-                    this.isFriend = false;
-                }
+                if (data.status === "created") this.isFriend = true;
+                if (data.status === "deleted") this.isFriend = false;
             });
         },
     },

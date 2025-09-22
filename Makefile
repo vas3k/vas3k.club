@@ -38,7 +38,7 @@ docker-run-dev:  ## Runs dev server in docker
 
 docker-run-production: docker-migrate docker-update-achievements
 	cp -r /app/frontend/static /tmp/
-	gunicorn club.asgi:application -w 7 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8814 --capture-output --log-level debug --access-logfile - --error-logfile -
+	gunicorn club.asgi:application -w 5 -k uvicorn.workers.UvicornWorker --bind=0.0.0.0:8814 --timeout 60 --max-requests 1500 --max-requests-jitter 300 --capture-output --log-level debug --access-logfile - --error-logfile -
 
 docker-update-achievements:
 	python3 manage.py update_achievements

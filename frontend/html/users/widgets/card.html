@@ -5,7 +5,8 @@
 
         {% if me and user != me %}
             <friend-button
-                url="{% url "api_friend" user.slug %}">
+                url="{% url "api_friend" user.slug %}"
+                :is-friend-by-default="{% if user.id in friends_ids %}true{% else %}false{% endif %}">
             </friend-button>
         {% endif %}
     </div>
