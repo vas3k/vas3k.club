@@ -15,7 +15,6 @@ def badge_generator(request, admin_page):
 
     for user in users:
         user.badges = UserBadge.user_badges_grouped(user=user)
-        # user.achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
 
     repeat = int(request.GET.get("repeat") or 1)
     if repeat > 1:

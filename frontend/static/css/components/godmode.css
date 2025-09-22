@@ -352,8 +352,10 @@
         }
 
         .badge-generator-results .profile-user-location {
-            font-size: 110%;
-            padding-bottom: 5px;
+            font-size: 120%;
+            opacity: 0.8;
+            position: relative;
+            left: -5px;
         }
 
         .badge-generator-results .profile-user-fullname {
@@ -381,6 +383,9 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
+
+        overflow: hidden;
+        max-height: 70px;
     }
 
     .badge-generator-results .user-badge-achievement {

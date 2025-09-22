@@ -115,6 +115,8 @@ DATABASES = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD") or "",
         "HOST": os.getenv("POSTGRES_HOST") or "localhost",
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
+        "CONN_MAX_AGE": 120,
+        "CONN_HEALTH_CHECKS": True,  # EXPERIMENTAL: probes stale conns before using them, remove if slow
     }
 }
 
