@@ -40,7 +40,7 @@
             .menu-left {
                 min-width: auto;
             }
-            
+
             .menu-burger {
                 display: block;
             }
@@ -79,6 +79,21 @@
         justify-content: space-between;
         display: flex;
         flex-direction: row;
+        align-items: center;
+    }
+
+    @media only screen and (max-width : 1024px) {
+        .menu-simplified {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+    }
+
+    @media only screen and (max-width : 570px) {
+        .menu-simplified {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
     }
 
         .menu-simplified-right {
