@@ -14,7 +14,6 @@ requests = "==2.32.3"
 pyjwt = "==2.10.1"
 cryptography = ">=39.0.2"
 patreon = ">=0.5"
-psycopg2-binary = "==2.9.10"
 awesome-slugify = ">=1.6.5"
 mistune = "==2.0.5"
 click = "*"
@@ -42,6 +41,7 @@ django-webpack-loader = "==3.1.1"
 urllib3 = "<2.0.0"  # dirty hack, required for python-telegram-bot<20.0
 standard-imghdr = "*"  # was removed in Python 3.13 but needed for python-telegram-bot too
 openai = "*"
+psycopg = {extras = ["pool"], version = "*"}
 
 [requires]
 python_version = "3.12"
