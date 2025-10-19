@@ -29,6 +29,11 @@ def markdown(text):
     return mark_safe(markdown_text(text))
 
 
+@register.filter(is_safe=True)
+def markdown_without_mentions(text):
+    return mark_safe(markdown_text(text, disable_mentions=True))
+
+
 @register.filter
 def ceil(value):
     return math.ceil(value or 0)

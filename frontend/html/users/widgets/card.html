@@ -38,7 +38,7 @@
 
         {% if user.bio %}
             <div class="profile-user-bio">
-                {{ user.bio | markdown }}
+                {{ user.bio | markdown_without_mentions }}
             </div>
         {% endif %}
     </div>

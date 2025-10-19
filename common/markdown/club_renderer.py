@@ -4,14 +4,19 @@ from urllib.parse import unquote
 from mistune import escape_html
 from slugify import slugify
 
-from common.markdown.common import split_title_and_css_classes
+from common.markdown.common import split_title_and_css_classes, url_normalize
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
 
 class ClubRenderer(mistune.HTMLRenderer):
+    def __init__(self, disable_mentions=False):
+        super().__init__()
+        self.disable_mentions = disable_mentions
+
     def text(self, text):
         text = escape_html(text)
-        text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
+        if not self.disable_mentions:
+            text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
         return text
 
     def paragraph(self, text):
@@ -30,6 +35,7 @@ class ClubRenderer(mistune.HTMLRenderer):
             if embed:
                 return embed
 
+        link = url_normalize(link)
         text, css_classes = split_title_and_css_classes(text or "")
 
         if text is None:

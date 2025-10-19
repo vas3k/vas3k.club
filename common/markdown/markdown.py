@@ -6,9 +6,9 @@ from common.markdown.plain_renderer import PlainRenderer
 from common.markdown.telegram_renderer import TelegramRenderer
 
 
-def markdown_text(text, renderer=ClubRenderer):
+def markdown_text(text, renderer=ClubRenderer, disable_mentions=False):
     markdown = mistune.create_markdown(
-        escape=True, renderer=renderer(), plugins=["strikethrough", "url", "table"]
+        escape=True, renderer=renderer(disable_mentions=disable_mentions), plugins=["strikethrough", "url", "table"]
     )
     return (markdown(text) or "").strip()
 
