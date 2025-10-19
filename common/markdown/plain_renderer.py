@@ -2,6 +2,9 @@ import mistune
 
 
 class PlainRenderer(mistune.HTMLRenderer):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
     def link(self, link, text=None, title=None):
         if text:
             return f'[{text}]({link})'

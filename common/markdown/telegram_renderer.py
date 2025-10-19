@@ -24,6 +24,9 @@ def convert_bulet_to_ordered_list(text, level, start):
 
 
 class TelegramRenderer(mistune.HTMLRenderer):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+
     def link(self, link, text=None, title=None):
         text, _ = split_title_and_css_classes(text or "")
         return super().link(link, text, title)
