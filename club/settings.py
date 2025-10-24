@@ -116,6 +116,12 @@ DATABASES = {
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
         "OPTIONS": {
             "pool": True,
+            # "pool": {
+            #     "min_size": 4,
+            #     "max_size": 16,
+            #     "timeout": 10, # fail in 10 sec under load
+            #     "max_idle": 300, # close idle after 5 min
+            # },
         },
     }
 }

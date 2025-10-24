@@ -131,12 +131,6 @@ def reject_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     post.moderation_status = Post.MODERATION_REJECTED
-
-    if post.visibility == Post.VISIBILITY_DRAFT:
-        update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
-        update.callback_query.edit_message_reply_markup(reply_markup=None)
-        return None
-
     post.unpublish()
 
     SearchIndex.update_post_index(post)

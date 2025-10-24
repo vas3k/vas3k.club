@@ -31,6 +31,20 @@ class ProTip(models.Model):
 
 
 class NetworkGroup(models.Model):
+    NETWORK_TEMPLATE_BLOCK = "block"
+    NETWORK_TEMPLATE_SERVICES = "services"
+    NETWORK_TEMPLATE_TOP = "top"
+    NETWORK_TEMPLATE_TITLE = "title"
+    NETWORK_TEMPLATE_OTHER = "other"
+
+    NETWORK_TEMPLATES = [
+        (NETWORK_TEMPLATE_BLOCK, NETWORK_TEMPLATE_BLOCK),
+        (NETWORK_TEMPLATE_SERVICES, NETWORK_TEMPLATE_SERVICES),
+        (NETWORK_TEMPLATE_TOP, NETWORK_TEMPLATE_TOP),
+        (NETWORK_TEMPLATE_TITLE, NETWORK_TEMPLATE_TITLE),
+        (NETWORK_TEMPLATE_OTHER, NETWORK_TEMPLATE_OTHER),
+    ]
+
     code = models.CharField(max_length=32, primary_key=True)
 
     title = models.TextField(null=False)
@@ -38,13 +52,18 @@ class NetworkGroup(models.Model):
     index = models.PositiveIntegerField(default=0)
     is_visible = models.BooleanField(default=True)
 
+    custom_template = models.CharField(max_length=16, choices=NETWORK_TEMPLATES, default=NETWORK_TEMPLATE_BLOCK)
+
     class Meta:
         db_table = "network_groups"
         ordering = ["index"]
+
+    def __str__(self):
+        return self.code
 
     @classmethod
     def visible_objects(cls):
         return cls.objects.filter(is_visible=True)
 
-    def __str__(self):
-        return self.code
+    def template(self):
+        return f"network/groups/{self.custom_template or self.NETWORK_TEMPLATE_BLOCK}.html"

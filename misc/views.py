@@ -75,7 +75,7 @@ def show_achievement(request, achievement_code):
 @require_auth
 def network(request):
     network_groups = NetworkGroup.visible_objects()
-    return render(request, "pages/network.html", {
+    return render(request, "network/network.html", {
         "network": network_groups,
     })
 

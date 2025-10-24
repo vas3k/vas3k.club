@@ -1,0 +1,33 @@
+{% load text_filters %}
+
+<div class="network-block network-block-services" id="{{ group.code }}">
+    <a href="#{{ group.code }}" class="network-header">{{ group.title }}</a>
+
+    {% if group.rooms %}
+        <div class="network-channels">
+            {% for room in group.rooms.all %}
+                {% if room.is_visible and room.get_private_url %}
+                    <a href="{{ room.get_private_url }}" target="_blank" class="block network-channel network-channel-square">
+                        {% if room.image %}
+                            <span class="avatar network-channel-image"><img src="{{ room.image }}" alt="{{ room.title }}"></span>
+                        {% endif %}
+
+                        <div class="network-channel-info">
+                            {% if room.title %}
+                                <span class="network-channel-name">{{ room.title | safe  }}</span>
+                            {% endif %}
+
+                            {% if room.subtitle %}
+                                <span class="network-channel-description">{{ room.subtitle | safe }}</span>
+                            {% endif %}
+                        </div>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="network-channel-text">
+        {{ group.text | markdown }}
+    </div>
+</div>

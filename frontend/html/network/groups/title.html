@@ -1,0 +1,11 @@
+{% load text_filters %}
+
+<div class="network-block network-block-title" id="{{ group.code }}">
+    <a href="#{{ group.code }}" class="network-header">{{ group.title }}</a>
+
+    {% if group.text %}
+        <div class="network-channel-text">
+            {{ group.text | markdown }}
+        </div>
+    {% endif %}
+</div>

@@ -43,7 +43,7 @@ class Room(models.Model):
 
     class Meta:
         db_table = "rooms"
-        ordering = ["-chat_member_count"]
+        ordering = ["-chat_member_count", "index"]
 
     def __str__(self):
         return self.title

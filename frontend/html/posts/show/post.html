@@ -48,12 +48,12 @@
                     {% endif %}
 
                     <div class="post-author">
-                        {% include "users/widgets/tiny.html" with user=post.author %}
+                        {% include "users/widgets/tiny.html" with user=post.author show_name=True %}
 
                         {% if post.coauthors %}
                             {% for coauthor in post.coauthors_with_details %}
                                 &nbsp;&nbsp;
-                                {% include "users/widgets/tiny.html" with user=coauthor %}
+                                {% include "users/widgets/tiny.html" with user=coauthor show_name=True %}
                             {% endfor %}
                         {% endif %}
                     </div>

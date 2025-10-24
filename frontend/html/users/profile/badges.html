@@ -53,7 +53,7 @@
                                 <span class="profile-badge-from">
                                     {{ user_badge.created_at|date:"j E Y" }}
                                     &nbsp;·&nbsp;
-                                    {% include "users/widgets/tiny.html" with user=user_badge.from_user %}
+                                    {% include "users/widgets/tiny.html" with user=user_badge.from_user show_name=True %}
                                 </span>
                             </div>
                         </div>

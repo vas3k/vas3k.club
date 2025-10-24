@@ -40,7 +40,17 @@
     .user-tiny {
         overflow: hidden;
         text-overflow: ellipsis;
+        display: flex-inline;
+        gap: 5px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
     }
+
+        .user-tiny .avatar {
+            width: 28px;
+            height: 28px;
+        }
 
     .user-small {
     }

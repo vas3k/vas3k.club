@@ -4,12 +4,14 @@
             <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy">
         </a>
     </span>
+
     <span class="user-info">
         <a href="{% url "profile" user.slug %}">
             <span class="user-name {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %}">{{ user.full_name }}</span>{% if me %}<span class="user-position">, {{ user.position }}</span>{% endif %}
             {% if user.hat %}{% include "users/widgets/hat.html" with hat=user.hat %}{% endif %}
         </a>
     </span>
+
     {% if created_at %}
         <span class="user-footer">
             {{ created_at | date:"j E Y" }}

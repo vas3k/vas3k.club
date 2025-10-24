@@ -10,7 +10,7 @@
         <div class="comment-header">
             <div class="comment-title">{{ comment.title | rutypography }}</div>
             <div  class="comment-type-battle-userinfo">
-                {% include "users/widgets/tiny.html" with user=comment.author %}
+                {% include "users/widgets/tiny.html" with user=comment.author show_name=True %}
 
                 <a href="#comment-{{ comment.id }}" class="reply-date">
                     {{ comment.created_at | cool_date }}

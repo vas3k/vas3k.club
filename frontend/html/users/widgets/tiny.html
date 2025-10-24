@@ -1,4 +1,6 @@
 <a class="user user-tiny" href="{% url "profile" user.slug %}">
     <span class="avatar user-avatar"><img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" /></span>
-    <span class="user-name {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %}">{{ user.full_name }}</span>
+    {% if show_name %}
+        <span class="user-name {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %}">{{ user.full_name }}</span>
+    {% endif %}
 </a>

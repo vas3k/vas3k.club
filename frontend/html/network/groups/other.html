@@ -1,0 +1,24 @@
+{% load text_filters %}
+
+<div class="block network-block" id="{{ group.code }}">
+    <a href="#{{ group.code }}" class="network-header">{{ group.title }}</a>
+
+    {% if group.rooms %}
+        <div class="network-channels" style="gap: 10px;">
+            {% for room in group.rooms.all %}
+                {% if room.is_visible and room.get_private_url %}
+                    <a href="{{ room.get_private_url }}" target="_blank" class="network-channel network-channel-other">
+                        <i class="fab fa-telegram"></i>
+                        <span class="network-channel-name">{{ room.title | safe  }}</span>
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if group.text %}
+        <div class="network-channel-text">
+            {{ group.text | markdown }}
+        </div>
+    {% endif %}
+</div>
