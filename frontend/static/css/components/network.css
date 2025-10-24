@@ -63,7 +63,9 @@
 
         .network-channel {
             position: relative;
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 150px;
             box-sizing: border-box;
             text-align: center;
@@ -105,6 +107,7 @@
                 padding-top: 10px;
                 text-decoration: underline;
                 font-weight: 500;
+                line-height: 1.3em;
             }
 
             .network-channel-description {
