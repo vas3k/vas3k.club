@@ -18,7 +18,7 @@
                             {% endif %}
 
                             {% if room.subtitle %}
-                                <span class="network-channel-description">{{ room.subtitle | safe }}</span>
+                                <span class="network-channel-description">{{ room.subtitle | markdown }}</span>
                             {% endif %}
                         </div>
                     </a>
