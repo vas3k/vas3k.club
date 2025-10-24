@@ -25,12 +25,13 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
     post = Post.objects.get(id=post_id)
+    post.moderation_status = Post.MODERATION_APPROVED
+
     if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
         update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
-    post.moderation_status = Post.MODERATION_APPROVED
     post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
@@ -77,12 +78,13 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
     post = Post.objects.get(id=post_id)
+    post.moderation_status = Post.MODERATION_FORGIVEN
+
     if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
         update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
-    post.moderation_status = Post.MODERATION_FORGIVEN
     post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
@@ -130,12 +132,13 @@ def reject_post(update: Update, context: CallbackContext) -> None:
     }.get(code) or PostRejectReason.draft
 
     post = Post.objects.get(id=post_id)
+    post.moderation_status = Post.MODERATION_REJECTED
+
     if post.visibility == Post.VISIBILITY_DRAFT:
         update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
-    post.moderation_status = Post.MODERATION_REJECTED
     post.unpublish()
 
     SearchIndex.update_post_index(post)
