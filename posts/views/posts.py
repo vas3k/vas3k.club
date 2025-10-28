@@ -8,7 +8,8 @@ from authn.helpers import check_user_permissions
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
 from notifications.telegram.posts import send_published_post_to_moderators, notify_author_friends, \
-    announce_in_online_channel, send_intro_changes_to_moderators
+    announce_in_online_channel, send_intro_changes_to_moderators, notify_post_label_changed, \
+    notify_post_coauthors_changed
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
@@ -199,6 +200,13 @@ def create_or_edit(request, post_type, post=None, mode="create"):
 
             SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)
+
+        # track label and coauthors changes
+        if "label_code" in form.changed_data:
+            async_task(notify_post_label_changed, post)
+
+        if "coauthors" in form.changed_data:
+            async_task(notify_post_coauthors_changed, post)
 
         # track intro changes
         if post.type == Post.TYPE_INTRO and not post.is_draft:

@@ -239,3 +239,40 @@ def post_reply_markup(post):
             telegram.InlineKeyboardButton("🔔", callback_data=f"subscribe:{post.id}"),
         ],
     ])
+
+
+def notify_post_label_changed(post):
+    moderator_template = "moderator_label_removed.html" if post.label_code is None else "moderator_label_set.html"
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=render_html_message(moderator_template, post=post),
+        parse_mode=telegram.ParseMode.HTML,
+    )
+    if post.label_code is not None and post.label['notify'] and post.author.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=post.author.telegram_id),
+            text=render_html_message("post_label.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+        )
+
+
+def notify_post_coauthors_changed(post):
+    old = set()
+    history = list(post.history.all()[:2])
+    if len(history) == 2:
+        old = set(history[1].coauthors)
+    new = set(post.coauthors)
+    added = new - old
+    removed = old - new
+    notify_users_by_username(added, "coauthor_added.html", post)
+    notify_users_by_username(removed, "coauthor_removed.html", post)
+
+
+def notify_users_by_username(users, template, post):
+    for username in users:
+        user = User.objects.filter(slug=username).first()
+        if user and user.telegram_id:
+            send_telegram_message(
+                chat=Chat(id=user.telegram_id),
+                text=render_html_message(template, post=post),
+            )

@@ -6,6 +6,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from django_q.tasks import async_task
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
@@ -14,6 +15,7 @@ from comments.models import Comment, CommentVote
 from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.request import parse_ip_address, parse_useragent
 from authn.decorators.api import api
+from notifications.telegram.comments import notify_on_comment_created
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -79,6 +81,10 @@ def create_comment(request, post_slug):
             )
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
+
+            # send all kind of notifications
+            async_task(notify_on_comment_created, comment)
+
             return redirect(comment.get_absolute_url())
         else:
             log.error(f"Comment form error: {form.errors}")
