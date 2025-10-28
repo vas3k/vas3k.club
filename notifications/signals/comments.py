@@ -1,4 +1,5 @@
 import telegram
+from django.db import close_old_connections
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -24,6 +25,8 @@ def create_or_update_comment(sender, instance, created, **kwargs):
 
 
 def async_create_or_update_comment(comment):
+    close_old_connections()  # HACK: fixes connection pooling bug in Django 5.1
+
     notified_user_ids = set()
     muted_author_user_ids = set(
         UserMuted.who_muted_user(comment.author_id).values_list("user_from_id", flat=True)

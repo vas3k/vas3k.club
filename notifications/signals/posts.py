@@ -1,4 +1,5 @@
 import telegram
+from django.db import close_old_connections
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -21,6 +22,8 @@ def create_or_update_post(sender, instance, created, **kwargs):
 
 
 def async_label_changed(post):
+    close_old_connections()  # HACK: fixes connection pooling bug in Django 5.1
+
     moderator_template = "moderator_label_removed.html" if post.label_code is None else "moderator_label_set.html"
     send_telegram_message(
         chat=ADMIN_CHAT,
@@ -46,6 +49,8 @@ def notify_users(users, template, post):
 
 
 def async_coauthors_changed(post):
+    close_old_connections()  # HACK: fixes connection pooling bug in Django 5.1
+
     old = set()
     history = list(post.history.all()[:2])
     if len(history) == 2:
