@@ -14,9 +14,9 @@
       {{ text }}
     </div>
 
-    <div class="clicker-counter" v-if="!loading && count != 0">{{ count }}</div>
+    <div class="clicker-counter" v-if="count != 0">{{ count }}</div>
 
-    <div class="clicker-users" v-if="!loading && clicks.length > 0">
+    <div class="clicker-users" v-if="clicks.length > 0">
       <a
         v-for="(c, i) in clicks"
         :key="i"

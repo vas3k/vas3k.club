@@ -513,7 +513,7 @@
         border-color: var(--opposite-text-color);
         min-width: 30px;
         height: 30px;
-        padding: 3px 4px;
+        padding: 4px;
         border-radius: 10px;
         text-align: center;
         line-height: 1em;
@@ -540,4 +540,5 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            background-color: #bdc3c7;
         }
