@@ -469,7 +469,7 @@
     text-decoration: none;
     border-radius: var(--button-border-radius);
     color: #EEE;
-    background-color: #063d09;
+    background-color: var(--button-bg-color);
     border: var(--button-border);
     cursor: pointer;
     line-height: 1em;
