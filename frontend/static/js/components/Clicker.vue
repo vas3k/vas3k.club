@@ -74,7 +74,7 @@ export default {
         this.loading = false;
         this.clicks = data.clicks || [];
         this.count = data.count || 0;
-        this.active = !!this.clicks.find((c) => c.user && c.user.is_me);
+        this.active = !!data.is_clicked;
       }, (err) => {
         this.loading = false;
         this.$emit("error", err);

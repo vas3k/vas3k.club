@@ -510,10 +510,11 @@
 
     .clicker-counter {
         border: var(--button-border);
-        min-width: 28px;
-        height: 28px;
-        padding: 2px 4px;
-        border-radius: 25px;
+        border-color: var(--opposite-text-color);
+        min-width: 30px;
+        height: 30px;
+        padding: 3px 4px;
+        border-radius: 10px;
         text-align: center;
         line-height: 1em;
         white-space: nowrap;
