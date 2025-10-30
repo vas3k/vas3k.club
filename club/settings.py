@@ -115,7 +115,7 @@ DATABASES = {
         "HOST": os.getenv("POSTGRES_HOST") or "localhost",
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
         "OPTIONS": {
-            "pool": True,
+            "pool": bool(os.getenv("POSTGRES_USE_POOLING")),
             # "pool": {
             #     "min_size": 4,
             #     "max_size": 16,
