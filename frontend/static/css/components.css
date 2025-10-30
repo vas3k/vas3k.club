@@ -475,6 +475,7 @@
     line-height: 1em;
     font-weight: 500;
     transition: 0.2s ease-out;
+    margin-left: -25px;
 }
 
     .clicker-is-clicked {
@@ -494,10 +495,7 @@
             content: "☑️";
         }
 
-        .clicker-is-clicked .clicker-checkbox::before {
-            content: "✅";
-        }
-
+        .clicker-is-clicked .clicker-checkbox::before,
         .clicker:hover .clicker-checkbox::before {
             content: "✅";
         }
@@ -519,7 +517,6 @@
         box-sizing: border-box;
     }
 
-        .clicker:hover .clicker-counter,
         .clicker-is-clicked .clicker-counter {
             border-color: var(--text-color);
         }
