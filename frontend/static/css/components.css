@@ -509,8 +509,21 @@
     }
 
     .clicker-counter {
+        border: var(--button-border);
+        min-width: 28px;
+        height: 28px;
+        padding: 2px 4px;
+        border-radius: 25px;
+        text-align: center;
+        line-height: 1em;
         white-space: nowrap;
+        box-sizing: border-box;
     }
+
+        .clicker:hover .clicker-counter,
+        .clicker-is-clicked .clicker-counter {
+            border-color: var(--text-color);
+        }
 
     .clicker-users {
         display: flex;

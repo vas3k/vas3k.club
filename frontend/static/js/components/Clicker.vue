@@ -7,14 +7,14 @@
     }"
     @click.prevent="toggle"
   >
-    <div v-if="loading">⌛</div>
+    <div v-if="loading" class="clicker-checkbox">⌛</div>
     <div v-else class="clicker-checkbox"></div>
 
     <div class="clicker-text">
       {{ text }}
     </div>
 
-    <div class="clicker-counter" v-if="!loading && count != 0">({{ count }})</div>
+    <div class="clicker-counter" v-if="!loading && count != 0">{{ count }}</div>
 
     <div class="clicker-users" v-if="!loading && clicks.length > 0">
       <a
