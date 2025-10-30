@@ -477,12 +477,6 @@
     transition: 0.2s ease-out;
 }
 
-    .clicker:hover {
-        color: var(--button-hover-color);
-        background-color: var(--button-hover-bg-color);
-        border: var(--button-hover-border);
-    }
-
     .clicker-is-clicked {
         color: var(--button-hover-color);
         background-color: var(--button-hover-bg-color);
@@ -501,6 +495,10 @@
         }
 
         .clicker-is-clicked .clicker-checkbox::before {
+            content: "✅";
+        }
+
+        .clicker:hover .clicker-checkbox::before {
             content: "✅";
         }
 

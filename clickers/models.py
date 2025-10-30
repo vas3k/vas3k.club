@@ -15,6 +15,7 @@ class Click(models.Model):
 
     class Meta:
         db_table = "clicks"
+        ordering = ["-created_at"]
         unique_together = ("user", "clicker_id")
 
     @classmethod
