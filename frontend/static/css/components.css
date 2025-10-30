@@ -492,12 +492,14 @@
     }
 
         .clicker-checkbox::before {
+            filter: grayscale(1);
             content: "☑️";
         }
 
         .clicker-is-clicked .clicker-checkbox::before,
         .clicker:hover .clicker-checkbox::before {
             content: "✅";
+            filter: grayscale(0);
         }
 
     .clicker-text {
