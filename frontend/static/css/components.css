@@ -460,6 +460,7 @@
     font-family: var(--sans-font);
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     padding: 13px 16px;
@@ -502,6 +503,14 @@
         .clicker-is-clicked .clicker-checkbox::before {
             content: "✅";
         }
+
+    .clicker-text {
+        min-width: 150px;
+    }
+
+    .clicker-counter {
+        white-space: nowrap;
+    }
 
     .clicker-users {
         display: flex;
