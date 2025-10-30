@@ -468,9 +468,9 @@
     box-sizing: border-box;
     text-decoration: none;
     border-radius: var(--button-border-radius);
-    background-color: var(--button-bg-color);
+    color: #EEE;
+    background-color: #063d09;
     border: var(--button-border);
-    color: var(--button-color);
     cursor: pointer;
     line-height: 1em;
     font-weight: 500;
@@ -480,7 +480,7 @@
 
     .clicker-is-clicked {
         color: var(--button-hover-color);
-        background-color: var(--button-hover-bg-color);
+        background-color: #69c26d;
         border: var(--button-hover-border);
     }
 
