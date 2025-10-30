@@ -1,7 +1,7 @@
 import html
 import mistune
 from urllib.parse import unquote
-from mistune import escape_html
+
 from slugify import slugify
 
 from common.markdown.common import split_title_and_css_classes, url_normalize
@@ -9,12 +9,13 @@ from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_R
 
 
 class ClubRenderer(mistune.HTMLRenderer):
-    def __init__(self, disable_mentions=False):
+    def __init__(self, uniq_id=None, disable_mentions=False):
         super().__init__()
+        self.uniq_id = uniq_id
         self.disable_mentions = disable_mentions
 
     def text(self, text):
-        text = escape_html(text)
+        text = html.escape(text)
         if not self.disable_mentions:
             text = USERNAME_RE.sub(r' <a href="/user/\1/">@\1</a>', text)
         return text
@@ -23,19 +24,19 @@ class ClubRenderer(mistune.HTMLRenderer):
         text = text.replace("\n", "<br>\n")  # Mistune 2.0 broke newlines, let's hack it =/
         return f"<p>{text}</p>\n"
 
-    def heading(self, text, level):
+    def heading(self, text, level, **attrs):
         tag = f"h{level}"
         anchor = slugify(text[:24])
         return f"<{tag} id=\"{anchor}\"><a href=\"#{anchor}\">{text}</a></{tag}>\n"
 
-    def link(self, link, text=None, title=None):
+    def link(self, text, url, title=None):
         if not text and not title:
             # it's a pure link (without link tag) and we can try to parse it
-            embed = self.embed(link, text or "", title or "")
+            embed = self.embed(url, text or "", title or "")
             if embed:
                 return embed
 
-        link = url_normalize(link)
+        link = url_normalize(url)
         text, css_classes = split_title_and_css_classes(text or "")
 
         if text is None:
@@ -44,16 +45,16 @@ class ClubRenderer(mistune.HTMLRenderer):
         # here's some magic of unescape->unquote->escape
         # to fix cyrillic (and other non-latin) wikipedia URLs
         return (f'<a class="{' '.join(css_classes)}" '
-                f'href="{self._safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
+                f'href="{self.safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
 
-    def image(self, src, alt="", title=None):
-        embed = self.embed(src, alt, title)
+    def image(self, text, url, title=None):
+        embed = self.embed(url, text, title)
         if embed:
             return embed
 
         # users can try to "hack" our parser by using non-image urls
         # so, if its not an image or video, display it as a link to avoid auto-loading
-        return f'<a href="{escape_html(src)}">{escape_html(src)}</a>'
+        return f'<a href="{html.escape(url)}">{html.escape(url)}</a>'
 
     def embed(self, src, alt="", title=None):
         if IMAGE_RE.match(src):
@@ -72,32 +73,32 @@ class ClubRenderer(mistune.HTMLRenderer):
 
     def simple_image(self, src, alt="", title=None):
         title, css_classes = split_title_and_css_classes(title or alt)
-        image_tag = f'<img src="{escape_html(src)}" alt="{escape_html(title)}">'
-        caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
+        image_tag = f'<img src="{html.escape(src)}" alt="{html.escape(title)}">'
+        caption = f"<figcaption>{html.escape(title)}</figcaption>" if title else ""
         return f'<figure class="{' '.join(css_classes)}">{image_tag}{caption}</figure>'
 
     def youtube(self, src, alt="", title=None):
         youtube_match = YOUTUBE_RE.match(src)
         playlist = ""
         if youtube_match.group(2):
-            playlist = f"list={escape_html(youtube_match.group(2))}&listType=playlist&"
+            playlist = f"list={html.escape(youtube_match.group(2))}&listType=playlist&"
         video_tag = (
             f'<span class="ratio-16-9">'
-            f'<iframe loading="lazy" src="https://www.youtube.com/embed/{escape_html(youtube_match.group(1) or "")}'
+            f'<iframe loading="lazy" src="https://www.youtube.com/embed/{html.escape(youtube_match.group(1) or "")}'
             f'?{playlist}autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
             f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"'
             f'allowfullscreen></iframe>'
             f"</span>"
         )
-        caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
+        caption = f"<figcaption>{html.escape(title)}</figcaption>" if title else ""
         return f"<figure>{video_tag}{caption}</figure>"
 
     def video(self, src, alt="", title=None):
         title, css_classes = split_title_and_css_classes(title or alt)
         video_tag = (
-            f'<video src="{escape_html(src)}" controls playsinline>{escape_html(alt)}</video>'
+            f'<video src="{html.escape(src)}" controls playsinline>{html.escape(alt)}</video>'
         )
-        caption = f"<figcaption>{escape_html(title)}</figcaption>" if title else ""
+        caption = f"<figcaption>{html.escape(title)}</figcaption>" if title else ""
         return f'<figure class="{' '.join(css_classes)}">{video_tag}{caption}</figure>'
 
     def tweet(self, src, alt="", title=None):

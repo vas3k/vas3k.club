@@ -46,21 +46,17 @@ class TelegramRenderer(mistune.HTMLRenderer):
     def paragraph(self, text):
         return text + "\n\n"
 
-    def heading(self, text, level):
+    def heading(self, text, level, **attrs):
         return f"<b>{text}</b>\n\n"
 
     def newline(self):
         return "\n"
 
-    def list(self, text, ordered, level, start=None):
-        if ordered:
-            text = convert_bulet_to_ordered_list(text, level, start)
-        if level > 1:
-            text = "\n" + text
+    def list(self, text, ordered, **attrs):
         return text
 
-    def list_item(self, text, level):
-        return f"{indent(level)}{get_bullet_point(level)}{text}\n"
+    def list_item(self, text):
+        return f"- {text}\n"
 
     def thematic_break(self):
         return '---\n'

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "godmode.apps.GodmodeConfig",
     "invites.apps.InvitesConfig",
     "tickets.apps.TicketsConfig",
+    "clickers.apps.ClickersConfig",
     "ai.apps.AiConfig",
     "simple_history",
     "django_q",

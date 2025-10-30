@@ -12,11 +12,13 @@ from authn.views.openid import openid_authorize, openid_issue_token, openid_revo
     openid_well_known_configuration, openid_well_known_jwks
 from authn.views.patreon import patreon_sync, patreon_sync_callback
 from badges.views import create_badge_for_post, create_badge_for_comment
+from clickers.api import api_clicker
 from club import features
 from comments.api import api_list_post_comments
 from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
     retract_comment_vote, pin_comment, delete_comment_thread
 from common.feature_flags import feature_switch
+from deals.views import list_deals
 from invites.views import show_invite, list_invites, activate_invite, godmode_generate_invite_code
 from landing.views import landing
 from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, godmode_delete_model, \
@@ -191,6 +193,8 @@ urlpatterns = [
     path("network/", network, name="network"),
     path("network/chat/<slug:chat_id>/", RedirectView.as_view(url="/room/%(chat_id)s/chat/", permanent=True),
          name="network_chat"),
+
+    path("clickers/<str:clicker_id>.json", api_clicker, name="api_clicker"),
 
     # admin features
     path("godmode/", godmode, name="godmode_settings"),

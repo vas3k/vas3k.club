@@ -455,3 +455,66 @@
         width: 80px;
         height: 80px;
     }
+
+.clicker {
+    font-family: var(--sans-font);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    text-decoration: none;
+    border-radius: var(--button-border-radius);
+    background-color: var(--button-bg-color);
+    border: var(--button-border);
+    color: var(--button-color);
+    cursor: pointer;
+    line-height: 1em;
+    font-weight: 500;
+    transition: 0.2s ease-out;
+}
+
+    .clicker:hover {
+        color: var(--button-hover-color);
+        background-color: var(--button-hover-bg-color);
+        border: var(--button-hover-border);
+    }
+
+    .clicker-is-clicked {
+        color: var(--button-hover-color);
+        background-color: var(--button-hover-bg-color);
+        border: var(--button-hover-border);
+    }
+
+    .clicker-checkbox {
+        position: relative;
+        text-align: center;
+        line-height: 1em;
+        font-size: 28px;
+    }
+
+        .clicker-checkbox::before {
+            content: "☑️";
+        }
+
+        .clicker-is-clicked .clicker-checkbox::before {
+            content: "✅";
+        }
+
+    .clicker-users {
+        display: flex;
+        gap: 5px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+        .clicker-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }

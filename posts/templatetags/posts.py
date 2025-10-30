@@ -41,7 +41,7 @@ def render_post(context, post):
         return post.html
 
     if not post.html or settings.DEBUG:
-        new_html = markdown_text(post.text)
+        new_html = markdown_text(post.text, uniq_id=post.id)
         if new_html != post.html:
             # to not flood into history
             post.html = new_html

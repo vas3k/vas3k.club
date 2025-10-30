@@ -64,7 +64,7 @@ def render_comment(context, comment):
         )
 
     if not comment.html or settings.DEBUG:
-        new_html = markdown_text(comment.text)
+        new_html = markdown_text(comment.text, uniq_id=comment.id)
         if new_html != comment.html:
             # to not flood into history
             comment.html = new_html

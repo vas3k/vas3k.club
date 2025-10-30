@@ -25,6 +25,7 @@ Vue.component("friend-button", () => import("./components/FriendButton.vue"));
 Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
 Vue.component("comment-markdown-editor", () => import("./components/MarkdownEditor/MarkdownEditor.vue"));
 Vue.component("toggle", () => import("./components/Toggle.vue"));
+Vue.component("clicker", () => import("./components/Clicker.vue"));
 Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
