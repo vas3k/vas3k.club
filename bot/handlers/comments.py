@@ -107,7 +107,7 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
     LinkedPost.create_links_from_text(reply.post, text)
 
     # send all notifications
-    async_task(notify_on_comment_created, comment)
+    async_task(notify_on_comment_created, reply)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
@@ -179,7 +179,7 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
     LinkedPost.create_links_from_text(post, text)
 
     # send notifications
-    async_task(notify_on_comment_created, comment)
+    async_task(notify_on_comment_created, reply)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
