@@ -44,7 +44,20 @@ services:
   queue:
     <<: *app
     environment:
-      - POSTGRES_USE_POOLING=0
+      - MODE=production
+      - PYTHONUNBUFFERED=1
+      - DEBUG=false
+      - APP_HOST=https://vas3k.club
+      - MEDIA_UPLOAD_URL=https://i.vas3k.club/upload/
+      - REDIS_DB=0
+      - REDIS_HOST=redis
+      - POSTGRES_DB=vas3k_club
+      - POSTGRES_USER=vas3k
+      - POSTGRES_HOST=host.docker.internal
+      - POSTGRES_PASSWORD
+      - EMAIL_HOST
+      - EMAIL_PORT
+      - DEFAULT_FROM_EMAIL
     command: make docker-run-queue
     container_name: club_queue
     networks:
@@ -62,8 +75,6 @@ services:
 
   helpdeskbot:
     <<: *app
-    environment:
-      - POSTGRES_USE_POOLING=0
     command: make docker-run-helpdeskbot
     container_name: club_help_desk_bot
     networks:
@@ -73,8 +84,6 @@ services:
 
   cron:
     <<: *app
-    environment:
-      - POSTGRES_USE_POOLING=0
     command: make docker-run-cron
     container_name: club_cron
     networks:
