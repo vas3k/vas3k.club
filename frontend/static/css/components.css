@@ -510,6 +510,7 @@
         border: var(--button-border);
         border-color: var(--opposite-text-color);
         background-color: var(--bg-color);
+        color: var(--text-color);
         min-width: 30px;
         height: 30px;
         padding: 4px;
