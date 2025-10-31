@@ -468,7 +468,7 @@
     box-sizing: border-box;
     text-decoration: none;
     border-radius: var(--button-border-radius);
-    color: #EEE;
+    color: var(--button-color);
     background-color: var(--button-bg-color);
     border: var(--button-border);
     cursor: pointer;
@@ -509,6 +509,7 @@
     .clicker-counter {
         border: var(--button-border);
         border-color: var(--opposite-text-color);
+        background-color: var(--bg-color);
         min-width: 30px;
         height: 30px;
         padding: 4px;
