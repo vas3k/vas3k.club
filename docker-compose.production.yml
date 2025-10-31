@@ -43,6 +43,8 @@ services:
 
   queue:
     <<: *app
+    environment:
+      - POSTGRES_USE_POOLING=0
     command: make docker-run-queue
     container_name: club_queue
     networks:
@@ -60,6 +62,8 @@ services:
 
   helpdeskbot:
     <<: *app
+    environment:
+      - POSTGRES_USE_POOLING=0
     command: make docker-run-helpdeskbot
     container_name: club_help_desk_bot
     networks:
@@ -69,6 +73,8 @@ services:
 
   cron:
     <<: *app
+    environment:
+      - POSTGRES_USE_POOLING=0
     command: make docker-run-cron
     container_name: club_cron
     networks:

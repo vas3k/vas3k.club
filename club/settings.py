@@ -106,7 +106,6 @@ LOGGING = {
 }
 
 # Database
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -115,17 +114,23 @@ DATABASES = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD") or "",
         "HOST": os.getenv("POSTGRES_HOST") or "localhost",
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
-        "OPTIONS": {
-            "pool": bool(os.getenv("POSTGRES_USE_POOLING")),
-            # "pool": {
-            #     "min_size": 4,
-            #     "max_size": 16,
-            #     "timeout": 10, # fail in 10 sec under load
-            #     "max_idle": 300, # close idle after 5 min
-            # },
-        },
     }
 }
+
+if bool(os.getenv("POSTGRES_USE_POOLING")):
+    DATABASES["default"]["OPTIONS"] = {
+        "pool": True
+    }
+    # "pool": {
+    #     "min_size": 4,
+    #     "max_size": 16,
+    #     "timeout": 10, # fail in 10 sec under load
+    #     "max_idle": 300, # close idle after 5 min
+    # },
+else:
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
 
 # Internationalization
 
