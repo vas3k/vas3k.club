@@ -151,6 +151,7 @@
             min-height: 170px;
             min-width: 360px;
             max-width: 550px;
+            width: 100%;
             padding: 20px;
             text-align: left;
             margin-bottom: 0;
