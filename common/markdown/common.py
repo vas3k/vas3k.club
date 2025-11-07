@@ -1,13 +1,26 @@
 import html
 
+ALLOWED_CSS_CLASSES_IN_MARKDOWN = {
+    "image-wide",
+    "button",
+    "button-small",
+    "button-big",
+    "button-red",
+    "button-blue",
+    "button-inverted",
+    "block",
+    "border",
+}
 
-def split_title_and_css_classes(value) -> [str, list]:
+def split_title_and_css_classes(value) -> tuple[str, list]:
     if value.startswith("."):
         try:
             classes, title = value.split(" ", 1)
         except ValueError:
             classes, title = value, ""
-        return title, [c for c in html.escape(classes).split(".") if c.strip()]
+        return title, [
+            c for c in html.escape(classes).split(".") if c.strip() and c.strip() in ALLOWED_CSS_CLASSES_IN_MARKDOWN
+        ]
     return value, []
 
 

@@ -237,6 +237,13 @@
         border-color: #0088cc;
     }
 
+.border {
+    border-radius: var(--button-border-radius);
+    border: var(--button-border);
+    color: var(--button-color);
+    padding: 5px 10px;
+}
+
 /* SLIDER THEME */
 input[type=range] {
   -webkit-appearance: none;
