@@ -30,7 +30,7 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<{tag} id=\"{anchor}\"><a href=\"#{anchor}\">{text}</a></{tag}>\n"
 
     def link(self, text, url, title=None):
-        if not title:
+        if text == url:
             # it's a pure link (without link tag) and we can try to parse it
             embed = self.embed(url, text or "", title or "")
             if embed:
