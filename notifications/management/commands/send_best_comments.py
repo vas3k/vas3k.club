@@ -11,7 +11,7 @@ from notifications.telegram.common import send_telegram_message, Chat
 
 log = logging.getLogger(__name__)
 
-TELEGRAM_CHANNEL_ID = -1001814814883
+TELEGRAM_CHANNEL_ID = -1001697713697 # ToDo: should use settings!
 TIME_INTERVAL = timedelta(days=3)
 SELECT_LIMIT = 40
 MIN_UPVOTES = 30
