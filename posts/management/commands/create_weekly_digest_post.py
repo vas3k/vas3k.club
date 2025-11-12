@@ -1,7 +1,10 @@
 import json
 import urllib.request
 import urllib.error
+import ssl
+import re
 from datetime import datetime
+from html import unescape
 
 from django.core.management import BaseCommand
 from users.models.user import User
@@ -21,7 +24,16 @@ def get_news_weekly_digest():
         json.JSONDecodeError: If the response is not valid JSON
     """
     try:
-        with urllib.request.urlopen(WEEKLY_DIGEST_URL) as response:
+        # Create SSL context to handle certificate issues
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
+        # Create a request object
+        req = urllib.request.Request(WEEKLY_DIGEST_URL)
+        
+        # Make the request with SSL context
+        with urllib.request.urlopen(req, context=ssl_context) as response:
             data = response.read()
             encoding = response.info().get_content_charset('utf-8')
             json_data = json.loads(data.decode(encoding))
@@ -30,6 +42,18 @@ def get_news_weekly_digest():
         raise
     except json.JSONDecodeError as e:
         raise
+
+def clean_html(text):
+    """Remove HTML tags and decode HTML entities."""
+    if not text:
+        return ""
+    # Remove HTML tags
+    text = re.sub(r'<[^>]+>', '', text)
+    # Decode HTML entities
+    text = unescape(text)
+    # Clean up multiple spaces and newlines
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
 
 def get_moderator_user():
     """
@@ -46,7 +70,8 @@ def get_moderator_user():
 
 def get_digest_post() -> str:
     """
-    Fetches weekly digest data and extracts title and content.
+    Fetches weekly digest data and creates formatted markdown content.
+    Adapted from create_digest_article function.
     
     Returns:
         str: Formatted markdown content of the digest post
@@ -58,52 +83,73 @@ def get_digest_post() -> str:
     """
     data = get_news_weekly_digest()
     
-    content_parts = ["Привет, Олимпийский! Ниже подборка актуальных постов тренеров и руководителей проектов за прошедшую неделю"]
-    content_parts.append("")  # Empty line for spacing
+    if not data or not isinstance(data, list):
+        return "Привет, Олимпийский! Ниже подборка актуальных постов тренеров и руководителей проектов за прошедшую неделю\n\nНет данных для создания дайджеста."
+    
+    article_parts = []
+    article_parts.append("Привет, Олимпийский! Ниже подборка актуальных постов тренеров и руководителей проектов за прошедшую неделю")
+    article_parts.append("")  # Empty line for spacing
+    article_parts.append("---")
+    article_parts.append("")
     
     # Process each feed
     for feed_data in data:
-        feed = feed_data.get("feed", {})
-        feed_title = feed.get("title", "")
-        posts = feed_data.get("posts", [])
+        feed = feed_data.get('feed', {})
+        feed_title = feed.get('title', 'Без названия')
+        feed_description = feed.get('description', '')
+        last_sync = feed_data.get('lastSyncDate', '')
+        posts = feed_data.get('posts', [])
         
-        if not feed_title or not posts:
-            continue
+        # Format date
+        date_str = ""
+        if last_sync:
+            try:
+                dt = datetime.fromisoformat(last_sync.replace('Z', '+00:00'))
+                date_str = dt.strftime('%d.%m.%Y')
+            except:
+                date_str = last_sync
         
-        # Add feed title as heading
-        content_parts.append(f"## {feed_title}")
-        content_parts.append("")
+        article_parts.append(f"## {feed_title}")
+        if feed_description:
+            article_parts.append(f"*{feed_description}*")
+        if date_str:
+            article_parts.append(f"**Последняя синхронизация:** {date_str}")
+        article_parts.append("")
         
-        # Process each post in the feed
-        for post in posts:
-            post_text = post.get("postText", "")
-            post_url = post.get("postUrl", "")
-            post_image = post.get("postImage", "")
-            post_date = post.get("postDate", "")
-            
-            # Add post link
-            if post_url:
-                content_parts.append(f"[Читать пост]({post_url})")
-            
-            # Add post image if available
-            if post_image:
-                content_parts.append(f"![Post image]({post_image})")
-            
-            # Add post text (HTML content - could be converted to markdown if needed)
-            if post_text:
-                content_parts.append("")
-                content_parts.append(post_text)
-            
-            # Add post date if available
-            if post_date:
-                content_parts.append("")
-                content_parts.append(f"*Дата: {post_date}*")
-            
-            content_parts.append("")  # Empty line between posts
-            content_parts.append("---")  # Separator between posts
-            content_parts.append("")
+        if posts:
+            for idx, post in enumerate(posts, 1):
+                post_text = post.get('postText', '')
+                post_image = post.get('postImage', '')
+                post_url = post.get('postUrl', '')
+                
+                if post_text:
+                    cleaned_text = clean_html(post_text)
+                    if cleaned_text:
+                        # Truncate if too long
+                        if len(cleaned_text) > 500:
+                            cleaned_text = cleaned_text[:500] + "..."
+                        article_parts.append(f"### Пост {idx}")
+                        
+                        # Add image if exists
+                        if post_image and post_image.strip():
+                            article_parts.append(f"![Изображение поста]({post_image})")
+                            article_parts.append("")
+                        
+                        article_parts.append(f"{cleaned_text}")
+                        article_parts.append("")
+                        
+                        # Add link to original post if exists
+                        if post_url and post_url.strip():
+                            article_parts.append(f"[🔗 Читать оригинал]({post_url})")
+                            article_parts.append("")
+        else:
+            article_parts.append("*Нет новых постов*")
+            article_parts.append("")
+        
+        article_parts.append("---")
+        article_parts.append("")
     
-    return "\n".join(content_parts)
+    return "\n".join(article_parts)
 
 class Command(BaseCommand):
     help = "Creates weekly digest post from PMPulse"
