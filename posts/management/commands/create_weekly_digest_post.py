@@ -10,6 +10,7 @@ from django.core.management import BaseCommand
 from users.models.user import User
 from posts.models.post import Post
 
+PMPULSE_URL = 'https://news.pmi.moscow'
 WEEKLY_DIGEST_URL = 'https://news.pmi.moscow/FeedPost/GetWeeklyDigest'
 
 def get_news_weekly_digest():
@@ -89,6 +90,8 @@ def get_digest_post() -> str:
     article_parts = []
     article_parts.append("Привет, Олимпийский! Ниже подборка актуальных постов из мира менеджмента")
     article_parts.append("")  # Empty line for spacing
+    article_parts.append(f"[🌐 PMPulse]({PMPULSE_URL})")
+    article_parts.append("")  # Empty line for spacing
     article_parts.append("---")
     article_parts.append("")
     
@@ -123,9 +126,6 @@ def get_digest_post() -> str:
                 if post_text:
                     cleaned_text = clean_html(post_text)
                     if cleaned_text:
-                        # Truncate if too long
-                        if len(cleaned_text) > 500:
-                            cleaned_text = cleaned_text[:500] + "..."
                         article_parts.append(f"###  {date_str} Пост {idx}")
                         
                         # Add image if exists
@@ -138,7 +138,7 @@ def get_digest_post() -> str:
                         
                         # Add link to original post if exists
                         if post_url and post_url.strip():
-                            article_parts.append(f"[🔗 Читать оригинал]({post_url})")
+                            article_parts.append(f"[🔗 Оригинал]({post_url})")
                             article_parts.append("")
         else:
             article_parts.append("*Нет новых постов*")
@@ -180,6 +180,7 @@ class Command(BaseCommand):
                 is_visible=False,
                 is_approved_by_moderator=False,
             )
+            post.publish()
             
             self.stdout.write(self.style.SUCCESS(f"Created post '{post.title}' with slug '{post.slug}' (awaiting moderation)"))
         except Exception as e:

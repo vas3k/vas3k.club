@@ -12,3 +12,4 @@
 0 4 * * * root find /app/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete >/proc/1/fd/1 2>/proc/1/fd/2
 13 * * * * root cd /app && python3 manage.py update_hotness  >/proc/1/fd/1 2>/proc/1/fd/2
 0 7 * * 3,6 root cd /app && python3 manage.py promote_one_old_post_on_main  >/proc/1/fd/1 2>/proc/1/fd/2
+0 14 * * 0 root cd /app && python3 manage.py create_weekly_digest_post  >/proc/1/fd/1 2>/proc/1/fd/2
