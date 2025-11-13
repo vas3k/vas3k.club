@@ -168,6 +168,9 @@ class Command(BaseCommand):
             title = f"📰 {current_date} Подборка постов известных авторов"
 
             content = get_digest_post()
+            if not content:
+                self.stdout.write(self.style.ERROR('Content of the post is None'))
+                return
 
             post = Post.objects.create(
                 author=moderator,
