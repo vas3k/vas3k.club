@@ -3,7 +3,7 @@ import urllib.request
 import urllib.error
 import ssl
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from html import unescape
 
 from django.core.management import BaseCommand
@@ -84,10 +84,10 @@ def get_digest_post() -> str:
     data = get_news_weekly_digest()
     
     if not data or not isinstance(data, list):
-        return "Привет, Олимпийский! Ниже подборка актуальных постов тренеров и руководителей проектов за прошедшую неделю\n\nНет данных для создания дайджеста."
+        return None
     
     article_parts = []
-    article_parts.append("Привет, Олимпийский! Ниже подборка актуальных постов тренеров и руководителей проектов за прошедшую неделю")
+    article_parts.append("Привет, Олимпийский! Ниже подборка актуальных постов из мира менеджмента")
     article_parts.append("")  # Empty line for spacing
     article_parts.append("---")
     article_parts.append("")
@@ -97,23 +97,12 @@ def get_digest_post() -> str:
         feed = feed_data.get('feed', {})
         feed_title = feed.get('title', 'Без названия')
         feed_description = feed.get('description', '')
-        last_sync = feed_data.get('lastSyncDate', '')
+        # last_sync = feed_data.get('lastSyncDate', '')
         posts = feed_data.get('posts', [])
-        
-        # Format date
-        date_str = ""
-        if last_sync:
-            try:
-                dt = datetime.fromisoformat(last_sync.replace('Z', '+00:00'))
-                date_str = dt.strftime('%d.%m.%Y')
-            except:
-                date_str = last_sync
         
         article_parts.append(f"## {feed_title}")
         if feed_description:
             article_parts.append(f"*{feed_description}*")
-        if date_str:
-            article_parts.append(f"**Последняя синхронизация:** {date_str}")
         article_parts.append("")
         
         if posts:
@@ -121,6 +110,15 @@ def get_digest_post() -> str:
                 post_text = post.get('postText', '')
                 post_image = post.get('postImage', '')
                 post_url = post.get('postUrl', '')
+                post_date = post.get('postDate', '')
+
+                date_str = ""
+                if post_date:
+                    try:
+                        dt = datetime.fromisoformat(post_date.replace('Z', '+00:00'))
+                        date_str = dt.strftime('%d.%m.%Y')
+                    except:
+                        date_str = post_date    
                 
                 if post_text:
                     cleaned_text = clean_html(post_text)
@@ -128,11 +126,11 @@ def get_digest_post() -> str:
                         # Truncate if too long
                         if len(cleaned_text) > 500:
                             cleaned_text = cleaned_text[:500] + "..."
-                        article_parts.append(f"### Пост {idx}")
+                        article_parts.append(f"###  {date_str} Пост {idx}")
                         
                         # Add image if exists
                         if post_image and post_image.strip():
-                            article_parts.append(f"![Изображение поста]({post_image})")
+                            article_parts.append(f"![]({post_image})")
                             article_parts.append("")
                         
                         article_parts.append(f"{cleaned_text}")
@@ -166,7 +164,7 @@ class Command(BaseCommand):
         
         try:            
             # Format current date as DD.MM.YYYY
-            current_date = datetime.utcnow().strftime("%d.%m.%Y")
+            current_date = datetime.now(timezone.utc).strftime("%d.%m.%Y")
             title = f"📰 {current_date} Подборка постов известных авторов"
 
             content = get_digest_post()
