@@ -4,7 +4,7 @@ from urllib.parse import unquote
 
 from slugify import slugify
 
-from common.markdown.common import split_title_and_css_classes, url_normalize
+from common.markdown.common import split_title_and_css_classes, normalize_url
 from common.regexp import IMAGE_RE, VIDEO_RE, YOUTUBE_RE, TWITTER_RE, USERNAME_RE
 
 
@@ -36,7 +36,7 @@ class ClubRenderer(mistune.HTMLRenderer):
             if embed:
                 return embed
 
-        link = url_normalize(url)
+        link = normalize_url(url)
         text, css_classes = split_title_and_css_classes(text or "")
 
         if text is None:

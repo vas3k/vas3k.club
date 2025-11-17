@@ -72,7 +72,7 @@ def delete_user_data(user: User):
     Comment.objects\
         .filter(reply_to__isnull=False, text__contains=f"@{old_slug}")\
         .update(
-            text=Replace("text", Value(f"@{old_slug}"), Value(f"@{new_slug}")),
+            text=Replace("text", Value(f"@{old_slug},"), Value(f"@{new_slug},")),
             html=None
         )
 

@@ -24,7 +24,7 @@ def split_title_and_css_classes(value) -> tuple[str, list]:
     return value, []
 
 
-def url_normalize(url: str, default_scheme: str = "https") -> str:
+def normalize_url(url: str, default_scheme: str = "https") -> str:
     if not url:
         return ""
 
