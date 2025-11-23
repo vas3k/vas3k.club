@@ -73,7 +73,7 @@ def profile(request, user_slug):
         note = None
 
     moderator_notes = []
-    if request.me and request.me.is_moderator:
+    if request.me and request.me.is_moderator or request.me.is_curator:
         moderator_notes = UserNote.objects.filter(user_to=user)\
             .exclude(user_from=request.me)\
             .select_related("user_from")\

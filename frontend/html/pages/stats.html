@@ -139,11 +139,6 @@
 
         <div class="stats-header">🏆 Ачивки</div>
 
-        <div class="stats-description">
-            Чтобы получить ачивку — пишите на почту <strong><a href="mailto:moderator@vas3k.club">moderator@vas3k.club</a></strong> или кому-то из Парламента.
-            Для оффлайн-ачивок потребуется фото-подтверждение.
-        </div>
-
         <div class="stats-achievements">
             {% for achievement in achievements %}
                 <div class="stats-achievement">
@@ -160,29 +155,10 @@
             {% endfor %}
         </div>
 
-        <div class="stats-header" id="parliament">🏛 Парламент</div>
-
         <div class="stats-description">
-            Парламент — это совет активных членов Клуба. Они собирают фидбек и вместе обсуждают каким мы хотим видеть Клуб. Им можно написать в личку и что-то предложить или спросить.
-            Подробнее про Парламент читайте <a href="{{ settings.PARLIAMENT_GUIDE_URL }}">в нашем гайде</a>.
-        </div>
+            <a href="{% url "write_to_crew" "parliament" %}?reason=achievement" class="button">Подать заявку на ачивку</a>
 
-        <div class="top-users top-users-medium">
-            {% for user in parliament %}
-                {% include "users/widgets/round.html" with user=user show_name=True %}
-            {% endfor %}
-        </div>
-
-        <div class="stats-header" id="moderators">🌚 Модераторы</div>
-
-        <div class="stats-description">
-            Они обычно очень заняты, так что если хотите с ними связаться — пингуйте в комментах мета-аккаунт <a href="/user/moderator/"><strong>@moderator</strong></a> или пользуйтесь нашей почтой.
-        </div>
-
-        <div class="top-users top-users-medium">
-            {% for user in moderators %}
-                {% include "users/widgets/round.html" with user=user show_name=True %}
-            {% endfor %}
+            <p>Для оффлайн-ачивок потребуется фото-подтверждение.</p>
         </div>
     </div>
 {% endblock %}

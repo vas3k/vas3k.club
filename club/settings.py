@@ -317,7 +317,6 @@ VALUES_GUIDE_URL = "https://vas3k.club/post/values/"
 POSTING_GUIDE_URL = "https://vas3k.club/post/10447/"
 CHATS_GUIDE_URL = "https://vas3k.club/post/9542/"
 PEOPLE_GUIDE_URL = "https://vas3k.club/post/2584/"
-PARLIAMENT_GUIDE_URL = "https://vas3k.club/post/12870/"
 
 SUPPORTED_TIME_ZONES = [
 	("UTC", "по UTC"),

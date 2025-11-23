@@ -23,7 +23,8 @@ from landing.views import landing
 from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, godmode_delete_model, \
     godmode_create_model, godmode_show_page, godmode_action
 from misc.fun import mass_note
-from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement
+from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement, \
+    crew, write_to_crew
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
     link_telegram
@@ -192,6 +193,8 @@ urlpatterns = [
     path("network/", network, name="network"),
     path("network/chat/<slug:chat_id>/", RedirectView.as_view(url="/room/%(chat_id)s/chat/", permanent=True),
          name="network_chat"),
+    path("crew/", crew, name="crew"),
+    path("crew/write/<slug:crew>/", write_to_crew, name="write_to_crew"),
 
     path("clickers/<str:clicker_id>.json", api_clicker, name="api_clicker"),
 

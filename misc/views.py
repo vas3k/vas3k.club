@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
 import pytz
+import telegram
 from django.db.models import Count, Q, Sum
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,7 +11,9 @@ from icalendar import Calendar, Event
 
 from authn.decorators.auth import require_auth
 from badges.models import UserBadge
+from misc.crew import CREWS
 from misc.models import NetworkGroup
+from notifications.telegram.common import send_telegram_message, Chat, render_html_message
 from users.models.achievements import Achievement
 from users.models.user import User
 
@@ -36,11 +39,6 @@ def stats(request):
         .order_by("-sum_price")[:20]  # select more in case someone gets deleted
     ]))[:15]  # filter None
 
-    moderators = User.objects\
-        .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
-
-    parliament = User.objects.filter(achievements__achievement_id="parliament_member")
-
     top_users = User.objects\
         .filter(
             moderation_status=User.MODERATION_STATUS_APPROVED,
@@ -53,8 +51,55 @@ def stats(request):
         "latest_badges": latest_badges,
         "top_badges": top_badges,
         "top_users": top_users,
+    })
+
+
+@require_auth
+def crew(request):
+    moderators = User.objects\
+        .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
+
+    parliament = User.objects.filter(achievements__achievement_id="parliament_member")
+    ministers = User.objects.filter(achievements__achievement_id="vibe_minister")
+    orgs = User.objects.filter(achievements__achievement_id="offline_org")
+
+    return render(request, "pages/crew.html", {
         "moderators": moderators,
         "parliament": parliament,
+        "ministers": ministers,
+        "orgs": orgs,
+    })
+
+
+@require_auth
+def write_to_crew(request, crew):
+    if crew not in CREWS:
+        raise Http404()
+
+    if request.method == "POST":
+        reason = request.POST.get("reason")
+        text = request.POST.get("text")
+        if not text:
+            return render(request, "error.html", {
+                "title": f"Надо написать какой-то текст",
+                "message": "А то что мы будем читать-то?"
+            })
+
+        send_telegram_message(
+            chat=Chat(id=crew["telegram_chat_id"]),
+            text=render_html_message("crew_message.html", user=request.me, reason=reason, text=text),
+            parse_mode=telegram.ParseMode.HTML,
+        )
+
+        return render(request, "message.html", {
+            "title": "✅ Ваше письмо отправлено",
+            "message": "Мы его прочитаем и обсудим."
+        })
+
+
+    return render(request, "pages/write_to_crew.html", {
+        "crew": CREWS[crew],
+        "default_reason": request.GET.get("reason"),
     })
 
 

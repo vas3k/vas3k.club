@@ -17,6 +17,18 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/2582c2df41eb67114307e22ffee862fe923ab1843ce47781aee577cc3f2abb5f.jpg",
         "style": "background-color: #000000; font-size: 120%;",
     }),
+    ("vibe_minister", {
+        "name": "Министр Вайбов",
+        "description": "Входит в клубное «Министерство Вайба»",
+        "image": "https://vas3k.club/static/images/achievements/vibe_minister.webp",
+        "style": "background-color: #201D2E; font-size: 120%;",
+    }),
+    ("offline_org", {
+        "name": "ОРГИ—Я",
+        "description": "Организатор оффлайн ивентов Клуба",
+        "image": "https://vas3k.club/static/images/achievements/offline_org.webp",
+        "style": "background-color: #f41921; font-size: 140%;",
+    }),
     ("contributor", {
         "name": "Контри-бьютор",
         "description": "За значительный вклад в разработку Клуба",
@@ -291,7 +303,7 @@ ACHIEVEMENTS = [
         "name": "Легенда мастерской",
         "description": "За участие в 8 DIY челленджах",
         "image": "https://vas3k.club/static/images/achievements/diy_challenge_3.png",
-        "style": "background-color: #F4F1DE; font-size: 120%;",
+        "style": "background-color: #C9C097; font-size: 120%;",
     }),
     ("music_jam_5", {
         "name": "Mashmer",
