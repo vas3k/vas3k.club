@@ -287,6 +287,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/diy_challenge_2.png",
         "style": "background-color: #C9C097; font-size: 120%;",
     }),
+    ("diy_challenge_3", {
+        "name": "Легенда мастерской",
+        "description": "За участие в 8 DIY челленджах",
+        "image": "https://vas3k.club/static/images/achievements/diy_challenge_3.png",
+        "style": "background-color: #F4F1DE; font-size: 120%;",
+    }),
     ("music_jam_5", {
         "name": "Mashmer",
         "description": "За участие в летнем музыкальном челлендже 2023",
