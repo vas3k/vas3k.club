@@ -103,7 +103,7 @@
                 {% include "posts/widgets/collectible_tag.html" %}
             {% endif %}
 
-            <footer class="post-footer p-author">
+            <section class="post-footer p-author">
                 {% if request.me or post.author.profile_publicity_level != "private" %}
                     {% include "users/widgets/card.html" with user=post.author %}
                 {% endif %}
@@ -113,7 +113,7 @@
                         {% include "users/widgets/card.html" with user=coauthor %}
                     {% endfor %}
                 {% endif %}
-            </footer>
+            </section>
         {% endblock %}
     </article>
 </section>

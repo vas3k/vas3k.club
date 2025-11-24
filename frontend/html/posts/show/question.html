@@ -73,9 +73,9 @@
         {% endblock %}
 
         {% block post_footer %}
-            <footer class="post-footer p-author">
+            <section class="post-footer p-author">
                 {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
-            </footer>
+            </section>
         {% endblock %}
     </article>
 

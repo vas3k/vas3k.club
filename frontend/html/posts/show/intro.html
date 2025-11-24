@@ -58,9 +58,9 @@
                 {% render_post post %}
             </div>
         </section>
-        <footer class="post-footer p-author">
+        <section class="post-footer p-author">
             {% include "users/widgets/card.html" with user=post.author %}
-        </footer>
+        </section>
     </article>
 </section>
 {% endblock %}
