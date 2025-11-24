@@ -78,15 +78,6 @@ def notify_user_ping(user, message):
         )
 
 
-def notify_user_ban(user, days, reason):
-    if user.telegram_id:
-        send_telegram_message(
-            chat=Chat(id=user.telegram_id),
-            text=f"⛔ <b>К сожалению, вы получили бан в Клубе на {days} дней</b>.\n\n"
-                 f"<b>Причина:</b> {reason}"
-        )
-
-
 def notify_admin_user_ping(user, message):
     send_telegram_message(
         chat=ADMIN_CHAT,
@@ -107,25 +98,3 @@ def notify_user_auth(user, code):
             chat=Chat(id=user.telegram_id),
             text=f"<code>{code.code}</code> — ваш одноразовый код для входа в Клуб",
         )
-
-
-def notify_admin_user_on_ban(user, days, reason):
-    banned_user_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user.slug})
-    send_telegram_message(
-        chat=ADMIN_CHAT,
-        text=f"⛔️ <b>Юзер <a href=\"{banned_user_profile_url}\">{user.full_name}</a> "
-             f"({user.slug}) забанен на {days} дней</b>"
-             f"\n\nПричина: <i>{reason}</i>"
-    )
-
-
-def notify_admin_user_on_mute(user_from, user_to, comment):
-    user_from_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_from.slug})
-    user_to_profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user_to.slug})
-    send_telegram_message(
-        chat=ADMIN_CHAT,
-        text=f"<b>Кого-то замьютили</b> 🤕"
-             f"\n\n<a href=\"{user_from_profile_url}\">{user_from.full_name}</a> ({user_from.slug}) считает, "
-             f"что <a href=\"{user_to_profile_url}\">{user_to.full_name}</a> ({user_to.slug}) не место в Клубе "
-             f"и замьютил его. \n\nВот почему: <i>{comment}</i>"
-    )

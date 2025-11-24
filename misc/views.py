@@ -11,7 +11,7 @@ from icalendar import Calendar, Event
 
 from authn.decorators.auth import require_auth
 from badges.models import UserBadge
-from misc.crew import CREWS
+from club.settings import CREWS
 from misc.models import NetworkGroup
 from notifications.telegram.common import send_telegram_message, Chat, render_html_message
 from users.models.achievements import Achievement
@@ -57,11 +57,11 @@ def stats(request):
 @require_auth
 def crew(request):
     moderators = User.objects\
-        .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
+        .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))\
+        .order_by("-last_activity_at")
 
-    parliament = User.objects.filter(achievements__achievement_id="parliament_member")
-    ministers = User.objects.filter(achievements__achievement_id="vibe_minister")\
-        .exclude(roles__contains=[User.ROLE_MODERATOR])
+    parliament = User.objects.filter(achievements__achievement_id="parliament_member").order_by("?")
+    ministers = User.objects.filter(achievements__achievement_id="vibe_minister").order_by("?")
     orgs = User.objects.filter(achievements__achievement_id="offline_org")
 
     return render(request, "pages/crew.html", {
@@ -88,7 +88,12 @@ def write_to_crew(request, crew):
 
         send_telegram_message(
             chat=Chat(id=CREWS[crew]["telegram_chat_id"]),
-            text=render_html_message("crew_message.html", user=request.me, reason=reason, text=text),
+            text=render_html_message(
+                template="crew_message.html",
+                user=request.me,
+                reason=reason,
+                text=text[:10000].strip()
+            ),
             parse_mode=telegram.ParseMode.HTML,
         )
 

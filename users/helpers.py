@@ -4,7 +4,7 @@ from django_q.tasks import async_task
 
 from common.data.ban import PERMANENT_BAN_DAYS, PROGRESSIVE_BAN_DAYS, BanReason
 from notifications.email.users import send_banned_email
-from notifications.telegram.users import notify_admin_user_on_ban, notify_user_ban
+from notifications.telegram.ban import notify_admins_on_ban, notify_user_ban
 from payments.helpers import cancel_all_stripe_subscriptions
 from rooms.helpers import ban_user_in_all_chats
 from users.models.user import User
@@ -51,7 +51,7 @@ def custom_ban_user(user: User, days: int, reason: BanReason) -> bool:
     reason_text = f"{reason.name or ''}. {reason.description or ''}" if reason.name else reason.description
     send_banned_email(user, days=days, reason=reason_text)
     notify_user_ban(user, days=days, reason=reason_text)
-    notify_admin_user_on_ban(user, days=days, reason=reason_text)
+    notify_admins_on_ban(user, days=days, reason=reason_text)
 
     # cancel subscriptions for long bans
     if days > 60 and user.is_banned_until > user.membership_expires_at:

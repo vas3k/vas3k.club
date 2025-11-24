@@ -3,6 +3,7 @@ from django.shortcuts import render
 
 from common.data.labels import LABELS
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
+from notifications.telegram.posts import notify_admins_on_post_label_changed
 from posts.models.post import Post
 from users.models.achievements import UserAchievement, Achievement
 
@@ -48,10 +49,7 @@ def post_label_action(request, post: Post, **context):
                             achievement=achievement,
                         )
 
-                send_telegram_message(
-                    chat=ADMIN_CHAT,
-                    text=f"🏷️ Посту «{post.title}» выдан лейбл «{data['new_label']}»"
-                )
+                notify_admins_on_post_label_changed(post)
 
         if data["remove_label"]:
             post.label_code = None

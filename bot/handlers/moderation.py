@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.urls import reverse
+from django_q.tasks import async_task
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -61,10 +62,10 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     announce_in_club_chats(post)
 
     if post.collectible_tag_code:
-        notify_post_collectible_tag_owners(post)
+        async_task(notify_post_collectible_tag_owners, post)
 
     if post.room_id:
-        notify_post_room_subscribers(post)
+        async_task(notify_post_room_subscribers, post)
 
     # update search index
     SearchIndex.update_post_index(post)

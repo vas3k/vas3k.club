@@ -3,7 +3,8 @@ from django.urls import reverse
 
 from club import settings
 from common.regexp import USERNAME_RE
-from notifications.telegram.common import send_telegram_message, Chat, render_html_message, CLUB_ONLINE, ADMIN_CHAT
+from notifications.telegram.common import send_telegram_message, Chat, render_html_message, CLUB_ONLINE
+from notifications.telegram.moderation import notify_moderators_on_mention
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
 from users.models.friends import Friend
@@ -92,10 +93,7 @@ def notify_on_comment_created(comment):
     # parse @nicknames and notify their users
     for username in USERNAME_RE.findall(comment.text):
         if username == settings.MODERATOR_USERNAME:
-            send_telegram_message(
-                chat=ADMIN_CHAT,
-                text=render_html_message("moderator_mention.html", comment=comment),
-            )
+            notify_moderators_on_mention(comment)
             continue
 
         user = User.objects.filter(slug=username).first()

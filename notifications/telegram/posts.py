@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from common.regexp import USERNAME_RE
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, \
-    send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE
+    send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE, VIBES_CHAT
 from posts.models.post import Post
 from rooms.models import RoomSubscription
 from tags.models import Tag, UserTag
@@ -253,6 +253,14 @@ def notify_post_label_changed(post):
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_label.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
+        )
+
+
+def notify_admins_on_post_label_changed(post):
+    for chat in [ADMIN_CHAT, VIBES_CHAT]:
+        send_telegram_message(
+            chat=chat,
+            text=f"🏷️ Посту «{post.title}» выдан лейбл «{post.label_code}»"
         )
 
 

@@ -10,13 +10,15 @@ from notifications.telegram.bot import bot, log
 
 Chat = namedtuple("Chat", ["id"])
 
-ADMIN_CHAT = Chat(id=settings.TELEGRAM_ADMIN_CHAT_ID)
-CLUB_CHAT = Chat(id=settings.TELEGRAM_CLUB_CHAT_ID)
-CLUB_CHANNEL = Chat(id=settings.TELEGRAM_CLUB_CHANNEL_ID)
-CLUB_ONLINE = Chat(id=settings.TELEGRAM_ONLINE_CHANNEL_ID)
+ADMIN_CHAT = Chat(id=settings.TELEGRAM_ADMIN_CHAT_ID) if settings.TELEGRAM_ADMIN_CHAT_ID else None
+CLUB_CHAT = Chat(id=settings.TELEGRAM_CLUB_CHAT_ID) if settings.TELEGRAM_CLUB_CHAT_ID else None
+CLUB_CHANNEL = Chat(id=settings.TELEGRAM_CLUB_CHANNEL_ID) if settings.TELEGRAM_CLUB_CHANNEL_ID else None
+CLUB_ONLINE = Chat(id=settings.TELEGRAM_ONLINE_CHANNEL_ID) if settings.TELEGRAM_ONLINE_CHANNEL_ID else None
+VIBES_CHAT = Chat(id=settings.TELEGRAM_VIBES_CHAT_ID) if settings.TELEGRAM_VIBES_CHAT_ID else None
+PARLIAMENT_CHAT = Chat(id=settings.TELEGRAM_PARLIAMENT_CHAT_ID) if settings.TELEGRAM_PARLIAMENT_CHAT_ID else None
 
 NORMAL_TEXT_LIMIT = 4096
-PHOTO_TEXT_LIMIT = 1024
+PHOTO_TEXT_LIMIT = 2048
 
 
 def send_telegram_message(
@@ -28,6 +30,10 @@ def send_telegram_message(
 ):
     if not bot:
         log.warning("No telegram token. Skipping")
+        return
+
+    if not chat:
+        log.warning("No chat id. Skipping")
         return
 
     log.info(f"Telegram: sending message to chat_id {chat.id}, starting with {text[:10]}...")

@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 from common.data.achievements import ACHIEVEMENTS
 from notifications.email.achievements import send_new_achievement_email
-from notifications.telegram.achievements import send_new_achievement_notification
+from notifications.telegram.achievements import notify_user_new_achievement, notify_admins_on_achievement
 from users.models.achievements import Achievement, UserAchievement
 from users.models.user import User
 
@@ -39,7 +39,8 @@ def post_achievement_action(request, user: User, **context):
                 )
                 if is_created:
                     send_new_achievement_email(user_achievement)
-                    send_new_achievement_notification(user_achievement)
+                    notify_user_new_achievement(user_achievement)
+                    notify_admins_on_achievement(user_achievement)
 
         return render(request, "godmode/message.html", {
             **context,
