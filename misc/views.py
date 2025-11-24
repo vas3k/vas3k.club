@@ -85,9 +85,10 @@ def write_to_crew(request, crew):
                 "message": "А то что мы будем читать-то?"
             })
 
+        reason_text = CREWS[crew].get("reason", {}).get(reason)
         send_telegram_message(
             chat=Chat(id=CREWS[crew]["telegram_chat_id"]),
-            text=render_html_message("crew_message.html", user=request.me, reason=reason, text=text),
+            text=render_html_message("crew_message.html", user=request.me, reason=reason_text, text=text),
             parse_mode=telegram.ParseMode.HTML,
         )
 
