@@ -69,7 +69,7 @@
             <p>
                 <a href="{% url "write_to_crew" "parliament" %}" class="button">Написать в Парламент</a>
 
-                <a href="{% url "write_to_crew" "parliament" %}?reason=achievement" class="button">Заявить ачивку</a>
+                <a href="{% url "write_to_crew" "parliament" %}?reason=achievement" class="button">Хотим ачивку</a>
 
                 <a href="{% url "write_to_crew" "parliament" %}?reason=idea" class="button">Предложить идею</a>
             </p>
@@ -97,12 +97,16 @@
             </p>
 
             <p>
-                <a href="{% url "write_to_crew" "vibes" %}" class="button">Написать министрам вайбов</a>
+                <a href="{% url "write_to_crew" "vibes" %}?reason=vibe" class="button">Поделиться вайбом</a>
+
+                <a href="{% url "write_to_crew" "vibes" %}?reason=novibe" class="button">Кто-то не вайбит</a>
+
+                <a href="{% url "write_to_crew" "vibes" %}?reason=other" class="button">Передать привет</a>
             </p>
         </div>
 
         <div class="top-users top-users-medium">
-            {% for user in parliament %}
+            {% for user in ministers %}
                 {% include "users/widgets/round.html" with user=user show_name=True %}
             {% endfor %}
         </div>
@@ -115,12 +119,12 @@
                 Им можно закидывать свои идеи по поводу новых форматов или активностей для следующих мероприятий.
             </p>
             <p>
-                <a href="{% url "write_to_crew" "events" %}" class="button">Написать министрам вайбов</a>
+                <a href="{% url "write_to_crew" "events" %}" class="button">Написать оргам</a>
             </p>
         </div>
 
         <div class="top-users top-users-medium">
-            {% for user in parliament %}
+            {% for user in orgs %}
                 {% include "users/widgets/round.html" with user=user show_name=True %}
             {% endfor %}
         </div>

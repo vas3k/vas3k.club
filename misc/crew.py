@@ -3,8 +3,8 @@ CREWS = {
         "title": "Написать в Министерство Вайбов",
         "telegram_chat_id": -1002158547445,
         "reasons": [
-            {"code": "vibe", "text": "Хочу повайбить!"},
-            {"code": "novibe", "text": "Кто-то нарушает вайб!"},
+            {"code": "vibe", "text": "Делюсь вайбом!"},
+            {"code": "novibe", "text": "Кто-то не вайбит!"},
             {"code": "interesting", "text": "Принёс вам интересненькое"},
             {"code": "other", "text": "Другое"},
         ]
@@ -16,7 +16,7 @@ CREWS = {
             {"code": "achievement", "text": "Хочу выдать или получить ачивку"},
             {"code": "activity", "text": "Хочу организовать активность"},
             {"code": "idea", "text": "У меня есть идея для Клуба!"},
-            {"code": "other", "text": "Другое"},
+            {"code": "other", "text": "Я только спросить"},
         ]
     },
     "events": {

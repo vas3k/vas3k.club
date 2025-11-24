@@ -1,4 +1,5 @@
-.stats {
+.stats,
+.crew {
     padding-top: 40px;
     margin: 0 auto;
     max-width: var(--max-content-width);

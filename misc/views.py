@@ -86,7 +86,7 @@ def write_to_crew(request, crew):
             })
 
         send_telegram_message(
-            chat=Chat(id=crew["telegram_chat_id"]),
+            chat=Chat(id=CREWS[crew]["telegram_chat_id"]),
             text=render_html_message("crew_message.html", user=request.me, reason=reason, text=text),
             parse_mode=telegram.ParseMode.HTML,
         )

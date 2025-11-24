@@ -558,15 +558,23 @@ input[type=range]:focus::-ms-fill-upper {
 
 .link-favicon {
     display: inline-block;
-    min-height: 1.2em;
-    min-width: 1.2em;
+    height: 1.1em;
+    width: 1.1em;
     background-position: center center;
     background-size: cover;
     vertical-align: middle;
+    padding-right: 0.2em;
 }
 
     .link-favicon i {
         font-size: 140%;
+    }
+
+    footer .link-favicon,
+    .network .link-favicon,
+    .intro .link-favicon,
+    .people .link-favicon {
+        display: none;
     }
 
 .show-on-iphone {

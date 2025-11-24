@@ -16,7 +16,7 @@ const INITIAL_SYNC_DELAY = 50;
 const App = {
     onCreate() {
         this.initializeThemeSwitcher();
-        this.addTargetBlankToExternalLinks();
+        this.stylizeExternalLinks();
     },
     onMount() {
         this.initializeImageZoom();
@@ -136,15 +136,25 @@ const App = {
 
         return fullMarkdownEditors;
     },
-    addTargetBlankToExternalLinks() {
+    stylizeExternalLinks() {
         let internal = location.host.replace("www.", "");
         internal = new RegExp(internal, "i");
 
         const links = [...document.getElementsByTagName("a")];
-        links.forEach((link) => {
-            if (internal.test(link.host)) return;
 
+        links.forEach((link) => {
+            if (internal.test(link.host) || !link.host) return;
+
+            // open external link in new tab
             link.setAttribute("target", "_blank");
+            link.setAttribute("rel", "noopener");
+
+            // insert favicon img
+            const domain = link.host.split(":")[0];
+            const img = document.createElement("img");
+            img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+            img.className = "link-favicon";
+            link.insertBefore(img, link.firstChild);
         });
     },
     initializeImageZoom() {

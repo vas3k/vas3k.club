@@ -303,6 +303,10 @@
     font-weight: 600;
 }
 
+.text-body a[target="_blank"] {
+    text-decoration: underline;
+}
+
 .text-body h1,
 .text-body h2,
 .text-body h3,
