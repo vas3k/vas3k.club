@@ -22,7 +22,6 @@ def clicker_hook(md: "Markdown", state: "BlockState") -> Iterable[Dict[str, Any]
 def render_clicker(renderer: "BaseRenderer", text: str, checked: bool = False) -> str:
     safe_text = html.escape(strip_tags(text))
     renderer_uniq_id = renderer.uniq_id if hasattr(renderer, "uniq_id") else ""
-    print("RENDERERE UNIQ ID:", renderer_uniq_id)
     clicker_id = hashlib.sha1(f"{renderer_uniq_id}{safe_text}".encode()).hexdigest()
     return f'<clicker clicker-id="{clicker_id}" text="{safe_text}"></clicker>'
 
