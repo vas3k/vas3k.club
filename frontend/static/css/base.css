@@ -573,6 +573,7 @@ input[type=range]:focus::-ms-fill-upper {
     footer .link-favicon,
     .network .link-favicon,
     .intro .link-favicon,
+    .post-header .link-favicon,
     .people .link-favicon {
         display: none;
     }

@@ -33,7 +33,7 @@ def normalize_url(url: str, default_scheme: str = "https") -> str:
         return ""
 
     # add scheme if missing
-    if not url.startswith("#") and not url.startswith("/") and "://" not in url:
+    if not url.startswith("#") and not url.startswith("/") and not url.startswith("mailto:") and "://" not in url:
         url = f"{default_scheme}://{url}"
 
     return url
