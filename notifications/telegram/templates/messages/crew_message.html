@@ -1,6 +1,5 @@
-🛎️ <a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{{ user.full_name }}</a> написал сообщение для всех в этом чате:
-
-{% if reason %}<b>{{ reason }}</b>
+🛎️🛎️🛎️ <b></b><a href="{{ settings.APP_HOST }}{% url "profile" user.slug %}">{{ user.full_name }}</a> написал сообщение для всех в этом чате:</b>
+{% if reason %}
+<b>{{ reason }}</b>
 {% endif %}
-
 {{ text }}

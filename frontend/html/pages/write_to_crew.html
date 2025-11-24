@@ -36,7 +36,7 @@
                         <label for="crew-reason">Причина:</label>
                         <select name="reason" id="crew-reason">
                             {% for reason in crew.reasons %}
-                                <option value="{{ reason.code }}" {% if reason.code == default_reason %}selected{% endif %}>{{ reason.text }}</option>
+                                <option value="{{ reason.text }}" {% if reason.code == default_reason %}selected{% endif %}>{{ reason.text }}</option>
                             {% endfor %}
                         </select>
                     </div>

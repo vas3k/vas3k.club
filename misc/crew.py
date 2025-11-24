@@ -13,7 +13,7 @@ CREWS = {
         "title": "Написать в Парламент",
         "telegram_chat_id": -1001148097898,
         "reasons": [
-            {"code": "achievement", "text": "Хочу выдать или получить ачивку"},
+            {"code": "achievement", "text": "Выдать или получить ачивку"},
             {"code": "activity", "text": "Хочу организовать активность"},
             {"code": "idea", "text": "У меня есть идея для Клуба!"},
             {"code": "other", "text": "Я только спросить"},

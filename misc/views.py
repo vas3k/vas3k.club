@@ -60,7 +60,8 @@ def crew(request):
         .filter(Q(roles__contains=[User.ROLE_MODERATOR]) | Q(roles__contains=[User.ROLE_GOD]))
 
     parliament = User.objects.filter(achievements__achievement_id="parliament_member")
-    ministers = User.objects.filter(achievements__achievement_id="vibe_minister")
+    ministers = User.objects.filter(achievements__achievement_id="vibe_minister")\
+        .exclude(roles__contains=[User.ROLE_MODERATOR])
     orgs = User.objects.filter(achievements__achievement_id="offline_org")
 
     return render(request, "pages/crew.html", {
@@ -85,10 +86,9 @@ def write_to_crew(request, crew):
                 "message": "А то что мы будем читать-то?"
             })
 
-        reason_text = CREWS[crew].get("reason", {}).get(reason)
         send_telegram_message(
             chat=Chat(id=CREWS[crew]["telegram_chat_id"]),
-            text=render_html_message("crew_message.html", user=request.me, reason=reason_text, text=text),
+            text=render_html_message("crew_message.html", user=request.me, reason=reason, text=text),
             parse_mode=telegram.ParseMode.HTML,
         )
 
