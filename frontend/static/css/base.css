@@ -609,6 +609,9 @@ input[type=range]:focus::-ms-fill-upper {
 .CodeMirror-line {
     word-break: break-word !important;
 }
+.CodeMirror-cursor {
+    border-color: var(--input-color);
+}
 
 .topic {
     display: inline-block;
