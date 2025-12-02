@@ -37,6 +37,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{% url "feed_type" "event" %}" class="{% if post_type == "event" %}feed-sidebar-menu-selected{% endif %}">
+                        📅 Ивенты
+                    </a>
+                </li>
+                <li>
                     <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
                         🏗 Проекты
                     </a>
