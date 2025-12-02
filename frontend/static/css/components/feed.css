@@ -322,6 +322,12 @@
         outline: auto;
     }
 
+    .feed-post-header .link-favicon {
+        height: 1.5em;
+        width: 1.6em;
+        padding: 0;
+    }
+
     .feed-post a {
         z-index: 1;
     }
@@ -539,6 +545,8 @@
     font-size: 30px;
     padding-right: 10px;
     line-height: 1em;
+    top: -3px;
+    position: relative;
 }
 
 .feed-post-type-event {
