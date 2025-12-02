@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib.syndication.views import Feed
 
 from posts.models.post import Post
@@ -10,10 +12,17 @@ class NewPostsRss(Feed):
     limit = 20
 
     def items(self):
-        return Post.visible_objects()\
-           .filter(moderation_status=Post.MODERATION_APPROVED)\
-           .exclude(type=Post.TYPE_INTRO)\
-           .order_by("-published_at", "-created_at")[:self.limit]
+        recent_cutoff = datetime.utcnow() - timedelta(days=30)
+        return (
+            Post.visible_objects()
+            .filter(
+                moderation_status=Post.MODERATION_APPROVED,
+                published_at__gte=recent_cutoff,
+                is_public=True,
+            )
+            .exclude(type=Post.TYPE_INTRO)
+            .order_by("-published_at", "-created_at")[: self.limit]
+        )
 
     def item_title(self, item):
         title = item.title
