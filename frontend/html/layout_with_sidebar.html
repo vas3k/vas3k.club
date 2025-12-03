@@ -33,47 +33,47 @@
             <ul class="feed-sidebar-list feed-sidebar-menu feed-sidebar-menu-small">
                 <li>
                     <a href="{% url "feed_type" "post" %}" class="{% if post_type == "post" %}feed-sidebar-menu-selected{% endif %}">
-                        📝 Посты
+                        <i class="fas fa-pen-square"></i> Посты
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url "feed_type" "event" %}" class="{% if post_type == "event" %}feed-sidebar-menu-selected{% endif %}">
+                        <i class="fas fa-calendar-times"></i> События
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
-                        🏗 Проекты
+                        <i class="fas fa-pencil-ruler"></i> Проекты
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_type" "guide" %}" class="{% if post_type == "guide" %}feed-sidebar-menu-selected{% endif %}">
-                        🗺 Путеводители
+                        <i class="fas fa-globe"></i> Путеводители
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_type" "question" %}" class="{% if post_type == "question" %}feed-sidebar-menu-selected{% endif %}">
-                        🤔 Вопросы
+                        <i class="fas fa-question-circle"></i> Вопросы
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_type" "thread" %}" class="{% if post_type == "thread" %}feed-sidebar-menu-selected{% endif %}">
-                        🗄 Треды
+                        <i class="fas fa-stream"></i> Треды
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_label" "approved" %}" class="{% if label_code == "approved" %}feed-sidebar-menu-selected{% endif %}">
-                        👍 Офигенно
+                        <i class="fas fa-thumbs-up"></i> Офигенно
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_label" "inside" %}" class="{% if label_code == "inside" %}feed-sidebar-menu-selected{% endif %}">
-                        💎️ Инсайды
+                        <i class="fas fa-gem"></i>️ Инсайды
                     </a>
                 </li>
                 <li>
                     <a href="{% url "feed_label" "post_of_month" %}" class="{% if label_code == "post_of_month" %}feed-sidebar-menu-selected{% endif %}">
-                        🏆 Посты месяца
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url "feed_label" "ama" %}" class="{% if label_code == "ama" %}feed-sidebar-menu-selected{% endif %}">
-                        ✋ AMA
+                        <i class="fas fa-trophy"></i> Посты месяца
                     </a>
                 </li>
             </ul>
@@ -82,7 +82,7 @@
         <div class="feed-sidebar-block">
             <div class="feed-sidebar-header">Комнаты</div>
             <div class="feed-sidebar-topics">
-                {% for room in rooms|slice:":10" %}
+                {% for room in rooms|slice:":15" %}
                     {% include "rooms/widgets/room.html" with room=room type="card" %}
                 {% endfor %}
             </div>

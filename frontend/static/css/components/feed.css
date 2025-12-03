@@ -93,7 +93,14 @@
             }
 
                 .feed-sidebar-menu-small li {
-                    padding-bottom: 5px;
+                    padding-bottom: 1px;
+                }
+
+                .feed-sidebar-menu-small i {
+                    padding-left: 2px;
+                    padding-right: 3px;
+                    opacity: 0.8;
+                    filter: grayscale(1);
                 }
 
         .feed-sidebar-topics {
