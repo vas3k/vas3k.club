@@ -1,43 +1,53 @@
 {% load static %}
 <nav class="menu menu-full">
-    <div class="menu-burger">
-        <span onclick="document.getElementById('app').classList.toggle('mobile-menu-opened')">
-            ≡
-        </span>
-    </div>
-    <div class="menu-left">
-        <a href="{% url "index" %}" class="menu-logo">
+    <div class="menu-logo">
+        <div class="menu-burger show-on-iphone">
+            <span onclick="document.getElementById('app').classList.toggle('mobile-menu-opened')">
+                ≡
+            </span>
+        </div>
+
+        <a href="{% url "index" %}" class="logo">
             Вастрик<img src="{% static "images/logo/logo-128.png" %}" alt=" x " width="26" height="26">Клуб
         </a>
-    </div>
-    <div class="menu-center">
+
         {% if me and me.is_member %}
-            <div class="menu-search">
-                <form action="{% url "search" %}">
-                    <label for="menu-search-input" class="menu-search-label {% if query %}menu-search-label-is-active{% endif %}" id="menu-search-label"><i class="fas fa-search"></i></label>
-                    <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}" placeholder="Поиск" enterkeyhint="search">
-                    <input type="submit" value="&rarr;" style="position: absolute; top: 0; left: -9999px;">
-                </form>
+            <div class="menu-button menu-button-search" onclick="document.getElementById('app').classList.toggle('mobile-search-opened'); document.getElementById('menu-search-input').focus()">
+                <i class="fas fa-search"></i>
             </div>
         {% endif %}
     </div>
-    <div class="menu-right">
-        {% if me %}
+
+    {% if me and me.is_member %}
+        <form action="{% url "search" %}" class="menu-search">
+            <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}" placeholder="Поиск" enterkeyhint="search">
+            <label for="menu-search-input" class="menu-search-label {% if query %}menu-search-label-is-active{% endif %}" id="menu-search-label"><i class="fas fa-search"></i></label>
+            <input type="submit" value="&rarr;" style="position: absolute; top: 0; left: -9999px;">
+        </form>
+    {% endif %}
+
+    {% if me %}
+        <div class="menu-right">
             {% if me.is_member %}
                 <a href="{% url "compose" %}" class="button menu-button menu-button-compose">
                     <i class="fas fa-pen"></i>
                     <span class="menu-button-compose-text">Пиши</span>
                 </a>
+
                 <a href="{% url "bookmarks" %}" class="menu-button menu-button-bookmark">
                     <i class="fa fa-bookmark"></i>
                 </a>
+
                 {% if me.is_moderator or me.is_curator %}
                     <a href="{% url "godmode_settings" %}" class="menu-button menu-button-godmode"><i class="fa fa-bomb"></i></a>
                 {% endif %}
             {% endif %}
-            <a href="{% url "profile" me.slug %}" class="avatar menu-avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}"></a>
-        {% else %}
-            <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar"><img src="{% static "images/test/avatar.png"%}" alt="Аватар"></a>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
+
+    {% if me %}
+        <a href="{% url "profile" me.slug %}" class="avatar menu-avatar"><img src="{{ me.get_avatar }}" alt="Аватар {{ me.full_name }}"></a>
+    {% else %}
+        <a href="{% url "login" %}?goto={{ settings.APP_HOST }}{{ request.path }}" class="avatar menu-avatar"><img src="{% static "images/test/avatar.png"%}" alt="Аватар"></a>
+    {% endif %}
 </nav>

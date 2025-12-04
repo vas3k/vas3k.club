@@ -25,6 +25,7 @@
         padding-right: 30px;
         font-size: 110%;
     }
+
         @media only screen and (max-width : 570px) {
             .feed-sidebar {
                 transform: translate(-100%);
