@@ -1,7 +1,7 @@
 .friends {
     padding-top: 40px;
     margin: 0 auto;
-    max-width: var(--max-content-width);
+    max-width: var(--normal-content-width);
 }
 
     .friends-title {

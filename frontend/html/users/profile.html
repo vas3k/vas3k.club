@@ -35,43 +35,87 @@
 
 {% block content %}
     <div class="content profile">
-        {% if me.id == user.id or me.is_moderator %}
+        {% if me.is_moderator %}
             <div class="profile-user-edit">
-                {% if me.is_moderator %}
-                    <i class="fas fa-tools"></i>&nbsp;<a href="{% url "godmode_edit_model" "users" user.id %}">Админка</a>&nbsp;&nbsp;&nbsp;
-                {% endif %}
-                <i class="fas fa-cog"></i>&nbsp;<a href="{% url "profile_settings" user.slug %}">Настройки профиля</a>
+                <i class="fas fa-tools"></i>&nbsp;<a href="{% url "godmode_edit_model" "users" user.id %}">Админка</a>&nbsp;&nbsp;&nbsp;
             </div>
         {% endif %}
 
         {% include "users/widgets/card.html" with user=user %}
 
         {% if me.id == user.id %}
-            <div class="block profile-statuses">
-                <div class="profile-status profile-respect">
-                    <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
-                    <span class="profile-status-text">
-                        {% if user.upvotes > 1000 %}
-                            плюсиков
-                        {% else %}
-                            {{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}
-                        {% endif %}
-                    </span>
-                </div>
-
-                <a href="{% url "edit_payments" user.slug %}" class="profile-status">
-                    {% if user.membership_days_left < 150 %}
-                        <span class="profile-status-number">{% if user.membership_days_left < 10 %}😱{% else %}😋{% endif %} {{ user.membership_days_left | ceil | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_days_left | ceil | rupluralize:"день,дня,дней" }}</span>
-                    {% elif user.membership_days_left <= 730 %}
-                        <span class="profile-status-number">😎 {{ user.membership_days_left | days_to_months | cool_number  }}</span>
-                        <span class="profile-status-text">{{ user.membership_days_left | days_to_months | rupluralize:"месяц,месяца,месяцев" }}</span>
-                    {% else %}
-                        <span class="profile-status-number">💎 {{ user.membership_days_left | days_to_years | cool_number }}</span>
-                        <span class="profile-status-text">{{ user.membership_days_left | days_to_years | rupluralize:"год,года,лет" }}</span>
-                    {% endif %}
+            <div class="profile-settings">
+                <a href="{% url "profile_settings" user.slug %}" class="button">
+                    ⚙️&nbsp;Настройки профиля
                 </a>
 
+                <a href="{% url "edit_payments" user.slug %}" class="button">
+                    💎&nbsp;Баланс: {{ user.membership_days_left | cool_number }} {{ user.membership_days_left | rupluralize:"день,дня,дней" }}
+                </a>
+
+                <a href="{% url "friends" user.slug %}" class="button">
+                    🤝&nbsp;Мои чуваки
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="block profile-statuses">
+            <div class="profile-status profile-respect">
+                <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
+                <span class="profile-status-text">
+                    {% if user.upvotes > 1000 %}
+                        плюсиков
+                    {% else %}
+                        {{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="profile-status">
+                {% if user.is_banned %}
+                    <span class="profile-status-icon">👮‍♀️</span>
+                    <span class="profile-status-text">забанен</span>
+                    {% if user.metadata.last_ban %}
+                        <span class="profile-status-text-small">
+                            {% if user.metadata.last_ban.days %}
+                                {% if user.metadata.last_ban.days > 999 %}
+                                    навечно
+                                {% else %}
+                                    на {{ user.metadata.last_ban.days }} {{ user.metadata.last_ban.days|rupluralize:"день,дня,дней" }}
+                                {% endif %}
+                            {% endif %}
+                            {% if user.metadata.last_ban.reason %}
+                                | {{ user.metadata.last_ban.reason }}
+                            {% endif %}
+                        </span>
+                    {% endif %}
+                {% elif user.deleted_at %}
+                    <span class="profile-status-icon">🏃‍♀️</span>
+                    <span class="profile-status-text">удалился из Клуба</span>
+                {% elif not user.is_moderation_approved %}
+                    <span class="profile-status-icon">⚖️</span>
+                    <span class="profile-status-text">на модерации</span>
+                    <span class="profile-status-text-small">
+                        интро ещё не прошло модерацию
+                    </span>
+                {% elif not user.is_active_member %}
+                    <span class="profile-status-icon">️😴</span>
+                    <span class="profile-status-text">аккаунт неактивен</span>
+                {% else %}
+                    {% if user.membership_created_days < 150 %}
+                        <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
+                    {% elif user.membership_created_days <= 730 %}
+                        <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
+                        <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
+                    {% else %}
+                        <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_years | cool_number }}</span>
+                        <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            {% if me.id == user.id %}
                 <a href="{% url "edit_notifications" user.slug %}" class="profile-status">
                     <span class="profile-status-icon">🔔</span>
                     <span class="profile-status-status">
@@ -100,64 +144,7 @@
                         {% endif %}
                     </span>
                 </a>
-            </div>
-        {% else %}
-            <div class="block profile-statuses">
-                <div class="profile-status profile-respect">
-                    <span class="profile-status-number">+{{ user.upvotes | cool_number }}</span>
-                    <span class="profile-status-text">
-                        {% if user.upvotes > 1000 %}
-                            плюсиков
-                        {% else %}
-                            {{ user.upvotes | rupluralize:"плюсик,плюсика,плюсиков" }}
-                        {% endif %}
-                    </span>
-                </div>
-
-                <div class="profile-status">
-                    {% if user.is_banned %}
-                        <span class="profile-status-icon">👮‍♀️</span>
-                        <span class="profile-status-text">забанен</span>
-                        {% if user.metadata.last_ban %}
-                            <span class="profile-status-text-small">
-                                {% if user.metadata.last_ban.days %}
-                                    {% if user.metadata.last_ban.days > 999 %}
-                                        навечно
-                                    {% else %}
-                                        на {{ user.metadata.last_ban.days }} {{ user.metadata.last_ban.days|rupluralize:"день,дня,дней" }}
-                                    {% endif %}
-                                {% endif %}
-                                {% if user.metadata.last_ban.reason %}
-                                    | {{ user.metadata.last_ban.reason }}
-                                {% endif %}
-                            </span>
-                        {% endif %}
-                    {% elif user.deleted_at %}
-                        <span class="profile-status-icon">🏃‍♀️</span>
-                        <span class="profile-status-text">удалился из Клуба</span>
-                    {% elif not user.is_moderation_approved %}
-                        <span class="profile-status-icon">⚖️</span>
-                        <span class="profile-status-text">на модерации</span>
-                        <span class="profile-status-text-small">
-                            интро ещё не прошло модерацию
-                        </span>
-                    {% elif not user.is_active_member %}
-                        <span class="profile-status-icon">️😴</span>
-                        <span class="profile-status-text">аккаунт неактивен</span>
-                    {% else %}
-                        {% if user.membership_created_days < 150 %}
-                            <span class="profile-status-number">⏳ {{ user.membership_created_days | ceil | cool_number }}</span>
-                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }} в Клубе</span>
-                        {% elif user.membership_created_days <= 730 %}
-                            <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_months | cool_number  }}</span>
-                            <span class="profile-status-text">{{ user.membership_created_days | days_to_months | rupluralize:"месяц,месяца,месяцев" }} в Клубе</span>
-                        {% else %}
-                            <span class="profile-status-number">⏳ {{ user.membership_created_days | days_to_years | cool_number }}</span>
-                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }} в Клубе</span>
-                        {% endif %}
-                    {% endif %}
-                </div>
-
+            {% else %}
                 {% if me %}
                     <a href="{% url "create_badge_for_post" user.slug %}" class="profile-status clickable">
                         <span class="profile-status-icon">🙏</span>
@@ -178,8 +165,8 @@
                         </a>
                     {% endif %}
                 {% endif %}
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
 
         {% if badges %}
             <a class="user-badges" href="{% url "profile_badges" user.slug  %}">
