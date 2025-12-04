@@ -25,11 +25,9 @@
 {% block content %}
     <div class="search">
         <div class="search-filters">
-            <form action="." method="get" class="">
-                <input type="hidden" name="type" value="{{ type }}">
-
+            <form action="{% url "search" %}">
                 <div class="search-query show-on-iphone">
-                    <input type="text" name="q" value="{{ query }}" placeholder="Поиск..." class="search-query-input">
+                    <input type="text" name="q" minlength="3" maxlength="200" value="{{ query }}" enterkeyhint="search" placeholder="Поиск..." class="search-query-input">
                 </div>
 
                 <div class="search-filters-types">
