@@ -1,4 +1,4 @@
-{% load posts %}🤘 <b><a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">Клубный журнал. Итоги недели. Выпуск #{{ issue_number }}{% if digest_title %}: {{ digest_title }}{% endif %}</a></b>
+{% load posts %}🤘 <b><a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">Клубный журнал #{{ issue_number }}{% if digest_title %}: {{ digest_title }}{% endif %}</a></b>
 
 {% if digest_intro %}{% render_tg digest_intro 3500 %}
 {% endif %}

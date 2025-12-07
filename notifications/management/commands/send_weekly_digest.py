@@ -9,7 +9,7 @@ from django.core.management import BaseCommand
 from club.exceptions import NotFound
 from godmode.models import ClubSettings
 from notifications.digests import generate_weekly_digest
-from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message
+from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message, Chat
 from notifications.email.sender import send_mass_email
 from posts.models.post import Post
 from search.models import SearchIndex
@@ -34,6 +34,10 @@ class Command(BaseCommand):
         # get a version without "unsubscribe" footer for posting on home page
         digest_without_footer, og_description = generate_weekly_digest(no_footer=True)
 
+        # get title and description
+        digest_title = ClubSettings.get("digest_title")
+        digest_intro = ClubSettings.get("digest_intro")
+
         # save digest as a post
         issue = (datetime.utcnow() - settings.LAUNCH_DATE).days // 7
         year, week, _ = (datetime.utcnow() - timedelta(days=7)).isocalendar()
@@ -42,7 +46,7 @@ class Command(BaseCommand):
             type=Post.TYPE_WEEKLY_DIGEST,
             defaults=dict(
                 author=User.objects.filter(slug="vas3k").first(),
-                title=f"Клубный журнал. Итоги недели. Выпуск #{issue}",
+                title=f"Клубный журнал. Выпуск #{issue}: {digest_title}",
                 html=digest_without_footer,
                 text=digest_without_footer,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
@@ -56,8 +60,34 @@ class Command(BaseCommand):
         # make it searchable
         SearchIndex.update_post_index(post)
 
+        # sending telegrams
+        telegram_subscribers = User.objects\
+            .exclude(
+                email_digest_type=User.EMAIL_DIGEST_TYPE_NOPE
+            )\
+            .filter(
+                membership_expires_at__gte=datetime.utcnow() - timedelta(days=30),
+                moderation_status=User.MODERATION_STATUS_APPROVED,
+                telegram_id__isnull=False,
+            )
+
+        for user in telegram_subscribers:
+            if user.telegram_id:
+                send_telegram_message(
+                    chat=Chat(id=user.telegram_id),
+                    text=render_html_message(
+                        "weekly_digest_announce.html",
+                        post=post,
+                        issue_number=issue,
+                        digest_title=digest_title,
+                        digest_intro=digest_intro
+                    ),
+                    disable_preview=False,
+                    parse_mode=telegram.ParseMode.HTML,
+                )
+
         # sending emails
-        subscribed_users = User.objects\
+        email_subscribers = User.objects\
             .filter(
                 is_email_verified=True,
                 membership_expires_at__gte=datetime.utcnow() - timedelta(days=14),
@@ -66,7 +96,7 @@ class Command(BaseCommand):
             .exclude(email_digest_type=User.EMAIL_DIGEST_TYPE_NOPE)\
             .exclude(is_email_unsubscribed=True)
 
-        for user in subscribed_users:
+        for user in email_subscribers:
             self.stdout.write(f"Sending to {user.email}...")
 
             if not options.get("production") and not user.is_god:
@@ -82,7 +112,7 @@ class Command(BaseCommand):
 
                 send_mass_email(
                     recipient=user.email,
-                    subject=f"🤘 Клубный журнал. Итоги недели. Выпуск #{issue}",
+                    subject=f"✖︎ Клубный журнал #{issue}. {digest_title}",
                     html=digest,
                     unsubscribe_link=f"{settings.APP_HOST}/notifications/unsubscribe/{user.id}/{secret_code}/"
                 )
@@ -92,10 +122,6 @@ class Command(BaseCommand):
                 continue
 
         if options.get("production"):
-            # get title and description
-            digest_title = ClubSettings.get("digest_title")
-            digest_intro = ClubSettings.get("digest_intro")
-
             # announce on channel
             send_telegram_message(
                 chat=CLUB_CHANNEL,
