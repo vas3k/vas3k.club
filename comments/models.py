@@ -30,7 +30,7 @@ class Comment(models.Model):
     ipaddress = models.GenericIPAddressField(null=True)
     useragent = models.CharField(max_length=512, null=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     upvotes = models.IntegerField(default=0, db_index=True)

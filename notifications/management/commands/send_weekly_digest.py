@@ -80,7 +80,8 @@ class Command(BaseCommand):
                         post=post,
                         issue_number=issue,
                         digest_title=digest_title,
-                        digest_intro=digest_intro
+                        digest_intro=digest_intro,
+                        include_unsubscribe=True,
                     ),
                     disable_preview=False,
                     parse_mode=telegram.ParseMode.HTML,
