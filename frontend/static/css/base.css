@@ -837,3 +837,30 @@ img.emoji {
     transform: scale(1.05);
     transition: transform .2s;
 }
+
+.page-404 {
+    text-align: center;
+}
+
+    .page-404-title {
+        font-size: 200%;
+        margin-top: 130px;
+        margin-bottom: 50px;
+    }
+
+    .page-404-game {
+        width: 100%;
+        max-width: 800px;
+    }
+
+        .page-404-game * {
+            outline: none;
+        }
+
+    .page-404-game-description {
+        opacity: 0.6;
+    }
+
+    .page-404-buttons {
+        padding-top: 150px;
+    }
