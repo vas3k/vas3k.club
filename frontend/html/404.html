@@ -207,7 +207,8 @@
   }
   const DEFAULT_WIDTH = 600,
     FPS = 60,
-    IS_HIDPI = window.devicePixelRatio > 1,
+    // there is no version for low dpi
+    IS_HIDPI = true,
     IS_IOS = /CriOS/.test(window.navigator.userAgent),
     IS_MOBILE = /Android/.test(window.navigator.userAgent) || IS_IOS,
     IS_RTL = "rtl" == document.querySelector("html").dir,
