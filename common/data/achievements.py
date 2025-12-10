@@ -143,6 +143,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/2024.png",
         "style": "background-color: #ff8a3d; font-size: 190%;",
     }),
+    ("2025", {
+        "name": "2025",
+        "description": "Призовое место в итогах 2025 года",
+        "image": "https://vas3k.club/static/images/achievements/2025.webp",
+        "style": "background-color: #A47764; font-size: 190%;",
+    }),
     ("mic", {
         "name": "Золотой микрофон",
         "description": "За выступление на клубных ивентах, митапах или АМА в качестве оратора",
@@ -435,7 +441,7 @@ ACHIEVEMENTS = [
         "name": "Уважаемые Знатоки",
         "description": "Призовое место в клубном турнире интеллектуальных игр",
         "image": "https://vas3k.club/static/images/achievements/intellectual.webp",
-        "style": "background-color: #535D94;",
+        "style": "background-color: #535D94; font-size: 110%;",
     }),
     ("vas3k_quest", {
         "name": "Вастрик Квест",
