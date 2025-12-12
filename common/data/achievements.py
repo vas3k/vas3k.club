@@ -30,7 +30,7 @@ ACHIEVEMENTS = [
         "style": "background-color: #f41921; font-size: 140%;",
     }),
     ("contributor", {
-        "name": "Контри-бьютор",
+        "name": "Контрибьютор",
         "description": "За значительный вклад в разработку Клуба",
         "image": "https://i.vas3k.club/3ah.png",
         "style": "background-color: #205072;",
@@ -67,7 +67,7 @@ ACHIEVEMENTS = [
         "style": "background-color: #94B447;",
     }),
     ("international", {
-        "name": "Между-народные отношения",
+        "name": "Международные отношения",
         "description": "Выдаётся за офлайн-встречу трёх и более человек с разным гражданством или ВНЖ",
         "image": "https://i.vas3k.club/3aq.png",
         "style": "background-color: #1976D2; font-size: 120%;",
