@@ -40,7 +40,7 @@ def post_achievement_action(request, user: User, **context):
                 if is_created:
                     send_new_achievement_email(user_achievement)
                     notify_user_new_achievement(user_achievement)
-                    notify_admins_on_achievement(user_achievement)
+                    notify_admins_on_achievement(user_achievement, from_user=request.me)
 
         return render(request, "godmode/message.html", {
             **context,
