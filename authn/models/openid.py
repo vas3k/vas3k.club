@@ -113,6 +113,9 @@ class OAuth2Token(models.Model, TokenMixin):
     def get_scope(self):
         return self.scope
 
+    def get_scopes(self):
+        return set(self.scope.split(" ") if self.scope else [])
+
     def get_expires_in(self):
         return self.expires_in
 

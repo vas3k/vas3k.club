@@ -146,7 +146,7 @@ class User(models.Model, ModelDiffMixin):
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
 
-    def to_dict(self):
+    def to_dict(self, include_private=False):
         return {
             "id": str(self.id),
             "slug": self.slug,
@@ -164,6 +164,10 @@ class User(models.Model, ModelDiffMixin):
             "city": self.city,
             "country": self.country,
             "is_active_member": self.is_active_member,
+            **({
+                "email": self.email,
+                "telegram": self.telegram_data,
+            } if include_private else {}),
         }
 
     def get_absolute_url(self):

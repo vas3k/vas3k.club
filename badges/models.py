@@ -39,6 +39,14 @@ class Badge(models.Model):
     def badges_for_intro(cls):
         return cls.visible_objects().filter(code="thanks").all()
 
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "title": self.title,
+            "description": self.description,
+            "created_at": self.created_at.isoformat(),
+        }
+
 
 class UserBadge(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -145,4 +153,14 @@ class UserBadge(models.Model):
                 "description": badges[badge_group["badge_id"]].description,
                 "count": badge_group["count"],
             } for badge_group in badge_groups
+        }
+
+    def to_dict(self):
+        return {
+            "badge": self.badge.to_dict(),
+            "from_user": self.from_user.to_dict(),
+            "created_at": self.created_at.isoformat(),
+            "post": {"id": self.post.id},
+            "comment": {"id": self.comment.id},
+            "note": self.note,
         }

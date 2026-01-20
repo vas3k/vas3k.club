@@ -2,8 +2,10 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from authn.decorators.api import api
+from badges.models import UserBadge
 from club.exceptions import ApiAccessDenied
 from tags.models import UserTag
+from users.models.achievements import UserAchievement
 from users.models.user import User
 
 
@@ -26,15 +28,15 @@ def api_profile_user(request, user_slug):
 @api(require_auth=True)
 def api_profile(request, user_slug):
     user = api_profile_user(request, user_slug)
-
-    return JsonResponse({"user": user.to_dict()})
+    scopes = request.oauth_token.get_scopes() if request.oauth_token else []
+    return JsonResponse({"user": user.to_dict(include_private="contact" in scopes)})
 
 
 @api(require_auth=True)
 def api_profile_tags(request, user_slug):
     user = api_profile_user(request, user_slug)
 
-    allowed_groups = {"club", "hobbies", "personal"}
+    allowed_groups = {"club", "tech", "hobbies", "personal", "collectible", "other"}
 
     user_tags = UserTag.objects.filter(user=user).select_related("tag")
 
@@ -48,6 +50,20 @@ def api_profile_tags(request, user_slug):
             })
 
     return JsonResponse({"tags": grouped_tags})
+
+
+@api(require_auth=True)
+def api_profile_achievements(request, user_slug):
+    user = api_profile_user(request, user_slug)
+    user_achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
+    return JsonResponse({"user_achievements": [ua.to_dict() for ua in user_achievements]})
+
+
+@api(require_auth=True)
+def api_profile_badges(request, user_slug):
+    user = api_profile_user(request, user_slug)
+    user_badges = UserBadge.objects.filter(user=user).select_related("badge", "from_user")
+    return JsonResponse({"user_badges": [ub.to_dict() for ub in user_badges]})
 
 
 @api(require_auth=True)

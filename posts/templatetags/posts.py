@@ -28,9 +28,6 @@ def css_classes(context, post):
     if me and hasattr(post, "unread_comments") and post.unread_comments:
         classes += ["feed-post-is-new"]
 
-    # if post.is_pinned:
-    #     classes += ["feed-post-is-pinned"]
-
     return " ".join(classes)
 
 

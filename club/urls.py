@@ -47,7 +47,8 @@ from bookmarks.views import bookmarks
 from search.views import search
 from tickets.views import stripe_ticket_sale_webhook
 
-from users.api import api_profile, api_profile_by_telegram_id, api_profile_tags
+from users.api import api_profile, api_profile_by_telegram_id, api_profile_tags, api_profile_achievements, \
+    api_profile_badges
 from users.views.delete_account import request_delete_account, confirm_delete_account
 from users.views.friends import api_friend, friends
 from users.views.messages import on_review, rejected, banned
@@ -99,6 +100,8 @@ urlpatterns = [
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
     path("user/by_telegram_id/<slug:telegram_id>.json", api_profile_by_telegram_id, name="api_profile_by_telegram_id"),
     path("user/<slug:user_slug>/tags.json", api_profile_tags, name="api_profile_tags"),
+    path("user/<slug:user_slug>/achievements.json", api_profile_achievements, name="api_profile_achievements"),
+    path("user/<slug:user_slug>/badges.json", api_profile_badges, name="api_profile_badges"),
     path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
     path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),
