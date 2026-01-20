@@ -14,6 +14,8 @@ def api(require_auth=True, scopes=None):
     def decorator(view):
         @functools.wraps(view)
         def wrapper(request, *args, **kwargs):
+            request.oauth_token = None
+
             # check auth if needed
             if require_auth:
                 # requests on behalf of apps (user == owner, for simplicity)
