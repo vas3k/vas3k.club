@@ -35,7 +35,7 @@
             <tr>
                 {% for user in users %}
                     <td>
-                        {% include "users/badge.html" with no_css=True %}
+                        {% include "users/badge.html" %}
                     </td>
                     {% if forloop.counter|divisibleby:2 %}</tr><tr>{% endif %}
                 {% endfor %}
