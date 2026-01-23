@@ -208,6 +208,7 @@ def reject_user_profile(update: Update, context: CallbackContext):
         "reject_user": UserRejectReason.intro,
         "reject_user_intro": UserRejectReason.intro,
         "reject_user_data": UserRejectReason.data,
+        "reject_user_ai": UserRejectReason.ai,
         "reject_user_aggression": UserRejectReason.aggression,
         "reject_user_general": UserRejectReason.general,
         "reject_user_name": UserRejectReason.name,

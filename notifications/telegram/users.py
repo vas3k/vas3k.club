@@ -35,6 +35,9 @@ def notify_profile_needs_review(user, intro):
                 telegram.InlineKeyboardButton("❌️ Нет контактов", callback_data=f"reject_user_data:{user.id}"),
             ],
             [
+                telegram.InlineKeyboardButton("❌️ ИИ-слоп", callback_data=f"reject_user_ai:{user.id}"),
+            ],
+            [
                 telegram.InlineKeyboardButton("❌️ Агрессия", callback_data=f"reject_user_aggression:{user.id}"),
             ],
             [

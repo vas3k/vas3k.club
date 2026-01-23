@@ -35,63 +35,7 @@
             <tr>
                 {% for user in users %}
                     <td>
-                        <div class="block profile-card h-card">
-                            <div class="profile-card-photo u-photo">
-                                <div class="avatar profile-user-avatar"><img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" /></div>
-
-                                {% if not hide_stats %}
-                                    <div class="profile-card-age">
-                                        {% if user.membership_created_days < 40 %}
-                                            <span class="profile-status-number">{{ user.membership_created_days | ceil | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | ceil | rupluralize:"день,дня,дней" }}</span>
-                                        {% elif user.membership_created_days <= 360 %}
-                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_months | cool_number  }}</span>
-                                            <span class="profile-status-text">мес.</span>
-                                        {% else %}
-                                            <span class="profile-status-number">{{ user.membership_created_days | days_to_years | cool_number }}</span>
-                                            <span class="profile-status-text">{{ user.membership_created_days | days_to_years | rupluralize:"год,года,лет" }}</span>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="profile-card-info">
-                                <a href="{% url "profile" user.slug %}" class="profile-user-name u-url">
-                                    <span class="profile-user-fullname {% if user.is_banned or user.deleted_at %}user-name-is-banned{% endif %} p-name">{{ user.full_name }}</span>
-                                    <span class="profile-user-nickname p-nickname">@{{ user.slug }}</span>
-                                </a>
-
-                                {% if user.position or user.company %}
-                                    <div class="profile-user-job">
-                                        <span class="profile-user-job-position p-job-title">{{ user.position }}</span>
-                                        {% if user.company %}— <span class="profile-user-job-company p-org">{{ user.company }}</span>{% endif %}
-                                    </div>
-                                {% endif %}
-
-                                {% if user.city or user.country %}
-                                    <div class="profile-user-location">
-                                        📍{% if user.city %}<span class="p-locality">{{ user.city }}</span>, {% endif %}<span class="p-country-name">{{ user.country }}</span>
-                                    </div>
-                                {% endif %}
-
-                                {% if not hide_bio and user.bio %}
-                                    <div class="profile-user-bio">
-                                        {{ user.bio | markdown }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="user-badges">
-                                {% if not hide_badges and user.achievements.all %}
-                                    {% for user_achievement in user.achievements.all|slice:":10" %}
-                                        <div class="user-badge-achievement" {% if user_achievement.achievement.style %}style="{{ user_achievement.achievement.style }}"{% endif %}>
-                                            <img src="{{ user_achievement.achievement.image }}" class="user-badge-achievement-image" alt="{{ user_achievement.achievement.code }}">
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                                {% if not hide_badges and user.badges %}
-                                    {% include "badges/widgets/badges.html" with badges=user.badges badge_size="small" %}
-                                {% endif %}
-                            </div>
-                        </div>
+                        {% include "users/badge.html" with no_css=True %}
                     </td>
                     {% if forloop.counter|divisibleby:2 %}</tr><tr>{% endif %}
                 {% endfor %}

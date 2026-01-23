@@ -303,13 +303,14 @@
 
 /* Badge generator */
 .badge-generator {
-        max-width: 900px;  /* good for A4 printing */
-        margin: 0 auto;
-    }
+    max-width: 900px;  /* good for A4 printing */
+    margin: 0 auto;
+}
 
 .badge-generator-results {
     background-color: white;
     font-size: 16px;
+    height: 100%;
 }
 
     .badge-generator-table {
@@ -334,6 +335,7 @@
         margin-bottom: 0;
         padding: 30px 20px 20px;
         border-radius: 0;
+        height: 100%;
     }
 
     .badge-generator-results .profile-card-info {

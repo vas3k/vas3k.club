@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 from authn.decorators.api import api
 from badges.models import UserBadge
@@ -30,6 +30,12 @@ def api_profile(request, user_slug):
     user = api_profile_user(request, user_slug)
     scopes = request.oauth_token.get_scopes() if request.oauth_token else []
     return JsonResponse({"user": user.to_dict(include_private="contact" in scopes)})
+
+
+@api(require_auth=True)
+def api_profile_badge(request, user_slug):
+    user = api_profile_user(request, user_slug)
+    return render(request, "users/badge.html", {"user": user})
 
 
 @api(require_auth=True)

@@ -169,7 +169,7 @@
 .button {
     display: inline-flex;
     align-items: center;
-    text-decoration: none;
+    text-decoration: none !important;
     padding: 15px 18px;
     box-sizing: border-box;
     text-decoration: none;

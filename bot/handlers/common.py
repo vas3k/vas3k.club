@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 class UserRejectReason(Enum):
     intro = "intro"
     data = "data"
+    ai = "ai"
     aggression = "aggression"
     general = "general"
     name = "name"
