@@ -17,7 +17,7 @@
     "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "^1.4.0",
     "postcss-import": "^12.0.1",
-    "postcss-loader": "^3.0.0",
+    "postcss-loader": "^8.2.0",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.0.5",
     "vue-hot-reload-api": "^2.3.4",
