@@ -151,12 +151,19 @@
     }
 
     .stats-achievement-details__info {
+        margin-top: 15px;
         max-width: 60%;
         font-size: 150%;
         display: flex;
         flex-direction: column;
         gap: 10px;
         justify-content: center;
+    }
+
+    @media only screen and (max-width : 570px) {
+        .stats-achievement-details {
+            flex-wrap: wrap;
+        }
     }
 
 .stats-badges-latest {
