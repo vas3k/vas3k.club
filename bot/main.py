@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 import django
-from dataclasses import dataclass
 
 # IMPORTANT: this should go before any django-related imports (models, apps, settings)
 # These lines must be kept together till THE END
@@ -43,21 +42,9 @@ def private_message(update: Update, context: CallbackContext) -> None:
         return llm.llm_response(update, context)
 
 
-@dataclass
-class Server:
-    updater: Updater
-
-    def run_blocking(self):
-        self.updater.idle()
-
-    def stop(self):
-        self.updater.stop()
-
-
-def start_server() -> Server:
-    # Allow optional TELEGRAM_BASE_URL override for testing with mock servers
-    print(f"token={settings.TELEGRAM_BASE_URL}")
-    updater = Updater(settings.TELEGRAM_TOKEN, base_url=getattr(settings, 'TELEGRAM_BASE_URL', None), use_context=True)
+def main() -> None:
+    # Initialize telegram
+    updater = Updater(settings.TELEGRAM_TOKEN, use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
@@ -112,11 +99,8 @@ def start_server() -> Server:
         log.info(f"Set webhook: {settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN}")
         updater.bot.set_webhook(settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN)
 
-    return Server(updater=updater)
-
-
-def main() -> None:
-    start_server().run_blocking()
+    # Wait all threads
+    updater.idle()
 
 
 if __name__ == '__main__':
