@@ -157,6 +157,7 @@ def edit_comment(request, comment_id):
 
 
 @require_auth
+@require_http_methods(["POST"])
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -202,6 +203,7 @@ def delete_comment(request, comment_id):
 
 
 @require_auth
+@require_http_methods(["POST"])
 def delete_comment_thread(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -220,6 +222,7 @@ def delete_comment_thread(request, comment_id):
 
 
 @require_auth
+@require_http_methods(["POST"])
 def pin_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
 
