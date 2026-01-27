@@ -3,7 +3,6 @@ from collections import namedtuple
 import telegram
 from django.conf import settings
 from django.template import loader
-from telegram import ParseMode
 
 from common.regexp import IMAGE_RE
 from notifications.telegram.bot import bot, log
@@ -24,9 +23,10 @@ PHOTO_TEXT_LIMIT = 1024
 def send_telegram_message(
     chat: Chat,
     text: str,
-    parse_mode: ParseMode = telegram.ParseMode.HTML,
+    parse_mode: str = telegram.ParseMode.HTML,
+    reply_markup: telegram.InlineKeyboardMarkup | None = None,
+    reply_to_message_id: int | None = None,
     disable_preview: bool = True,
-    **kwargs
 ):
     if not bot:
         log.warning("No telegram token. Skipping")
@@ -47,7 +47,8 @@ def send_telegram_message(
                 photo=images_in_message[0],
                 caption=text[:PHOTO_TEXT_LIMIT],
                 parse_mode=parse_mode,
-                **kwargs
+                reply_markup=reply_markup,
+                reply_to_message_id=reply_to_message_id,
             )
         else:
             return bot.send_message(
@@ -55,7 +56,8 @@ def send_telegram_message(
                 text=text[:NORMAL_TEXT_LIMIT],
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_preview,
-                **kwargs
+                reply_markup=reply_markup,
+                reply_to_message_id=reply_to_message_id,
             )
     except telegram.error.TelegramError as ex:
         log.warning(f"Telegram error: {ex}")
@@ -65,8 +67,7 @@ def send_telegram_image(
     chat: Chat,
     image_url: str,
     text: str,
-    parse_mode: ParseMode = telegram.ParseMode.HTML,
-    **kwargs
+    parse_mode: str = telegram.ParseMode.HTML,
 ):
     if not bot:
         log.warning("No telegram token. Skipping")
@@ -80,23 +81,9 @@ def send_telegram_image(
             photo=image_url,
             caption=text[:PHOTO_TEXT_LIMIT],
             parse_mode=parse_mode,
-            **kwargs
         )
     except telegram.error.TelegramError as ex:
         log.warning(f"Telegram error: {ex}")
-
-
-def remove_action_buttons(chat: Chat, message_id: str, **kwargs):
-    try:
-        return bot.edit_message_reply_markup(
-            chat_id=chat.id,
-            message_id=message_id,
-            reply_markup=None,
-            **kwargs
-        )
-    except telegram.error.TelegramError:
-        log.info("Buttons are already removed. Skipping")
-        return None
 
 
 def render_html_message(template, **data):
