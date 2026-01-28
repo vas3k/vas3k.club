@@ -23,6 +23,7 @@ const App = {
         this.initializeEmojiForPoorPeople();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
+        this.initializePostActions();
 
         const registeredEditors = this.initializeMarkdownEditor();
 
@@ -189,6 +190,25 @@ const App = {
                 comment.querySelector(".comment-collapse-stub, .reply-collapse-stub").click();
             }
         }
+    },
+    initializePostActions() {
+        document.querySelectorAll(".js-post-action").forEach((link) => {
+            link.addEventListener("click", async (e) => {
+                e.preventDefault();
+
+                const confirmMsg = link.dataset.confirm;
+                if (confirmMsg && !confirm(confirmMsg)) {
+                    return;
+                }
+
+                const response = await fetch(link.href, { method: "POST" });
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
     },
 };
 

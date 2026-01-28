@@ -19,7 +19,7 @@
         {% if request.me.is_moderator %}
             <div class="comment-moderation">
                 <div class="comment-title">Модерация</div>
-                <a href="{% url "delete_comment_thread" comment.id %}" class="button">Удалить весь тред</a>
+                <a href="{% url "delete_comment_thread" comment.id %}" class="button js-post-action" data-confirm="Удалить весь тред?">Удалить весь тред</a>
             </div>
         {% endif %}
     </div>

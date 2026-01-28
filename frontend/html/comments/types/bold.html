@@ -75,14 +75,14 @@
         </div>
         <div class="comment-footer">
             {% if me.id == comment.post.author_id or me.is_moderator %}
-                <a href="{% url "pin_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-thumbtack"></i></a>
+                <a href="{% url "pin_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover js-post-action"><i class="fas fa-thumbtack"></i></a>
             {% endif %}
 
             {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
                 {% if comment.is_deleted %}
-                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover js-post-action" data-confirm="Восстанавливаем?"><i class="fas fa-trash-restore"></i></a>
                 {% else %}
-                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover js-post-action" data-confirm="Удаляем?"><i class="fas fa-trash"></i></a>
                 {% endif %}
             {% endif %}
 
