@@ -60,7 +60,6 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.people import people
 from search.api import api_search_users, api_search_tags
-from users.views.valentine import send_valentine
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))(?::(?P<ordering_param>[^/]+))?"
@@ -112,7 +111,6 @@ urlpatterns = [
     path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
     path("user/<slug:user_slug>/muted/", muted, name="muted"),
     path("user/<slug:user_slug>/note/", edit_note, name="edit_note"),
-    path("user/<slug:user_slug>/valentine/", send_valentine, name="send_valentine"),
 
     path("user/<slug:user_slug>/edit/", profile_settings, name="profile_settings"),
     path("user/<slug:user_slug>/edit/profile/", edit_profile, name="edit_profile"),
@@ -243,7 +241,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     import debug_toolbar
-
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
 
 # According to django doc: https://docs.djangoproject.com/en/3.1/topics/testing/overview/#other-test-conditions
@@ -251,5 +248,4 @@ if settings.DEBUG:
 # so we use separate special var instead of settings.DEBUG
 if settings.TESTS_RUN:
     from debug.api import api_me
-
     urlpatterns.append(path("debug/me", api_me, name="debug_api_me"))
