@@ -167,9 +167,7 @@
                 {% endif %}
             {% endif %}
         </div>
-        {% now "n" as current_month %}
-        {% now "j" as current_day %}
-        {% if me.id != user.id and current_month == "2" and current_day in "13,14,15" %}
+        {% if me.id != user.id %}
             <form method="post"
                   action="{% url 'send_valentine' user_slug=user.slug %}"
                   class="inline"

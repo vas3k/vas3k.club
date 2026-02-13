@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.utils import timezone
 
 from authn.decorators.auth import require_auth
 from users.models.user import User
@@ -20,11 +19,6 @@ GLOBAL_COOLDOWN_SECONDS = 60 * 30
 @require_POST
 def send_valentine(request, user_slug):
     to_user = get_object_or_404(User, slug=user_slug)
-
-    # 🗓️ только 14–15 февраля
-    now = timezone.now()
-    if not (now.month == 2 and now.day in (13, 14, 15)):
-        return redirect("profile", user_slug=to_user.slug)
 
     if request.me and to_user.id == request.me.id:
         return redirect("profile", user_slug=to_user.slug)
