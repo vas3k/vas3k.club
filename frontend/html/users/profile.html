@@ -146,11 +146,11 @@
                 </a>
             {% else %}
                 {% if me %}
-                    <a href="{% url "create_badge_for_post" user.slug %}" class="profile-status clickable">
-                        <span class="profile-status-icon">🙏</span>
-                        <span class="profile-status-status">Сказать спасибо</span>
-                    </a>
-               {% endif %}
+                        <a href="{% url "create_badge_for_post" user.slug %}" class="profile-status clickable">
+                            <span class="profile-status-icon">🙏</span>
+                            <span class="profile-status-status">Сказать спасибо</span>
+                        </a>
+                   {% endif %}
 
                 {% if me and not user.is_curator and not user.is_moderator %}
                     {% if muted %}
@@ -167,6 +167,19 @@
                 {% endif %}
             {% endif %}
         </div>
+        {% now "n" as current_month %}
+        {% now "j" as current_day %}
+        {% if me.id != user.id and current_month == "2" and current_day in "13,14,15" %}
+            <form method="post"
+                  action="{% url 'send_valentine' user_slug=user.slug %}"
+                  class="inline"
+                  style="text-align:center">
+                {% csrf_token %}
+                <button type="submit" class="button">
+                    💌 Отправить Валентинку
+                </button>
+            </form>
+        {% endif %}
 
         {% if badges %}
             <a class="user-badges" href="{% url "profile_badges" user.slug  %}">
