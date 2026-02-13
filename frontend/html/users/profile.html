@@ -171,7 +171,7 @@
             <form method="post"
                   action="{% url 'send_valentine' user_slug=user.slug %}"
                   class="inline"
-                  style="text-align:center">
+                  style="text-align:center;margin-bottom: 30px;">
                 {% csrf_token %}
                 <button type="submit" class="button">
                     💌 Отправить Валентинку
