@@ -66,9 +66,9 @@ POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys(
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))(?::(?P<ordering_param>[^/]+))?"
 urlpatterns = [
     path("", feature_switch(
-        features.PRIVATE_FEED,  # if private feed is enabled
+        features.PRIVATE_FEED,                  # if private feed is enabled
         yes=auth_switch(yes=feed, no=landing),  # show it only for authorized users
-        no=feed,  # else - show it to everyone
+        no=feed,                                # else - show it to everyone
     ), name="index"),
 
     path("landing", feature_switch(
