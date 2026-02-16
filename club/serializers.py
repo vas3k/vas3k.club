@@ -1,9 +1,9 @@
-from datetime import date, datetime
+from datetime import datetime, date
 from decimal import Decimal
 from uuid import UUID
 
 from django.core.paginator import Page
-from django.db.models import Model, QuerySet
+from django.db.models import QuerySet, Model
 from django.forms import BaseForm
 from django.template.context import BaseContext
 
@@ -13,12 +13,12 @@ SKIP_KEYS = {"csrf_token", "request", "perms", "messages", "view", "DEFAULT_PAGE
 # These are passed to templates for server-side rendering but should never
 # be serialized into public JSON responses.
 SENSITIVE_KEYS = {
-    "muted_user_ids",  # list of UUIDs the user has muted (render_post)
-    "user_notes",  # private notes about other users (render_post)
-    "moderator_notes",  # moderator-only notes about a user (profile)
-    "note",  # current user's private note about a profile (profile)
-    "muted",  # whether current user muted this profile (profile)
-    "subscription",  # current user's subscription object (render_post)
+    "muted_user_ids",       # list of UUIDs the user has muted (render_post)
+    "user_notes",           # private notes about other users (render_post)
+    "moderator_notes",      # moderator-only notes about a user (profile)
+    "note",                 # current user's private note about a profile (profile)
+    "muted",                # whether current user muted this profile (profile)
+    "subscription",         # current user's subscription object (render_post)
 }
 
 

@@ -1,11 +1,11 @@
-from authn.decorators.api import api
-from authn.decorators.auth import require_auth
-from club.rendering import json_context, render
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_http_methods
 
-from rooms.models import Room, RoomMuted, RoomSubscription
+from authn.decorators.api import api
+from authn.decorators.auth import require_auth
+from club.rendering import render, json_context
+from rooms.models import Room, RoomSubscription, RoomMuted
 
 
 @json_context(lambda request: {"rooms": list(Room.objects.filter(is_visible=True))})
@@ -42,7 +42,9 @@ def toggle_room_subscription(request, room_slug):
             room=room,
         )
 
-    return {"status": "created" if is_created else "deleted"}
+    return {
+        "status": "created" if is_created else "deleted"
+    }
 
 
 @api(require_auth=True)
@@ -61,4 +63,6 @@ def toggle_room_mute(request, room_slug):
             room=room,
         )
 
-    return {"status": "created" if is_created else "deleted"}
+    return {
+        "status": "created" if is_created else "deleted"
+    }

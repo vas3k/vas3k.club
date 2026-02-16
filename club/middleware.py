@@ -1,8 +1,8 @@
-from authn.helpers import authorized_user_with_session
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from club.exceptions import ApiException, ClubException
+from authn.helpers import authorized_user_with_session
+from club.exceptions import ClubException, ApiException
 from club.rendering import wants_json
 from club.serializers import serialize
 
@@ -15,13 +15,13 @@ def json_suffix(get_response):
     Existing explicit .json routes (like /feed.json, /user/slug.json)
     are matched normally and never hit this retry logic.
     """
-
     def middleware(request):
         response = get_response(request)
         if response.status_code == 404 and request.path_info.endswith(".json"):
             original_path = request.path_info
             request.path_info = original_path[:-5] or "/"
-            request._wants_json = True
+            request.GET = request.GET.copy()
+            request.GET["format"] = "json"
             response = get_response(request)
             request.path_info = original_path
         return response
@@ -50,42 +50,32 @@ class ExceptionMiddleware:
 
     def process_exception(self, request, exception):
         if isinstance(exception, ApiException):
-            return JsonResponse(
-                {
+            return JsonResponse({
+                "error": {
+                    "code": exception.code,
+                    "title": exception.title,
+                    "message": exception.message,
+                    "data": exception.data,
+                }
+            }, status=400)
+
+        if isinstance(exception, ClubException):
+            if wants_json(request):
+                return JsonResponse({
                     "error": {
                         "code": exception.code,
                         "title": exception.title,
                         "message": exception.message,
                         "data": exception.data,
                     }
-                },
-                status=400,
-            )
+                }, status=400)
 
-        if isinstance(exception, ClubException):
-            if wants_json(request):
-                return JsonResponse(
-                    {
-                        "error": {
-                            "code": exception.code,
-                            "title": exception.title,
-                            "message": exception.message,
-                            "data": exception.data,
-                        }
-                    },
-                    status=400,
-                )
-            return render(
-                request,
-                "error.html",
-                {
-                    "code": exception.code,
-                    "title": exception.title,
-                    "message": exception.message,
-                    "data": exception.data,
-                },
-                status=400,
-            )
+            return render(request, "error.html", {
+                "code": exception.code,
+                "title": exception.title,
+                "message": exception.message,
+                "data": exception.data,
+            }, status=400)
 
 
 class JsonApiMiddleware:
@@ -113,14 +103,10 @@ class JsonApiMiddleware:
         # Django calls response.render() after process_template_response,
         # so we override the template rendering to produce JSON instead.
         original_context = response.context_data
-        response.template_name = None
-        response["Content-Type"] = "application/json; charset=utf-8"
 
         def render_json():
             data = serialize(original_context)
-            json_response = JsonResponse(
-                data, json_dumps_params={"ensure_ascii": False}
-            )
+            json_response = JsonResponse(data, json_dumps_params=dict(ensure_ascii=False))
             response.content = json_response.content
             response["Content-Type"] = json_response["Content-Type"]
             return response
