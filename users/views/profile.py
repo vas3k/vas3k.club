@@ -1,19 +1,20 @@
-from django.conf import settings
-from django.db.models import Q
-from django.http import Http404
-from django.shortcuts import redirect, get_object_or_404, render
-
+from authn.decorators.api import api
 from authn.decorators.auth import require_auth
 from authn.helpers import check_user_permissions
 from badges.models import UserBadge
+from club.rendering import render
 from comments.models import Comment
 from common.pagination import paginate
-from authn.decorators.api import api
+from django.conf import settings
+from django.db.models import Q
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
 from posts.models.post import Post
 from search.models import SearchIndex
+from tags.models import Tag, UserTag
+
 from users.models.achievements import UserAchievement
 from users.models.mute import UserMuted
-from tags.models import Tag, UserTag
 from users.models.notes import UserNote
 from users.models.user import User
 from users.utils import calculate_similarity
@@ -40,10 +41,14 @@ def profile(request, user_slug):
         return render(request, "auth/private_profile.html")
 
     # select user tags and calculate similarity with me
-    tags = Tag.objects.filter(is_visible=True).exclude(group=Tag.GROUP_COLLECTIBLE).all()
+    tags = (
+        Tag.objects.filter(is_visible=True).exclude(group=Tag.GROUP_COLLECTIBLE).all()
+    )
     user_tags = UserTag.objects.filter(user=user).select_related("tag").all()
     active_tags = {t.tag_id for t in user_tags if t.tag.group != Tag.GROUP_COLLECTIBLE}
-    collectible_tags = [t.tag for t in user_tags if t.tag.group == Tag.GROUP_COLLECTIBLE]
+    collectible_tags = [
+        t.tag for t in user_tags if t.tag.group == Tag.GROUP_COLLECTIBLE
+    ]
     similarity = {}
     if request.me and user.id != request.me.id:
         my_tags = {t.tag_id for t in UserTag.objects.filter(user=request.me).all()}
@@ -53,18 +58,24 @@ def profile(request, user_slug):
     intro = Post.get_user_intro(user)
     projects = Post.visible_objects().filter(author=user, type=Post.TYPE_PROJECT).all()
     badges = UserBadge.user_badges_grouped(user=user)
-    achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
-    posts = Post.objects_for_user(request.me)\
-        .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+    achievements = UserAchievement.objects.filter(user=user).select_related(
+        "achievement"
+    )
+    posts = (
+        Post.objects_for_user(request.me)
+        .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])
         .order_by("-published_at")
+    )
 
     if request.me:
-        comments = Comment.visible_objects()\
-            .filter(author=user)\
-            .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
-            .order_by("-created_at")\
+        comments = (
+            Comment.visible_objects()
+            .filter(author=user)
+            .exclude(post__visibility=Post.VISIBILITY_DRAFT)
+            .order_by("-created_at")
             .select_related("post")
+        )
         muted = UserMuted.objects.filter(user_from=request.me, user_to=user).first()
         note = UserNote.objects.filter(user_from=request.me, user_to=user).first()
     else:
@@ -74,29 +85,35 @@ def profile(request, user_slug):
 
     moderator_notes = []
     if request.me and (request.me.is_moderator or request.me.is_curator):
-        moderator_notes = UserNote.objects.filter(user_to=user)\
-            .exclude(user_from=request.me)\
-            .select_related("user_from")\
+        moderator_notes = (
+            UserNote.objects.filter(user_to=user)
+            .exclude(user_from=request.me)
+            .select_related("user_from")
             .all()
+        )
 
-    return render(request, "users/profile.html", {
-        "user": user,
-        "intro": intro,
-        "projects": projects,
-        "badges": badges,
-        "tags": tags,
-        "active_tags": active_tags,
-        "collectible_tags": collectible_tags,
-        "achievements": [ua.achievement for ua in achievements],
-        "comments": comments[:3] if comments else [],
-        "comments_total": comments.count() if comments else 0,
-        "posts": posts[:15],
-        "posts_total": posts.count() if posts else 0,
-        "similarity": similarity,
-        "muted": muted,
-        "note": note,
-        "moderator_notes": moderator_notes,
-    })
+    return render(
+        request,
+        "users/profile.html",
+        {
+            "user": user,
+            "intro": intro,
+            "projects": projects,
+            "badges": badges,
+            "tags": tags,
+            "active_tags": active_tags,
+            "collectible_tags": collectible_tags,
+            "achievements": [ua.achievement for ua in achievements],
+            "comments": comments[:3] if comments else [],
+            "comments_total": comments.count() if comments else 0,
+            "posts": posts[:15],
+            "posts_total": posts.count() if posts else 0,
+            "similarity": similarity,
+            "muted": muted,
+            "note": note,
+            "moderator_notes": moderator_notes,
+        },
+    )
 
 
 @require_auth
@@ -106,16 +123,24 @@ def profile_comments(request, user_slug):
 
     user = get_object_or_404(User, slug=user_slug)
 
-    comments = Comment.visible_objects()\
-        .filter(author=user)\
-        .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
-        .order_by("-created_at")\
+    comments = (
+        Comment.visible_objects()
+        .filter(author=user)
+        .exclude(post__visibility=Post.VISIBILITY_DRAFT)
+        .order_by("-created_at")
         .select_related("post")
+    )
 
-    return render(request, "users/profile/comments.html", {
-        "user": user,
-        "comments": paginate(request, comments, settings.PROFILE_COMMENTS_PAGE_SIZE),
-    })
+    return render(
+        request,
+        "users/profile/comments.html",
+        {
+            "user": user,
+            "comments": paginate(
+                request, comments, settings.PROFILE_COMMENTS_PAGE_SIZE
+            ),
+        },
+    )
 
 
 def profile_posts(request, user_slug):
@@ -127,15 +152,21 @@ def profile_posts(request, user_slug):
     if not user.can_view(request.me):
         return render(request, "auth/private_profile.html")
 
-    posts = Post.objects_for_user(request.me) \
-        .filter(Q(author=user) | Q(coauthors__contains=[user.slug])) \
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST]) \
+    posts = (
+        Post.objects_for_user(request.me)
+        .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])
         .order_by("-published_at")
+    )
 
-    return render(request, "users/profile/posts.html", {
-        "user": user,
-        "posts": paginate(request, posts, settings.PROFILE_POSTS_PAGE_SIZE),
-    })
+    return render(
+        request,
+        "users/profile/posts.html",
+        {
+            "user": user,
+            "posts": paginate(request, posts, settings.PROFILE_POSTS_PAGE_SIZE),
+        },
+    )
 
 
 def profile_badges(request, user_slug):
@@ -149,10 +180,14 @@ def profile_badges(request, user_slug):
 
     badges = UserBadge.user_badges(user)
 
-    return render(request, "users/profile/badges.html", {
-        "user": user,
-        "badges": paginate(request, badges, settings.PROFILE_BADGES_PAGE_SIZE),
-    })
+    return render(
+        request,
+        "users/profile/badges.html",
+        {
+            "user": user,
+            "badges": paginate(request, badges, settings.PROFILE_BADGES_PAGE_SIZE),
+        },
+    )
 
 
 @api(require_auth=True)

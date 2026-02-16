@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 import sentry_sdk
 from dotenv import load_dotenv
@@ -11,10 +11,19 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
-DEBUG = (os.getenv("DEBUG") != "false")  # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = (
+    os.getenv("DEBUG") != "false"
+)  # SECURITY WARNING: don't run with debug turned on in production!
 TESTS_RUN = True if os.getenv("TESTS_RUN") else False
 
-ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "ru.vas3k.club"]
+ALLOWED_HOSTS = [
+    "*",
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
+    "vas3k.club",
+    "ru.vas3k.club",
+]
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
@@ -54,10 +63,12 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "club.middleware.json_suffix",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "club.middleware.me",
+    "club.middleware.JsonApiMiddleware",
     "club.middleware.ExceptionMiddleware",
 ]
 
@@ -93,9 +104,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "console": {
-            "class": "logging.StreamHandler"
-        },
+        "console": {"class": "logging.StreamHandler"},
     },
     "loggers": {
         "": {  # "catch all" loggers by referencing it with the empty string
@@ -122,8 +131,8 @@ if bool(os.getenv("POSTGRES_USE_POOLING")):
         "pool": {
             "min_size": 5,
             "max_size": 15,
-            "timeout": 10, # fail in 10 sec under load
-            "max_idle": 300, # close idle after 5 min
+            "timeout": 10,  # fail in 10 sec under load
+            "max_idle": 300,  # close idle after 5 min
         }
     }
 else:
@@ -156,11 +165,7 @@ Q_CLUSTER = {
     "compress": True,
     "save_limit": 250,
     "queue_limit": 5000,
-    "redis": {
-        "host": REDIS_HOST,
-        "port": REDIS_PORT,
-        "db": os.getenv("REDIS_DB") or 0
-    }
+    "redis": {"host": REDIS_HOST, "port": REDIS_PORT, "db": os.getenv("REDIS_DB") or 0},
 }
 
 # Redis cache
@@ -173,7 +178,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "IGNORE_EXCEPTIONS": True,
-        }
+        },
     }
 }
 
@@ -210,7 +215,9 @@ PROFILE_BADGES_PAGE_SIZE = 50
 
 COMMUNITY_APPROVE_UPVOTES = 35
 
-GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(BASE_DIR, "gdpr/downloads")
+GDPR_ARCHIVE_STORAGE_PATH = os.getenv("GDPR_ARCHIVE_STORAGE_PATH") or os.path.join(
+    BASE_DIR, "gdpr/downloads"
+)
 GDPR_ARCHIVE_URL = "/downloads/"
 GDPR_ARCHIVE_REQUEST_TIMEDELTA = timedelta(hours=6)
 GDPR_ARCHIVE_DELETE_TIMEDELTA = timedelta(hours=24)
@@ -300,15 +307,21 @@ RETRACT_VOTE_TIMEDELTA = timedelta(hours=RETRACT_VOTE_IN_HOURS)
 RATE_LIMIT_POSTS_PER_DAY = 3
 RATE_LIMIT_COMMENTS_PER_DAY = 100
 RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY = "comments_per_day"
-POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
+POST_VIEW_COOLDOWN_PERIOD = timedelta(
+    days=1
+)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
-MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
+MAX_COMMENTS_FOR_DELETE_VS_CLEAR = (
+    10  # number of comments after which the post cannot be deleted
+)
 MIN_DAYS_TO_GIVE_BADGES = 50  # minimum "days" balance to buy and gift any badge
 MAX_MUTE_COUNT = 25  # maximum number of users allowed to mute
-CLEARED_POST_TEXT = "```\n" \
-    "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. " \
-    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club." \
+CLEARED_POST_TEXT = (
+    "```\n"
+    "😥 Этот пост был удален самим автором и от него остались лишь комментарии участников. "
+    "Если вы хотите приютить и развить эту тему как новый автор, напишите модераторам Клуба: moderator@vas3k.club."
     "\n```"
+)
 
 
 MODERATOR_USERNAME = "moderator"
@@ -328,7 +341,7 @@ CREWS = {
             {"code": "novibe", "text": "Кто-то не вайбит!"},
             {"code": "interesting", "text": "Принёс вам интересненькое"},
             {"code": "other", "text": "Другое"},
-        ]
+        ],
     },
     "parliament": {
         "title": "Написать в Парламент",
@@ -338,76 +351,76 @@ CREWS = {
             {"code": "activity", "text": "Хочу организовать активность"},
             {"code": "idea", "text": "У меня есть идея для Клуба!"},
             {"code": "other", "text": "Я только спросить"},
-        ]
+        ],
     },
     "events": {
         "title": "Написать оргам Вастрик Ивентов",
         "telegram_chat_id": -1003410014342,
-    }
+    },
 }
 
 
 SUPPORTED_TIME_ZONES = [
-	("UTC", "по UTC"),
-	("Asia/Almaty", "по Алматы"),
-	("Europe/Amsterdam", "по Амстердаму"),
-	("Europe/Belgrade", "по Белграду"),
-	("Europe/Berlin", "по Берлину"),
-	("America/Argentina/Buenos_Aires", "по Буэнос-Айресу"),
-	("America/Vancouver", "по Ванкуверу"),
-	("Europe/Warsaw", "по Варшаве"),
-	("Europe/Vienna", "по Вене"),
-	("Europe/Vilnius", "по Вильнюсу"),
-	("Asia/Vladivostok", "по Владивостоку"),
+    ("UTC", "по UTC"),
+    ("Asia/Almaty", "по Алматы"),
+    ("Europe/Amsterdam", "по Амстердаму"),
+    ("Europe/Belgrade", "по Белграду"),
+    ("Europe/Berlin", "по Берлину"),
+    ("America/Argentina/Buenos_Aires", "по Буэнос-Айресу"),
+    ("America/Vancouver", "по Ванкуверу"),
+    ("Europe/Warsaw", "по Варшаве"),
+    ("Europe/Vienna", "по Вене"),
+    ("Europe/Vilnius", "по Вильнюсу"),
+    ("Asia/Vladivostok", "по Владивостоку"),
     ("Europe/Athens", "по Греции"),
-	("Asia/Hong_Kong", "по Гонконгу"),
-	("America/Denver", "по Денверу"),
-	("Asia/Dubai", "по Дубаю"),
-	("Europe/Dublin", "по Дублину"),
-	("Asia/Yekaterinburg", "по Екатеринбургу"),
-	("Asia/Yerevan", "по Еревану"),
-	("Asia/Jerusalem", "по Израилю"),
-	("Asia/Irkutsk", "по Иркутску"),
-	("Asia/Kamchatka", "по Камчатке"),
-	("Africa/Johannesburg", "по Кейптауну"),
-	("Europe/Kyiv", "по Киеву"),
-	("Europe/Chisinau", "по Кишиневу"),
-	("Europe/Copenhagen", "по Копенгагену"),
-	("Asia/Krasnoyarsk", "по Красноярску"),
-	("Asia/Kuala_Lumpur", "по Куала-Лумпуру"),
-	("Europe/Lisbon", "по Лиссабону"),
-	("Europe/London", "по Лондону"),
-	("America/Los_Angeles", "по Лос-Анджелесу"),
-	("Asia/Magadan", "по Магадану"),
-	("Europe/Madrid", "по Мадриду/Барселоне"),
-	("America/Mexico_City", "по Мехико"),
-	("Europe/Moscow", "по Москве"),
-	("Asia/Novosibirsk", "по Новосибирску"),
-	("America/New_York", "по Нью-Йорку"),
-	("Pacific/Auckland", "по Окленду"),
-	("Asia/Omsk", "по Омску"),
-	("Europe/Paris", "по Парижу"),
-	("Europe/Prague", "по Праге"),
-	("Europe/Riga", "по Риге"),
-	("Europe/Rome", "по Риму"),
-	("Europe/Samara", "по Самаре"),
-	("America/Sao_Paulo", "по Сан-Паулу"),
-	("Asia/Seoul", "по Сеулу"),
-	("Australia/Sydney", "по Сиднею"),
-	("Asia/Singapore", "по Сингапуру"),
-	("Europe/Istanbul", "по Стамбулу"),
-	("Europe/Stockholm", "по Стокгольму"),
-	("Asia/Bangkok", "по Таиланду"),
-	("Europe/Tallinn", "по Таллину"),
-	("Asia/Samarkand", "по Ташкенту"),
-	("Asia/Tbilisi", "по Тбилиси"),
-	("Asia/Tokyo", "по Токио"),
-	("America/Toronto", "по Торонто"),
-	("Europe/Helsinki", "по Хельсинки"),
-	("Europe/Zurich", "по Цюриху"),
-	("America/Chicago", "по Чикаго"),
-	("Asia/Shanghai", "по Шанхаю"),
-	("Asia/Yakutsk", "по Якутску")
+    ("Asia/Hong_Kong", "по Гонконгу"),
+    ("America/Denver", "по Денверу"),
+    ("Asia/Dubai", "по Дубаю"),
+    ("Europe/Dublin", "по Дублину"),
+    ("Asia/Yekaterinburg", "по Екатеринбургу"),
+    ("Asia/Yerevan", "по Еревану"),
+    ("Asia/Jerusalem", "по Израилю"),
+    ("Asia/Irkutsk", "по Иркутску"),
+    ("Asia/Kamchatka", "по Камчатке"),
+    ("Africa/Johannesburg", "по Кейптауну"),
+    ("Europe/Kyiv", "по Киеву"),
+    ("Europe/Chisinau", "по Кишиневу"),
+    ("Europe/Copenhagen", "по Копенгагену"),
+    ("Asia/Krasnoyarsk", "по Красноярску"),
+    ("Asia/Kuala_Lumpur", "по Куала-Лумпуру"),
+    ("Europe/Lisbon", "по Лиссабону"),
+    ("Europe/London", "по Лондону"),
+    ("America/Los_Angeles", "по Лос-Анджелесу"),
+    ("Asia/Magadan", "по Магадану"),
+    ("Europe/Madrid", "по Мадриду/Барселоне"),
+    ("America/Mexico_City", "по Мехико"),
+    ("Europe/Moscow", "по Москве"),
+    ("Asia/Novosibirsk", "по Новосибирску"),
+    ("America/New_York", "по Нью-Йорку"),
+    ("Pacific/Auckland", "по Окленду"),
+    ("Asia/Omsk", "по Омску"),
+    ("Europe/Paris", "по Парижу"),
+    ("Europe/Prague", "по Праге"),
+    ("Europe/Riga", "по Риге"),
+    ("Europe/Rome", "по Риму"),
+    ("Europe/Samara", "по Самаре"),
+    ("America/Sao_Paulo", "по Сан-Паулу"),
+    ("Asia/Seoul", "по Сеулу"),
+    ("Australia/Sydney", "по Сиднею"),
+    ("Asia/Singapore", "по Сингапуру"),
+    ("Europe/Istanbul", "по Стамбулу"),
+    ("Europe/Stockholm", "по Стокгольму"),
+    ("Asia/Bangkok", "по Таиланду"),
+    ("Europe/Tallinn", "по Таллину"),
+    ("Asia/Samarkand", "по Ташкенту"),
+    ("Asia/Tbilisi", "по Тбилиси"),
+    ("Asia/Tokyo", "по Токио"),
+    ("America/Toronto", "по Торонто"),
+    ("Europe/Helsinki", "по Хельсинки"),
+    ("Europe/Zurich", "по Цюриху"),
+    ("America/Chicago", "по Чикаго"),
+    ("Asia/Shanghai", "по Шанхаю"),
+    ("Asia/Yakutsk", "по Якутску"),
 ]
 
 WEBPACK_LOADER = {
@@ -424,15 +437,14 @@ WEBPACK_LOADER = {
 
 if SENTRY_DSN and not DEBUG:
     # activate sentry on production
-    sentry_sdk.init(dsn=SENTRY_DSN, integrations=[
-        DjangoIntegration(),
-        RedisIntegration(),
-    ])
-    Q_CLUSTER["error_reporter"] = {
-        "sentry": {
-            "dsn": SENTRY_DSN
-        }
-    }
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+            RedisIntegration(),
+        ],
+    )
+    Q_CLUSTER["error_reporter"] = {"sentry": {"dsn": SENTRY_DSN}}
 
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]

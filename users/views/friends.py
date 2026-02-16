@@ -1,12 +1,13 @@
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect
+from authn.decorators.api import api
+from authn.decorators.auth import require_auth
+from club.exceptions import ApiException
+from club.rendering import render
+from common.pagination import paginate
 from django.conf import settings
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_http_methods
 
-from authn.decorators.auth import require_auth
-from authn.decorators.api import api
-from club.exceptions import ApiException
-from common.pagination import paginate
 from users.models.friends import Friend
 from users.models.user import User
 
@@ -24,9 +25,7 @@ def api_friend(request, user_slug):
         if not friend:
             raise Http404()
 
-        return {
-            "friend": friend.to_dict()
-        }
+        return {"friend": friend.to_dict()}
 
     if request.method == "POST":
         friend, is_created = Friend.add_friend(
@@ -52,7 +51,13 @@ def friends(request, user_slug):
 
     user_friends = Friend.user_friends(user_from=request.me)
 
-    return render(request, "users/friends/index.html", {
-        "user": request.me,
-        "friends_paginated": paginate(request, user_friends, page_size=settings.FRIENDS_PAGE_SIZE)
-    })
+    return render(
+        request,
+        "users/friends/index.html",
+        {
+            "user": request.me,
+            "friends_paginated": paginate(
+                request, user_friends, page_size=settings.FRIENDS_PAGE_SIZE
+            ),
+        },
+    )
