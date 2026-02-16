@@ -8,13 +8,6 @@ from club.serializers import serialize
 
 
 def json_suffix(get_response):
-    """Strip .json suffix from URL path and flag request for JSON response.
-
-    Runs AFTER URL routing fails for .json paths. If the original path
-    ends with .json and gets a 404, retries without the suffix.
-    Existing explicit .json routes (like /feed.json, /user/slug.json)
-    are matched normally and never hit this retry logic.
-    """
     def middleware(request):
         response = get_response(request)
         if response.status_code == 404 and request.path_info.endswith(".json"):
@@ -79,12 +72,6 @@ class ExceptionMiddleware:
 
 
 class JsonApiMiddleware:
-    """Intercepts TemplateResponse and returns JSON when the client requests it.
-
-    Triggered by Accept: application/json header or ?format=json query param.
-    Only works with views that return TemplateResponse (via club.rendering.render).
-    """
-
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -99,9 +86,6 @@ class JsonApiMiddleware:
         if not hasattr(response, "context_data") or response.context_data is None:
             return response
 
-        # Replace the TemplateResponse's rendering with JSON serialization.
-        # Django calls response.render() after process_template_response,
-        # so we override the template rendering to produce JSON instead.
         original_context = response.context_data
 
         def render_json():
