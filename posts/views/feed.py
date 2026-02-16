@@ -6,7 +6,7 @@ from authn.decorators.auth import require_auth
 from club import features
 from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
-from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed, ORDERING_HOT
+from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, get_feed_posts
 from posts.models.post import Post
 from rooms.models import Room
 
@@ -22,44 +22,19 @@ def feed(
 ):
     if request.me:
         request.me.update_last_activity()
-        posts = Post.objects_for_user(request.me)
-    else:
-        posts = Post.visible_objects()
 
-    # filter posts by type
-    if post_type != POST_TYPE_ALL:
-        posts = posts.filter(type=post_type)
+    # resolve room slug to room object
+    room = get_object_or_404(Room, slug=room_slug) if room_slug else None
 
-    # filter by room
-    if room_slug:
-        room = get_object_or_404(Room, slug=room_slug)
-        posts = posts.filter(room=room)
-    else:
-        room = None
-
-    # filter by label
-    if label_code:
-        posts = posts.filter(label_code=label_code)
-
-    # hide muted users and rooms
-    if request.me:
-        # exclude muted users
-        posts = posts.exclude(author__muted_to__user_from=request.me)
-
-        # exclude muted rooms (only if not in the room)
-        if not room and ordering in [ORDERING_NEW, ORDERING_HOT, ORDERING_ACTIVITY]:
-            posts = posts.exclude(room__muted_users__user=request.me)
-
-    # hide non-public posts and intros from unauthorized users
-    if not request.me:
-        posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
-
-    # hide room-only posts
-    if not room and not label_code:
-        posts = posts.exclude(is_room_only=True)
-
-    # order posts by some metric
-    posts = sort_feed(posts, ordering, ordering_param)
+    # get filtered and sorted posts
+    posts = get_feed_posts(
+        user=request.me,
+        post_type=post_type,
+        room=room,
+        label_code=label_code,
+        ordering=ordering,
+        ordering_param=ordering_param,
+    )
 
     # for main page — add pinned posts
     pinned_posts = []

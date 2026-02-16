@@ -8,7 +8,7 @@ from authn.decorators.api import api
 from club.exceptions import ApiAuthRequired
 from common.pagination import paginate
 from posts.models.post import Post
-from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, sort_feed
+from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, get_feed_posts
 
 
 @api(require_auth=False)
@@ -50,16 +50,13 @@ def api_show_post(request, post_type, post_slug):
 @api(require_auth=False)
 def json_feed(request, post_type=POST_TYPE_ALL, ordering=ORDERING_ACTIVITY):
     page_number = int(request.GET.get("page") or 1)
-    posts = Post.visible_objects()
 
-    # filter posts by type
-    if post_type != POST_TYPE_ALL:
-        posts = posts.filter(type=post_type)
+    posts = get_feed_posts(
+        user=request.me,
+        post_type=post_type,
+        ordering=ordering,
+    )
 
-    # order posts by some metric
-    posts = sort_feed(posts, ordering)
-
-    # paginate
     posts = paginate(request, posts)
 
     return JsonResponse({

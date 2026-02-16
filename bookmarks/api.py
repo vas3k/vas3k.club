@@ -1,14 +1,11 @@
 from authn.decorators.api import api
+from bookmarks.helpers import get_user_bookmarks
 from common.pagination import paginate
-from posts.models.post import Post
 
 
 @api(require_auth=True)
 def api_bookmarks(request):
-    posts = Post.objects_for_user(request.me)\
-        .filter(bookmarks__user=request.me, deleted_at__isnull=True)\
-        .order_by('-bookmarks__created_at')
-
+    posts = get_user_bookmarks(request.me)
     page = paginate(request, posts)
 
     return {
