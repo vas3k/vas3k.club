@@ -74,6 +74,11 @@ class PostJsonTest(JsonApiTestCase):
         data = self.get_json(f"/post/{self.post.slug}/.json")
         self.assertIn("post", data)
 
+    def test_post_no_sensitive_keys(self): # специальный тест для Андрея
+        data = self.get_json(f"/post/{self.post.slug}/?format=json")
+        for key in ("muted_user_ids", "user_notes", "moderator_notes", "subscription"):
+            self.assertNotIn(key, data)
+
 
 class ProfileJsonTest(JsonApiTestCase):
     def test_profile(self):
@@ -84,6 +89,12 @@ class ProfileJsonTest(JsonApiTestCase):
         data = self.get_json(f"/user/{self.user.slug}/?format=json")
         for key in ("muted_user_ids", "user_notes", "moderator_notes", "note", "muted", "subscription"):
             self.assertNotIn(key, data)
+
+    def test_no_email_in_profile(self):
+        data = self.get_json(f"/user/{self.user.slug}/?format=json")
+        user_data = data["user"]
+        self.assertNotIn("email", user_data)
+        self.assertNotIn("telegram", user_data)
 
 
 class BookmarksJsonTest(JsonApiTestCase):
