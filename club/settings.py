@@ -54,12 +54,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "club.middleware.json_suffix",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "club.middleware.me",
-    "club.middleware.JsonApiMiddleware",
     "club.middleware.ExceptionMiddleware",
 ]
 

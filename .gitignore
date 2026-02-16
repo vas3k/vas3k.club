@@ -24,9 +24,6 @@ pip-log.txt
 # IDEA
 .idea
 
-# ZED
-.zed
-
 # Mac OS X
 .DS_Store
 

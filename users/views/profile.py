@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
-from django.shortcuts import redirect, get_object_or_404
-
-from club.rendering import render
+from django.shortcuts import redirect, get_object_or_404, render
 
 from authn.decorators.auth import require_auth
 from authn.helpers import check_user_permissions

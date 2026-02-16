@@ -1,5 +1,6 @@
+from django.shortcuts import render
+
 from authn.decorators.auth import require_auth
-from club.rendering import render
 from common.pagination import paginate
 from posts.models.post import Post
 

@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from club.rendering import render
+from django.shortcuts import render
 from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm

@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 from authn.decorators.auth import require_auth
-from club.rendering import render
 from club import features
 from common.feature_flags import feature_switch, noop
 from common.pagination import paginate

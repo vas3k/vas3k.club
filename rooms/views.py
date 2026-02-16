@@ -1,14 +1,12 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
 from authn.decorators.api import api
 from authn.decorators.auth import require_auth
-from club.rendering import render, json_context
 from rooms.models import Room, RoomSubscription, RoomMuted
 
 
-@json_context(lambda request: {"rooms": list(Room.objects.filter(is_visible=True))})
 @require_auth
 def list_rooms(request):
     return render(request, "rooms/list_rooms.html")
