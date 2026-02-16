@@ -9,7 +9,7 @@ def api_bookmarks(request):
     page = paginate(request, posts)
 
     return {
-        "posts": [post.to_dict(including_private=True) for post in page],
+        "posts": [post.to_dict() for post in page],
         "page": page.number,
         "total_pages": page.paginator.num_pages,
         "has_next": page.has_next(),

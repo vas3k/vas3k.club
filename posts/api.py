@@ -43,7 +43,7 @@ def api_show_post(request, post_type, post_slug):
         raise Http404()
 
     return {
-        "post": post.to_dict(including_private=bool(request.me))
+        "post": post.to_dict()
     }
 
 
@@ -66,6 +66,6 @@ def json_feed(request, post_type=POST_TYPE_ALL, ordering=ORDERING_ACTIVITY):
         "feed_url": f"{settings.APP_HOST}{reverse('json_feed')}",
         "next_url": f"{settings.APP_HOST}{reverse('json_feed')}?page={page_number + 1}",
         "items": [
-            post.to_dict(including_private=bool(request.me)) for post in posts
+            post.to_dict() for post in posts
         ]
     }, json_dumps_params=dict(ensure_ascii=False), content_type="application/feed+json")
