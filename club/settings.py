@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django_q",
     "webpack_loader",
     "helpdeskbot.apps.HelpDeskBotConfig",
+    "fun.apps.FunConfig",
 ]
 
 MIDDLEWARE = [
