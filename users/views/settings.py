@@ -11,7 +11,6 @@ from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
 from search.models import SearchIndex
 from users.forms.profile import ProfileEditForm, NotificationsEditForm
-from users.models.geo import Geo
 from users.models.user import User
 from utils.strings import random_hash
 

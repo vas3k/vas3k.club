@@ -41,7 +41,6 @@ jobs:
           secret_TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
           secret_TELEGRAM_CLUB_CHANNEL_URL: ${{ secrets.TELEGRAM_CLUB_CHANNEL_URL }}
           secret_TELEGRAM_CLUB_CHANNEL_ID: ${{ secrets.TELEGRAM_CLUB_CHANNEL_ID }}
-          secret_TELEGRAM_CLUB_CHAT_URL: ${{ secrets.TELEGRAM_CLUB_CHAT_URL }}
           secret_TELEGRAM_CLUB_CHAT_ID: ${{ secrets.TELEGRAM_CLUB_CHAT_ID }}
           secret_TELEGRAM_ONLINE_CHANNEL_URL: ${{ secrets.TELEGRAM_ONLINE_CHANNEL_URL }}
           secret_TELEGRAM_ONLINE_CHANNEL_ID: ${{ secrets.TELEGRAM_ONLINE_CHANNEL_ID }}
