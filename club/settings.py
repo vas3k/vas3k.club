@@ -102,6 +102,9 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG",
         },
+        "asyncio": {
+            "level": "WARNING",
+        },
     },
 }
 
