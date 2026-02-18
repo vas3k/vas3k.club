@@ -31,7 +31,7 @@ def get_dayly_banek() -> str:
     return banek
 
 
-def check_today_for_antic(month: int, day: int, duration: int) -> bool:
+def check_today_for_antic(month: int, day: int, duration: int = 1) -> bool:
     antic_start = date(2000, month, day)
     antic_end = antic_start + timedelta(days=duration)
     year_td = relativedelta(years=1)

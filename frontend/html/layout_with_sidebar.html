@@ -2,6 +2,7 @@
 {% load static %}
 {% load paginator %}
 {% load text_filters %}
+{% load antics %}
 
 {% block content %}
 <div class="feed">
@@ -76,6 +77,13 @@
                         <i class="fas fa-trophy"></i> Посты месяца
                     </a>
                 </li>
+                {% for antic in "common"|get_current_antics %}
+                <li>
+                    <a href="LINKLINKLINK{{ antic.name }}">
+                        <i class="fas fa-{{ antic.link.icon }}"></i> {{ antic.link.label }}
+                    </a>
+                </li>
+                {% endfor %}
             </ul>
         </div>
 

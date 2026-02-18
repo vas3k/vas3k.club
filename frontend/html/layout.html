@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
+{% load antics %}
+
 <html lang="ru">
 <head>
     <title>{% block title %}{{ settings.APP_TITLE }}{% endblock %}</title>
@@ -71,12 +73,18 @@
             <br><br>
 
             {% if request.me %}
-                <a href="{% url "invites" %}">Пригласить друга</a> &nbsp;&middot;&nbsp;
+                <a href="{% url "invites" %}">Пригласить друга</a>
+                &nbsp;&middot;&nbsp;
             {% endif %}
 
-            <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a> &nbsp;&middot;&nbsp;
-
+            <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a>
+            &nbsp;&middot;&nbsp;
             <a href="{% url "show_post" "docs" "blocked_dolor" %}">Оплата из России</a>
+
+            {% for antic in "unexpected_day"|get_current_antics %}
+                &nbsp;&middot;&nbsp;
+                <a href="LINKLINKLINK{{ antic.name }}">{{ antic.link.label }}</a>
+            {% endfor %}
 
             <br><br>
 

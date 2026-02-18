@@ -5,6 +5,7 @@
 {% load users %}
 {% load text_filters %}
 {% load paginator %}
+{% load antics %}
 
 {% block title %}
     {{ user.full_name }} — {{ block.super }}
@@ -150,6 +151,12 @@
                         <span class="profile-status-icon">🙏</span>
                         <span class="profile-status-status">Сказать спасибо</span>
                     </a>
+                    {% for antic in "private"|get_current_antics %}
+                        <a href="LINKLINKLINK{{ antic.name }}" class="profile-status clickable">
+                            <span class="profile-status-icon">{{ antic.link.icon }}</span>
+                            <span class="profile-status-status">{{ antic.link.label }}</span>
+                        </a>
+                    {% endfor %}
                {% endif %}
 
                 {% if me and not user.is_curator and not user.is_moderator %}
