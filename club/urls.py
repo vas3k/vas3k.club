@@ -60,6 +60,7 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.people import people
 from search.api import api_search_users, api_search_tags
+from fun.views import do_fun_antic
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))(?::(?P<ordering_param>[^/]+))?"
@@ -202,6 +203,7 @@ urlpatterns = [
 
     path("clickers/<str:clicker_id>.json", api_clicker, name="api_clicker"),
 
+    path("fun/", do_fun_antic, name="do_fun_antic"),
     # admin features
     path("godmode/", godmode, name="godmode_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
