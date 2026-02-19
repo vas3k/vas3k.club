@@ -42,7 +42,7 @@ from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote
     toggle_post_event_participation
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, compose, compose_type, \
-    delete_post, unpublish_post, clear_post
+    delete_post, unpublish_post, clear_post, random_post
 from bookmarks.views import bookmarks
 from search.views import search
 from tickets.views import stripe_ticket_sale_webhook
@@ -142,6 +142,7 @@ urlpatterns = [
 
     path("create/", compose, name="compose"),
     path("create/<slug:post_type>/", compose_type, name="compose_type"),
+    path("post/random/", auth_switch(yes=random_post, no=landing), name="random_post"),
     path("post/<slug:post_slug>/unpublish/", unpublish_post, name="unpublish_post"),
     path("post/<slug:post_slug>/clear/", clear_post, name="clear_post"),
     path("post/<slug:post_slug>/delete/", delete_post, name="delete_post"),

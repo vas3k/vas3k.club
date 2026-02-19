@@ -1,7 +1,3 @@
-from datetime import timedelta, datetime
-from random import randint
-
-from django.conf import settings
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
@@ -27,25 +23,11 @@ def command_banek(update: Update, context: CallbackContext) -> None:
 
 
 def command_random(update: Update, context: CallbackContext) -> None:
-    post = None
-    attempt = 0
-
-    while not post and attempt < 5:
-        attempt += 1
-        random_date = settings.LAUNCH_DATE + timedelta(
-            seconds=randint(0, int((datetime.utcnow() - settings.LAUNCH_DATE).total_seconds())),
-        )
-
-        post = Post.visible_objects() \
-            .filter(published_at__lte=random_date, published_at__gte=random_date - timedelta(days=2)) \
-            .filter(moderation_status=Post.MODERATION_APPROVED) \
-            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
-            .order_by("?") \
-            .first()
-
     update.effective_chat.send_message(
-        render_html_message("channel_post_announce.html", post=post),
+        render_html_message(
+            "channel_post_announce.html",
+            post=Post.objects.get_random_post()
+        ),
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
     )
-
