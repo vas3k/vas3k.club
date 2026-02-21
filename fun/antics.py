@@ -33,7 +33,7 @@ class _Link(TypedDict):
     label: str
 
 
-class AnticHandlerBase:
+class AnticBase:
     name: ClassVar[str]
     type: ANTIC_TYPE
     date: tuple[int, int]
@@ -107,7 +107,7 @@ class AnticHandlerBase:
     }
 
     @staticmethod
-    def _make_message(template: _MessageTemplate) -> _Message:
+    def make_message(template: _MessageTemplate) -> _Message:
         return _Message(
             title=template["title"],
             message=random.choice(template["message_texts"]),
@@ -159,9 +159,10 @@ class AnticHandlerBase:
     # === main methods
 
     @classmethod
-    def is_displayable(cls, sender: User, recipient: User | None) -> bool:
+    def is_displayable(cls, type: str, sender: User, recipient: User | None) -> bool:
         if (
-            not cls._is_today()
+            cls.type != type
+            or not cls._is_today()
             or cls._is_global_cooldown_active()
             or cls._is_user_cooldown_active(sender)
         ):
@@ -188,31 +189,31 @@ class AnticHandlerBase:
     @classmethod
     def handle(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
         if not cls._is_today():
-            return False, cls._make_message(cls.not_today_errors)
+            return False, cls.make_message(cls.not_today_errors)
         if cls._is_global_cooldown_active():
-            return False, cls._make_message(cls.global_cooldown_errors)
+            return False, cls.make_message(cls.global_cooldown_errors)
         if cls._is_user_cooldown_active(sender):
-            return False, cls._make_message(cls.user_cooldown_errors)
+            return False, cls.make_message(cls.user_cooldown_errors)
 
         if recipient:
             if sender.id == recipient.id:
-                return False, cls._make_message(cls.its_you_errors)
+                return False, cls.make_message(cls.its_you_errors)
             if not recipient.telegram_id:
-                return False, cls._make_message(cls.no_telegram_errors)
+                return False, cls.make_message(cls.no_telegram_errors)
             if cls._is_already_sent(sender, recipient):
-                return False, cls._make_message(cls.already_send_errors)
+                return False, cls.make_message(cls.already_send_errors)
 
         try:
             cls.handler(sender, recipient)
         except Exception as exc:
             log.warning(f"Error handling antic: {exc}")
-            return False, cls._make_message(cls.default_errors)
+            return False, cls.make_message(cls.default_errors)
 
         cls._set_global_cooldown()
         cls._set_user_cooldown(sender)
         cls._set_already_send(sender, recipient)
 
-        return True, cls._make_message(cls.success_messages)
+        return True, cls.make_message(cls.success_messages)
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None) -> tuple[bool, _Message]:
@@ -222,7 +223,7 @@ class AnticHandlerBase:
 # === antics ===
 
 
-class NewYear(AnticHandlerBase):
+class NewYear(AnticBase):
     name = "new_year"
     type = "common"
     date = (12, 31)
@@ -247,7 +248,7 @@ class NewYear(AnticHandlerBase):
         )
 
 
-class NewYearPrivate(AnticHandlerBase):
+class NewYearPrivate(AnticBase):
     name = "new_year_private"
     type = "private",
     date = (12, 31),
@@ -278,7 +279,7 @@ class NewYearPrivate(AnticHandlerBase):
         )
 
 
-class ValentineCommon(AnticHandlerBase):
+class ValentineCommon(AnticBase):
     name = "valentine_common"
     type = "common"
     date = (2, 14)
@@ -304,7 +305,7 @@ class ValentineCommon(AnticHandlerBase):
         )
 
 
-class Valentine(AnticHandlerBase):
+class Valentine(AnticBase):
     name = "valentine"
     type = "private"
     date = (2, 14)
@@ -327,7 +328,7 @@ class Valentine(AnticHandlerBase):
         )
 
 
-class ValentineAnonymous(AnticHandlerBase):
+class ValentineAnonymous(AnticBase):
     name = "valentine_anonymous"
     type = "private"
     date = (2, 14)
@@ -352,7 +353,7 @@ class ValentineAnonymous(AnticHandlerBase):
         )
 
 
-class LeapDay(AnticHandlerBase):
+class LeapDay(AnticBase):
     name = "leap_day"
     type = "common"
     date = (2, 29)
@@ -374,7 +375,7 @@ class LeapDay(AnticHandlerBase):
         )
 
 
-class FoolsDay(AnticHandlerBase):
+class FoolsDay(AnticBase):
     name = "fools_day"
     type = "common"
     date = (4, 1)
@@ -400,7 +401,7 @@ class FoolsDay(AnticHandlerBase):
         )
 
 
-class CosmonauticsDay(AnticHandlerBase):
+class CosmonauticsDay(AnticBase):
     name = "cosmonautics_day"
     type = "common"
     date = (4, 12)
@@ -424,7 +425,7 @@ class CosmonauticsDay(AnticHandlerBase):
         )
 
 
-class ClubBirthday(AnticHandlerBase):
+class ClubBirthday(AnticBase):
     name = "club_birthday"
     type = "common"
     date = (4, 15)
@@ -448,7 +449,7 @@ class ClubBirthday(AnticHandlerBase):
         )
 
 
-class SummerSolstice(AnticHandlerBase):
+class SummerSolstice(AnticBase):
     name = "summer_solstice"
     type = "common"
     date = (6, 21)
@@ -472,7 +473,7 @@ class SummerSolstice(AnticHandlerBase):
         )
 
 
-class FriendsDay(AnticHandlerBase):
+class FriendsDay(AnticBase):
     name = "friends_day"
     type = "common"
     date = (7, 30)
@@ -494,7 +495,7 @@ class FriendsDay(AnticHandlerBase):
         )
 
 
-class FriendsDayPrivate(AnticHandlerBase):
+class FriendsDayPrivate(AnticBase):
     name = "friends_day_private"
     type = "private"
     date = (7, 30)
@@ -519,7 +520,7 @@ class FriendsDayPrivate(AnticHandlerBase):
         )
 
 
-class CatsDay(AnticHandlerBase):
+class CatsDay(AnticBase):
     name = "cats_day"
     type = "common"
     date = (8, 8)
@@ -541,7 +542,7 @@ class CatsDay(AnticHandlerBase):
         )
 
 
-class CatsDayPrivate(AnticHandlerBase):
+class CatsDayPrivate(AnticBase):
     name = "cats_day_private"
     type = "private"
     date = (8, 8)
@@ -568,7 +569,7 @@ class CatsDayPrivate(AnticHandlerBase):
         )
 
 
-class TestersDay(AnticHandlerBase):
+class TestersDay(AnticBase):
     name = "testers_day"
     type = "common"
     date = (9, 9)
@@ -593,7 +594,7 @@ class TestersDay(AnticHandlerBase):
         )
 
 
-class Halloween(AnticHandlerBase):
+class Halloween(AnticBase):
     name = "halloween"
     type = "common"
     date = (10, 31)
@@ -615,7 +616,7 @@ class Halloween(AnticHandlerBase):
         )
 
 
-class CoffeesDay(AnticHandlerBase):
+class CoffeesDay(AnticBase):
     name = "coffees_day"
     type = "common"
     date = (10, 1)
@@ -637,7 +638,7 @@ class CoffeesDay(AnticHandlerBase):
         )
 
 
-class WesternChristmas(AnticHandlerBase):
+class WesternChristmas(AnticBase):
     name = "western_christmas"
     type = "common"
     date = (12, 25)
@@ -662,7 +663,7 @@ class WesternChristmas(AnticHandlerBase):
         )
 
 
-class WesternChristmasPrivate(AnticHandlerBase):
+class WesternChristmasPrivate(AnticBase):
     name = "western_christmas_private"
     type = "private"
     date = (12, 25)
@@ -689,7 +690,7 @@ class WesternChristmasPrivate(AnticHandlerBase):
         )
 
 
-class UnexpectedDay(AnticHandlerBase):
+class UnexpectedDay(AnticBase):
     name = "unexpected_day"
     type = "bottom_link"
     date = (random.randint(1, 12), random.randint(1, 28))
@@ -728,26 +729,26 @@ class UnexpectedDay(AnticHandlerBase):
         )
 
 
-ANTIC_HANDLERS = {
-    "new_year": new_year,
-    "new_year_private": new_year_private,
-    "valentine_common": valentine_common,
-    "valentine": valentine,
-    "valentine_anonymous": valentine_anonymous,
-    "leap_day": leap_day,
-    "fools_day": fools_day,
-    "cosmonautics_day": cosmonautics_day,
-    "club_birthday": club_birthday,
-    "summer_solstice": summer_solstice,
-    "friends_day": friends_day,
-    "friends_day_private": friends_day_private,
-    "cats_day": cats_day,
-    "cats_day_private": cats_day_private,
-    "testers_day": testers_day,
-    "halloween": halloween,
-    "coffees_day": coffees_day,
-    "western_christmas": western_christmas,
-    "western_christmas_private": western_christmas_private,
-    "unexpected_day": unexpected_day,
-    "miss": miss,
-}
+ANTICS = [
+    NewYear,
+    NewYearPrivate,
+    ValentineCommon,
+    Valentine,
+    ValentineAnonymous,
+    LeapDay,
+    FoolsDay,
+    CosmonauticsDay,
+    ClubBirthday,
+    SummerSolstice,
+    FriendsDay,
+    FriendsDayPrivate,
+    CatsDay,
+    CatsDayPrivate,
+    TestersDay,
+    Halloween,
+    CoffeesDay,
+    WesternChristmas,
+    WesternChristmasPrivate,
+    UnexpectedDay,
+]
+ANTICS_MAP = {antic.name: antic for antic in ANTICS}

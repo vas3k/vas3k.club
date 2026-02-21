@@ -81,7 +81,7 @@
             &nbsp;&middot;&nbsp;
             <a href="{% url "show_post" "docs" "blocked_dolor" %}">Оплата из России</a>
 
-            {% for antic in "unexpected_day"|get_current_antics %}
+            {% for antic in "bottom_link"|get_current_antics %}
                 &nbsp;&middot;&nbsp;
                 <button form="antic_{{ antic.name }}" type="submit" class="footer-antic-button clickable">
                     {{ antic.link.label }}
