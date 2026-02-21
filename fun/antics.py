@@ -13,8 +13,9 @@ from users.models.user import User
 
 log = logging.getLogger(__name__)
 
-HOUR_SEC = 60 * 60
-DAY_SEC = 24 * HOUR_SEC
+MIN = 60
+HOUR = 60 * MIN
+DAY = 24 * HOUR
 ANTIC_TYPE = Literal["common", "private", "bottom_link"]
 
 
@@ -40,7 +41,8 @@ class AnticBase:
     duration: int  # days
     link: _Link
 
-    global_timeout: ClassVar[int] = 0  # for common chat notifications
+    global_cooldown: ClassVar[int] = 0  # for common chat notifications
+    user_cooldown: ClassVar[int] = 30  # general user cd and for check single click
 
     already_send_errors: _MessageTemplate = {
         "title": "Повторная отправка! 🧐",
@@ -62,8 +64,6 @@ class AnticBase:
 
     # === inner things
 
-    user_timeout: ClassVar[int] = 30
-
     not_today_errors: _MessageTemplate = {
         "title": "Ой, это не должно произойти сегодня 📆",
         "message_texts": [
@@ -81,19 +81,19 @@ class AnticBase:
         ],
     }
     user_cooldown_errors: _MessageTemplate = {
-        "title": "Ой! Вы слишком часто нажимали на кнопочку 🧐",
+        "title": "Ой! Кажется, вы это недавно нажимали 🧐",
         "message_texts": [
-            "Нужно чуть-чуть подождать, это пройдёт 🕓",
-            "А пока можно выпить же чаю и съесть ещё этих мягких французских булок.",
             "Мы бы и рады помочь, но это же кнопочка, мы её не можем контролировать 😳",
+            "Блин, и что делать? О, можно почитать пост:\n\n https://vas3k.club/post/random/",
+            "Похоже, теперь эта кнопочка сломалась. Придётся её чинить 🗜️",
         ]
     }
     no_telegram_errors: _MessageTemplate = {
         "title": "Мы не смогли доставить посылку 😮",
         "message_texts": [
-            "Получатель не привязал телеграм. Мы так не играем!",
-            "Получатель предпочёл скрыть от нас телеграм. Вот и пусть сидит без уведомляшек!",
-            "Возможно, получатель скрылся от мира. По крайней мере, мы не нашли его телеграм.",
+            "Получатель не привязал телеграм. Мы так не играем! 🤥",
+            "Получатель предпочёл скрыть от нас телеграм. Вот и пусть сидит без уведомляшек! 👅",
+            "Возможно, получатель скрылся от мира. По крайней мере, мы не нашли его телеграм 🥷",
         ],
     }
     default_errors: _MessageTemplate = {
@@ -126,7 +126,7 @@ class AnticBase:
 
     @classmethod
     def _is_global_cooldown_active(cls) -> bool | None:
-        if cls.global_timeout:
+        if cls.global_cooldown:
             return cache.get(f"fun:antic:{cls.name}")
         return None
 
@@ -140,12 +140,12 @@ class AnticBase:
 
     @classmethod
     def _set_global_cooldown(cls) -> None:
-        if cls.global_timeout:
-            cache.set(f"fun:antic:{cls.name}", True, timeout=cls.global_timeout)
+        if cls.global_cooldown:
+            cache.set(f"fun:antic:{cls.name}", True, timeout=cls.global_cooldown)
 
     @classmethod
     def _set_user_cooldown(cls, sender: User) -> None:
-        cache.set(f"fun:antic:{cls.name}:{sender.id}", True, timeout=cls.user_timeout)
+        cache.set(f"fun:antic:{cls.name}:{sender.id}", True, timeout=cls.user_cooldown)
 
     @classmethod
     def _set_already_send(cls, sender: User, recipient: User | None) -> None:
@@ -153,7 +153,7 @@ class AnticBase:
             cache.set(
                 f"fun:antic:{cls.name}:{sender.id}:{recipient.id}",
                 True,
-                timeout=cls.duration * DAY_SEC,
+                timeout=cls.duration * DAY,
             )
 
     # === main methods
@@ -217,8 +217,8 @@ class AnticBase:
         return True, cls.make_message(cls.success_messages)
 
     @classmethod
-    def handler(cls, sender: User, recipient: User | None) -> tuple[bool, _Message]:
-        raise NotImplementedError("No ")
+    def handler(cls, sender: User, recipient: User | None) -> None:
+        raise NotImplementedError("")
 
 
 # === antics ===
@@ -230,6 +230,8 @@ class NewYear(AnticBase):
     date = (12, 31)
     duration = 2
     link = {"icon": "gifts", "label": "Навайбить!"}
+    global_cooldown = 30 * MIN
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -251,8 +253,8 @@ class NewYear(AnticBase):
 
 class NewYearPrivate(AnticBase):
     name = "new_year_private"
-    type = "private",
-    date = (12, 31),
+    type = "private"
+    date = (12, 31)
     duration = 2,
     link = {"icon": "🎅🏻", "label": "Поздравить с Новым Годом"},
 
@@ -286,6 +288,8 @@ class ValentineCommon(AnticBase):
     date = (2, 14)
     duration = 1
     link = {"icon": "heart", "label": "Выдать любовь!"}
+    global_cooldown = 1 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls,
@@ -360,6 +364,7 @@ class LeapDay(AnticBase):
     date = (2, 29)
     duration = 1
     link = {"icon": "calendar-alt", "label": "Зафиксировать!"}
+    global_cooldown = 2 * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -382,6 +387,7 @@ class FoolsDay(AnticBase):
     date = (4, 1)
     duration = 1
     link = {"icon": "laugh", "label": "Наклоунадничать!"}
+    global_cooldown = 2 * HOUR
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -408,6 +414,8 @@ class CosmonauticsDay(AnticBase):
     date = (4, 12)
     duration = 1
     link = {"icon": "rocket", "label": "Стартовать!"}
+    global_cooldown = 4 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls,
@@ -432,6 +440,8 @@ class ClubBirthday(AnticBase):
     date = (4, 15)
     duration = 1
     link = {"icon": "birthday-cake", "label": "Поздравить!"}
+    global_cooldown = 2 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -456,6 +466,7 @@ class SummerSolstice(AnticBase):
     date = (6, 21)
     duration = 1
     link = {"icon": "sun", "label": "Подсветить!"}
+    global_cooldown = 1 * DAY
 
     @classmethod
     def handler(cls,
@@ -480,6 +491,8 @@ class FriendsDay(AnticBase):
     date = (7, 30)
     duration = 1
     link = {"icon": "smile", "label": "Подружиться!"}
+    global_cooldown = 2 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -527,6 +540,8 @@ class CatsDay(AnticBase):
     date = (8, 8)
     duration = 1
     link = {"icon": "cat", "label": "Помурлыкать!"}
+    global_cooldown = 4 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -576,6 +591,7 @@ class TestersDay(AnticBase):
     date = (9, 9)
     duration = 1
     link = {"icon": "bug", "label": "Создать баги!"}
+    global_cooldown = 4 * HOUR
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -601,6 +617,8 @@ class Halloween(AnticBase):
     date = (10, 31)
     duration = 1
     link = {"icon": "skull", "label": "Напугать!"}
+    global_cooldown = 1 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -623,6 +641,8 @@ class CoffeesDay(AnticBase):
     date = (10, 1)
     duration = 1
     link = {"icon": "mug-hot", "label": "Накофеинить!"}
+    global_cooldown = 4 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -645,6 +665,8 @@ class WesternChristmas(AnticBase):
     date = (12, 25)
     duration = 2
     link = {"icon": "gift", "label": "Дать подарок!"}
+    global_cooldown = 2 * HOUR
+    user_cooldown = duration * DAY
 
     @classmethod
     def handler(cls,
@@ -697,6 +719,7 @@ class UnexpectedDay(AnticBase):
     date = (random.randint(1, 12), random.randint(1, 28))
     duration = random.randint(1, 3)
     link = {"icon": "", "label": "Ничего подозрительного тут"}
+    global_cooldown = duration * DAY
 
     @classmethod
     def handler(cls,
