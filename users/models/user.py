@@ -173,6 +173,10 @@ class User(models.Model, ModelDiffMixin):
     def get_absolute_url(self):
         return reverse("profile", kwargs={"user_slug": self.slug})
 
+    @property
+    def club_profile_link(self):
+        return settings.APP_HOST + self.get_absolute_url()
+
     def update_last_activity(self):
         now = datetime.utcnow()
         if self.last_activity_at < now - timedelta(minutes=5):
@@ -280,4 +284,3 @@ class User(models.Model, ModelDiffMixin):
         return cls.objects.filter(
             moderation_status=User.MODERATION_STATUS_APPROVED
         )
-

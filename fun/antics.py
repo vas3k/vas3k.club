@@ -7,6 +7,7 @@ from django_q.tasks import async_task
 from typing import TypedDict, ClassVar, Literal
 from telegram import ParseMode
 
+from fun.utils import get_new_banek
 from notifications.telegram.common import send_telegram_message, Chat, CLUB_CHAT
 from users.models.user import User
 
@@ -44,6 +45,13 @@ class AnticBase:
     global_cooldown: ClassVar[int] = 0  # for common chat notifications
     user_cooldown: ClassVar[int] = 30  # general user cd and for check single click
 
+    notifications: list[str] = []
+    success_messages: _MessageTemplate = {
+        "title": "Ура, доставлено 🌟",
+        "message_texts": [
+            "Всё успешно отправлено, сценарий Seele выполнен в точности 📱",
+        ],
+    }
     already_send_errors: _MessageTemplate = {
         "title": "Повторная отправка! 🧐",
         "message_texts": [
@@ -56,13 +64,6 @@ class AnticBase:
             "Ну и дела!\nПохоже, вы пытаетесь отправить это самому себе, мы так не умеем.",
         ],
     }
-    success_messages: _MessageTemplate = {
-        "title": "Ура, доставлено 🌟",
-        "message_texts": [
-            "Всё успешно отправлено, сценарий Seele выполнен в точности 📱",
-        ],
-    }
-
     # === inner things
 
     not_today_errors: _MessageTemplate = {
@@ -179,15 +180,6 @@ class AnticBase:
 
         return True
 
-    @staticmethod
-    def send_message(text: str, to_chat: Chat = CLUB_CHAT) -> None:
-        async_task(
-            send_telegram_message,
-            chat=to_chat,
-            text=text,
-            parse_mode=ParseMode.MARKDOWN,
-        )
-
     @classmethod
     def handle(
         cls, sender: User, recipient: User | None = None
@@ -199,6 +191,8 @@ class AnticBase:
         if cls._is_user_cooldown_active(sender):
             return False, cls.make_message(cls.user_cooldown_errors)
 
+        if cls.type == "private" and not recipient:
+            return False, cls.make_message(cls.no_telegram_errors)
         if recipient:
             if sender.id == recipient.id:
                 return False, cls.make_message(cls.its_you_errors)
@@ -221,7 +215,15 @@ class AnticBase:
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None) -> None:
-        raise NotImplementedError("")
+        text = random.choice(cls.notifications).format(
+            sender=f"[{sender.full_name}]({sender.club_profile_link})"
+        )
+        async_task(
+            send_telegram_message,
+            chat=Chat(id=recipient.telegram_id) if recipient else CLUB_CHAT,
+            text=text,
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
 
 # === antics ===
@@ -398,7 +400,16 @@ class FoolsDay(AnticBase):
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+        text = "_Анекдот по заказу от {sender}:_\n\n{banek}".format(
+            sender=f"[{sender.full_name}]({sender.club_profile_link})",
+            banek=get_new_banek(),
+        )
+        async_task(
+            send_telegram_message,
+            chat=CLUB_CHAT,
+            text=text,
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
 
 class CosmonauticsDay(AnticBase):
