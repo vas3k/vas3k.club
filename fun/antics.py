@@ -168,6 +168,7 @@ class AnticBase:
         ):
             return False
 
+        # in practice due to template filter limitations these checks are not used
         if recipient and (
             sender.id == recipient.id
             or not recipient.telegram_id
