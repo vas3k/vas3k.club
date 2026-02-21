@@ -238,6 +238,24 @@ class NewYear(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "gifts", "label": "Навайбить!"}
+    notifications = [
+        "{sender} поздравляет с Новым годом!",
+        "{sender} желает всем самого доброго в новом году!",
+        "{sender} желает самых красивых салютов за окном!",
+        "{sender} отправляет снежинки вайба всем!",
+        "{sender} чокается со всеми шампанским!",
+        "{sender} передаёт всем самых крутых новогодних поздравлений!",
+        "{sender} делится новогодним настроением!",
+        "{sender} отправляет всем мешок новогодней магии!",
+        "{sender} поднимает бокал за каждого здесь!",
+        "{sender} добавляет немного волшебства в этот год!",
+        "{sender} желает всем уютных вечеров и смелых планов!",
+        "{sender} желает всем стать лучшей версией себя в новом году!",
+        "{sender} желает всем меньше багов и больше чудес!",
+        "{sender} зажигает пачку бенгалек!",
+        "{sender} варит всем в чате вкусный глинтвейн!",
+        "{sender} раздаёт всем в чате подарки!",
+    ]
     success_messages = {
         "title": "Поздравление улетело поздравлять ❄️",
         "message": [
@@ -250,19 +268,18 @@ class NewYear(AnticBase):
         ],
     }
 
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
-
 
 class NewYearPrivate(AnticBase):
     name = "new_year_private"
     type = "private"
     date = (12, 31)
     duration = 2
-    user_cooldown = 3 * HOUR
+    user_cooldown = 30 * MIN
 
     link = {"icon": "🎅🏻", "label": "Поздравить с Новым Годом"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Поздравление улетело клубню 📨",
         "message": [
@@ -278,10 +295,14 @@ class NewYearPrivate(AnticBase):
             "Теперь у адресата официально праздничное настроение 📜",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+    already_send_errors = {
+        "title": "",
+        "message": [],
+    }
+    its_you_errors = {
+        "title": "",
+        "message": [],
+    }
 
 
 class ValentineCommon(AnticBase):
@@ -293,6 +314,9 @@ class ValentineCommon(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "heart", "label": "Выдать любовь!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Вы публично рассказали свою любовь ☺️",
         "message": [
@@ -304,19 +328,18 @@ class ValentineCommon(AnticBase):
         ],
     }
 
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
-
 
 class Valentine(AnticBase):
     name = "valentine"
     type = "private"
     date = (2, 14)
     duration = 1
-    user_cooldown = 1 * HOUR
+    user_cooldown = 30 * MIN
 
     link = {"icon": "💝", "label": "Отправить валентинку"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Шоколадка передана 🍫",
         "message": [
@@ -326,10 +349,14 @@ class Valentine(AnticBase):
             "Не забудь, что тебя тоже любят! 🩷",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+    already_send_errors = {
+        "title": "",
+        "message": [],
+    }
+    its_you_errors = {
+        "title": "",
+        "message": [],
+    }
 
 
 class ValentineAnonymous(AnticBase):
@@ -337,9 +364,12 @@ class ValentineAnonymous(AnticBase):
     type = "private"
     date = (2, 14)
     duration = 1
-    user_cooldown = 3 * HOUR
+    user_cooldown = 1 * HOUR
 
     link = {"icon": "💖", "label": "Отправить анонимку"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Валентинка отправлена 💌",
         "message": [
@@ -349,10 +379,14 @@ class ValentineAnonymous(AnticBase):
             "Но получатель не узнает, кто её отправил 🕵️🏻‍️",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+    already_send_errors = {
+        "title": "",
+        "message": [],
+    }
+    its_you_errors = {
+        "title": "",
+        "message": [],
+    }
 
 
 class LeapDay(AnticBase):
@@ -360,9 +394,12 @@ class LeapDay(AnticBase):
     type = "common"
     date = (2, 29)
     duration = 1
-    global_cooldown = 2 * DAY
+    global_cooldown = duration * DAY
 
     link = {"icon": "calendar-alt", "label": "Зафиксировать!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Вы зафиксировали временной парадокс 👀",
         "message": [
@@ -371,10 +408,6 @@ class LeapDay(AnticBase):
             "Этим вы сломали все наши даты 🔐",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
 
 
 class FoolsDay(AnticBase):
@@ -417,10 +450,12 @@ class CosmonauticsDay(AnticBase):
     type = "common"
     date = (4, 12)
     duration = 1
-    global_cooldown = 4 * HOUR
-    user_cooldown = duration * DAY
+    global_cooldown = duration * DAY
 
     link = {"icon": "rocket", "label": "Стартовать!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Поздравление улетело 🚀",
         "message": [
@@ -429,10 +464,6 @@ class CosmonauticsDay(AnticBase):
             "Следующая остановка - Марс 👨‍🚀",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
 
 
 class ClubBirthday(AnticBase):
@@ -444,6 +475,9 @@ class ClubBirthday(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "birthday-cake", "label": "Поздравить!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Ура, Клуб поздравлен 🎉",
         "message": [
@@ -455,19 +489,18 @@ class ClubBirthday(AnticBase):
         ],
     }
 
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
-
 
 class SummerSolstice(AnticBase):
     name = "summer_solstice"
     type = "common"
     date = (6, 21)
     duration = 1
-    global_cooldown = 1 * DAY
+    global_cooldown = duration * DAY
 
     link = {"icon": "sun", "label": "Подсветить!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "На сегодняшнюю дату пролит свет ☀",
         "message": [
@@ -476,10 +509,6 @@ class SummerSolstice(AnticBase):
             "Кстати, держи венок, сегодня ты - Королева мая 🌼🌼🌼🌼",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
 
 
 class FriendsDay(AnticBase):
@@ -491,6 +520,9 @@ class FriendsDay(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "smile", "label": "Подружиться!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Клубни поздравлены и дружелюбны 🧑‍🤝‍🧑",
         "message": [
@@ -500,19 +532,18 @@ class FriendsDay(AnticBase):
         ],
     }
 
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
-
 
 class FriendsDayPrivate(AnticBase):
     name = "friends_day_private"
     type = "private"
     date = (7, 30)
     duration = 1
-    user_cooldown = 31 * HOUR
+    user_cooldown = 1 * HOUR
 
     link = {"icon": "👯‍♂️", "label": "Признаться в дружбе"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Друг поздравлен 💅",
         "message": [
@@ -522,10 +553,14 @@ class FriendsDayPrivate(AnticBase):
             "Ты можешь поздравить и остальных своих друзей.\nПогоди, ты что, плачешь?",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+    already_send_errors = {
+        "title": "",
+        "message": [],
+    }
+    its_you_errors = {
+        "title": "",
+        "message": [],
+    }
 
 
 class CatsDay(AnticBase):
@@ -537,6 +572,9 @@ class CatsDay(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "cat", "label": "Помурлыкать!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Чат успешно назван котятами 🐱",
         "message": [
@@ -545,10 +583,6 @@ class CatsDay(AnticBase):
             "Мяв. Мяв. Мур 🐈",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
 
 
 class CatsDayPrivate(AnticBase):
@@ -559,6 +593,9 @@ class CatsDayPrivate(AnticBase):
     user_cooldown = 4 * HOUR
 
     link = {"icon": "😺", "label": "Обозвать котиком"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Адресат получил мявобщение 😼",
         "message": [
@@ -570,10 +607,14 @@ class CatsDayPrivate(AnticBase):
             "Теперь он котик. И ты котик.",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+    already_send_errors = {
+        "title": "",
+        "message": [],
+    }
+    its_you_errors = {
+        "title": "",
+        "message": [],
+    }
 
 
 class TestersDay(AnticBase):
@@ -584,6 +625,9 @@ class TestersDay(AnticBase):
     global_cooldown = 4 * HOUR
 
     link = {"icon": "bug", "label": "Создать баги!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Баги ÑƒÑ�Ð¿ÐµÑˆÐ½Ð¾ созданы 🪲",
         "message": [
@@ -596,10 +640,6 @@ class TestersDay(AnticBase):
         ],
     }
 
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
-
 
 class Halloween(AnticBase):
     name = "halloween"
@@ -610,6 +650,9 @@ class Halloween(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "skull", "label": "Напугать!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Хехехе, чат напуган 🎃",
         "message": [
@@ -618,10 +661,6 @@ class Halloween(AnticBase):
             "Но не переживайте, они всё понимают 🍁",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
 
 
 class CoffeesDay(AnticBase):
@@ -633,6 +672,9 @@ class CoffeesDay(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "mug-hot", "label": "Накофеинить!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Кофе в процессе доставки 🐌",
         "message": [
@@ -641,10 +683,6 @@ class CoffeesDay(AnticBase):
             "Теперь они немного более кофеинезированы ☕",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
 
 
 class WesternChristmas(AnticBase):
@@ -656,6 +694,9 @@ class WesternChristmas(AnticBase):
     user_cooldown = duration * DAY
 
     link = {"icon": "gift", "label": "Дать подарок!"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Чат поздравлен 💫",
         "message": [
@@ -666,19 +707,18 @@ class WesternChristmas(AnticBase):
         ],
     }
 
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
-
 
 class WesternChristmasPrivate(AnticBase):
     name = "western_christmas_private"
     type = "private"
     date = (12, 25)
     duration = 2
-    user_cooldown = 3 * HOUR
+    user_cooldown = 30 * MIN
 
     link = {"icon": "🎁", "label": "Поздравить с рождеством"}
+    notifications = [
+        "XXX",
+    ]
     success_messages = {
         "title": "Поздравление улетело 💫",
         "message": [
@@ -690,10 +730,14 @@ class WesternChristmasPrivate(AnticBase):
             "Что ж, а теперь пора праздновать! 🍾",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        pass
+    already_send_errors = {
+        "title": "",
+        "message": [],
+    }
+    its_you_errors = {
+        "title": "",
+        "message": [],
+    }
 
 
 class UnexpectedDay(AnticBase):
@@ -704,32 +748,25 @@ class UnexpectedDay(AnticBase):
     global_cooldown = duration * DAY
 
     link = {"icon": "", "label": "Ничего подозрительного тут"}
+    notifications = [
+        "_{sender} заметил то, что старалось быть незамеченным._",
+        "_Аномалия, обнаруженная {sender}, передана в профильный отдел анализа аномалий._",
+        "_Благодаря {sender} стало ясно, что всё не так просто._",
+        "_В ходе наблюдения {sender} были зафиксированы отклонения от штатного режима._",
+        "_Обнаруженное {sender} отправлено на дальнейшее изучение._",
+        "_По информации {sender}, происходит некое несоответствие установленным параметрам._",
+        "_Сигнал, поступивший от {sender}, классифицирован как нестандартный._",
+        "_Согласно наблюдениям {sender}, стабильность нестабильна._",
+    ]
     success_messages = {
         "title": "Об этом инциденте теперь знают все 👾",
         "message": [
             "Дальше ситуация находится под контролем 🇦🇶️",
             "Запущен внутренний протокол реагирования 📡",
-            "Истинная причина будет выяснена 👽",
             "Материалы переданы в профильные агентства 🛸",
-            "Начата проверка по всем каналам 🔮",
             "Ответственные подразделения уже уведомлены 🕵️🏻",
         ],
     }
-
-    @classmethod
-    def handler(cls, sender: User, recipient: User | None = None) -> None:
-        notifications = [
-            "{sender} заметил то, что старалось быть незамеченным.",
-            "{sender} стал свидетелем процесса, который не был запланирован.",
-            "Аномалия, обнаруженная {sender}, передана в профильный отдел анализа аномалий.",
-            "Благодаря {sender} стало ясно, что всё не так просто.",
-            "В ходе наблюдения {sender} были зафиксированы отклонения от штатного режима.",
-            "Обнаруженное {sender} отправлено на дальшейшее изучение.",
-            "По версии {sender}, происходит нечто подозрительно неклассифицируемое.",
-            "По информации {sender}, происходит некое несоответствие установленным параметрам.",
-            "Сигнал, поступивший от {sender}, классифицирован как нестандартный.",
-            "Согласно наблюдениям {sender}, стабильность нестабильна.",
-        ]
 
 
 ANTICS = [
