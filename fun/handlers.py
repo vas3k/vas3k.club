@@ -1,22 +1,222 @@
+import logging
 import random
-from typing import TypedDict
+from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 from django.core.cache import cache
-from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
-from notifications.telegram.posts import send_published_post_to_moderators, notify_author_friends, \
-    announce_in_online_channel, send_intro_changes_to_moderators, notify_post_label_changed, \
-    notify_post_coauthors_changed
-from django.views.decorators.http import require_http_methods
+from django_q.tasks import async_task
+from typing import TypedDict, ClassVar, Literal
+from telegram import ParseMode
 
-from authn.decorators.api import api
-from club.exceptions import ApiException
+from notifications.telegram.common import send_telegram_message, Chat, CLUB_CHAT
 from users.models.user import User
 
-from users.models.user import User
+
+log = logging.getLogger(__name__)
+
+HOUR_SEC = 60 * 60
+DAY_SEC = 24 * HOUR_SEC
+ANTIC_TYPE = Literal["common", "private", "bottom_link"]
 
 
 class _Message(TypedDict):
     title: str
     message: str
+
+
+class _MessageTemplate(TypedDict):
+    title: str
+    message_texts: list[str]
+
+
+class _Link(TypedDict):
+    icon: str
+    label: str
+
+
+class AnticHandlerBase():
+    name: ClassVar[str]
+    type: ANTIC_TYPE
+    date: tuple[int, int]
+    duration: int  # days
+    link: _Link
+
+    global_timeout: ClassVar[int] = 0  # for common chat notifications
+
+    already_send_errors: _MessageTemplate = {
+        "title": "Повторная отправка! 🧐",
+        "message_texts": [
+            "У нас ощущение, что вы уже отправляли этому пользователю 🪛",
+        ],
+    }
+    its_you_errors: _MessageTemplate = {
+        "title": "Всё пошло не так! 🧐",
+        "message_texts": [
+            "Ну и дела!\nПохоже, вы пытаетесь отправить это самому себе, мы так не умеем.",
+        ],
+    }
+    success_messages: _MessageTemplate = {
+        "title": "Ура, доставлено 🌟",
+        "message_texts": [
+            "Всё успешно отправлено, сценарий Seele выполнен в точности 📱",
+        ],}
+
+    # === inner things
+
+    user_timeout: ClassVar[int] = 30
+
+    not_today_errors: _MessageTemplate = {
+        "title": "Ой, это не должно произойти сегодня 📆",
+        "message_texts": [
+            "Подожди чуть-чуть и попробуй ещё раз в нужное время 👁️👁️",
+            "А сегодня можешь почитать пост:\n\n https://vas3k.club/post/random/",
+            "Кажется, все даты решили перепутаться 🤖"
+        ],
+    }
+    global_cooldown_errors: _MessageTemplate = {
+        "title": "Ой! Кто-то это недавно уже использовал 🥺",
+        "message_texts": [
+            "Кто первый встал - того и кнопка 🛴",
+            "Следующий раз нужно быть быстрее 🍎",
+            "Но всегда можно пойти и пообщаться в [Баре](https://vas3k.club/room/bar/chat/)",
+        ],
+    }
+    user_cooldown_errors: _MessageTemplate = {
+        "title": "Ой! Вы слишком часто нажимали на кнопочку 🧐",
+        "message_texts": [
+            "Нужно чуть-чуть подождать, это пройдёт 🕓",
+            "А пока можно выпить же чаю и съесть ещё этих мягких французских булок.",
+            "Мы бы и рады помочь, но это же кнопочка, мы её не можем контролировать 😳",
+        ]
+    }
+    no_telegram_errors: _MessageTemplate = {
+        "title": "Мы не смогли доставить посылку 😮",
+        "message_texts": [
+            "Получатель не привязал телеграм. Мы так не играем!",
+            "Получатель предпочёл скрыть от нас телеграм. Вот и пусть сидит без уведомляшек!",
+            "Возможно, получатель скрылся от мира. По крайней мере, мы не нашли его телеграм.",
+        ],
+    }
+    default_errors: _MessageTemplate = {
+        "title": "Что-то произошло, но мы не знаем, что 🐞",
+        "message": [
+            "О нет, всё поломалось. Мы к такому не готовились 😳",
+            "Ой! Вы что-то нажали и всё сломалось 🌀",
+            "Планировалось сделать всё как нужно, но получилось как всегда 🔧",
+            "Попробовали всё сделать хорошо. Но не получилось 🍿",
+        ],
+    }
+
+    @staticmethod
+    def _make_message(template: _MessageTemplate) -> _Message:
+        return _Message(
+            title=template["title"],
+            message=random.choice(template["message_texts"]),
+        )
+
+    @classmethod
+    def _is_today(cls) -> bool:
+        antic_start = date(2000, *cls.date)
+        antic_end = antic_start + timedelta(days=cls.duration)
+        year_td = relativedelta(years=1)
+        today = date.today().replace(year=2000)
+        return (
+            antic_start <= today < antic_end
+            or (antic_start - year_td) <= today < (antic_end - year_td)  # new year
+        )
+
+    @classmethod
+    def _is_global_cooldown_active(cls) -> bool | None:
+        if cls.global_timeout:
+            return cache.get(f"fun:antic:{cls.name}")
+        return None
+
+    @classmethod
+    def _is_user_cooldown_active(cls, sender: User) -> bool | None:
+        return cache.get(f"fun:antic:{cls.name}:{sender.id}")
+
+    @classmethod
+    def _is_already_sent(cls, sender: User, recipient: User) -> bool | None:
+        return cache.get(f"fun:antic:{cls.name}:{sender.id}:{recipient.id}")
+
+    @classmethod
+    def _set_global_cooldown(cls) -> None:
+        if cls.global_timeout:
+            cache.set(f"fun:antic:{cls.name}", True, timeout=cls.global_timeout)
+
+    @classmethod
+    def _set_user_cooldown(cls, sender: User) -> None:
+        cache.set(f"fun:antic:{cls.name}:{sender.id}", True, timeout=cls.user_timeout)
+
+    @classmethod
+    def _set_already_send(cls, sender: User, recipient: User | None) -> None:
+        if recipient:
+            cache.set(
+                f"fun:antic:{cls.name}:{sender.id}:{recipient.id}",
+                True,
+                timeout=cls.duration * DAY_SEC,
+            )
+
+    # === main methods
+
+    @classmethod
+    def is_displayable(cls, sender: User, recipient: User | None) -> bool:
+        if (
+            not cls._is_today()
+            or cls._is_global_cooldown_active()
+            or cls._is_user_cooldown_active(sender)
+        ):
+            return False
+
+        if recipient and (
+            sender.id == recipient.id
+            or not recipient.telegram_id
+            or cls._is_already_sent(sender, recipient)
+        ):
+            return False
+
+        return True
+
+    @staticmethod
+    def send_message(text: str, to_chat: Chat = CLUB_CHAT) -> None:
+        async_task(
+            send_telegram_message,
+            chat=to_chat,
+            text=text,
+            parse_mode=ParseMode.MARKDOWN,
+        )
+
+    @classmethod
+    def handle(cls, sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
+        if not cls._is_today():
+            return False, cls._make_message(cls.not_today_errors)
+        if cls._is_global_cooldown_active():
+            return False, cls._make_message(cls.global_cooldown_errors)
+        if cls._is_user_cooldown_active(sender):
+            return False, cls._make_message(cls.user_cooldown_errors)
+
+        if recipient:
+            if sender.id == recipient.id:
+                return False, cls._make_message(cls.its_you_errors)
+            if not recipient.telegram_id:
+                return False, cls._make_message(cls.no_telegram_errors)
+            if cls._is_already_sent(sender, recipient):
+                return False, cls._make_message(cls.already_send_errors)
+
+        try:
+            cls.handler(sender, recipient)
+        except Exception as exc:
+            log.warning(f"Error handling antic: {exc}")
+            return False, cls._make_message(cls.default_errors)
+
+        cls._set_global_cooldown()
+        cls._set_user_cooldown(sender)
+        cls._set_already_send(sender, recipient)
+
+        return True, cls._make_message(cls.success_messages)
+
+    @classmethod
+    def handler(cls, sender: User, recipient: User | None) -> tuple[bool, _Message]:
+        raise NotImplementedError("No ")
 
 
 def new_year(sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
@@ -365,55 +565,6 @@ def unexpected_day(
     )
 
 
-# =========
-
-
-def miss(sender: User, recipient: User | None = None) -> tuple[bool, _Message]:
-    return False, _Message(
-        title="Что-то произошло, но мы не знаем, что 🐞",
-        message=random.choice(
-            [
-                "Мы ожидали понятное, а пришло творческое 🧩",
-                "Мы почти разобрались. Но почти не считается 🫠",
-                "Мы честно пытались найти сценарий действий, но пусто 🔎",
-                "Мы шли по инструкции, а она внезапно кончилась 👀",
-                "О нет, всё поломалось. Мы к такому не готовились 😳",
-                "Ой! Вы что-то нажали и всё сломалось 🌀",
-                "Ой! Что-то пошло не так и эээ...\n\n**Fatal Error**: _Я сломался 🤖_",
-                "Попробовали всё сделать хорошо. Но не получилось 🍿",
-                "Свитки Мёртвого моря такого не предсказывали 👼🏻",
-                "Сначала у нас план точно был. Потом он точно потерялся 📋",
-                "Так-так, планировалось сделать всё как нужно, но получилось как всегда 🔧",
-                "Это не входило в сценарий Seele 📱",
-            ]
-        ),
-    )
-
-
-def error_global_timeout_message() -> tuple[bool, _Message]:
-    texts = []
-    return False, _Message(
-        title="Что-то произошло, но мы не знаем, что 🐞",
-        message=random.choice(texts),
-    )
-
-
-def error_user_timeout_message() -> tuple[bool, _Message]:
-    texts = []
-    return False, _Message(
-        title="Что-то произошло, но мы не знаем, что 🐞",
-        message=random.choice(texts),
-    )
-
-
-def error_user_message_count_message() -> tuple[bool, _Message]:
-    texts = []
-    return False, _Message(
-        title="Что-то произошло, но мы не знаем, что 🐞",
-        message=random.choice(texts),
-    )
-
-
 ANTIC_HANDLERS = {
     "new_year": new_year,
     "new_year_private": new_year_private,
@@ -437,24 +588,3 @@ ANTIC_HANDLERS = {
     "unexpected_day": unexpected_day,
     "miss": miss,
 }
-
-
-# @api(require_auth=True)
-# @require_http_methods(["POST"])
-# def fun_(request, user_slug):
-#     addressee = get_object_or_404(User, slug=user_slug)
-#     if request.me == addressee:
-#         raise ApiException(title="You can’t send a Valentine to yourself")
-#
-#     user_key = f"fun:valentine:{request.me.id}"
-#     pair_key = f"fun:valentine:{request.me.id}-{addressee.id}"
-#
-#     if not addressee.get("have_valentine", False):
-#         raise ApiException(title="You have already sent your Valentine")
-#
-#     return {
-#         "status": "created" if is_created else "deleted",
-#     }
-
-
-
