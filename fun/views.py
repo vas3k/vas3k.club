@@ -13,14 +13,14 @@ def do_fun_antic(request):
     if request.method != "POST":
         raise Http404()
 
-    recipient = request.GET.get("recipient")
+    recipient = request.POST.get("recipient")
     if recipient is not None:
         recipient = get_object_or_404(User, slug=recipient)
 
-    antic_type = request.GET.get("antic_type")
+    antic_type = request.POST.get("antic_type")
     if antic_type in ANTICS_MAP:
-        success, result = ANTICS_MAP[antic_type](request.me, recipient)
+        success, result = ANTICS_MAP[antic_type].handle(request.me, recipient)
     else:
-        success, result = AnticBase.make_message(AnticBase.default_errors)
+        success, result = False, AnticBase.make_message(AnticBase.default_errors)
 
     return render(request, "message.html" if success else "error.html", result)

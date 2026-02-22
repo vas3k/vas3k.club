@@ -23,11 +23,14 @@ def command_banek(update: Update, context: CallbackContext) -> None:
 
 
 def command_random(update: Update, context: CallbackContext) -> None:
+    post = Post.objects.get_random_post()
+    if post is not None:
+        message = render_html_message("channel_post_announce.html", post=post)
+    else:
+        message = "Не смогли найти пост 🤪\nПопробуйте ещё раз!"
+
     update.effective_chat.send_message(
-        render_html_message(
-            "channel_post_announce.html",
-            post=Post.objects.get_random_post()
-        ),
+        message,
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
     )
