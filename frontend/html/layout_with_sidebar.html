@@ -77,7 +77,7 @@
                         <i class="fas fa-trophy"></i> Посты месяца
                     </a>
                 </li>
-                {% for antic in "common"|get_current_antics %}
+                {% for antic in "common"|get_current_antics:request.me %}
                 <li>
                     <form id="antic_{{ antic.name }}" method="post" action="{% url "do_fun_antic" %}" class="hidden">
                         <input type="hidden" name="antic_type" value="{{ antic.name }}">

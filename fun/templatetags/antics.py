@@ -7,5 +7,7 @@ register = template.Library()
 
 
 @register.filter
-def get_current_antics(antic_type: str, sender: User) -> list[AnticBase]:
+def get_current_antics(antic_type: str, sender: User | None = None) -> list[AnticBase]:
+    if not sender:
+        return []
     return list(filter(lambda a: a.is_displayable(antic_type, sender), ANTICS))

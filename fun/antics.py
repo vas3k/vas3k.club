@@ -161,7 +161,10 @@ class AnticBase:
     # === main methods
 
     @classmethod
-    def is_displayable(cls, type: str, sender: User, recipient: User | None) -> bool:
+    def is_displayable(
+        cls, type: str, sender: User, recipient: User | None = None
+    ) -> bool:
+        return True
         if (
             cls.type != type
             or not cls._is_today()
