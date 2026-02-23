@@ -19,8 +19,8 @@ def do_fun_antic(request):
 
     antic_type = request.POST.get("antic_type")
     if antic_type in ANTICS_MAP:
-        success, result = ANTICS_MAP[antic_type].handle(request.me, recipient)
+        result = ANTICS_MAP[antic_type].handle(request.me, recipient)
     else:
-        success, result = False, AnticBase.make_message(AnticBase.default_errors)
+        result = AnticBase.make_message(AnticBase.default_errors)
 
-    return render(request, "message.html" if success else "error.html", result)
+    return render(request, "message.html", result)

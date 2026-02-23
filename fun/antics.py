@@ -184,37 +184,35 @@ class AnticBase:
         return True
 
     @classmethod
-    def handle(
-        cls, sender: User, recipient: User | None = None
-    ) -> tuple[bool, _Message]:
+    def handle(cls, sender: User, recipient: User | None = None) -> _Message:
         if not cls._is_today():
-            return False, cls.make_message(cls.not_today_errors)
+            return cls.make_message(cls.not_today_errors)
         if cls._is_global_cooldown_active():
-            return False, cls.make_message(cls.global_cooldown_errors)
+            return cls.make_message(cls.global_cooldown_errors)
         if cls._is_user_cooldown_active(sender):
-            return False, cls.make_message(cls.user_cooldown_errors)
+            return cls.make_message(cls.user_cooldown_errors)
 
         if cls.type == "private" and not recipient:
-            return False, cls.make_message(cls.no_telegram_errors)
+            return cls.make_message(cls.no_telegram_errors)
         if recipient:
             if sender.id == recipient.id:
-                return False, cls.make_message(cls.its_you_errors)
+                return cls.make_message(cls.its_you_errors)
             if not recipient.telegram_id:
-                return False, cls.make_message(cls.no_telegram_errors)
+                return cls.make_message(cls.no_telegram_errors)
             if cls._is_already_sent(sender, recipient):
-                return False, cls.make_message(cls.already_send_errors)
+                return cls.make_message(cls.already_send_errors)
 
         try:
             cls.handler(sender, recipient)
         except Exception as exc:
             log.warning(f"Error handling antic: {exc}")
-            return False, cls.make_message(cls.default_errors)
+            return cls.make_message(cls.default_errors)
 
         cls._set_global_cooldown()
         cls._set_user_cooldown(sender)
         cls._set_already_send(sender, recipient)
 
-        return True, cls.make_message(cls.success_messages)
+        return cls.make_message(cls.success_messages)
 
     @classmethod
     def handler(cls, sender: User, recipient: User | None) -> None:
