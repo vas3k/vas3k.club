@@ -79,7 +79,7 @@ class AnticBase:
         "message_texts": [
             "Кто первый встал - того и кнопка 🛴",
             "Следующий раз нужно быть быстрее 🍎",
-            "Но всегда можно пойти и пообщаться в [Баре](https://vas3k.club/room/bar/chat/)",
+            "Но всегда можно пойти и пообщаться в Баре:\n\n https://vas3k.club/room/bar/chat/",
         ],
     }
     user_cooldown_errors: _MessageTemplate = {
@@ -173,7 +173,6 @@ class AnticBase:
         ):
             return False
 
-        # in practice due to template filter limitations these checks are not used
         if recipient and (
             sender.id == recipient.id
             or not recipient.telegram_id
