@@ -8,9 +8,10 @@ register = template.Library()
 
 
 @register.filter
+@register.simple_tag  # for calling with recipient parameter
 def get_current_antics(
-    antic_type: str, sender: User | None = None
+    antic_type: str, sender: User | None = None, recipient: User | None = None
 ) -> list[Type[AnticBase]]:
     if not sender:
         return []
-    return list(filter(lambda a: a.is_displayable(antic_type, sender), ANTICS))
+    return list(filter(lambda a: a.is_displayable(antic_type, sender, recipient), ANTICS))
