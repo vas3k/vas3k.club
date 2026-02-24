@@ -442,3 +442,36 @@ class ViewProfileGotoTests(TestCase):
             data={"goto": "http://127.0.0.1:8000.evil.com/"}
         )
         self.assertEqual(response.status_code, 200)
+
+
+class ViewEmailConfirmTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.new_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4",
+            is_email_verified=False,
+        )
+
+    def test_valid_secret_confirms_email(self):
+        response = self.client.get(
+            reverse("email_confirm", args=[self.new_user.id, self.new_user.secret_hash])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(User.objects.get(id=self.new_user.id).is_email_verified)
+
+    def test_wrong_secret_returns_404(self):
+        response = self.client.get(
+            reverse("email_confirm", args=[self.new_user.id, "wrong_secret_hash"])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
+
+    def test_wrong_user_id_returns_404(self):
+        response = self.client.get(
+            reverse("email_confirm", args=["00000000-0000-0000-0000-000000000000", self.new_user.secret_hash])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
