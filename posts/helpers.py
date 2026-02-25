@@ -29,6 +29,36 @@ def extract_any_image(post):
     return None
 
 
+def get_feed_posts(user=None, post_type=POST_TYPE_ALL, room=None,
+                   label_code=None, ordering=ORDERING_ACTIVITY, ordering_param=None):
+    if user:
+        posts = Post.objects_for_user(user)
+    else:
+        posts = Post.visible_objects()
+
+    if post_type != POST_TYPE_ALL:
+        posts = posts.filter(type=post_type)
+
+    if room:
+        posts = posts.filter(room=room)
+
+    if label_code:
+        posts = posts.filter(label_code=label_code)
+
+    if user:
+        posts = posts.exclude(author__muted_to__user_from=user)
+        if not room and ordering in [ORDERING_NEW, ORDERING_HOT, ORDERING_ACTIVITY]:
+            posts = posts.exclude(room__muted_users__user=user)
+
+    if not user:
+        posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
+
+    if not room and not label_code:
+        posts = posts.exclude(is_room_only=True)
+
+    return sort_feed(posts, ordering, ordering_param)
+
+
 def sort_feed(posts, ordering, ordering_param=None):
     if not ordering:
         return posts
