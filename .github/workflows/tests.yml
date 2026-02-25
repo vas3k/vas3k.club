@@ -28,8 +28,6 @@ jobs:
           python-version: '3.12'
 
       - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
-        with:
-          enable-cache: true
 
       - name: Install requirements
         run: |
@@ -76,6 +74,7 @@ jobs:
       - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
         with:
           enable-cache: true
+          cache-dependency-glob: "**/Pipfile.lock"
 
       - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
