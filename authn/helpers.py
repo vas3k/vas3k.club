@@ -1,11 +1,14 @@
 import logging
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
+from urllib.parse import urlparse
 
 from django.shortcuts import redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
+
+from django.conf import settings
 
 from authn.models.session import Session
-from club import settings
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -15,6 +18,13 @@ PATH_PREFIXES_WITHOUT_AUTH = [
     "/auth/",
     "/intro/",
 ]
+
+
+def is_safe_url(url):
+    if not url:
+        return False
+    allowed_host = urlparse(settings.APP_HOST).netloc
+    return url_has_allowed_host_and_scheme(url, allowed_hosts={allowed_host})
 
 
 def authorized_user(request):

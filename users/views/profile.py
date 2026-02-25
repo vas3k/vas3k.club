@@ -4,7 +4,7 @@ from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
 from authn.decorators.auth import require_auth
-from authn.helpers import check_user_permissions
+from authn.helpers import check_user_permissions, is_safe_url
 from badges.models import UserBadge
 from comments.models import Comment
 from common.pagination import paginate
@@ -28,7 +28,7 @@ def profile(request, user_slug):
     if request.me and user.id == request.me.id:
         # handle auth redirect
         goto = request.GET.get("goto")
-        if goto and goto.startswith(settings.APP_HOST):
+        if is_safe_url(goto):
             return redirect(goto)
 
         # moderation status check for new-joiners

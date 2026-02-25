@@ -1,11 +1,8 @@
 """
 Integration tests for the Telegram bot.
 
-Tests the bot with real Telegram library calls (no mocking of telegram lib), using:
-- Mock Telegram API server (from BaseTelegramTest)
-- Real bot main() function running in webhook/polling mode
-- Real Update objects created by telegram library
-- Actual HTTP requests to webhook server
+Uses a mock Telegram API server (BaseTelegramTest) with real bot main(),
+real Update objects, and actual HTTP requests to the webhook server.
 """
 
 import contextlib
@@ -28,6 +25,7 @@ import bot.config
 django.setup()
 
 import requests
+import urllib3
 import telegram
 from telegram import Update, Message, User as TgUser, Chat as TgChat
 
@@ -38,14 +36,10 @@ log = logging.getLogger(__name__)
 
 
 class BotIntegrationTest(BaseTelegramTest, TestCase):
-    """Integration tests for bot webhook and polling - runs real main()"""
-
     tags = {"telegram", "telegram_bot", "telegram_integration"}
 
-    # Use the same TOKEN as BaseTelegramTest
     TELEGRAM_TOKEN_VALUE = BaseTelegramTest.TOKEN
 
-    # Telegram API responses
     SEND_MESSAGE_RESPONSE = json.dumps(
         {
             "ok": True,
@@ -84,11 +78,9 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
     def setUp(self):
         super().setUp()
 
-        # Calculate the mock server base URL dynamically
         server_port = self.server.server_address[1]
         telegram_base_url = f"http://127.0.0.1:{server_port}/"
 
-        # Create test user with active membership
         now = datetime.now(timezone.utc)
         self.test_user = User.objects.create(
             slug="test-user",
@@ -101,7 +93,8 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
 
-        # Patch close_old_connections to prevent 'connection is closed' errors in tests
+        # Prevent 'connection is closed' errors — Django closes DB connections between requests,
+        # but bot handler threads reuse them
         self.close_old_connections_patch = patch(
             "bot.handlers.common.close_old_connections"
         )
@@ -122,19 +115,17 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         if self.bot_server:
             self.bot_server.stop()
 
-        # Clean up
         self.test_user.delete()
         self.close_old_connections_patch.stop()
         self.settings_override.disable()
 
-        # NB: shut down bot_server first, then the API (in super()):
-        # in the polling mode, bot polls the API endlessly and fails with a gnarly stacktrace otherwise
+        # Shut down bot_server first, then the mock API (in super()),
+        # otherwise the polling bot keeps hitting a dead server
         super().tearDown()
 
     def _create_update(
         self, message_text: str, reply_to_text: Optional[str] = None
     ) -> Update:
-        """Create a real Update object using telegram library"""
         telegram_id = int(self.test_user.telegram_id or "")
         tg_user = TgUser(id=telegram_id, is_bot=False, first_name="Test")
         tg_chat = TgChat(id=12345, type="private")
@@ -171,29 +162,16 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         return update
 
     def _send_webhook_update(self, update: Update) -> requests.Response:
-        """
-        Send an update to the webhook server via HTTP POST.
-        """
+        """Retries on ConnectionRefused — the webhook server starts asynchronously."""
         webhook_url = f"http://{settings.TELEGRAM_BOT_WEBHOOK_HOST}:{settings.TELEGRAM_BOT_WEBHOOK_PORT}/{self.TELEGRAM_TOKEN_VALUE}"
-        update_dict = update.to_dict()
-        try:
-            response = requests.post(webhook_url, json=update_dict, timeout=5)
-            return response
-        except Exception as e:
-            log.error(f"Failed to send webhook update: {e}")
-            raise
+        session = requests.Session()
+        session.mount("http://", requests.adapters.HTTPAdapter(
+            max_retries=urllib3.util.Retry(connect=5, backoff_factor=0.1),
+        ))
+        return session.post(webhook_url, json=update.to_dict(), timeout=5)
 
     @override_settings(DEBUG=False)
     def test_webhook_help_command(self):
-        """
-        Test: Send /help command via webhook and verify bot sends help message
-
-        Integration flow:
-        1. Start bot in webhook mode (DEBUG=False)
-        2. Send /help update via HTTP to webhook endpoint
-        3. Verify bot calls Telegram API sendMessage
-        """
-        # Setup expected Telegram API calls
         SEND_MESSAGE_PATH = f"/{self.TELEGRAM_TOKEN_VALUE}/sendMessage"
 
         self.server.expect_requests(
@@ -239,49 +217,18 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         response = self._send_webhook_update(self._create_command_update("/help"))
         self.assertIn(response.status_code, [200, 202, 204])
 
-        # Wait for bot to process the update
-        time.sleep(1)
-
-        # Verify expected API calls were made
+        self.assertTrue(
+            self.server.wait_for_completion(timeout=5), "Bot did not send expected message"
+        )
         self.server.check_requests()
 
     @override_settings(DEBUG=True)
     def test_polling_help_command(self):
-        """
-        Test: Send /help command via polling and verify bot sends help message
-
-        Integration flow:
-        1. Start bot in polling mode (DEBUG=True)
-        2. Send /help update via Telegram API response
-        3. Verify bot calls Telegram API sendMessage
-        """
-        # Setup expected Telegram API calls
         SEND_MESSAGE_PATH = f"/{self.TELEGRAM_TOKEN_VALUE}/sendMessage"
+        GET_UPDATES_PATH = f"/{self.TELEGRAM_TOKEN_VALUE}/getUpdates"
 
-        # HACK: this relies on weird timings and sleeps to get things to work properly:
-        # first, a getUpdates call returns the single update;
-        # while this is being processed through a queue, another getUpdates call sleeps for a short time
-        # and then returns nothing;
-        # while it sleeps, in another client thread, the bot sends its sendMessage that is checked against
-        # the 'expected' instance;
-        # finally, the third getUpdates call sleeps for a longer while before returning nothing;
-        # we expect that during that time the test will shut down and no further getUpdates calls will be made
-        #
-        # it would be more robust to make API handlers stateful, implementing a mechanism that returns the single
-        # update instantly and then however many empty results would be necessary, sleeping for 100ms each time
-        # to conserve some CPU
-        #
-        # that would require an involved refactoring however, so only worthwhile whenever the server logic
-        # is undergoing constant change -- that would require this test suite to catch any problems;
-        # otherwise, in case the performance here with sleeps becomes a problem, it would be better
-        # to mark this test in such a way that it's only ran when specifically requested
-        # or to simply remove it
-        #
-        # the original intent was to write these tests, upgrade the Telegram library written by the Olympian athletes
-        # without any regard to backwards compatibility, and use them to try and ensure nothing breaks;
-        # this entire exercise can be repeated as often as such an upgrade is needed, including vibecoding
-        # the tests once again -- the author very much hopes that the foundational models would get better
-        # in the meantime to allow this to be done unsupervised
+        # sendMessage and getUpdates race between the dispatcher and polling threads,
+        # so request order is non-deterministic — matching is content-based
         self.server.expect_requests(
             [
                 ExpectedRequest(
@@ -303,7 +250,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                 ExpectedRequest(
                     Request(
                         "POST",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/getUpdates",
+                        GET_UPDATES_PATH,
                         {
                             "limit": "100",
                             "timeout": "10",
@@ -319,19 +266,6 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                 ExpectedRequest(
                     Request(
                         "POST",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/getUpdates",
-                        {
-                            "limit": "100",
-                            "offset": "2",
-                            "timeout": "10",
-                        },
-                    ),
-                    json.dumps({"ok": True, "result": []}),
-                    wait=0.2,
-                ),
-                ExpectedRequest(
-                    Request(
-                        "POST",
                         SEND_MESSAGE_PATH,
                         {
                             "chat_id": "12345",
@@ -342,29 +276,12 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                     ),
                     self.SEND_MESSAGE_RESPONSE,
                 ),
-                ExpectedRequest(
-                    Request(
-                        "POST",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/getUpdates",
-                        {
-                            "limit": "100",
-                            "offset": "2",
-                            "timeout": "10",
-                        },
-                    ),
-                    json.dumps({"ok": True, "result": []}),
-                    wait=1,
-                ),
-            ]
+            ],
         )
 
         self.bot_server = start_server()
 
-        # response = self._send_webhook_update(self._create_command_update("/help"))
-        # self.assertIn(response.status_code, [200, 202, 204])
+        completed = self.server.wait_for_completion(timeout=5)
+        self.assertTrue(completed, "Bot did not process all expected requests in time")
 
-        # Wait for bot to process the update
-        time.sleep(1)
-
-        # Verify expected API calls were made
         self.server.check_requests()
