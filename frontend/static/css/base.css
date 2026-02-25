@@ -169,10 +169,10 @@
 .button {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     text-decoration: none !important;
     padding: 15px 18px;
     box-sizing: border-box;
-    text-decoration: none;
     border-radius: var(--button-border-radius);
     background-color: var(--button-bg-color);
     border: var(--button-border);
