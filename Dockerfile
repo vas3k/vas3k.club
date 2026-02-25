@@ -1,8 +1,9 @@
-FROM python:3.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c AS builder
+FROM ghcr.io/astral-sh/uv:python3.12-trixie-slim@sha256:2cab366b0a3a74238f9621435eca8328e86f55dca98e6acdc216bc5c969b02f5 AS builder
 
 ARG MODE=dev
-ENV PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -yq \
@@ -12,14 +13,15 @@ RUN apt-get update \
 WORKDIR /app
 
 COPY Pipfile Pipfile.lock ./
-RUN python -m venv /opt/venv \
-    && /opt/venv/bin/pip install pipenv==2026.0.3 \
+RUN uv venv /opt/venv \
+    && uv pip install --python=/opt/venv/bin/python pipenv==2026.0.3 \
     && if [ "$MODE" = "production" ]; then \
         /opt/venv/bin/pipenv requirements --keep-outdated > requirements.txt; \
     else \
         /opt/venv/bin/pipenv requirements --dev > requirements.txt; \
     fi \
-    && /opt/venv/bin/pip install -r requirements.txt
+    && uv pip uninstall --python=/opt/venv/bin/python pipenv \
+    && uv pip install --python=/opt/venv/bin/python -r requirements.txt
 
 COPY frontend/package.json frontend/package-lock.json ./frontend/
 WORKDIR /app/frontend
@@ -27,7 +29,7 @@ RUN npm ci
 COPY frontend/ /app/frontend/
 RUN npm run build
 
-FROM python:3.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
+FROM python:3.12-slim-trixie@sha256:39e4e1ccb01578e3c86f7a0cf7b7fd89b8dbe2c27a88de11cf726ba669469f49
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
