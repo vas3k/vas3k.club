@@ -1,11 +1,24 @@
 .git/
+.github/
+**/.venv
 **/node_modules
+**/__pycache__
 
+.coverage
 .editorconfig
+.env
 .gitignore
+.idea/
+.mypy_cache/
+.tox/
+
+docker-compose*.yml
+Dockerfile
 
 CHANGELOG.md
 README.md
 
-*.tmp
+*.egg-info
 *.log
+*.py[co]
+*.tmp
