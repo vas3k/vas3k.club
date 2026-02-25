@@ -25,7 +25,7 @@
 {% block content %}
     <div class="stats">
         <div class="stats-achievement-details">
-            {% include "achievements/widgets/achievement.html" %}
+            {% include "achievements/widgets/achievement.html" with skip_achievement_link=True %}
             <div class="stats-achievement-details__info">
                 <span><strong>Название:</strong> {{ achievement.name }}</span>
                 <span><strong>Описание:</strong> {{ achievement.description }}</span>

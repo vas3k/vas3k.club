@@ -47,9 +47,10 @@
         }
 
         .user-achievement-name {
-            display: block;
-            padding-top: 10px;
-            padding-bottom: 10px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
             text-align: center;
             line-height: 1.3em;
         }
