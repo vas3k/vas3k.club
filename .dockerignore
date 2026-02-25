@@ -5,11 +5,14 @@
 **/__pycache__
 
 .coverage
+.DS_Store
 .editorconfig
 .env
 .gitignore
+.history/
 .idea/
 .mypy_cache/
+.npm/
 .tox/
 
 docker-compose*.yml
@@ -18,7 +21,14 @@ Dockerfile
 CHANGELOG.md
 README.md
 
+*.egg
 *.egg-info
 *.log
 *.py[co]
+*.session
 *.tmp
+
+db.sqlite3
+gdpr/downloads/*.zip
+pip-log.txt
+venv/
