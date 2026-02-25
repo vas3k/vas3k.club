@@ -1,37 +1,51 @@
-FROM ubuntu:24.04@sha256:d1e2e92c075e5ca139d51a140fff46f84315c0fdce203eab2807c7e495eff4f9
-ENV MODE=dev \
-    DEBIAN_FRONTEND=noninteractive \
-    PIP_BREAK_SYSTEM_PACKAGES=1
+FROM python:3.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c AS builder
+
+ARG MODE=dev
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -yq \
-      build-essential \
-      python3 \
-      python3-dev \
-      python3-pip \
-      libpq-dev \
-      gdal-bin \
-      libgdal-dev \
-      make \
-      npm \
-      cron \
+      build-essential libgdal-dev libpq-dev npm \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY Pipfile Pipfile.lock ./
-RUN pip3 install pipenv \
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install pipenv==2026.0.3 \
     && if [ "$MODE" = "production" ]; then \
-        pipenv requirements --keep-outdated > requirements.txt; \
-    elif [ "$MODE" = "dev" ]; then \
-        pipenv requirements --dev > requirements.txt; \
+        /opt/venv/bin/pipenv requirements --keep-outdated > requirements.txt; \
+    else \
+        /opt/venv/bin/pipenv requirements --dev > requirements.txt; \
     fi \
-    && pip3 install --ignore-installed -r requirements.txt
+    && /opt/venv/bin/pip install -r requirements.txt
 
 COPY frontend/package.json frontend/package-lock.json ./frontend/
-RUN cd frontend && npm ci
+WORKDIR /app/frontend
+RUN npm ci
+COPY frontend/ /app/frontend/
+RUN npm run build
 
-COPY . /app
-RUN cd frontend && npm run build
+FROM python:3.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH"
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends -yq \
+      cron gdal-bin libpq5 make \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd --system --gid 1000 app \
+    && useradd --system --uid 1000 --gid app --no-create-home --shell /usr/sbin/nologin app
+
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+COPY . .
+COPY --from=builder /app/frontend/static/dist/ ./frontend/static/dist/
+COPY --from=builder /app/frontend/webpack-stats.json ./frontend/webpack-stats.json
 COPY --chmod=600 etc/crontab /etc/crontab
+
+USER 1000:1000
