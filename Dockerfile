@@ -42,10 +42,10 @@ RUN groupadd --system --gid 1000 app \
     && useradd --system --uid 1000 --gid app --no-create-home --shell /usr/sbin/nologin app
 
 WORKDIR /app
-COPY --from=builder /opt/venv /opt/venv
-COPY . .
-COPY --from=builder /app/frontend/static/dist/ ./frontend/static/dist/
-COPY --from=builder /app/frontend/webpack-stats.json ./frontend/webpack-stats.json
-COPY --chmod=600 etc/crontab /etc/crontab
+COPY --link --from=builder /opt/venv /opt/venv
+COPY --link . .
+COPY --link --from=builder /app/frontend/static/dist/ ./frontend/static/dist/
+COPY --link --from=builder /app/frontend/webpack-stats.json ./frontend/webpack-stats.json
+COPY --link --chmod=600 etc/crontab /etc/crontab
 
 USER 1000:1000
