@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django_q.tasks import async_task
 
-from authn.helpers import set_session_cookie
+from authn.helpers import is_safe_url, set_session_cookie
 from authn.models.session import Session, Code
 from notifications.email.users import send_auth_email
 from notifications.telegram.users import notify_user_auth
@@ -65,6 +65,6 @@ def email_login_code(request):
         user.deleted_at = None
         user.save()
 
-    redirect_to = reverse("profile", args=[user.slug]) if not goto else goto
+    redirect_to = goto if is_safe_url(goto) else reverse("profile", args=[user.slug])
     response = redirect(redirect_to)
     return set_session_cookie(response, user, session)

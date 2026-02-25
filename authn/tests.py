@@ -2,13 +2,48 @@ from datetime import datetime, timedelta
 
 import django
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
+from authn.helpers import is_safe_url
 from authn.models.session import Code
 from club.exceptions import RateLimitException, InvalidCode
 from users.models.user import User
+
+
+class IsSafeUrlTests(TestCase):
+
+    def test_relative_path_is_safe(self):
+        self.assertTrue(is_safe_url("/user/foo/"))
+        self.assertTrue(is_safe_url("/auth/login/"))
+
+    def test_absolute_url_same_host_is_safe(self):
+        self.assertTrue(is_safe_url("http://127.0.0.1:8000/user/foo/"))
+
+    @override_settings(APP_HOST="https://vas3k.club")
+    def test_absolute_url_production_host_is_safe(self):
+        self.assertTrue(is_safe_url("https://vas3k.club/user/foo/"))
+
+    def test_external_url_is_rejected(self):
+        self.assertFalse(is_safe_url("https://evil.com/phishing"))
+
+    def test_host_prefix_bypass_is_rejected(self):
+        self.assertFalse(is_safe_url("http://127.0.0.1:8000.evil.com/"))
+
+    def test_protocol_relative_url_is_rejected(self):
+        self.assertFalse(is_safe_url("//evil.com"))
+        self.assertFalse(is_safe_url("///evil.com"))
+
+    def test_javascript_uri_is_rejected(self):
+        self.assertFalse(is_safe_url("javascript:alert(1)"))
+
+    def test_data_uri_is_rejected(self):
+        self.assertFalse(is_safe_url("data:text/html,<script>alert(1)</script>"))
+
+    def test_empty_and_none_are_rejected(self):
+        self.assertFalse(is_safe_url(""))
+        self.assertFalse(is_safe_url(None))
 
 
 class ModelCodeTests(TestCase):
