@@ -219,3 +219,17 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         "post_type": post_type,
         "form": form,
     })
+
+
+def random_post(request):
+    post = Post.objects.get_random_post()
+    if post:
+        return redirect("show_post", post.type, post.slug)
+    return render(request, "message.html", {
+        "title": "Ой, что-то пошло не так 🤖",
+        "message":  (
+            "Пост немного выругался и ещё глубже укутался в одеялку. Похоже, его "
+            "не разбудить. Но пока вы можете посмотреть остальные тут:\n\n"
+            "https://vas3k.club/"
+        ),
+    })

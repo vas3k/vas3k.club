@@ -42,7 +42,7 @@ from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote
     toggle_post_event_participation
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, compose, compose_type, \
-    delete_post, unpublish_post, clear_post
+    delete_post, unpublish_post, clear_post, random_post
 from bookmarks.views import bookmarks
 from search.views import search
 from tickets.views import stripe_ticket_sale_webhook
@@ -60,6 +60,7 @@ from users.views.settings import profile_settings, edit_profile, edit_account, e
 from users.views.intro import intro
 from users.views.people import people
 from search.api import api_search_users, api_search_tags
+from fun.views import do_fun_antic
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
 ORDERING_RE = r"(?P<ordering>(activity|new|top|top_week|top_month|top_year|hot))(?::(?P<ordering_param>[^/]+))?"
@@ -141,6 +142,7 @@ urlpatterns = [
 
     path("create/", compose, name="compose"),
     path("create/<slug:post_type>/", compose_type, name="compose_type"),
+    path("post/random/", auth_switch(yes=random_post, no=landing), name="random_post"),
     path("post/<slug:post_slug>/unpublish/", unpublish_post, name="unpublish_post"),
     path("post/<slug:post_slug>/clear/", clear_post, name="clear_post"),
     path("post/<slug:post_slug>/delete/", delete_post, name="delete_post"),
@@ -202,6 +204,7 @@ urlpatterns = [
 
     path("clickers/<str:clicker_id>.json", api_clicker, name="api_clicker"),
 
+    path("fun/", do_fun_antic, name="do_fun_antic"),
     # admin features
     path("godmode/", godmode, name="godmode_settings"),
     path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),

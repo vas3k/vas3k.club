@@ -5,6 +5,7 @@
 {% load users %}
 {% load text_filters %}
 {% load paginator %}
+{% load antics %}
 
 {% block title %}
     {{ user.full_name }} — {{ block.super }}
@@ -150,21 +151,35 @@
                         <span class="profile-status-icon">🙏</span>
                         <span class="profile-status-status">Сказать спасибо</span>
                     </a>
-               {% endif %}
 
-                {% if me and not user.is_curator and not user.is_moderator %}
-                    {% if muted %}
-                        <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
-                            <span class="profile-status-icon">❌</span>
-                            <span class="profile-status-status">Снять бан</span>
-                        </a>
-                    {% else %}
-                        <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
-                            <span class="profile-status-icon">⛔️</span>
-                            <span class="profile-status-status">Я не хочу видеть этого юзера в Клубе</span>
-                        </a>
+                    {% if not user.is_curator and not user.is_moderator %}
+                        {% if muted %}
+                            <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
+                                <span class="profile-status-icon">❌</span>
+                                <span class="profile-status-status">Снять бан</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url "toggle_mute" user.slug %}" class="profile-status clickable">
+                                <span class="profile-status-icon">⛔️</span>
+                                <span class="profile-status-status">Я не хочу видеть этого юзера в Клубе</span>
+                            </a>
+                        {% endif %}
                     {% endif %}
+
+                    {% get_current_antics "private" request.me user as antics %}
+                    {% for antic in antics %}
+                        <form id="antic_{{ antic.name }}" method="post" action="{% url "do_fun_antic" %}" class="hidden">
+                            <input type="hidden" name="antic_type" value="{{ antic.name }}">
+                            <input type="hidden" name="recipient" value="{{ user.slug }}">
+                        </form>
+                        <button form="antic_{{ antic.name }}" type="submit" class="profile-status clickable">
+                            <span class="profile-status-icon">{{ antic.link.icon }}</span>
+                            <span class="profile-status-status">{{ antic.link.label }}</span>
+                        </button>
+                    {% endfor %}
+
                 {% endif %}
+
             {% endif %}
         </div>
 

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
+{% load antics %}
+
 <html lang="ru">
 <head>
     <title>{% block title %}{{ settings.APP_TITLE }}{% endblock %}</title>
@@ -71,12 +73,23 @@
             <br><br>
 
             {% if request.me %}
-                <a href="{% url "invites" %}">Пригласить друга</a> &nbsp;&middot;&nbsp;
+                <a href="{% url "invites" %}">Пригласить друга</a>
+                &nbsp;&middot;&nbsp;
             {% endif %}
 
-            <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a> &nbsp;&middot;&nbsp;
-
+            <a href="https://github.com/vas3k/vas3k.club">Опенсорс</a>
+            &nbsp;&middot;&nbsp;
             <a href="{% url "show_post" "docs" "blocked_dolor" %}">Оплата из России</a>
+
+            {% for antic in "bottom_link"|get_current_antics:request.me %}
+                &nbsp;&middot;&nbsp;
+                <button form="antic_{{ antic.name }}" type="submit" class="footer-antic-button clickable">
+                    {{ antic.link.label }}
+                </button>
+                <form id="antic_{{ antic.name }}" method="post" action="{% url "do_fun_antic" %}" class="hidden">
+                    <input type="hidden" name="antic_type" value="{{ antic.name }}">
+                </form>
+            {% endfor %}
 
             <br><br>
 

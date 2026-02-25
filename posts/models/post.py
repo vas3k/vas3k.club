@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime, timedelta
+from random import randint
 from uuid import uuid4
 
 from django.conf import settings
@@ -15,6 +18,36 @@ from common.models import ModelDiffMixin
 from rooms.models import Room
 from users.models.user import User
 from utils.slug import generate_unique_slug
+
+
+class PostManager(models.Manager):
+    def visible_objects(self):
+        return (
+            self
+            .exclude(visibility=Post.VISIBILITY_LINK_ONLY)
+            .exclude(visibility=Post.VISIBILITY_DRAFT)
+            .select_related("room", "author")
+        )
+
+    def get_random_post(self) -> Post | None:
+        post_qs = (
+            Post.objects
+            .visible_objects()
+            .filter(moderation_status=Post.MODERATION_APPROVED)
+            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])
+        )
+        club_age = int((datetime.now() - settings.LAUNCH_DATE).total_seconds())
+
+        for _ in range(5):
+            random_date = settings.LAUNCH_DATE + timedelta(seconds=randint(0, club_age))
+            post = post_qs.filter(
+                published_at__lte=random_date,
+                published_at__gte=random_date - timedelta(days=5)
+            ).order_by("?").first()
+            if post:
+                return post
+
+        return None
 
 
 class Post(models.Model, ModelDiffMixin):
@@ -165,6 +198,8 @@ class Post(models.Model, ModelDiffMixin):
             "room",
         ],
     )
+
+    objects = PostManager()
 
     class Meta:
         db_table = "posts"
@@ -331,10 +366,7 @@ class Post(models.Model, ModelDiffMixin):
 
     @classmethod
     def visible_objects(cls):
-        return cls.objects\
-            .exclude(visibility=Post.VISIBILITY_LINK_ONLY)\
-            .exclude(visibility=Post.VISIBILITY_DRAFT)\
-            .select_related("room", "author")
+        return cls.objects.visible_objects()
 
     @classmethod
     def objects_for_user(cls, user):

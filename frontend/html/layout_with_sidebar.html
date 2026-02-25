@@ -2,6 +2,7 @@
 {% load static %}
 {% load paginator %}
 {% load text_filters %}
+{% load antics %}
 
 {% block content %}
 <div class="feed">
@@ -76,6 +77,16 @@
                         <i class="fas fa-trophy"></i> Посты месяца
                     </a>
                 </li>
+                {% for antic in "common"|get_current_antics:request.me %}
+                <li>
+                    <form id="antic_{{ antic.name }}" method="post" action="{% url "do_fun_antic" %}" class="hidden">
+                        <input type="hidden" name="antic_type" value="{{ antic.name }}">
+                    </form>
+                    <button form="antic_{{ antic.name }}" type="submit" class="clickable">
+                        <i class="fas fa-{{ antic.link.icon }}"></i> {{ antic.link.label }}
+                    </button>
+                </li>
+                {% endfor %}
             </ul>
         </div>
 
