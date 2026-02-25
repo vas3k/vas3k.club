@@ -2,17 +2,17 @@ name: Check it could be build and run from scratch
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   dockerize:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Build the docker-compose stack
         run: docker compose up -d
-      - name: Sleep
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '20s'
+
       - name: Check db migrate on container
         run: |
           docker compose exec -T club_app make docker-migrate

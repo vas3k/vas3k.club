@@ -1,7 +1,7 @@
-FROM ubuntu:24.04
-ENV MODE dev
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PIP_BREAK_SYSTEM_PACKAGES=1
+FROM ubuntu:24.04@sha256:d1e2e92c075e5ca139d51a140fff46f84315c0fdce203eab2807c7e495eff4f9
+ENV MODE=dev \
+    DEBIAN_FRONTEND=noninteractive \
+    PIP_BREAK_SYSTEM_PACKAGES=1
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -yq \
@@ -19,17 +19,19 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY . /app
-COPY etc/crontab /etc/crontab
-RUN chmod 600 /etc/crontab
-
-RUN cd frontend && npm ci && npm run build && cd ..
-
-RUN pip3 install pipenv
-RUN if [ "$MODE" = "production" ]; then \
+COPY Pipfile Pipfile.lock ./
+RUN pip3 install pipenv \
+    && if [ "$MODE" = "production" ]; then \
         pipenv requirements --keep-outdated > requirements.txt; \
     elif [ "$MODE" = "dev" ]; then \
         pipenv requirements --dev > requirements.txt; \
-    fi
+    fi \
+    && pip3 install --ignore-installed -r requirements.txt
 
-RUN pip3 install --ignore-installed -r requirements.txt
+COPY frontend/package.json frontend/package-lock.json ./frontend/
+RUN cd frontend && npm ci
+
+COPY . /app
+RUN cd frontend && npm run build
+
+COPY --chmod=600 etc/crontab /etc/crontab

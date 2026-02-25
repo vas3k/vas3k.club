@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   club_app: &app
     build:
@@ -21,10 +19,14 @@ services:
     volumes:
       - .:/app:delegated # enable hot code reload in debug mode
     depends_on:
-      - postgres
-      - redis
-      - queue
-      - webpack
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      queue:
+        condition: service_started
+      webpack:
+        condition: service_started
     ports:
       - "8000:8000"
 
@@ -47,24 +49,36 @@ services:
     volumes:
       - .:/app:delegated
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   postgres:
-    image: postgres:14
+    image: postgres:14@sha256:b964c3211689ffe50cc65235ea338717520954dcf6ecd4d76bf887eba3cbc91f
     container_name: club_postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=vas3k_club
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:2afba59292f25f5d1af200496db41bea2c6c816b059f57ae74703a50a03a27d0
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   webpack:
-    image: node:14-slim
+    image: node:14-slim@sha256:198142146b4c47193348f6415da769bdb5035c16fcab051c38c256a6b48f2e1c
     command: npm run watch
     restart: always
     volumes:

@@ -10,7 +10,7 @@ jobs:
     name: Build image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - run: docker login ghcr.io -u $GITHUB_ACTOR -p ${{ secrets.TOKEN }}
       - run: docker build -t ghcr.io/$GITHUB_ACTOR/club:latest -t ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA .
       - run: docker image push ghcr.io/$GITHUB_ACTOR/club:$GITHUB_SHA
@@ -24,7 +24,7 @@ jobs:
       SSH_KEY_PATH: /tmp/ssh_key
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Make envfile
         run: export | grep "secret_" | sed "s/declare -x secret_//" > .env
         env:
