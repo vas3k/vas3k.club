@@ -2,6 +2,8 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.shortcuts import render, redirect
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from authn.decorators.auth import require_auth
 from authn.exceptions import PatreonException
@@ -60,19 +62,23 @@ def patreon_sync_callback(request):
     if not membership:
         return render(request, "error.html", {
             "title": "Надо быть патроном, чтобы состоять в Клубе",
-            "message": "Кажется, вы не патроните <a href=\"https://www.patreon.com/join/vas3k\">@vas3k</a>. "
+            "message": mark_safe(
+                       "Кажется, вы не патроните <a href=\"https://www.patreon.com/join/vas3k\">@vas3k</a>. "
                        "А это одно из основных требований для входа в Клуб.<br><br>"
                        "Ещё иногда бывает, что ваш банк отказывает патреону в снятии денег. "
                        "Проверьте, всё ли там у них в порядке."
+                       )
         }, status=402)
 
     if membership.email and request.me.email.lower() != membership.email.lower():
         # user and patreon emails do not match
         return render(request, "error.html", {
             "title": "⛔️ Ваш email не совпадает с патреоновским",
-            "message": f"Для продления аккаунта ваш адрес почты в Клубе и на Патреоне должен совпадать.<br><br> "
-                       f"Сейчас там {membership.email}, а здесь {request.me.email}.<br><br> "
+            "message": mark_safe(
+                       f"Для продления аккаунта ваш адрес почты в Клубе и на Патреоне должен совпадать.<br><br> "
+                       f"Сейчас там {escape(membership.email)}, а здесь {escape(request.me.email)}.<br><br> "
                        "Так нельзя, ибо это открывает дыру для продления сразу нескольким людям :)"
+                       )
         }, status=400)
 
     if request.me.membership_platform_type != User.MEMBERSHIP_PLATFORM_PATREON:
