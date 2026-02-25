@@ -5,6 +5,12 @@ services:
       context: .
     command: make docker-run-dev
     container_name: club_app
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 30s
     environment:
       - MODE=dev
       - DEBUG=true
