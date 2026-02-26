@@ -7,7 +7,8 @@ from django.http import JsonResponse, HttpResponse
 
 from authn.models.openid import OAuth2App, OAuth2Token
 from authn.providers.openid import oauth2_token_validator
-from club.exceptions import ApiException, ClubException, ApiAuthRequired
+from authn.helpers import get_access_denied_reason
+from club.exceptions import ApiAccessDenied, ApiException, ClubException, ApiAuthRequired
 
 
 def api(require_auth=True, scopes=None):
@@ -53,6 +54,10 @@ def api(require_auth=True, scopes=None):
                 # this user can also come from other types of auth (e.g. cookies)
                 if not request.me:
                     raise ApiAuthRequired()
+
+                reason = get_access_denied_reason(request.me)
+                if reason:
+                    raise ApiAccessDenied(code=reason)
 
             # execute view and catch exceptions
             status_code = 200

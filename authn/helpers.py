@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timedelta
+from enum import StrEnum, unique
 from typing import Optional, Tuple
 from urllib.parse import urlparse
 
@@ -53,6 +54,32 @@ def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
     return session.user, session
 
 
+@unique
+class AccessDeniedReason(StrEnum):
+    BANNED = "banned"
+    MEMBERSHIP_EXPIRED = "membership_expired"
+    INTRO = "intro"
+    REJECTED = "rejected"
+    ON_REVIEW = "on_review"
+
+
+def get_access_denied_reason(user) -> Optional[AccessDeniedReason]:
+    if user.is_banned:
+        return AccessDeniedReason.BANNED
+
+    if not user.is_active_membership:
+        return AccessDeniedReason.MEMBERSHIP_EXPIRED
+
+    if user.moderation_status in (
+        User.MODERATION_STATUS_INTRO,
+        User.MODERATION_STATUS_REJECTED,
+        User.MODERATION_STATUS_ON_REVIEW,
+    ):
+        return AccessDeniedReason(user.moderation_status)
+
+    return None
+
+
 def check_user_permissions(request, **context):
     if not request.me:
         return render(request, "auth/access_denied.html", context)
@@ -60,25 +87,10 @@ def check_user_permissions(request, **context):
     if any(request.path.startswith(prefix) for prefix in PATH_PREFIXES_WITHOUT_AUTH):
         return None
 
-    if not request.me.is_active_membership:
-        log.info("User membership expired. Redirecting to payments page...")
-        return redirect("membership_expired")
-
-    if request.me.is_banned:
-        log.info("User was banned. Redirecting to 'banned' page...")
-        return redirect("banned")
-
-    if request.me.moderation_status == User.MODERATION_STATUS_INTRO:
-        log.info("New user. Redirecting to intro...")
-        return redirect("intro")
-
-    if request.me.moderation_status == User.MODERATION_STATUS_REJECTED:
-        log.info("Rejected user. Redirecting to 'rejected' page...")
-        return redirect("rejected")
-
-    if request.me.moderation_status == User.MODERATION_STATUS_ON_REVIEW:
-        log.info("User on review. Redirecting to 'on_review' page...")
-        return redirect("on_review")
+    reason = get_access_denied_reason(request.me)
+    if reason:
+        log.info(f"Access denied ({reason}). Redirecting...")
+        return redirect(reason)
 
     return None
 
