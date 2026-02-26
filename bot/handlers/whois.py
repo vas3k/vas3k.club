@@ -1,3 +1,5 @@
+import html
+
 from django.urls import reverse
 from telegram import Update, ParseMode
 from telegram import Chat as TGChat
@@ -63,7 +65,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
     })
 
     update.message.reply_text(
-        f"""Кажется, это <a href="{profile_url}">{user.full_name}</a>""",
+        f"""Кажется, это <a href="{profile_url}">{html.escape(user.full_name)}</a>""",
         parse_mode=ParseMode.HTML,
         quote=True
     )

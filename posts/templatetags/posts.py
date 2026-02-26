@@ -95,7 +95,7 @@ def link_icon(post):
             icon = CUSTOM_ICONS[post.metadata["domain"]]
             return mark_safe(f"""<span class="link-favicon">{icon}</span>""")
 
-    if post.image and FAVICON_RE.match(post.image):
+    if post.image and FAVICON_RE.fullmatch(post.image):
         return mark_safe(f"""<span class="link-favicon" style="background-image: url('{post.image}');"></span>""")
 
     return mark_safe("""<span class="link-favicon"><i class="fas fa-link"></i></span>""")

@@ -1,3 +1,5 @@
+import html
+
 import mistune
 
 from common.markdown.common import split_title_and_css_classes
@@ -13,9 +15,9 @@ class TelegramRenderer(mistune.HTMLRenderer):
 
     def image(self, text, url, title=None):
         if text:
-            return f'<a href="{url}">🏞 «{text}»</a>'
+            return f'<a href="{html.escape(url)}">🏞 «{html.escape(text)}»</a>'
         else:
-            return f'<a href="{url}">🏞🔗</a>'
+            return f'<a href="{html.escape(url)}">🏞🔗</a>'
 
     def strikethrough(self, text):
         return f"<s>{text}</s>"
