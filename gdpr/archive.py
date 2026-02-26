@@ -1,8 +1,9 @@
 import json
 import logging
 import os
-import random
+import secrets
 import shutil
+from pathlib import Path
 import tempfile
 from datetime import datetime
 
@@ -37,26 +38,36 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
         dump_user_achievements(user_dir, user)
 
         # save zip archive
-        archive_name = f"{user.slug}-{datetime.utcnow().strftime('%Y-%m-%d-%H-%M')}-{random.randint(1000000, 9999998)}"
+        archive_name = f"{user.slug}-{secrets.token_urlsafe(32)}"
         archive_path = shutil.make_archive(os.path.join(save_path, archive_name), "zip", tmp_dir)
 
-        # schedule a task to remove archive after timeout
-        schedule(
-            "gdpr.archive.delete_data_archive",
-            archive_path,
-            next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA
-        )
+        try:
+            # schedule a task to remove archive after timeout
+            schedule(
+                "gdpr.archive.delete_data_archive",
+                archive_path,
+                next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA
+            )
 
-        # notify the user
-        send_data_archive_ready_email(
-            user=user,
-            url=settings.GDPR_ARCHIVE_URL + os.path.basename(archive_path),
-        )
+            # notify the user
+            send_data_archive_ready_email(
+                user=user,
+                url=settings.GDPR_ARCHIVE_URL + os.path.basename(archive_path),
+            )
+        except Exception:
+            delete_data_archive(archive_path)
+            raise
 
 
 def delete_data_archive(archive_path):
+    real_path = Path(archive_path).resolve()
+    safe_dir = Path(settings.GDPR_ARCHIVE_STORAGE_PATH).resolve()
+    if not real_path.is_relative_to(safe_dir):
+        logging.warning(f"Refusing to delete path outside archive dir: {archive_path}")
+        return
+
     try:
-        os.remove(archive_path)
+        real_path.unlink()
     except FileNotFoundError:
         logging.info(f"Archive already deleted: {archive_path}")
 
