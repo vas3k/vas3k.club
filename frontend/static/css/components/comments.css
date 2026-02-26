@@ -663,6 +663,12 @@
         transform: translateX(-50%) translateY(-50%) rotate(0);
     }
 
+    @media only print {
+        .comment-scroll-arrow {
+            display: none;
+        }
+    }
+
 .comment-markdown-editor {
     position: relative;
 }
