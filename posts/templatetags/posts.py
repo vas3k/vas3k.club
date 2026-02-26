@@ -1,3 +1,4 @@
+import html as html_lib
 from urllib.parse import urlencode
 
 from django import template
@@ -96,7 +97,8 @@ def link_icon(post):
             return mark_safe(f"""<span class="link-favicon">{icon}</span>""")
 
     if post.image and FAVICON_RE.match(post.image):
-        return mark_safe(f"""<span class="link-favicon" style="background-image: url('{post.image}');"></span>""")
+        safe_url = post.image.replace("\\", "%5C").replace("'", "%27").replace(")", "%29")
+        return mark_safe(f"""<span class="link-favicon" style="background-image: url('{html_lib.escape(safe_url)}');"></span>""")
 
     return mark_safe("""<span class="link-favicon"><i class="fas fa-link"></i></span>""")
 
