@@ -101,9 +101,6 @@ def link_icon(post):
     return mark_safe("""<span class="link-favicon"><i class="fas fa-link"></i></span>""")
 
 
-summary_template = loader.get_template("posts/embeds/summary.html")
-
-
 @register.simple_tag()
 def link_summary(post):
     if not post.metadata or not any(map(post.metadata.get, ['title', 'url', 'description'])):
@@ -116,6 +113,7 @@ def link_summary(post):
             return ""
         embed = parser["template"].render(parser["data"](post))
 
+    summary_template = loader.get_template("posts/embeds/summary.html")
     return summary_template.render({
         "post": post,
         "embed": mark_safe(embed)
