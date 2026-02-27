@@ -1,4 +1,5 @@
 from django.template import loader
+from django.utils.functional import SimpleLazyObject
 
 from common.regexp import YOUTUBE_RE
 
@@ -17,7 +18,7 @@ CUSTOM_ICONS = {
 
 CUSTOM_PARSERS = {
     "www.youtube.com": {
-        "template": loader.get_template("posts/embeds/youtube.html"),
+        "template": SimpleLazyObject(lambda: loader.get_template("posts/embeds/youtube.html")),
         "data": lambda post: {
             "post": post,
             "src": YOUTUBE_RE.match(post.url).group(1) or "" if YOUTUBE_RE.match(post.url) else None
