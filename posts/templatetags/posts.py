@@ -5,7 +5,7 @@ from django.conf import settings
 from django.template import loader
 from django.template.defaultfilters import truncatechars, truncatechars_html
 from django.urls import reverse
-from django.utils.html import strip_tags
+from django.utils.html import escape, strip_tags
 from django.utils.safestring import mark_safe
 
 from common.embeds import CUSTOM_ICONS, CUSTOM_PARSERS
@@ -49,7 +49,7 @@ def render_post(context, post):
 
 @register.simple_tag(takes_context=True)
 def render_plain(context, post, truncate=None):
-    result = mark_safe(strip_tags(markdown_plain(post.text)))
+    result = strip_tags(markdown_plain(post.text))
     if truncate:
         result = truncatechars(result, truncate)
     return result
@@ -96,7 +96,7 @@ def link_icon(post):
             return mark_safe(f"""<span class="link-favicon">{icon}</span>""")
 
     if post.image and FAVICON_RE.fullmatch(post.image):
-        return mark_safe(f"""<span class="link-favicon" style="background-image: url('{post.image}');"></span>""")
+        return mark_safe(f"""<span class="link-favicon" style="background-image: url('{escape(post.image)}');"></span>""")
 
     return mark_safe("""<span class="link-favicon"><i class="fas fa-link"></i></span>""")
 
