@@ -4,7 +4,8 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import BigIntegerField, F, OuterRef, Q, Subquery
+from django.db.models.functions import Extract, Round
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -12,6 +13,8 @@ from simple_history.models import HistoricalRecords
 
 from common.data.labels import LABELS
 from common.models import ModelDiffMixin
+from posts.models.views import PostView
+from posts.models.votes import PostVote
 from rooms.models import Room
 from users.models.user import User
 from utils.slug import generate_unique_slug
@@ -341,21 +344,24 @@ class Post(models.Model, ModelDiffMixin):
         if not user:
             return cls.visible_objects()
 
+        vote_qs = PostVote.objects.filter(post=OuterRef('pk'), user=user)
+        view_qs = PostView.objects.filter(post=OuterRef('pk'), user=user)
+
         return cls.objects\
             .select_related("room", "author")\
             .exclude(visibility=Post.VISIBILITY_DRAFT)\
             .exclude(Q(visibility=Post.VISIBILITY_LINK_ONLY) & ~Q(author=user))\
-            .extra({
-                "is_voted": "select 1 from post_votes "
-                            "where post_votes.post_id = posts.id "
-                            f"and post_votes.user_id = '{user.id}'",
-                "upvoted_at": "select ROUND(extract(epoch from created_at) * 1000) from post_votes "
-                              "where post_votes.post_id = posts.id "
-                              f"and post_votes.user_id = '{user.id}'",
-                "unread_comments": f"select unread_comments from post_views "
-                                   f"where post_views.post_id = posts.id "
-                                   f"and post_views.user_id = '{user.id}'"
-            })  # TODO: i've been trying to use .annotate() here for 2 hours and I have no idea why it's not working
+            .annotate(
+                upvoted_at=Subquery(
+                    vote_qs.annotate(
+                        epoch_ms=Round(Extract('created_at', 'epoch') * 1000)
+                    ).values('epoch_ms')[:1],
+                    output_field=BigIntegerField(),
+                ),
+                unread_comments=Subquery(
+                    view_qs.values('unread_comments')[:1],
+                ),
+            )
 
     @classmethod
     def check_rate_limits(cls, user):
