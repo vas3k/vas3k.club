@@ -195,9 +195,8 @@ def notify_author_friends(post):
     usernames = set(USERNAME_RE.findall(post.text))
     mentioned_users = User.objects.in_bulk(usernames, field_name="slug")
 
-    for username in usernames:
-        user = mentioned_users.get(username)
-        if user and user.telegram_id and user.id not in notified_user_ids:
+    for user in mentioned_users.values():
+        if user.telegram_id and user.id not in notified_user_ids:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message("post_mention.html", post=post),

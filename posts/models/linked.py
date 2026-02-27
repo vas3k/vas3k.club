@@ -47,10 +47,8 @@ class LinkedPost(models.Model):
 
         posts_by_slug = Post.visible_objects().in_bulk(slugs, field_name="slug")
 
-        for slug in slugs:
-            post_to = posts_by_slug.get(slug)
-            if post_to:
-                cls.link(post_from.author, post_from, post_to)
+        for post_to in posts_by_slug.values():
+            cls.link(post_from.author, post_from, post_to)
 
     @classmethod
     def links_for_post(cls, post):

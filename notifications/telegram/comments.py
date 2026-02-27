@@ -99,11 +99,7 @@ def notify_on_comment_created(comment):
     usernames = {u for u in all_usernames if u != settings.MODERATOR_USERNAME}
     mentioned_users = User.objects.in_bulk(usernames, field_name="slug")
 
-    for username in usernames:
-        user = mentioned_users.get(username)
-        if not user:
-            continue
-
+    for user in mentioned_users.values():
         if user.id in muted_author_user_ids:
             continue
 
