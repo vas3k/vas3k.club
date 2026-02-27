@@ -192,8 +192,11 @@ def notify_author_friends(post):
     notified_user_ids = set()
 
     # parse @nicknames and notify mentioned users
-    for username in USERNAME_RE.findall(post.text):
-        user = User.objects.filter(slug=username).first()
+    usernames = set(USERNAME_RE.findall(post.text))
+    mentioned_users = User.objects.in_bulk(usernames, field_name="slug")
+
+    for username in usernames:
+        user = mentioned_users.get(username)
         if user and user.telegram_id and user.id not in notified_user_ids:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
@@ -278,9 +281,9 @@ def notify_post_coauthors_changed(post):
 
 
 def notify_users_by_username(users, template, post):
-    for username in users:
-        user = User.objects.filter(slug=username).first()
-        if user and user.telegram_id:
+    users_by_slug = User.objects.in_bulk(set(users), field_name="slug")
+    for user in users_by_slug.values():
+        if user.telegram_id:
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=render_html_message(template, post=post),

@@ -42,7 +42,7 @@ def render_post(context, post):
         if new_html != post.html:
             # to not flood into history
             post.html = new_html
-            post.save()
+            post.save(update_fields=["html", "updated_at"])
 
     return mark_safe(post.html or "")
 

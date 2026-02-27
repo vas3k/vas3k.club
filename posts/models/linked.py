@@ -41,9 +41,14 @@ class LinkedPost(models.Model):
 
     @classmethod
     def create_links_from_text(cls, post_from, text):
-        links = CLUB_POST_URL_RE.findall(text)
-        for post_slug in links:
-            post_to = Post.visible_objects().filter(slug=post_slug).first()
+        slugs = set(CLUB_POST_URL_RE.findall(text))
+        if not slugs:
+            return
+
+        posts_by_slug = Post.visible_objects().in_bulk(slugs, field_name="slug")
+
+        for slug in slugs:
+            post_to = posts_by_slug.get(slug)
             if post_to:
                 cls.link(post_from.author, post_from, post_to)
 

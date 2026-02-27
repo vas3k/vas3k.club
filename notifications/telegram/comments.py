@@ -91,12 +91,16 @@ def notify_on_comment_created(comment):
                 notified_user_ids.add(friend.user_from.id)
 
     # parse @nicknames and notify their users
-    for username in USERNAME_RE.findall(comment.text):
-        if username == settings.MODERATOR_USERNAME:
-            notify_moderators_on_mention(comment)
-            continue
+    all_usernames = USERNAME_RE.findall(comment.text)
 
-        user = User.objects.filter(slug=username).first()
+    if settings.MODERATOR_USERNAME in all_usernames:
+        notify_moderators_on_mention(comment)
+
+    usernames = {u for u in all_usernames if u != settings.MODERATOR_USERNAME}
+    mentioned_users = User.objects.in_bulk(usernames, field_name="slug")
+
+    for username in usernames:
+        user = mentioned_users.get(username)
         if not user:
             continue
 
