@@ -51,6 +51,10 @@ class Room(models.Model):
     def emoji(self):
         return re.sub("<.*?>", "", self.icon) if self.icon else ""
 
+    @classmethod
+    def visible_rooms(cls):
+        return cls.objects.filter(is_visible=True, is_open_for_posting=True)
+
     def update_last_activity(self):
         now = datetime.utcnow()
         if self.last_activity_at < now - timedelta(minutes=5):
