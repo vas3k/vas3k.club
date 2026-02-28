@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import models
 
 from common.request import parse_ip_address
-from posts.models.post import Post
 from users.models.user import User
 
 
@@ -13,7 +12,7 @@ class PostVote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     user = models.ForeignKey(User, related_name="post_votes", db_index=True, null=True, on_delete=models.SET_NULL)
-    post = models.ForeignKey(Post, related_name="voters", db_index=True, on_delete=models.CASCADE)
+    post = models.ForeignKey("posts.Post", related_name="voters", db_index=True, on_delete=models.CASCADE)
 
     ipaddress = models.GenericIPAddressField(null=True)
 
