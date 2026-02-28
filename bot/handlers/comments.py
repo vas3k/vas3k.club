@@ -7,7 +7,7 @@ from telegram.ext import CallbackContext
 
 from bot.config import MIN_COMMENT_LEN, SKIP_COMMANDS, COMMENT_EMOJI_RE, POST_EMOJI_RE
 from bot.handlers.common import get_club_user, get_club_comment, get_club_post
-from bot.decorators import is_club_member
+from bot.decorators import is_club_member, ensure_fresh_db_connection
 from club import settings
 from comments.models import Comment
 from comments.rate_limits import is_comment_rate_limit_exceeded
@@ -20,6 +20,7 @@ from search.models import SearchIndex
 log = logging.getLogger(__name__)
 
 
+@ensure_fresh_db_connection
 def comment(update: Update, context: CallbackContext) -> None:
     log.info("Comment handler triggered")
 

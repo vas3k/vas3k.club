@@ -56,10 +56,9 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
 
-        # HACK: the hack in bot.handlers.common.get_club_user() causes 'connection is closed' errors in tests,
-        # this is a work-around
+        # Prevent ensure_fresh_db_connection from closing the test DB connection
         self.close_old_connections_patch = patch(
-            "bot.handlers.common.close_old_connections"
+            "bot.decorators.close_old_connections"
         )
         self.close_old_connections_patch.start()
 

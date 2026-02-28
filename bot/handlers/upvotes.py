@@ -5,7 +5,7 @@ from telegram.ext import CallbackContext
 
 from bot.handlers.common import get_club_user, get_club_comment, get_club_post
 from bot.config import COMMENT_EMOJI_RE, POST_EMOJI_RE
-from bot.decorators import is_club_member
+from bot.decorators import is_club_member, ensure_fresh_db_connection
 from comments.models import CommentVote, Comment
 from posts.models.post import Post
 from posts.models.votes import PostVote
@@ -13,6 +13,7 @@ from posts.models.votes import PostVote
 log = logging.getLogger(__name__)
 
 
+@ensure_fresh_db_connection
 @is_club_member
 def upvote(update: Update, context: CallbackContext) -> None:
     log.info("Upvote handler triggered")
@@ -51,6 +52,7 @@ def upvote(update: Update, context: CallbackContext) -> None:
     return None
 
 
+@ensure_fresh_db_connection
 def upvote_comment(update: Update, context: CallbackContext) -> None:
     log.info("Upvote_comment handler triggered")
 
@@ -77,6 +79,7 @@ def upvote_comment(update: Update, context: CallbackContext) -> None:
     return None
 
 
+@ensure_fresh_db_connection
 def upvote_post(update: Update, context: CallbackContext) -> None:
     log.info("Upvote_post handler triggered")
 
