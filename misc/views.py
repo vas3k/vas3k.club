@@ -3,8 +3,8 @@ from urllib.parse import urlencode
 
 import pytz
 import telegram
-from django.db.models import Count, Q, Sum
-from django.http import HttpResponse, Http404
+from django.db.models import Count, Prefetch, Q, Sum
+from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_GET
 from icalendar import Calendar, Event
@@ -19,7 +19,7 @@ from users.models.user import User
 
 
 @require_auth
-def stats(request):
+def stats(request: HttpRequest) -> HttpResponse:
     achievements = Achievement.objects\
         .annotate(user_count=Count('users'))\
         .filter(is_visible=True)\
@@ -31,13 +31,24 @@ def stats(request):
         .select_related("badge", "to_user")\
         .order_by('-created_at')[:20]
 
-    top_badges = list(filter(None.__ne__, [
-        User.registered_members().filter(id=to_user).first() for to_user, _ in UserBadge.objects
-        .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))
-        .values_list("to_user")
-        .annotate(sum_price=Sum("badge__price_days"))
-        .order_by("-sum_price")[:20]  # select more in case someone gets deleted
-    ]))[:15]  # filter None
+    top_badge_qs = UserBadge.objects\
+        .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))\
+        .values("to_user")\
+        .annotate(sum_price=Sum("badge__price_days"))\
+        .order_by("-sum_price")[:20]
+
+    top_user_ids = [row["to_user"] for row in top_badge_qs]
+
+    users_by_id = {
+        user.id: user
+        for user in User.registered_members()
+            .filter(id__in=top_user_ids)
+            .prefetch_related(
+                Prefetch("to_badges", queryset=UserBadge.objects.select_related("badge"))
+            )
+    }
+
+    top_badges = [users_by_id[uid] for uid in top_user_ids if uid in users_by_id][:15]
 
     top_users = User.objects\
         .filter(
