@@ -2,24 +2,17 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.core.cache import cache
 from django.utils.translation import gettext as _
 
 from posts.helpers import ORDERING_TOP, ORDERING_TOP_YEAR, ORDERING_TOP_MONTH, ORDERING_TOP_WEEK
 from rooms.models import Room
 
 ORDERING_LAST_MONTHS = 12
-ROOMS_CACHE_KEY = "rooms_context"
-ROOMS_CACHE_TTL = 60 * 5  # 5 minutes
 
 
 def rooms(request):
     return {
-        "rooms": cache.get_or_set(
-            ROOMS_CACHE_KEY,
-            lambda: list(Room.visible_rooms().order_by("-last_activity_at")),
-            ROOMS_CACHE_TTL,
-        ),
+        "rooms": Room.visible_rooms().order_by("-last_activity_at"),
     }
 
 
