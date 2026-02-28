@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import hmac
 from datetime import timedelta, datetime
 from uuid import uuid4
@@ -34,6 +36,13 @@ class OAuth2App(models.Model, ClientMixin):
 
     class Meta:
         db_table = "oauth_apps"
+
+    @classmethod
+    def by_service_token(cls, service_token: str) -> OAuth2App | None:
+        return cls.objects\
+            .filter(service_token=service_token)\
+            .select_related("owner")\
+            .first()
 
     def save(self, *args, **kwargs):
         if not self.client_id:
@@ -115,7 +124,11 @@ class OAuth2Token(models.Model, TokenMixin):
         return self.scope
 
     def get_scopes(self):
-        return set(self.scope.split(" ") if self.scope else [])
+        return self.parse_scope(self.scope)
+
+    @staticmethod
+    def parse_scope(scope: str) -> set[str]:
+        return set(scope.split(" ") if scope else [])
 
     def get_expires_in(self):
         return self.expires_in
