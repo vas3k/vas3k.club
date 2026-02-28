@@ -8,6 +8,7 @@ from django.utils.html import strip_tags
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 
+from bot.decorators import ensure_fresh_db_connection
 from bot.handlers.common import get_club_user
 from helpdeskbot import config
 from helpdeskbot.help_desk_common import get_channel_message_link, send_message, send_reply
@@ -98,6 +99,7 @@ class QuestionDto:
         }
 
 
+@ensure_fresh_db_connection
 def start(update: Update, context: CallbackContext) -> State:
     user = get_club_user(update)
     if not user:
@@ -188,6 +190,7 @@ def cancel_question(update: Update, context: CallbackContext) -> State:
     return ConversationHandler.END
 
 
+@ensure_fresh_db_connection
 def review_question(update: Update, context: CallbackContext) -> State:
     data = QuestionDto.from_user_data(context.user_data)
 
@@ -283,6 +286,7 @@ def edit_question(update: Update, context: CallbackContext) -> State:
     return State.REQUEST_FOR_INPUT
 
 
+@ensure_fresh_db_connection
 def finish_review(update: Update, context: CallbackContext) -> State:
     user_data = context.user_data
     text = update.message.text
@@ -374,6 +378,7 @@ class QuestionHandler(ConversationHandler):
         )
 
 
+@ensure_fresh_db_connection
 def update_discussion_message_id(update: Update) -> None:
     channel_msg_id = update.message.forward_from_message_id
     discussion_msg_id = update.message.message_id

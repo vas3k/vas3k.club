@@ -4,6 +4,7 @@ from django.urls import reverse
 from telegram import Update
 from telegram.ext import CallbackContext
 
+from bot.decorators import ensure_fresh_db_connection
 from bot.handlers.common import get_club_user
 from club import settings
 from posts.models.post import Post
@@ -12,6 +13,7 @@ from posts.models.subscriptions import PostSubscription
 log = logging.getLogger(__name__)
 
 
+@ensure_fresh_db_connection
 def subscribe(update: Update, context: CallbackContext) -> None:
     user = get_club_user(update)
     if not user or not user.telegram_id:
@@ -34,6 +36,7 @@ def subscribe(update: Update, context: CallbackContext) -> None:
         )
 
 
+@ensure_fresh_db_connection
 def unsubscribe(update: Update, context: CallbackContext) -> None:
     user = get_club_user(update)
     if not user or not user.telegram_id:

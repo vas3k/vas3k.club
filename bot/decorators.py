@@ -1,4 +1,5 @@
 from functools import wraps
+from typing import Callable, ParamSpec, TypeVar
 
 from django.conf import settings
 from django.db import close_old_connections
@@ -8,15 +9,15 @@ from telegram.ext import CallbackContext
 from bot.cache import cached_telegram_users
 from users.models.user import User
 
+P = ParamSpec("P")
+T = TypeVar("T")
+
 
 def is_moderator(callback):
     def wrapper(update: Update, context: CallbackContext, *args, **kwargs):
         if update.effective_chat.id != int(settings.TELEGRAM_ADMIN_CHAT_ID):
             update.effective_chat.send_message("❌ Для этого действия нужно быть в чате модераторов")
             return None
-
-        # HACK: remove when you figure out how to fix it
-        close_old_connections()
 
         moderator = User.objects.filter(telegram_id=update.effective_user.id).first()
         if not moderator or not moderator.is_moderator:
@@ -49,9 +50,9 @@ def is_club_member(callback):
     return wrapper
 
 
-def ensure_fresh_db_connection(func):
+def ensure_fresh_db_connection(func: Callable[P, T]) -> Callable[P, T]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
         close_old_connections()
         try:
             return func(*args, **kwargs)
