@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.12-trixie-slim@sha256:2cab366b0a3a74238f9621435eca8328e86f55dca98e6acdc216bc5c969b02f5 AS python-builder
+FROM ghcr.io/astral-sh/uv:0.10.7-python3.12-trixie-slim AS python-builder
 
 ARG MODE=dev
 ENV UV_COMPILE_BYTECODE=1 \
