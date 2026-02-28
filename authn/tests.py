@@ -4,6 +4,9 @@ from unittest.mock import patch, MagicMock
 
 import django
 from django.conf import settings
+from authlib.oauth2 import OAuth2Error
+from authlib.oauth2.rfc6749 import MissingAuthorizationError
+from django.http import Http404
 from django.test import TestCase, override_settings
 
 django.setup()  # todo: how to run tests from PyCharm without this workaround?
@@ -11,7 +14,9 @@ django.setup()  # todo: how to run tests from PyCharm without this workaround?
 from authn.helpers import is_safe_url, get_access_denied_reason
 from authn.decorators.api import api
 from authn.models.session import Code
-from club.exceptions import ApiAccessDenied, ApiAuthRequired, RateLimitException, InvalidCode
+from club.exceptions import (
+    ApiAccessDenied, ApiAuthRequired, ApiException, ClubException, InvalidCode, RateLimitException,
+)
 from users.models.user import User
 
 
@@ -135,22 +140,62 @@ class ApiDecoratorAccessControlTests(TestCase):
         self.assertEqual(ctx.exception.code, "on_review")
 
 
-class ApiDecoratorAuthResolutionTests(TestCase):
-    """Tests that auth is resolved before require_auth check,
-    so require_auth=False endpoints can still identify the user."""
+class ApiDecoratorResponseFormatTests(TestCase):
 
     @staticmethod
-    @api(require_auth=False)
-    def _public_view(request):
-        return {"has_user": request.me is not None}
+    def _make_request(**user_overrides):
+        return SimpleNamespace(
+            me=GetAccessDeniedReasonTests._make_user(**user_overrides),
+            headers={},
+            GET={},
+            COOKIES={},
+        )
+
+    def test_dict_returns_json_response(self):
+        @api(require_auth=True)
+        def view(request):
+            return {"key": "value"}
+
+        result = view(self._make_request())
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result["Content-Type"], "application/json")
+        self.assertIn("value", result.content.decode())
+
+    def test_str_returns_text_response(self):
+        @api(require_auth=True)
+        def view(request):
+            return "plain text"
+
+        result = view(self._make_request())
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("text/plain", result["Content-Type"])
+        self.assertEqual(result.content.decode(), "plain text")
+
+    def test_http_response_returned_as_is(self):
+        from django.http import HttpResponse
+
+        @api(require_auth=True)
+        def view(request):
+            return HttpResponse("<html>ok</html>", content_type="text/html")
+
+        result = view(self._make_request())
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("text/html", result["Content-Type"])
+
+    def test_dict_with_unicode(self):
+        @api(require_auth=True)
+        def view(request):
+            return {"name": "Привет мир"}
+
+        result = view(self._make_request())
+        self.assertIn("Привет мир", result.content.decode())
+
+
+class ApiDecoratorAuthTests(TestCase):
 
     @staticmethod
-    @api(require_auth=True)
-    def _private_view(request):
-        return {"ok": True}
+    def _make_request(headers=None, get_params=None, me=None):
 
-    @staticmethod
-    def _make_request(me=None, headers=None, get_params=None):
         return SimpleNamespace(
             me=me,
             headers=headers or {},
@@ -158,83 +203,182 @@ class ApiDecoratorAuthResolutionTests(TestCase):
             COOKIES={},
         )
 
-    def test_public_endpoint_anonymous_succeeds(self):
-        """require_auth=False with no credentials should succeed."""
-        request = self._make_request()
-        result = self._public_view(request)
-        self.assertEqual(result.status_code, 200)
+    @staticmethod
+    def _make_user():
+        return GetAccessDeniedReasonTests._make_user()
 
-    @patch("authn.decorators.api.OAuth2Token")
-    @patch("authn.decorators.api.app_by_service_token")
-    def test_public_endpoint_resolves_service_token(self, mock_app_by_token, mock_token_cls):
-        owner = GetAccessDeniedReasonTests._make_user()
+    @patch("authn.models.openid.OAuth2App.by_service_token")
+    def test_service_token_authenticates(self, mock_by_service_token):
+        owner = self._make_user()
         mock_app = MagicMock()
         mock_app.owner = owner
         mock_app.client_id = "test-client"
-        mock_app.scope = "all"
-        mock_app_by_token.return_value = mock_app
-        mock_token_cls.return_value = MagicMock()
+        mock_app.scope = "read write"
+        mock_by_service_token.return_value = mock_app
 
-        request = self._make_request(
-            headers={"X-Service-Token": "valid-token"},
-        )
-        result = self._public_view(request)
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(headers={"X-Service-Token": "secret-token"})
+        result = view(request)
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(request.me, owner)
-        self.assertIsNotNone(request.oauth_token)
-        mock_app_by_token.assert_called_once_with("valid-token")
-
-    @patch("authn.decorators.api.app_by_service_token")
-    def test_public_endpoint_invalid_service_token_raises(self, mock_app_by_token):
-        """Invalid service token should raise even on require_auth=False endpoints."""
-        mock_app_by_token.return_value = None
-
-        request = self._make_request(
-            headers={"X-Service-Token": "bad-token"},
-        )
-        with self.assertRaises(ApiAuthRequired):
-            self._public_view(request)
+        self.assertIs(request.me, owner)
+        self.assertIn("read", request.oauth_token.get_scopes())
+        mock_by_service_token.assert_called_once_with("secret-token")
 
     @patch("authn.decorators.api.oauth2_token_validator")
-    def test_public_endpoint_resolves_oauth_token(self, mock_validator):
-        owner = GetAccessDeniedReasonTests._make_user()
+    def test_oauth_authenticates(self, mock_validator):
+        owner = self._make_user()
         mock_token = MagicMock()
         mock_token.user = owner
         mock_validator.acquire_token.return_value = mock_token
 
-        request = self._make_request(
-            headers={"Authorization": "Bearer test-token"},
-        )
-        result = self._public_view(request)
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(headers={"Authorization": "Bearer abc123"})
+        result = view(request)
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(request.me, owner)
-        self.assertEqual(request.oauth_token, mock_token)
+        self.assertIs(request.me, owner)
+        self.assertIs(request.oauth_token, mock_token)
 
-    def test_private_endpoint_no_auth_raises(self):
-        """require_auth=True with no credentials should raise ApiAuthRequired."""
-        request = self._make_request()
-        with self.assertRaises(ApiAuthRequired):
-            self._private_view(request)
-
-    @patch("authn.decorators.api.OAuth2Token")
-    @patch("authn.decorators.api.app_by_service_token")
-    def test_service_token_via_query_param(self, mock_app_by_token, mock_token_cls):
-        """Service token passed as query param should also be resolved."""
-        owner = GetAccessDeniedReasonTests._make_user()
+    @patch("authn.decorators.api.oauth2_token_validator")
+    @patch("authn.models.openid.OAuth2App.by_service_token")
+    def test_service_token_priority_over_oauth(self, mock_by_service_token, mock_validator):
+        owner = self._make_user()
         mock_app = MagicMock()
         mock_app.owner = owner
         mock_app.client_id = "test-client"
-        mock_app.scope = "all"
-        mock_app_by_token.return_value = mock_app
-        mock_token_cls.return_value = MagicMock()
+        mock_app.scope = "read"
+        mock_by_service_token.return_value = mock_app
 
-        request = self._make_request(
-            get_params={"service_token": "valid-token"},
-        )
-        result = self._public_view(request)
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(headers={
+            "X-Service-Token": "secret-token",
+            "Authorization": "Bearer abc123",
+        })
+        result = view(request)
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(request.me, owner)
-        mock_app_by_token.assert_called_once_with("valid-token")
+        self.assertIs(request.me, owner)
+        mock_validator.acquire_token.assert_not_called()
+
+    def test_http404_returns_api_not_found(self):
+        @api(require_auth=True)
+        def view(request):
+            raise Http404("no such object")
+
+        request = self._make_request(me=self._make_user())
+        with self.assertRaises(ApiException) as ctx:
+            view(request)
+        self.assertEqual(ctx.exception.code, "not-found")
+        self.assertEqual(ctx.exception.title, "Not found")
+
+    def test_unhandled_exception_propagates(self):
+        @api(require_auth=True)
+        def view(request):
+            raise RuntimeError("unexpected failure")
+
+        request = self._make_request(me=self._make_user())
+        with self.assertRaises(RuntimeError):
+            view(request)
+
+    @patch("authn.models.openid.OAuth2App.by_service_token")
+    @patch("authn.decorators.api.log")
+    def test_query_param_service_token_logs_warning(self, mock_log, mock_by_service_token):
+        owner = self._make_user()
+        mock_app = MagicMock()
+        mock_app.owner = owner
+        mock_app.client_id = "test-client"
+        mock_app.scope = ""
+        mock_by_service_token.return_value = mock_app
+
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(get_params={"service_token": "secret-token"})
+        view(request)
+        mock_log.warning.assert_called_once()
+
+    @patch("authn.models.openid.OAuth2App.by_service_token")
+    def test_invalid_service_token_raises_auth_required(self, mock_by_service_token):
+        mock_by_service_token.return_value = None
+
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(headers={"X-Service-Token": "bad-token"})
+        with self.assertRaises(ApiAuthRequired):
+            view(request)
+
+    @patch("authn.decorators.api.oauth2_token_validator")
+    def test_oauth_missing_token_raises_auth_required(self, mock_validator):
+        mock_validator.acquire_token.side_effect = MissingAuthorizationError()
+
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(headers={"Authorization": "Bearer bad"})
+        with self.assertRaises(ApiAuthRequired):
+            view(request)
+
+    @patch("authn.decorators.api.oauth2_token_validator")
+    def test_oauth_error_raises_auth_required(self, mock_validator):
+        mock_validator.acquire_token.side_effect = OAuth2Error()
+
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request(headers={"Authorization": "Bearer expired"})
+        with self.assertRaises(ApiAuthRequired):
+            view(request)
+
+    def test_no_auth_raises_auth_required(self):
+        @api(require_auth=True)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request()
+        with self.assertRaises(ApiAuthRequired):
+            view(request)
+
+    def test_require_auth_false_skips_auth(self):
+        @api(require_auth=False)
+        def view(request):
+            return {"ok": True}
+
+        request = self._make_request()
+        result = view(request)
+        self.assertEqual(result.status_code, 200)
+
+    def test_club_exception_wrapped_into_api_exception(self):
+        @api(require_auth=True)
+        def view(request):
+            raise ClubException(code="test-error", title="Test")
+
+        request = self._make_request(me=self._make_user())
+        with self.assertRaises(ApiException) as ctx:
+            view(request)
+        self.assertEqual(ctx.exception.code, "test-error")
+
+    def test_api_exception_reraised_as_is(self):
+        @api(require_auth=True)
+        def view(request):
+            raise ApiException(code="custom", title="Custom error")
+
+        request = self._make_request(me=self._make_user())
+        with self.assertRaises(ApiException) as ctx:
+            view(request)
+        self.assertEqual(ctx.exception.code, "custom")
+        self.assertEqual(ctx.exception.title, "Custom error")
 
 
 class ModelCodeTests(TestCase):
