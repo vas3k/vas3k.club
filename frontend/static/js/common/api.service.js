@@ -1,11 +1,10 @@
 const ClubApi = {
-    post(href, callback) {
-        const params = {
-            method: "POST",
+    _request(method, href, callback) {
+        fetch(href, {
+            method,
             credentials: "include",
-        };
-
-        fetch(href + "?is_ajax=true", params)
+            headers: { "Accept": "application/json" },
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -18,23 +17,12 @@ const ClubApi = {
             });
     },
 
-    get(href, callback) {
-        const params = {
-            method: "GET",
-            credentials: "include",
-        };
+    post(href, callback) {
+        this._request("POST", href, callback);
+    },
 
-        fetch(href + "?is_ajax=true", params)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => callback(data))
-            .catch((error) => {
-                callback({ error: error.message });
-            });
+    get(href, callback) {
+        this._request("GET", href, callback);
     },
 };
 
