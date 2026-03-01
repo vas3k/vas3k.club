@@ -9,7 +9,7 @@ class EmailRenderer(ClubRenderer):
         super().__init__()
 
     def simple_image(self, url, text="", title=None):
-        return f"""<img src="{url}" alt="{text}" width="600" border="0"><br>{title or ""}"""
+        return f"""<img src="{html.escape(url)}" alt="{html.escape(text)}" width="600" border="0"><br>{html.escape(title or "")}"""
 
     def youtube(self, url, text="", title=None):
         youtube_match = YOUTUBE_RE.match(url)
@@ -19,7 +19,7 @@ class EmailRenderer(ClubRenderer):
                f'</span></a><br>{html.escape(title or "")}'
 
     def video(self, url, text="", title=None):
-        return f'<video src="{html.escape(url)}" controls muted playsinline>{text}</video><br>{title or ""}'
+        return f'<video src="{html.escape(url)}" controls muted playsinline>{html.escape(text)}</video><br>{html.escape(title or "")}'
 
     def tweet(self, url, text="", title=None):
         return f'<a href="{html.escape(url)}">{html.escape(url)}</a><br>{html.escape(title or "")}'

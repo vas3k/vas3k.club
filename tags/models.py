@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from django.db import models
+from django.db.models import Count
 
 from common.data.colors import COOL_COLORS
 from users.models.user import User
@@ -53,10 +54,9 @@ class Tag(models.Model):
 
     @classmethod
     def tags_with_stats(cls):
-        # to show fancy charts on /people/ page
-        return Tag.objects.filter(is_visible=True).extra({
-            "user_count": "select count(*) from user_tags where user_tags.tag_id = tags.code"
-        })
+        return Tag.objects.filter(is_visible=True).annotate(
+            user_count=Count("user_tags")
+        )
 
 
 class UserTag(models.Model):

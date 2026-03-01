@@ -7,12 +7,24 @@ from django.db.models import Count
 from django.shortcuts import render
 
 from authn.decorators.auth import require_auth
-from common.models import group_by, top
+from common.models import group_by
 from common.pagination import paginate
 from tags.models import Tag
 from users.models.user import User
 
-TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60  # 24 hours
+TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60
+
+
+def _top(queryset, field, skip=None, limit=5):
+    qs = queryset.exclude(**{field: None}).exclude(**{field: ""})
+    if skip:
+        qs = qs.exclude(**{f"{field}__in": skip})
+    return list(
+        qs.values(field)
+          .annotate(count=Count(field))
+          .order_by("-count")
+          .values_list(field, "count")[:limit]
+    )
 
 
 @require_auth
@@ -77,6 +89,7 @@ def people(request):
         cache.set("people_tags_with_stats", tags_with_stats, TAGS_CACHE_TIMEOUT_SECONDS)
 
     active_countries = User.registered_members().filter(country__isnull=False)\
+        .exclude(country="")\
         .values("country")\
         .annotate(country_count=Count("country"))\
         .order_by("-country_count")
@@ -84,10 +97,12 @@ def people(request):
     users_total = users.count()
 
     map_stat_groups = {
-        "💼 Топ компаний": top(users, "company", skip={"-"})[:5],
-        "🌍 Страны": top(users, "country")[:5],
-        "🏰 Города": top(users, "city")[:5],
+        "💼 Топ компаний": _top(users, "company", skip={"-"}),
+        "🌍 Страны": _top(users, "country"),
+        "🏰 Города": _top(users, "city"),
     }
+
+    users_for_map = users.filter(geo__isnull=False)
 
     return render(request, "users/people.html", {
         "people_query": {
@@ -96,8 +111,8 @@ def people(request):
             "tags": tags,
             "filters": filters,
         },
-        "users": users,
         "users_total": users_total,
+        "users_for_map": users_for_map,
         "users_paginated": paginate(request, users, page_size=settings.PEOPLE_PAGE_SIZE),
         "tag_stat_groups": tag_stat_groups,
         "max_tag_user_count": max(tag.user_count for tag in tags_with_stats),

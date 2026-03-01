@@ -1,10 +1,11 @@
 import logging
 from collections import namedtuple
-from typing import Optional
+from typing import Optional, Tuple
 from urllib.parse import urljoin, urlparse
 
 import newspaper
 import requests
+from common.url_security import is_url_safe_for_fetch
 from django.utils.html import strip_tags
 from newspaper import Article, ArticleException
 from requests import RequestException
@@ -49,37 +50,51 @@ def parse_url_preview(url: str) -> Optional[ParsedURL]:
     )
 
 
-def resolve_url(entry_link):
+def resolve_url(entry_link: str) -> Tuple[Optional[str], Optional[str], int]:
     url = str(entry_link)
     content_type = None
     content_length = MAX_PARSABLE_CONTENT_LENGTH + 1  # don't parse null content-types
-    depth = 10
-    while depth > 0:
-        depth -= 1
+
+    for _ in range(10):
+        if not is_url_safe_for_fetch(url):
+            log.warning(f"Blocked URL: {url}")
+            return None, content_type, content_length
 
         try:
-            response = requests.head(url, timeout=DEFAULT_REQUEST_TIMEOUT, verify=False, stream=True)
+            response = requests.head(
+                url, timeout=DEFAULT_REQUEST_TIMEOUT,
+                verify=False, stream=True,
+                allow_redirects=False,
+            )
         except RequestException:
             log.warning(f"Failed to resolve URL: {url}")
             return None, content_type, content_length
 
-        if 300 < response.status_code < 400:
-            url = response.headers["location"]  # follow redirect
+        if 300 <= response.status_code < 400:
+            redirect_url = response.headers.get("location", "")
+            if not urlparse(redirect_url).netloc:
+                redirect_url = urljoin(url, redirect_url)
+            url = redirect_url
         else:
             content_type = response.headers.get("content-type")
             content_length = int(response.headers.get("content-length") or 0)
-            break
+            return url, content_type, content_length
 
-    return url, content_type, content_length
+    return None, content_type, content_length
 
 
 def load_page_safe(url: str) -> str:
+    if not is_url_safe_for_fetch(url):
+        log.warning(f"Blocked page URL: {url}")
+        return ""
+
     try:
         response = requests.get(
             url=url,
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers=DEFAULT_REQUEST_HEADERS,
-            stream=True  # the most important part — stream response to prevent loading everything into memory
+            stream=True,  # the most important part — stream response to prevent loading everything into memory
+            allow_redirects=False,
         )
     except RequestException as ex:
         log.warning(f"Error parsing the page: {url} {ex}")

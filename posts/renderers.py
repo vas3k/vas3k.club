@@ -24,8 +24,8 @@ def render_post(request, post, context=None):
     if request.me:
         comments = Comment.objects_for_user(request.me).filter(post=post).all()  # do not add more joins here! it slows down a lot!
         is_bookmark = PostBookmark.objects.filter(post=post, user=request.me).exists()
-        is_voted = PostVote.objects.filter(post=post, user=request.me).exists()
-        upvoted_at = int(PostVote.objects.filter(post=post, user=request.me).first().created_at.timestamp() * 1000) if is_voted else None
+        vote = PostVote.objects.filter(post=post, user=request.me).first()
+        upvoted_at = int(vote.created_at.timestamp() * 1000) if vote else None
         subscription = PostSubscription.get(request.me, post)
         muted_user_ids = list(UserMuted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True).all())
         user_notes = dict(UserNote.objects.filter(user_from=request.me).values_list("user_to", "text").all()[:100])
@@ -33,7 +33,6 @@ def render_post(request, post, context=None):
         is_collectible_tag_collected = UserTag.objects.filter(tag=collectible_tag, user=request.me).exists() if collectible_tag else False
     else:
         comments = Comment.visible_objects(show_deleted=True).filter(post=post).all()
-        is_voted = False
         is_bookmark = False
         upvoted_at = None
         subscription = None
@@ -60,7 +59,6 @@ def render_post(request, post, context=None):
         "comment_order": comment_order,
         "reply_form": ReplyForm(),
         "is_bookmark": is_bookmark,
-        "is_voted": is_voted,
         "upvoted_at": upvoted_at,
         "subscription": subscription,
         "muted_user_ids": muted_user_ids,

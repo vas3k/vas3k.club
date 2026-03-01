@@ -7,6 +7,8 @@ import requests
 from PIL import Image
 from django.conf import settings
 
+from common.url_security import is_url_safe_for_fetch
+
 log = logging.getLogger(__name__)
 
 
@@ -73,6 +75,10 @@ def upload_image_from_url(url, resize=(192, 192), convert_to="jpg", quality=90):
         return url
 
     if not url:
+        return None
+
+    if not is_url_safe_for_fetch(url):
+        log.warning(f"Blocked image URL: {url}")
         return None
 
     image_name = os.path.basename(urlparse(url).path)

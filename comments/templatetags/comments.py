@@ -68,7 +68,7 @@ def render_comment(context, comment):
         if new_html != comment.html:
             # to not flood into history
             comment.html = new_html
-            comment.save()
+            comment.save(update_fields=["html", "updated_at"])
 
     return mark_safe(comment.html or "")
 

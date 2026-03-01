@@ -3,7 +3,8 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
-from django.db.models import F
+from django.db.models import BigIntegerField, F, OuterRef, Subquery
+from django.db.models.functions import Extract, Round
 from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
@@ -139,14 +140,16 @@ class Comment(models.Model):
 
     @classmethod
     def objects_for_user(cls, user):
-        return cls.visible_objects(show_deleted=True).extra({
-            "is_voted": "select 1 from comment_votes "
-                        "where comment_votes.comment_id = comments.id "
-                        f"and comment_votes.user_id = '{user.id}'",
-            "upvoted_at": "select ROUND(extract(epoch from created_at) * 1000) from comment_votes "
-                          "where comment_votes.comment_id = comments.id "
-                          f"and comment_votes.user_id = '{user.id}'",
-        })
+        vote_qs = CommentVote.objects.filter(comment=OuterRef('pk'), user=user)
+
+        return cls.visible_objects(show_deleted=True).annotate(
+            upvoted_at=Subquery(
+                vote_qs.annotate(
+                    epoch_ms=Round(Extract('created_at', 'epoch') * 1000)
+                ).values('epoch_ms')[:1],
+                output_field=BigIntegerField(),
+            ),
+        )
 
     @classmethod
     def update_post_counters(cls, post, update_activity=True):

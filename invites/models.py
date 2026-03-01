@@ -48,6 +48,7 @@ class Invite(models.Model):
                 if not Invite.objects.filter(code=code).exists():
                     self.code = code
                     break
+                attempt += 1
         return super().save(*args, **kwargs)
 
     @classmethod

@@ -52,7 +52,7 @@
                              :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                              upvote-url="{% url "upvote_post" post.slug %}"
                              retract-vote-url="{% url "retract_post_vote" post.slug %}"
-                             {% if is_voted %}
+                             {% if upvoted_at %}
                                 initial-is-voted
                                 initial-upvote-timestamp={{upvoted_at}}
                              {% endif %}

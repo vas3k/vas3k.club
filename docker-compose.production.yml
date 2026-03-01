@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   club_app: &app
     image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
@@ -32,7 +30,8 @@ services:
       - ./frontend/static:/tmp/static
       - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     ports:
       - "127.0.0.1:8814:8814"
     logging:
@@ -91,7 +90,7 @@ services:
     ports: []
 
   redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:2afba59292f25f5d1af200496db41bea2c6c816b059f57ae74703a50a03a27d0
     container_name: club_redis
     restart: unless-stopped
     networks:

@@ -62,11 +62,20 @@ export default {
         },
         closeToc() {
             this.isOpen = false;
+        },
+        handleClickOutside(event) {
+            if (this.isOpen && !this.$el.contains(event.target)) {
+                this.closeToc();
+            }
         }
     },
     mounted() {
+        document.addEventListener("click", this.handleClickOutside);
         this.currentHeadingIndex = calcActivePosition(this.headlines);
         this.prevScrollPosition = window.scrollY;
+    },
+    beforeDestroy() {
+        document.removeEventListener("click", this.handleClickOutside);
     },
     beforeMount() {
         this.headlines = Array.from(document.querySelectorAll("article.post .text-body h1, article.post .text-body h2, article.post .text-body h3"))

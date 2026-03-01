@@ -5,8 +5,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from authn.decorators.auth import require_auth
-from authn.helpers import set_session_cookie
-from authn.models.session import Session
+from django.conf import settings
+from django_q.tasks import async_task
+
+from authn.models.session import Code
+from notifications.email.users import send_auth_email
+from notifications.telegram.users import notify_user_auth
 from club.exceptions import AccessDenied
 from invites.models import Invite
 from payments.models import Payment
@@ -79,9 +83,17 @@ def activate_invite(request, invite_code):
             "message": "Пожалуйста, введите нормальный адрес почты, чтобы зарегистрироваться."
         })
 
-    # create or find existing user
-    now = datetime.utcnow()
     email = email.lower().strip()
+
+    if request.me and request.me.email == email:
+        club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, request.me)
+        now = datetime.utcnow()
+        invite.used_at = now
+        invite.invited_user = request.me
+        invite.save()
+        return redirect(reverse("profile", args=[request.me.slug]))
+
+    now = datetime.utcnow()
     user, _ = User.objects.get_or_create(
         email=email,
         defaults=dict(
@@ -95,19 +107,14 @@ def activate_invite(request, invite_code):
         ),
     )
 
-    # activate subscription
-    club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, user)
+    code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
+    async_task(send_auth_email, user, code)
+    async_task(notify_user_auth, user, code)
 
-    # expire the invite
-    invite.used_at = now
-    invite.invited_user = user
-    invite.save()
-
-    # log in user
-    session = Session.create_for_user(user)
-    redirect_to = reverse("profile", args=[user.slug])
-    response = redirect(redirect_to)
-    return set_session_cookie(response, user, session)
+    return render(request, "auth/email.html", {
+        "email": user.email,
+        "goto": reverse("show_invite", kwargs={"invite_code": invite_code}),
+    })
 
 
 @require_auth

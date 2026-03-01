@@ -16,9 +16,8 @@ from notifications.digests import generate_daily_digest, generate_weekly_digest
 from users.models.user import User
 
 
-def email_confirm(request, secret, legacy_code=None):
-    # secret is user.id (uuid)
-    user = get_object_or_404(User, id=secret)
+def email_confirm(request, user_id, secret):
+    user = get_object_or_404(User, id=user_id, secret_hash=secret)
     user.is_email_verified = True
     user.save()
 
@@ -150,4 +149,4 @@ def is_valid_telegram_data(data, bot_token):
         hashlib.sha256,
     ).hexdigest()
 
-    return hmac_hash == check_hash
+    return hmac.compare_digest(hmac_hash, check_hash)

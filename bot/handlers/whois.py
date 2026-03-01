@@ -1,3 +1,4 @@
+import html
 from telegram import Update, ParseMode
 from telegram import Chat as TGChat
 from telegram.ext import CallbackContext
@@ -59,7 +60,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         return None
 
     update.message.reply_text(
-        f"""Кажется, это <a href="{user.club_profile_link}">{user.full_name}</a>""",
+        f"""Кажется, это <a href="{user.club_profile_link}">{html.escape(user.full_name)}</a>""",
         parse_mode=ParseMode.HTML,
         quote=True
     )

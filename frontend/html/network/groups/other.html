@@ -9,7 +9,7 @@
                 {% if room.is_visible and room.get_private_url %}
                     <a href="{{ room.get_private_url }}" target="_blank" class="network-channel network-channel-other">
                         <i class="fab fa-telegram"></i>
-                        <span class="network-channel-name">{{ room.title | safe  }}</span>
+                        <span class="network-channel-name">{{ room.title }}</span>
                     </a>
                 {% endif %}
             {% endfor %}

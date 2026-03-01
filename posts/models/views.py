@@ -6,7 +6,6 @@ from django.db import models
 from django.db.models import F
 
 from common.request import parse_ip_address
-from posts.models.post import Post
 from users.models.user import User
 
 
@@ -14,7 +13,7 @@ class PostView(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     user = models.ForeignKey(User, related_name="post_views", db_index=True, null=True, on_delete=models.SET_NULL)
-    post = models.ForeignKey(Post, related_name="viewers", db_index=True, on_delete=models.CASCADE)
+    post = models.ForeignKey("posts.Post", related_name="viewers", db_index=True, on_delete=models.CASCADE)
 
     ipaddress = models.GenericIPAddressField(null=True)
 
