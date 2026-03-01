@@ -52,53 +52,7 @@ class AnticBase:
             "Всё успешно отправлено, сценарий Seele выполнен в точности 📱",
         ],
     }
-    already_send_errors: _MessageTemplate = {
-        "title": "Повторная отправка! 🧐",
-        "message_texts": [
-            "У нас ощущение, что вы уже отправляли этому пользователю 🪛",
-        ],
-    }
-    its_you_errors: _MessageTemplate = {
-        "title": "Всё пошло не так! 🧐",
-        "message_texts": [
-            "Ну и дела!\nПохоже, вы пытаетесь отправить это самому себе, мы так не умеем.",
-        ],
-    }
-    # === inner things
-
-    not_today_errors: _MessageTemplate = {
-        "title": "Ой, это не должно произойти сегодня 📆",
-        "message_texts": [
-            "Подожди чуть-чуть и попробуй ещё раз в нужное время 👁️👁️",
-            "А сегодня можешь почитать пост:\n\n https://vas3k.club/post/random/",
-            "Кажется, все даты решили перепутаться 🤖",
-        ],
-    }
-    global_cooldown_errors: _MessageTemplate = {
-        "title": "Ой! Кто-то это недавно уже использовал 🥺",
-        "message_texts": [
-            "Кто первый встал - того и кнопка 🛴",
-            "Следующий раз нужно быть быстрее 🍎",
-            "Но всегда можно пойти и пообщаться в Баре:\n\n https://vas3k.club/room/bar/chat/",
-        ],
-    }
-    user_cooldown_errors: _MessageTemplate = {
-        "title": "Ой! Кажется, вы это недавно нажимали 🧐",
-        "message_texts": [
-            "Мы бы и рады помочь, но это же кнопочка, мы её не можем контролировать 😳",
-            "Блин, и что делать? О, можно почитать пост:\n\n https://vas3k.club/post/random/",
-            "Похоже, теперь эта кнопочка сломалась. Придётся её чинить 🗜️",
-        ],
-    }
-    no_telegram_errors: _MessageTemplate = {
-        "title": "Мы не смогли доставить посылку 😮",
-        "message_texts": [
-            "Получатель не привязал телеграм. Мы так не играем! 🤥",
-            "Получатель предпочёл скрыть от нас телеграм. Вот и пусть сидит без уведомляшек! 👅",
-            "Возможно, получатель скрылся от мира. По крайней мере, мы не нашли его телеграм 🥷",
-        ],
-    }
-    default_errors: _MessageTemplate = {
+    errors: _MessageTemplate = {
         "title": "Что-то произошло, но мы не знаем, что 🐞",
         "message_texts": [
             "О нет, всё поломалось. Мы к такому не готовились 😳",
@@ -158,19 +112,19 @@ class AnticBase:
                 timeout=cls.duration * DAY,
             )
 
-    # === main methods
-
     @classmethod
-    def is_displayable(
-        cls, type: str, sender: User, recipient: User | None = None
+    def can_send_notification(
+        cls, sender: User, recipient: User | None = None
     ) -> bool:
         if (
-            cls.type != type
-            or not cls._is_today()
+            not cls._is_today()
             or cls._is_global_cooldown_active()
             or cls._is_user_cooldown_active(sender)
             or not sender.is_active_member
         ):
+            return False
+
+        if cls.type == "private" and not recipient:
             return False
 
         if recipient and (
@@ -185,28 +139,14 @@ class AnticBase:
 
     @classmethod
     def handle(cls, sender: User, recipient: User | None = None) -> _Message:
-        if not cls._is_today():
-            return cls.make_message(cls.not_today_errors)
-        if cls._is_global_cooldown_active():
-            return cls.make_message(cls.global_cooldown_errors)
-        if cls._is_user_cooldown_active(sender):
-            return cls.make_message(cls.user_cooldown_errors)
-
-        if cls.type == "private" and not recipient:
-            return cls.make_message(cls.no_telegram_errors)
-        if recipient:
-            if sender.id == recipient.id:
-                return cls.make_message(cls.its_you_errors)
-            if not recipient.telegram_id:
-                return cls.make_message(cls.no_telegram_errors)
-            if cls._is_already_sent(sender, recipient):
-                return cls.make_message(cls.already_send_errors)
+        if not cls.can_send_notification(sender, recipient):
+            return cls.make_message(cls.errors)
 
         try:
             cls.handler(sender, recipient)
         except Exception as exc:
             log.warning(f"Error handling antic: {exc}")
-            return cls.make_message(cls.default_errors)
+            return cls.make_message(cls.errors)
 
         cls._set_global_cooldown()
         cls._set_user_cooldown(sender)
@@ -299,20 +239,6 @@ class NewYearPrivate(AnticBase):
             "Теперь у адресата официально праздничное настроение 📜",
         ],
     }
-    already_send_errors = {
-        "title": "Не отправилось 🎁",
-        "message_texts": [
-            "Этот клубень уже был поздравлен!",
-            "Новый год - круто! Давай поздравим как можно больше людей (этого поздравляли).",
-            "Хм, сюда уже доставляли поздравление. Давай кому-нибудь ещё попробуем!",
-        ],
-    }
-    its_you_errors = {
-        "title": "С Новым годом! 🎄",
-        "message_texts": [
-            "А теперь давай поздравлять не только самого себя!",
-        ],
-    }
 
 
 class ValentineCommon(AnticBase):
@@ -377,20 +303,6 @@ class Valentine(AnticBase):
             "Не забудь, что тебя тоже любят! 🩷",
         ],
     }
-    already_send_errors = {
-        "title": "Ой, валентинка не отправилась 🩶",
-        "message_texts": [
-            "Это потому что у этого человека уже есть поздравление.",
-            "Сюда уже подкидывали валентинку. Давай кому-то другому!",
-            "Похоже, этот человек уже получал валентинку. Можно попробовать другому.",
-        ],
-    }
-    its_you_errors = {
-        "title": "Вау, у тебя новая валентинка! 📩",
-        "message_texts": [
-            "Держи, она от тебя!\nТеперь можешь отправить кому-то ещё :D",
-        ],
-    }
 
 
 class ValentineAnonymous(AnticBase):
@@ -420,19 +332,6 @@ class ValentineAnonymous(AnticBase):
             "И мы передали её абсолютно анонимно 🤿",
             "И пусть адресат теперь гадает, от кого она 💟",
             "Но получатель не узнает, кто её отправил 🕵️🏻‍️",
-        ],
-    }
-    already_send_errors = {
-        "title": "Не отправилось",
-        "message_texts": [
-            "У человека уже есть валентинка от тебя, давай отправим кому-то ещё? 💞",
-            "Две валентинки нейтрализуются, поэтому давай эту кому-то другому 💞",
-        ],
-    }
-    its_you_errors = {
-        "title": "Так не работает",
-        "message_texts": [
-            "Любить себя полезно, но валентинки нужно дарить другим людям 🧐",
         ],
     }
 
@@ -639,20 +538,6 @@ class FriendsDayPrivate(AnticBase):
             "Ты можешь поздравить и остальных своих друзей.\nПогоди, ты что, плачешь?",
         ],
     }
-    already_send_errors = {
-        "title": "Да, он ваш друг 🐰",
-        "message_texts": [
-            "Но он уже и так знает. Давай отправим кому-нибудь ещё?",
-            "Хотя ему об этом уже говорили. Но можно подружиться и с другими!",
-            "И ему уже известно. Давай расскажем другим!",
-        ],
-    }
-    its_you_errors = {
-        "title": "Ну, с самим собой дружить действительно нужно 👀",
-        "message_texts": [
-            "Но давай дружить и с кем-то ещё?",
-        ],
-    }
 
 
 class CatsDay(AnticBase):
@@ -712,19 +597,6 @@ class CatsDayPrivate(AnticBase):
             "Ну вот, скатываемся. Точнее, _СКОТЫВАЕМСЯ_ 🐈",
             "Теперь вам придётся его гладить и кормить несколько раз в день 🐟",
             "Теперь он котик. И ты котик.",
-        ],
-    }
-    already_send_errors = {
-        "title": "Этот человек уже и так котик! 🐱",
-        "message_texts": [
-            "Ты уже называл его котиком. Давай кого-то другого тоже назовём!",
-            "Этот пользователь знает, что он котик, ты ему это рассказал!",
-        ],
-    }
-    its_you_errors = {
-        "title": "Ты - котик",
-        "message_texts": [
-            "Но отправлять уведомляшки можно только другим 😮",
         ],
     }
 
@@ -892,19 +764,6 @@ class WesternChristmasPrivate(AnticBase):
             "Мы передадим его с рождественскими эльфами 🧝🏻",
             "Оно попало прямо под ёлочку 🎁",
             "Что ж, а теперь пора праздновать! 🍾",
-        ],
-    }
-    already_send_errors = {
-        "title": "Поздравление вернулось обратно в мешок ❄️",
-        "message_texts": [
-            "Оказалось, этого человека пошли поздравлять по второму кругу 💫",
-            "Сохраним поздравление для другого адресата, этот уже получал 📧",
-        ],
-    }
-    its_you_errors = {
-        "title": "Что ж, с Рождеством! 🎅🏻",
-        "message_texts": [
-            "Но поздравлять себя - это странно :)",
         ],
     }
 
