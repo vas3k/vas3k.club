@@ -152,7 +152,7 @@ Q_CLUSTER = {
     "name": "vas3k_club",
     "workers": 4,
     "recycle": 500,
-    "timeout": 30,
+    "timeout": 300,
     "compress": True,
     "save_limit": 250,
     "queue_limit": 5000,
