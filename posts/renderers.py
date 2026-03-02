@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
-from comments.models import Comment
+from comments.models import Comment, CommentVote
 from posts.models.post import Post
 from bookmarks.models import PostBookmark
 from posts.models.subscriptions import PostSubscription
@@ -14,15 +14,20 @@ from users.models.notes import UserNote
 
 POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
+COMMENT_DEFERRED_FIELDS = ("ipaddress", "useragent", "url")
+
 
 def render_post(request, post, context=None):
-    # render "raw" newsletters
     if post.type == Post.TYPE_WEEKLY_DIGEST:
         return HttpResponse(post.html)
 
-    # select votes and comments
+    comments = Comment.objects \
+        .filter(post=post, is_visible=True) \
+        .select_related("author") \
+        .defer(*COMMENT_DEFERRED_FIELDS) \
+        .order_by("created_at")
+
     if request.me:
-        comments = Comment.objects_for_user(request.me).filter(post=post).all()  # do not add more joins here! it slows down a lot!
         is_bookmark = PostBookmark.objects.filter(post=post, user=request.me).exists()
         vote = PostVote.objects.filter(post=post, user=request.me).first()
         upvoted_at = int(vote.created_at.timestamp() * 1000) if vote else None
@@ -32,7 +37,6 @@ def render_post(request, post, context=None):
         collectible_tag = Tag.objects.filter(code=post.collectible_tag_code).first() if post.collectible_tag_code else None
         is_collectible_tag_collected = UserTag.objects.filter(tag=collectible_tag, user=request.me).exists() if collectible_tag else False
     else:
-        comments = Comment.visible_objects(show_deleted=True).filter(post=post).all()
         is_bookmark = False
         upvoted_at = None
         subscription = None
@@ -41,14 +45,35 @@ def render_post(request, post, context=None):
         collectible_tag = None
         is_collectible_tag_collected = False
 
-    # order comments
     comment_order = request.GET.get("comment_order") or "-upvotes"
     if comment_order in POSSIBLE_COMMENT_ORDERS:
-        comments = comments.order_by(comment_order, "created_at")  # additionally sort by time to preserve an order
+        comments = comments.order_by(comment_order, "created_at")
 
-    # hide deleted comments for battle (visual junk)
+    # battle hides deleted comments to keep the voting UI clean
     if post.type == Post.TYPE_BATTLE:
         comments = comments.filter(is_deleted=False)
+
+    comments = list(comments)
+
+    # avoid N lazy post lookups: all comments share the same post
+    for comment in comments:
+        comment.post = post
+
+    # fetch votes in one query instead of correlated subquery per comment
+    if request.me:
+        comment_ids = [c.id for c in comments]
+        vote_map = dict(
+            CommentVote.objects.filter(
+                comment_id__in=comment_ids,
+                user=request.me,
+            ).values_list("comment_id", "created_at")
+        )
+        for comment in comments:
+            ts = vote_map.get(comment.id)
+            comment.upvoted_at = int(ts.timestamp() * 1000) if ts else None
+    else:
+        for comment in comments:
+            comment.upvoted_at = None
 
     comment_form = CommentForm(initial={'text': post.comment_template}) if post.comment_template else CommentForm()
     context = {
