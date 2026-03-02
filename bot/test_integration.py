@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import django
 from django.conf import settings
+from django.db import connections
 from django.test import TestCase, override_settings
 
 from bot.main import build_application
@@ -65,6 +66,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
     _application: Application | None
     _event_loop: asyncio.AbstractEventLoop | None
     _stop_event: asyncio.Event | None
+    _thread: threading.Thread | None
 
     def setUp(self):
         super().setUp()
@@ -102,6 +104,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         self._application = None
         self._event_loop = None
         self._stop_event = None
+        self._thread = None
 
     def tearDown(self):
         if self._application and self._event_loop:
@@ -114,6 +117,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
 
             asyncio.run_coroutine_threadsafe(_stop(), self._event_loop).result(timeout=5)
             self._event_loop.call_soon_threadsafe(self._stop_event.set)
+            self._thread.join(timeout=5)
 
         self.close_old_connections_patch.stop()
         self.settings_override.disable()
@@ -145,9 +149,10 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
 
         def _thread_target():
             asyncio.run(_run())
+            connections.close_all()
 
-        thread = threading.Thread(target=_thread_target, daemon=True)
-        thread.start()
+        self._thread = threading.Thread(target=_thread_target, daemon=True)
+        self._thread.start()
         if not started.wait(timeout=5):
             self.fail("Application did not start within 5 seconds")
 
