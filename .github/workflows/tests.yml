@@ -10,7 +10,7 @@ concurrency:
   # For pull requests, cancel all currently-running jobs for this workflow
   # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -27,9 +27,11 @@ jobs:
         with:
           python-version: '3.12'
 
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+
       - name: Install requirements
         run: |
-          pip install --no-cache-dir flake8
+          uv pip install --system flake8
 
       - name: run flake8
         run: |
@@ -69,11 +71,16 @@ jobs:
         with:
           python-version: '3.12'
 
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: "**/Pipfile.lock"
+
       - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: '14'
 
-      - name: ⚡️ Cache webpack build
+      - name: Cache webpack build
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         id: cache-webpack
         with:
@@ -84,7 +91,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-webpack-
 
-      - name: 🏗 Webpack build
+      - name: Webpack build
         if: steps.cache-webpack.outputs.cache-hit != 'true'
         working-directory: ./frontend
         run: |
@@ -93,24 +100,11 @@ jobs:
           npm ci
           npm run build
 
-      - name: ⚡️ Cache python virtualenv
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
-        id: cache-venv
-        with:
-          path: |
-            venv
-          key: ${{ runner.os }}-venv-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ steps.setup-python.outputs.python-version }}-
-
       - name: Install pip dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
         run: |
-          python -m venv venv
-          . venv/bin/activate
-          pip install --upgrade pip pipenv
+          uv pip install --system pipenv
           pipenv requirements --dev > requirements.txt
-          pip install --ignore-installed -r requirements.txt
+          uv pip install --system -r requirements.txt
 
       - name: Run tests
         env:
@@ -123,5 +117,4 @@ jobs:
           PYTHONUNBUFFERED: 1
           TESTS_RUN: da
         run: |
-          . venv/bin/activate
           make test-ci
