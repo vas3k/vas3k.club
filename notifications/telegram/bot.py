@@ -44,7 +44,4 @@ class SyncBot:
         return f"<SyncBot({status})>"
 
 
-if not settings.TELEGRAM_TOKEN:
-    raise RuntimeError("TELEGRAM_TOKEN is not set. Configure it in .env or environment variables.")
-
-bot = SyncBot(Bot(token=settings.TELEGRAM_TOKEN))
+bot = SyncBot(Bot(token=settings.TELEGRAM_TOKEN)) if settings.TELEGRAM_TOKEN else None

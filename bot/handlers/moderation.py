@@ -28,7 +28,9 @@ async def approve_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
-        await update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}")
+        await update.effective_chat.send_message(
+            f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}"
+        )
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
@@ -78,7 +80,9 @@ async def forgive_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
-        await update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}")
+        await update.effective_chat.send_message(
+            f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}"
+        )
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
@@ -130,7 +134,9 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
 
     post = Post.objects.get(id=post_id)
     if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
-        await update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}")
+        await update.effective_chat.send_message(
+            f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}"
+        )
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
