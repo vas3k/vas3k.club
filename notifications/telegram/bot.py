@@ -36,7 +36,9 @@ class SyncBot:
         self._ensure_initialized()
         attr = getattr(self._bot, name)
         if asyncio.iscoroutinefunction(attr):
-            return async_to_sync(attr)
+            wrapped = async_to_sync(attr)
+            setattr(self, name, wrapped)
+            return wrapped
         return attr
 
     def __repr__(self):

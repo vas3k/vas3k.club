@@ -44,10 +44,9 @@ async def private_message(update: Update, context: CallbackContext) -> None:
         return await llm.llm_response(update, context)
 
 
-def build_application() -> Application:
+def build_application(base_url: str | None = None) -> Application:
     """Build Application with all handlers registered. Does not start polling/webhook."""
     builder = Application.builder().token(settings.TELEGRAM_TOKEN)
-    base_url = getattr(settings, 'TELEGRAM_BASE_URL', None)
     if base_url:
         builder = builder.base_url(base_url)
     application = builder.build()

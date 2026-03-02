@@ -1,5 +1,5 @@
-import cgi
-import io
+import email.parser
+import email.policy
 from dataclasses import dataclass
 import json
 import http.server
@@ -94,20 +94,13 @@ class MockTelegramHandler(http.server.BaseHTTPRequestHandler):
         return dict(parse_qsl(body.decode("utf-8"), keep_blank_values=True))
 
     def _parse_multipart(self, body: bytes, content_type: str) -> dict:
-        environ = {
-            "REQUEST_METHOD": "POST",
-            "CONTENT_TYPE": content_type,
-            "CONTENT_LENGTH": str(len(body)),
-        }
-        fs = cgi.FieldStorage(
-            fp=io.BytesIO(body),
-            environ=environ,
-            keep_blank_values=True,
-        )
+        raw = f"Content-Type: {content_type}\r\n\r\n".encode() + body
+        msg = email.parser.BytesParser(policy=email.policy.HTTP).parsebytes(raw)
         result = {}
-        for key in fs.keys():
-            item = fs[key]
-            result[key] = item[0].value if isinstance(item, list) else item.value
+        for part in msg.iter_parts():
+            name = part.get_param("name", header="content-disposition")
+            if name:
+                result[name] = part.get_content()
         return result
 
     def do_GET(self):
