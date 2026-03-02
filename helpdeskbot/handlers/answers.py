@@ -1,6 +1,6 @@
 import logging
 
-from telegram import Update
+from telegram import Update, MessageOrigin
 from telegram.ext import CallbackContext
 
 from bot.decorators import ensure_fresh_db_connection
@@ -16,24 +16,26 @@ rooms = {r.chat_id: r for r in get_rooms()}
 
 
 @ensure_fresh_db_connection
-def on_reply_message(update: Update, context: CallbackContext) -> None:
+async def on_reply_message(update: Update, context: CallbackContext) -> None:
     if not update.message or not update.message.reply_to_message or not update.message.text:
         return None
 
     reply_to = update.message.reply_to_message
 
-    if reply_to.forward_from_chat:
-        if reply_to.forward_from_chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
-            return handle_answer_from_channel(update)
-    else:
-        if str(reply_to.chat.id) in rooms.keys():
-            return handle_answer_from_room_chat(update)
+    origin = reply_to.forward_origin
+    if origin is not None and origin.type == MessageOrigin.CHANNEL \
+            and origin.chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID):
+        return await handle_answer_from_channel(update)
+
+    if origin is None and str(reply_to.chat.id) in rooms.keys():
+        return await handle_answer_from_room_chat(update)
 
 
-def handle_answer_from_channel(update: Update) -> None:
-    channel_msg_id = update.message.reply_to_message.forward_from_message_id
+async def handle_answer_from_channel(update: Update) -> None:
+    origin = update.message.reply_to_message.forward_origin
+    channel_msg_id = origin.message_id
     if not channel_msg_id:
-        log.error(f"forward_from_message_id is null")
+        log.error(f"forward_origin.message_id is null")
         return None
 
     question = Question.objects \
@@ -50,7 +52,7 @@ def handle_answer_from_channel(update: Update) -> None:
     notify_user_about_answer(update, question)
 
 
-def handle_answer_from_room_chat(update: Update) -> None:
+async def handle_answer_from_room_chat(update: Update) -> None:
     room_chat_msg_id = update.message.reply_to_message.message_id
     if not room_chat_msg_id:
         log.error(f"reply_to_message.message_id is null")

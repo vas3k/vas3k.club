@@ -1,11 +1,16 @@
+import logging
 from collections import namedtuple
 
-import telegram
+from telegram import InlineKeyboardMarkup, LinkPreviewOptions, ReplyParameters
+from telegram.constants import ParseMode
+from telegram.error import TelegramError
 from django.conf import settings
 from django.template import loader
 
 from common.regexp import IMAGE_RE
-from notifications.telegram.bot import bot, log
+from notifications.telegram.bot import bot
+
+log = logging.getLogger(__name__)
 
 Chat = namedtuple("Chat", ["id"])
 
@@ -23,11 +28,13 @@ PHOTO_TEXT_LIMIT = 1024
 def send_telegram_message(
     chat: Chat,
     text: str,
-    parse_mode: str = telegram.ParseMode.HTML,
-    reply_markup: telegram.InlineKeyboardMarkup | None = None,
+    parse_mode: str = ParseMode.HTML,
+    reply_markup: InlineKeyboardMarkup | None = None,
     reply_to_message_id: int | None = None,
     disable_preview: bool = True,
 ):
+    link_preview_options = LinkPreviewOptions(is_disabled=disable_preview)
+    reply_parameters = ReplyParameters(message_id=reply_to_message_id) if reply_to_message_id else None
     if not bot:
         log.warning("No telegram token. Skipping")
         return
@@ -48,18 +55,18 @@ def send_telegram_message(
                 caption=text[:PHOTO_TEXT_LIMIT],
                 parse_mode=parse_mode,
                 reply_markup=reply_markup,
-                reply_to_message_id=reply_to_message_id,
+                reply_parameters=reply_parameters,
             )
         else:
             return bot.send_message(
                 chat_id=chat.id,
                 text=text[:NORMAL_TEXT_LIMIT],
                 parse_mode=parse_mode,
-                disable_web_page_preview=disable_preview,
+                link_preview_options=link_preview_options,
                 reply_markup=reply_markup,
-                reply_to_message_id=reply_to_message_id,
+                reply_parameters=reply_parameters,
             )
-    except telegram.error.TelegramError as ex:
+    except TelegramError as ex:
         log.warning(f"Telegram error: {ex}")
 
 
@@ -67,7 +74,7 @@ def send_telegram_image(
     chat: Chat,
     image_url: str,
     text: str,
-    parse_mode: str = telegram.ParseMode.HTML,
+    parse_mode: str = ParseMode.HTML,
 ):
     if not bot:
         log.warning("No telegram token. Skipping")
@@ -82,7 +89,7 @@ def send_telegram_image(
             caption=text[:PHOTO_TEXT_LIMIT],
             parse_mode=parse_mode,
         )
-    except telegram.error.TelegramError as ex:
+    except TelegramError as ex:
         log.warning(f"Telegram error: {ex}")
 
 

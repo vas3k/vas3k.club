@@ -7,6 +7,7 @@ import sys
 import django
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "club.settings")
+os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 django.setup()
 # THE END
 
@@ -15,14 +16,15 @@ from helpdeskbot.handlers.question import update_discussion_message_id, Question
 from helpdeskbot.handlers.answers import on_reply_message
 
 from django.conf import settings
-from telegram import Update, ParseMode
-from telegram.ext import Updater, CommandHandler, CallbackContext, Filters, MessageHandler
+from telegram import Update, MessageOrigin
+from telegram.constants import ParseMode
+from telegram.ext import Application, CommandHandler, CallbackContext, filters, MessageHandler
 
 log = logging.getLogger(__name__)
 
 
-def on_help_command(update: Update, context: CallbackContext) -> None:
-    update.effective_chat.send_message(
+async def on_help_command(update: Update, context: CallbackContext) -> None:
+    await update.effective_chat.send_message(
         "🤔 <b>Я бот Вастрик Справочной.</b>\n\n"
         "Через меня задать вопрос и получить ответы от других членов коммьюнити.\n\n\n"
         "Список команд:\n\n"
@@ -32,48 +34,36 @@ def on_help_command(update: Update, context: CallbackContext) -> None:
     )
 
 
-def on_telegram_admin_bot_message(update: Update, context: CallbackContext) -> None:
+async def on_telegram_admin_bot_message(update: Update, context: CallbackContext) -> None:
     if not update.message:
         return None
 
     message = update.message
+    origin = message.forward_origin
     if message.chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID) \
-        and message.forward_from_chat \
-        and message.forward_from_chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID) \
-        and message.forward_from_message_id:
-        update_discussion_message_id(update)
+        and origin is not None and origin.type == MessageOrigin.CHANNEL \
+        and origin.chat.id == int(config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID) \
+        and origin.message_id:
+        await update_discussion_message_id(update)
 
 
 def main() -> None:
-    # Initialize telegram
-    updater = Updater(config.TELEGRAM_HELP_DESK_BOT_TOKEN, use_context=True)
+    application = Application.builder().token(config.TELEGRAM_HELP_DESK_BOT_TOKEN).build()
 
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    application.add_handler(CommandHandler("help", on_help_command))
+    application.add_handler(QuestionHandler("start"))
+    application.add_handler(MessageHandler(filters.REPLY & ~filters.COMMAND, on_reply_message))
+    application.add_handler(MessageHandler(filters.User(config.TELEGRAM_ADMIN_BOT_ID), on_telegram_admin_bot_message))
 
-    # Set handlers
-    dispatcher.add_handler(CommandHandler("help", on_help_command))
-    dispatcher.add_handler(QuestionHandler("start"))
-    dispatcher.add_handler(MessageHandler(Filters.reply & ~Filters.command, on_reply_message))
-    dispatcher.add_handler(MessageHandler(Filters.user(config.TELEGRAM_ADMIN_BOT_ID), on_telegram_admin_bot_message))
-
-    # Start the bot
     if settings.DEBUG:
-        updater.start_polling()
-        # ^ polling is useful for development since you don't need to expose webhook endpoints
+        application.run_polling()
     else:
-        updater.start_webhook(
+        application.run_webhook(
             listen=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_HOST,
             port=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_PORT,
-            url_path=config.TELEGRAM_HELP_DESK_BOT_TOKEN
+            url_path=config.TELEGRAM_HELP_DESK_BOT_TOKEN,
+            webhook_url=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN,
         )
-        log.info(f"Set webhook: {config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN}")
-        updater.bot.set_webhook(
-            url=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN
-        )
-
-    # Wait all threads
-    updater.idle()
 
 
 if __name__ == '__main__':

@@ -1,26 +1,26 @@
+import asyncio
 import json
-import logging
+import os
 import time
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from unittest.mock import patch, MagicMock
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "club.settings")
+os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+
 import django
-from django.test import TestCase
+django.setup()
+
+from django.test import TransactionTestCase
 from telegram import Update, Message, User as TgUser, Chat as TgChat
-import telegram
-from telegram.ext import CallbackContext
 
 from bot.handlers.llm import llm_response
 from notifications.telegram.tests import BaseTelegramTest, ExpectedRequest, Request
 from users.models.user import User
 
-django.setup()
 
-log = logging.getLogger(__name__)
-
-
-class LLMResponseTest(BaseTelegramTest, TestCase):
+class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
     """Test the llm_response handler with mock Telegram server"""
 
     tags = {"telegram", "telegram_bot", "telegram_handler"}
@@ -38,8 +38,8 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
 
     CHAT_ACTION_RESPONSE = json.dumps({"ok": True, "result": True})
 
-    SEND_MESSAGE_PATH = f"/{BaseTelegramTest.TOKEN}/sendMessage"
-    SEND_CHAT_ACTION_PATH = f"/{BaseTelegramTest.TOKEN}/sendChatAction"
+    SEND_MESSAGE_PATH = f"/bot{BaseTelegramTest.TOKEN}/sendMessage"
+    SEND_CHAT_ACTION_PATH = f"/bot{BaseTelegramTest.TOKEN}/sendChatAction"
 
     def setUp(self):
         super().setUp()
@@ -56,16 +56,14 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
 
-        # Prevent ensure_fresh_db_connection from closing the test DB connection
         self.close_old_connections_patch = patch(
             "bot.decorators.close_old_connections"
         )
         self.close_old_connections_patch.start()
 
     def tearDown(self):
-        super().tearDown()
-        self.test_user.delete()
         self.close_old_connections_patch.stop()
+        super().tearDown()
 
     def _create_update(
         self, message_text: str, reply_to_text: Optional[str] = None
@@ -75,26 +73,26 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
         tg_user = TgUser(id=telegram_id, is_bot=False, first_name="Test")
         tg_chat = TgChat(id=12345, type="private")
 
+        reply_to_message = None
+        if reply_to_text:
+            reply_to_message = Message(
+                message_id=0,
+                date=datetime.now(timezone.utc),
+                chat=tg_chat,
+                text=reply_to_text,
+                from_user=TgUser(id=6789, is_bot=False, first_name="First"),
+            )
+            reply_to_message.set_bot(self.sync_bot.bot)
+
         message = Message(
             message_id=1,
-            date=int(time.time()),
+            date=datetime.now(timezone.utc),
             chat=tg_chat,
             from_user=tg_user,
             text=message_text,
-            bot=self.bot,
+            reply_to_message=reply_to_message,
         )
-
-        if reply_to_text:
-            reply_message = Message(
-                message_id=0,
-                date=int(time.time()),
-                chat=tg_chat,
-                text=reply_to_text,
-                bot=self.bot,
-                from_user=telegram.User(id=6789, is_bot=False, first_name="First"),
-            )
-            message.reply_to_message = reply_message
-
+        message.set_bot(self.sync_bot.bot)
         update = Update(update_id=1, message=message)
         return update
 
@@ -104,8 +102,8 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
         mock_ask_assistant.return_value = ["This is a test response"]
 
         update = self._create_update("Hello bot")
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot  # Get the mocked bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
         self.server.expect_requests(
             [
@@ -128,8 +126,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
                             "chat_id": "12345",
                             "text": "This is a test response",
                             "parse_mode": "HTML",
-                            "disable_web_page_preview": "True",
-                            "disable_notification": "False",
+                            "link_preview_options": '{"is_disabled": true}',
                         },
                     ),
                     self.RESPONSE,
@@ -137,7 +134,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             ]
         )
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         mock_ask_assistant.assert_called_once()
         call_args = mock_ask_assistant.call_args[0][0]
@@ -152,8 +149,8 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
         update = self._create_update(
             "What about this?", reply_to_text="Previous message"
         )
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
         self.server.expect_requests(
             [
@@ -176,8 +173,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
                             "chat_id": "12345",
                             "text": "Replied to previous message",
                             "parse_mode": "HTML",
-                            "disable_web_page_preview": "True",
-                            "disable_notification": "False",
+                            "link_preview_options": '{"is_disabled": true}',
                         },
                     ),
                     self.RESPONSE,
@@ -185,7 +181,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             ]
         )
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         call_args = mock_ask_assistant.call_args[0][0]
         assert "Previous message" in call_args
@@ -200,8 +196,8 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
         self.test_user.save()
 
         update = self._create_update("Hello bot")
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
         self.server.expect_requests(
             [
@@ -212,8 +208,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
                         {
                             "chat_id": "12345",
                             "text": "🙈 Я отвечаю только чувакам с активной подпиской в Клубе. Иди продлевай! https://vas3k.club/user/me/",
-                            "disable_web_page_preview": "True",
-                            "disable_notification": "False",
+                            "link_preview_options": '{"is_disabled": true}',
                         },
                     ),
                     self.RESPONSE,
@@ -221,7 +216,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             ]
         )
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         # Should NOT call assistant for inactive user
         mock_ask_assistant.assert_not_called()
@@ -233,8 +228,8 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
         mock_rate_limited.return_value = True
 
         update = self._create_update("Hello bot")
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
         self.server.expect_requests(
             [
@@ -256,7 +251,6 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
                         {
                             "chat_id": "12345",
                             "text": "Чот я устал отвечать на вопросы... давай потом",
-                            "disable_notification": "False",
                         },
                     ),
                     self.RESPONSE,
@@ -264,7 +258,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             ]
         )
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         mock_ask_assistant.assert_not_called()
 
@@ -279,16 +273,16 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
 
         message = Message(
             message_id=1,
-            date=int(time.time()),
+            date=datetime.now(timezone.utc),
             chat=tg_chat,
             from_user=tg_user,
             caption="Image caption text",
-            bot=self.bot,
         )
+        message.set_bot(self.sync_bot.bot)
 
         update = Update(update_id=1, message=message)
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
         self.server.expect_requests(
             [
@@ -311,8 +305,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
                             "chat_id": "12345",
                             "text": "Response to caption",
                             "parse_mode": "HTML",
-                            "disable_web_page_preview": "True",
-                            "disable_notification": "False",
+                            "link_preview_options": '{"is_disabled": true}',
                         },
                     ),
                     self.RESPONSE,
@@ -320,7 +313,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             ]
         )
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         mock_ask_assistant.assert_called_once()
         call_args = mock_ask_assistant.call_args[0][0]
@@ -335,17 +328,17 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
 
         message = Message(
             message_id=1,
-            date=int(time.time()),
+            date=datetime.now(timezone.utc),
             chat=tg_chat,
             from_user=tg_user,
-            bot=self.bot,
         )
+        message.set_bot(self.sync_bot.bot)
 
         update = Update(update_id=1, message=message)
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         mock_ask_assistant.assert_not_called()
 
@@ -358,8 +351,8 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             "Third paragraph",
         ]
         update = self._create_update("Tell me a story")
-        context = MagicMock(spec=CallbackContext)
-        context.bot = self.bot
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
 
         self.server.expect_requests(
             [
@@ -382,8 +375,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
                             "chat_id": "12345",
                             "text": "First paragraph\n\nSecond paragraph\n\nThird paragraph",
                             "parse_mode": "HTML",
-                            "disable_web_page_preview": "True",
-                            "disable_notification": "False",
+                            "link_preview_options": '{"is_disabled": true}',
                         },
                     ),
                     self.RESPONSE,
@@ -391,6 +383,6 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
             ]
         )
 
-        llm_response(update, context)
+        asyncio.run(llm_response(update, context))
 
         mock_ask_assistant.assert_called_once()

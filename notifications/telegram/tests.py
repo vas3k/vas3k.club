@@ -1,17 +1,22 @@
+import cgi
+import io
 from dataclasses import dataclass
 import json
 import http.server
-import logging
+
 import socketserver
 import threading
 import time
 from typing import Any, Protocol
 from unittest.mock import patch
+from urllib.parse import parse_qs
+
+from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 
 import django
 from django.test import TestCase
-import telegram
 
+from notifications.telegram.bot import SyncBot
 from notifications.telegram.common import (
     send_telegram_message,
     send_telegram_image,
@@ -19,7 +24,15 @@ from notifications.telegram.common import (
 )
 django.setup()
 
-log = logging.getLogger(__name__)
+GET_ME_RESPONSE = json.dumps({
+    "ok": True,
+    "result": {
+        "id": 987654321,
+        "is_bot": True,
+        "first_name": "TestBot",
+        "username": "test_bot",
+    },
+})
 
 
 @dataclass
@@ -51,9 +64,6 @@ class MockTelegramHandler(http.server.BaseHTTPRequestHandler):
                 self._send_json(expected.response)
                 return
 
-        # Unmatched request — return generic OK to keep clients running.
-        # check_requests() will still catch missing expected requests.
-        log.warning(f"Unmatched request (no expected match): {request}")
         self._send_json('{"ok": true, "result": []}')
 
     def _send_json(self, body):
@@ -67,13 +77,50 @@ class MockTelegramHandler(http.server.BaseHTTPRequestHandler):
         body = self.rfile.read(content_length)
         body_str = body.decode("utf-8") if body else ""
 
+        content_type = self.headers.get("Content-Type", "")
+
+        if "application/json" in content_type:
+            parsed_body = json.loads(body_str)
+        elif "multipart/form-data" in content_type:
+            # httpx sends multipart for requests with files; for simple
+            # form fields we extract them from the multipart stream.
+            parsed_body = self._parse_multipart(body, content_type)
+        else:
+            # httpx in python-telegram-bot v22 sends application/x-www-form-urlencoded
+            parsed_body = {}
+            if body_str:
+                qs = parse_qs(body_str, keep_blank_values=True)
+                for k, v in qs.items():
+                    parsed_body[k] = v[0] if len(v) == 1 else v
+
         request = Request(
             path=self.path,
             method=self.command,
-            body=json.loads(body_str),
+            body=parsed_body,
         )
 
         self._do_handle(request)
+
+    def _parse_multipart(self, body: bytes, content_type: str) -> dict:
+        """Minimal multipart parser for test purposes."""
+        environ = {
+            "REQUEST_METHOD": "POST",
+            "CONTENT_TYPE": content_type,
+            "CONTENT_LENGTH": str(len(body)),
+        }
+        fs = cgi.FieldStorage(
+            fp=io.BytesIO(body),
+            environ=environ,
+            keep_blank_values=True,
+        )
+        result = {}
+        for key in fs.keys():
+            item = fs[key]
+            if isinstance(item, list):
+                result[key] = item[0].value
+            else:
+                result[key] = item.value
+        return result
 
     def do_GET(self):
         request = Request(
@@ -94,7 +141,7 @@ class MockTelegramHandler(http.server.BaseHTTPRequestHandler):
 
 class TelegramTestCaseProtocol(Protocol):
     server: "MockTelegramServer"
-    bot: telegram.Bot
+    sync_bot: SyncBot
     patcher: Any
 
     def setUp(self) -> None: ...
@@ -139,8 +186,9 @@ class BaseTelegramTest:
     tags = ["telegram"]
 
     TOKEN = "123456789:ABCDefGhijklmnOpqrstuvWxyzAbcdefghijk"
-    SEND_MESSAGE_PATH = f"/{TOKEN}/sendMessage"
-    SEND_PHOTO_PATH = f"/{TOKEN}/sendPhoto"
+    GET_ME_PATH = f"/bot{TOKEN}/getMe"
+    SEND_MESSAGE_PATH = f"/bot{TOKEN}/sendMessage"
+    SEND_PHOTO_PATH = f"/bot{TOKEN}/sendPhoto"
 
     def setUp(self: TelegramTestCaseProtocol):
         self.server = MockTelegramServer(
@@ -151,16 +199,26 @@ class BaseTelegramTest:
 
         server_port = self.server.server_address[1]
         server_thread = threading.Thread(target=self.server.serve_forever, daemon=True)
-        server_thread.daemon = True
         server_thread.start()
 
-        # Create a real bot that points to our test server
-        # Use a valid token format to pass validation
-        self.bot = telegram.Bot(
-            base_url=f"http://127.0.0.1:{server_port}/",
-            token=SendTelegramMessageTest.TOKEN,
+        self.sync_bot = SyncBot(
+            Bot(
+                token=BaseTelegramTest.TOKEN,
+                base_url=f"http://127.0.0.1:{server_port}/bot",
+            )
         )
-        self.patcher = patch("notifications.telegram.common.bot", self.bot)
+
+        self.server.expect_requests([
+            ExpectedRequest(
+                Request("POST", BaseTelegramTest.GET_ME_PATH, {}),
+                GET_ME_RESPONSE,
+            ),
+        ])
+        _ = self.sync_bot.bot
+        self.server.wait_for_completion(timeout=5)
+        self.server.remaining_expected_requests = None
+
+        self.patcher = patch("notifications.telegram.common.bot", self.sync_bot)
         self.patcher.start()
 
         super().setUp()
@@ -178,14 +236,13 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
     MESSAGE_BODY_TEMPLATE = {
         "chat_id": "12345",
         "parse_mode": "HTML",
-        "disable_web_page_preview": "True",
-        "disable_notification": "False",
+        "link_preview_options": '{"is_disabled": true}',
     }
 
     MESSAGE_BODY_TEMPLATE_WITH_PREVIEW = {
         k: v
         for k, v in MESSAGE_BODY_TEMPLATE.items()
-        if k != "disable_web_page_preview"
+        if k != "link_preview_options"
     }
 
     RESPONSE = json.dumps(
@@ -285,7 +342,7 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
                         {
                             **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE,
                             "text": text,
-                            "parse_mode": telegram.ParseMode.MARKDOWN,
+                            "parse_mode": "Markdown",
                         },
                     ),
                     SendTelegramMessageTest.RESPONSE,
@@ -294,7 +351,7 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
         )
 
         send_telegram_message(
-            self.test_chat, text, parse_mode=telegram.ParseMode.MARKDOWN
+            self.test_chat, text, parse_mode="Markdown"
         )
 
     def test_send_telegram_message_enable_preview(self):
@@ -309,6 +366,7 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
                         SendTelegramMessageTest.SEND_MESSAGE_PATH,
                         {
                             **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE_WITH_PREVIEW,
+                            "link_preview_options": '{"is_disabled": false}',
                             "text": text,
                         },
                     ),
@@ -332,7 +390,7 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
                         {
                             **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE,
                             "text": text,
-                            "reply_to_message_id": "999",
+                            "reply_parameters": '{"message_id": 999}',
                         },
                     ),
                     SendTelegramMessageTest.RESPONSE,
@@ -346,8 +404,8 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
         """Test that reply_markup is sent in the request"""
         text = "Hello with buttons"
         # Create a simple inline keyboard
-        keyboard = telegram.InlineKeyboardMarkup(
-            [[telegram.InlineKeyboardButton(text="Click me", callback_data="test")]]
+        keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton(text="Click me", callback_data="test")]]
         )
 
         self.server.expect_requests(
@@ -359,7 +417,7 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
                         {
                             **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE,
                             "text": text,
-                            "reply_markup": '{"inline_keyboard": [[{"text": "Click me", "callback_data": "test"}]]}',
+                            "reply_markup": '{"inline_keyboard": [[{"callback_data": "test", "text": "Click me"}]]}',
                         },
                     ),
                     SendTelegramMessageTest.RESPONSE,
@@ -433,7 +491,7 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
                             **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE_WITH_PREVIEW,
                             "photo": image_url,
                             "caption": caption,
-                            "parse_mode": telegram.ParseMode.MARKDOWN,
+                            "parse_mode": "Markdown",
                         },
                     ),
                     SendTelegramMessageTest.RESPONSE,
@@ -442,5 +500,5 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
         )
 
         send_telegram_image(
-            self.test_chat, image_url, caption, parse_mode=telegram.ParseMode.MARKDOWN
+            self.test_chat, image_url, caption, parse_mode="Markdown"
         )

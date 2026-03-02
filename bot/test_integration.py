@@ -1,13 +1,7 @@
-"""
-Integration tests for the Telegram bot.
-
-Uses a mock Telegram API server (BaseTelegramTest) with real bot main(),
-real Update objects, and actual HTTP requests to the webhook server.
-"""
-
-import contextlib
+import asyncio
 import json
 import logging
+import socket
 import threading
 import time
 from datetime import datetime, timedelta, timezone
@@ -17,17 +11,16 @@ from unittest.mock import patch
 import django
 from django.conf import settings
 from django.test import TestCase, override_settings
-import django.db
 
-from bot.main import start_server, Server
+from bot.main import build_application
 import bot.config
 
 django.setup()
 
 import requests
 import urllib3
-import telegram
-from telegram import Update, Message, User as TgUser, Chat as TgChat
+from telegram import Update, Message, User as TgUser, Chat as TgChat, MessageEntity
+from telegram.ext import Application
 
 from notifications.telegram.tests import BaseTelegramTest, ExpectedRequest, Request
 from users.models.user import User
@@ -73,13 +66,14 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
 
     SET_WEBHOOK_RESPONSE = json.dumps({"ok": True, "result": True})
 
-    bot_server: Server | None
+    _application: Application | None
+    _event_loop: asyncio.AbstractEventLoop | None
 
     def setUp(self):
         super().setUp()
 
         server_port = self.server.server_address[1]
-        telegram_base_url = f"http://127.0.0.1:{server_port}/"
+        telegram_base_url = f"http://127.0.0.1:{server_port}/bot"
 
         now = datetime.now(timezone.utc)
         self.test_user = User.objects.create(
@@ -108,19 +102,55 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         )
         self.settings_override.enable()
 
-        self.bot_server = None
+        self._application = None
+        self._event_loop = None
 
     def tearDown(self):
-        if self.bot_server:
-            self.bot_server.stop()
+        if self._application and self._event_loop:
+            async def _stop():
+                if self._application.updater and self._application.updater.running:
+                    await self._application.updater.stop()
+                if self._application.running:
+                    await self._application.stop()
+                    await self._application.shutdown()
 
-        self.test_user.delete()
+            asyncio.run_coroutine_threadsafe(_stop(), self._event_loop).result(timeout=5)
+
         self.close_old_connections_patch.stop()
         self.settings_override.disable()
 
-        # Shut down bot_server first, then the mock API (in super()),
-        # otherwise the polling bot keeps hitting a dead server
         super().tearDown()
+
+    def _start_application_in_thread(self, application, mode="webhook"):
+        """Start the application in a background thread using non-blocking API."""
+        started = threading.Event()
+
+        async def _run():
+            self._event_loop = asyncio.get_running_loop()
+            await application.initialize()
+            await application.start()
+
+            if mode == "webhook":
+                await application.updater.start_webhook(
+                    listen=settings.TELEGRAM_BOT_WEBHOOK_HOST,
+                    port=settings.TELEGRAM_BOT_WEBHOOK_PORT,
+                    url_path=settings.TELEGRAM_TOKEN,
+                    webhook_url=settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN,
+                )
+            else:
+                await application.updater.start_polling()
+
+            started.set()
+            # Keep the loop running until stopped
+            while application.running:
+                await asyncio.sleep(0.1)
+
+        def _thread_target():
+            asyncio.run(_run())
+
+        thread = threading.Thread(target=_thread_target, daemon=True)
+        thread.start()
+        started.wait(timeout=5)
 
     def _create_update(
         self, message_text: str, reply_to_text: Optional[str] = None
@@ -129,35 +159,45 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         tg_user = TgUser(id=telegram_id, is_bot=False, first_name="Test")
         tg_chat = TgChat(id=12345, type="private")
 
+        reply_to_message = None
+        if reply_to_text:
+            reply_to_message = Message(
+                message_id=0,
+                date=datetime.now(timezone.utc),
+                chat=tg_chat,
+                text=reply_to_text,
+                from_user=TgUser(id=6789, is_bot=False, first_name="First"),
+            )
+
         message = Message(
             message_id=1,
-            date=int(time.time()),
+            date=datetime.now(timezone.utc),
             chat=tg_chat,
             from_user=tg_user,
             text=message_text,
-            bot=self.bot,
+            reply_to_message=reply_to_message,
         )
 
-        if reply_to_text:
-            reply_message = Message(
-                message_id=0,
-                date=int(time.time()),
-                chat=tg_chat,
-                text=reply_to_text,
-                bot=self.bot,
-                from_user=telegram.User(id=6789, is_bot=False, first_name="First"),
-            )
-            message.reply_to_message = reply_message
-
-        update = Update(update_id=1, message=message, entities=123)
+        update = Update(update_id=1, message=message)
         return update
 
     def _create_command_update(self, cmd="/help") -> Update:
-        update = self._create_update(cmd)
-        assert isinstance(update.message, Message)
-        update.message.entities.append(
-            telegram.MessageEntity(type="bot_command", offset=0, length=len(cmd))
+        telegram_id = int(self.test_user.telegram_id or "")
+        tg_user = TgUser(id=telegram_id, is_bot=False, first_name="Test")
+        tg_chat = TgChat(id=12345, type="private")
+
+        message = Message(
+            message_id=1,
+            date=datetime.now(timezone.utc),
+            chat=tg_chat,
+            from_user=tg_user,
+            text=cmd,
+            entities=(
+                MessageEntity(type=MessageEntity.BOT_COMMAND, offset=0, length=len(cmd)),
+            ),
         )
+
+        update = Update(update_id=1, message=message)
         return update
 
     def _send_webhook_update(self, update: Update) -> requests.Response:
@@ -169,89 +209,71 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         ))
         return session.post(webhook_url, json=update.to_dict(), timeout=5)
 
-    @override_settings(DEBUG=False)
     def test_webhook_help_command(self):
-        SEND_MESSAGE_PATH = f"/{self.TELEGRAM_TOKEN_VALUE}/sendMessage"
+        GET_ME_PATH = f"/bot{self.TELEGRAM_TOKEN_VALUE}/getMe"
+        SEND_MESSAGE_PATH = f"/bot{self.TELEGRAM_TOKEN_VALUE}/sendMessage"
 
-        self.server.expect_requests(
-            [
-                ExpectedRequest(
-                    Request(
-                        "GET",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/getMe",
-                        {},
+        # Find a free port for the webhook server
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(("127.0.0.1", 0))
+            webhook_port = s.getsockname()[1]
+
+        with self.settings(
+            DEBUG=False,
+            TELEGRAM_BOT_WEBHOOK_HOST="127.0.0.1",
+            TELEGRAM_BOT_WEBHOOK_PORT=webhook_port,
+        ):
+            self.server.expect_requests(
+                [
+                    ExpectedRequest(
+                        Request("POST", GET_ME_PATH, {}),
+                        self.GET_ME_RESPONSE,
                     ),
-                    self.GET_ME_RESPONSE,
-                ),
-                ExpectedRequest(
-                    Request(
-                        "POST",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/setWebhook",
-                        {
-                            "url": settings.TELEGRAM_BOT_WEBHOOK_URL
-                            + self.TELEGRAM_TOKEN_VALUE,
-                            "max_connections": "40",
-                        },
+                    ExpectedRequest(
+                        Request(
+                            "POST",
+                            SEND_MESSAGE_PATH,
+                            {
+                                "chat_id": "12345",
+                                "text": bot.config.WELCOME_MESSAGE,
+                                "parse_mode": "HTML",
+                            },
+                        ),
+                        self.SEND_MESSAGE_RESPONSE,
                     ),
-                    self.SET_WEBHOOK_RESPONSE,
-                ),
-                ExpectedRequest(
-                    Request(
-                        "POST",
-                        SEND_MESSAGE_PATH,
-                        {
-                            "chat_id": "12345",
-                            "text": bot.config.WELCOME_MESSAGE,
-                            "parse_mode": "HTML",
-                            "disable_notification": "False",
-                        },
-                    ),
-                    self.SEND_MESSAGE_RESPONSE,
-                ),
-            ]
-        )
+                ]
+            )
 
-        self.bot_server = start_server()
+            application = build_application()
+            self._application = application
+            self._start_application_in_thread(application, mode="webhook")
 
-        response = self._send_webhook_update(self._create_command_update("/help"))
-        self.assertIn(response.status_code, [200, 202, 204])
+            response = self._send_webhook_update(self._create_command_update("/help"))
+            self.assertIn(response.status_code, [200, 202, 204])
 
-        self.assertTrue(
-            self.server.wait_for_completion(timeout=5), "Bot did not send expected message"
-        )
-        self.server.check_requests()
+            self.assertTrue(
+                self.server.wait_for_completion(timeout=5), "Bot did not send expected message"
+            )
+            self.server.check_requests()
 
     @override_settings(DEBUG=True)
     def test_polling_help_command(self):
-        SEND_MESSAGE_PATH = f"/{self.TELEGRAM_TOKEN_VALUE}/sendMessage"
-        GET_UPDATES_PATH = f"/{self.TELEGRAM_TOKEN_VALUE}/getUpdates"
+        GET_ME_PATH = f"/bot{self.TELEGRAM_TOKEN_VALUE}/getMe"
+        SEND_MESSAGE_PATH = f"/bot{self.TELEGRAM_TOKEN_VALUE}/sendMessage"
+        GET_UPDATES_PATH = f"/bot{self.TELEGRAM_TOKEN_VALUE}/getUpdates"
 
-        # sendMessage and getUpdates race between the dispatcher and polling threads,
-        # so request order is non-deterministic — matching is content-based
         self.server.expect_requests(
             [
                 ExpectedRequest(
-                    Request(
-                        "GET",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/getMe",
-                        {},
-                    ),
+                    Request("POST", GET_ME_PATH, {}),
                     self.GET_ME_RESPONSE,
-                ),
-                ExpectedRequest(
-                    Request(
-                        "POST",
-                        f"/{self.TELEGRAM_TOKEN_VALUE}/deleteWebhook",
-                        {},
-                    ),
-                    self.SET_WEBHOOK_RESPONSE,
                 ),
                 ExpectedRequest(
                     Request(
                         "POST",
                         GET_UPDATES_PATH,
                         {
-                            "limit": "100",
+                            "offset": "0",
                             "timeout": "10",
                         },
                     ),
@@ -270,7 +292,6 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                             "chat_id": "12345",
                             "text": bot.config.WELCOME_MESSAGE,
                             "parse_mode": "HTML",
-                            "disable_notification": "False",
                         },
                     ),
                     self.SEND_MESSAGE_RESPONSE,
@@ -278,7 +299,9 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
             ],
         )
 
-        self.bot_server = start_server()
+        application = build_application()
+        self._application = application
+        self._start_application_in_thread(application, mode="polling")
 
         completed = self.server.wait_for_completion(timeout=5)
         self.assertTrue(completed, "Bot did not process all expected requests in time")

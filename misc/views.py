@@ -2,8 +2,8 @@ from datetime import timedelta, datetime
 from urllib.parse import urlencode
 
 import pytz
-import telegram
 from django.db.models import Count, Prefetch, Q, Sum
+from telegram.constants import ParseMode
 from django.http import HttpRequest, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_GET
@@ -105,7 +105,7 @@ def write_to_crew(request, crew):
                 reason=reason,
                 text=text[:10000].strip()
             ),
-            parse_mode=telegram.ParseMode.HTML,
+            parse_mode=ParseMode.HTML,
         )
 
         return render(request, "message.html", {
