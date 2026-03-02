@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv venv /opt/venv \
     && uv pip install --python=/opt/venv/bin/python pipenv==2026.0.3 \
     && if [ "$MODE" = "production" ]; then \
-        /opt/venv/bin/pipenv requirements --keep-outdated > requirements.txt; \
+        /opt/venv/bin/pipenv requirements > requirements.txt; \
     else \
         /opt/venv/bin/pipenv requirements --dev > requirements.txt; \
     fi \
