@@ -83,6 +83,7 @@ services:
 
   cron:
     <<: *app
+    user: root
     command: make docker-run-cron
     container_name: club_cron
     networks:
