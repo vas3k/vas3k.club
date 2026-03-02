@@ -193,7 +193,7 @@ class TestDeleteComment(TestCase):
 
         response = client.post(self._delete_url())
 
-        self.assertIn(response.status_code, [403, 302])
+        self.assertEqual(response.status_code, 400)
         self.comment.refresh_from_db()
         self.assertFalse(self.comment.is_deleted)
 
