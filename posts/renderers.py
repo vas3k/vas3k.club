@@ -1,9 +1,13 @@
+from datetime import datetime
+
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
+from common.markdown.markdown import markdown_text
 from posts.models.post import Post
 from bookmarks.models import PostBookmark
 from posts.models.subscriptions import PostSubscription
@@ -54,6 +58,7 @@ def render_post(request, post, context=None):
         comments = comments.filter(is_deleted=False)
 
     comments = list(comments)
+    _warm_comment_html_cache(comments)
 
     # avoid N lazy post lookups: all comments share the same post
     for comment in comments:
@@ -100,3 +105,20 @@ def render_post(request, post, context=None):
         return render(request, f"posts/show/{post.type}.html", context)
     except TemplateDoesNotExist:
         return render(request, "posts/show/post.html", context)
+
+
+def _warm_comment_html_cache(comments):
+    if settings.DEBUG:
+        return
+
+    to_update = []
+    now = datetime.utcnow()
+    for comment in comments:
+        if comment.is_deleted or comment.html:
+            continue
+        comment.html = markdown_text(comment.text, uniq_id=comment.id)
+        comment.updated_at = now
+        to_update.append(comment)
+
+    if to_update:
+        Comment.objects.bulk_update(to_update, ["html", "updated_at"])
