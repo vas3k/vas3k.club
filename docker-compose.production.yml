@@ -1,6 +1,7 @@
 services:
   club_app: &app
     image: ghcr.io/vas3k/club:${GITHUB_SHA:-latest}
+    user: root
     command: make docker-run-production
     container_name: club_app
     networks:
@@ -42,6 +43,7 @@ services:
 
   queue:
     <<: *app
+    user: "1000:1000"
     environment:
       - MODE=production
       - PYTHONUNBUFFERED=1
@@ -65,6 +67,7 @@ services:
 
   bot:
     <<: *app
+    user: "1000:1000"
     command: make docker-run-bot
     container_name: club_bot
     networks:
@@ -74,6 +77,7 @@ services:
 
   helpdeskbot:
     <<: *app
+    user: "1000:1000"
     command: make docker-run-helpdeskbot
     container_name: club_help_desk_bot
     networks:
@@ -83,7 +87,6 @@ services:
 
   cron:
     <<: *app
-    user: root
     command: make docker-run-cron
     container_name: club_cron
     networks:
