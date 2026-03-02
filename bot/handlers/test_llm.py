@@ -56,13 +56,7 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
 
-        self.close_old_connections_patch = patch(
-            "bot.decorators.close_old_connections"
-        )
-        self.close_old_connections_patch.start()
-
     def tearDown(self):
-        self.close_old_connections_patch.stop()
         super().tearDown()
 
     def _create_update(
