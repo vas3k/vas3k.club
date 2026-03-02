@@ -13,16 +13,18 @@ from users.models.user import User
 @ensure_fresh_db_connection
 @is_club_member
 async def command_whois(update: Update, context: CallbackContext) -> None:
-    is_private_forward = update.message is not None \
-        and update.message.forward_origin is not None \
-        and update.message.chat.type == TGChat.PRIVATE
-
     if not update.message:
         return None
+
+    is_private_forward = (
+        update.message.forward_origin is not None
+        and update.message.chat.type == TGChat.PRIVATE
+    )
 
     if not update.message.reply_to_message and not is_private_forward:
         await update.message.reply_text(
             "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать",
+            do_quote=True,
         )
         return None
 
@@ -36,6 +38,7 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
         if origin.type == MessageOrigin.HIDDEN_USER:
             await update.message.reply_text(
                 f"🤨 Кажется, {origin.sender_user_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
+                do_quote=True,
             )
             return None
         if origin.type == MessageOrigin.USER:

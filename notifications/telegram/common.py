@@ -33,8 +33,6 @@ def send_telegram_message(
     reply_to_message_id: int | None = None,
     disable_preview: bool = True,
 ):
-    link_preview_options = LinkPreviewOptions(is_disabled=disable_preview)
-    reply_parameters = ReplyParameters(message_id=reply_to_message_id) if reply_to_message_id else None
     if not bot:
         log.warning("No telegram token. Skipping")
         return
@@ -44,6 +42,9 @@ def send_telegram_message(
         return
 
     log.info(f"Telegram: sending message to chat_id {chat.id}, starting with {text[:10]}...")
+
+    link_preview_options = LinkPreviewOptions(is_disabled=disable_preview)
+    reply_parameters = ReplyParameters(message_id=reply_to_message_id) if reply_to_message_id else None
 
     images_in_message = IMAGE_RE.findall(text)
 

@@ -227,10 +227,10 @@ async def review_question(update: Update, context: CallbackContext) -> State:
     return State.FINISH_REVIEW
 
 
-async def publish_question(update: Update, user_data: Dict[str, str]) -> str:
+async def publish_question(update: Update, user_data: Dict[str, str]) -> str | None:
     user = await get_club_user(update)
     if not user:
-        return ConversationHandler.END
+        return None
 
     data = QuestionDto.from_user_data(user_data)
     room = rooms[data.room] if data.room else None
@@ -293,6 +293,8 @@ async def finish_review(update: Update, context: CallbackContext) -> State:
 
     if text == ReviewKeyboard.CREATE.value:
         link = await publish_question(update, user_data)
+        if not link:
+            return ConversationHandler.END
         await send_reply(
             update,
             f"🎉 Вопрос опубликован: <a href=\"{link}\">ссылка и ответы в канале</a>",
@@ -309,6 +311,7 @@ async def finish_review(update: Update, context: CallbackContext) -> State:
             f"😱 Неожиданная команда. Можем начать заново - /start",
             reply_markup=start_markup
         )
+        return ConversationHandler.END
 
 
 async def fallback(update: Update, context: CallbackContext) -> State:
@@ -379,9 +382,15 @@ class QuestionHandler(ConversationHandler):
 
 @ensure_fresh_db_connection
 async def update_discussion_message_id(update: Update) -> None:
+    if not update.message or not update.message.forward_origin:
+        return
+
     channel_msg_id = update.message.forward_origin.message_id
     discussion_msg_id = update.message.message_id
 
     question = Question.objects.filter(channel_msg_id=channel_msg_id).first()
+    if not question:
+        return
+
     question.discussion_msg_id = discussion_msg_id
     question.save()

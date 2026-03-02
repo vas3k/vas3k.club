@@ -92,8 +92,9 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         )
         self.close_old_connections_patch.start()
 
+        self.telegram_base_url = telegram_base_url
+
         self.settings_override = override_settings(
-            TELEGRAM_BASE_URL=telegram_base_url,
             TELEGRAM_TOKEN=BaseTelegramTest.TOKEN,
             TELEGRAM_ADMIN_CHAT_ID="123456789",
             TELEGRAM_BOT_WEBHOOK_URL=telegram_base_url,
@@ -248,7 +249,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                 ]
             )
 
-            application = build_application()
+            application = build_application(base_url=self.telegram_base_url)
             self._application = application
             self._start_application_in_thread(application, mode="webhook")
 
@@ -303,7 +304,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
             ],
         )
 
-        application = build_application()
+        application = build_application(base_url=self.telegram_base_url)
         self._application = application
         self._start_application_in_thread(application, mode="polling")
 
