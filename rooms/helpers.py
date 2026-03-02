@@ -1,6 +1,6 @@
 import logging
 
-import telegram
+from telegram.error import TelegramError
 
 from notifications.telegram.bot import bot
 from rooms.models import Room
@@ -18,13 +18,13 @@ def ban_user_in_all_chats(user: User, is_permanent=True):
         try:
             chat_member = bot.get_chat_member(room.chat_id, user.telegram_id)
             if chat_member:
-                is_ok = bot.kick_chat_member(room.chat_id, user.telegram_id)
+                is_ok = bot.ban_chat_member(room.chat_id, user.telegram_id)
                 if is_ok:
                     log.info(f"User {user.slug} banned in chat {room.slug}")
                     if not is_permanent:
                         # banning-unbanning the user works like kicking from the chat
                         bot.unban_chat_member(room.chat_id, user.telegram_id)
-        except telegram.TelegramError as ex:
+        except TelegramError as ex:
             log.warning(f"Failed to ban user {user.slug} in chat {room.slug}: {ex}")
 
 
@@ -38,7 +38,7 @@ def unban_user_in_all_chats(user: User):
             is_ok = bot.unban_chat_member(room.chat_id, user.telegram_id)
             if is_ok:
                 log.info(f"User {user.slug} unbanned in chat {room.slug}")
-        except telegram.TelegramError as ex:
+        except TelegramError as ex:
             log.warning(f"Can't unban user {user.slug} in chat {room.slug}: {ex}")
 
 
@@ -54,5 +54,5 @@ def print_user_in_all_chats(user: User, is_permanent=True):
                 print(f"✅ User found is in chat «{room.title}». Status: {chat_member.status}")
             else:
                 print(f"Not in chat «{room.title}». Skipping.")
-        except telegram.TelegramError as ex:
+        except TelegramError as ex:
             log.warning(f"Failed to get user {user.slug} in chat {room.slug}: {ex}")
