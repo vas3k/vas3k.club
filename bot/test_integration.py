@@ -50,8 +50,6 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         }
     )
 
-    SEND_CHAT_ACTION_RESPONSE = json.dumps({"ok": True, "result": True})
-
     GET_ME_RESPONSE = json.dumps(
         {
             "ok": True,
@@ -64,10 +62,9 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
         }
     )
 
-    SET_WEBHOOK_RESPONSE = json.dumps({"ok": True, "result": True})
-
     _application: Application | None
     _event_loop: asyncio.AbstractEventLoop | None
+    _stop_event: asyncio.Event | None
 
     def setUp(self):
         super().setUp()
@@ -104,6 +101,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
 
         self._application = None
         self._event_loop = None
+        self._stop_event = None
 
     def tearDown(self):
         if self._application and self._event_loop:
@@ -115,6 +113,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                     await self._application.shutdown()
 
             asyncio.run_coroutine_threadsafe(_stop(), self._event_loop).result(timeout=5)
+            self._event_loop.call_soon_threadsafe(self._stop_event.set)
 
         self.close_old_connections_patch.stop()
         self.settings_override.disable()
@@ -127,6 +126,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
 
         async def _run():
             self._event_loop = asyncio.get_running_loop()
+            self._stop_event = asyncio.Event()
             await application.initialize()
             await application.start()
 
@@ -141,16 +141,15 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                 await application.updater.start_polling()
 
             started.set()
-            # Keep the loop running until stopped
-            while application.running:
-                await asyncio.sleep(0.1)
+            await self._stop_event.wait()
 
         def _thread_target():
             asyncio.run(_run())
 
         thread = threading.Thread(target=_thread_target, daemon=True)
         thread.start()
-        started.wait(timeout=5)
+        if not started.wait(timeout=5):
+            self.fail("Application did not start within 5 seconds")
 
     def _create_update(
         self, message_text: str, reply_to_text: Optional[str] = None

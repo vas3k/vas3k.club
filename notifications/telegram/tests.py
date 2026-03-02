@@ -9,7 +9,7 @@ import threading
 import time
 from typing import Any, Protocol
 from unittest.mock import patch
-from urllib.parse import parse_qs
+from urllib.parse import parse_qsl
 
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -75,34 +75,25 @@ class MockTelegramHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length)
-        body_str = body.decode("utf-8") if body else ""
-
         content_type = self.headers.get("Content-Type", "")
-
-        if "application/json" in content_type:
-            parsed_body = json.loads(body_str)
-        elif "multipart/form-data" in content_type:
-            # httpx sends multipart for requests with files; for simple
-            # form fields we extract them from the multipart stream.
-            parsed_body = self._parse_multipart(body, content_type)
-        else:
-            # httpx in python-telegram-bot v22 sends application/x-www-form-urlencoded
-            parsed_body = {}
-            if body_str:
-                qs = parse_qs(body_str, keep_blank_values=True)
-                for k, v in qs.items():
-                    parsed_body[k] = v[0] if len(v) == 1 else v
 
         request = Request(
             path=self.path,
             method=self.command,
-            body=parsed_body,
+            body=self._parse_body(body, content_type),
         )
-
         self._do_handle(request)
 
+    def _parse_body(self, body: bytes, content_type: str) -> dict:
+        if not body:
+            return {}
+        if "application/json" in content_type:
+            return json.loads(body.decode("utf-8"))
+        if "multipart/form-data" in content_type:
+            return self._parse_multipart(body, content_type)
+        return dict(parse_qsl(body.decode("utf-8"), keep_blank_values=True))
+
     def _parse_multipart(self, body: bytes, content_type: str) -> dict:
-        """Minimal multipart parser for test purposes."""
         environ = {
             "REQUEST_METHOD": "POST",
             "CONTENT_TYPE": content_type,
@@ -116,10 +107,7 @@ class MockTelegramHandler(http.server.BaseHTTPRequestHandler):
         result = {}
         for key in fs.keys():
             item = fs[key]
-            if isinstance(item, list):
-                result[key] = item[0].value
-            else:
-                result[key] = item.value
+            result[key] = item[0].value if isinstance(item, list) else item.value
         return result
 
     def do_GET(self):
