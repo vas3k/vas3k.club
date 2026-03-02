@@ -186,9 +186,9 @@ urlpatterns = [
 
     path("telegram/link/", link_telegram, name="link_telegram"),
 
-    path("notifications/confirm/<str:user_id>/<str:secret>/", email_confirm, name="email_confirm"),
-    path("notifications/unsubscribe/<str:user_id>/<str:secret>/", email_unsubscribe, name="email_unsubscribe"),
-    path("notifications/switch/<str:digest_type>/<str:user_id>/<str:secret>/", email_digest_switch,
+    path("notifications/confirm/<uuid:user_id>/<str:secret>/", email_confirm, name="email_confirm"),
+    path("notifications/unsubscribe/<uuid:user_id>/<str:secret>/", email_unsubscribe, name="email_unsubscribe"),
+    path("notifications/switch/<str:digest_type>/<uuid:user_id>/<str:secret>/", email_digest_switch,
          name="email_digest_switch"),
     path("notifications/renderer/digest/weekly/", render_weekly_digest, name="render_weekly_digest"),
     path("notifications/webhook/<slug:event_type>", webhook_event, name="webhook_event"),
