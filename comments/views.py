@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -159,10 +160,9 @@ def edit_comment(request, comment_id):
 @require_auth
 @require_http_methods(["POST"])
 def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post"), id=comment_id)
 
     if not request.me.is_moderator:
-        # only comment author, post author or moderator can delete comments
         if comment.author != request.me and request.me != comment.post.author:
             raise AccessDenied(
                 title="Нельзя!",
@@ -182,20 +182,28 @@ def delete_comment(request, comment_id):
                 message="Нельзя удалять комментарии к скрытому посту"
             )
 
-    if not comment.is_deleted:
-        # delete comment
-        comment.delete(deleted_by=request.me)
-        PostView.decrement_unread_comments(comment)
-    else:
-        # undelete comment
-        if comment.deleted_by == request.me.id or request.me.is_moderator:
-            comment.undelete()
-            PostView.increment_unread_comments(comment)
+    with transaction.atomic():
+        comment = Comment.objects.select_related("post").select_for_update().get(id=comment_id)
+
+        if not comment.is_deleted:
+            comment.delete(deleted_by=request.me)
+            was_deleted = True
         else:
-            raise AccessDenied(
-                title="Нельзя!",
-                message="Только тот, кто удалил комментарий, может его восстановить"
-            )
+            if comment.deleted_by == request.me.id or request.me.is_moderator:
+                comment.undelete()
+                was_deleted = False
+            else:
+                raise AccessDenied(
+                    title="Нельзя!",
+                    message="Только тот, кто удалил комментарий, может его восстановить"
+                )
+
+    if was_deleted:
+        PostView.decrement_unread_comments(comment)
+        SearchIndex.objects.filter(comment=comment).delete()
+    else:
+        PostView.increment_unread_comments(comment)
+        SearchIndex.update_comment_index(comment)
 
     Comment.update_post_counters(comment.post, update_activity=False)
 

@@ -130,6 +130,128 @@ class TestCommentHttpMethods(TestCase):
         self.assertTrue(self.comment.is_pinned)
 
 
+class TestDeleteComment(TestCase):
+    def setUp(self):
+        self.creator = ModelCreator()
+        self.post = self.creator.create_post(is_public=True)
+        self.comment_author = self.post.author
+        self.other_user = self.creator.create_user()
+        self.moderator = self.creator.create_user()
+        self.moderator.roles = ["moderator"]
+        self.moderator.save()
+
+        self.comment = Comment.objects.create(
+            author=self.comment_author,
+            post=self.post,
+            text="Test comment",
+        )
+
+    def _delete_url(self):
+        return reverse("delete_comment", args=[self.comment.id])
+
+    def test_author_can_delete_own_comment(self):
+        client = HelperClient(self.comment_author)
+        client.authorise()
+
+        response = client.post(self._delete_url())
+
+        self.assertEqual(response.status_code, 302)
+        self.comment.refresh_from_db()
+        self.assertTrue(self.comment.is_deleted)
+        self.assertEqual(self.comment.deleted_by, self.comment_author.id)
+
+    def test_post_author_can_delete_comment(self):
+        other_comment = Comment.objects.create(
+            author=self.other_user,
+            post=self.post,
+            text="Someone else's comment",
+        )
+        client = HelperClient(self.comment_author)  # post author
+        client.authorise()
+
+        url = reverse("delete_comment", args=[other_comment.id])
+        response = client.post(url)
+
+        self.assertEqual(response.status_code, 302)
+        other_comment.refresh_from_db()
+        self.assertTrue(other_comment.is_deleted)
+        self.assertEqual(other_comment.deleted_by, self.comment_author.id)
+
+    def test_moderator_can_delete_any_comment(self):
+        client = HelperClient(self.moderator)
+        client.authorise()
+
+        response = client.post(self._delete_url())
+
+        self.assertEqual(response.status_code, 302)
+        self.comment.refresh_from_db()
+        self.assertTrue(self.comment.is_deleted)
+
+    def test_random_user_cannot_delete_comment(self):
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        response = client.post(self._delete_url())
+
+        self.assertIn(response.status_code, [403, 302])
+        self.comment.refresh_from_db()
+        self.assertFalse(self.comment.is_deleted)
+
+    def test_undelete_by_same_user(self):
+        self.comment.delete(deleted_by=self.comment_author)
+        client = HelperClient(self.comment_author)
+        client.authorise()
+
+        response = client.post(self._delete_url())
+
+        self.assertEqual(response.status_code, 302)
+        self.comment.refresh_from_db()
+        self.assertFalse(self.comment.is_deleted)
+        self.assertIsNone(self.comment.deleted_by)
+
+    def test_undelete_by_moderator(self):
+        self.comment.delete(deleted_by=self.comment_author)
+        client = HelperClient(self.moderator)
+        client.authorise()
+
+        response = client.post(self._delete_url())
+
+        self.assertEqual(response.status_code, 302)
+        self.comment.refresh_from_db()
+        self.assertFalse(self.comment.is_deleted)
+
+    def test_undelete_by_wrong_user_denied(self):
+        self.comment.delete(deleted_by=self.comment_author)
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        response = client.post(self._delete_url())
+
+        self.comment.refresh_from_db()
+        self.assertTrue(self.comment.is_deleted)
+
+    def test_delete_toggle_by_same_user(self):
+        """Same user can delete and then undelete their comment"""
+        client = HelperClient(self.comment_author)
+        client.authorise()
+
+        client.post(self._delete_url())
+        self.comment.refresh_from_db()
+        self.assertTrue(self.comment.is_deleted)
+
+        client.post(self._delete_url())
+        self.comment.refresh_from_db()
+        self.assertFalse(self.comment.is_deleted)
+
+    def test_anonymous_cannot_delete(self):
+        client = HelperClient()
+        url = self._delete_url()
+        response = client.post(url)
+
+        self.comment.refresh_from_db()
+        self.assertFalse(self.comment.is_deleted)
+
+
 class TestCommentThreadDeletion(TestCase):
     """Tests for delete_comment_thread endpoint"""
 
