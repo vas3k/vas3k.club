@@ -110,7 +110,7 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
                     await self._application.updater.stop()
                 if self._application.running:
                     await self._application.stop()
-                    await self._application.shutdown()
+                await self._application.shutdown()
 
             asyncio.run_coroutine_threadsafe(_stop(), self._event_loop).result(timeout=5)
             self._event_loop.call_soon_threadsafe(self._stop_event.set)
