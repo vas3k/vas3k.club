@@ -26,7 +26,7 @@ def email_confirm(request, user_id, secret):
 
     user = get_object_or_404(User, id=user_id, secret_hash=secret, deleted_at__isnull=True)
     user.is_email_verified = True
-    user.save()
+    user.save(update_fields=["is_email_verified"])
 
     return render(request, "message.html", {
         "title": "💌 Ваш адрес почты подтвержден",
@@ -45,7 +45,7 @@ def email_unsubscribe(request, user_id, secret):
 
     user.is_email_unsubscribed = True
     user.email_digest_type = User.EMAIL_DIGEST_TYPE_NOPE
-    user.save()
+    user.save(update_fields=["is_email_unsubscribed", "email_digest_type"])
 
     return render(request, "message.html", {
         "title": "🙅‍♀️ Вы отписались от всех писем Клуба",
@@ -69,7 +69,7 @@ def email_digest_switch(request, digest_type, user_id, secret):
 
     user.email_digest_type = digest_type
     user.is_email_unsubscribed = False
-    user.save()
+    user.save(update_fields=["email_digest_type", "is_email_unsubscribed"])
 
     if digest_type == User.EMAIL_DIGEST_TYPE_DAILY:
         return render(request, "message.html", {
