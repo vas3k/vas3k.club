@@ -126,6 +126,19 @@ class TestCommentTree(TestCase):
         self.assertEqual(tree[1].comment.id, c2.id)
         self.assertEqual(tree[0].replies, [])
 
+    def test_top_level_order_is_preserved_from_queryset(self):
+        c1 = self._create_comment()
+        c2 = self._create_comment()
+        c3 = self._create_comment()
+        Comment.objects.filter(id=c1.id).update(upvotes=1)
+        Comment.objects.filter(id=c2.id).update(upvotes=3)
+        Comment.objects.filter(id=c3.id).update(upvotes=2)
+
+        tree = comment_tree(Comment.objects.filter(post=self.post).order_by("-upvotes", "created_at"))
+
+        top_level_ids = [t.comment.id for t in tree]
+        self.assertEqual(top_level_ids, [c2.id, c3.id, c1.id])
+
     def test_three_level_nesting(self):
         top = self._create_comment()
         reply = self._create_comment(reply_to=top)
