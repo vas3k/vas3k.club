@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 
 from django import template
 from django.utils.safestring import mark_safe
@@ -16,35 +16,27 @@ TreeComment = namedtuple("TreeComment", ["comment", "replies"])
 
 @register.filter()
 def comment_tree(comments):
-    comments = list(comments)  # in case if it's a queryset
-    tree = []
+    comments = list(comments)
 
-    # build reply tree (3 levels)
+    children = defaultdict(list)
     for comment in comments:
-        # find 1st level comments
-        if not comment.reply_to_id:
-            replies = []
-            for reply in sorted(comments, key=lambda c: c.created_at):
-                # 2nd level replies
-                if reply.reply_to_id == comment.id:
-                    replies.append(
-                        TreeComment(
-                            comment=reply,
-                            replies=sorted(  # 3rd level replies
-                                [c for c in comments if c.reply_to_id == reply.id],
-                                key=lambda c: c.created_at
-                            )
-                        )
-                    )
-            tree.append(
-                TreeComment(
-                    comment=comment,
-                    replies=replies
-                )
-            )
+        children[comment.reply_to_id].append(comment)
 
-    # move pinned comments to the top
-    tree = sorted(tree, key=lambda c: c.comment.is_pinned, reverse=True)
+    for group in children.values():
+        group.sort(key=lambda c: c.created_at)
+
+    tree = []
+    for comment in children.get(None, []):
+        replies = [
+            TreeComment(
+                comment=reply,
+                replies=children.get(reply.id, [])
+            )
+            for reply in children.get(comment.id, [])
+        ]
+        tree.append(TreeComment(comment=comment, replies=replies))
+
+    tree.sort(key=lambda c: c.comment.is_pinned, reverse=True)
 
     return tree
 
