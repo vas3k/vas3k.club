@@ -93,10 +93,9 @@ class BotIntegrationTest(BaseTelegramTest, TestCase):
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
 
-        # Prevent 'connection is closed' errors — Django closes DB connections between requests,
-        # but bot handler threads reuse them
+        # Prevent ensure_fresh_db_connection from closing the test DB connection
         self.close_old_connections_patch = patch(
-            "bot.handlers.common.close_old_connections"
+            "bot.decorators.close_old_connections"
         )
         self.close_old_connections_patch.start()
 
