@@ -62,7 +62,7 @@ def notify_on_comment_created(comment):
             notified_user_ids.add(thread_author.id)
 
     # post top level comments to "online" channel
-    if not comment.reply_to and comment.post.visibility not in [Post.VISIBILITY_DRAFT, Post.VISIBILITY_LINK_ONLY]:
+    if not comment.reply_to and comment.post.visibility != Post.VISIBILITY_DRAFT:
         send_telegram_message(
             chat=CLUB_ONLINE,
             text=render_html_message("channel_comment_announce.html", comment=comment),
@@ -77,7 +77,7 @@ def notify_on_comment_created(comment):
             )
 
     # notify friends about your comments (not replies)
-    if not comment.reply_to:
+    if not comment.reply_to and comment.post.visibility != Post.VISIBILITY_DRAFT:
         friends = Friend.friends_for_user(comment.author)
         for friend in friends:
             if friend.user_from.telegram_id \
