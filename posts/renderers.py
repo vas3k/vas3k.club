@@ -51,7 +51,7 @@ def render_post(request, post, context=None):
 
     comment_order = request.GET.get("comment_order") or "-upvotes"
     if comment_order in POSSIBLE_COMMENT_ORDERS:
-        comments = comments.order_by(comment_order, "-created_at")
+        comments = comments.order_by(comment_order, "created_at")
 
     # battle hides deleted comments to keep the voting UI clean
     if post.type == Post.TYPE_BATTLE:
