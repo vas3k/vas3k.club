@@ -158,6 +158,24 @@ class TestRenderPostVotes(RendererTestBase):
             self.assertNotIn("comment_votes", sql)
 
 
+class TestRenderPostCommentOrder(RendererTestBase):
+    def test_same_upvotes_sorted_oldest_first(self):
+        """When sorting by upvotes, comments with equal upvotes should show oldest first."""
+        old = Comment.objects.create(author=self.user, post=self.post, text="old comment")
+        new = Comment.objects.create(author=self.user, post=self.post, text="new comment")
+        Comment.objects.filter(id=old.id).update(upvotes=1)
+        Comment.objects.filter(id=new.id).update(upvotes=1)
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        content = response.content.decode()
+        pos_old = content.index("old comment")
+        pos_new = content.index("new comment")
+        self.assertLess(pos_old, pos_new, "Older comment should appear before newer one with same upvotes")
+
+
 class TestRenderPostCommentPostReference(RendererTestBase):
     def test_comment_post_fields_accessible(self):
         """Comments should have post reference set for template rendering."""
