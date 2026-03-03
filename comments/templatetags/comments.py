@@ -22,8 +22,6 @@ def comment_tree(comments):
     for comment in comments:
         children[comment.reply_to_id].append(comment)
 
-    # keep top-level comments in incoming queryset order (selected by comment_order),
-    # but sort replies by creation time for stable thread reading.
     for parent_id, group in children.items():
         if parent_id is not None:
             group.sort(key=lambda c: c.created_at)
