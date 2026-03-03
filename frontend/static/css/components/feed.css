@@ -77,13 +77,25 @@
             font-weight: 500;
         }
 
-            .feed-sidebar-menu a {
+            .feed-sidebar-menu a,
+            .feed-sidebar-menu button {
                 display: block;
                 text-decoration: none;
                 padding: 5px 10px;
             }
 
+            .feed-sidebar-menu button {
+                width: 100%;
+                text-align: left;
+                line-height: 1.42;
+                font-weight: 500;
+                background: none;
+                border: none;
+                color: var(--text-color);
+            }
+
             .feed-sidebar-menu a:hover,
+            .feed-sidebar-menu button:hover,
             .feed-sidebar-menu-selected {
                 color: var(--opposite-text-color);
                 background-color: var(--opposite-bg-color);

@@ -1,12 +1,9 @@
 import html
-
-from django.urls import reverse
 from telegram import Update, ParseMode
 from telegram import Chat as TGChat
 from telegram.ext import CallbackContext
 
 from bot.decorators import is_club_member, ensure_fresh_db_connection
-from club import settings
 from users.models.user import User
 
 
@@ -32,7 +29,9 @@ def command_whois(update: Update, context: CallbackContext) -> None:
     if original_message.forward_date:
         if not original_message.forward_from:
             update.effective_chat.send_message(
-                f"🤨 Кажется, {original_message.forward_sender_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
+                f"🤨 Кажется, {original_message.forward_sender_name} скрыл свой профиль"
+                f" для пересылаемых сообщений. Попробуй дать команду в ответ на"
+                f" исходное сообщение",
                 quote=True
             )
             return None
@@ -60,12 +59,8 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         )
         return None
 
-    profile_url = settings.APP_HOST + reverse("profile", kwargs={
-        "user_slug": user.slug,
-    })
-
     update.message.reply_text(
-        f"""Кажется, это <a href="{profile_url}">{html.escape(user.full_name)}</a>""",
+        f"""Кажется, это <a href="{user.club_profile_link}">{html.escape(user.full_name)}</a>""",
         parse_mode=ParseMode.HTML,
         quote=True
     )

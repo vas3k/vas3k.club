@@ -177,8 +177,14 @@
             padding: 20px;
             box-sizing: border-box;
         }
+            button.profile-status {
+                padding: 20px;
+                background: none;
+                border: none;
+            }
 
-            a.profile-status:hover {
+            a.profile-status:hover,
+            button.profile-status:hover {
                 background-color: var(--opposite-bg-color);
                 color: var(--opposite-text-color);
             }

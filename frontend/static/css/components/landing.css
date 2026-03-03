@@ -324,3 +324,10 @@
     height: 150px;
     float: right;
 }
+
+.footer-antic-button {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    color: var(--link-color);
+}

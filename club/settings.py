@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django_q",
     "webpack_loader",
     "helpdeskbot.apps.HelpDeskBotConfig",
+    "fun.apps.FunConfig",
 ]
 
 MIDDLEWARE = [
@@ -101,6 +102,9 @@ LOGGING = {
         "": {  # "catch all" loggers by referencing it with the empty string
             "handlers": ["console"],
             "level": "DEBUG",
+        },
+        "asyncio": {
+            "level": "WARNING",
         },
     },
 }
