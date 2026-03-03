@@ -9,7 +9,7 @@ import {
     handleFormSubmissionShortcuts,
     imageUploadOptions,
 } from "./common/markdown-editor";
-import { getCollapsedCommentThreadsSet } from "./common/comments";
+import { getCollapsedCommentThreadsSet, collapseCommentThread } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
 
@@ -187,7 +187,7 @@ const App = {
         const collapsedSet = getCollapsedCommentThreadsSet();
         for (const comment of comments) {
             if (collapsedSet.has(comment.id)) {
-                comment.querySelector(".comment-collapse-stub, .reply-collapse-stub").click();
+                collapseCommentThread(comment);
             }
         }
     },
