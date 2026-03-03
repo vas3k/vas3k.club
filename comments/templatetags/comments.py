@@ -22,7 +22,7 @@ def comment_tree(comments):
     # build reply tree (3 levels)
     for comment in comments:
         # find 1st level comments
-        if not comment.reply_to:
+        if not comment.reply_to_id:
             replies = []
             for reply in sorted(comments, key=lambda c: c.created_at):
                 # 2nd level replies
