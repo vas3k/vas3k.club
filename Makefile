@@ -88,6 +88,7 @@ psql:
   lint \
   migrate \
   build-frontend \
+  test \
   test-ci \
   test-frontend \
   test-frontend-ci
