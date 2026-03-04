@@ -301,7 +301,6 @@ class TestRenderPostUpvotedAt(RendererTestBase):
 
 class TestRenderPostBookmark(RendererTestBase):
     def test_bookmark_state_for_bookmarked_post(self):
-        """Bookmarked post should show bookmark active state."""
         PostBookmark.objects.create(user=self.user, post=self.post)
 
         client = HelperClient(self.user)
@@ -309,16 +308,15 @@ class TestRenderPostBookmark(RendererTestBase):
         response = client.get(self._post_url())
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "is-active-by-default")
+        self.assertContains(response, "initial-is-bookmarked")
 
     def test_no_bookmark_state_for_unbookmarked_post(self):
-        """Non-bookmarked post should not show bookmark active state."""
         client = HelperClient(self.user)
         client.authorise()
         response = client.get(self._post_url())
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "is-active-by-default")
+        self.assertNotContains(response, "initial-is-bookmarked")
 
 
 class TestRenderPostCollectibleTag(RendererTestBase):
