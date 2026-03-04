@@ -34,7 +34,7 @@ build-frontend:  ## Run webpack build
 
 .PHONY: lint
 lint:  ## Lint code with flake8
-	@pipenv run flake8 $(PROJECT_NAME)
+	@pipenv run flake8 .
 
 .PHONY: test
 test:  ## Run backend tests
