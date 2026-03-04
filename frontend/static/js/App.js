@@ -1,4 +1,3 @@
-import twemoji from "twemoji";
 import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
@@ -20,7 +19,6 @@ const App = {
     },
     onMount() {
         this.initializeImageZoom();
-        this.initializeEmojiForPoorPeople();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
         this.initializePostActions();
@@ -35,14 +33,6 @@ const App = {
                 }
             });
         }, INITIAL_SYNC_DELAY);
-    },
-    initializeEmojiForPoorPeople() {
-        const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
-        if (!isApple) {
-            document.body = twemoji.parse(document.body, {
-                base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
-            });
-        }
     },
     initializeThemeSwitcher() {
         const mediaQueryList = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
@@ -155,6 +145,8 @@ const App = {
             const img = document.createElement("img");
             img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
             img.className = "link-favicon";
+            img.loading = "lazy";
+            img.onerror = function () { this.remove(); };
             link.insertBefore(img, link.firstChild);
         });
     },

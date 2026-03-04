@@ -21,7 +21,7 @@ export default {
     },
     methods: {
         getBodyTop() {
-            return document.body.getBoundingClientRect().top;
+            return -window.scrollY;
         },
         getElementMargin(el) {
              const style = window.getComputedStyle(el);
@@ -41,7 +41,7 @@ export default {
 
             const onScroll = () => {
                 const scrolledToElement = Math.abs(offset - window.pageYOffset) < 1;
-                const scrolledToBottom = Math.abs(document.body.getBoundingClientRect().height - window.pageYOffset - window.innerHeight) < 1;
+                const scrolledToBottom = Math.abs(document.documentElement.scrollHeight - window.pageYOffset - window.innerHeight) < 1;
                 if (scrolledToElement || (this.arrowDirection === "Down" && scrolledToBottom)) {
                     window.removeEventListener('scroll', onScroll);
 
@@ -112,12 +112,16 @@ export default {
 
             const position = window.scrollY + this.getElementMargin(comments[0]);
 
-            // Убираем комментарии ниже или выше направления поиска
-            const filteredComments = [...comments].filter((el) => {
-                const elTop = el.getBoundingClientRect().top;
-                const elTopMargin = this.getElementMargin(el);
+            // Read all positions in a single batch (one layout pass)
+            const measured = [...comments].map((el) => ({
+                el,
+                top: el.getBoundingClientRect().top,
+                margin: this.getElementMargin(el),
+            }));
 
-                return (direction === "Down") ? elTop - elTopMargin > 2 : elTop < 0;
+            // Убираем комментарии ниже или выше направления поиска
+            const filteredComments = measured.filter(({ top, margin }) => {
+                return (direction === "Down") ? top - margin > 2 : top < 0;
             });
 
             if (filteredComments.length < 1) {
@@ -125,11 +129,12 @@ export default {
             }
 
             // Находим ближайший комментарий
-            const nearest = [...filteredComments].reduce((a, b) => {
-                const atop = a.getBoundingClientRect().top - bodyTop;
-                const btop = b.getBoundingClientRect().top - bodyTop;
+            const nearestData = filteredComments.reduce((a, b) => {
+                const atop = a.top - bodyTop;
+                const btop = b.top - bodyTop;
                 return Math.abs(btop - position) < Math.abs(atop - position) ? b : a;
             });
+            const nearest = nearestData.el;
 
             /**
              * remove selected class from previous selected comment
@@ -163,7 +168,7 @@ export default {
         },
         initOnPageScroll() {
             this.onPageScrollHandler = throttle(() => {
-                const bottomOfWindow = Math.abs(document.body.getBoundingClientRect().height - window.pageYOffset - window.innerHeight) < 1;
+                const bottomOfWindow = Math.abs(document.documentElement.scrollHeight - window.pageYOffset - window.innerHeight) < 1;
                 const topOfWindow = window.pageYOffset === 0;
 
                 if (bottomOfWindow) {

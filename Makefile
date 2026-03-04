@@ -66,6 +66,12 @@ test:
 test-ci:   ## Run tests (intended for CI usage)
 	python3 manage.py test
 
+test-frontend:  ## Run frontend tests locally
+	cd frontend && npm test
+
+test-frontend-ci:  ## Run frontend tests (CI)
+	cd frontend && npm run test:ci
+
 psql:
 	psql -h localhost -p 5433 -d vas3k_club -U vas3k
 
@@ -82,4 +88,6 @@ psql:
   lint \
   migrate \
   build-frontend \
-  test-ci
+  test-ci \
+  test-frontend \
+  test-frontend-ci
