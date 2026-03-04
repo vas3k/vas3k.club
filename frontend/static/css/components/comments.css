@@ -374,6 +374,15 @@
             opacity: 1;
         }
 
+        .thread-collapsed > .thread-collapse-toggle {
+            display: none !important;
+        }
+
+        .thread-collapsed > .comment-collapse-stub,
+        .thread-collapsed > .reply-collapse-stub {
+            display: block !important;
+        }
+
     .comment-title {
         font-size: 160%;
         font-weight: 500;
