@@ -5,6 +5,7 @@ on:
     branches:
       - master
   pull_request:
+  workflow_call:
 
 concurrency:
   # For pull requests, cancel all currently-running jobs for this workflow
@@ -18,6 +19,7 @@ permissions:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -37,8 +39,8 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings.
-          flake8 . --count --exit-zero --statistics
+          # all style warnings
+          flake8 . --count --statistics
 
   frontend-test:
     runs-on: ubuntu-latest
@@ -70,6 +72,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:14-alpine
@@ -115,7 +118,7 @@ jobs:
           path: |
             frontend/static/dist
             frontend/webpack-stats.json
-          key: ${{ runner.os }}-webpack-${{ hashFiles('frontend/package*.json', 'frontend/webpack*.js') }}
+          key: ${{ runner.os }}-webpack-${{ hashFiles('frontend/package*.json', 'frontend/webpack*.js', 'frontend/static/js/**', 'frontend/static/css/**') }}
           restore-keys: |
             ${{ runner.os }}-webpack-
 
