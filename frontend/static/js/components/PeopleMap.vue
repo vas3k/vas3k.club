@@ -68,7 +68,38 @@ export default {
             let markers = {};
             let markersOnScreen = {};
 
+            function avatarOrDefault(avatar) {
+                return avatar && avatar !== "null" ? avatar : defaultAvatar;
+            }
+
+            function projectAllFeatures() {
+                var projected = [];
+                for (var i = 0; i < geojson.features.length; i++) {
+                    var avatar = geojson.features[i].properties.avatar;
+                    if (avatar && avatar !== "null") {
+                        projected.push({
+                            avatar: avatar,
+                            pixels: map.project(geojson.features[i].geometry.coordinates),
+                        });
+                    }
+                }
+                return projected;
+            }
+
+            function getClusterAvatar(projectedFeatures, coordinates) {
+                var pointPixels = map.project(coordinates);
+                for (var i = 0; i < projectedFeatures.length; i++) {
+                    var dx = projectedFeatures[i].pixels.x - pointPixels.x;
+                    var dy = projectedFeatures[i].pixels.y - pointPixels.y;
+                    if (dx * dx + dy * dy <= 400) { // 20^2
+                        return projectedFeatures[i].avatar;
+                    }
+                }
+                return defaultAvatar;
+            }
+
             function updateMarkers() {
+                var projectedFeatures = projectAllFeatures();
                 let newMarkers = {};
                 let features = map.querySourceFeatures("usersGeojson");
 
@@ -80,18 +111,16 @@ export default {
                     let marker = markers[id];
                     if (!marker) {
                         if (props.cluster) {
-                            // it's a cluster
                             let clusterElement = document.createElement("div");
                             clusterElement.classList.add("people-map-user-cluster");
                             clusterElement.innerText = props.point_count;
-                            const clusterAvatar = getClusterAvatar(coords);
+                            const clusterAvatar = getClusterAvatar(projectedFeatures, coords);
                             clusterElement.style.backgroundImage = "url('" + avatarOrDefault(clusterAvatar) + "')";
                             marker = new mapbox.Marker({ element: clusterElement }).setLngLat(coords);
                             clusterElement.addEventListener("click", function () {
                                 map.flyTo({ center: coords, zoom: map.getZoom() + 2, offset: [200, 0] });
                             });
                         } else {
-                            // it's a normal marker
                             let markerElement = document.createElement("a");
                             markerElement.href = props.url;
                             markerElement.target = "_blank";
@@ -106,34 +135,18 @@ export default {
                     if (!markersOnScreen[id]) marker.addTo(map);
                 }
 
-                // remove old markers from map
                 for (let id in markersOnScreen) {
                     if (!newMarkers[id]) markersOnScreen[id].remove();
                 }
                 markersOnScreen = newMarkers;
             }
 
-            function getClusterAvatar(coordinates) {
-                let pointPixels = map.project(coordinates);
-                const avatarFeature = geojson.features.find(function (el) {
-                    if (!el.properties.avatar || el.properties.avatar === "null") return;
-                    let elPixels = map.project(el.geometry.coordinates);
-                    let pixelDistance = Math.sqrt(
-                        Math.pow(elPixels.x - pointPixels.x, 2) + Math.pow(elPixels.y - pointPixels.y, 2)
-                    );
-                    return Math.abs(pixelDistance) <= 20;
-                });
-                return avatarFeature ? avatarFeature.properties.avatar : defaultAvatar;
-            }
-
-            function avatarOrDefault(avatar) {
-                return avatar && avatar !== "null" ? avatar : defaultAvatar;
-            }
+            // Register move/moveend handlers once (not inside "data" to avoid accumulation)
+            map.on("move", updateMarkers);
+            map.on("moveend", updateMarkers);
 
             map.on("data", function (e) {
                 if (e.sourceId !== "usersGeojson" || !e.isSourceLoaded) return;
-                map.on("move", updateMarkers);
-                map.on("moveend", updateMarkers);
                 updateMarkers();
             });
         },
