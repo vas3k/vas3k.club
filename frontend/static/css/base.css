@@ -735,13 +735,6 @@ input[type=range]:focus::-ms-fill-upper {
             margin-right: 10px;
         }
 
-img.emoji {
-   height: 1.2em;
-   width: 1.2em;
-   margin: 0 .05em 0 .1em;
-   vertical-align: -0.25em;
-}
-
 .text-center {
     text-align: center;
 }

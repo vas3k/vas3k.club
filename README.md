@@ -53,11 +53,9 @@ For more information on how to test the telegram bot, run project without docker
 
 ## ☄️ Testing
 
-We use standard Django testing framework. No magic, really. You can run them from PyCharm or using Django CLI. 
+We use standard Django testing framework for backend and Jest for frontend. No magic, really.
 
 See [docs/test.md](docs/test.md) for more insights.
-
-> We don't have UI tests, sorry. Maybe in the future
 
 ## 🚢 Deployment
 
