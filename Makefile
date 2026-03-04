@@ -6,15 +6,15 @@ PROJECT_NAME := vas3k_club
 
 .PHONY: run-dev
 run-dev:  ## Run dev server
-	pipenv run python manage.py runserver 0.0.0.0:8000
+	pipenv run python3 manage.py runserver 0.0.0.0:8000
 
 .PHONY: run-queue
 run-queue:  ## Run task broker
-	pipenv run python manage.py qcluster
+	pipenv run python3 manage.py qcluster
 
 .PHONY: run-bot
 run-bot:  ## Run telegram bot
-	pipenv run python bot/main.py
+	pipenv run python3 bot/main.py
 
 .PHONY: run-uvicorn
 run-uvicorn:  ## Run uvicorn (ASGI) server
