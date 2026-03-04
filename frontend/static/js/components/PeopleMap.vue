@@ -86,12 +86,15 @@ export default {
                 return projected;
             }
 
+            var CLUSTER_AVATAR_RADIUS = 20;
+            var CLUSTER_AVATAR_RADIUS_SQ = CLUSTER_AVATAR_RADIUS * CLUSTER_AVATAR_RADIUS;
+
             function getClusterAvatar(projectedFeatures, coordinates) {
                 var pointPixels = map.project(coordinates);
                 for (var i = 0; i < projectedFeatures.length; i++) {
                     var dx = projectedFeatures[i].pixels.x - pointPixels.x;
                     var dy = projectedFeatures[i].pixels.y - pointPixels.y;
-                    if (dx * dx + dy * dy <= 400) { // 20^2
+                    if (dx * dx + dy * dy <= CLUSTER_AVATAR_RADIUS_SQ) {
                         return projectedFeatures[i].avatar;
                     }
                 }
