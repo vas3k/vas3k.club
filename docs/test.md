@@ -4,29 +4,29 @@
 
 Consider next required conditions for running tests:
 
-- **venv**
+- **pipenv**
 
-  Don't forget to run it under configured venv. Look [setup venv](#setup-venv) how to configure venv
+  Don't forget to run it under configured pipenv. Install dependencies with `pipenv install --dev`
 - **postgres**
 
-  Due to tests make database queries the local postgres should be running. 
-  
+  Due to tests make database queries the local postgres should be running.
+
   Run postgres:
   ```sh
-  $ docker-compose -f docker-compose.yml up -d postgres
+  $ docker compose -f docker-compose.yml up -d postgres
   ```
-  For first time run migrations (it needs only for fresh images) 
-  ```sh 
-  (venv) $ ./manage.py migrate
+  For first time run migrations (it needs only for fresh images)
+  ```sh
+  $ pipenv run python3 manage.py migrate
   ```
 - **redis**
   Run redis:
   ```sh
-  $ docker-compose -f docker-compose.yml up -d redis
+  $ docker compose -f docker-compose.yml up -d redis
   ```
 - build **frontend**
-  
-  For [views tests](https://docs.djangoproject.com/en/3.1/intro/tutorial05/#a-test-for-a-view) its essential to build our frontend upfront. 
+
+  For [views tests](https://docs.djangoproject.com/en/5.1/intro/tutorial05/#a-test-for-a-view) its essential to build our frontend upfront.
   Hot to build front look [setup-frontend](#setup-frontend) section, for now just run next commands:
   ```sh
   $ cd frontend
@@ -34,11 +34,9 @@ Consider next required conditions for running tests:
   $ npm run build
   ```
   Above commands will create [required `webpack-stats.json`](https://github.com/vas3k/vas3k.club/blob/6f1812f36b546feba2bd729ac84011e20e237136/club/settings.py#L228) file
-- test environment variables
+- test environment variables (needed when running `manage.py test` directly, `make test` sets them automatically)
   ```dotenv
-  DJANGO_SETTINGS_MODULE=club.settings;
-  PYTHONUNBUFFERED=1;
-  TESTS_RUN=da
+  TESTS_RUN=true
   POSTGRES_DB=vas3k_club
   POSTGRES_USER=postgres
   POSTGRES_PASSWORD=postgres
@@ -50,18 +48,16 @@ Consider next required conditions for running tests:
 ## Run tests
 
 Basically tests automatically runs in CI in opened PR, but if you want to run tests **locally** there are few ways to do it
-1. virgin shell
+1. make (recommended)
    ```sh
    $ make test
    ```
-2. venv shell
+2. pipenv shell
    ```sh
-   $ source {your-venv-folder}/bin/activate
-   (venv) $ ./manage.py test
+   $ TESTS_RUN=true pipenv run python3 manage.py test
    ```
-   (^*don't forget inject test env variables*)
 3. pycharm *profession edition*
-   Use `django tests` template out of the box
+   Use `django tests` template out of the box. Add `TESTS_RUN=true` to environment variables.
 4. pycharm *common edition*
    - Make sure you have set `Unittest` as default test runner: Settings --> Tools --> Python Integrated Tools --> Default Test Runner: Unittests
    ![Default Test Runner](images/pycharm-ce.settings.default-test-runner.png)
@@ -73,7 +69,7 @@ Basically tests automatically runs in CI in opened PR, but if you want to run te
      django.setup()
      ```
 
-For more information about testing in django look well written [official documentation](https://docs.djangoproject.com/en/3.1/topics/testing/overview/)
+For more information about testing in django look well written [official documentation](https://docs.djangoproject.com/en/5.1/topics/testing/overview/)
 
 ## Frontend tests
 
