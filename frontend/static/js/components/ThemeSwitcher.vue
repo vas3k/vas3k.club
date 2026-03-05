@@ -1,5 +1,5 @@
 <template>
-    <div :data-value="theme" :data-real="realTheme()">
+    <div :data-value="theme" :data-real="realTheme">
         <label class="light" aria-label="Светлая тема"><input type="radio" v-model="theme" value="light" /></label>
         <label class="auto" aria-label="Автоматически определять тему"><input type="radio" v-model="theme" value="auto" /></label>
         <label class="dark" aria-label="Тёмная тема"><input type="radio" v-model="theme" value="dark" /></label>
@@ -12,36 +12,38 @@ export default {
     data() {
         return {
             theme: "auto",
+            prefersLight: matchMedia("(prefers-color-scheme: light)").matches,
         };
     },
-    watch: {
-        theme() {
-            this.changeTheme();
+    computed: {
+        realTheme() {
+            // if you change this code, update the similar code in `html/layout.html`
+            // run on initialization to avoid background flickering
+            return this.theme === "auto" ? (this.prefersLight ? "light" : "dark") : this.theme;
         },
     },
-    computed: {
-        $media() {
-            return matchMedia("(prefers-color-scheme: light)");
+    watch: {
+        realTheme(val) {
+            document.documentElement.setAttribute("theme", val);
+            localStorage.setItem("theme", this.theme);
         },
     },
     mounted() {
-        this.$media.addEventListener("change", this.changeTheme);
+        this._mediaQuery = matchMedia("(prefers-color-scheme: light)");
+        this.prefersLight = this._mediaQuery.matches;
+        this._mediaQuery.addEventListener("change", this.onMediaChange);
+
         const localTheme = localStorage.getItem("theme");
         if (["light", "auto", "dark"].includes(localTheme)) {
             this.theme = localTheme;
         }
     },
+    beforeDestroy() {
+        this._mediaQuery.removeEventListener("change", this.onMediaChange);
+    },
     methods: {
-        changeTheme() {
-            document.documentElement.setAttribute("theme", this.realTheme());
-            this.$el.dataset.value = this.theme;
-            localStorage.setItem("theme", this.theme);
-            this.$forceUpdate();
-        },
-        realTheme() {
-            // if you change this code, update the similar code in `html/layout.html`
-            // run on initialization to avoid background flickering
-            return this.theme === "auto" ? (this.$media.matches ? "light" : "dark") : this.theme;
+        onMediaChange(e) {
+            this.prefersLight = e.matches;
         },
     },
 };
