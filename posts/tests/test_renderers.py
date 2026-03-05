@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.utils import CaptureQueriesContext
 from django.db import connection
 from django.urls import reverse
@@ -203,3 +203,52 @@ class TestRenderPostCommentPostReference(RendererTestBase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "удален")
+
+
+class TestRenderPostCommentRateLimit(RendererTestBase):
+    def test_comment_form_shown_when_under_limit(self):
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "comment-form-form")
+        self.assertNotContains(response, "block-comments-restricted")
+
+    @override_settings(RATE_LIMIT_COMMENTS_PER_DAY=2)
+    def test_rate_limit_block_shown_when_exceeded(self):
+        """When user exceeds daily comment limit, comment form is replaced with restriction block."""
+        for i in range(2):
+            Comment.objects.create(author=self.user, post=self.post, text=f"spam {i}")
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "block-comments-restricted")
+        self.assertNotContains(response, "comment-form-form")
+
+    def test_anonymous_sees_no_comment_form(self):
+        client = HelperClient()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "comment-form-form")
+        self.assertNotContains(response, "block-comments-restricted")
+
+    def test_rate_limit_not_computed_in_template(self):
+        """Rate limit check should happen in the view, not via template tag query."""
+        client = HelperClient(self.user)
+        client.authorise()
+
+        with CaptureQueriesContext(connection) as queries:
+            client.get(self._post_url())
+
+        template_tag_queries = [
+            q["sql"] for q in queries
+            if "comments" in q["sql"]
+               and "COUNT" in q["sql"]
+               and q["sql"].startswith("SELECT")
+        ]
+        self.assertLessEqual(len(template_tag_queries), 1)

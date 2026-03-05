@@ -7,6 +7,7 @@ from django.template import TemplateDoesNotExist
 
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm
 from comments.models import Comment, CommentVote
+from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.markdown.markdown import markdown_text
 from posts.models.post import Post
 from bookmarks.models import PostBookmark
@@ -40,6 +41,7 @@ def render_post(request, post, context=None):
         user_notes = dict(UserNote.objects.filter(user_from=request.me).values_list("user_to", "text").all()[:100])
         collectible_tag = Tag.objects.filter(code=post.collectible_tag_code).first() if post.collectible_tag_code else None
         is_collectible_tag_collected = UserTag.objects.filter(tag=collectible_tag, user=request.me).exists() if collectible_tag else False
+        is_comment_rate_exceeded = is_comment_rate_limit_exceeded(post, request.me)
     else:
         is_bookmark = False
         upvoted_at = None
@@ -48,6 +50,7 @@ def render_post(request, post, context=None):
         user_notes = {}
         collectible_tag = None
         is_collectible_tag_collected = False
+        is_comment_rate_exceeded = False
 
     comment_order = request.GET.get("comment_order") or "-upvotes"
     if comment_order in POSSIBLE_COMMENT_ORDERS:
@@ -95,6 +98,7 @@ def render_post(request, post, context=None):
         "user_notes": user_notes,
         "collectible_tag": collectible_tag,
         "is_collectible_tag_collected": is_collectible_tag_collected,
+        "is_comment_rate_exceeded": is_comment_rate_exceeded,
     }
 
     # FIXME: too much hardcoded stuff here. implement a proper type->form mapping in future
