@@ -226,7 +226,7 @@ class TestRenderPostCommentRateLimit(RendererTestBase):
         response = client.get(self._post_url())
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "block-comments-restricted")
+        self.assertContains(response, "block-comments-rate-limited")
         self.assertNotContains(response, "comment-form-form")
 
     def test_anonymous_sees_no_comment_form(self):
@@ -235,7 +235,7 @@ class TestRenderPostCommentRateLimit(RendererTestBase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "comment-form-form")
-        self.assertNotContains(response, "block-comments-restricted")
+        self.assertNotContains(response, "block-comments-rate-limited")
 
     def test_rate_limit_not_computed_in_template(self):
         """Rate limit check should happen in the view, not via template tag query."""
