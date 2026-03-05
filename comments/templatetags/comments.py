@@ -56,11 +56,7 @@ def render_comment(context, comment):
         )
 
     if not comment.html or settings.DEBUG:
-        new_html = markdown_text(comment.text, uniq_id=comment.id)
-        if new_html != comment.html:
-            # to not flood into history
-            comment.html = new_html
-            comment.save(update_fields=["html", "updated_at"])
+        comment.html = markdown_text(comment.text, uniq_id=comment.id)
 
     return mark_safe(comment.html or "")
 
@@ -74,5 +70,5 @@ def edit_form(form):
 def selected_battle_side(context):
     try:
         return "selected" if context['comment'].battle_side == context['side']['name'] else ""
-    except Exception:
+    except (KeyError, AttributeError, TypeError):
         return ""
