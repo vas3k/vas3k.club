@@ -38,7 +38,7 @@ lint:  ## Lint code with flake8
 
 .PHONY: test
 test:  ## Run backend tests
-	pipenv run python3 manage.py test
+	TESTS_RUN=true pipenv run python3 manage.py test
 
 .PHONY: test-frontend
 test-frontend:  ## Run frontend tests
@@ -49,7 +49,7 @@ test-all: test test-frontend  ## Run all tests (backend + frontend)
 
 .PHONY: test-ci
 test-ci:  ## Run backend tests (CI)
-	python3 manage.py test
+	TESTS_RUN=true python3 manage.py test
 
 .PHONY: test-frontend-ci
 test-frontend-ci:  ## Run frontend tests (CI)
