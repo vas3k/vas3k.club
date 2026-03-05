@@ -79,6 +79,18 @@ def profile(request, user_slug):
             .select_related("user_from")\
             .all()
 
+    posts_total = Post.visible_objects()\
+        .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .count()
+
+    comments_total = 0
+    if comments is not None:
+        comments_total = Comment.visible_objects()\
+            .filter(author=user)\
+            .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
+            .count()
+
     return render(request, "users/profile.html", {
         "user": user,
         "intro": intro,
@@ -89,9 +101,9 @@ def profile(request, user_slug):
         "collectible_tags": collectible_tags,
         "achievements": [ua.achievement for ua in achievements],
         "comments": comments[:3] if comments else [],
-        "comments_total": comments.count() if comments else 0,
+        "comments_total": comments_total,
         "posts": posts[:15],
-        "posts_total": posts.count() if posts else 0,
+        "posts_total": posts_total,
         "similarity": similarity,
         "muted": muted,
         "note": note,
