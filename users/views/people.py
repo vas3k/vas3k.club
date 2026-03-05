@@ -102,7 +102,7 @@ def people(request):
         "🏰 Города": _top(users, "city"),
     }
 
-    users_for_map = users.filter(geo__isnull=False)
+    users_for_map = users.filter(geo__isnull=False).order_by().values_list("slug", "avatar", "geo")
 
     return render(request, "users/people.html", {
         "people_query": {
