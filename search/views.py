@@ -18,7 +18,7 @@ def search(request):
     # fetch query results
     results = SearchIndex\
         .search(query)\
-        .select_related("post", "user", "comment")
+        .select_related("post__author", "comment__author", "comment__post", "user")
 
     # filter them by type
     content_type = request.GET.get("type")
