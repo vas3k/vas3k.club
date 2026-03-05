@@ -13,7 +13,7 @@ def geo_coordinates(geo):
         return None
     lat = geo.get("latitude")
     lng = geo.get("longitude")
-    if not lat or not lng:
+    if lat is None or lng is None:
         return None
     if not geo.get("precise"):
         lat += random.uniform(-0.12, 0.12)
