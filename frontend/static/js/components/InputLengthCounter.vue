@@ -33,30 +33,29 @@ export default {
     data() {
         return {
             counter: null,
-            $target: null,
         };
     },
     mounted() {
-        this.$target = document.querySelector(this.element);
-        if (!this.$target) {
+        this._target = document.querySelector(this.element);
+        if (!this._target) {
             return console.warn(`${this.element} is not found.`);
         }
 
-        if (!(this.$target instanceof HTMLTextAreaElement) && !(this.$target instanceof HTMLInputElement)) {
+        if (this._target.tagName !== "TEXTAREA" && this._target.tagName !== "INPUT") {
             return console.warn(`${this.element} is not an input element.`);
         }
 
-        this.counter = this.$target.value.length;
+        this.counter = this._target.value.length;
 
-        this.throttledCounterHandler = throttle((e) => {
+        this._throttledHandler = throttle((e) => {
             this.counter = e.target.value.length;
         }, this.delay);
 
-        this.$target.addEventListener("keyup", this.throttledCounterHandler);
+        this._target.addEventListener("keyup", this._throttledHandler);
     },
     beforeUnmount() {
-        if (this.$target) {
-            this.$target.removeEventListener("keyup", this.throttledCounterHandler);
+        if (this._target) {
+            this._target.removeEventListener("keyup", this._throttledHandler);
         }
     },
 };
