@@ -25,6 +25,7 @@ from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, 
 from misc.fun import mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement, \
     crew, write_to_crew
+from rooms.api import api_rooms
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
     link_telegram
@@ -43,6 +44,7 @@ from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, compose, compose_type, \
     delete_post, unpublish_post, clear_post
+from bookmarks.api import api_bookmarks
 from bookmarks.views import bookmarks
 from search.views import search
 from tickets.views import stripe_ticket_sale_webhook
@@ -50,7 +52,7 @@ from tickets.views import stripe_ticket_sale_webhook
 from users.api import api_profile, api_profile_by_telegram_id, api_profile_tags, api_profile_achievements, \
     api_profile_badges, api_profile_badge
 from users.views.delete_account import request_delete_account, confirm_delete_account
-from users.views.friends import api_friend, friends
+from users.views.friends import api_friend, api_friends, friends
 from users.views.messages import on_review, rejected, banned
 from users.views.muted import toggle_mute, muted
 from users.views.notes import edit_note
@@ -108,6 +110,7 @@ urlpatterns = [
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),
     path("user/<slug:user_slug>/friend/", api_friend, name="api_friend"),
     path("user/<slug:user_slug>/friends/", friends, name="friends"),
+    path("friends.json", api_friends, name="api_friends"),
     path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
     path("user/<slug:user_slug>/muted/", muted, name="muted"),
     path("user/<slug:user_slug>/note/", edit_note, name="edit_note"),
@@ -155,12 +158,14 @@ urlpatterns = [
     path("post/<slug:post_slug>/badge/", create_badge_for_post, name="create_badge_for_post"),
 
     path("bookmarks/", bookmarks, name="bookmarks"),
+    path("bookmarks.json", api_bookmarks, name="api_bookmarks"),
 
     path("search/", search, name="search"),
     path("search/users.json", api_search_users, name="api_search_users"),
     path("search/tags.json", api_search_tags, name="api_search_tags"),
 
     path("rooms/", list_rooms, name="list_rooms"),
+    path("rooms.json", api_rooms, name="api_rooms"),
     path("room/<slug:room_slug>/", feed, name="feed_room"),
     path("room/<slug:room_slug>/chat/", redirect_to_room_chat, name="redirect_to_room_chat"),
     path("room/<slug:room_slug>/subscribe/", toggle_room_subscription, name="toggle_room_subscription"),
