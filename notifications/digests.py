@@ -67,6 +67,18 @@ def generate_daily_digest(user):
         .exclude(id__in=[p.id for p in new_posts]) \
         .order_by("-hotness")[:3]
 
+    # Events for you today (user participates and event is scheduled for today)
+    today_events_for_user = Post.visible_objects()\
+        .filter(
+            type=Post.TYPE_EVENT,
+            moderation_status=Post.MODERATION_APPROVED,
+            published_at__gte=end_date - timedelta(days=180),  # ignore older events
+            metadata__event__day=str(end_date.day),
+            metadata__event__month=str(end_date.month),
+            metadata__event__participants__contains=[str(user.id)],
+        )\
+        .order_by("-upvotes")[:3]
+
     # Upcoming events
     upcoming_events = Post.visible_objects()\
         .filter(Q(moderation_status=Post.MODERATION_APPROVED))\
@@ -98,7 +110,7 @@ def generate_daily_digest(user):
     if top_old_post.upvotes < MIN_TOP_POST_UPVOTES:
         top_old_post = None
 
-    if not new_post_comments and not new_posts and not intros:
+    if not new_post_comments and not new_posts and not intros and not today_events_for_user:
         raise NotFound()
 
     return render_to_string("messages/good_morning.html", {
@@ -106,6 +118,7 @@ def generate_daily_digest(user):
         "intros": intros,
         "new_posts": new_posts,
         "hot_posts": hot_posts,
+        "today_events_for_user": today_events_for_user,
         "upcoming_events": upcoming_events,
         "top_old_post": top_old_post,
         "stats": {

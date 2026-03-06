@@ -2,7 +2,11 @@
 
 Сегодня {% if date.weekday == 2 %}среда, мои чуваки! 🐸{% else %}{{ date|date:"j E, l"|lower }}.{% endif %} {% if stats.new_upvotes %}Вы получили 💎 <b>{{ stats.new_upvotes }} {{ stats.new_upvotes | rupluralize:"новый плюсик,новых плюсика,новых плюсиков" }}</b> за посты и комменты!{% endif %} {% if stats.new_post_comments %}К вашему посту <b><a href="{{ settings.APP_HOST }}{% url "show_post" stats.new_post_comments.post__type stats.new_post_comments.post__slug %}">{{ stats.new_post_comments.post__title }}</a></b> написали <b>{{ stats.new_post_comments.count }} {{ stats.new_post_comments.count | rupluralize:"новый комментарий,новых комментария,новых комментариев" }}</b>.{% endif %}
 
+{% if today_events_for_user %}📅 <b>ОПА! У вас сегодня есть важное событие!</b>
+{% for post in today_events_for_user %}
+в {{ post.event_datetime|date:"H:i" }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
 
+{% endfor %}{% endif %}
 {% if new_posts %}📝 <b>Свежие посты</b>
 {% for post in new_posts %}
 {{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
