@@ -14,7 +14,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, "static/dist"),
         publicPath: "/static/dist/",
-        filename: mode === "production" ? "[name]-[hash].js" : "[name].js",
+        filename: mode === "production" ? "[name]-[fullhash].js" : "[name].js",
         libraryTarget: "var",
         library: "Club",
     },
@@ -24,7 +24,7 @@ module.exports = {
             filename: "webpack-stats.json",
         }),
         new MiniCssExtractPlugin({
-            filename: mode === "production" ? "[name]-[hash].css" : "[name].css",
+            filename: mode === "production" ? "[name]-[fullhash].css" : "[name].css",
             chunkFilename: "[id].css",
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
