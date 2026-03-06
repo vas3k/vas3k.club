@@ -1,31 +1,15 @@
 <template>
-    <MglMap
-        :accessToken="accessToken"
-        :mapStyle="mapStyle"
-        :maxZoom="12"
-        :attributionControl="false"
-        :scrollZoom="false"
-        @load="onMapLoaded"
-    >
-        <MglNavigationControl position="top-right" />
-        <MglGeolocateControl position="top-right" />
+    <div>
+        <div ref="map" class="people-map-gl"></div>
         <slot></slot>
-    </MglMap>
+    </div>
 </template>
 
 <script>
-import Mapbox from "mapbox-gl";
-
-import { MglMap, MglNavigationControl, MglGeolocateControl, MglMarker } from "vue-mapbox-ho";
+import mapboxgl from "mapbox-gl";
 
 export default {
     name: "PeopleMap",
-    components: {
-        MglMap,
-        MglNavigationControl,
-        MglGeolocateControl,
-        MglMarker,
-    },
     props: {
         geojson: {
             type: Object,
@@ -40,15 +24,29 @@ export default {
             defaultAvatar: "https://i.vas3k.club/v.png",
         };
     },
-    created() {
-        this.mapbox = Mapbox;
+    mounted() {
+        mapboxgl.accessToken = this.accessToken;
+        this.map = new mapboxgl.Map({
+            container: this.$refs.map,
+            style: this.mapStyle,
+            maxZoom: 12,
+            attributionControl: false,
+            scrollZoom: false,
+        });
+        this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
+        this.map.addControl(new mapboxgl.GeolocateControl(), "top-right");
+        this.map.on("load", () => this.onMapLoaded());
+    },
+    beforeDestroy() {
+        if (this.map) {
+            this.map.remove();
+        }
     },
     methods: {
-        onMapLoaded(event) {
-            const map = event.map;
+        onMapLoaded() {
+            const map = this.map;
             const geojson = this.geojson;
             const defaultAvatar = this.defaultAvatar;
-            const mapbox = this.mapbox;
             map.addSource("usersGeojson", {
                 type: "geojson",
                 data: this.geojson,
@@ -119,7 +117,7 @@ export default {
                             clusterElement.innerText = props.point_count;
                             const clusterAvatar = getClusterAvatar(projectedFeatures, coords);
                             clusterElement.style.backgroundImage = "url('" + avatarOrDefault(clusterAvatar) + "')";
-                            marker = new mapbox.Marker({ element: clusterElement }).setLngLat(coords);
+                            marker = new mapboxgl.Marker({ element: clusterElement }).setLngLat(coords);
                             clusterElement.addEventListener("click", function () {
                                 map.flyTo({ center: coords, zoom: map.getZoom() + 2, offset: [200, 0] });
                             });
@@ -129,7 +127,7 @@ export default {
                             markerElement.target = "_blank";
                             markerElement.classList.add("people-map-user-marker");
                             markerElement.style.backgroundImage = "url('" + avatarOrDefault(props.avatar) + "')";
-                            marker = new mapbox.Marker({ element: markerElement }).setLngLat(coords);
+                            marker = new mapboxgl.Marker({ element: markerElement }).setLngLat(coords);
                         }
                     }
                     newMarkers[id] = marker;

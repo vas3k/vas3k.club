@@ -7,29 +7,24 @@ const mockMarkerInstance = {
 const mockMap = {
     addSource: jest.fn(),
     addLayer: jest.fn(),
+    addControl: jest.fn(),
     querySourceFeatures: jest.fn().mockReturnValue([]),
     project: jest.fn((coords) => ({ x: coords[0], y: coords[1] })),
     getZoom: jest.fn().mockReturnValue(5),
     flyTo: jest.fn(),
     on: jest.fn(),
+    remove: jest.fn(),
 };
 
 jest.mock("mapbox-gl", () => ({
     __esModule: true,
     default: {
+        Map: jest.fn(() => mockMap),
         Marker: jest.fn(() => mockMarkerInstance),
+        NavigationControl: jest.fn(),
+        GeolocateControl: jest.fn(),
+        accessToken: null,
     },
-}));
-
-jest.mock("vue-mapbox-ho", () => ({
-    MglMap: {
-        name: "MglMap",
-        template: "<div><slot /></div>",
-        props: ["accessToken", "mapStyle", "maxZoom", "attributionControl", "scrollZoom"],
-    },
-    MglNavigationControl: { name: "MglNavigationControl", template: "<div />" },
-    MglGeolocateControl: { name: "MglGeolocateControl", template: "<div />" },
-    MglMarker: { name: "MglMarker", template: "<div />" },
 }));
 
 import { shallowMount } from "@vue/test-utils";
@@ -72,11 +67,22 @@ describe("PeopleMap.vue", () => {
     function mountMap(geojson) {
         wrapper = shallowMount(PeopleMap, {
             propsData: { geojson },
+            stubs: { default: true },
         });
-        wrapper.vm.onMapLoaded({ map: mockMap });
+        // Simulate map load: the "load" callback is registered via map.on("load", ...)
+        var loadCall = mockMap.on.mock.calls.find(([e]) => e === "load");
+        if (loadCall) loadCall[1]();
     }
 
     describe("map initialization", () => {
+        it("creates a mapbox-gl Map and adds controls", () => {
+            mountMap(makeGeojson([{ coords: [10, 20] }]));
+
+            var mapboxgl = require("mapbox-gl").default;
+            expect(mapboxgl.Map).toHaveBeenCalledTimes(1);
+            expect(mockMap.addControl).toHaveBeenCalledTimes(2);
+        });
+
         it("adds clustered geojson source and transparent circle layer", () => {
             mountMap(makeGeojson([{ coords: [10, 20] }]));
 
@@ -332,6 +338,16 @@ describe("PeopleMap.vue", () => {
 
             fireDataEvent();
             expect(MarkerCtor.mock.calls.length).toBe(countAfterFirst);
+        });
+    });
+
+    describe("cleanup", () => {
+        it("calls map.remove() on destroy", () => {
+            mountMap(makeGeojson([{ coords: [10, 20] }]));
+            wrapper.destroy();
+
+            expect(mockMap.remove).toHaveBeenCalled();
+            wrapper = null; // prevent double destroy in afterEach
         });
     });
 });
