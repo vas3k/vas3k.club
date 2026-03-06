@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 
 from authn.decorators.auth import require_auth
@@ -64,8 +65,9 @@ def feed(
     # for main page — add pinned posts
     pinned_posts = []
     if ordering == ORDERING_ACTIVITY:
-        pinned_posts = posts.filter(is_pinned_until__gte=datetime.utcnow())
-        posts = posts.exclude(id__in=[p.id for p in pinned_posts])
+        now = datetime.utcnow()
+        pinned_posts = posts.filter(is_pinned_until__gte=now)
+        posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
     # for moderators — pending posts
     waiting_for_moderation_posts = []
