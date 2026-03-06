@@ -108,7 +108,7 @@ def show_comment(request, post_slug, comment_id):
 
 @require_auth
 def edit_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post", "author"), id=comment_id)
 
     if not request.me.is_moderator:
         if comment.author != request.me:
@@ -213,7 +213,7 @@ def delete_comment(request, comment_id):
 @require_auth
 @require_http_methods(["POST"])
 def delete_comment_thread(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post"), id=comment_id)
 
     if not request.me.is_moderator:
         # only moderator can delete whole threads
@@ -232,7 +232,7 @@ def delete_comment_thread(request, comment_id):
 @require_auth
 @require_http_methods(["POST"])
 def pin_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post__author", "reply_to"), id=comment_id)
 
     if not request.me.is_moderator and comment.post.author != request.me:
         raise AccessDenied(
@@ -255,7 +255,7 @@ def pin_comment(request, comment_id):
 @api(require_auth=True)
 @require_http_methods(["POST"])
 def upvote_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("author", "post"), id=comment_id)
 
     post_vote, is_created = CommentVote.upvote(
         user=request.me,
@@ -274,7 +274,7 @@ def upvote_comment(request, comment_id):
 @api(require_auth=True)
 @require_http_methods(["POST"])
 def retract_comment_vote(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("author"), id=comment_id)
 
     is_retracted = CommentVote.retract_vote(
         request=request,
