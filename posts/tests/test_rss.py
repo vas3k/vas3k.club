@@ -44,10 +44,9 @@ class TestNewPostsRss(TestCase):
         _create_post("rss_visible", self.user)
 
         response = self.client.get("/posts.rss")
-        content = response.content.decode()
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("rss_visible", content)
+        self.assertIn("rss_visible", response.content.decode())
 
     def test_only_approved_posts_in_rss(self):
         _create_post("rss_approved", self.user)
@@ -60,14 +59,13 @@ class TestNewPostsRss(TestCase):
         self.assertNotIn("rss_pending", content)
         self.assertNotIn("rss_none", content)
 
-    def test_only_public_posts_in_rss(self):
-        _create_post("rss_public", self.user)
-        _create_post("rss_private", self.user, is_public=False)
+    def test_private_post_shown_without_content(self):
+        _create_post("rss_private", self.user, is_public=False, text="secret content")
 
         content = self.client.get("/posts.rss").content.decode()
 
-        self.assertIn("rss_public", content)
-        self.assertNotIn("rss_private", content)
+        self.assertIn("rss_private", content)
+        self.assertNotIn("secret content", content)
 
     def test_intro_posts_excluded(self):
         _create_post("rss_intro", self.user, type=Post.TYPE_INTRO)
@@ -104,14 +102,13 @@ class TestUserPostsRss(TestCase):
         self.assertNotIn("urss_pending", content)
         self.assertNotIn("urss_none", content)
 
-    def test_only_public_posts(self):
-        _create_post("urss_public", self.user)
-        _create_post("urss_private", self.user, is_public=False)
+    def test_private_post_shown_without_content(self):
+        _create_post("urss_private", self.user, is_public=False, text="secret stuff")
 
         content = self.client.get(f"/user/{self.user.slug}/posts.rss").content.decode()
 
-        self.assertIn("urss_public", content)
-        self.assertNotIn("urss_private", content)
+        self.assertIn("urss_private", content)
+        self.assertNotIn("secret stuff", content)
 
     def test_nonexistent_user_returns_404(self):
         response = self.client.get("/user/no_such_user/posts.rss")

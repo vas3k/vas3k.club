@@ -12,7 +12,6 @@ class NewPostsRss(Feed):
     def items(self):
         return Post.visible_objects()\
            .filter(moderation_status=Post.MODERATION_APPROVED)\
-           .filter(is_public=True)\
            .exclude(type=Post.TYPE_INTRO)\
            .order_by("-published_at", "-created_at")[:self.limit]
 
@@ -25,6 +24,8 @@ class NewPostsRss(Feed):
         return title
 
     def item_description(self, item):
+        if not item.is_public:
+            return "🔒"
         return item.description
 
     def item_pubdate(self, item):
