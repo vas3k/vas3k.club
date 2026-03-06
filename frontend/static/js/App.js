@@ -1,13 +1,6 @@
-import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
-import { isCommunicationForm, isMobile } from "./common/utils";
-import {
-    createFileInput,
-    createMarkdownEditor,
-    handleFormSubmissionShortcuts,
-    imageUploadOptions,
-} from "./common/markdown-editor";
+import { isCommunicationForm } from "./common/utils";
 import { getCollapsedCommentThreadsSet, collapseCommentThread } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
@@ -23,16 +16,15 @@ const App = {
         this.restoreCommentThreadsState();
         this.initializePostActions();
 
-        const registeredEditors = this.initializeMarkdownEditor();
-
-        setTimeout(function () {
-            registeredEditors.forEach((editor) => {
-                // textarea value after navigation might be restored after codemirror inited
-                if (editor.element.value && !editor.codemirror.getValue()) {
-                    editor.codemirror.setValue(editor.element.value);
-                }
-            });
-        }, INITIAL_SYNC_DELAY);
+        this.initializeMarkdownEditor().then((registeredEditors) => {
+            setTimeout(function () {
+                registeredEditors.forEach((editor) => {
+                    if (editor.element.value && !editor.codemirror.getValue()) {
+                        editor.codemirror.setValue(editor.element.value);
+                    }
+                });
+            }, INITIAL_SYNC_DELAY);
+        });
     },
     initializeThemeSwitcher() {
         const mediaQueryList = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
@@ -46,84 +38,92 @@ const App = {
         setFaviconHref(mediaQueryList);
         mediaQueryList.addListener(setFaviconHref);
     },
-    initializeMarkdownEditor() {
-        const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
-            (editors, element) => {
-                const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes });
-                const editor = createMarkdownEditor(element, {
-                    autosave: {
-                        enabled: false,
+    async initializeMarkdownEditor() {
+        const elements = document.querySelectorAll(".markdown-editor-full");
+        if (elements.length === 0) return [];
+
+        const [
+            { default: EasyMDE },
+            { createMarkdownEditor, imageUploadOptions, handleFormSubmissionShortcuts, createFileInput },
+        ] = await Promise.all([import("easymde"), import("./common/markdown-editor")]);
+
+        await import("./inline-attachment");
+        await import("./codemirror-4.inline-attachment");
+
+        const fullMarkdownEditors = [...elements].reduce((editors, element) => {
+            const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes });
+            const editor = createMarkdownEditor(element, {
+                autosave: {
+                    enabled: false,
+                },
+                hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
+                showIcons: ["heading-2", "code"],
+                toolbar: [
+                    {
+                        name: "bold",
+                        action: EasyMDE.toggleBold,
+                        className: "fa fa-bold",
+                        title: "Bold",
                     },
-                    hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
-                    showIcons: ["heading-2", "code"],
-                    toolbar: [
-                        {
-                            name: "bold",
-                            action: EasyMDE.toggleBold,
-                            className: "fa fa-bold",
-                            title: "Bold",
+                    {
+                        name: "italic",
+                        action: EasyMDE.toggleItalic,
+                        className: "fa fa-italic",
+                        title: "Italic",
+                    },
+                    {
+                        name: "header",
+                        action: EasyMDE.toggleHeadingSmaller,
+                        className: "fas fa-heading",
+                        title: "Heading",
+                    },
+                    {
+                        name: "quote",
+                        action: EasyMDE.toggleBlockquote,
+                        className: "fas fa-quote-right",
+                        title: "Quote",
+                    },
+                    "|",
+                    {
+                        name: "list",
+                        action: EasyMDE.toggleUnorderedList,
+                        className: "fas fa-list",
+                        title: "List",
+                    },
+                    {
+                        name: "url",
+                        action: EasyMDE.drawLink,
+                        className: "fas fa-link",
+                        title: "Insert URL",
+                    },
+                    {
+                        name: "image",
+                        action: EasyMDE.drawImage,
+                        className: "fas fa-image",
+                        title: "Insert an image",
+                    },
+                    {
+                        name: "upload-file",
+                        action: () => {
+                            fileInputEl.click();
                         },
-                        {
-                            name: "italic",
-                            action: EasyMDE.toggleItalic,
-                            className: "fa fa-italic",
-                            title: "Italic",
-                        },
-                        {
-                            name: "header",
-                            action: EasyMDE.toggleHeadingSmaller,
-                            className: "fas fa-heading",
-                            title: "Heading",
-                        },
-                        {
-                            name: "quote",
-                            action: EasyMDE.toggleBlockquote,
-                            className: "fas fa-quote-right",
-                            title: "Quote",
-                        },
-                        "|",
-                        {
-                            name: "list",
-                            action: EasyMDE.toggleUnorderedList,
-                            className: "fas fa-list",
-                            title: "List",
-                        },
-                        {
-                            name: "url",
-                            action: EasyMDE.drawLink,
-                            className: "fas fa-link",
-                            title: "Insert URL",
-                        },
-                        {
-                            name: "image",
-                            action: EasyMDE.drawImage,
-                            className: "fas fa-image",
-                            title: "Insert an image",
-                        },
-                        {
-                            name: "upload-file",
-                            action: () => {
-                                fileInputEl.click();
-                            },
-                            className: "fa fa-paperclip",
-                            title: "Upload image",
-                        },
-                        {
-                            name: "code",
-                            action: EasyMDE.toggleCodeBlock,
-                            className: "fas fa-code",
-                            title: "Insert code",
-                        },
-                    ],
-                });
+                        className: "fa fa-paperclip",
+                        title: "Upload image",
+                    },
+                    {
+                        name: "code",
+                        action: EasyMDE.toggleCodeBlock,
+                        className: "fas fa-code",
+                        title: "Insert code",
+                    },
+                ],
+            });
 
-                editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
-                inlineAttachment.editors.codemirror4.attach(editor.codemirror, { ...imageUploadOptions, fileInputEl });
+            editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
+            inlineAttachment.editors.codemirror4.attach(editor.codemirror, { ...imageUploadOptions, fileInputEl });
 
-                return [...editors, editor];
-            },
-            []
-        );
+            return [...editors, editor];
+        }, []);
 
         return fullMarkdownEditors;
     },
@@ -146,7 +146,9 @@ const App = {
             img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
             img.className = "link-favicon";
             img.loading = "lazy";
-            img.onerror = function () { this.remove(); };
+            img.onerror = function () {
+                this.remove();
+            };
             link.insertBefore(img, link.firstChild);
         });
     },

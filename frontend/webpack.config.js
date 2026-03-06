@@ -14,9 +14,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, "static/dist"),
         publicPath: "/static/dist/",
-        filename: mode === "production" ? "[name]-[fullhash].js" : "[name].js",
-        libraryTarget: "var",
-        library: "Club",
+        filename: mode === "production" ? "[name]-[contenthash].js" : "[name].js",
     },
     plugins: [
         new BundleTracker({
@@ -24,9 +22,8 @@ module.exports = {
             filename: "webpack-stats.json",
         }),
         new MiniCssExtractPlugin({
-            filename: mode === "production" ? "[name]-[fullhash].css" : "[name].css",
-            chunkFilename: "[id].css",
-            ignoreOrder: false, // Enable to remove warnings about conflicting order
+            filename: mode === "production" ? "[name]-[contenthash].css" : "[name].css",
+            chunkFilename: mode === "production" ? "[id]-[contenthash].css" : "[id].css",
         }),
         new CleanWebpackPlugin(),
         new VueLoaderPlugin(),

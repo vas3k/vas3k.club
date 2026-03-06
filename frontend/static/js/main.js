@@ -2,9 +2,6 @@ import { createApp, defineAsyncComponent } from "vue";
 
 import "../css/index.css";
 
-import "./inline-attachment";
-import "./codemirror-4.inline-attachment";
-
 import App from "./App.js";
 import { handleCommentThreadCollapseToggle, collapseCommentThread } from "./common/comments.js";
 import vSelect from "vue-select";
@@ -136,4 +133,9 @@ app.component(
 
 app.mount("#app");
 
-createApp({}).mount("#footer");
+const footer = createApp({});
+footer.component(
+    "theme-switcher",
+    defineAsyncComponent(() => import("./components/ThemeSwitcher.vue"))
+);
+footer.mount("#footer");
