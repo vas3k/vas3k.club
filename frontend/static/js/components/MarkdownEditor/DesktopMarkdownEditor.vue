@@ -54,6 +54,12 @@ export default {
             fileInputEl.accept = imageUploadOptions.allowedTypes.join();
         }
 
+        // Set textarea value BEFORE creating CodeMirror so it initializes
+        // with the content directly, avoiding stale line references from setValue()
+        if (this.value) {
+            this.$refs["textarea"].value = this.value;
+        }
+
         this.editor = createMarkdownEditor(this.$refs["textarea"], {
             toolbar: false,
         });
@@ -67,7 +73,6 @@ export default {
 
         this.populateCacheWithCommentAuthors();
 
-        this.editor.value(this.value);
         this.focusIfNeeded(this.focused);
     },
     watch: {
@@ -85,7 +90,9 @@ export default {
             this.focusIfNeeded(value);
         },
         value: function (value) {
-            this.editor.value(value);
+            const cm = this.editor.codemirror;
+            cm.setValue(value || "");
+            cm.refresh();
             this.focusIfNeeded(true);
         },
     },
