@@ -1,9 +1,9 @@
 import json
-import random
 
 from django import template
 
 from tags.models import Tag
+from users.models.geo import geo_coordinates
 
 register = template.Library()
 
@@ -16,19 +16,27 @@ def user_tag_images(user):
 
 @register.simple_tag()
 def users_geo_json(users):
-    return json.dumps({
-        "type": "FeatureCollection",
-        "id": "user-markers",
-        "features": [{
+    """Build GeoJSON FeatureCollection from values_list(slug, avatar, geo) tuples."""
+    features = []
+    for slug, avatar, geo in users:
+        coords = geo_coordinates(geo)
+        if not coords:
+            continue
+        lat, lng = coords
+        features.append({
             "type": "Feature",
             "properties": {
-                "id": user.slug,
-                "url": f"/user/{user.slug}/",
-                "avatar": user.avatar,
+                "id": slug,
+                "url": f"/user/{slug}/",
+                "avatar": avatar,
             },
             "geometry": {
                 "type": "Point",
-                "coordinates": [user.longitude, user.latitude],
-            }
-        } for user in users if user.geo]
+                "coordinates": [lng, lat],
+            },
+        })
+    return json.dumps({
+        "type": "FeatureCollection",
+        "id": "user-markers",
+        "features": features,
     })
