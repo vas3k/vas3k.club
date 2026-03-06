@@ -1,17 +1,11 @@
 <template>
     <div class="input-select">
-        <input type="hidden" v-model="currentValue.code" :name="id" />
-        <v-select
-            :options="options"
-            :value="currentValue"
-            @input="onChange"
-        >
-        </v-select>
+        <input type="hidden" :value="currentValue ? currentValue.code : ''" :name="id" />
+        <v-select :options="options" v-model="currentValue"> </v-select>
     </div>
 </template>
 
 <script>
-
 export default {
     name: "SimpleSelect",
     props: {
@@ -26,17 +20,12 @@ export default {
         options: {
             type: Array,
             required: true,
-        }
+        },
     },
     data() {
         return {
-            currentValue: this.options.find(x => x.code === this.initialValue) || {},
+            currentValue: this.options.find((x) => x.code === this.initialValue) || null,
         };
     },
-    methods: {
-        onChange(newValue) {
-            this.currentValue = newValue || {};
-        }
-    }
 };
 </script>

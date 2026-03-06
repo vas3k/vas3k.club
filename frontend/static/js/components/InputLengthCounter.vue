@@ -54,11 +54,10 @@ export default {
 
         this.$target.addEventListener("keyup", this.throttledCounterHandler);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.$target) {
             this.$target.removeEventListener("keyup", this.throttledCounterHandler);
         }
     },
 };
-
 </script>

@@ -15,7 +15,7 @@ describe("CommentScrollArrow.vue", () => {
     });
 
     afterEach(() => {
-        wrapper.destroy();
+        wrapper.unmount();
         commentsContainer.remove();
         jest.restoreAllMocks();
     });
@@ -191,15 +191,15 @@ describe("CommentScrollArrow.vue", () => {
         });
     });
 
-    describe("beforeDestroy", () => {
-        it("removes event listeners on destroy", () => {
+    describe("beforeUnmount", () => {
+        it("removes event listeners on unmount", () => {
             const removeWindowListener = jest.spyOn(window, "removeEventListener");
             const removeDocListener = jest.spyOn(document, "removeEventListener");
 
             const keyUpHandler = wrapper.vm.keyUpHandler;
             const scrollHandler = wrapper.vm.onPageScrollHandler;
 
-            wrapper.destroy();
+            wrapper.unmount();
 
             expect(removeDocListener).toHaveBeenCalledWith("keyup", keyUpHandler);
             expect(removeWindowListener).toHaveBeenCalledWith("scroll", scrollHandler);

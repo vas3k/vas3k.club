@@ -37,7 +37,7 @@ export default {
         this.map.addControl(new mapboxgl.GeolocateControl(), "top-right");
         this.map.on("load", () => this.onMapLoaded());
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.map) {
             this.map.remove();
         }

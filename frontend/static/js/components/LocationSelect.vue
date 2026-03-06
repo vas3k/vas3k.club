@@ -3,8 +3,8 @@
         <div ref="map" class="location-select-map"></div>
         <div class="location-select-target">📍</div>
         <slot></slot>
-        <input type="hidden" v-model="latitude" :name="latitudeFieldName" readonly>
-        <input type="hidden" v-model="longitude" :name="longitudeFieldName" readonly>
+        <input type="hidden" v-model="latitude" :name="latitudeFieldName" readonly />
+        <input type="hidden" v-model="longitude" :name="longitudeFieldName" readonly />
     </div>
 </template>
 
@@ -56,7 +56,7 @@ export default {
         this.map.on("load", () => this.onMapLoaded());
         this.map.on("move", () => this.onMapMove());
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.map) {
             this.map.remove();
         }
@@ -65,7 +65,7 @@ export default {
         onMapLoaded() {
             this.map.setCenter([this.defaultLongitude, this.defaultLatitude]);
             this.updateCoordinates(this.defaultLatitude, this.defaultLongitude);
-            this.map.on('movestart', this.onUserInteraction);
+            this.map.on("movestart", this.onUserInteraction);
 
             if (this.defaultLatitude && this.defaultLongitude) {
                 this.map.setZoom(8);
@@ -79,7 +79,7 @@ export default {
         },
         onUserInteraction() {
             this.userInteracted = true;
-            this.map.off('movestart', this.onUserInteraction);
+            this.map.off("movestart", this.onUserInteraction);
         },
         updateCoordinates(lat, lng) {
             this.latitude = lat.toFixed(6);
@@ -96,22 +96,22 @@ export default {
     max-width: 550px;
 }
 
-    .location-select .mapboxgl-map,
-    .location-select .location-select-map {
-        position: relative;
-        width: 100%;
-        height: 300px;
-        max-width: 550px;
-    }
+.location-select .mapboxgl-map,
+.location-select .location-select-map {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    max-width: 550px;
+}
 
-    .location-select-target {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -95%);
-        font-size: 40px;
-        line-height: 1em;
-        width: 40px;
-        height: 40px;
-    }
+.location-select-target {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -95%);
+    font-size: 40px;
+    line-height: 1em;
+    width: 40px;
+    height: 40px;
+}
 </style>
