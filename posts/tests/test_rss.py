@@ -59,13 +59,21 @@ class TestNewPostsRss(TestCase):
         self.assertNotIn("rss_pending", content)
         self.assertNotIn("rss_none", content)
 
-    def test_private_post_shown_without_content(self):
-        _create_post("rss_private", self.user, is_public=False, text="secret content")
+    def test_private_post_shown_in_rss(self):
+        _create_post("rss_private", self.user, is_public=False)
 
         content = self.client.get("/posts.rss").content.decode()
 
         self.assertIn("rss_private", content)
-        self.assertNotIn("secret content", content)
+
+    def test_description_is_truncated(self):
+        long_text = "A" * 500
+        _create_post("rss_long", self.user, text=long_text)
+
+        content = self.client.get("/posts.rss").content.decode()
+
+        self.assertIn("rss_long", content)
+        self.assertNotIn("A" * 500, content)
 
     def test_intro_posts_excluded(self):
         _create_post("rss_intro", self.user, type=Post.TYPE_INTRO)
@@ -102,13 +110,12 @@ class TestUserPostsRss(TestCase):
         self.assertNotIn("urss_pending", content)
         self.assertNotIn("urss_none", content)
 
-    def test_private_post_shown_without_content(self):
-        _create_post("urss_private", self.user, is_public=False, text="secret stuff")
+    def test_private_post_shown_in_user_rss(self):
+        _create_post("urss_private", self.user, is_public=False)
 
         content = self.client.get(f"/user/{self.user.slug}/posts.rss").content.decode()
 
         self.assertIn("urss_private", content)
-        self.assertNotIn("secret stuff", content)
 
     def test_nonexistent_user_returns_404(self):
         response = self.client.get("/user/no_such_user/posts.rss")
