@@ -1,5 +1,5 @@
-import telegram
 from django.urls import reverse
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from club import settings
 from common.regexp import USERNAME_RE
@@ -22,11 +22,11 @@ def notify_on_comment_created(comment):
         "post_slug": comment.post.slug,
         "comment_id": comment.id,
     })
-    comment_reply_markup = telegram.InlineKeyboardMarkup([
+    comment_reply_markup = InlineKeyboardMarkup([
         [
-            telegram.InlineKeyboardButton("👍", callback_data=f"upvote_comment:{comment.id}"),
-            telegram.InlineKeyboardButton("🔗", url=comment_url),
-            telegram.InlineKeyboardButton("🔕", callback_data=f"unsubscribe:{comment.post_id}"),
+            InlineKeyboardButton("👍", callback_data=f"upvote_comment:{comment.id}"),
+            InlineKeyboardButton("🔗", url=comment_url),
+            InlineKeyboardButton("🔕", callback_data=f"unsubscribe:{comment.post_id}"),
         ],
     ])
 
