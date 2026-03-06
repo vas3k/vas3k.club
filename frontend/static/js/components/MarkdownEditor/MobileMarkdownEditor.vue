@@ -9,7 +9,8 @@
             :value="value"
             @input="growTextareaIfNeeded"
             @blur="emitCustomBlur"
-        ></textarea>
+        >
+        </textarea>
     </div>
 </template>
 
@@ -20,43 +21,44 @@ import { initSettings, isFileAllowed, uploadFile } from "../../inline-attachment
 export default {
     props: {
         value: {
-            type: String,
+            type: String
         },
         focused: {
-            type: Boolean,
-        },
+            type: Boolean
+        }
     },
-    mounted: function () {
+    mounted: function() {
         this.attachImageListener();
         this.focusTextareaIfNeeded(this.focused);
         this.growTextareaIfNeeded();
+
     },
     watch: {
         focused: function (value) {
             this.focusTextareaIfNeeded(value);
-        },
+        }
     },
     methods: {
         emitCustomBlur: function () {
             this.$emit("blur", this.$refs["textarea"].value);
         },
-        focusTextareaIfNeeded: function (shouldFocus) {
+        focusTextareaIfNeeded: function(shouldFocus) {
             this.$nextTick(() => {
                 shouldFocus && this.$refs["textarea"].focus();
             });
         },
-        growTextareaIfNeeded: function () {
-            this.$refs["textarea"].style.height = "auto";
-            this.$refs["textarea"].style.height = this.$refs["textarea"].scrollHeight + "px";
+        growTextareaIfNeeded: function() {
+            this.$refs["textarea"].style.height = 'auto';
+            this.$refs["textarea"].style.height = this.$refs["textarea"].scrollHeight + 'px';
         },
-        attachImageListener: function () {
+        attachImageListener: function() {
             // we reach outside the current component to get the filepicker. It is not a good practice,
             // but we cannot move the text ownership to form because the editor is used in many different contexts
             const fileInput = this.$el.closest("form").querySelector("input[type=file][name=attach-image]");
             if (!fileInput) return;
 
             const settings = initSettings(imageUploadOptions);
-            const textarea = this.$refs["textarea"];
+            const textarea = this.$refs["textarea"]
 
             fileInput.accept = settings.allowedTypes.join();
             fileInput.addEventListener("change", (e) => {
@@ -64,7 +66,7 @@ export default {
                 e.preventDefault();
 
                 for (const file of e.target.files) {
-                    if (!isFileAllowed(file, settings)) continue;
+                    if (!isFileAllowed(file, settings)) continue
 
                     textarea.value = appendText(textarea.value, settings.progressText);
                     uploadFile(
@@ -76,38 +78,30 @@ export default {
 
                             if (filename) {
                                 const urlMarkdown = settings.urlText.replace(settings.filenameTag, filename);
-                                textarea.value = replaceProgressTextOrAppend(
-                                    textarea.value,
-                                    settings.progressText,
-                                    urlMarkdown
-                                );
+                                textarea.value = replaceProgressTextOrAppend(textarea.value, settings.progressText, urlMarkdown);
                                 this.focusTextareaIfNeeded(true);
                             }
                         },
                         () => {
-                            textarea.value = replaceProgressTextOrAppend(
-                                textarea.value,
-                                settings.progressText,
-                                settings.errorText
-                            );
+                            textarea.value = replaceProgressTextOrAppend(textarea.value, settings.progressText, settings.errorText);
                             this.focusTextareaIfNeeded(true);
                         }
                     );
                 }
-            });
-        },
-    },
-};
+            })
+        }
+    }
+}
 
 function appendText(target, text) {
-    return target.length > 0 ? `${target} ${text}` : text;
+    return target.length > 0 ? `${target} ${text}` : text
 }
 
 function replaceProgressTextOrAppend(target, progressText, replacement) {
     if (target.includes(progressText)) {
         return target.replace(progressText, replacement);
     } else {
-        return appendText(target, replacement);
+        return appendText(target, replacement)
     }
 }
 </script>
@@ -126,4 +120,5 @@ textarea {
         box-shadow: none;
     }
 }
+
 </style>

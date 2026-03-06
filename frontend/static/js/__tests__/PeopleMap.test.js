@@ -61,12 +61,12 @@ describe("PeopleMap.vue", () => {
     });
 
     afterEach(() => {
-        if (wrapper) wrapper.unmount();
+        if (wrapper) wrapper.destroy();
     });
 
     function mountMap(geojson) {
         wrapper = shallowMount(PeopleMap, {
-            props: { geojson },
+            propsData: { geojson },
             stubs: { default: true },
         });
         // Simulate map load: the "load" callback is registered via map.on("load", ...)
@@ -86,20 +86,15 @@ describe("PeopleMap.vue", () => {
         it("adds clustered geojson source and transparent circle layer", () => {
             mountMap(makeGeojson([{ coords: [10, 20] }]));
 
-            expect(mockMap.addSource).toHaveBeenCalledWith(
-                "usersGeojson",
-                expect.objectContaining({
-                    type: "geojson",
-                    cluster: true,
-                    clusterRadius: 25,
-                })
-            );
-            expect(mockMap.addLayer).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    id: "users",
-                    source: "usersGeojson",
-                })
-            );
+            expect(mockMap.addSource).toHaveBeenCalledWith("usersGeojson", expect.objectContaining({
+                type: "geojson",
+                cluster: true,
+                clusterRadius: 25,
+            }));
+            expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({
+                id: "users",
+                source: "usersGeojson",
+            }));
         });
     });
 
@@ -180,7 +175,9 @@ describe("PeopleMap.vue", () => {
 
     describe("cluster markers", () => {
         it("creates a div with point count and nearby user avatar", () => {
-            var geojson = makeGeojson([{ coords: [10, 20], avatar: "https://example.com/nearby.jpg", id: "u1" }]);
+            var geojson = makeGeojson([
+                { coords: [10, 20], avatar: "https://example.com/nearby.jpg", id: "u1" },
+            ]);
             var cluster = {
                 geometry: { coordinates: [10.5, 20.5] },
                 properties: { cluster: true, cluster_id: "c1", point_count: 3 },
@@ -216,7 +213,9 @@ describe("PeopleMap.vue", () => {
         });
 
         it("falls back to default avatar when no feature is within pixel threshold", () => {
-            var geojson = makeGeojson([{ coords: [100, 200], avatar: "https://example.com/far.jpg", id: "u1" }]);
+            var geojson = makeGeojson([
+                { coords: [100, 200], avatar: "https://example.com/far.jpg", id: "u1" },
+            ]);
             var cluster = {
                 geometry: { coordinates: [10, 20] },
                 properties: { cluster: true, cluster_id: "c1", point_count: 1 },
@@ -291,11 +290,9 @@ describe("PeopleMap.vue", () => {
             var el = MarkerCtor.mock.calls[0][0].element;
             el.click();
 
-            expect(mockMap.flyTo).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    center: [15, 25],
-                })
-            );
+            expect(mockMap.flyTo).toHaveBeenCalledWith(expect.objectContaining({
+                center: [15, 25],
+            }));
         });
     });
 
@@ -347,7 +344,7 @@ describe("PeopleMap.vue", () => {
     describe("cleanup", () => {
         it("calls map.remove() on destroy", () => {
             mountMap(makeGeojson([{ coords: [10, 20] }]));
-            wrapper.unmount();
+            wrapper.destroy();
 
             expect(mockMap.remove).toHaveBeenCalled();
             wrapper = null; // prevent double destroy in afterEach

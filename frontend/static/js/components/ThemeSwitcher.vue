@@ -1,9 +1,7 @@
 <template>
     <div :data-value="theme" :data-real="realTheme">
         <label class="light" aria-label="Светлая тема"><input type="radio" v-model="theme" value="light" /></label>
-        <label class="auto" aria-label="Автоматически определять тему"
-            ><input type="radio" v-model="theme" value="auto"
-        /></label>
+        <label class="auto" aria-label="Автоматически определять тему"><input type="radio" v-model="theme" value="auto" /></label>
         <label class="dark" aria-label="Тёмная тема"><input type="radio" v-model="theme" value="dark" /></label>
     </div>
 </template>
@@ -40,7 +38,7 @@ export default {
             this.theme = localTheme;
         }
     },
-    beforeUnmount() {
+    beforeDestroy() {
         this._mediaQuery.removeEventListener("change", this.onMediaChange);
     },
     methods: {

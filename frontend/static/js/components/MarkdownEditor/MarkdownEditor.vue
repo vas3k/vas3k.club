@@ -1,11 +1,24 @@
 <template>
-    <mobile-editor v-if="isMobile()" :value="value" :focused="focused" @blur="$emit('blur', $event)"></mobile-editor>
-    <desktop-editor v-else :value="value" :focused="focused" @blur="$emit('blur', $event)"></desktop-editor>
+    <mobile-editor
+        v-if="isMobile()"
+        :value="value"
+        :focused="focused"
+        @blur="$emit('blur', $event)"
+    ></mobile-editor>
+    <desktop-editor
+        v-else
+        :value="value"
+        :focused="focused"
+        @blur="$emit('blur', $event)"
+    ></desktop-editor>
 </template>
 
 <script>
-import { defineAsyncComponent } from "vue";
+import Vue from "vue";
 import { isMobile } from "../../common/utils";
+
+Vue.component("mobile-editor", () => import("./MobileMarkdownEditor.vue"));
+Vue.component("desktop-editor", () => import("./DesktopMarkdownEditor.vue"));
 
 /**
  * The component is a facade for external use.
@@ -15,17 +28,13 @@ import { isMobile } from "../../common/utils";
  * When the user moves the focus from the editor, `blur` event with an updated value is sent
  */
 export default {
-    components: {
-        "mobile-editor": defineAsyncComponent(() => import("./MobileMarkdownEditor.vue")),
-        "desktop-editor": defineAsyncComponent(() => import("./DesktopMarkdownEditor.vue")),
-    },
     props: {
         value: {
-            type: String,
+            type: String
         },
         focused: {
-            type: Boolean,
-        },
+            type: Boolean
+        }
     },
     methods: {
         isMobile,

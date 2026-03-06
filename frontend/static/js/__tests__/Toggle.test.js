@@ -17,7 +17,7 @@ describe("Toggle.vue", () => {
 
     function mountToggle(props = {}) {
         return shallowMount(Toggle, {
-            props: {
+            propsData: {
                 url: "/toggle-url",
                 ...props,
             },

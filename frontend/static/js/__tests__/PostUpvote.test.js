@@ -17,7 +17,7 @@ describe("PostUpvote.vue", () => {
 
     function mountUpvote(props = {}) {
         return shallowMount(PostUpvote, {
-            props: {
+            propsData: {
                 upvoteUrl: "/upvote",
                 retractVoteUrl: "/retract",
                 initialUpvotes: 5,

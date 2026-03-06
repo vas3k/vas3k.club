@@ -2,13 +2,12 @@ module.exports = {
     testEnvironment: "jsdom",
     testEnvironmentOptions: {
         url: "https://vas3k.club",
-        customExportConditions: ["node"],
     },
     roots: ["<rootDir>/static/js"],
     testMatch: ["**/__tests__/**/*.test.js"],
     transform: {
         "^.+\\.js$": "babel-jest",
-        "^.+\\.vue$": "@vue/vue3-jest",
+        "^.+\\.vue$": "@vue/vue2-jest",
     },
     moduleFileExtensions: ["js", "json", "vue"],
     collectCoverageFrom: [

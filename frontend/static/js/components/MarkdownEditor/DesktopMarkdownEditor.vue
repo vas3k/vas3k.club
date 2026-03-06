@@ -8,20 +8,20 @@
                 placeholder="Напишите ответ..."
                 class="markdown-editor-invisible"
                 ref="textarea"
-            ></textarea>
+            >
+            </textarea>
         </div>
-        <div style="position: absolute; z-index: 1">
+        <div style="position:absolute;z-index:1;">
             <div
                 class="mention-autocomplete-hint"
                 v-show="users.length > 0"
                 :style="{
-                    top: autocomplete ? autocomplete.top + 'px' : 0,
-                    left: autocomplete ? autocomplete.left + 'px' : 0,
-                }"
+            top: autocomplete ? autocomplete.top + 'px' : 0,
+            left: autocomplete ? autocomplete.left + 'px' : 0,
+        }"
             >
                 <div
                     v-for="(user, index) in users.slice(0, 5)"
-                    :key="user.slug"
                     :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
                     @click="insertSuggestion(user)"
                     class="mention-autocomplete-hint__option"
@@ -35,18 +35,20 @@
 
 <script>
 import { throttle } from "../../common/utils";
-import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../../common/markdown-editor";
-import "../../inline-attachment";
-import "../../codemirror-4.inline-attachment";
+import {
+    createMarkdownEditor,
+    handleFormSubmissionShortcuts,
+    imageUploadOptions
+} from "../../common/markdown-editor";
 
 export default {
     props: {
         value: {
-            type: String,
+            type: String
         },
         focused: {
-            type: Boolean,
-        },
+            type: Boolean
+        }
     },
     mounted() {
         const fileInputEl = this.$el.closest("form").querySelector("input[type=file][name=attach-image]");
@@ -54,14 +56,8 @@ export default {
             fileInputEl.accept = imageUploadOptions.allowedTypes.join();
         }
 
-        // Set textarea value BEFORE creating CodeMirror so it initializes
-        // with the content directly, avoiding stale line references from setValue()
-        if (this.value) {
-            this.$refs["textarea"].value = this.value;
-        }
-
         this.editor = createMarkdownEditor(this.$refs["textarea"], {
-            toolbar: false,
+            toolbar: false
         });
 
         this.editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
@@ -73,10 +69,11 @@ export default {
 
         this.populateCacheWithCommentAuthors();
 
+        this.editor.value(this.value);
         this.focusIfNeeded(this.focused);
     },
     watch: {
-        users: function (val) {
+        users: function(val) {
             if (val.length > 0) {
                 this.selectedUserIndex = 0;
                 document.addEventListener("keydown", this.handleKeydown, true);
@@ -86,15 +83,13 @@ export default {
                 document.removeEventListener("click", this.handleClickOnOpenAutocomplete, true);
             }
         },
-        focused: function (value) {
+        focused: function(value) {
             this.focusIfNeeded(value);
         },
-        value: function (value) {
-            const cm = this.editor.codemirror;
-            cm.setValue(value || "");
-            cm.refresh();
+        value: function(value) {
+            this.editor.value(value);
             this.focusIfNeeded(true);
-        },
+        }
     },
     data() {
         return {
@@ -104,8 +99,8 @@ export default {
             autocomplete: null,
             autocompleteCache: {
                 samples: {},
-                users: {},
-            },
+                users: {}
+            }
         };
     },
     methods: {
@@ -146,7 +141,7 @@ export default {
             const prevSymbol = cm.getRange(
                 {
                     line: event.from.line,
-                    ch: event.from.ch - 1,
+                    ch: event.from.ch - 1
                 },
                 event.from
             );
@@ -167,15 +162,15 @@ export default {
                 `${user.slug} `,
                 {
                     line,
-                    ch: ch + 1,
+                    ch: ch + 1
                 },
                 {
                     line: cursor.line,
-                    ch: cursor.ch,
+                    ch: cursor.ch
                 }
             );
         },
-        populateCacheWithCommentAuthors: function () {
+        populateCacheWithCommentAuthors: function() {
             document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
                 const slug = linkEl.dataset.authorSlug;
                 const full_name = linkEl.innerText;
@@ -186,11 +181,11 @@ export default {
 
                 this.autocompleteCache.users[slug] = {
                     slug,
-                    full_name,
+                    full_name
                 };
             });
         },
-        fetchAutocompleteSuggestions: throttle(function (sample) {
+        fetchAutocompleteSuggestions: throttle(function(sample) {
             fetch(`/search/users.json?prefix=${sample}`)
                 .then((res) => {
                     if (!res.url.includes(`prefix=${sample}`)) {
@@ -205,7 +200,6 @@ export default {
                     }
 
                     this.users = data.users;
-                    this.selectedUserIndex = 0;
 
                     this.autocompleteCache.samples[sample] = this.users;
 
@@ -231,7 +225,7 @@ export default {
                 this.autocomplete = {
                     ...event.from,
                     top: cursorCoords.top + 36 - this.editor.codemirror.getWrapperElement().clientHeight, // first line offset
-                    left: Math.floor(cursorCoords.left),
+                    left: Math.floor(cursorCoords.left)
                 };
             }
         },
@@ -252,7 +246,6 @@ export default {
                 const cacheKeys = Object.keys(this.autocompleteCache.users).filter((k) => k.includes(sample));
                 if (cacheKeys) {
                     this.users = cacheKeys.map((k) => this.autocompleteCache.users[k]);
-                    this.selectedUserIndex = 0;
                 }
 
                 return;
@@ -262,7 +255,6 @@ export default {
             const cachedSample = this.autocompleteCache.samples[sample];
             if (cachedSample) {
                 this.users = cachedSample;
-                this.selectedUserIndex = 0;
 
                 return;
             }
@@ -274,7 +266,7 @@ export default {
             this.users = [];
             this.editor.codemirror.focus();
         },
-        focusIfNeeded: function (shouldFocus) {
+        focusIfNeeded: function(shouldFocus) {
             this.$nextTick(() => {
                 if (shouldFocus) {
                     this.editor.codemirror.focus();
@@ -282,10 +274,10 @@ export default {
                 }
             });
         },
-        emitCustomBlur: function (editor) {
+        emitCustomBlur: function(editor) {
             this.$emit("blur", editor.getValue());
-        },
-    },
+        }
+    }
 };
 </script>
 
@@ -299,4 +291,5 @@ export default {
     box-shadow: none;
     border: none;
 }
+
 </style>
