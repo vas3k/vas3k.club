@@ -56,9 +56,14 @@ class ReplyForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         try:
-            self.instance.reply_to = Comment.objects.get(id=cleaned_data["reply_to_id"])
+            reply_to = Comment.objects.get(id=cleaned_data["reply_to_id"])
         except Comment.DoesNotExist:
             raise ValidationError("Ответ на неизвестный коммент")
+
+        if reply_to.is_deleted:
+            raise ValidationError("Нельзя ответить на удалённый комментарий")
+
+        self.instance.reply_to = reply_to
 
         return cleaned_data
 

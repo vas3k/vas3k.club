@@ -46,35 +46,26 @@ class TestRenderComment(TestCase):
         self.assertIsInstance(result, SafeString)
         self.assertIn("comment", result)
 
-    def test_caches_html_on_comment(self):
+    def test_sets_html_in_memory(self):
         Comment.objects.filter(id=self.comment.id).update(html="")
         self.comment.refresh_from_db()
 
         context = {"request": None}
         render_comment(context, self.comment)
 
-        self.comment.refresh_from_db()
         self.assertTrue(len(self.comment.html) > 0)
 
-    def test_save_uses_update_fields(self):
-        """save() should UPDATE only html and updated_at, not all columns."""
+    def test_no_db_write(self):
+        """render_comment should not write to DB — persistence is handled by _warm_comment_html_cache."""
         Comment.objects.filter(id=self.comment.id).update(html="")
         self.comment.refresh_from_db()
-
-        new_html = markdown_text(self.comment.text, uniq_id=self.comment.id)
-        self.assertNotEqual(new_html, self.comment.html, "html must differ to trigger save")
 
         context = {"request": None}
         with CaptureQueriesContext(connection) as queries:
             render_comment(context, self.comment)
 
         update_queries = [q["sql"] for q in queries if q["sql"].startswith("UPDATE")]
-        self.assertEqual(len(update_queries), 1)
-
-        sql = update_queries[0]
-        self.assertIn("html", sql)
-        self.assertNotIn("title", sql)
-        self.assertNotIn('"text"', sql)
+        self.assertEqual(len(update_queries), 0)
 
     def test_deleted_comment_shows_message(self):
         self.comment.is_deleted = True

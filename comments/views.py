@@ -45,6 +45,9 @@ def create_comment(request, post_slug):
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
         if form.is_valid():
+            if form.instance.reply_to and form.instance.reply_to.post_id != post.id:
+                raise AccessDenied(title="Нельзя ответить на комментарий из другого поста")
+
             if is_comment_rate_limit_exceeded(post, request.me):
                 raise RateLimitException(
                     title="🙅‍♂️ Вы комментируете слишком часто",
@@ -93,7 +96,7 @@ def create_comment(request, post_slug):
                 "title": "Какая-то ошибка при публикации комментария 🤷‍♂️",
                 "message": f"Мы уже получили оповещение и скоро пофиксим. "
                            f"Ваш коммент мы сохранили чтобы вы могли скопировать его и запостить еще раз:",
-                "data": {"saved_text": form.cleaned_data.get("text")}
+                "data": {"saved_text": request.POST.get("text")}
             }, status=500)
 
     raise Http404()
