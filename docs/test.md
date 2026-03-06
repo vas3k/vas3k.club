@@ -81,7 +81,7 @@ Frontend tests use [Jest](https://jestjs.io/) with jsdom and cover utility funct
 
 ### Prerequisites
 
-- Node.js 14+ (see CI config for exact version)
+- Node.js 22+
 - Dependencies installed: `cd frontend && npm ci`
 
 No postgres, redis or python required.
