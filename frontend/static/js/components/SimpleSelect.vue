@@ -1,6 +1,6 @@
 <template>
     <div class="input-select">
-        <input type="hidden" v-model="currentValue.code" :name="id" />
+        <input type="hidden" :value="currentValue ? currentValue.code : ''" :name="id" />
         <v-select :options="options" v-model="currentValue"> </v-select>
     </div>
 </template>
@@ -24,7 +24,7 @@ export default {
     },
     data() {
         return {
-            currentValue: this.options.find((x) => x.code === this.initialValue) || {},
+            currentValue: this.options.find((x) => x.code === this.initialValue) || null,
         };
     },
 };

@@ -21,6 +21,7 @@
             >
                 <div
                     v-for="(user, index) in users.slice(0, 5)"
+                    :key="user.slug"
                     :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
                     @click="insertSuggestion(user)"
                     class="mention-autocomplete-hint__option"
@@ -197,6 +198,7 @@ export default {
                     }
 
                     this.users = data.users;
+                    this.selectedUserIndex = 0;
 
                     this.autocompleteCache.samples[sample] = this.users;
 
@@ -243,6 +245,7 @@ export default {
                 const cacheKeys = Object.keys(this.autocompleteCache.users).filter((k) => k.includes(sample));
                 if (cacheKeys) {
                     this.users = cacheKeys.map((k) => this.autocompleteCache.users[k]);
+                    this.selectedUserIndex = 0;
                 }
 
                 return;
@@ -252,6 +255,7 @@ export default {
             const cachedSample = this.autocompleteCache.samples[sample];
             if (cachedSample) {
                 this.users = cachedSample;
+                this.selectedUserIndex = 0;
 
                 return;
             }
