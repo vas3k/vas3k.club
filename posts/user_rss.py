@@ -17,6 +17,7 @@ class UserPostsRss(NewPostsRss):
 
     def items(self, user):
         return Post.visible_objects()\
-           .filter(author=user) \
+           .filter(author=user)\
+           .filter(moderation_status=Post.MODERATION_APPROVED)\
            .exclude(type=Post.TYPE_INTRO)\
            .order_by("-published_at", "-created_at")[:self.limit]
