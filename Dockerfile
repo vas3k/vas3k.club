@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     && uv pip uninstall --python=/opt/venv/bin/python pipenv \
     && uv pip install --python=/opt/venv/bin/python -r requirements.txt
 
-FROM node:22-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94 AS frontend-builder
+FROM node:25-slim@sha256:5aea649bacdc35e8e20571131c4f3547477dfe66e677d45c005af6dbd1edfaa7 AS frontend-builder
 
 WORKDIR /app/frontend
 
