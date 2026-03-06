@@ -4,25 +4,16 @@
         <v-select
             :taggable="allowCreateNew"
             :multiple="allowMultiple"
-
             label="title"
             placeholder=""
-
             v-model="selectValue"
-
             :options="options"
             :selectable="canSelect"
-
-            @input="onSelectValueChange"
             @search="onSearch"
         >
             <template #no-options="{ search, searching, loading }">
-                <template v-if="!searching || search.length < 3">
-                    Начните набирать текст для поиска...
-                </template>
-                <template v-else>
-                    Ничего не найдено
-                </template>
+                <template v-if="!searching || search.length < 3"> Начните набирать текст для поиска... </template>
+                <template v-else> Ничего не найдено </template>
             </template>
 
             <template #option="{ title, isExist }">
@@ -30,7 +21,7 @@
                     <template v-if="!isExist">{{ labelPrefixInput }}</template>
                     {{ title }}
                 </span>
-                <br>
+                <br />
                 <template v-if="!isExist">
                     <span class="vs__dropdown-option-secondary-text">
                         <template v-if="!isValidInput">
@@ -43,8 +34,7 @@
                 </template>
             </template>
 
-
-            <template #search="{attributes, events}">
+            <template #search="{ attributes, events }">
                 <input
                     class="vs__search"
                     @input="onInputChange"
@@ -59,7 +49,6 @@
 
 <script>
 import { debounce } from "../common/utils";
-
 
 export default {
     props: {
@@ -99,7 +88,7 @@ export default {
             this.selectValue = {
                 title: this.initialValue,
                 isExist: true,
-            }
+            };
             this.formValue = this.initialValue;
         }
     },
@@ -118,7 +107,16 @@ export default {
             }
 
             return new RegExp(this.validationRegExp);
-        }
+        },
+    },
+    watch: {
+        selectValue(option) {
+            if (!option) {
+                this.formValue = null;
+                return;
+            }
+            this.formValue = option.title || option;
+        },
     },
     methods: {
         canSelect(option) {
@@ -154,35 +152,22 @@ export default {
             this.options = [];
         },
 
-        search: debounce(((loading, search, vm) => {
+        search: debounce((loading, search, vm) => {
             fetch(`${vm.$props.searchUrl}${search}`)
-                .then(response => response.json())
-                .then(json => {
+                .then((response) => response.json())
+                .then((json) => {
                     if (!json.tags) {
                         return;
                     }
-                    vm.options = json.tags
-                        .map(tag => ({
-                            title: tag.name,
-                            isExist: true,
-                        }))
-                    ;
+                    vm.options = json.tags.map((tag) => ({
+                        title: tag.name,
+                        isExist: true,
+                    }));
                 })
                 .finally(() => {
                     loading(false);
                 });
-
-        }), 500),
-
-        // value changed at item in dropdown
-        onSelectValueChange(option) {
-            if (!option) {
-                this.formValue = null;
-                return;
-            }
-
-            this.formValue = option.title || option;
-        }
+        }, 500),
     },
 };
 </script>

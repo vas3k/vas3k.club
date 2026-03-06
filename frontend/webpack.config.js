@@ -1,10 +1,11 @@
 const path = require("path");
+const webpack = require("webpack");
 const BundleTracker = require("webpack-bundle-tracker");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const { VueLoaderPlugin } = require("vue-loader");
 
-const { NODE_ENV: mode = 'production' } = process.env;
+const { NODE_ENV: mode = "production" } = process.env;
 
 module.exports = {
     mode,
@@ -13,7 +14,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, "static/dist"),
         publicPath: "/static/dist/",
-        filename: mode === "production" ? "[name]-[hash].js": "[name].js",
+        filename: mode === "production" ? "[name]-[hash].js" : "[name].js",
         libraryTarget: "var",
         library: "Club",
     },
@@ -23,12 +24,17 @@ module.exports = {
             filename: "webpack-stats.json",
         }),
         new MiniCssExtractPlugin({
-            filename: mode === "production" ? "[name]-[hash].css": "[name].css",
+            filename: mode === "production" ? "[name]-[hash].css" : "[name].css",
             chunkFilename: "[id].css",
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
         new CleanWebpackPlugin(),
         new VueLoaderPlugin(),
+        new webpack.DefinePlugin({
+            __VUE_OPTIONS_API__: true,
+            __VUE_PROD_DEVTOOLS__: false,
+            __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+        }),
     ],
     module: {
         rules: [
@@ -37,31 +43,27 @@ module.exports = {
                 exclude: /node_modules/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    { loader: 'css-loader', options: { importLoaders: 1 } },
+                    { loader: "css-loader", options: { importLoaders: 1 } },
                     "postcss-loader",
                 ],
             },
             {
-                test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-                use: [{
-                    loader: "file-loader",
-                    options: {
-                        name: "[name].[ext]",
-                        outputPath: "fonts/",    // where the fonts will go
-                        publicPath: "fonts/"     // override the default path
-                    }
-                }]
+                test: /\.(ttf|otf|eot|svg|woff2?)(\?.*)?$/,
+                type: "asset/resource",
+                generator: {
+                    filename: "fonts/[name][ext]",
+                },
             },
             {
                 test: /\.vue$/,
-                loader: "vue-loader"
-            }
-        ]
+                loader: "vue-loader",
+            },
+        ],
     },
     devtool: "source-map",
     resolve: {
         alias: {
-            vue: mode === "production" ? "vue/dist/vue.min.js" : "vue/dist/vue.js",
-        }
-    }
+            vue: "vue/dist/vue.esm-bundler.js",
+        },
+    },
 };

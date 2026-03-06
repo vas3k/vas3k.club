@@ -2,7 +2,7 @@
     <button
         class="comment-scroll-arrow"
         :class="{
-            'arrow-up': arrowDirection === 'Up'
+            'arrow-up': arrowDirection === 'Up',
         }"
         @click.prevent="onArrowClickHandler"
     ></button>
@@ -24,15 +24,15 @@ export default {
             return -window.scrollY;
         },
         getElementMargin(el) {
-             const style = window.getComputedStyle(el);
-             return parseInt(style.scrollMarginTop, 10);
-         },
+            const style = window.getComputedStyle(el);
+            return parseInt(style.scrollMarginTop, 10);
+        },
         scrollToElement(el, callback) {
             const oldHash = document.location.hash;
             const newHash = `#${el.id}`;
             if (oldHash === newHash) {
                 // zero the hash so that there is no sticking if we are already on this element
-                history.pushState(null, null, '');
+                history.pushState(null, null, "");
             }
 
             document.documentElement.style.scrollBehavior = "smooth";
@@ -41,9 +41,10 @@ export default {
 
             const onScroll = () => {
                 const scrolledToElement = Math.abs(offset - window.pageYOffset) < 1;
-                const scrolledToBottom = Math.abs(document.documentElement.scrollHeight - window.pageYOffset - window.innerHeight) < 1;
+                const scrolledToBottom =
+                    Math.abs(document.documentElement.scrollHeight - window.pageYOffset - window.innerHeight) < 1;
                 if (scrolledToElement || (this.arrowDirection === "Down" && scrolledToBottom)) {
-                    window.removeEventListener('scroll', onScroll);
+                    window.removeEventListener("scroll", onScroll);
 
                     document.documentElement.style.scrollBehavior = "auto";
 
@@ -76,27 +77,27 @@ export default {
         },
         scrollToComment(direction) {
             let comments = document.querySelectorAll(
-                 [
-                     // Просто новые комментарии
-                     ".comment.comment-is-new",
-                     // Новые реплаи к старым комментариям
-                     ".comment:not(.comment-is-new) > .comment-replies > .replies > .reply.comment-is-new",
-                     // Новые реплаи на втором уровне к старым реплаям старых комментариев
-                     ".comment:not(.comment-is-new) > .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies > .replies > .reply.comment-is-new",
-                     // Новые реплаи без родительского комментария
-                     ".post-comments-list > .replies > .reply.comment-is-new",
-                     // Новые реплаи на втором уровне к старым реплаям без родительского комментария
-                     ".post-comments-list > .replies > .reply:not(.comment-is-new) > .reply.comment-is-new",
-                     // Новые реплаи бэтлов
-                     ".battle-comments-list .comment-replies > .replies > .reply.comment-is-new",
-                     // Новые реплаи на втором уровне бэтлов
-                     ".battle-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
-                     // Новые реплаи к запиненым комментам (bold)
-                     ".block-comments-list .comment-replies > .replies > .reply.comment-is-new",
-                     // Новые реплаи на втором уровне запиненных комментов (bold)
-                     ".block-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
-                 ].join()
-             );
+                [
+                    // Просто новые комментарии
+                    ".comment.comment-is-new",
+                    // Новые реплаи к старым комментариям
+                    ".comment:not(.comment-is-new) > .comment-replies > .replies > .reply.comment-is-new",
+                    // Новые реплаи на втором уровне к старым реплаям старых комментариев
+                    ".comment:not(.comment-is-new) > .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies > .replies > .reply.comment-is-new",
+                    // Новые реплаи без родительского комментария
+                    ".post-comments-list > .replies > .reply.comment-is-new",
+                    // Новые реплаи на втором уровне к старым реплаям без родительского комментария
+                    ".post-comments-list > .replies > .reply:not(.comment-is-new) > .reply.comment-is-new",
+                    // Новые реплаи бэтлов
+                    ".battle-comments-list .comment-replies > .replies > .reply.comment-is-new",
+                    // Новые реплаи на втором уровне бэтлов
+                    ".battle-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
+                    // Новые реплаи к запиненым комментам (bold)
+                    ".block-comments-list .comment-replies > .replies > .reply.comment-is-new",
+                    // Новые реплаи на втором уровне запиненных комментов (bold)
+                    ".block-comments-list .comment-replies > .replies > .reply:not(.comment-is-new) > .reply-replies >.replies > .reply.comment-is-new",
+                ].join()
+            );
 
             const bodyTop = this.getBodyTop();
 
@@ -121,7 +122,7 @@ export default {
 
             // Убираем комментарии ниже или выше направления поиска
             const filteredComments = measured.filter(({ top, margin }) => {
-                return (direction === "Down") ? top - margin > 2 : top < 0;
+                return direction === "Down" ? top - margin > 2 : top < 0;
             });
 
             if (filteredComments.length < 1) {
@@ -150,7 +151,7 @@ export default {
                 nearest.classList.add("comment-scroll-animation");
 
                 window.setTimeout(() => {
-                     nearest.classList.remove("comment-scroll-animation");
+                    nearest.classList.remove("comment-scroll-animation");
                 }, 500);
             };
 
@@ -168,7 +169,8 @@ export default {
         },
         initOnPageScroll() {
             this.onPageScrollHandler = throttle(() => {
-                const bottomOfWindow = Math.abs(document.documentElement.scrollHeight - window.pageYOffset - window.innerHeight) < 1;
+                const bottomOfWindow =
+                    Math.abs(document.documentElement.scrollHeight - window.pageYOffset - window.innerHeight) < 1;
                 const topOfWindow = window.pageYOffset === 0;
 
                 if (bottomOfWindow) {
@@ -183,11 +185,14 @@ export default {
             window.addEventListener("scroll", this.onPageScrollHandler);
         },
         initOnKeyUp() {
-             this.keyUpHandler = (e) => {
+            this.keyUpHandler = (e) => {
                 // ctrl-up/down для всех, а в macos и FF - ⇧⌃↑/↓
-                const isFirefox = ("netscape" in window) && / rv:/.test(navigator.userAgent);
-                if (!e.ctrlKey || (isFirefox && !e.shiftKey)
-                    || ["ArrowDown", "ArrowUp", "Down", "Up"].indexOf(e.key) < 0) {
+                const isFirefox = "netscape" in window && / rv:/.test(navigator.userAgent);
+                if (
+                    !e.ctrlKey ||
+                    (isFirefox && !e.shiftKey) ||
+                    ["ArrowDown", "ArrowUp", "Down", "Up"].indexOf(e.key) < 0
+                ) {
                     return;
                 }
 
@@ -199,25 +204,29 @@ export default {
             document.addEventListener("keyup", this.keyUpHandler);
         },
         initSelectedClassCleanerListener() {
-            document.querySelector('#comments').addEventListener("click", (event) => {
-                if (event.target.classList.contains("comment-header-date")) {
-                    const selectedComment = event.target.closest(".comment-scroll-selected");
-                    if (selectedComment) {
-                        selectedComment.classList.remove("comment-scroll-selected");
+            document.querySelector("#comments").addEventListener(
+                "click",
+                (event) => {
+                    if (event.target.classList.contains("comment-header-date")) {
+                        const selectedComment = event.target.closest(".comment-scroll-selected");
+                        if (selectedComment) {
+                            selectedComment.classList.remove("comment-scroll-selected");
+                        }
                     }
-                }
-            }, false);
+                },
+                false
+            );
         },
         init() {
             this.initOnKeyUp();
             this.initOnPageScroll();
             this.initSelectedClassCleanerListener();
-        }
+        },
     },
     mounted() {
         this.init();
     },
-    beforeDestroy() {
+    beforeUnmount() {
         document.removeEventListener("keyup", this.keyUpHandler);
         window.removeEventListener("scroll", this.onPageScrollHandler);
     },

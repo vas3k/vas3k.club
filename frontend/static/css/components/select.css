@@ -70,7 +70,7 @@
     transition: opacity 0.15s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
-.vs__fade-enter, .vs__fade-leave-to {
+.vs__fade-enter-from, .vs__fade-leave-to {
     opacity: 0;
 }
 
