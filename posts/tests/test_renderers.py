@@ -8,6 +8,11 @@ from django.urls import reverse
 from comments.models import Comment, CommentVote
 from debug.helpers import HelperClient
 from posts.models.post import Post
+from bookmarks.models import PostBookmark
+from posts.models.votes import PostVote
+from tags.models import Tag, UserTag
+from users.models.mute import UserMuted
+from users.models.notes import UserNote
 from users.models.user import User
 
 
@@ -252,3 +257,154 @@ class TestRenderPostCommentRateLimit(RendererTestBase):
                and q["sql"].startswith("SELECT")
         ]
         self.assertLessEqual(len(template_tag_queries), 1)
+
+
+class TestRenderPostUpvotedAt(RendererTestBase):
+    def test_post_upvote_timestamp_in_response(self):
+        """Post upvoted_at should appear as initial-upvote-timestamp in rendered page."""
+        PostVote.objects.create(user=self.user, post=self.post)
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "initial-upvote-timestamp=")
+
+    def test_no_post_upvote_no_timestamp(self):
+        """Without a post vote, initial-upvote-timestamp should not appear."""
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "initial-upvote-timestamp=")
+
+    def test_post_vote_query_uses_values_list(self):
+        """PostVote query should fetch only created_at, not the full object."""
+        PostVote.objects.create(user=self.user, post=self.post)
+        client = HelperClient(self.user)
+        client.authorise()
+
+        with CaptureQueriesContext(connection) as queries:
+            client.get(self._post_url())
+
+        vote_queries = [
+            q["sql"] for q in queries
+            if "post_votes" in q["sql"]
+               and q["sql"].startswith("SELECT")
+               and "comment_votes" not in q["sql"]
+        ]
+        for sql in vote_queries:
+            self.assertNotIn('"ipaddress"', sql)
+
+
+class TestRenderPostBookmark(RendererTestBase):
+    def test_bookmark_state_for_bookmarked_post(self):
+        PostBookmark.objects.create(user=self.user, post=self.post)
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "initial-is-bookmarked")
+
+    def test_no_bookmark_state_for_unbookmarked_post(self):
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "initial-is-bookmarked")
+
+
+class TestRenderPostCollectibleTag(RendererTestBase):
+    def test_collectible_tag_rendered_when_exists(self):
+        """Post with a valid collectible_tag_code should render the tag widget."""
+        tag = Tag.objects.create(code="test_collect", name="Test Collectible", group=Tag.GROUP_COLLECTIBLE)
+        self.post.collectible_tag_code = tag.code
+        self.post.save()
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test Collectible")
+
+    def test_collected_tag_shows_active(self):
+        """Collected tag should show active state for the user."""
+        tag = Tag.objects.create(code="test_collected", name="Collected Tag", group=Tag.GROUP_COLLECTIBLE)
+        UserTag.objects.create(user=self.user, tag=tag, name=tag.name)
+        self.post.collectible_tag_code = tag.code
+        self.post.save()
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "is-active-by-default")
+
+    def test_no_extra_query_when_tag_code_is_none(self):
+        """Post without collectible_tag_code should not query Tag table."""
+        self.post.collectible_tag_code = None
+        self.post.save()
+
+        client = HelperClient(self.user)
+        client.authorise()
+
+        with CaptureQueriesContext(connection) as queries:
+            client.get(self._post_url())
+
+        tag_queries = [
+            q["sql"] for q in queries
+            if '"tags"' in q["sql"] and q["sql"].startswith("SELECT")
+        ]
+        self.assertEqual(len(tag_queries), 0)
+
+    def test_nonexistent_tag_code_no_usertag_query(self):
+        """Post with collectible_tag_code pointing to missing Tag should not query UserTag."""
+        self.post.collectible_tag_code = "nonexistent_tag"
+        self.post.save()
+
+        client = HelperClient(self.user)
+        client.authorise()
+
+        with CaptureQueriesContext(connection) as queries:
+            client.get(self._post_url())
+
+        usertag_queries = [
+            q["sql"] for q in queries
+            if '"user_tags"' in q["sql"] and q["sql"].startswith("SELECT")
+        ]
+        self.assertEqual(len(usertag_queries), 0)
+
+
+class TestRenderPostMutedAndNotes(RendererTestBase):
+    def test_muted_user_ids_loaded(self):
+        """Muted users should be tracked in context for comment rendering."""
+        other_user = self._create_user()
+        Comment.objects.create(author=other_user, post=self.post, text="muted user comment")
+        UserMuted.objects.create(user_from=self.user, user_to=other_user)
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(other_user.id, response.context["muted_user_ids"])
+
+    def test_user_notes_loaded(self):
+        """User notes should be available in the rendered context."""
+        other_user = self._create_user()
+        Comment.objects.create(author=other_user, post=self.post, text="noted user comment")
+        UserNote.objects.create(user_from=self.user, user_to=other_user, text="my note")
+
+        client = HelperClient(self.user)
+        client.authorise()
+        response = client.get(self._post_url())
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["user_notes"].get(other_user.id), "my note")

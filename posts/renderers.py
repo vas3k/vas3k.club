@@ -34,13 +34,19 @@ def render_post(request, post, context=None):
 
     if request.me:
         is_bookmark = PostBookmark.objects.filter(post=post, user=request.me).exists()
-        vote = PostVote.objects.filter(post=post, user=request.me).first()
-        upvoted_at = int(vote.created_at.timestamp() * 1000) if vote else None
+        upvoted_at_dt = PostVote.objects.filter(post=post, user=request.me).values_list("created_at", flat=True).first()
+        upvoted_at = int(upvoted_at_dt.timestamp() * 1000) if upvoted_at_dt else None
         subscription = PostSubscription.get(request.me, post)
-        muted_user_ids = list(UserMuted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True).all())
-        user_notes = dict(UserNote.objects.filter(user_from=request.me).values_list("user_to", "text").all()[:100])
-        collectible_tag = Tag.objects.filter(code=post.collectible_tag_code).first() if post.collectible_tag_code else None
-        is_collectible_tag_collected = UserTag.objects.filter(tag=collectible_tag, user=request.me).exists() if collectible_tag else False
+        muted_user_ids = list(UserMuted.objects.filter(user_from=request.me).values_list("user_to_id", flat=True))
+        user_notes = dict(UserNote.objects.filter(user_from=request.me).values_list("user_to", "text")[:100])
+        if post.collectible_tag_code:
+            collectible_tag = Tag.objects.filter(code=post.collectible_tag_code).first()
+            is_collectible_tag_collected = UserTag.objects.filter(
+                tag=collectible_tag, user=request.me
+            ).exists() if collectible_tag else False
+        else:
+            collectible_tag = None
+            is_collectible_tag_collected = False
         is_comment_rate_exceeded = is_comment_rate_limit_exceeded(post, request.me)
     else:
         is_bookmark = False

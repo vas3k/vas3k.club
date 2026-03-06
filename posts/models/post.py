@@ -273,7 +273,9 @@ class Post(models.Model, ModelDiffMixin):
 
     @property
     def coauthors_with_details(self):
-        return User.objects.filter(slug__in=self.coauthors).all()
+        if not self.coauthors:
+            return []
+        return list(User.objects.filter(slug__in=self.coauthors))
 
     @property
     def is_draft(self):
@@ -319,8 +321,6 @@ class Post(models.Model, ModelDiffMixin):
             return []
 
         users = User.objects.filter(id__in=participant_ids)
-
-        # Create a mapping from ID to user to presercve order
         user_map = {str(user.id): user for user in users}
         return [user_map[uid] for uid in participant_ids if uid in user_map]
 
