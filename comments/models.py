@@ -139,6 +139,13 @@ class Comment(models.Model):
         return comments
 
     @classmethod
+    def count_user_comments(cls, user):
+        return cls.visible_objects()\
+            .filter(author=user)\
+            .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
+            .count()
+
+    @classmethod
     def objects_for_user(cls, user):
         vote_qs = CommentVote.objects.filter(comment=OuterRef('pk'), user=user)
 

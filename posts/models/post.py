@@ -340,6 +340,15 @@ class Post(models.Model, ModelDiffMixin):
             .select_related("room", "author")
 
     @classmethod
+    def visible_objects_for_user(cls, user):
+        if not user:
+            return cls.visible_objects()
+        return cls.objects\
+            .select_related("room", "author")\
+            .exclude(visibility=Post.VISIBILITY_DRAFT)\
+            .exclude(Q(visibility=Post.VISIBILITY_LINK_ONLY) & ~Q(author=user))
+
+    @classmethod
     def objects_for_user(cls, user):
         if not user:
             return cls.visible_objects()
@@ -347,10 +356,7 @@ class Post(models.Model, ModelDiffMixin):
         vote_qs = PostVote.objects.filter(post=OuterRef('pk'), user=user)
         view_qs = PostView.objects.filter(post=OuterRef('pk'), user=user)
 
-        return cls.objects\
-            .select_related("room", "author")\
-            .exclude(visibility=Post.VISIBILITY_DRAFT)\
-            .exclude(Q(visibility=Post.VISIBILITY_LINK_ONLY) & ~Q(author=user))\
+        return cls.visible_objects_for_user(user)\
             .annotate(
                 upvoted_at=Subquery(
                     vote_qs.annotate(
@@ -362,6 +368,19 @@ class Post(models.Model, ModelDiffMixin):
                     view_qs.values('unread_comments')[:1],
                 ),
             )
+
+    @classmethod
+    def count_user_posts(cls, user, viewer=None):
+        qs = cls.visible_objects_for_user(viewer)
+        return (
+            qs.filter(author=user)
+            .exclude(type__in=[cls.TYPE_INTRO, cls.TYPE_WEEKLY_DIGEST])
+            .count()
+            + qs.filter(coauthors__contains=[user.slug])
+            .exclude(author=user)
+            .exclude(type__in=[cls.TYPE_INTRO, cls.TYPE_WEEKLY_DIGEST])
+            .count()
+        )
 
     @classmethod
     def check_rate_limits(cls, user):
