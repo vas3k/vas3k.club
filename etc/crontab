@@ -1,8 +1,8 @@
 SHELL=/bin/bash
 PATH=/opt/venv/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 
-* * * * * root which python3 >/proc/1/fd/1 2>/proc/1/fd/2
-* * * * * root python3 -c "import django; print(django.get_version())" >/proc/1/fd/1 2>/proc/1/fd/2
+@reboot root which python3 >/proc/1/fd/1 2>/proc/1/fd/2
+@reboot root python3 -c "import django; print(django.get_version())" >/proc/1/fd/1 2>/proc/1/fd/2
 0 1 * * * root cd /app && python3 manage.py delete_users  >/proc/1/fd/1 2>/proc/1/fd/2
 0 3 * * * root cd /app && python3 manage.py cleanup_old_oauth_tokens  >/proc/1/fd/1 2>/proc/1/fd/2
 0 9 * * 1-6 root cd /app && python3 manage.py send_daily_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
