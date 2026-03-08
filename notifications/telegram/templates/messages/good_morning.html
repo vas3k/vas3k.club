@@ -4,8 +4,9 @@
 
 {% if upcoming_events_for_user %}📅 <b>ОПА! Для вас скоро есть важное событие!</b>
 {% for post in upcoming_events_for_user %}
-✅ <b>{{ post.event_datetime|date:"j E" }} в {{ post.event_datetime|date:"H:i" }}:</b> <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
-{% endfor %}{% endif %}
+- ✅ <b>{{ post.event_datetime|date:"j E" }} в {{ post.event_datetime|date:"H:i" }}:</b> <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
+{% endfor %}
+{% endif %}
 {% if new_posts %}📝 <b>Свежие посты</b>
 {% for post in new_posts %}
 {{ forloop.counter }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.emoji %}{{ post.emoji }} {% endif %}{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a> (+{{ post.upvotes }})
