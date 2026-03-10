@@ -81,8 +81,7 @@ docker-run-helpdeskbot:
 
 .PHONY: docker-run-cron
 docker-run-cron:
-	env >> /etc/environment
-	cron -f -l 2
+	exec supercronic -json -split-logs /app/etc/crontab
 
 .PHONY: docker-migrate
 docker-migrate:
