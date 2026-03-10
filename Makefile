@@ -81,7 +81,7 @@ docker-run-helpdeskbot:
 
 .PHONY: docker-run-cron
 docker-run-cron:
-	exec supercronic -json -split-logs /app/etc/crontab
+	exec supercronic -json -split-logs -sentry-dsn="$$SENTRY_DSN" /app/etc/crontab
 
 .PHONY: docker-migrate
 docker-migrate:
