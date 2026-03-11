@@ -41,12 +41,21 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH"
 
+ARG SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.2.43/supercronic-linux-amd64
+ARG SUPERCRONIC_SHA1SUM=f97b92132b61a8f827c3faf67106dc0e4467ccf2
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -yq \
-      cron \
+      curl \
       gdal-bin \
       libpq5 \
       make \
+    && curl -fsSLO "$SUPERCRONIC_URL" \
+    && echo "${SUPERCRONIC_SHA1SUM}  supercronic-linux-amd64" | sha1sum -c - \
+    && chmod +x supercronic-linux-amd64 \
+    && mv supercronic-linux-amd64 /usr/local/bin/supercronic \
+    && apt-get purge -yq curl \
+    && apt-get autoremove -yq \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --system --gid 1000 app \
@@ -57,7 +66,8 @@ COPY --link --from=python-builder /opt/venv /opt/venv
 COPY --link . .
 COPY --link --from=frontend-builder /app/frontend/static/dist/ ./frontend/static/dist/
 COPY --link --from=frontend-builder /app/frontend/webpack-stats.json ./frontend/webpack-stats.json
-COPY --link --chmod=600 etc/crontab /etc/crontab
+COPY --link etc/crontab /app/etc/crontab
+RUN supercronic -test /app/etc/crontab
 
 EXPOSE 8814
 USER 1000:1000
