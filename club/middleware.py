@@ -1,3 +1,4 @@
+import sentry_sdk
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -8,6 +9,14 @@ from club.exceptions import ClubException, ApiException
 def me(get_response):
     def middleware(request):
         request.me, request.my_session = authorized_user_with_session(request)
+
+        if request.me:
+            sentry_sdk.set_user({
+                "slug": request.me.slug,
+                "full_name": request.me.full_name,
+            })
+        else:
+            sentry_sdk.set_user(None)
 
         response = get_response(request)
 

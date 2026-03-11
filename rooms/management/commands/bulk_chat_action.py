@@ -3,7 +3,7 @@ import logging
 from django.core.management import BaseCommand
 from django.db.models import Q
 
-from rooms.helpers import ban_user_in_all_chats, unban_user_in_all_chats
+from rooms.helpers import ban_user_in_all_chats, unban_user_in_all_chats, print_user_in_all_chats
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -38,6 +38,8 @@ class Command(BaseCommand):
                 ban_user_in_all_chats(user, is_permanent=True)
             elif action == "unban":
                 unban_user_in_all_chats(user)
+            elif action == "list":
+                print_user_in_all_chats(user)
             else:
                 self.stderr.write(f"Wrong action: {action}")
 

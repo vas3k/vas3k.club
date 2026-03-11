@@ -40,3 +40,19 @@ def unban_user_in_all_chats(user: User):
                 log.info(f"User {user.slug} unbanned in chat {room.slug}")
         except telegram.TelegramError as ex:
             log.warning(f"Can't unban user {user.slug} in chat {room.slug}: {ex}")
+
+
+def print_user_in_all_chats(user: User, is_permanent=True):
+    if not user.telegram_id:
+        log.warning(f"User {user.slug} has no telegram_id, can't ban")
+        return
+
+    for room in Room.objects.filter(chat_id__isnull=False):
+        try:
+            chat_member = bot.get_chat_member(room.chat_id, user.telegram_id)
+            if chat_member:
+                print(f"✅ User found is in chat «{room.title}». Status: {chat_member.status}")
+            else:
+                print(f"Not in chat «{room.title}». Skipping.")
+        except telegram.TelegramError as ex:
+            log.warning(f"Failed to get user {user.slug} in chat {room.slug}: {ex}")
