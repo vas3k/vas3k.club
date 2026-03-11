@@ -42,6 +42,7 @@ urllib3 = "<2.0.0"  # dirty hack, required for python-telegram-bot<20.0
 standard-imghdr = "*"  # was removed in Python 3.13 but needed for python-telegram-bot too
 openai = "*"
 psycopg = {extras = ["pool"], version = "*"}
+telethon = "*"
 
 [requires]
 python_version = "3.12"

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c23c0abc2ec9f2b658f89b7133dd55e59172aa11041b3f40574f6b9f38369569"
+            "sha256": "85461014f7f066f14e1a5256d476920cb683425864476f8065e925297c94ba99"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1091,6 +1091,20 @@
             "markers": "python_version >= '3.8'",
             "version": "==3.2.6"
         },
+        "pyaes": {
+            "hashes": [
+                "sha256:02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f"
+            ],
+            "version": "==1.6.1"
+        },
+        "pyasn1": {
+            "hashes": [
+                "sha256:1eb26d860996a18e9b6ed05e7aae0e9fc21619fcee6af91cca9bad4fbea224bf",
+                "sha256:9b59a2b25ba7e4f8197db7686c09fb33e658b98339fadb826e9512629017833b"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==0.6.2"
+        },
         "pycparser": {
             "hashes": [
                 "sha256:78816d4f24add8f10a06d6f05b4d424ad9e96cfebf68a4ddc99c65c0720d00c2",
@@ -1437,6 +1451,14 @@
             ],
             "version": "==2.1.0"
         },
+        "rsa": {
+            "hashes": [
+                "sha256:68635866661c6836b8d39430f97a996acbd61bfa49406748ea243539fe239762",
+                "sha256:e7bdbfdb5497da4c07dfd35530e1a902659db6ff241e39d9953cad06ebd0ae75"
+            ],
+            "markers": "python_version >= '3.6' and python_version < '4'",
+            "version": "==4.9.1"
+        },
         "sentry-sdk": {
             "hashes": [
                 "sha256:afa82713a92facf847df3c6f63cec71eb488d826a50965def3d7722aa6f0fdab",
@@ -1500,6 +1522,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.6'",
             "version": "==11.4.1"
+        },
+        "telethon": {
+            "hashes": [
+                "sha256:032e95511261d5ead719f75494c6c85ece2ce71816b54f3c65d6ccc371d6994d",
+                "sha256:cf361c94586bcacd6d0fc8959a2bce509d1bb37007fe6476a80c4fb4a2decc29"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.5'",
+            "version": "==1.42.0"
         },
         "tldextract": {
             "hashes": [
