@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -133,9 +134,10 @@ class Command(BaseCommand):
                             chat_entity,
                             participant,
                             view_messages=False,
-                            until_date=datetime.utcnow() + timedelta(seconds=1),
+                            until_date=datetime.utcnow() + timedelta(minutes=5),
                         )
                         removed_count += 1
+                        time.sleep(1.5)
                         log.info(
                             "Removed telegram user %s (%s) from chat %s for reason: %s",
                             telegram_id,
