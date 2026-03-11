@@ -5,17 +5,16 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.management import BaseCommand
 from telethon.sync import TelegramClient
+from telethon.sessions import StringSession
 from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsRecent
 
 from users.models.user import User
 
 log = logging.getLogger(__name__)
 
-TELEGRAM_SESSION_NAME = "remove_expired_bot"
-
 
 class Command(BaseCommand):
-    help = "Remove users with expired or missing membership from a telegram chat (Telethon)"
+    help = "Remove users with expired or missing membership from a telegram chat"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -29,7 +28,7 @@ class Command(BaseCommand):
             "--execute",
             dest="execute",
             action="store_true",
-            help="Actually remove users from chat (default: dry run)",
+            help="Actually remove users from chat (false by default)",
         )
 
     def handle(self, *args, **options):
@@ -42,6 +41,7 @@ class Command(BaseCommand):
                 "Get them from https://my.telegram.org"
             )
             return
+
         if not settings.TELEGRAM_TOKEN:
             self.stderr.write(
                 "settings.TELEGRAM_TOKEN (or TELEGRAM_TOKEN) is required. Set in env or settings."
@@ -55,7 +55,7 @@ class Command(BaseCommand):
             return
 
         client = TelegramClient(
-            TELEGRAM_SESSION_NAME,
+            StringSession(),
             api_id,
             settings.TELEGRAM_API_HASH,
         )
@@ -106,7 +106,7 @@ class Command(BaseCommand):
 
                 user = User.objects.filter(telegram_id=telegram_id).first()
 
-                if not user:
+                if not user or not user.is_member:
                     status_emoji = "❌"
                     slug = "-"
                     full_name = "-"
@@ -127,7 +127,7 @@ class Command(BaseCommand):
 
                 self.stdout.write(f"{telegram_id} {status_emoji} {slug} {full_name}")
 
-                if execute and reason in {"not_registered"} and not is_admin:
+                if execute and reason in {"not_registered", "expired"} and not is_admin and not user.is_moderator:
                     try:
                         # Kick without permanent ban: restrict briefly so they can rejoin later
                         client.edit_permissions(
