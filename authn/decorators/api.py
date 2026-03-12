@@ -1,104 +1,92 @@
 import functools
-from typing import Optional
+import logging
+from types import SimpleNamespace
+from typing import Any, Callable
 
 from authlib.oauth2 import OAuth2Error
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
-from django.http import JsonResponse, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 
 from authn.models.openid import OAuth2App, OAuth2Token
 from authn.providers.openid import oauth2_token_validator
 from authn.helpers import get_access_denied_reason
 from club.exceptions import ApiAccessDenied, ApiException, ClubException, ApiAuthRequired
 
+log = logging.getLogger(__name__)
 
-def api(require_auth=True, scopes=None):
-    def decorator(view):
+
+def api(require_auth: bool = True) -> Callable:
+    def decorator(view: Callable) -> Callable:
         @functools.wraps(view)
-        def wrapper(request, *args, **kwargs):
+        def wrapper(request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
             request.oauth_token = None
 
-            # check auth if needed
             if require_auth:
-                # requests on behalf of apps (user == owner, for simplicity)
-                service_token = request.headers.get("X-Service-Token") or request.GET.get("service_token")
-                if service_token:
-                    app = app_by_service_token(service_token)
-                    if not app:
-                        raise ApiAuthRequired("App with this service token not found")
-
-                    request.me = app.owner
-
-                    # create "fake" token so we always have "request.oauth_token" set
-                    request.oauth_token = OAuth2Token(
-                        user=request.me,
-                        client_id=app.client_id,
-                        token_type="Service",
-                        access_token=service_token,
-                        refresh_token=service_token,
-                        scope=app.scope,
-                    )
-
-                # oauth requests with Bearer token
-                oauth_access_token = request.headers.get("Authorization")
-                if oauth_access_token:
-                    try:
-                        token = oauth2_token_validator.acquire_token(request, scopes)
-                    except MissingAuthorizationError as ex:
-                        raise ApiAuthRequired(title="Missing OAuth token", message=str(ex))
-                    except OAuth2Error as ex:
-                        raise ApiAuthRequired(title="OAuth token error", message=str(ex))
-
-                    request.me = token.user
-                    request.oauth_token = token
-
-                # this user can also come from other types of auth (e.g. cookies)
+                _authenticate_api_request(request)
                 if not request.me:
                     raise ApiAuthRequired()
-
                 reason = get_access_denied_reason(request.me)
                 if reason:
                     raise ApiAccessDenied(code=reason)
 
-            # execute view and catch exceptions
-            status_code = 200
             try:
-                results = view(request, *args, **kwargs)
+                result = view(request, *args, **kwargs)
             except ApiException:
-                raise  # simply re-raise
+                raise
+            except Http404:
+                raise ApiException(code="not-found", title="Not found")
             except ClubException as ex:
-                # wrap and re-raise
                 raise ApiException(
                     code=ex.code,
                     title=ex.title,
                     message=ex.message,
                     data=ex.data,
                 )
-            except Exception as ex:
-                raise ApiException(
-                    code=ex.__class__.__name__,
-                    title=str(ex),
-                )
 
-            # return results in expected format
-            if is_ajax(request):  # legacy, change to Content-Type check
-                return JsonResponse(data=results, status=status_code, json_dumps_params=dict(ensure_ascii=False))
-            elif isinstance(results, dict):
-                return JsonResponse(data=results, status=status_code, json_dumps_params=dict(ensure_ascii=False))
-            elif isinstance(results, str):
-                return HttpResponse(results, content_type="text/plain; charset=utf-8")
-            else:
-                return results
+            return _serialize_api_response(result)
 
         return wrapper
     return decorator
 
+def _authenticate_api_request(request: HttpRequest) -> None:
+    service_token: str | None = request.headers.get("X-Service-Token") or request.GET.get("service_token")
+    if service_token:
+        if request.GET.get("service_token"):
+            log.warning("service_token passed as GET parameter, use X-Service-Token header instead")
 
-def is_ajax(request):
-    return bool(request.GET.get("is_ajax"))
+        app: OAuth2App | None = OAuth2App.by_service_token(service_token)
+        if not app:
+            raise ApiAuthRequired("App with this service token not found")
 
+        request.me = app.owner
 
-def app_by_service_token(service_token) -> Optional[OAuth2App]:
-    return OAuth2App.objects\
-        .filter(service_token=service_token)\
-        .select_related("owner")\
-        .first()
+        scope: str = app.scope or ""
+        request.oauth_token = SimpleNamespace(
+            user=request.me,
+            client_id=app.client_id,
+            token_type="Service",
+            access_token=service_token,
+            scope=scope,
+            get_scopes=lambda: OAuth2Token.parse_scope(scope),
+        )
+        return
+
+    auth_header: str | None = request.headers.get("Authorization")
+    if auth_header:
+        try:
+            token = oauth2_token_validator.acquire_token(request, None)
+        except MissingAuthorizationError as ex:
+            raise ApiAuthRequired(title="Missing OAuth token", message=str(ex))
+        except OAuth2Error as ex:
+            raise ApiAuthRequired(title="OAuth token error", message=str(ex))
+
+        request.me = token.user
+        request.oauth_token = token
+
+def _serialize_api_response(result: Any) -> HttpResponse:
+    if isinstance(result, dict):
+        return JsonResponse(data=result, json_dumps_params={"ensure_ascii": False})
+    elif isinstance(result, str):
+        return HttpResponse(result, content_type="text/plain; charset=utf-8")
+    else:
+        return result
