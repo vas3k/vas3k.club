@@ -25,6 +25,9 @@ coverage/
 # IDEA
 .idea
 
+# ZED
+.zed
+
 # Mac OS X
 .DS_Store
 
