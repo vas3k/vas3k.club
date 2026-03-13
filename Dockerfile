@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.10.7-python3.12-trixie-slim AS python-builder
+FROM ghcr.io/astral-sh/uv:0.10.9-python3.12-trixie-slim AS python-builder
 
 ARG MODE=dev
 ENV UV_COMPILE_BYTECODE=1 \
