@@ -19,7 +19,12 @@ docker-compose*.yml
 Dockerfile
 
 CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
 README.md
+docs/
+setup.cfg
+**/.pytest_cache
 
 *.egg
 *.egg-info

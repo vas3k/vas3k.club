@@ -453,7 +453,7 @@ class PostProjectForm(AbstractPostForm):
         label="Название проекта",
         required=True,
         max_length=128,
-        widget=forms.TextInput(attrs={"placeholder": "Название проекта 🏗"}),
+        widget=forms.TextInput(attrs={"placeholder": "Название проекта и кратко о чём он 🏗"}),
     )
     url = forms.URLField(
         label="Ссылка на страницу проекта 👇",

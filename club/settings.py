@@ -153,6 +153,7 @@ Q_CLUSTER = {
     "workers": 4,
     "recycle": 500,
     "timeout": 300,
+    "retry": 360,
     "compress": True,
     "save_limit": 250,
     "queue_limit": 5000,
@@ -278,6 +279,8 @@ TELEGRAM_PAY_BOT_URL = "https://t.me/vas3kpaybot"
 TELEGRAM_BOT_WEBHOOK_URL = "https://vas3k.club/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
+TELEGRAM_API_ID = os.getenv("TELEGRAM_API_ID")
+TELEGRAM_API_HASH = os.getenv("TELEGRAM_API_HASH")
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""
