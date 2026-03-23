@@ -66,14 +66,14 @@ class Command(BaseCommand):
         expired_count = 0
         non_member_count = 0
 
-        with client:
-            try:
-                client.start(bot_token=settings.TELEGRAM_TOKEN)
-            except Exception as ex:
-                log.exception("Telethon bot start failed")
-                self.stderr.write(f"Failed to start Telegram client: {ex}")
-                return
+        try:
+            client.start(bot_token=settings.TELEGRAM_TOKEN)
+        except Exception as ex:
+            log.exception("Telethon bot start failed")
+            self.stderr.write(f"Failed to start Telegram client: {ex}")
+            return
 
+        with client:
             try:
                 chat_entity = client.get_entity(int(chat_id_raw))
             except Exception as ex:
