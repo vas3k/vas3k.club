@@ -77,63 +77,35 @@ Three huge requests for everyone:
 
 - Please give kudos the original authors. "Works on vas3k.club engine" in the footer of your site will be enough.
 - Please share new features you implement with us, so other folks can also benefit from them, and your own codebase minimally diverges from the original one (so you can sync updates and security fixes) . Use our [feature-flags](club/features.py).
-- Do not use our issues and other official channels as a support desk. Use [chats](https://t.me/joinchat/T5DDOpAVcZwzODg0).
+- Do not use our "issues" and chats as a support desk for your own fork.
 
 > ♥️ [Feature-flags](club/features.py) are great. Use them to tweak your fork. Create new flags to upstream your new features or disable existing ones.
 
-## 🙋‍♂️ How to report a bug?
+## 🙋‍♂️ How to report a bug or propose a feature?
 
-- 🆕Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new). 
-- 🔦 Please, **use a search**, to check, if there is already existed issue!
-- Explain your idea or proposal in all the details: 
-    - Make sure you clearly describe "observed" and "expected" behaviour. It will dramatically save time for our contributors and maintainers. 
-    - **For minor fixes** please just open a PR.
-    
-## 💎 Now to propose a new feature?
-
-- Go to our [Discussions](https://github.com/vas3k/vas3k.club/discussions)
-- Check to see if someone else has already come up with the idea before
-- Create a new discussion
-- 🖼 If it's **UI/UX** related: attach a screenshot or wireframe
+- 🆕Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new) using one of the existing templates. 
+- 🔦 Please, **use the search function** to make sure you aren't creating a duplicate.
+- 🖼 Provide ALL the details, screenshots, logs, etc. Bug reports without steps to reproduce will be closed.
 
 ## 😍 Contributions
 
-Contributions are welcome.  
+Important information for everyone willing to contribute to this project.
 
-The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues).
+- AI-generated PRs are NOT welcome.
+- Low-effort PRs are NOT welcome.
+- No cowboy PRs without prior discussion AND approval from maintainers.
+- 1 PR = 1 feature. No PRs with bulk changes.
+- Any PR longer than 10 lines of code must include a detailed text explanation of all changes.
 
-Here's our contribution guidelines — [CONTRIBUTING.md](CONTRIBUTING.md).
+**A good way to contribute bug fixes:** search the Issues to make sure the bug hasn't been reported yet. Open a new Issue with a detailed description and steps to reproduce. Open a PR with the fix (if you can), then the contributors will either merge your PR or you'll carry on the discussion in the comments.
 
-We also run the public [Github Project Board](https://github.com/vas3k/vas3k.club/projects/3) to track progress and develop roadmaps.
+**For new features:** open a new Issue describing the new feature you're interested in. Wait for the contributors to get back to you and give you the green light for implementation. If the contributors don't reply, it means the feature isn't of interest at the moment. ONLY after that should you open a PR for that feature.
+
+The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues) and our Dev-chat (@vas3k_club_dev in telegram). DO NOT DISCUSS FORKS THERE.
+
+If you want to contribute but don't know where to start — come to the chat and just ask! 
 
 > The official development language at the moment is Russian, because 100% of our users speak it. We don't want to introduce unnecessary barriers for them. But we are used to writing commits and comments in English and we won't mind communicating with you in it.
-
-### 😎 I want to write some code
-
-- Open our [Issues page](https://github.com/vas3k/vas3k.club/issues) to see the most important tickets at top. 
-- Pick one issue you like and **leave a comment** inside that you're getting it.
-
-**For big changes** open an issues first or (if it's already opened) leave a comment with brief explanation what and why you're going to change. Many tickets hang open not because they cannot be done, but because they cause many logical contradictions that you may not know. It's better to clarify them in comments before sending a PR.
-
-### 🚦Pay attention to issue labels!
-
-#### 🟩 Ready to implement
-
-- **good first issue** — good tickets **for first-timers**. Usually these are simple and not critical things that allow you to quickly feel the code and start contributing to it.
-- **bug** — if **something is not working**, it needs to be fixed, obviously.
-- **critical** — the **first priority** tickets.
-- **improvement** — accepted improvements for an existing module. Like adding a sort parameter to the feed. If improvement requires UI, **be sure to provide a sketch before you start.**
-
-#### 🟨 Discussion is needed
-
-- **new feature** —  completely new features. Usually they're too hard for newbies, leave them **for experienced contributors.**
-- **idea** — **discussion is needed**. Those tickets look adequate, but waiting for real proposals how they will be done. Don't implement them right away.
-
-#### 🟥 Questionable
-
-- [¯\\_(ツ)\_/¯](https://github.com/vas3k/vas3k.club/labels/%C2%AF%5C_%28%E3%83%84%29_%2F%C2%AF) - special label for **questionable issues**. (should be closed in 60 days of inactivity)
-- **[no label]** — ticket is new, unclear or still not reviewed. Feel free to comment it but **wait for our maintainers' decision** before starting to implement it.
-
 
 ## 🔐 Security and vulnerabilities
 
@@ -141,26 +113,11 @@ If you think you've found a critical vulnerability that should not be exposed to
 
 Please do not test vulnerabilities in public. If you start spamming the website with "test-test-test" posts or comments, our moderators will ban you even if you had good intentions.
 
-
-## 👍 Our top contributors
-
-Take some time to press F and give some respects to our [best contributors](https://github.com/vas3k/vas3k.club/graphs/contributors), who spent their own time to make the club better.
-
-- [@vas3k](https://github.com/vas3k)
-- [@dimabory](https://github.com/dimabory)
-- [@devcooch](https://github.com/devcooch)
-- [@nlopin](https://github.com/nlopin)
-- [@fr33mang](https://github.com/fr33mang)
-- [@Vostenzuk](https://github.com/Vostenzuk)
-- [@nikolay-govorov](https://github.com/nikolay-govorov)
-- [@FMajesty](https://github.com/FMajesty)
-
-
 ## 👩‍💼 License 
 
 [MIT](LICENSE)
 
-In other words, you can use the code for private and commercial purposes with an author attribution (by including the original license file or mentioning the Club 🎩).
+You can use the code for your own private or commercial purposes with an author attribution (by including the original license file and mentioning vas3k.club somewhere on your website 🎩).
 
 Feel free to contact us via email [club@vas3k.club](mailto:club@vas3k.club).
 
