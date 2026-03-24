@@ -47,6 +47,7 @@ def ai_rate_post_quality(post):
         order_by="-created_at",
         limit=5
     )
+    post_duplicates = [p for p in post_duplicates if p.get("id") != post.id]
 
     input_messages = [
         {"role": "system", "content": POST_QUALITY_PROMPT},
