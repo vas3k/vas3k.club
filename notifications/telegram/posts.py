@@ -82,10 +82,10 @@ def send_published_post_to_moderators(post):
         ])
     )
 
-    ai_post_rate_results = ai_rate_post_quality(post)
+    ai_post_rate_text = ai_rate_post_quality(post)
     send_telegram_message(
         chat=ADMIN_CHAT,
-        text="\n".join(ai_post_rate_results),
+        text=ai_post_rate_text,
         parse_mode=telegram.ParseMode.HTML,
         reply_to_message_id=message.message_id,
     )
