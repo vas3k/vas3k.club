@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
+from ai.moderation import ai_rate_intro_quality
 from notifications.telegram.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message
 from bot.handlers.common import UserRejectReason
 from users.models.user import User
@@ -15,7 +16,7 @@ def notify_profile_needs_review(user, intro):
         "action_code": "message"
     })
 
-    send_telegram_message(
+    message = send_telegram_message(
         chat=ADMIN_CHAT,
         text=render_html_message("moderator_new_member_review.html", user=user, intro=intro),
         reply_markup=telegram.InlineKeyboardMarkup([
@@ -44,6 +45,14 @@ def notify_profile_needs_review(user, intro):
                 telegram.InlineKeyboardButton("✏️ Написать юзеру", url=admin_profile_url),
             ]
         ])
+    )
+
+    ai_intro_rate_results = ai_rate_intro_quality(user, intro)
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text="\n".join(ai_intro_rate_results),
+        parse_mode=telegram.ParseMode.HTML,
+        reply_to_message_id=message.message_id,
     )
 
 
