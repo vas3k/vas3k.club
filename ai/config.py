@@ -16,6 +16,7 @@ CLUB_INFO_POST_SLUGS = [
 ]
 CLUB_EXTRA_INFO_POST_SLUGS = [
     "privacy_policy",
+    "ai_policy",
     "7979",  # club bot
     "4916",  # memes
     "25328",  # why club is helpful
