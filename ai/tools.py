@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from ai.config import TRIM_LONG_CONTENT_TO_LEN, CLUB_INFO_POST_SLUGS, CLUB_INFO_POST_LABEL
+from ai.config import TRIM_LONG_CONTENT_TO_LEN, CLUB_INFO_POST_SLUGS, CLUB_INFO_POST_LABEL, CLUB_EXTRA_INFO_POST_SLUGS
 from posts.models.post import Post
 from rooms.models import Room
 from search.models import SearchIndex
@@ -89,7 +89,7 @@ def club_rules_and_info(query, limit=5):
     search_results = SearchIndex\
         .search(query)\
         .filter(
-            Q(post__slug__in=CLUB_INFO_POST_SLUGS) |
+            Q(post__slug__in=CLUB_INFO_POST_SLUGS + CLUB_EXTRA_INFO_POST_SLUGS) |
             Q(post__label_code=CLUB_INFO_POST_LABEL) |
             Q(post__type=Post.TYPE_DOCS)
         )[:limit]
