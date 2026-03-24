@@ -47,10 +47,10 @@ def notify_profile_needs_review(user, intro):
         ])
     )
 
-    ai_intro_rate_results = ai_rate_intro_quality(user, intro)
+    ai_intro_rate_text = ai_rate_intro_quality(user, intro)
     send_telegram_message(
         chat=ADMIN_CHAT,
-        text="\n".join(ai_intro_rate_results),
+        text=ai_intro_rate_text,
         parse_mode=telegram.ParseMode.HTML,
         reply_to_message_id=message.message_id,
     )

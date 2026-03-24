@@ -1,5 +1,7 @@
 import logging
 
+from openai.types.responses import Response
+
 from ai.config import OPENAI_CHAT_MODEL, CLUB_INFO_POST_SLUGS
 from ai.openai import openai
 from ai.tools import search_posts
@@ -7,6 +9,9 @@ from posts.models.post import Post
 from users.models.user import User
 
 log = logging.getLogger(__name__)
+
+MODERATION_TEMPERATURE = 0.3
+MODERATION_MAX_OUTPUT_TOKENS = 800
 
 POST_QUALITY_PROMPT = """Ты помощник модераторов нашего коммьюнити, которое называется Вастрик Клуб.
 Твоя цель помогать модераторам оценивать качество новых постов, находить нарушения правил и давать оценку.
@@ -38,7 +43,7 @@ POST_QUALITY_PROMPT = """Ты помощник модераторов нашег
 [краткое резюме, ключевые моменты, на которые обратить внимание модератору]
 """
 
-def ai_rate_post_quality(post: Post) -> list:
+def ai_rate_post_quality(post: Post) -> str:
     moderation_guides = Post.visible_objects()\
         .filter(slug__in=CLUB_INFO_POST_SLUGS)
 
@@ -50,33 +55,30 @@ def ai_rate_post_quality(post: Post) -> list:
     )
     post_duplicates = [p for p in post_duplicates if p.get("id") != post.id]
 
-    input_messages = [
-        {"role": "system", "content": POST_QUALITY_PROMPT},
-        {"role": "user", "content": f"Основные правила и ценности Клуба: "
-                                    "\n\n".join([f"{p.title}.\n\n{p.text}" for p in moderation_guides])
-        },
-        {"role": "user", "content": f"Новый пост выглядит вот так:"
-                                    f"Тип: {post.type}"
-                                    f"Видимость наружу: {post.is_public}"
-                                    f"Категория (комната): {post.room_id}"
-                                    f"Название: {post.title}"
-                                    f"Текст (Markdown): {post.text}"
-        },
-        {"role": "user", "content": f"Похожие посты: {post_duplicates}"},
-    ]
-
-    chat_response = openai.responses.create(
+    response: Response = openai.responses.create(
         model=OPENAI_CHAT_MODEL,
-        input=input_messages,
+        instructions=POST_QUALITY_PROMPT,
+        input=[
+            {"role": "user", "content": "Основные правила и ценности Клуба:\n\n"
+                                        + "\n\n".join(f"{p.title}.\n\n{p.text}" for p in moderation_guides)
+            },
+            {"role": "user", "content": f"Новый пост выглядит вот так:\n"
+                                        f"Тип: {post.type}\n"
+                                        f"Видимость наружу: {post.is_public}\n"
+                                        f"Категория (комната): {post.room_id}\n"
+                                        f"Название: {post.title}\n"
+                                        f"Текст (Markdown): {post.text}"
+            },
+            {"role": "user", "content": f"Похожие посты: {post_duplicates}"},
+        ],
+        temperature=MODERATION_TEMPERATURE,
+        max_output_tokens=MODERATION_MAX_OUTPUT_TOKENS,
+        truncation="auto",
+        store=False,
     )
 
-    log.info(f"CHATGPT: {chat_response}")
-    answer = []
-
-    for output in chat_response.output:
-        answer += [c.text for c in output.content]
-
-    return answer
+    log.info(f"CHATGPT: {response}")
+    return response.output_text
 
 
 
@@ -109,33 +111,30 @@ INTRO_QUALITY_PROMPT = """Ты помощник модераторов наше�
 """
 
 
-def ai_rate_intro_quality(user: User, intro: Post) -> list:
+def ai_rate_intro_quality(user: User, intro: Post) -> str:
     moderation_guides = Post.visible_objects()\
         .filter(slug__in=CLUB_INFO_POST_SLUGS)
 
-    input_messages = [
-        {"role": "system", "content": INTRO_QUALITY_PROMPT},
-        {"role": "user", "content": f"Основные правила и ценности Клуба: "
-                                    "\n\n".join([f"{p.title}.\n\n{p.text}" for p in moderation_guides])
-        },
-        {"role": "user", "content": f"Новый пользователь выглядит вот так:"
-                                    f"Имя: {user.full_name}"
-                                    f"Чем занимаемся: {user.position} @ {user.company}"
-                                    f"Город и страна: {user.city} {user.country}"
-                                    f"Контакты и био: {user.bio}"
-                                    f"Интро (Markdown): {intro.text}"
-        },
-    ]
-
-    chat_response = openai.responses.create(
+    response: Response = openai.responses.create(
         model=OPENAI_CHAT_MODEL,
-        input=input_messages,
+        instructions=INTRO_QUALITY_PROMPT,
+        input=[
+            {"role": "user", "content": "Основные правила и ценности Клуба:\n\n"
+                                        + "\n\n".join(f"{p.title}.\n\n{p.text}" for p in moderation_guides)
+            },
+            {"role": "user", "content": f"Новый пользователь выглядит вот так:\n"
+                                        f"Имя: {user.full_name}\n"
+                                        f"Чем занимаемся: {user.position} @ {user.company}\n"
+                                        f"Город и страна: {user.city} {user.country}\n"
+                                        f"Контакты и био: {user.bio}\n"
+                                        f"Интро (Markdown): {intro.text}"
+            },
+        ],
+        temperature=MODERATION_TEMPERATURE,
+        max_output_tokens=MODERATION_MAX_OUTPUT_TOKENS,
+        truncation="auto",
+        store=False,
     )
 
-    log.info(f"CHATGPT: {chat_response}")
-    answer = []
-
-    for output in chat_response.output:
-        answer += [c.text for c in output.content]
-
-    return answer
+    log.info(f"CHATGPT: {response}")
+    return response.output_text
