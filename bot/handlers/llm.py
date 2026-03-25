@@ -56,7 +56,7 @@ def llm_response(update: Update, context: CallbackContext) -> None:
     answer = ask_assistant("\n".join(user_input))
     if answer:
         update.message.reply_text(
-            markdown_tg("\n\n".join(answer)),
+            markdown_tg(answer),
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True
         )

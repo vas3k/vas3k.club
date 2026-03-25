@@ -101,7 +101,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
     @patch("bot.handlers.llm.ask_assistant")
     def test_simple_message(self, mock_ask_assistant):
         """Test handling a simple message"""
-        mock_ask_assistant.return_value = ["This is a test response"]
+        mock_ask_assistant.return_value = "This is a test response"
 
         update = self._create_update("Hello bot")
         context = MagicMock(spec=CallbackContext)
@@ -147,7 +147,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
     @patch("bot.handlers.llm.ask_assistant")
     def test_message_with_reply(self, mock_ask_assistant):
         """Test message with reply_to_message"""
-        mock_ask_assistant.return_value = ["Replied to previous message"]
+        mock_ask_assistant.return_value = "Replied to previous message"
 
         update = self._create_update(
             "What about this?", reply_to_text="Previous message"
@@ -271,7 +271,7 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
     @patch("bot.handlers.llm.ask_assistant")
     def test_message_with_caption(self, mock_ask_assistant):
         """Test handling a message with caption instead of text"""
-        mock_ask_assistant.return_value = ["Response to caption"]
+        mock_ask_assistant.return_value = "Response to caption"
 
         telegram_id = int(self.test_user.telegram_id or "")
         tg_user = TgUser(id=telegram_id, is_bot=False, first_name="Test")
@@ -350,13 +350,9 @@ class LLMResponseTest(BaseTelegramTest, TestCase):
         mock_ask_assistant.assert_not_called()
 
     @patch("bot.handlers.llm.ask_assistant")
-    def test_multiple_responses(self, mock_ask_assistant):
-        """Test handling multiple response lines from assistant"""
-        mock_ask_assistant.return_value = [
-            "First paragraph",
-            "Second paragraph",
-            "Third paragraph",
-        ]
+    def test_long_response(self, mock_ask_assistant):
+        """Test handling a long multi-paragraph response from assistant"""
+        mock_ask_assistant.return_value = "First paragraph\n\nSecond paragraph\n\nThird paragraph"
         update = self._create_update("Tell me a story")
         context = MagicMock(spec=CallbackContext)
         context.bot = self.bot
