@@ -799,10 +799,11 @@
         },
         "lxml-html-clean": {
             "hashes": [
-                "sha256:74ccfba277adcfea87a1e9294f47dd86b05d65b4da7c5b07966e3d5f3be8a505",
-                "sha256:91291e7b5db95430abf461bc53440964d58e06cc468950f9e47db64976cebcb3"
+                "sha256:58f39a9d632711202ed1d6d0b9b47a904e306c85de5761543b90e3e3f736acfb",
+                "sha256:ce2ef506614ecb85ee1c5fe0a2aa45b06a19514ec7949e9c8f34f06925cfabcb"
             ],
-            "version": "==0.4.2"
+            "index": "pypi",
+            "version": "==0.4.4"
         },
         "mistune": {
             "hashes": [
