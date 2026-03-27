@@ -31,8 +31,8 @@ def godmode_list_model(request, model_name):
         return render(request, "godmode/message.html", {
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
-            "message": f"У вас нет прав для просмотра таблицы '{admin_model.title}', "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.list_roles)}.",
+            "message": f"У вас нет прав для просмотра раздела «{admin_model.title}», "
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.list_roles)}.",
         })
 
     # Get pagination parameters
@@ -101,8 +101,8 @@ def godmode_edit_model(request, model_name, item_id):
         return render(request, "godmode/message.html", {
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
-            "message": f"У вас нет прав для редактирования записей таблицы '{admin_model.title}', "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.edit_roles)}.",
+            "message": f"У вас нет прав для редактирования записей таблицы «{admin_model.title}», "
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.edit_roles)}.",
         })
 
     # Get the model instance
@@ -144,8 +144,8 @@ def godmode_delete_model(request, model_name, item_id):
         return render(request, "godmode/message.html", {
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
-            "message": f"У вас нет прав для удаления записей из таблицы '{admin_model.title}', "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.delete_roles)}.",
+            "message": f"У вас нет прав для удаления записей из таблицы «{admin_model.title}», "
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.delete_roles)}.",
         })
 
     # Get the primary key field name dynamically
@@ -174,8 +174,8 @@ def godmode_create_model(request, model_name):
         return render(request, "godmode/message.html", {
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
-            "message": f"У вас нет прав для создания записей в таблице '{admin_model.title}', "
-                       f"это могут делать только админы с ролями {', '.join(admin_model.create_roles)}.",
+            "message": f"У вас нет прав для создания записей в таблице «{admin_model.title}», "
+                       f"это могут делать только админы с ролями: {', '.join(admin_model.create_roles)}.",
         })
 
     # Create a dynamic form for the model
@@ -209,8 +209,8 @@ def godmode_show_page(request, page_name):
         return render(request, "godmode/message.html", {
             "admin": ADMIN,
             "title": "🥲 Вам сюда нельзя",
-            "message": f"У вас нет прав для просмотра страницы '{admin_page.title}', "
-                       f"это могут делать только админы с ролями {', '.join(admin_page.access_roles)}.",
+            "message": f"У вас нет прав для просмотра страницы «{admin_page.title}», "
+                       f"это могут делать только админы с ролями: {', '.join(admin_page.access_roles)}.",
         })
 
     if not admin_page.view:
@@ -225,3 +225,42 @@ def godmode_show_page(request, page_name):
         "admin_page": admin_page,
         "page": admin_page.view(request, admin_page)
     })
+
+
+@require_auth
+def godmode_action(request, model_name, item_id, action_code):
+    if not ADMIN.has_access(request.me):
+        raise AccessDenied()
+
+    admin_model = ADMIN.get_model(model_name)
+    if not admin_model or not admin_model.model:
+        raise Http404()
+
+    admin_action = admin_model.actions.get(action_code)
+    if not admin_action:
+        raise Http404()
+
+    if not admin_action.has_access(request.me):
+        return render(request, "godmode/message.html", {
+            "admin": ADMIN,
+            "title": "🥲 Вам сюда нельзя",
+            "message": f"У вас нет прав для выполнения действия «{admin_action.title}», "
+                       f"это могут делать только админы с ролями: {', '.join(admin_action.access_roles)}.",
+        })
+
+    # Get the model instance
+    primary_key_field = admin_model.model._meta.pk.name
+    item = get_object_or_404(admin_model.model, **{primary_key_field: item_id})
+
+    # run the action
+    context = dict(
+        admin=ADMIN,
+        admin_model=admin_model,
+        admin_action=admin_action
+    )
+    if request.method == "GET":
+        return admin_action.get(request, item, **context)
+    elif request.method == "POST":
+        return admin_action.post(request, item, **context)
+    else:
+        raise Http404()

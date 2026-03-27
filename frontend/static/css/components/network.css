@@ -1,6 +1,7 @@
 .network {
     font-size: 140%;
     padding-top: 30px;
+    max-width: none;
 }
 
     .network-title {
@@ -8,8 +9,9 @@
         text-align: center;
         font-weight: 500;
         padding-top: 50px;
-        padding-bottom: 40px;
+        padding-bottom: 20px;
         text-decoration: none;
+        margin: 0 auto;
     }
 
     .network-header {
@@ -22,48 +24,76 @@
         padding-top: 10px;
         padding-left: 20px;
         padding-bottom: 30px;
+        max-width: var(--normal-content-width);
+        margin: 0 auto;
     }
 
     .network-description {
         text-align: center;
-        max-width: var(--normal-content-width);
         padding-bottom: 40px;
         font-size: 110%;
+        margin: 0 auto;
     }
 
     .network-block {
-        padding-bottom: 40px;
+        margin: 0 auto 40px;
+        padding-bottom: 20px;
+        max-width: var(--normal-content-width);
     }
+
+        .network-block-services {
+            max-width: 1300px;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .network-block-title {
+            text-align: center;
+            padding: 50px 0 0;
+            margin-bottom: 0;
+        }
 
     .network-channels {
         display: flex;
+        gap: 20px;
         flex-wrap: wrap;
-        justify-content: flex-start;
         align-items: flex-start;
+        justify-content: center;
     }
 
         .network-channel {
             position: relative;
-            display: block;
-            max-width: 180px;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 150px;
             box-sizing: border-box;
             text-align: center;
             text-decoration: none;
+            padding-bottom: 10px;
         }
 
-            .network-channel-icon {
-                display: block;
-                width: 140px;
-                height: 140px;
-                background-color: #FFFFFF;
+            .network-channel:hover {
+                transition: all 0.3s;
+                transform: scale(1.06);
+                box-shadow: var(--block-shadow);
+                border-radius: var(--block-border-radius);
             }
 
-            .network-channel-badge {
+            .network-channel-image {
+                display: block;
+                width: 140px;
+                min-width: 140px;
+                height: 140px;
+                background-color: #FFFFFF;
+                position: relative;
+            }
+
+            .network-channel-icon {
                 position: absolute;
                 display: block;
-                top: 16px;
-                right: 16px;
+                top: -9px;
+                right: -3px;
                 font-size: 200%;
                 border-radius: 1em;
                 background-color: var(--bg-color);
@@ -77,6 +107,7 @@
                 padding-top: 10px;
                 text-decoration: underline;
                 font-weight: 500;
+                line-height: 1.3em;
             }
 
             .network-channel-description {
@@ -106,14 +137,67 @@
                     max-width: 160px;
                     padding: 10px;
                 }
-
-                    .network-channel-icon {
-                        width: 120px;
-                        height: 120px;
-                    }
         }
 
         .network-channel-text {
             font-size: 90%;
             padding: 10px;
         }
+
+        .network-channel-square {
+            display: flex;
+            gap: 15px;
+            flex-direction: row;
+            min-height: 170px;
+            min-width: 360px;
+            max-width: 550px;
+            width: 100%;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 0;
+        }
+
+            .network-channel-square .network-channel-image {
+                width: 120px;
+                min-width: 120px;
+                height: 120px;
+                border-radius: 20px;
+            }
+
+            .network-channel-square .network-channel-name {
+                font-size: 110%;
+                padding: 0;
+            }
+
+            .network-channel-square .network-channel-description p {
+                margin: 5px 0 7px;
+            }
+
+        .network-channel-small {
+            width: 100px;
+            font-size: 70%;
+        }
+
+            .network-channel-small .network-channel-image {
+                width: 80px;
+                min-width: 80px;
+                height: 80px;
+            }
+
+        .network-channel-other {
+            display: inline-flex;
+            align-items: center;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 5px;
+            font-size: 80%;
+            padding: 0;
+            overflow: hidden;
+        }
+
+            .network-channel-other .network-channel-name {
+                padding: 0;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }

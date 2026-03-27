@@ -32,13 +32,13 @@
 {% block content %}
     <div class="people">
         <div class="people-map">
-            <people-map :geojson="JSON.parse('{% users_geo_json users %}')" class="people-map-container"></people-map>
+            <people-map :geojson="JSON.parse('{% users_geo_json users_for_map %}')" class="people-map-container"></people-map>
         </div>
 
         <form action="." method="get">
             <div class="people-wrapper">
                 <div class="people-title">
-                    {% if users %}
+                    {% if users_total %}
                         <strong>{{ users_total }}</strong> {{ users_total|rupluralize:"человек,человека,человек" }}
                     {% else %}
                         Никого 😢
@@ -68,8 +68,8 @@
                     </div>
 
                     <div class="people-filters-title show-on-iphone">
-                        {% if users %}
-                            <strong>{{ users | length }}</strong> {{ users|length|rupluralize:"человек,человека,человек" }}
+                        {% if users_total %}
+                            <strong>{{ users_total }}</strong> {{ users_total|rupluralize:"человек,человека,человек" }}
                         {% else %}
                             Никого 😢
                         {% endif %}
@@ -181,7 +181,7 @@
                 </div>
 
                 <div class="people-results">
-                    {% if users %}
+                    {% if users_total %}
                         <div class="block people-stats hide-on-iphone">
                             {% for header, stat in map_stat_groups.items %}
                                 <div class="people-stat">

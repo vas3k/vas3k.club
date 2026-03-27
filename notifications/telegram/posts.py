@@ -3,9 +3,109 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
-from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, send_telegram_image, CLUB_CHAT
+from ai.moderation import ai_rate_post_quality
+from common.regexp import USERNAME_RE
+from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, \
+    send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE, VIBES_CHAT
+from posts.models.post import Post
 from rooms.models import RoomSubscription
 from tags.models import Tag, UserTag
+from users.models.friends import Friend
+from users.models.user import User
+
+REJECT_POST_REASONS = {
+    "post": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+        ("value", "Нет пользы/абстрактно"),
+        ("inside", "Нет инсайдов и опыта"),
+    ],
+    "event": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+    ],
+    "guide": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+    ],
+    "thread": [
+        ("title", "Плохой заголовок"),
+        ("design", "Текст недооформлен"),
+        ("duplicate", "Дубликат"),
+    ],
+    "question": [
+        ("title", "Плохой заголовок"),
+        ("dyor", "Нет рисёрча, коротко"),
+        ("hot", "Провокация/срач"),
+        ("chat", "Лучше в чат"),
+        ("duplicate", "Дубликат"),
+    ],
+    "link": [
+        ("tldr", "Короткое описание"),
+        ("self", "Ссылка на себя"),
+        ("value", "Бесполезно/непонятно"),
+    ],
+    "idea": [
+        ("title", "Плохой заголовок"),
+        ("tldr", "Мало описания"),
+        ("github", "Фича, на гитхаб"),
+    ],
+    "battle": [
+        ("hot", "Срач"),
+        ("false_dilemma", "Ложная дилемма"),
+        ("duplicate", "Дубликат"),
+        ("bias", "Предвзят к одному варианту"),
+    ],
+    "project": [
+        ("ad", "Похоже на рекламу"),
+        ("inside", "Нет инсайдов и опыта"),
+    ],
+}
+
+
+def send_published_post_to_moderators(post):
+    message = send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=render_html_message("moderator_new_post_review.html", post=post),
+        reply_markup=telegram.InlineKeyboardMarkup([
+            *[
+                [telegram.InlineKeyboardButton(f"❌ {title}", callback_data=f"reject_post_{reason}:{post.id}")]
+                for reason, title in REJECT_POST_REASONS.get(post.type) or []
+            ],
+            [
+                telegram.InlineKeyboardButton("❌ В черновики", callback_data=f"reject_post:{post.id}"),
+                telegram.InlineKeyboardButton("😕 Так себе", callback_data=f"forgive_post:{post.id}"),
+            ],
+            [
+                telegram.InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),
+            ],
+        ])
+    )
+
+    ai_post_rate_text = ai_rate_post_quality(post)
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=ai_post_rate_text,
+        parse_mode=telegram.ParseMode.HTML,
+        reply_to_message_id=message.message_id,
+    )
+
+
+def send_intro_changes_to_moderators(post):
+    if post.type == Post.TYPE_INTRO:
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=render_html_message("moderator_updated_intro.html", user=post.author, intro=post),
+        )
+
+
+def announce_in_online_channel(post):
+    send_telegram_message(
+        chat=CLUB_ONLINE,
+        text=render_html_message("channel_post_announce.html", post=post),
+        parse_mode=telegram.ParseMode.HTML,
+        disable_preview=True,
+    )
 
 
 def announce_in_club_channel(post, announce_text=None, image=None):
@@ -29,7 +129,7 @@ def announce_in_club_channel(post, announce_text=None, image=None):
 
 def announce_in_club_chats(post):
     # announce to public chat
-    if post.is_visible_in_feeds or not post.room or not post.room.chat_id:
+    if post.visibility == Post.VISIBILITY_EVERYWHERE or not post.room or not post.room.chat_id:
         send_telegram_message(
             chat=CLUB_CHAT,
             text=render_html_message("channel_post_announce.html", post=post),
@@ -49,13 +149,24 @@ def announce_in_club_chats(post):
         )
 
 
-def notify_post_approved(post):
-    if post.author.telegram_id:
+def notify_post_approved(post: Post):
+    if not post.author.telegram_id:
+        return None
+
+    if post.room_id and post.is_room_only:
+        send_telegram_message(
+            chat=Chat(id=post.author.telegram_id),
+            text=render_html_message("post_approved_in_room.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+        )
+    else:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
             text=render_html_message("post_approved.html", post=post),
             parse_mode=telegram.ParseMode.HTML,
         )
+
+    return None
 
 
 def notify_post_rejected(post, reason):
@@ -86,6 +197,33 @@ def notify_post_collectible_tag_owners(post):
                         reply_markup=post_reply_markup(post),
                     )
 
+def notify_author_friends(post):
+    notified_user_ids = set()
+
+    # parse @nicknames and notify mentioned users
+    usernames = set(USERNAME_RE.findall(post.text))
+    mentioned_users = User.objects.in_bulk(usernames, field_name="slug")
+
+    for user in mentioned_users.values():
+        if user.telegram_id and user.id not in notified_user_ids:
+            send_telegram_message(
+                chat=Chat(id=user.telegram_id),
+                text=render_html_message("post_mention.html", post=post),
+            )
+            notified_user_ids.add(user.id)
+
+    # notify friends about new posts
+    friends = Friend.friends_for_user(post.author)
+    for friend in friends:
+        if friend.user_from.telegram_id \
+            and friend.is_subscribed_to_posts \
+            and friend.user_from.id not in notified_user_ids:
+            send_telegram_message(
+                chat=Chat(id=friend.user_from.telegram_id),
+                text=render_html_message("friend_post.html", post=post),
+            )
+            notified_user_ids.add(friend.user_from.id)
+
 
 def notify_post_room_subscribers(post):
     if post.room:
@@ -113,3 +251,48 @@ def post_reply_markup(post):
             telegram.InlineKeyboardButton("🔔", callback_data=f"subscribe:{post.id}"),
         ],
     ])
+
+
+def notify_post_label_changed(post):
+    moderator_template = "moderator_label_removed.html" if post.label_code is None else "moderator_label_set.html"
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=render_html_message(moderator_template, post=post),
+        parse_mode=telegram.ParseMode.HTML,
+    )
+    if post.label_code is not None and post.label['notify'] and post.author.telegram_id:
+        send_telegram_message(
+            chat=Chat(id=post.author.telegram_id),
+            text=render_html_message("post_label.html", post=post),
+            parse_mode=telegram.ParseMode.HTML,
+        )
+
+
+def notify_admins_on_post_label_changed(post):
+    for chat in [ADMIN_CHAT, VIBES_CHAT]:
+        send_telegram_message(
+            chat=chat,
+            text=f"🏷️ Посту «{post.title}» выдан лейбл «{post.label_code}»"
+        )
+
+
+def notify_post_coauthors_changed(post):
+    old = set()
+    history = list(post.history.all()[:2])
+    if len(history) == 2:
+        old = set(history[1].coauthors)
+    new = set(post.coauthors)
+    added = new - old
+    removed = old - new
+    notify_users_by_username(added, "coauthor_added.html", post)
+    notify_users_by_username(removed, "coauthor_removed.html", post)
+
+
+def notify_users_by_username(users, template, post):
+    users_by_slug = User.objects.in_bulk(set(users), field_name="slug")
+    for user in users_by_slug.values():
+        if user.telegram_id:
+            send_telegram_message(
+                chat=Chat(id=user.telegram_id),
+                text=render_html_message(template, post=post),
+            )

@@ -4,7 +4,7 @@ from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
 from authn.decorators.auth import require_auth
-from authn.helpers import check_user_permissions
+from authn.helpers import check_user_permissions, is_safe_url
 from badges.models import UserBadge
 from comments.models import Comment
 from common.pagination import paginate
@@ -12,7 +12,6 @@ from authn.decorators.api import api
 from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.achievements import UserAchievement
-from users.models.friends import Friend
 from users.models.mute import UserMuted
 from tags.models import Tag, UserTag
 from users.models.notes import UserNote
@@ -29,7 +28,7 @@ def profile(request, user_slug):
     if request.me and user.id == request.me.id:
         # handle auth redirect
         goto = request.GET.get("goto")
-        if goto and goto.startswith(settings.APP_HOST):
+        if is_safe_url(goto):
             return redirect(goto)
 
         # moderation status check for new-joiners
@@ -52,17 +51,18 @@ def profile(request, user_slug):
 
     # select other stuff from this user
     intro = Post.get_user_intro(user)
-    projects = Post.objects.filter(author=user, type=Post.TYPE_PROJECT, is_visible=True).all()
+    projects = Post.visible_objects().filter(author=user, type=Post.TYPE_PROJECT).all()
     badges = UserBadge.user_badges_grouped(user=user)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
-    posts = Post.objects_for_user(request.me).filter(is_visible=True)\
+    posts = Post.objects_for_user(request.me)\
         .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST])\
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-published_at")
 
     if request.me:
         comments = Comment.visible_objects()\
-            .filter(author=user, post__is_visible=True)\
+            .filter(author=user)\
+            .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
             .order_by("-created_at")\
             .select_related("post")
         muted = UserMuted.objects.filter(user_from=request.me, user_to=user).first()
@@ -73,7 +73,7 @@ def profile(request, user_slug):
         note = None
 
     moderator_notes = []
-    if request.me and request.me.is_moderator:
+    if request.me and (request.me.is_moderator or request.me.is_curator):
         moderator_notes = UserNote.objects.filter(user_to=user)\
             .exclude(user_from=request.me)\
             .select_related("user_from")\
@@ -89,9 +89,9 @@ def profile(request, user_slug):
         "collectible_tags": collectible_tags,
         "achievements": [ua.achievement for ua in achievements],
         "comments": comments[:3] if comments else [],
-        "comments_total": comments.count() if comments else 0,
+        "comments_total": Comment.count_user_comments(user) if comments is not None else 0,
         "posts": posts[:15],
-        "posts_total": posts.count() if posts else 0,
+        "posts_total": Post.count_user_posts(user, viewer=request.me),
         "similarity": similarity,
         "muted": muted,
         "note": note,
@@ -107,7 +107,8 @@ def profile_comments(request, user_slug):
     user = get_object_or_404(User, slug=user_slug)
 
     comments = Comment.visible_objects()\
-        .filter(author=user, post__is_visible=True)\
+        .filter(author=user)\
+        .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
         .order_by("-created_at")\
         .select_related("post")
 
@@ -127,7 +128,6 @@ def profile_posts(request, user_slug):
         return render(request, "auth/private_profile.html")
 
     posts = Post.objects_for_user(request.me) \
-        .filter(is_visible=True) \
         .filter(Q(author=user) | Q(coauthors__contains=[user.slug])) \
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST]) \
         .order_by("-published_at")

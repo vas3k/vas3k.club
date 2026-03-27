@@ -3,8 +3,6 @@ from django.template import loader
 
 register = template.Library()
 
-battle_stats_template = loader.get_template("posts/widgets/battle_stats.html")
-
 
 def _is_argument_for_side(comment, side):
     for_side = comment.metadata and comment.metadata.get("battle", {}).get("side") == side
@@ -20,6 +18,7 @@ def battle_stats(post, comments):
     total_votes_a = sum(c.upvotes for c in arguments_for_a)
     total_votes_b = sum(c.upvotes for c in arguments_for_b)
 
+    battle_stats_template = loader.get_template("posts/widgets/battle_stats.html")
     return battle_stats_template.render({
         "total_arguments": {
             "a": len(arguments_for_a),

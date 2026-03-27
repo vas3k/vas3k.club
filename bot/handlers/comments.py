@@ -1,15 +1,17 @@
 import logging
 
 from django.urls import reverse
+from django_q.tasks import async_task
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from bot.config import MIN_COMMENT_LEN, SKIP_COMMANDS, COMMENT_EMOJI_RE, POST_EMOJI_RE
 from bot.handlers.common import get_club_user, get_club_comment, get_club_post
-from bot.decorators import is_club_member
+from bot.decorators import is_club_member, ensure_fresh_db_connection
 from club import settings
 from comments.models import Comment
 from comments.rate_limits import is_comment_rate_limit_exceeded
+from notifications.telegram.comments import notify_on_comment_created
 from posts.models.post import Post
 from posts.models.linked import LinkedPost
 from posts.models.views import PostView
@@ -18,6 +20,7 @@ from search.models import SearchIndex
 log = logging.getLogger(__name__)
 
 
+@ensure_fresh_db_connection
 def comment(update: Update, context: CallbackContext) -> None:
     log.info("Comment handler triggered")
 
@@ -104,6 +107,9 @@ def reply_to_comment(update: Update, context: CallbackContext) -> None:
     SearchIndex.update_comment_index(reply)
     LinkedPost.create_links_from_text(reply.post, text)
 
+    # send all notifications
+    async_task(notify_on_comment_created, reply)
+
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,
         "comment_id": reply.id
@@ -172,6 +178,9 @@ def comment_to_post(update: Update, context: CallbackContext) -> None:
     )
     SearchIndex.update_comment_index(reply)
     LinkedPost.create_links_from_text(post, text)
+
+    # send notifications
+    async_task(notify_on_comment_created, reply)
 
     new_comment_url = settings.APP_HOST + reverse("show_comment", kwargs={
         "post_slug": reply.post.slug,

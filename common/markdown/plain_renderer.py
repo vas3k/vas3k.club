@@ -2,13 +2,16 @@ import mistune
 
 
 class PlainRenderer(mistune.HTMLRenderer):
-    def link(self, link, text=None, title=None):
-        if text:
-            return f'[{text}]({link})'
-        else:
-            return f'({link})'
+    def __init__(self, *args, **kwargs):
+        super().__init__()
 
-    def image(self, src, alt="", title=None):
+    def link(self, text, url, title=None):
+        if text:
+            return f'[{text}]({url})'
+        else:
+            return f'({url})'
+
+    def image(self, text, url, title=None):
         return "🖼"
 
     def emphasis(self, text):
@@ -26,7 +29,7 @@ class PlainRenderer(mistune.HTMLRenderer):
     def paragraph(self, text):
         return text + "\n\n"
 
-    def heading(self, text, level):
+    def heading(self, text, level, **attrs):
         return text + "\n\n"
 
     def newline(self):
@@ -38,11 +41,11 @@ class PlainRenderer(mistune.HTMLRenderer):
     def block_code(self, code, info=None):
         return code
 
-    def list(self, text, ordered, level, start=None):
+    def list(self, text, ordered, **attrs):
         return text
 
-    def list_item(self, text, level):
-        return "- " + text + "\n"
+    def list_item(self, text):
+        return f"- {text}\n"
 
     def thematic_break(self):
         return '---\n'

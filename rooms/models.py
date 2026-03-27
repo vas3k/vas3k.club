@@ -15,7 +15,7 @@ class Room(models.Model):
     title = models.CharField(max_length=64, null=False)
     subtitle = models.CharField(max_length=256, null=True, blank=True)
     image = models.URLField(null=True, blank=True)
-    icon = models.URLField(null=True, blank=True)
+    icon = models.CharField(max_length=256, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     color = models.CharField(max_length=16, null=False)
     style = models.CharField(max_length=256, default="", null=True, blank=True)
@@ -43,7 +43,7 @@ class Room(models.Model):
 
     class Meta:
         db_table = "rooms"
-        ordering = ["index"]
+        ordering = ["-chat_member_count", "index"]
 
     def __str__(self):
         return self.title
@@ -55,6 +55,7 @@ class Room(models.Model):
         now = datetime.utcnow()
         if self.last_activity_at < now - timedelta(minutes=5):
             return Room.objects.filter(slug=self.slug).update(last_activity_at=now)
+        return None
 
     def get_private_url(self):
         if self.url or self.chat_url:

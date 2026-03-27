@@ -167,10 +167,12 @@
 }
 
 .button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
     padding: 15px 18px;
     box-sizing: border-box;
-    text-decoration: none;
     border-radius: var(--button-border-radius);
     background-color: var(--button-bg-color);
     border: var(--button-border);
@@ -181,6 +183,14 @@
     font-weight: 500;
     transition: 0.2s ease-out;
 }
+
+    @media only screen and (max-width : 570px) {
+        .button {
+            font-size: 90%;
+            line-height: 1.2em;
+            padding: 10px;
+        }
+    }
 
     .button-round {
         border-radius: 50%;
@@ -236,6 +246,13 @@
         background-color: #0088cc;
         border-color: #0088cc;
     }
+
+.border {
+    border-radius: var(--button-border-radius);
+    border: var(--button-border);
+    color: var(--button-color);
+    padding: 5px 10px;
+}
 
 /* SLIDER THEME */
 input[type=range] {
@@ -427,6 +444,7 @@ input[type=range]:focus::-ms-fill-upper {
 
         .form-row-space-between {
             display: flex;
+            gap: 20px;
             justify-content: space-between;
         }
 
@@ -551,15 +569,25 @@ input[type=range]:focus::-ms-fill-upper {
 
 .link-favicon {
     display: inline-block;
-    min-height: 1.2em;
-    min-width: 1.2em;
+    height: 1.1em;
+    width: 1.1em;
     background-position: center center;
     background-size: cover;
     vertical-align: middle;
+    padding-right: 0.2em;
 }
 
     .link-favicon i {
         font-size: 140%;
+    }
+
+    footer .link-favicon,
+    .network .link-favicon,
+    .intro .link-favicon,
+    .post-header .link-favicon,
+    .landing .link-favicon,
+    .people .link-favicon {
+        display: none;
     }
 
 .show-on-iphone {
@@ -592,6 +620,9 @@ input[type=range]:focus::-ms-fill-upper {
 
 .CodeMirror-line {
     word-break: break-word !important;
+}
+.CodeMirror-cursor {
+    border-color: var(--input-color);
 }
 
 .topic {
@@ -704,13 +735,6 @@ input[type=range]:focus::-ms-fill-upper {
             margin-right: 10px;
         }
 
-img.emoji {
-   height: 1.2em;
-   width: 1.2em;
-   margin: 0 .05em 0 .1em;
-   vertical-align: -0.25em;
-}
-
 .text-center {
     text-align: center;
 }
@@ -817,3 +841,30 @@ img.emoji {
     transform: scale(1.05);
     transition: transform .2s;
 }
+
+.page-404 {
+    text-align: center;
+}
+
+    .page-404-title {
+        font-size: 200%;
+        margin-top: 130px;
+        margin-bottom: 50px;
+    }
+
+    .page-404-game {
+        width: 100%;
+        max-width: 800px;
+    }
+
+        .page-404-game * {
+            outline: none;
+        }
+
+    .page-404-game-description {
+        opacity: 0.6;
+    }
+
+    .page-404-buttons {
+        padding-top: 150px;
+    }

@@ -22,10 +22,7 @@ ADMINS = [
 ]
 
 INSTALLED_APPS = [
-    "django.contrib.auth",  # FIXME: do we need this?
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.sitemaps",
@@ -47,6 +44,7 @@ INSTALLED_APPS = [
     "godmode.apps.GodmodeConfig",
     "invites.apps.InvitesConfig",
     "tickets.apps.TicketsConfig",
+    "clickers.apps.ClickersConfig",
     "ai.apps.AiConfig",
     "simple_history",
     "django_q",
@@ -56,9 +54,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "club.middleware.me",
@@ -80,11 +75,9 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
-                "django.contrib.messages.context_processors.messages",
-                "django.contrib.auth.context_processors.auth",
                 "club.context_processors.settings_processor",
                 "club.context_processors.features_processor",
-                "authn.context_processors.users.me",
+                "users.context_processors.users.me",
                 "posts.context_processors.feed.rooms",
                 "posts.context_processors.feed.ordering",
             ]
@@ -112,11 +105,9 @@ LOGGING = {
 }
 
 # Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB") or "pmi_club",
         "USER": os.getenv("POSTGRES_USER") or "pmiclub",
         "PASSWORD": os.getenv("POSTGRES_PASSWORD") or "",
@@ -125,8 +116,21 @@ DATABASES = {
     }
 }
 
+if bool(os.getenv("POSTGRES_USE_POOLING")):
+    DATABASES["default"]["OPTIONS"] = {
+        "pool": {
+            "min_size": 5,
+            "max_size": 15,
+            "timeout": 10, # fail in 10 sec under load
+            "max_idle": 300, # close idle after 5 min
+        }
+    }
+else:
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
+
 # Internationalization
-# https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = "ru"
 TIME_ZONE = "UTC"
@@ -135,7 +139,6 @@ USE_L10N = True
 USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/static")]
@@ -148,7 +151,8 @@ Q_CLUSTER = {
     "name": "pmi_club",
     "workers": 4,
     "recycle": 500,
-    "timeout": 30,
+    "timeout": 300,
+    "retry": 360,
     "compress": True,
     "save_limit": 250,
     "queue_limit": 5000,
@@ -165,8 +169,10 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+        "TIMEOUT": 3600,  # 5 hours max
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
         }
     }
 }
@@ -225,9 +231,6 @@ PATREON_CLIENT_SECRET = os.getenv("PATREON_CLIENT_SECRET") or ""
 PATREON_REDIRECT_URL = f"{APP_HOST}/auth/patreon_callback/"
 PATREON_SCOPE = "identity identity[email]"
 
-COINBASE_CHECKOUT_ENDPOINT = "https://commerce.coinbase.com/checkout/"
-COINBASE_WEBHOOK_SECRET = os.getenv("COINBASE_WEBHOOK_SECRET")
-
 JWT_PRIVATE_KEY = (os.getenv("JWT_PRIVATE_KEY") or "").replace("\\n", "\n")
 JWT_PUBLIC_KEY = """-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA03rHsNGQ3HUfHIqSYXCh
@@ -253,7 +256,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 MEDIA_UPLOAD_URL = "https://media.pmi.moscow/upload/multipart/"
 MEDIA_UPLOAD_CODE = os.getenv("MEDIA_UPLOAD_CODE")
 VIDEO_EXTENSIONS = {"mp4", "mov", "webm"}
-IMAGE_EXTENSIONS = {"jpg", "jpeg", "png", "gif"}
+IMAGE_EXTENSIONS = {"webp", "jpg", "jpeg", "png", "gif"}
 
 OG_IMAGE_GENERATOR_URL = "https://og.pmi.moscow/preview"
 OG_IMAGE_DEFAULT = "https://pmi.moscow/static/images/pmi_share.png"
@@ -267,9 +270,10 @@ OG_IMAGE_GENERATOR_DEFAULTS = {
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_BOT_URL = os.getenv("TELEGRAM_BOT_URL") or "https://t.me/pmiclubbot"
 TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID")
+TELEGRAM_VIBES_CHAT_ID = -1002158547445
+TELEGRAM_PARLIAMENT_CHAT_ID = -1001148097898
 TELEGRAM_CLUB_CHANNEL_URL = os.getenv("TELEGRAM_CLUB_CHANNEL_URL")
 TELEGRAM_CLUB_CHANNEL_ID = os.getenv("TELEGRAM_CLUB_CHANNEL_ID")
-TELEGRAM_CLUB_CHAT_URL = os.getenv("TELEGRAM_CLUB_CHAT_URL")
 TELEGRAM_CLUB_CHAT_ID = os.getenv("TELEGRAM_CLUB_CHAT_ID")
 TELEGRAM_ONLINE_CHANNEL_URL = os.getenv("TELEGRAM_ONLINE_CHANNEL_URL")
 TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
@@ -277,6 +281,8 @@ TELEGRAM_PAY_BOT_URL = "https://t.me/vas3kpaybot"
 TELEGRAM_BOT_WEBHOOK_URL = "https://pmi.moscow/telegram/webhook/"
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
+TELEGRAM_API_ID = os.getenv("TELEGRAM_API_ID")
+TELEGRAM_API_HASH = os.getenv("TELEGRAM_API_HASH")
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY") or ""
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY") or ""
@@ -287,9 +293,6 @@ STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWI
 WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_CHAT_MODEL = "gpt-4.1-mini"
-OPENAI_EMBEDDINGS_MODEL = "text-embedding-3-small"
-OPENAI_EMBEDDINGS_VECTOR_DIM = 1536
 
 DEFAULT_AVATAR = "https://media.pmi.moscow/30095075d17a92786cfea143a73d68f5f1b3e71173e3f4ecf16f90d25834e45e.png"
 COMMENT_EDITABLE_TIMEDELTA = timedelta(hours=24)
@@ -314,12 +317,38 @@ CLEARED_POST_TEXT = "```\n" \
 MODERATOR_USERNAME = "moderator"
 DELETED_USERNAME = "deleted"
 
-
 VALUES_GUIDE_URL = "https://pmi.moscow/post/103/"
 POSTING_GUIDE_URL = "https://pmi.moscow/post/9/"
 CHATS_GUIDE_URL = "https://pmi.moscow/post/12/"
 PEOPLE_GUIDE_URL = "https://pmi.moscow/post/13/"
 PARLIAMENT_GUIDE_URL = "https://pmi.moscow/post/15/"
+
+CREWS = {
+    "vibes": {
+        "title": "Написать в Министерство Вайбов",
+        "telegram_chat_id": TELEGRAM_VIBES_CHAT_ID,
+        "reasons": [
+            {"code": "vibe", "text": "Делюсь вайбом!"},
+            {"code": "novibe", "text": "Кто-то не вайбит!"},
+            {"code": "interesting", "text": "Принёс вам интересненькое"},
+            {"code": "other", "text": "Другое"},
+        ]
+    },
+    "parliament": {
+        "title": "Написать в Парламент",
+        "telegram_chat_id": TELEGRAM_PARLIAMENT_CHAT_ID,
+        "reasons": [
+            {"code": "achievement", "text": "Выдать или получить ачивку"},
+            {"code": "activity", "text": "Хочу организовать активность"},
+            {"code": "idea", "text": "У меня есть идея для Клуба!"},
+            {"code": "other", "text": "Я только спросить"},
+        ]
+    },
+    "events": {
+        "title": "Написать оргам Вастрик Ивентов",
+        "telegram_chat_id": -1003410014342,
+    }
+}
 
 SUPPORTED_TIME_ZONES = [
 	("UTC", "по UTC"),

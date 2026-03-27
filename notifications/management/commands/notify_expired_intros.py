@@ -87,7 +87,6 @@ class Command(BaseCommand):
 
                         secret_code = base64.b64encode(user.secret_hash.encode("utf-8")).decode()
                         email = email \
-                            .replace("%username%", user.slug) \
                             .replace("%user_id%", str(user.id)) \
                             .replace("%secret_code%", secret_code)
 

@@ -117,13 +117,10 @@ class Command(BaseCommand):
                     comment_count=item['_club']['comment_count'],
                     view_count=item['_club']['view_count'],
                     upvotes=item['_club']['upvotes'],
-                    is_visible=True,
-                    is_visible_in_feeds=True,
                     is_commentable=True,
-                    is_approved_by_moderator=True,
+                    moderation_status=Post.MODERATION_APPROVED,
                     is_public=item['_club']['is_public'],
                     author_id=author.id,
-                    is_shadow_banned=False,
                     published_at=item['date_published'],
                     coauthors=[]
                 )

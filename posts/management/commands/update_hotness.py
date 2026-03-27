@@ -34,7 +34,7 @@ class Command(BaseCommand):
                         ) as c
                     )
                 , 0.0)
-                where is_visible = true
+                where visibility = 'everywhere'
                     and last_activity_at > %s
             """, [
                 POST_HOTNESS_PERIOD.total_seconds(),

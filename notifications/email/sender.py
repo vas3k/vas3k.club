@@ -1,23 +1,25 @@
 import logging
-import re
 
 from django.conf import settings
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from premailer import Premailer
 
 log = logging.getLogger(__name__)
 
 
-def send_transactional_email(recipient, subject, html, **kwargs):
+def send_transactional_email(recipient, subject, html, unsubscribe_link=None, **kwargs):
     log.info(f"Sending transactional email to {recipient}")
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
-    return send_mail(
+    headers = {"List-Unsubscribe": unsubscribe_link} if unsubscribe_link else {}
+    email = EmailMultiAlternatives(
         subject=subject,
-        html_message=prepared_html,
-        message=re.sub(r"<[^>]+>", "", prepared_html),
         from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[recipient],
+        to=[recipient],
+        headers=headers,
     )
+    email.attach_alternative(prepared_html, "text/html")
+    email.content_subtype = "html"
+    return email.send(fail_silently=False)
 
 
 def send_mass_email(recipient, subject, html, unsubscribe_link):
@@ -25,7 +27,6 @@ def send_mass_email(recipient, subject, html, unsubscribe_link):
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
     email = EmailMultiAlternatives(
         subject=subject,
-        body=prepared_html,
         from_email=settings.DEFAULT_FROM_EMAIL,
         to=[recipient],
         headers={

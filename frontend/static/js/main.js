@@ -7,8 +7,7 @@ import "./codemirror-4.inline-attachment";
 
 import App from "./App.js";
 import ClubApi from "./common/api.service.js";
-import { pluralize } from "./common/utils.js";
-import { handleCommentThreadCollapseToggle } from "./common/comments.js";
+import { handleCommentThreadCollapseToggle, collapseCommentThread } from "./common/comments.js";
 import vSelect from "vue-select";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
@@ -25,6 +24,7 @@ Vue.component("friend-button", () => import("./components/FriendButton.vue"));
 Vue.component("comment-scroll-arrow", () => import("./components/CommentScrollArrow.vue"));
 Vue.component("comment-markdown-editor", () => import("./components/MarkdownEditor/MarkdownEditor.vue"));
 Vue.component("toggle", () => import("./components/Toggle.vue"));
+Vue.component("clicker", () => import("./components/Clicker.vue"));
 Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
@@ -56,21 +56,13 @@ new Vue({
                 return;
             }
 
-            // toggle thread visibility
-            const collapseItems = comment.querySelectorAll(".thread-collapse-toggle");
-            for (let i = 0; i < collapseItems.length; i++) {
-                const isVisible = window.getComputedStyle(collapseItems[i]).display !== "none";
-                collapseItems[i].style.display = isVisible ? "none" : null;
+            // toggle thread visibility via CSS class (no forced reflows)
+            const wasCollapsed = !comment.classList.contains("thread-collapsed");
+            if (wasCollapsed) {
+                collapseCommentThread(comment);
+            } else {
+                comment.classList.remove("thread-collapsed");
             }
-
-            // show/hide placeholder with thread length
-            const collapseStub =
-                comment.querySelector(".comment-collapse-stub") || comment.querySelector(".reply-collapse-stub");
-            const wasCollapsed = collapseStub.style.display !== "block";
-            collapseStub.style.display = wasCollapsed ? "block" : "none";
-            const threadLength = comment.querySelectorAll(".reply").length + 1;
-            const pluralForm = pluralize(threadLength, ["комментарий", "комментария", "комментариев"]);
-            collapseStub.querySelector(".thread-collapse-length").innerHTML = `${threadLength} ${pluralForm}`;
 
             handleCommentThreadCollapseToggle(wasCollapsed, comment.id);
             // scroll back to comment if it's outside of the screen

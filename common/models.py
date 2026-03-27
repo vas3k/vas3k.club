@@ -1,5 +1,5 @@
-from collections import Counter
-from itertools import groupby
+from collections import Counter, defaultdict
+from operator import attrgetter
 
 from django.forms.models import model_to_dict
 
@@ -55,5 +55,8 @@ def top(values, key, skip=None):
 
 
 def group_by(values, key, todict=True):
-    results = groupby(values, lambda value: getattr(value, key))
-    return {k: list(v) for k, v in results} if todict else results
+    get_key = attrgetter(key)
+    groups = defaultdict(list)
+    for value in values:
+        groups[get_key(value)].append(value)
+    return dict(groups) if todict else groups

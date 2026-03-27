@@ -5,7 +5,7 @@ from django.db.models import Q
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
-from bot.decorators import is_club_member
+from bot.decorators import is_club_member, ensure_fresh_db_connection
 from comments.models import Comment
 from notifications.telegram.common import render_html_message
 from posts.models.post import Post
@@ -13,13 +13,14 @@ from posts.models.post import Post
 TOP_TIMEDELTA = timedelta(days=3)
 
 
+@ensure_fresh_db_connection
 @is_club_member
 def command_top(update: Update, context: CallbackContext) -> None:
     # Top posts
     top_posts = Post.visible_objects()\
         .filter(published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
-         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
+        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:5]
 
     # Hot posts

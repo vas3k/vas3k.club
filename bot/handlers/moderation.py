@@ -3,11 +3,12 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.urls import reverse
+from django_q.tasks import async_task
 from telegram import Update
 from telegram.ext import CallbackContext
 
 from bot.handlers.common import UserRejectReason, PostRejectReason
-from bot.decorators import is_moderator
+from bot.decorators import is_moderator, ensure_fresh_db_connection
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
     notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers
@@ -20,17 +21,19 @@ from users.models.user import User
 log = logging.getLogger(__name__)
 
 
+@ensure_fresh_db_connection
 @is_moderator
 def approve_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
     post = Post.objects.get(id=post_id)
-    if post.is_approved_by_moderator:
-        update.effective_chat.send_message(f"Пост «{post.title}» уже одобрен")
+    if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
+        update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
-        return
+        return None
 
-    post.is_approved_by_moderator = True
+    post.moderation_status = Post.MODERATION_APPROVED
+    post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.save()
@@ -40,10 +43,17 @@ def approve_post(update: Update, context: CallbackContext) -> None:
         "post_slug": post.slug,
     })
 
-    update.effective_chat.send_message(
-        f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}",
-        disable_web_page_preview=True
-    )
+    if post.room_id and post.is_room_only:
+        update.effective_chat.send_message(
+            f"😎 Пост «{post.title}» хорош для комнаты «{post.room.title}», "
+            f"но не будет отображаться на главной ({update.effective_user.full_name}): {post_url}",
+            disable_web_page_preview=True
+        )
+    else:
+        update.effective_chat.send_message(
+            f"👍 Пост «{post.title}» одобрен ({update.effective_user.full_name}): {post_url}",
+            disable_web_page_preview=True
+        )
 
     # hide buttons
     update.callback_query.edit_message_reply_markup(reply_markup=None)
@@ -53,20 +63,31 @@ def approve_post(update: Update, context: CallbackContext) -> None:
     announce_in_club_chats(post)
 
     if post.collectible_tag_code:
-        notify_post_collectible_tag_owners(post)
+        async_task(notify_post_collectible_tag_owners, post)
 
     if post.room_id:
-        notify_post_room_subscribers(post)
+        async_task(notify_post_room_subscribers, post)
+
+    # update search index
+    SearchIndex.update_post_index(post)
 
     return None
 
 
+@ensure_fresh_db_connection
 @is_moderator
 def forgive_post(update: Update, context: CallbackContext) -> None:
     _, post_id = update.callback_query.data.split(":", 1)
 
     post = Post.objects.get(id=post_id)
-    post.is_approved_by_moderator = False
+    if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
+        update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}")
+        update.callback_query.edit_message_reply_markup(reply_markup=None)
+        return None
+
+    post.moderation_status = Post.MODERATION_FORGIVEN
+    post.visibility = Post.VISIBILITY_EVERYWHERE
+    post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.collectible_tag_code = None
     post.save()
@@ -84,9 +105,13 @@ def forgive_post(update: Update, context: CallbackContext) -> None:
     # hide buttons
     update.callback_query.edit_message_reply_markup(reply_markup=None)
 
+    # update search index
+    SearchIndex.update_post_index(post)
+
     return None
 
 
+@ensure_fresh_db_connection
 @is_moderator
 def reject_post(update: Update, context: CallbackContext) -> None:
     code, post_id = update.callback_query.data.split(":", 1)
@@ -109,11 +134,12 @@ def reject_post(update: Update, context: CallbackContext) -> None:
     }.get(code) or PostRejectReason.draft
 
     post = Post.objects.get(id=post_id)
-    if not post.is_visible:
-        update.effective_chat.send_message(f"Пост «{post.title}» уже перенесен в черновики")
+    if post.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN, Post.MODERATION_REJECTED]:
+        update.effective_chat.send_message(f"Пост «{post.title}» уже был отмодерирован ранее: {post.moderation_status}")
         update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
+    post.moderation_status = Post.MODERATION_REJECTED
     post.unpublish()
 
     SearchIndex.update_post_index(post)
@@ -130,6 +156,7 @@ def reject_post(update: Update, context: CallbackContext) -> None:
     return None
 
 
+@ensure_fresh_db_connection
 @is_moderator
 def approve_user_profile(update: Update, context: CallbackContext) -> None:
     _, user_id = update.callback_query.data.split(":", 1)
@@ -153,8 +180,8 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
 
     # make intro visible
     intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
-    intro.is_approved_by_moderator = True
-    intro.is_visible = True
+    intro.moderation_status = Post.MODERATION_APPROVED
+    intro.visibility = Post.VISIBILITY_EVERYWHERE
     intro.last_activity_at = datetime.utcnow()
     if not intro.published_at:
         intro.published_at = datetime.utcnow()
@@ -178,6 +205,7 @@ def approve_user_profile(update: Update, context: CallbackContext) -> None:
     return None
 
 
+@ensure_fresh_db_connection
 @is_moderator
 def reject_user_profile(update: Update, context: CallbackContext):
     code, user_id = update.callback_query.data.split(":", 1)
@@ -185,6 +213,7 @@ def reject_user_profile(update: Update, context: CallbackContext):
         "reject_user": UserRejectReason.intro,
         "reject_user_intro": UserRejectReason.intro,
         "reject_user_data": UserRejectReason.data,
+        "reject_user_ai": UserRejectReason.ai,
         "reject_user_aggression": UserRejectReason.aggression,
         "reject_user_general": UserRejectReason.general,
         "reject_user_name": UserRejectReason.name,

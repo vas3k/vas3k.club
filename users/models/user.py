@@ -1,4 +1,3 @@
-import random
 from datetime import datetime, timedelta
 from uuid import uuid4
 
@@ -9,6 +8,7 @@ from django.db.models import F
 from django.urls import reverse
 
 from common.models import ModelDiffMixin
+from users.models.geo import geo_coordinates
 from utils.slug import generate_unique_slug
 from utils.strings import random_string
 
@@ -146,7 +146,7 @@ class User(models.Model, ModelDiffMixin):
         self.updated_at = datetime.utcnow()
         return super().save(*args, **kwargs)
 
-    def to_dict(self):
+    def to_dict(self, include_private=False):
         return {
             "id": str(self.id),
             "slug": self.slug,
@@ -164,6 +164,10 @@ class User(models.Model, ModelDiffMixin):
             "city": self.city,
             "country": self.country,
             "is_active_member": self.is_active_member,
+            **({
+                "email": self.email,
+                "telegram": self.telegram_data,
+            } if include_private else {}),
         }
 
     def get_absolute_url(self):
@@ -255,21 +259,13 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def latitude(self):
-        if self.geo and self.geo.get("latitude"):
-            if self.geo.get("precise"):
-                return self.geo["latitude"]
-            else:
-                return self.geo["latitude"] + random.uniform(-0.12, 0.12)
-        return None
+        coords = geo_coordinates(self.geo)
+        return coords[0] if coords else None
 
     @property
     def longitude(self):
-        if self.geo and self.geo.get("longitude"):
-            if self.geo.get("precise"):
-                return self.geo["longitude"]
-            else:
-                return self.geo["longitude"] + random.uniform(-0.25, 0.25)
-        return None
+        coords = geo_coordinates(self.geo)
+        return coords[1] if coords else None
 
     @classmethod
     def registered_members(cls):

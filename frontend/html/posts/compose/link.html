@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% if mode == "edit" %}
-        Редактируем ссылку — {{ block.super }}
-    {% else %}
+    {% if mode == "create" %}
         Новая ссылка — {{ block.super }}
+    {% else %}
+        Редактируем ссылку — {{ block.super }}
     {% endif %}
 {% endblock %}
 
@@ -12,29 +12,29 @@
     <div class="content compose">
         {% if mode == "create" %}
             <div class="content-header">Новая ссылка</div>
-        {% elif mode == "edit" %}
-            <div class="content-header">Редактируем ссылку</div>
         {% else %}
-            <div class="content-header">Ссылка</div>
+            <div class="content-header">Редактируем ссылку</div>
         {% endif %}
 
-        <div class="content-description content-description-left">
-            <p>
-                🌟 Приносите сюда всё, что вам хочется <strong>обсудить вместе или показать</strong>!
-            </p>
+        {% if mode == "create" or form.instance.visibility == "draft" %}
+            <div class="content-description content-description-left">
+                <p>
+                    🌟 Приносите сюда всё интересное из интернета, чем вам хочется <strong>поделиться или обсудить</strong> с коммьюнити!
+                </p>
 
-            <p>
-                😎 <strong>Напишите кратко о чём ссылка</strong>, чтобы другим было понятно зачем на неё кликать. Ссылки с описанием из одного предложения будут удаляться
-            </p>
+                <p>
+                    ❌ <strong>Ссылки на собственные статьи и блоги больше нельзя.</strong> Лучше напишите полноценный пост, у нас разрешены репосты!
+                </p>
 
-            <p>
-                ⁉️ <strong>Задайте вопрос для обсуждения или поделитесь что зацепило.</strong> Вы ведь не просто так решили показать это на тысячи человек.
-            </p>
+                <p>
+                    😎 <strong>У ссылки должно быть понятное описание</strong>, чтобы другим было понятно что там. Ссылки с коротким описанием будут удаляться. Можно использовать ИИ саммари.
+                </p>
 
-            <p>
-                🚨 <strong>Нельзя: рекламу, политоту и срачи.</strong> Ссылки свои блоги и посты в других коммьюнити — можно. Новости тоже, но только самые важные.
-            </p>
-        </div>
+                <p>
+                    🌎 Ссылки на новостные ресурсы, статьи за пейволлом, политические срачи не приветствуются.
+                </p>
+            </div>
+        {% endif %}
 
         <div class="block compose-text">
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">

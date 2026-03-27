@@ -1,0 +1,55 @@
+{% extends "godmode/layout.html" %}
+{% load static %}
+{% load godmode_filters %}
+
+{% block title %}
+    {{ admin_action.title }} — {{ block.super }}
+{% endblock %}
+
+{% block godmode_content %}
+    <div class="godmode-action">
+        <div class="godmode-header">
+            <span class="godmode-icon">{{ admin_model.icon }}</span>
+            <a href="{% url "godmode_list_model" admin_model.name %}" class="godmode-title">{{ admin_model.title }}</a>
+            <span>→</span>
+            {% if admin_model.title_field %}
+                <a href="{% url "godmode_edit_model" admin_model.name item.pk %}" class="godmode-id">{{ item|get_attr:admin_model.title_field }}</a>
+            {% else %}
+                <a href="{% url "godmode_edit_model" admin_model.name item.pk %}" class="godmode-id">ID: {{ item|get_attr:primary_key_field }}</a>
+            {% endif %}
+            <span>→</span>
+            <span class="godmode-title">{{ admin_action.title }}</span>
+        </div>
+
+        <div class="godmode-action-form">
+            {% block godmode_action_form %}
+                <form action="." method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="godmode-form">
+                        {% for field in form %}
+                            <div class="godmode-form-row">
+                                <div class="godmode-form-label">{{ field.label_tag }}</div>
+                                <div class="godmode-form-input">
+                                    <div>{{ field }}</div>
+                                    <div class="godmode-form-help">
+                                        {% if field.help_text %}
+                                        <span class="form-row-help">{{ field.help_text }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if field.errors %}
+                                    <div class="godmode-form-errors">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="godmode-form-actions">
+                            <button type="submit" class="button">Погнале!</button>
+                        </div>
+                    </div>
+                </form>
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}

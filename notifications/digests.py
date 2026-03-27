@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Count, Q
 from django.template.loader import render_to_string
 
@@ -21,6 +22,7 @@ from users.models.user import User
 
 BONUS_HOURS = 10  # for better/honest rating estimation of "night" posts
 MIN_TOP_POST_UPVOTES = 30
+DAILY_DIGEST_CACHE_TIMEOUT_SECONDS = 30 * 60  # 30 min cache looks enough
 
 
 def generate_daily_digest(user):
@@ -39,7 +41,7 @@ def generate_daily_digest(user):
     created_at_condition = dict(created_at__gte=start_date, created_at__lte=end_date)
     published_at_condition = dict(published_at__gte=start_date, published_at__lte=end_date)
 
-    # New comments
+    # New comments and upvotes received by the user
     new_post_comments = Comment.visible_objects()\
         .filter(
             post__author=user,
@@ -53,31 +55,61 @@ def generate_daily_digest(user):
     new_upvotes = PostVote.objects.filter(post__author=user, **created_at_condition).count() \
         + CommentVote.objects.filter(comment__author=user, **created_at_condition).count()
 
-    # New posts
-    new_posts = Post.visible_objects()\
-        .filter(**published_at_condition)\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-        .filter(is_visible_in_feeds=True)\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .exclude(is_shadow_banned=True)\
-        .order_by("-upvotes")[:3]
+    # New posts (global)
+    new_posts = cache.get("daily_digest:new_posts")
+    if not new_posts:
+        new_posts = Post.visible_objects()\
+            .filter(**published_at_condition)\
+            .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+            .order_by("-upvotes")[:3]
+        cache.set("daily_digest:new_posts", list(new_posts), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
 
-    # Hot posts
-    hot_posts = Post.visible_objects()\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
-        .exclude(id__in=[p.id for p in new_posts]) \
-        .order_by("-hotness")[:3]
+    # Hot posts (global)
+    hot_posts = cache.get("daily_digest:hot_posts")
+    if not hot_posts:
+        hot_posts = Post.visible_objects()\
+            .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
+            .exclude(id__in=[p.id for p in new_posts]) \
+            .order_by("-hotness")[:3]
+        cache.set("daily_digest:hot_posts", list(hot_posts), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
 
-    # New intros
-    intros = Post.visible_objects()\
-        .filter(type=Post.TYPE_INTRO, **published_at_condition)\
-        .order_by("-upvotes")[:3]
+    # Upcoming events (global)
+    upcoming_events = cache.get("daily_digest:upcoming_events")
+    if not upcoming_events:
+        upcoming_events = Post.visible_objects()\
+            .filter(Q(moderation_status=Post.MODERATION_APPROVED))\
+            .filter(type=Post.TYPE_EVENT)\
+            .filter(
+                metadata__isnull=False,
+                published_at__gte=datetime.utcnow() - timedelta(days=300),
+                metadata__event__month=str(datetime.utcnow().month),
+                metadata__event__day__in=[str(datetime.utcnow().day + i) for i in range(0, 4)],
+            ).order_by("-upvotes")
+        cache.set("daily_digest:upcoming_events", list(upcoming_events), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
+
+    # Upcoming events for user
+    upcoming_events_for_user = []
+    if upcoming_events:
+        for upcoming_event in upcoming_events:
+            if upcoming_event.metadata:
+                participants = set((upcoming_event.metadata.get("event") or {}).get("participants") or [])
+                if str(user.id) in participants:
+                    upcoming_events_for_user.append(upcoming_event)
+
+    # New intros (global)
+    intros = cache.get("daily_digest:intros")
+    if not intros:
+        intros = Post.visible_objects()\
+            .filter(type=Post.TYPE_INTRO, **published_at_condition)\
+            .order_by("-upvotes")[:3]
+        cache.set("daily_digest:intros", list(intros), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
 
     # Top post 1 year ago
     top_old_post = Post.visible_objects()\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(
             published_at__gte=start_date - timedelta(days=365),
             published_at__lte=end_date - timedelta(days=364)
@@ -89,7 +121,7 @@ def generate_daily_digest(user):
     if top_old_post.upvotes < MIN_TOP_POST_UPVOTES:
         top_old_post = None
 
-    if not new_post_comments and not new_posts and not intros:
+    if not new_post_comments and not new_posts and not intros and not upcoming_events:
         raise NotFound()
 
     return render_to_string("messages/good_morning.html", {
@@ -97,6 +129,8 @@ def generate_daily_digest(user):
         "intros": intros,
         "new_posts": new_posts,
         "hot_posts": hot_posts,
+        "upcoming_events_for_user": upcoming_events_for_user,
+        "upcoming_events": upcoming_events[:3],
         "top_old_post": top_old_post,
         "stats": {
             "new_post_comments": new_post_comments,
@@ -144,12 +178,10 @@ def generate_weekly_digest(no_footer=False):
 
     posts = Post.visible_objects()\
         .filter(**published_at_condition)\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-        .filter(is_visible_in_feeds=True)\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .exclude(id=featured_post.id if featured_post else None)\
         .exclude(label_code__isnull=False, label_code="ad")\
-        .exclude(is_shadow_banned=True)\
         .order_by("-upvotes")
 
     post_count = posts.count()
@@ -159,7 +191,7 @@ def generate_weekly_digest(no_footer=False):
     top_video_comment = Comment.visible_objects()\
         .filter(**created_at_condition)\
         .filter(is_deleted=False)\
-        .filter(post__is_approved_by_moderator=True)\
+        .filter(post__moderation_status=Post.MODERATION_APPROVED)\
         .filter(upvotes__gte=3)\
         .filter(Q(text__contains="https://youtu.be/") | Q(text__contains="youtube.com/watch"))\
         .order_by("-upvotes")\
@@ -169,7 +201,7 @@ def generate_weekly_digest(no_footer=False):
     if not top_video_comment:
         top_video_post = Post.visible_objects() \
             .filter(type=Post.TYPE_LINK, upvotes__gte=3) \
-            .filter(is_approved_by_moderator=True) \
+            .filter(moderation_status=Post.MODERATION_APPROVED) \
             .filter(**published_at_condition) \
             .filter(Q(url__contains="https://youtu.be/") | Q(url__contains="youtube.com/watch")) \
             .order_by("-upvotes") \
@@ -178,18 +210,17 @@ def generate_weekly_digest(no_footer=False):
     # Best comments
     comments = Comment.visible_objects() \
         .filter(**created_at_condition) \
-        .filter(is_deleted=False)\
+        .filter(is_deleted=False, post__moderation_status=Post.MODERATION_APPROVED)\
         .exclude(post__type=Post.TYPE_BATTLE)\
-        .exclude(post__is_visible=False)\
-        .exclude(post__is_approved_by_moderator=False)\
-        .exclude(post__is_visible_in_feeds=False)\
+        .exclude(post__visibility=Post.VISIBILITY_DRAFT)\
+        .exclude(post__visibility=Post.VISIBILITY_LINK_ONLY)\
         .exclude(id=top_video_comment.id if top_video_comment else None)\
         .order_by("-upvotes")[:3]
 
     # Best post 1 year ago
     top_old_post = Post.visible_objects()\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(
             published_at__gte=start_date - timedelta(days=365),
             published_at__lte=end_date - timedelta(days=365)
@@ -198,9 +229,8 @@ def generate_weekly_digest(no_footer=False):
         .first()
 
     # Get intro and title
-    club_settings = ClubSettings.objects.first()
-    digest_title = club_settings.digest_title
-    digest_intro = club_settings.digest_intro
+    digest_title = ClubSettings.get("digest_title")
+    digest_intro = ClubSettings.get("digest_intro")
 
     if not digest_intro and not posts and not comments:
         raise NotFound()

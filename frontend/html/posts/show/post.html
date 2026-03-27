@@ -31,7 +31,7 @@
                                 <span class="label-title">Удалённый пост</span>
                             </span>
                         </div>
-                    {% elif not post.is_visible %}
+                    {% elif post.visibility == "draft" %}
                         <div class="post-label">
                             {% include "posts/widgets/draft_label.html" %}
                         </div>
@@ -48,12 +48,12 @@
                     {% endif %}
 
                     <div class="post-author">
-                        {% include "users/widgets/tiny.html" with user=post.author %}
+                        {% include "users/widgets/tiny.html" with user=post.author show_name=True %}
 
                         {% if post.coauthors %}
                             {% for coauthor in post.coauthors_with_details %}
                                 &nbsp;&nbsp;
-                                {% include "users/widgets/tiny.html" with user=coauthor %}
+                                {% include "users/widgets/tiny.html" with user=coauthor show_name=True %}
                             {% endfor %}
                         {% endif %}
                     </div>
@@ -84,7 +84,7 @@
                                  :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                                  upvote-url="{% url "upvote_post" post.slug %}"
                                  retract-vote-url="{% url "retract_post_vote" post.slug %}"
-                                 {% if is_voted %}
+                                 {% if upvoted_at %}
                                     initial-is-voted
                                     initial-upvote-timestamp={{upvoted_at}}
                                  {% endif %}
@@ -103,7 +103,7 @@
                 {% include "posts/widgets/collectible_tag.html" %}
             {% endif %}
 
-            <footer class="post-footer p-author">
+            <section class="post-footer p-author">
                 {% if request.me or post.author.profile_publicity_level != "private" %}
                     {% include "users/widgets/card.html" with user=post.author %}
                 {% endif %}
@@ -113,7 +113,7 @@
                         {% include "users/widgets/card.html" with user=coauthor %}
                     {% endfor %}
                 {% endif %}
-            </footer>
+            </section>
         {% endblock %}
     </article>
 </section>

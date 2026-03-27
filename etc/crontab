@@ -1,15 +1,16 @@
-0 1 * * * root cd /app && python3 manage.py delete_users  >/proc/1/fd/1 2>/proc/1/fd/2
-0 3 * * * root cd /app && python3 manage.py cleanup_old_oauth_tokens  >/proc/1/fd/1 2>/proc/1/fd/2
-0 9 * * 2,3,4,5 root cd /app && python3 manage.py send_daily_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
-0 13 * * 2 root cd /app && python3 manage.py notify_expired_intros --production true  >/proc/1/fd/1 2>/proc/1/fd/2
-30 */4 * * 1-6 root cd /app && python3 manage.py send_best_comments  >/proc/1/fd/1 2>/proc/1/fd/2
-0 10 * * 1 root cd /app && python3 manage.py send_weekly_digest --production true  >/proc/1/fd/1 2>/proc/1/fd/2
-0 12 * * * root cd /app && python3 manage.py send_subscription_expired --production true  >/proc/1/fd/1 2>/proc/1/fd/2
-0 2 * * 6 root cd /app && python3 manage.py cleanup_post_views  >/proc/1/fd/1 2>/proc/1/fd/2
-0 2 * * 7 root cd /app && python3 manage.py rebuild_search_index  >/proc/1/fd/1 2>/proc/1/fd/2
-0 0 * * 7 root cd /app && python3 manage.py count_chat_members  >/proc/1/fd/1 2>/proc/1/fd/2
-0 8 * * * root cd /app && python3 manage.py replay_stuck_reviews  >/proc/1/fd/1 2>/proc/1/fd/2
-0 4 * * * root find /app/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete >/proc/1/fd/1 2>/proc/1/fd/2
-13 * * * * root cd /app && python3 manage.py update_hotness  >/proc/1/fd/1 2>/proc/1/fd/2
-0 7 * * 3,6 root cd /app && python3 manage.py promote_one_old_post_on_main  >/proc/1/fd/1 2>/proc/1/fd/2
-0 14 * * 0 root cd /app && python3 manage.py create_weekly_digest_post  >/proc/1/fd/1 2>/proc/1/fd/2
+0 1 * * * cd /app && python3 manage.py delete_users
+0 3 * * * cd /app && python3 manage.py cleanup_old_oauth_tokens
+0 9 * * 1-6 cd /app && python3 manage.py send_daily_digest --production true
+0 13 * * 2 cd /app && python3 manage.py notify_expired_intros --production true
+30 */4 * * 1-6 cd /app && python3 manage.py send_best_comments
+0 10 * * 1 cd /app && python3 manage.py send_weekly_digest --production true
+0 12 * * * cd /app && python3 manage.py send_subscription_expired --production true
+0 2 * * 6 cd /app && python3 manage.py cleanup_post_views
+0 2 * * 7 cd /app && python3 manage.py rebuild_search_index
+0 0 * * 7 cd /app && python3 manage.py count_chat_members
+0 8 * * * cd /app && python3 manage.py replay_stuck_reviews
+20 */6 * * * cd /app && python3 manage.py replay_pending_moderation_posts
+0 4 * * * find /app/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete
+13 * * * * cd /app && python3 manage.py update_hotness
+0 7 * * 3,6 cd /app && python3 manage.py promote_one_old_post_on_main
+0 14 * * 0 cd /app && python3 manage.py create_weekly_digest_post

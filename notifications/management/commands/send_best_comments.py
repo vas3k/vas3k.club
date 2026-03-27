@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from badges.models import UserBadge
 from comments.models import Comment
 from notifications.telegram.common import send_telegram_message, Chat
+from posts.models.post import Post
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         best_comments = Comment.visible_objects().filter(
             created_at__gte=datetime.utcnow() - TIME_INTERVAL,
-            post__is_approved_by_moderator=True,
+            post__moderation_status=Post.MODERATION_APPROVED,
             upvotes__gte=MIN_UPVOTES,
         ).order_by("-upvotes")[:SELECT_LIMIT]
 

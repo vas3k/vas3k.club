@@ -1,4 +1,3 @@
-import twemoji from "twemoji";
 import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
@@ -9,20 +8,20 @@ import {
     handleFormSubmissionShortcuts,
     imageUploadOptions,
 } from "./common/markdown-editor";
-import { getCollapsedCommentThreadsSet } from "./common/comments";
+import { getCollapsedCommentThreadsSet, collapseCommentThread } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
 
 const App = {
     onCreate() {
         this.initializeThemeSwitcher();
-        this.addTargetBlankToExternalLinks();
+        this.stylizeExternalLinks();
     },
     onMount() {
         this.initializeImageZoom();
-        this.initializeEmojiForPoorPeople();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
+        this.initializePostActions();
 
         const registeredEditors = this.initializeMarkdownEditor();
 
@@ -34,14 +33,6 @@ const App = {
                 }
             });
         }, INITIAL_SYNC_DELAY);
-    },
-    initializeEmojiForPoorPeople() {
-        const isApple = /iPad|iPhone|iPod|OS X/.test(navigator.userAgent) && !window.MSStream;
-        if (!isApple) {
-            document.body = twemoji.parse(document.body, {
-                base: "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/",
-            });
-        }
     },
     initializeThemeSwitcher() {
         const mediaQueryList = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
@@ -55,17 +46,7 @@ const App = {
         setFaviconHref(mediaQueryList);
         mediaQueryList.addListener(setFaviconHref);
     },
-    /**
-     * Initializes markdown editor with toolbar **for server-side rendered pages**
-     * e.g. Create post page
-     *
-     * Simple editors are initialized in the `CommentMarkdownEditor` Vue component
-     *
-     * @returns {CodeMirrorEditor[]}
-     */
     initializeMarkdownEditor() {
-        if (isMobile()) return []; // we don't need fancy features on mobiles
-
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
                 const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes });
@@ -125,7 +106,6 @@ const App = {
                                 fileInputEl.click();
                             },
                             className: "fa fa-paperclip",
-                            text: "Upload image",
                             title: "Upload image",
                         },
                         {
@@ -147,15 +127,27 @@ const App = {
 
         return fullMarkdownEditors;
     },
-    addTargetBlankToExternalLinks() {
+    stylizeExternalLinks() {
         let internal = location.host.replace("www.", "");
         internal = new RegExp(internal, "i");
 
         const links = [...document.getElementsByTagName("a")];
-        links.forEach((link) => {
-            if (internal.test(link.host)) return;
 
+        links.forEach((link) => {
+            if (internal.test(link.host) || !link.host) return;
+
+            // open external link in new tab
             link.setAttribute("target", "_blank");
+            link.setAttribute("rel", "noopener");
+
+            // insert favicon img
+            const domain = link.host.split(":")[0];
+            const img = document.createElement("img");
+            img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+            img.className = "link-favicon";
+            img.loading = "lazy";
+            img.onerror = function () { this.remove(); };
+            link.insertBefore(img, link.firstChild);
         });
     },
     initializeImageZoom() {
@@ -187,9 +179,28 @@ const App = {
         const collapsedSet = getCollapsedCommentThreadsSet();
         for (const comment of comments) {
             if (collapsedSet.has(comment.id)) {
-                comment.querySelector(".comment-collapse-stub, .reply-collapse-stub").click();
+                collapseCommentThread(comment);
             }
         }
+    },
+    initializePostActions() {
+        document.querySelectorAll(".js-post-action").forEach((link) => {
+            link.addEventListener("click", async (e) => {
+                e.preventDefault();
+
+                const confirmMsg = link.dataset.confirm;
+                if (confirmMsg && !confirm(confirmMsg)) {
+                    return;
+                }
+
+                const response = await fetch(link.href, { method: "POST" });
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    window.location.reload();
+                }
+            });
+        });
     },
 };
 

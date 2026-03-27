@@ -2,10 +2,14 @@ from django.conf import settings
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django_q.tasks import async_task
 
 from authn.helpers import check_user_permissions
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, ContentDuplicated, RateLimitException
+from notifications.telegram.posts import send_published_post_to_moderators, notify_author_friends, \
+    announce_in_online_channel, send_intro_changes_to_moderators, notify_post_label_changed, \
+    notify_post_coauthors_changed
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
@@ -54,7 +58,7 @@ def show_post(request, post_type, post_slug):
     }, key=lambda p: p.upvotes, reverse=True)
 
     # force cleanup deleted/hidden posts from linked
-    linked_posts = [p for p in linked_posts if p.is_visible]
+    linked_posts = [p for p in linked_posts if not p.is_draft]
 
     return render_post(request, post, {
         "post_last_view_at": last_view_at,
@@ -111,7 +115,7 @@ def delete_post(request, post_slug):
 @require_auth
 def compose(request):
     drafts = Post.objects\
-        .filter(is_visible=False, deleted_at__isnull=True)\
+        .filter(visibility=Post.VISIBILITY_DRAFT, deleted_at__isnull=True)\
         .filter(Q(author=request.me) | Q(coauthors__contains=[request.me.slug]))[:100]
 
     return render(request, "posts/compose/compose.html", {
@@ -176,20 +180,37 @@ def create_or_edit(request, post_type, post=None, mode="create"):
         post.html = None  # flush cache
         post.save()
 
-        if mode == "create" or not post.is_visible:
+        # create new post
+        if mode == "create" or post.is_draft:
             PostSubscription.subscribe(request.me, post, type=PostSubscription.TYPE_ALL_COMMENTS)
 
-        if post.is_visible:
+        # publish post for the first time
+        action = request.POST.get("action")
+        if action == "publish":
+            post.publish()
+
+            async_task(send_published_post_to_moderators, post=post)
+            async_task(notify_author_friends, post=post)
+            async_task(announce_in_online_channel, post=post)
+
+        # update post and room stats
+        if post.visibility != Post.VISIBILITY_DRAFT:
             if post.room:
                 post.room.update_last_activity()
 
             SearchIndex.update_post_index(post)
             LinkedPost.create_links_from_text(post, post.text)
 
-        action = request.POST.get("action")
-        if action == "publish":
-            post.publish()
-            LinkedPost.create_links_from_text(post, post.text)
+        # track label and coauthors changes
+        if "label_code" in form.changed_data:
+            async_task(notify_post_label_changed, post)
+
+        if "coauthors" in form.changed_data:
+            async_task(notify_post_coauthors_changed, post)
+
+        # track intro changes
+        if post.type == Post.TYPE_INTRO and not post.is_draft:
+            async_task(send_intro_changes_to_moderators, post=post)
 
         return redirect("show_post", post.type, post.slug)
 

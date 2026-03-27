@@ -3,7 +3,7 @@ import logging
 from django.core.management import BaseCommand
 from django.db.models import Q
 
-from rooms.helpers import ban_user_in_all_chats, unban_user_in_all_chats
+from rooms.helpers import ban_user_in_all_chats, unban_user_in_all_chats, print_user_in_all_chats
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -20,15 +20,26 @@ class Command(BaseCommand):
         action = options.get("action")[0]
         emails_or_slugs = options.get("users")[0].split(",")
 
-        for email_or_slugs in emails_or_slugs:
-            user = User.objects.filter(Q(email=email_or_slugs) | Q(slug=email_or_slugs)).first()
+        identifiers = set(emails_or_slugs)
+        users_qs = User.objects.filter(Q(email__in=identifiers) | Q(slug__in=identifiers))
+        users_by_email = {}
+        users_by_slug = {}
+        for user in users_qs:
+            users_by_email[user.email] = user
+            users_by_slug[user.slug] = user
+
+        for identifier in emails_or_slugs:
+            user = users_by_email.get(identifier) or users_by_slug.get(identifier)
             if not user:
-                self.stderr.write(f"No such user: {email_or_slugs}")
+                self.stderr.write(f"No such user: {identifier}")
+                continue
 
             if action == "ban":
                 ban_user_in_all_chats(user, is_permanent=True)
             elif action == "unban":
                 unban_user_in_all_chats(user)
+            elif action == "list":
+                print_user_in_all_chats(user)
             else:
                 self.stderr.write(f"Wrong action: {action}")
 

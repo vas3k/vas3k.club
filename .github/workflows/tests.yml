@@ -1,32 +1,39 @@
 name: Run integration tests
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
+  workflow_call:
 
 concurrency:
   # For pull requests, cancel all currently-running jobs for this workflow
   # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         id: setup-python
         with:
           python-version: '3.12'
 
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          enable-cache: false
+
       - name: Install requirements
         run: |
-          pip install --no-cache-dir flake8
+          uv pip install --system flake8
+
       - name: run flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
@@ -34,8 +41,37 @@ jobs:
           # exit-zero treats all errors as warnings.
           flake8 . --count --exit-zero --statistics
 
+  frontend-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: npm run test:ci
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/
+          retention-days: 14
+
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:14-alpine
@@ -58,27 +94,34 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         id: setup-python
         with:
           python-version: '3.12'
 
-      - uses: actions/setup-node@v3
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
-          node-version: '14'
+          enable-cache: true
+          cache-dependency-glob: "**/Pipfile.lock"
 
-      - name: ⚡️ Cache webpack build
-        uses: actions/cache@v3
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: '22'
+
+      - name: Cache webpack build
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         id: cache-webpack
         with:
           path: |
             frontend/static/dist
             frontend/webpack-stats.json
-          key: ${{ runner.os }}-webpack-${{ hashFiles('frontend/package*.json', 'frontend/webpack*.js') }}
+          key: ${{ runner.os }}-webpack-${{ hashFiles('frontend/package*.json', 'frontend/webpack*.js', 'frontend/static/js/**', 'frontend/static/css/**') }}
+          restore-keys: |
+            ${{ runner.os }}-webpack-
 
-      - name: 🏗 Webpack build
+      - name: Webpack build
         if: steps.cache-webpack.outputs.cache-hit != 'true'
         working-directory: ./frontend
         run: |
@@ -87,22 +130,11 @@ jobs:
           npm ci
           npm run build
 
-      - name: ⚡️ Cache python virtualenv
-        uses: actions/cache@v3
-        id: cache-venv
-        with:
-          path: |
-            venv
-          key: ${{ runner.os }}-venv-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('Pipfile.lock') }}
-
       - name: Install pip dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
         run: |
-          python -m venv venv
-          . venv/bin/activate
-          pip install --upgrade pip pipenv
+          uv pip install --system pipenv
           pipenv requirements --dev > requirements.txt
-          pip install --ignore-installed -r requirements.txt
+          uv pip install --system -r requirements.txt
 
       - name: Run tests
         env:
@@ -115,5 +147,4 @@ jobs:
           PYTHONUNBUFFERED: 1
           TESTS_RUN: da
         run: |
-          . venv/bin/activate
           make test-ci

@@ -12,7 +12,7 @@
                              :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                              upvote-url="{% url "upvote_post" post.slug %}"
                              retract-vote-url="{% url "retract_post_vote" post.slug %}"
-                             {% if is_voted %}
+                             {% if upvoted_at %}
                                 initial-is-voted
                                 initial-upvote-timestamp={{upvoted_at}}
                              {% endif %}
@@ -42,7 +42,7 @@
                                 <span class="label-title">Удалённый пост</span>
                             </span>
                         </div>
-                    {% elif not post.is_visible %}
+                    {% elif post.visibility == "draft" %}
                         <div class="post-label">
                             {% include "posts/widgets/draft_label.html" %}
                         </div>
@@ -73,9 +73,9 @@
         {% endblock %}
 
         {% block post_footer %}
-            <footer class="post-footer p-author">
+            <section class="post-footer p-author">
                 {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
-            </footer>
+            </section>
         {% endblock %}
     </article>
 

@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load users %}
+{% load text_filters %}
+
+{% block title %}
+    {{ crew.title }} — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="{{ crew.title }} — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ crew.title }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <form action="#" method="post" class="intro-form" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="block">
+                <h1 class="block-header">📝 {{ crew.title }}</h1>
+
+                <div class="clearfix50"></div>
+
+                {% if crew.reasons %}
+                    <div class="form-row">
+                        <label for="crew-reason">Причина:</label>
+                        <select name="reason" id="crew-reason">
+                            {% for reason in crew.reasons %}
+                                <option value="{{ reason.text }}" {% if reason.code == default_reason %}selected{% endif %}>{{ reason.text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                <div class="form-row">
+                    <label for="crew-reason">Ваше сообщение:</label>
+                    <textarea name="text"></textarea>
+                </div>
+
+                <button type="submit" class="button button-big">Отправить сообщение</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

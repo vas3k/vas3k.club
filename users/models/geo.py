@@ -1,5 +1,24 @@
+import random
+
 from django.db import models
 from django.db.models import Q
+
+
+def geo_coordinates(geo):
+    """Extract (latitude, longitude) from a geo dict, applying random offset for non-precise locations.
+
+    Returns None if geo is missing or has no coordinates.
+    """
+    if not geo:
+        return None
+    lat = geo.get("latitude")
+    lng = geo.get("longitude")
+    if lat is None or lng is None:
+        return None
+    if not geo.get("precise"):
+        lat += random.uniform(-0.12, 0.12)
+        lng += random.uniform(-0.25, 0.25)
+    return lat, lng
 
 
 class Geo(models.Model):

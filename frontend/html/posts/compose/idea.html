@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% if mode == "edit" %}
-        Идея — {{ block.super }}
-    {% else %}
+    {% if mode == "create" %}
         Новая идея — {{ block.super }}
+    {% else %}
+        Идея — {{ block.super }}
     {% endif %}
 {% endblock %}
 
@@ -12,7 +12,7 @@
     <div class="content compose">
         <div class="content-header">Идея</div>
 
-        {% if mode == "create" %}
+        {% if mode == "create" or form.instance.visibility == "draft" %}
             <div class="content-description">
                 <p>
                     Делимся идеями, которые засели в голове или желаниями «вот бы был такой сервис, чтобы...»

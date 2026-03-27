@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load users %}
+{% load text_filters %}
+
+{% block title %}
+    Команда Клуба — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Команда Клуба — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Команда Клуба — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="crew">
+        <div class="stats-title">🕹️<br>Команда Клуба</div>
+
+        <div class="stats-header" id="moderators"><a href="#moderators" style="text-decoration: none;">🌚 Модераторы</a></div>
+
+        <div class="stats-description">
+            <p>
+                Модераторы отвечают за качество контента и людей внутри Клуба. Они модерируют интры, посты, комментарии на сайте. Они видят все жалобы и выдают баны тем, кто нарушает правила или неуважительно общается.
+            </p>
+
+            <p>
+                Модераторов можно призвать в комментах под любым постом (даже в черновиках!), пинганув мета-аккаунт <a href="/user/moderator/"><strong>@moderator</strong></a>. Либо им можно написать на почту.
+            </p>
+
+            <p>
+                <a href="mailto:moderator@vas3k.club" class="button">Написать модераторам</a>
+            </p>
+        </div>
+
+        <div class="top-users top-users-medium">
+            {% for user in moderators %}
+                {% include "users/widgets/round.html" with user=user show_name=True %}
+            {% endfor %}
+        </div>
+
+        <div class="stats-header" id="parliament"><a href="#parliament" style="text-decoration: none;">🏛 Парламент</a></div>
+
+        <div class="stats-description">
+            <p>
+                Парламент организует и поддерживает активности внутри Клуба, выдаёт ачивки, собирает фидбек и новые идеи по развитию Клуба.
+            </p>
+
+            <p>
+                В Парламент можно обратиться если вы организуете какой-то движ внутри Клуба и они вам помогут с его продвижением и пушем по всем нужным каналам. Либо просто за советом.
+            </p>
+
+            <p>
+                Также Парламент всегда рад выслушать ваши идеи или пожелания по поводу развития Клуба — они обсудят её на ежемесячном созвоне и примут решение.
+            </p>
+
+            <p>
+                В Парламент можно вступить если вы тоже хотите что-то организовывать или помогать внутри Клуба. Напишите нам по кнопочке ниже.
+            </p>
+
+            <p>
+                <a href="{% url "write_to_crew" "parliament" %}?reason=other" class="button">Написать в Парламент</a>
+
+                <a href="{% url "write_to_crew" "parliament" %}?reason=achievement" class="button">Хотим ачивку</a>
+
+                <a href="{% url "write_to_crew" "parliament" %}?reason=idea" class="button">Предложить идею</a>
+            </p>
+        </div>
+
+        <div class="top-users top-users-medium">
+            {% for user in parliament %}
+                {% include "users/widgets/round.html" with user=user show_name=True %}
+            {% endfor %}
+        </div>
+
+        <div class="stats-header" id="vibes"><a href="#vibes" style="text-decoration: none;">✨ Министерство Вайбов ✨</a></div>
+
+        <div class="stats-description">
+            <p>
+                Совет активных членов Клуба, ответственных за сохранение и поддержание правильного вайба во всех уголках Клуба.
+            </p>
+
+            <p>
+                Они помогают Парламенту и Модераторам наблюдать что происходит вокруг. Ну и вайбят, конечно!
+            </p>
+
+            <p>
+                В Министерство Вайбов можно вступить, если вас пригласит кто-то из активных его членов.
+            </p>
+
+            <p>
+                <a href="{% url "write_to_crew" "vibes" %}?reason=vibe" class="button">Поделиться вайбом</a>
+
+                <a href="{% url "write_to_crew" "vibes" %}?reason=novibe" class="button">Кто-то не вайбит</a>
+
+                <a href="{% url "write_to_crew" "vibes" %}?reason=other" class="button">Передать привет</a>
+            </p>
+        </div>
+
+        <div class="top-users top-users-medium">
+            {% for user in ministers %}
+                {% include "users/widgets/round.html" with user=user show_name=True %}
+            {% endfor %}
+        </div>
+
+        <div class="stats-header" id="events"><a href="#events" style="text-decoration: none;">🔥 Орги оффлайн-ивентов</a></div>
+
+        <div class="stats-description">
+            <p>
+                Команда организаторов оффлайновых Вастрик Ивентов. Они отвечают за Кэмпы, Флоты, Бёрны и прочие большие клубные события в оффлайне.
+                Им можно закидывать свои идеи по поводу новых форматов или активностей для следующих мероприятий.
+            </p>
+            <p>
+                <a href="{% url "write_to_crew" "events" %}" class="button">Написать оргам ивентов</a>
+            </p>
+        </div>
+
+        <div class="top-users top-users-medium">
+            {% for user in orgs %}
+                {% include "users/widgets/round.html" with user=user show_name=True %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

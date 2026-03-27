@@ -1,37 +1,18 @@
 <template>
     <div class="location-select">
-        <MglMap
-            :accessToken="accessToken"
-            :mapStyle="mapStyle"
-            :maxZoom="14"
-            :zoom="zoom"
-            :attributionControl="false"
-            :scrollZoom="true"
-            @load="onMapLoaded"
-            @move="onMapMove"
-        >
-            <MglNavigationControl position="top-right" />
-            <MglGeolocateControl position="top-right" />
-            <div class="location-select-target">📍</div>
-            <slot></slot>
-        </MglMap>
+        <div ref="map" class="location-select-map"></div>
+        <div class="location-select-target">📍</div>
+        <slot></slot>
         <input type="hidden" v-model="latitude" :name="latitudeFieldName" readonly>
         <input type="hidden" v-model="longitude" :name="longitudeFieldName" readonly>
     </div>
 </template>
 
 <script>
-import Mapbox from "mapbox-gl";
-import { MglMap, MglNavigationControl, MglGeolocateControl, MglMarker } from "vue-mapbox-ho";
+import mapboxgl from "mapbox-gl";
 
 export default {
     name: "LocationSelect",
-    components: {
-        MglMap,
-        MglNavigationControl,
-        MglGeolocateControl,
-        MglMarker,
-    },
     props: {
         defaultLatitude: {
             type: Number,
@@ -60,25 +41,45 @@ export default {
             userInteracted: false,
         };
     },
+    mounted() {
+        mapboxgl.accessToken = this.accessToken;
+        this.map = new mapboxgl.Map({
+            container: this.$refs.map,
+            style: this.mapStyle,
+            maxZoom: 14,
+            zoom: this.zoom,
+            attributionControl: false,
+            scrollZoom: true,
+        });
+        this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
+        this.map.addControl(new mapboxgl.GeolocateControl(), "top-right");
+        this.map.on("load", () => this.onMapLoaded());
+        this.map.on("move", () => this.onMapMove());
+    },
+    beforeDestroy() {
+        if (this.map) {
+            this.map.remove();
+        }
+    },
     methods: {
-        onMapLoaded(event) {
-            event.map.setCenter([this.defaultLongitude, this.defaultLatitude]);
+        onMapLoaded() {
+            this.map.setCenter([this.defaultLongitude, this.defaultLatitude]);
             this.updateCoordinates(this.defaultLatitude, this.defaultLongitude);
-            event.map.on('movestart', this.onUserInteraction);
+            this.map.on('movestart', this.onUserInteraction);
 
             if (this.defaultLatitude && this.defaultLongitude) {
-                event.map.setZoom(8);
+                this.map.setZoom(8);
             }
         },
-        onMapMove(event) {
-            if (event.map && this.userInteracted) {
-                const center = event.map.getCenter();
+        onMapMove() {
+            if (this.userInteracted) {
+                const center = this.map.getCenter();
                 this.updateCoordinates(center.lat, center.lng);
             }
         },
         onUserInteraction() {
             this.userInteracted = true;
-            this.map.off('movestart', this.onUserInteraction); // Remove listener after first interaction
+            this.map.off('movestart', this.onUserInteraction);
         },
         updateCoordinates(lat, lng) {
             this.latitude = lat.toFixed(6);
@@ -96,7 +97,7 @@ export default {
 }
 
     .location-select .mapboxgl-map,
-    .location-select .mgl-map-wrapper {
+    .location-select .location-select-map {
         position: relative;
         width: 100%;
         height: 300px;

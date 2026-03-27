@@ -76,7 +76,7 @@ ul {
         </p>
 
         <p>
-            <a href="{% url "email_confirm" user.id %}" class="button">Подтвердить адрес почты</a>
+            <a href="{% url "email_confirm" user.id user.secret_hash %}" class="button">Подтвердить адрес почты</a>
         </p>
     {% endif %}
 

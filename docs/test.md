@@ -74,3 +74,27 @@ Basically tests automatically runs in CI in opened PR, but if you want to run te
      ```
 
 For more information about testing in django look well written [official documentation](https://docs.djangoproject.com/en/3.1/topics/testing/overview/)
+
+## Frontend tests
+
+Frontend tests use [Jest](https://jestjs.io/) with jsdom and cover utility functions and DOM-related logic (`stylizeExternalLinks`, etc.).
+
+### Prerequisites
+
+- Node.js 22+
+- Dependencies installed: `cd frontend && npm ci`
+
+No postgres, redis or python required.
+
+### Run frontend tests
+
+```sh
+# via make
+$ make test-frontend
+
+# or directly
+$ cd frontend
+$ npm test
+```
+
+Frontend tests also run automatically in CI as a separate `frontend-test` job.

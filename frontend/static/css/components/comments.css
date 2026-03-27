@@ -346,6 +346,7 @@
 
     .comment-body {
         padding-top: 10px;
+        padding-right: 15px;
         text-overflow: ellipsis;
         box-sizing: border-box;
         max-width: 100%;
@@ -371,6 +372,15 @@
         .comment-collapse-stub:hover,
         .reply-collapse-stub:hover {
             opacity: 1;
+        }
+
+        .thread-collapsed > .thread-collapse-toggle {
+            display: none !important;
+        }
+
+        .thread-collapsed > .comment-collapse-stub,
+        .thread-collapsed > .reply-collapse-stub {
+            display: block !important;
         }
 
     .comment-title {
@@ -412,6 +422,7 @@
             }
 
         .comment-body {
+            padding-right: 0;
             max-width: 100%;
         }
     }

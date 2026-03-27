@@ -1,5 +1,8 @@
+import { pluralize } from "./utils";
+
 const COLLAPSED_COMMENTS_LOCAL_STORAGE_KEY = "collapsed-comments";
 const WEEK_LENGTH_IN_MS = 7 * 24 * 60 * 60 * 1000;
+const COMMENT_PLURAL_FORMS = ["комментарий", "комментария", "комментариев"];
 
 export const getCollapsedCommentThreadsForTwoWeeks = () => {
     const currentValue = localStorage[COLLAPSED_COMMENTS_LOCAL_STORAGE_KEY];
@@ -14,6 +17,16 @@ export const getCollapsedCommentThreadsForTwoWeeks = () => {
 export const getCollapsedCommentThreadsSet = () => {
     const [lastWeekCollapsedComments, thisWeekCollapsedComments] = getCollapsedCommentThreadsForTwoWeeks();
     return new Set([...lastWeekCollapsedComments, ...thisWeekCollapsedComments]);
+};
+
+export const collapseCommentThread = (comment) => {
+    comment.classList.add("thread-collapsed");
+    const collapseStub = comment.querySelector(".comment-collapse-stub, .reply-collapse-stub");
+    if (collapseStub) {
+        const threadLength = comment.querySelectorAll(".reply").length + 1;
+        const pluralForm = pluralize(threadLength, COMMENT_PLURAL_FORMS);
+        collapseStub.querySelector(".thread-collapse-length").innerHTML = `${threadLength} ${pluralForm}`;
+    }
 };
 
 export const handleCommentThreadCollapseToggle = (wasCollapsed, commentId) => {

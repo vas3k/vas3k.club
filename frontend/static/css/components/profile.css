@@ -20,7 +20,7 @@
         }
 
         .profile-card-age {
-            font-size: 90%;
+            font-size: 80%;
             max-width: 60%;
             margin: 0 auto;
             display: flex;
@@ -32,7 +32,7 @@
             min-width: 25px;
             padding: 6px 5px 6px;
             color: var(--text-color);
-            background-color: var(--bg-color);
+            background-color: color-mix(in srgb, var(--bg-color) 85%, transparent);
             position: relative;
             top: -17px;
         }
@@ -42,7 +42,6 @@
             text-align: left;
             font-size: 110%;
             padding-top: 20px;
-            max-height: 700px;
             overflow: hidden;
         }
 
@@ -137,6 +136,14 @@
         text-align: right;
         padding-bottom: 20px;
         font-size: 120%;
+    }
+
+    .profile-settings {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-bottom: 30px;
     }
 
     .profile-statuses {

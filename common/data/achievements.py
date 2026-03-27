@@ -17,8 +17,20 @@ ACHIEVEMENTS = [
         "image": "https://media.pmi.moscow/aa09b7c8dc32abfdf624ce7837d7e3b90bfcae7255c1f7136060af6120caf3a1.jpe",
         "style": "background-color: #000000; font-size: 120%;",
     }),
+    ("vibe_minister", {
+        "name": "Министр Вайбов",
+        "description": "Входит в клубное «Министерство Вайба»",
+        "image": "https://vas3k.club/static/images/achievements/vibe_minister.webp",
+        "style": "background-color: #201D2E; font-size: 120%;",
+    }),
+    ("offline_org", {
+        "name": "ОРГИ—Я",
+        "description": "Организатор оффлайн ивентов Клуба",
+        "image": "https://vas3k.club/static/images/achievements/offline_org.webp",
+        "style": "background-color: #f41921; font-size: 140%;",
+    }),
     ("contributor", {
-        "name": "Контри-бьютор",
+        "name": "Контрибьютор",
         "description": "За значительный вклад в разработку Клуба",
         "image": "https://media.pmi.moscow/12802095aabdc223e8560f80fad2a8bc241c3ce9019e62c92faca3aa297decc7.png",
         "style": "background-color: #205072;",
@@ -55,9 +67,9 @@ ACHIEVEMENTS = [
         "style": "background-color: #94B447;",
     }),
     ("international", {
-        "name": "Между-народные отношения",
-        "description": "Выдаётся за офлайн-встречу с ранее не знакомыми членами Клуба в другой стране (не СНГ)",
-        "image": "https://media.pmi.moscow/f5cc939f6edf630940c6b88806ef2f510e902947d1de5955690945e55dc547da.png",
+        "name": "Международные отношения",
+        "description": "Выдаётся за офлайн-встречу трёх и более человек с разным гражданством или ВНЖ",
+        "image": "https://i.vas3k.club/3aq.png",
         "style": "background-color: #1976D2; font-size: 120%;",
     }),
     ("cook", {
@@ -131,6 +143,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/2024.png",
         "style": "background-color: #ff8a3d; font-size: 190%;",
     }),
+    ("2025", {
+        "name": "2025",
+        "description": "Призовое место в итогах 2025 года",
+        "image": "https://vas3k.club/static/images/achievements/2025.webp",
+        "style": "background-color: #A47764; font-size: 190%;",
+    }),
     ("mic", {
         "name": "Золотой микрофон",
         "description": "За выступление на АМА  и митапах в качестве оратора",
@@ -191,6 +209,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/diy_challenge_2.png",
         "style": "background-color: #C9C097; font-size: 120%;",
     }),
+    ("diy_challenge_3", {
+        "name": "Легенда мастерской",
+        "description": "За участие в 8 DIY челленджах",
+        "image": "https://vas3k.club/static/images/achievements/diy_challenge_3.png",
+        "style": "background-color: #C9C097; font-size: 120%;",
+    }),
     ("music_jam_5", {
         "name": "Mashmer",
         "description": "За участие в летнем музыкальном челлендже 2023",
@@ -249,6 +273,12 @@ ACHIEVEMENTS = [
         "name": "Вастрик ⛵ Флот 2024",
         "description": "Участник первого Вастрик Флота в Черногории осенью 2024",
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2024.png",
+        "style": "background-color: #4c98d5; font-size: 120%;",
+    }),
+    ("vas3k_flot_2025", {
+        "name": "Вастрик ⛵ Флот 2025",
+        "description": "Участнику Вастрик Флота в Турции осенью 2025",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2025.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
     }),
     ("spooky", {
@@ -315,7 +345,7 @@ ACHIEVEMENTS = [
         "name": "Уважаемые Знатоки",
         "description": "Призовое место в клубном турнире интеллектуальных игр",
         "image": "https://vas3k.club/static/images/achievements/intellectual.webp",
-        "style": "background-color: #535D94;",
+        "style": "background-color: #535D94; font-size: 110%;",
     }),
     ("vas3k_quest", {
         "name": "Вастрик Квест",

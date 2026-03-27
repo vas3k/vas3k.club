@@ -1,0 +1,123 @@
+<div class="godmode-moderation">
+    <!-- Users Table -->
+    {% if users %}
+        <div class="clearfix50"></div>
+        <div class="godmode-section">
+            <div class="godmode-header">
+                <span>👥</span>
+                <span>Пользователи на модерации</span>
+                <span>({{ users.count }})</span>
+            </div>
+
+            <div class="godmode-list-content">
+                <table class="godmode-table">
+                    <thead>
+                        <tr>
+                            <th class="godmode-table-header">Имя</th>
+                            <th class="godmode-table-header">Компания</th>
+                            <th class="godmode-table-header">Гео</th>
+                            <th class="godmode-table-header">Дата регистрации</th>
+                            <th class="godmode-table-header">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr class="godmode-table-row">
+                                <td>
+                                    {% include "godmode/widgets/user.html" with value=user %}
+                                </td>
+                                <td>
+                                    {% if user.company %}
+                                        {{ user.company }}
+                                        {% if user.position %}<br><small>{{ user.position }}</small>{% endif %}
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.city or user.country %}
+                                        {% if user.city %}{{ user.city }}{% endif %}
+                                        {% if user.city and user.country %}, {% endif %}
+                                        {% if user.country %}{{ user.country }}{% endif %}
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ user.created_at|date:"d.m.Y H:i" }}
+                                </td>
+                                <td>
+                                    <div class="godmode-actions">
+                                        <button class="button button-small button-green" onclick="approveUser('{{ user.id }}')">
+                                            ✅ Одобрить
+                                        </button>
+                                        <button class="button button-small button-red" onclick="rejectUser('{{ user.id }}')">
+                                            ❌ Отклонить
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Posts Table -->
+    {% if posts %}
+        <div class="clearfix50"></div>
+        <div class="godmode-section">
+            <div class="godmode-header">
+                <span>📝</span>
+                <span>Посты на модерации</span>
+                <span>({{ posts.count }})</span>
+            </div>
+
+            <div class="godmode-list-content">
+                <table class="godmode-table">
+                    <thead>
+                        <tr>
+                            <th class="godmode-table-header">Заголовок</th>
+                            <th class="godmode-table-header">Автор</th>
+                            <th class="godmode-table-header">Дата создания</th>
+                            <th class="godmode-table-header">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                            <tr class="godmode-table-row">
+                                <td>
+                                    {% include "godmode/widgets/post.html" with value=post %}
+                                </td>
+                                <td>
+                                    {% include "godmode/widgets/user.html" with value=post.author %}
+                                </td>
+                                <td>
+                                    {{ post.created_at|date:"d.m.Y H:i" }}
+                                </td>
+                                <td>
+                                    <div class="godmode-actions">
+                                        <button class="button button-small button-green" onclick="approvePost('{{ post.id }}')">
+                                            ✅ Одобрить
+                                        </button>
+                                        <button class="button button-small button-red" onclick="rejectPost('{{ post.id }}')">
+                                            ❌ Отклонить
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Empty State -->
+    {% if not users and not posts %}
+        <div class="godmode-empty">
+            <p>🎉 Нет ничего для модерации!</p>
+        </div>
+    {% endif %}
+</div>

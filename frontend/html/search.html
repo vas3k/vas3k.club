@@ -25,11 +25,9 @@
 {% block content %}
     <div class="search">
         <div class="search-filters">
-            <form action="." method="get" class="">
-                <input type="hidden" name="type" value="{{ type }}">
-
+            <form action="{% url "search" %}">
                 <div class="search-query show-on-iphone">
-                    <input type="text" name="q" value="{{ query }}" placeholder="Поиск..." class="search-query-input">
+                    <input type="text" name="q" minlength="3" maxlength="200" value="{{ query }}" enterkeyhint="search" placeholder="Поиск..." class="search-query-input">
                 </div>
 
                 <div class="search-filters-types">
@@ -59,13 +57,13 @@
         <div class="search-results">
             {% if results %}
                 {% for result in results %}
-                    {% if result.type == "post" %}
+                    {% if result.type == "post" and result.post %}
                         {% include "posts/items/items.html" with post=result.post upvote_disabled=True %}
                     {% endif %}
-                    {% if result.type == "comment" %}
+                    {% if result.type == "comment" and result.comment %}
                         {% include "comments/types/snippet.html" with comment=result.comment %}
                     {% endif %}
-                    {% if result.type == "user" %}
+                    {% if result.type == "user" and result.user %}
                         {% include "users/widgets/card.html" with user=result.user %}
                     {% endif %}
                 {% endfor %}

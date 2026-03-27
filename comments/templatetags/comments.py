@@ -1,10 +1,9 @@
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 
 from django import template
 from django.utils.safestring import mark_safe
 
 from club import settings
-from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.markdown.markdown import markdown_text
 
 from comments.forms import BattleCommentForm
@@ -16,35 +15,28 @@ TreeComment = namedtuple("TreeComment", ["comment", "replies"])
 
 @register.filter()
 def comment_tree(comments):
-    comments = list(comments)  # in case if it's a queryset
-    tree = []
+    comments = list(comments)
 
-    # build reply tree (3 levels)
+    children = defaultdict(list)
     for comment in comments:
-        # find 1st level comments
-        if not comment.reply_to:
-            replies = []
-            for reply in sorted(comments, key=lambda c: c.created_at):
-                # 2nd level replies
-                if reply.reply_to_id == comment.id:
-                    replies.append(
-                        TreeComment(
-                            comment=reply,
-                            replies=sorted(  # 3rd level replies
-                                [c for c in comments if c.reply_to_id == reply.id],
-                                key=lambda c: c.created_at
-                            )
-                        )
-                    )
-            tree.append(
-                TreeComment(
-                    comment=comment,
-                    replies=replies
-                )
-            )
+        children[comment.reply_to_id].append(comment)
 
-    # move pinned comments to the top
-    tree = sorted(tree, key=lambda c: c.comment.is_pinned, reverse=True)
+    for parent_id, group in children.items():
+        if parent_id is not None:
+            group.sort(key=lambda c: c.created_at)
+
+    tree = []
+    for comment in children.get(None, []):
+        replies = [
+            TreeComment(
+                comment=reply,
+                replies=children.get(reply.id, [])
+            )
+            for reply in children.get(comment.id, [])
+        ]
+        tree.append(TreeComment(comment=comment, replies=replies))
+
+    tree.sort(key=lambda c: c.comment.is_pinned, reverse=True)
 
     return tree
 
@@ -64,11 +56,7 @@ def render_comment(context, comment):
         )
 
     if not comment.html or settings.DEBUG:
-        new_html = markdown_text(comment.text)
-        if new_html != comment.html:
-            # to not flood into history
-            comment.html = new_html
-            comment.save()
+        comment.html = markdown_text(comment.text, uniq_id=comment.id)
 
     return mark_safe(comment.html or "")
 
@@ -82,9 +70,5 @@ def edit_form(form):
 def selected_battle_side(context):
     try:
         return "selected" if context['comment'].battle_side == context['side']['name'] else ""
-    except Exception:
+    except (KeyError, AttributeError, TypeError):
         return ""
-
-@register.filter
-def is_comment_limit_exceeded(user, post):
-    return is_comment_rate_limit_exceeded(post, user)

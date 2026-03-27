@@ -1,11 +1,39 @@
 .git/
-node_modules/
+.github/
+**/.venv
+**/node_modules
+**/__pycache__
 
+.coverage
+.DS_Store
 .editorconfig
+.env
 .gitignore
+.history/
+.idea/
+.mypy_cache/
+.npm/
+.tox/
+
+docker-compose*.yml
+Dockerfile
 
 CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
 README.md
+docs/
+setup.cfg
+**/.pytest_cache
 
-*.tmp
+*.egg
+*.egg-info
 *.log
+*.py[co]
+*.session
+*.tmp
+
+db.sqlite3
+gdpr/downloads/*.zip
+pip-log.txt
+venv/

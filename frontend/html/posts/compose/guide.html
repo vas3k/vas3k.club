@@ -1,16 +1,21 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% if mode == "edit" %}
-        Редактируем пост — {{ block.super }}
+    {% if mode == "create" %}
+        Новый путеводитель — {{ block.super }}
     {% else %}
-        Новый пост — {{ block.super }}
+        Редактируем путеводитель — {{ block.super }}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="content compose">
-        <div class="content-header">Путеводитель</div>
+        {% if mode == "create" %}
+            <div class="content-header">Новый путеводитель</div>
+        {% else %}
+            <div class="content-header">Редактируем путеводитель</div>
+        {% endif %}
+
 
         <div class="content-description content-description-left">
             <p>

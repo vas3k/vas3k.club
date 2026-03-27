@@ -17,6 +17,17 @@
     width: 280px;
 }
 
+    @media print {
+        .godmode-sidebar {
+            display: none !important;
+        }
+
+        .godmode-content {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    }
+
 .godmode-content {
     flex: 1;
     min-width: 500px;
@@ -74,10 +85,7 @@
 
 .godmode-page {}
 
-.godmode-list-header,
-.godmode-edit-header,
-.godmode-page-header,
-.godmode-form-simple-header {
+.godmode-header {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -104,6 +112,14 @@
 .godmode-simple-form {
     padding-top: 40px;
 }
+
+.godmode-action {
+}
+
+    .godmode-action-form {
+        padding: 20px 0;
+    }
+
 
 .godmode-table {
     width: 100%;
@@ -180,64 +196,77 @@
     max-height: 150px;
 }
 
-.godmode-edit-form {
+.godmode-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 20px;
 }
 
-    .godmode-edit-form-row {
+    .godmode-form-row {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
         align-items: center;
     }
 
-    .godmode-edit-form-label {
+    .godmode-form-label {
         font-size: 120%;
         font-weight: 500;
         min-width: 150px;
     }
 
-    .godmode-edit-form-input {
+    .godmode-form-input {
         flex: 1;
         width: 100%;
     }
 
-    .godmode-edit-form-input input,
-    .godmode-edit-form-input textarea {
+    .godmode-form-input input,
+    .godmode-form-input textarea {
         width: 100%;
-        min-width: 300px;
+        min-width: 320px;
     }
 
-    .godmode-edit-form-input input[type="checkbox"] {
+    .godmode-form-input input[type="checkbox"] {
         width: auto;
         min-width: 0;
         scale: 1.5;
     }
 
-    .godmode-edit-form-input input[readonly] {
+    .godmode-form-input input[readonly] {
         background-color: #DDD;
     }
 
-    .godmode-edit-form-input select {
+    .godmode-form-input select {
         -webkit-appearance: listbox;
         appearance: auto;
     }
 
-    .godmode-edit-form-errors {
+    .godmode-form-errors {
         width: 100%;
         color: red;
     }
 
-    .godmode-edit-form-actions {
+    .godmode-form-actions {
         display: flex;
         gap: 10px;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         padding-top: 30px;
+    }
+
+.godmode-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+    .godmode-actions .button {
+        padding: 10px 15px;
     }
 
 .godmode-message {
@@ -271,6 +300,102 @@
 .godmode-mobile-menu-close {
     display: none;
 }
+
+/* Badge generator */
+.badge-generator {
+    max-width: 900px;  /* good for A4 printing */
+    margin: 0 auto;
+}
+
+.badge-generator-results {
+    background-color: white;
+    font-size: 16px;
+    height: 100%;
+}
+
+    .badge-generator-table {
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+        .badge-generator-table td {
+            width: 50%;
+            padding: 0;
+            border: solid 0.5px #666;
+        }
+
+    .badge-generator-results .profile-card {
+        color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        grid-template-columns: 90px auto;
+        column-gap: 15px;
+        grid-template-rows: auto auto;
+        box-shadow: none;
+        margin-bottom: 0;
+        padding: 30px 20px 20px;
+        border-radius: 0;
+        height: 100%;
+    }
+
+    .badge-generator-results .profile-card-info {
+        font-size: 85%;
+        padding-top: 0;
+    }
+
+        .badge-generator-results .profile-user-name {
+            font-size: 200%;
+            padding-bottom: 7px;
+            line-height: 1.1em;
+        }
+
+        .badge-generator-results .profile-user-job {
+            font-size: 120%;
+        }
+
+        .badge-generator-results .profile-user-location {
+            font-size: 120%;
+            opacity: 0.8;
+            position: relative;
+            left: -5px;
+        }
+
+        .badge-generator-results .profile-user-fullname {
+            margin-right: 0;
+        }
+
+        .badge-generator-results .profile-user-nickname {
+            position: relative;
+            top: -0.1em;
+            font-size: 70%;
+            opacity: 1;
+            color: #777;
+        }
+
+    .badge-generator-results .user-badges {
+        grid-column-start: 1;
+        grid-column-end: 3;
+        font-size: 80%;
+        gap: 10px;
+        display: flex;
+        justify-content: center;
+        padding-top: 15px;
+        padding-bottom: 0;
+
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+
+        overflow: hidden;
+        max-height: 70px;
+    }
+
+    .badge-generator-results .user-badge-achievement {
+        width: 20px;
+        height: 20px;
+        padding: 3px;
+        border-radius: 5px;
+    }
 
 /* Mobile responsive styles */
 @media (max-width: 700px) {
@@ -349,23 +474,23 @@
         font-size: 12px;
     }
 
-    .godmode-edit-form-row {
+    .godmode-form-row {
         flex-direction: column;
         align-items: stretch;
         gap: 5px;
     }
 
-    .godmode-edit-form-label {
+    .godmode-form-label {
         min-width: auto;
         font-size: 110%;
     }
 
-    .godmode-edit-form-input input,
-    .godmode-edit-form-input textarea {
+    .godmode-form-input input,
+    .godmode-form-input textarea {
         min-width: 100%;
     }
 
-    .godmode-edit-form-actions {
+    .godmode-form-actions {
         flex-direction: column;
         gap: 15px;
     }

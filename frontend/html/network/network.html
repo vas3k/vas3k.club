@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load users %}
+
+{% block title %}
+    Сеть — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Сеть — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}">
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="">
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Сеть — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="content network">
+        <div class="network-title">🌐 Сеть Клуба</div>
+
+        <div class="network-description">
+            Здесь мы собираем официальные клубные чатики, сервисы и подпроекты
+        </div>
+
+        {% if not network %}
+            <div class="block network-block">
+                <a class="network-header">Тут пока ничего нет :(</a>
+                <p>
+                    Добавьте чатики в таблички network_groups и rooms через админку, тогда они появятся здесь.
+                </p>
+            </div>
+        {% endif %}
+
+        {% for group in network %}
+            {% include group.template with group=group %}
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -54,6 +54,7 @@ services:
 
   bot:
     <<: *app
+    user: "1000:1000"
     command: make docker-run-bot
     container_name: club_bot
     environment:
@@ -78,6 +79,7 @@ services:
 
   helpdeskbot:
     <<: *app
+    user: "1000:1000"
     command: make docker-run-helpdeskbot
     container_name: club_help_desk_bot
     environment:
@@ -148,7 +150,7 @@ services:
       - club
 
   redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:2afba59292f25f5d1af200496db41bea2c6c816b059f57ae74703a50a03a27d0
     container_name: club_redis
     restart: unless-stopped
     healthcheck:

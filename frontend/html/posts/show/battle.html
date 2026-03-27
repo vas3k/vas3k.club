@@ -18,7 +18,7 @@
                     <span class="label-title">Удалённый пост</span>
                 </span>
             </div>
-        {% elif not post.is_visible %}
+        {% elif post.visibility == "draft" %}
             <div class="post-label">
                 {% include "posts/widgets/draft_label.html" %}
             </div>
@@ -52,7 +52,7 @@
                              :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                              upvote-url="{% url "upvote_post" post.slug %}"
                              retract-vote-url="{% url "retract_post_vote" post.slug %}"
-                             {% if is_voted %}
+                             {% if upvoted_at %}
                                 initial-is-voted
                                 initial-upvote-timestamp={{upvoted_at}}
                              {% endif %}
@@ -98,7 +98,7 @@
             </toggle>
         {% endif %}
 
-        {% if not post.comment_count and post.is_commentable and post.is_visible %}
+        {% if post.is_commentable and not post.comment_count %}
             <div class="post-comments-title">
                 <a href="#comments" class="post-comments-count">
                     Аргументируйте первым 👇
@@ -121,7 +121,7 @@
             </div>
         {% endif %}
 
-        {% if me and me.is_active_membership and post.is_commentable and post.is_visible or me.is_moderator %}
+        {% if me and me.is_active_membership and post.is_commentable or me.is_moderator %}
             <div class="post-comments-form">
                 {% include "comments/forms/battle.html" with post=post form=comment_form save_message="Отправить" %}
             </div>

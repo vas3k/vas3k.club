@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from godmode.models import ClubSettings
 
 
-class WeeklyDigestComposeForm(forms.ModelForm):
+class WeeklyDigestComposeForm(forms.Form):
     digest_title = forms.CharField(
         label="Заголовок следующего дайджеста",
         required=False,
@@ -23,28 +23,24 @@ class WeeklyDigestComposeForm(forms.ModelForm):
         ),
     )
 
-    class Meta:
-        model = ClubSettings
-        fields = [
-            "digest_title",
-            "digest_intro",
-        ]
-
 
 def compose_weekly_digest(request, admin_page):
-    god_settings = ClubSettings.objects.first()
-
     if request.method == "POST":
-        form = WeeklyDigestComposeForm(request.POST, request.FILES, instance=god_settings)
+        form = WeeklyDigestComposeForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            ClubSettings.set("digest_title", form.cleaned_data["digest_title"])
+            ClubSettings.set("digest_intro", form.cleaned_data["digest_intro"])
+
             return render_to_string("godmode/pages/message.html", {
                 "title": "💌 Дайджест сохранен",
-                "message": f"Он будет отправлен в понедельник утром по расписанию. "
-                           f"До этого момента вы всегда можете его отредактировать.",
+                "message": "Он будет отправлен в понедельник утром по расписанию. "
+                           "До этого момента вы всегда можете его отредактировать.",
             }, request=request)
     else:
-        form = WeeklyDigestComposeForm(instance=god_settings)
+        form = WeeklyDigestComposeForm(initial={
+            "digest_title": ClubSettings.get("digest_title"),
+            "digest_intro": ClubSettings.get("digest_intro"),
+        })
 
     return render_to_string("godmode/pages/simple_form.html", {
         "form": form

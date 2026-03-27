@@ -20,7 +20,7 @@ def send_renewal_email(user: User):
     renewal_template = loader.get_template("emails/renewal.html")
     send_transactional_email(
         recipient=user.email,
-        subject=f"Ваша подписка стала еще длинее!",
+        subject=f"Ваша подписка стала еще длиннее!",
         html=renewal_template.render({"user": user}),
         tags=["renewal"]
     )

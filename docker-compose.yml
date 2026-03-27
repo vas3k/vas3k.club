@@ -5,6 +5,12 @@ services:
       context: .
     command: make docker-run-dev
     container_name: club_app
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 30s
     environment:
       - MODE=dev
       - DEBUG=true
@@ -19,10 +25,14 @@ services:
     volumes:
       - .:/app:delegated # enable hot code reload in debug mode
     depends_on:
-      - postgres
-      - redis
-      - queue
-      - webpack
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      queue:
+        condition: service_started
+      webpack:
+        condition: service_started
     ports:
       - "8000:8000"
 
@@ -45,11 +55,13 @@ services:
     volumes:
       - .:/app:delegated
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   postgres:
-    image: postgres:14
+    image: postgres:14@sha256:b964c3211689ffe50cc65235ea338717520954dcf6ecd4d76bf887eba3cbc91f
     container_name: club_postgres
     environment:
       - POSTGRES_USER=pmiclub
@@ -59,14 +71,14 @@ services:
       - "5432:5432"
 
   redis:
-    image: redis:alpine
+    image: redis:alpine@sha256:2afba59292f25f5d1af200496db41bea2c6c816b059f57ae74703a50a03a27d0
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "6379:6379"
 
   webpack:
-    image: node:14-slim
+    image: node:22-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94
     command: npm run watch
     restart: always
     volumes:

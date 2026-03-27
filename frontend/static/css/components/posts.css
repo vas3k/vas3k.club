@@ -155,7 +155,7 @@
 .post-type-post .upvote:not(.upvote-disabled) {
     float: left;
     position: sticky;
-    margin-left: -110px;
+    margin-left: -125px;
     margin-top: 30px;
 }
 
@@ -303,6 +303,10 @@
     font-weight: 600;
 }
 
+.text-body a[target="_blank"] {
+    text-decoration: underline;
+}
+
 .text-body h1,
 .text-body h2,
 .text-body h3,
@@ -318,7 +322,7 @@
 .text-body h1 {
     font-size: 230%;
     margin-top: 180px;
-    margin-bottom: 70px;
+    margin-bottom: 50px;
     line-height: 1.4em;
     text-align: center;
 }
@@ -326,14 +330,14 @@
 .text-body h2 {
     font-size: 190%;
     margin-top: 130px;
-    margin-bottom: 50px;
+    margin-bottom: 35px;
     text-align: left;
 }
 
 .text-body h3 {
     font-size: 150%;
     margin-top: 100px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     text-align: left;
 }
 

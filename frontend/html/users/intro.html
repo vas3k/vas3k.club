@@ -88,7 +88,7 @@
                     <span class="form-row-errors">{{ form.bio.errors }}</span>
                 {% endif %}
                 <span class="form-row-help">
-                    🔥 <strong>Очень важное поле, без контактов мы не пускаем.</strong> Укажите ссылки на ваш телеграм, блог, инстаграм, подкаст и другие соцсети, чтобы другие члены Клуба могли с вами как-то связаться (телефон и имейл не считаются). Формат свободный. Используйте Эмодзи и <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a> чтобы сделать красиво. По сути это и будет карточка вашего профиля.
+                    🔥 <strong>Очень важное поле, без контактов мы не пускаем.</strong> Укажите ссылки на ваш телеграм, блог, инстаграм, подкаст и другие соцсети, чтобы другие члены Клуба могли с вами как-то связаться (телефон и имейл не считаются). Формат свободный. По сути это и будет карточка вашего профиля.
                 </span>
             </div>
 
@@ -103,8 +103,7 @@
             <div class="block-header">👨‍💻<br>Чем занимаетесь?</div>
 
             <div class="block-description">
-                Расскажите кто вы. Не обязательно как в трудовой книжке, просто укажите как вы себя сами называете.
-                Эта информация будет висеть в вашем профиле прямо под именем.
+                Расскажите кто вы. Не обязательно как в трудовой книжке, просто расскажите как вы себя сами называете.
             </div>
 
             <div class="clearfix50"></div>
@@ -134,18 +133,17 @@
                 <p>
                     Расскажите в нескольких абзацах откуда вы, где работаете, чем увлекаетесь по жизни и о чем мечтаете.
                     Неформально — мы же знакомимся, а не проводим собеседование.
-                    Представьте, что я спросил вас об этом в баре за кружечкой пива или кофе.
+                    Представьте, что мы встретились в баре у камина, уютно сидим и хотим познакомиться друг с другом.
                 </p>
                 <p>
                     <strong>Ваше интро станет видно всем</strong> — оно попадёт на главную и будет вашим первым постом в Клубе.
                     Это помогает новичкам быстро влиться в коммьюнити и найти единомышленников.
-                    Но сначала <strong>его прочитает модератор, чтобы вы не попытались нас всех обмануть</strong>.
                 </p>
                 <p>
                     Вот примеры хороших интро: <a href="https://pmi.moscow/intro/ElenaSavchuk/" target="_blank">Лена</a>, <a href="https://pmi.moscow/intro/apod/" target="_blank">Алексей</a>, <a href="https://pmi.moscow/intro/joker3d/" target="_blank">Константин</a>.
                 </p>
                 <p>
-                    А вот чуть более подробное описание с примерами: <a href="https://vas3k.club/post/28726/" target="_blank">Как не надо писать интро</a>.
+                    А если пока сложно — вот чуть более подробное описание с примерами: <a href="https://vas3k.club/post/28726/" target="_blank">Как не надо писать интро</a>.
                 </p>
             </div>
 
@@ -166,20 +164,19 @@
                 <ul>
                     <li>Расскажите чем вы занимаетесь и где сейчас работаете?</li>
                     <li>Из какого вы города и как там оказались?</li>
-                    <li>Расскажите о своих хобби и привычках?</li>
-                    <li>Что вы делаете на работе? Только честно, а не как в резюме</li>
-                    <li>Почему вы захотели вступить в Клуб? Что можете ему дать? Есть ли уже друзья в Клубе?</li>
-                    <li>Что делаете в свободное от работы время? Куда любите гонять на выходных?</li>
+                    <li>Расскажите о своих хобби и привычках? Что делаете в свободное время?</li>
+                    <li>Что вы делаете на работе? Только правда, а не как в резюме</li>
+                    <li>Почему вы захотели вступить в Клуб? Как нашли нас? Есть ли уже друзья в Клубе?</li>
+                    <li>Куда бы вы поехали, если бы вам подарили полгода оплачиваемого отпуска?</li>
                     <li>О чем вы мечтаете? Какие планы на будущее?</li>
                     <li>Может у вас есть какие-то личные проекты?</li>
-                    <li>Какой из последних постов вам понравился больше всего?</li>
                 </ul>
             </div>
 
-            <div class="block-header">📫<br>Как удобнее следить за происходящим?</div>
+            <div class="block-header">📫<br>Как вам удобнее следить за происходящим?</div>
 
             <div class="block-description">
-                У всех нас мало времени. Клуб — не соцсеточка, которая хочет максимум вашего внимания.
+                У всех нас мало времени. Клуб — не социальная сеть, которая хочет украсть максимум вашего внимания и времени.
                 Мы сразу предлагаем выбрать удобный для вас способ оставаться в курсе новых постов и событий.
             </div>
 
@@ -188,57 +185,51 @@
                     <div class="big-radio-item">
                         {{ form.email_digest_type.1.tag }}
                         <label for="{{ form.email_digest_type.1.id_for_label }}" class="big-radio-label">
-                            <i class="fas fa-robot"></i>
-                            <span class="big-radio-title">Ежедневные дайджесты</span>
-                            <span class="big-radio-description">Хочу быть в курсе всего!</span>
+                            <i class="fab fa-telegram"></i>
+                            <span class="big-radio-title">Ежедневный дайджест</span>
+                            <span class="big-radio-description">Хочу быть в гуще событий и вкатиться в движуху!</span>
                         </label>
                     </div>
                     <div class="big-radio-item">
                         {{ form.email_digest_type.2.tag }}
                         <label for="{{ form.email_digest_type.2.id_for_label }}" class="big-radio-label">
                             <i class="fas fa-envelope"></i>
-                            <span class="big-radio-title">Журнал раз в неделю</span>
-                            <span class="big-radio-description">Подборка лучшего по понедельникам</span>
+                            <span class="big-radio-title">Клубный Журнал</span>
+                            <span class="big-radio-description">Хочу получать подборки лучших постов и комментов за неделю, чтобы я не пропустить ничего важного</span>
                         </label>
                     </div>
                     <div class="big-radio-item">
                         {{ form.email_digest_type.0.tag }}
                         <label for="{{ form.email_digest_type.0.id_for_label }}" class="big-radio-label">
-                            <i class="fab fa-telegram"></i>
+                            <i class="fas fa-skull-crossbones"></i>
                             <span class="big-radio-title">Никак</span>
-                            <span class="big-radio-description">Я сам разберусь (нет)</span>
+                            <span class="big-radio-description">Ничего не хочу, я просто сбоку постою и забуду про Клуб через месяц</span>
                         </label>
                     </div>
                 </div>
                 {% if form.email_digest_type.errors %}<span class="form-row-errors">{{ form.email_digest_type.errors }}</span>{% endif %}
             </div>
 
-            <div class="block-header">Еще способы быть в курсе 👇</div>
+           <div class="block-header">Еще способы быть в курсе 👇</div>
 
             <div class="clearfix20"></div>
 
             <div class="block network-block" id="main">
                 <div class="network-channels">
                     <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank" class="network-channel">
-                        <span class="avatar network-channel-icon" style="background-image: url('https://media.pmi.moscow/90b3ac3c442ee5a5a1abb51c58c7623c9497bd6e83148af65016dc486bdcc41e.png');"></span>
+                        <span class="avatar network-channel-image" style="background-image: url('https://media.pmi.moscow/90b3ac3c442ee5a5a1abb51c58c7623c9497bd6e83148af65016dc486bdcc41e.png');"></span>
                         <span class="network-channel-name text-120">Телеграм-канал Клуба</span>
                         <span class="network-channel-description">Лучшие посты, отобранные руками</span>
                     </a>
 
                     <a href="https://t.me/pmimoscow" target="_blank" class="network-channel">
-                        <span class="avatar network-channel-icon" style="background-image: url('https://media.pmi.moscow/3381ce200f9b034a882dbf0e54d0586e7784fbce2020c4e0c6bf63921565f23e.png');"></span>
+                        <span class="avatar network-channel-image" style="background-image: url('https://media.pmi.moscow/3381ce200f9b034a882dbf0e54d0586e7784fbce2020c4e0c6bf63921565f23e.png');"></span>
                         <span class="network-channel-name text-120">Московский вайб и движ</span>
                         <span class="network-channel-description">Интересные занятия в Клубе</span>
                     </a>
 
-                    <a href="{{ settings.TELEGRAM_CLUB_CHAT_URL }}" rel="noreferrer" target="_blank" class="network-channel">
-                        <span class="avatar network-channel-icon" style="background-image: url('https://media.pmi.moscow/40f5b2dec76c9e26039fccbb1615d328c119d7eb3660790b48c80a5436c728c1.jpe');"></span>
-                        <span class="network-channel-name text-120">Клубный чат</span>
-                        <span class="network-channel-description">Главный чат Клуба (там бывает шумно)</span>
-                    </a>
-
                     <a href="{% url "network" %}" target="_blank" class="network-channel">
-                        <span class="avatar network-channel-icon" style="background-image: url('https://media.pmi.moscow/e47e1aae6df686eac27222b7ee15e66dee8be0135d9ddb2b9396bd605c04675f.jpe');"></span>
+                        <span class="avatar network-channel-image" style="background-image: url('https://media.pmi.moscow/e47e1aae6df686eac27222b7ee15e66dee8be0135d9ddb2b9396bd605c04675f.jpe');"></span>
                         <span class="network-channel-name text-120">Другие чаты</span>
                     </a>
                 </div>
@@ -255,7 +246,7 @@
                 </p>
 
                 <a href="{{ settings.TELEGRAM_BOT_URL }}?start={{ me.secret_hash }}" target="_blank" class="button button-blue">
-                    Привязать бота
+                    🤝 Привязать бота 🤝
                 </a>
             </div>
 

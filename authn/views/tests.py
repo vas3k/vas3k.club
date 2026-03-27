@@ -235,6 +235,39 @@ class ViewEmailLoginCodeTests(TestCase):
         self.assertFalse(self.client.is_authorised())
         self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
 
+    def test_correct_code_with_safe_goto(self):
+        code = Code.create_for_user(user=self.new_user, recipient=self.new_user.email)
+        response = self.client.get(
+            reverse("email_login_code"),
+            data={"email": self.new_user.email, "code": code.code, "goto": "/posts/all/"}
+        )
+        self.assertRedirects(response=response, expected_url="/posts/all/", fetch_redirect_response=False)
+
+    def test_correct_code_with_malicious_goto_redirects_to_profile(self):
+        code = Code.create_for_user(user=self.new_user, recipient=self.new_user.email)
+        response = self.client.get(
+            reverse("email_login_code"),
+            data={"email": self.new_user.email, "code": code.code, "goto": "https://evil.com/phishing"}
+        )
+        self.assertRedirects(
+            response=response,
+            expected_url=f"/user/{self.new_user.slug}/",
+            fetch_redirect_response=False,
+        )
+
+    def test_correct_code_with_protocol_relative_goto_redirects_to_profile(self):
+        code = Code.create_for_user(user=self.new_user, recipient=self.new_user.email)
+        response = self.client.get(
+            reverse("email_login_code"),
+            data={"email": self.new_user.email, "code": code.code, "goto": "//evil.com"}
+        )
+        self.assertRedirects(
+            response=response,
+            expected_url=f"/user/{self.new_user.slug}/",
+            fetch_redirect_response=False,
+        )
+
+
 @unittest.skipIf(not features.PATREON_AUTH_ENABLED, reason="Patreon auth was disabled")
 class ViewPatreonLoginTests(TestCase):
     @classmethod
@@ -364,3 +397,81 @@ class ViewPatreonOauthCallbackTests(TestCase):
     def test_param_code_absent(self, mocked_patreon=None):
         response = self.client.get(reverse("patreon_sync_callback"), data={})
         self.assertContains(response=response, text="Что-то сломалось между нами и патреоном", status_code=500)
+
+
+class ViewProfileGotoTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.new_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4",
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+        )
+
+    def setUp(self):
+        self.client = HelperClient(user=self.new_user)
+        self.client.authorise()
+
+    def test_safe_goto_redirects(self):
+        response = self.client.get(
+            reverse("profile", args=[self.new_user.slug]),
+            data={"goto": "/posts/all/"}
+        )
+        self.assertRedirects(response=response, expected_url="/posts/all/", fetch_redirect_response=False)
+
+    def test_malicious_goto_does_not_redirect(self):
+        response = self.client.get(
+            reverse("profile", args=[self.new_user.slug]),
+            data={"goto": "https://evil.com/phishing"}
+        )
+        # should render profile page, not redirect
+        self.assertEqual(response.status_code, 200)
+
+    def test_protocol_relative_goto_does_not_redirect(self):
+        response = self.client.get(
+            reverse("profile", args=[self.new_user.slug]),
+            data={"goto": "//evil.com"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_host_prefix_bypass_does_not_redirect(self):
+        response = self.client.get(
+            reverse("profile", args=[self.new_user.slug]),
+            data={"goto": "http://127.0.0.1:8000.evil.com/"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class ViewEmailConfirmTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.new_user: User = User.objects.create(
+            email="testemail@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="ujlbu4",
+            is_email_verified=False,
+        )
+
+    def test_valid_secret_confirms_email(self):
+        response = self.client.get(
+            reverse("email_confirm", args=[self.new_user.id, self.new_user.secret_hash])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(User.objects.get(id=self.new_user.id).is_email_verified)
+
+    def test_wrong_secret_returns_404(self):
+        response = self.client.get(
+            reverse("email_confirm", args=[self.new_user.id, "wrong_secret_hash"])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
+
+    def test_wrong_user_id_returns_404(self):
+        response = self.client.get(
+            reverse("email_confirm", args=["00000000-0000-0000-0000-000000000000", self.new_user.secret_hash])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)

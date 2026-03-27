@@ -51,6 +51,18 @@ class ClubAdminField:
 
 
 @dataclass
+class ClubAdminAction:
+    title: str = None
+    get: Callable = None
+    post: Callable = None
+
+    access_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
+
+    def has_access(self, user: User) -> bool:
+        return bool(set(user.roles or []) & set(self.access_roles or []))
+
+
+@dataclass
 class ClubAdminModel:
     model: type[models.Model] = None
     title: str = None
@@ -66,6 +78,8 @@ class ClubAdminModel:
     edit_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
     create_roles: set[str] = field(default_factory=lambda: {User.ROLE_GOD})
     delete_roles: set[str] = field(default_factory=lambda: {User.ROLE_GOD})
+
+    actions: dict[str, ClubAdminAction] = field(default_factory=dict)
 
     def get_absolute_url(self):
         return f"/godmode/{self.name}/" if self.name else None
@@ -149,6 +163,7 @@ class ClubAdminPage:
     def has_access(self, user: User) -> bool:
         return bool(set(user.roles or []) & set(self.access_roles or []))
 
+
 @dataclass
 class ClubAdminGroup:
     title: str = "Default Group"
@@ -162,7 +177,7 @@ class ClubAdmin:
     groups: list[ClubAdminGroup] = field(default_factory=list)
     foreign_key_templates: dict = field(default_factory=dict)
 
-    access_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
+    access_roles: set[str] = field(default_factory=lambda: {User.ROLE_CURATOR, User.ROLE_MODERATOR, User.ROLE_GOD})
 
     def get_model(self, model_name: str) -> ClubAdminModel | None:
         for group in self.groups:

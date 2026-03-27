@@ -10,7 +10,7 @@ from slugify import slugify_filename
 from common.regexp import EMOJI_RE
 from common.url_metadata_parser import parse_url_preview
 from posts.models.post import Post
-from common.forms import ImageUploadField, ReverseBooleanField
+from common.forms import ImageUploadField
 from rooms.models import Room
 from tags.models import Tag
 from users.models.user import User
@@ -70,9 +70,9 @@ class AbstractPostForm(forms.ModelForm):
         max_length=32,
         required=False,
     )
-    is_visible_in_feeds = ReverseBooleanField(
+    is_room_only = forms.BooleanField(
         label="Пост только для этой комнаты (не отображается на главной)",
-        initial=True,
+        initial=False,
         required=False
     )
     is_public = forms.ChoiceField(
@@ -102,14 +102,16 @@ class AbstractPostForm(forms.ModelForm):
 
         return coauthors
 
-    def clean_is_visible_in_feeds(self):
-        new_value = self.cleaned_data.get("is_visible_in_feeds")
+    def clean_is_room_only(self):
+        new_value = self.cleaned_data.get("is_room_only")
 
         if new_value is None:
-            return self.instance.is_visible_in_feeds
+            return self.instance.is_room_only
 
-        if new_value and not self.instance.is_visible_in_feeds:
-            raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
+        # already moderated posts cannot change "room-only" setting
+        if self.instance.moderation_status in [Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN]:
+            if new_value and self.instance.is_room_only:
+                raise ValidationError("Нельзя вытаскивать посты обратно из комнат. Только модератор может это сделать")
 
         return new_value
 
@@ -170,7 +172,7 @@ class PostTextForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -213,7 +215,7 @@ class PostLinkForm(AbstractPostForm):
             "url",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -262,7 +264,7 @@ class PostQuestionForm(AbstractPostForm):
             "text",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public"
         ]
 
@@ -295,7 +297,7 @@ class PostIdeaForm(AbstractPostForm):
             "text",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -404,7 +406,7 @@ class PostEventForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public"
         ]
 
@@ -450,7 +452,7 @@ class PostProjectForm(AbstractPostForm):
         label="Название проекта",
         required=True,
         max_length=128,
-        widget=forms.TextInput(attrs={"placeholder": "Название проекта 🏗"}),
+        widget=forms.TextInput(attrs={"placeholder": "Название проекта и кратко о чём он 🏗"}),
     )
     url = forms.URLField(
         label="Ссылка на страницу проекта 👇",
@@ -517,7 +519,7 @@ class PostProjectForm(AbstractPostForm):
             "image",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -565,7 +567,7 @@ class PostBattleForm(AbstractPostForm):
             "text",
             "room",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -680,7 +682,7 @@ class PostGuideForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 
@@ -732,7 +734,7 @@ class PostThreadForm(AbstractPostForm):
             "room",
             "coauthors",
             "collectible_tag_code",
-            "is_visible_in_feeds",
+            "is_room_only",
             "is_public",
         ]
 

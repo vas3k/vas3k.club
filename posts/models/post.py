@@ -4,7 +4,8 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from django.db.models import F
+from django.db.models import BigIntegerField, F, OuterRef, Q, Subquery
+from django.db.models.functions import Extract, Round
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -12,6 +13,8 @@ from simple_history.models import HistoricalRecords
 
 from common.data.labels import LABELS
 from common.models import ModelDiffMixin
+from posts.models.views import PostView
+from posts.models.votes import PostVote
 from rooms.models import Room
 from users.models.user import User
 from utils.slug import generate_unique_slug
@@ -73,6 +76,28 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_DOCS: "",
     }
 
+    MODERATION_NONE = "none"
+    MODERATION_PENDING = "pending"
+    MODERATION_APPROVED = "approved"
+    MODERATION_FORGIVEN = "forgiven"
+    MODERATION_REJECTED = "rejected"
+    MODERATION_STATUSES = [
+        (MODERATION_NONE, "✍️ Еще не был на модерации"),
+        (MODERATION_PENDING, "🕓 Пост на модерации"),
+        (MODERATION_APPROVED, "👍 Хороший пост"),
+        (MODERATION_FORGIVEN, "☹️ Пост не одобрен, но оставлен на сайте"),
+        (MODERATION_REJECTED, "❌ Пост отклонен модератором"),
+    ]
+
+    VISIBILITY_DRAFT = "draft"
+    VISIBILITY_LINK_ONLY = "link_only"
+    VISIBILITY_EVERYWHERE = "everywhere"
+    VISIBILITY = [
+        (VISIBILITY_DRAFT, "Черновик"),
+        (VISIBILITY_LINK_ONLY, "Только по ссылке"),
+        (VISIBILITY_EVERYWHERE, "Виден везде"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     slug = models.CharField(max_length=128, unique=True, db_index=True)
 
@@ -103,13 +128,23 @@ class Post(models.Model, ModelDiffMixin):
     upvotes = models.IntegerField(default=0, db_index=True)
     hotness = models.IntegerField(default=0, db_index=True)
 
-    is_visible = models.BooleanField(default=False)  # published or draft
-    is_visible_in_feeds = models.BooleanField(default=True)  # hide post from main feeds (still visible in rooms)
+    moderation_status = models.CharField(
+        max_length=12,
+        choices=MODERATION_STATUSES,
+        default=MODERATION_NONE
+    )
+
+    visibility = models.CharField(
+        max_length=16,
+        choices=VISIBILITY,
+        default=VISIBILITY_DRAFT,
+        db_index=True
+    )
+
     is_commentable = models.BooleanField(default=True)  # allow comments
-    is_approved_by_moderator = models.BooleanField(default=False)  # post is exposed in newsletters, rss, etc
+    is_room_only = models.BooleanField(default=False)  # post is visible only in the room
     is_public = models.BooleanField(default=False)  # post is visible for the outside world
     is_pinned_until = models.DateTimeField(null=True)  # pin on top on the main page
-    is_shadow_banned = models.BooleanField(default=False)  # hide from feeds but not for author
 
     history = HistoricalRecords(
         user_model=User,
@@ -125,11 +160,11 @@ class Post(models.Model, ModelDiffMixin):
             "upvotes",
             "hotness",
             "label_code",
-            "is_approved_by_moderator",
+            "moderation_status",
+            "visibility",
+            "is_room_only",
             "is_commentable",
-            "is_visible_in_feeds",
             "is_pinned_until",
-            "is_shadow_banned",
             "room",
         ],
     )
@@ -147,8 +182,8 @@ class Post(models.Model, ModelDiffMixin):
             "url": f"{settings.APP_HOST}{self.get_absolute_url()}",
             "title": self.title,
             "content_text": self.text if self.is_public or including_private else "🔒",
-            "date_published": self.published_at.astimezone().isoformat(),
-            "date_modified": self.updated_at.astimezone().isoformat(),
+            "date_published": self.published_at.astimezone().isoformat() if self.published_at else None,
+            "date_modified": self.updated_at.astimezone().isoformat() if self.updated_at else None,
             "authors": [
                 {
                     "name": self.author.full_name,
@@ -172,7 +207,7 @@ class Post(models.Model, ModelDiffMixin):
         if not self.slug:
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
 
-        if not self.published_at and self.is_visible:
+        if not self.published_at and self.visibility != Post.VISIBILITY_DRAFT:
             self.published_at = datetime.utcnow()
 
         self.updated_at = datetime.utcnow()
@@ -206,7 +241,7 @@ class Post(models.Model, ModelDiffMixin):
         return self.author == user or user.is_moderator or user.slug in self.coauthors
 
     def can_view(self, user):
-        return self.is_visible or self.can_view_draft(user)
+        return self.visibility != Post.VISIBILITY_DRAFT or self.can_view_draft(user)
 
     def can_view_draft(self, user):
         if not user:
@@ -233,28 +268,30 @@ class Post(models.Model, ModelDiffMixin):
     def label(self):
         lbl = LABELS.get(self.label_code)
         if lbl is not None:
-            lbl['code'] = self.label_code
+            lbl["code"] = self.label_code
         return lbl
 
     @property
     def coauthors_with_details(self):
-        return User.objects.filter(slug__in=self.coauthors).all()
+        if not self.coauthors:
+            return []
+        return list(User.objects.filter(slug__in=self.coauthors))
+
+    @property
+    def is_draft(self):
+        return self.visibility == Post.VISIBILITY_DRAFT
 
     @property
     def is_pinned(self):
         return self.is_pinned_until and self.is_pinned_until > datetime.utcnow()
 
     @property
-    def is_searchable(self):
-        return self.is_visible and not self.is_shadow_banned
-
-    @property
-    def is_approved(self):
-        return self.is_approved_by_moderator or self.upvotes >= settings.COMMUNITY_APPROVE_UPVOTES
-
-    @property
     def is_safely_deletable_by_author(self):
         return self.comment_count < settings.MAX_COMMENTS_FOR_DELETE_VS_CLEAR
+
+    @property
+    def is_waiting_for_moderation(self):
+        return self.moderation_status == Post.MODERATION_PENDING and self.visibility != Post.VISIBILITY_DRAFT
 
     @property
     def description(self):
@@ -284,8 +321,6 @@ class Post(models.Model, ModelDiffMixin):
             return []
 
         users = User.objects.filter(id__in=participant_ids)
-
-        # Create a mapping from ID to user to presercve order
         user_map = {str(user.id): user for user in users}
         return [user_map[uid] for uid in participant_ids if uid in user_map]
 
@@ -299,25 +334,53 @@ class Post(models.Model, ModelDiffMixin):
 
     @classmethod
     def visible_objects(cls):
-        return cls.objects.filter(is_visible=True).select_related("room", "author")
+        return cls.objects\
+            .exclude(visibility=Post.VISIBILITY_LINK_ONLY)\
+            .exclude(visibility=Post.VISIBILITY_DRAFT)\
+            .select_related("room", "author")
+
+    @classmethod
+    def visible_objects_for_user(cls, user):
+        if not user:
+            return cls.visible_objects()
+        return cls.objects\
+            .select_related("room", "author")\
+            .exclude(visibility=Post.VISIBILITY_DRAFT)\
+            .exclude(Q(visibility=Post.VISIBILITY_LINK_ONLY) & ~Q(author=user))
 
     @classmethod
     def objects_for_user(cls, user):
         if not user:
             return cls.visible_objects()
 
-        return cls.visible_objects()\
-            .extra({
-                "is_voted": "select 1 from post_votes "
-                            "where post_votes.post_id = posts.id "
-                            f"and post_votes.user_id = '{user.id}'",
-                "upvoted_at": "select ROUND(extract(epoch from created_at) * 1000) from post_votes "
-                              "where post_votes.post_id = posts.id "
-                              f"and post_votes.user_id = '{user.id}'",
-                "unread_comments": f"select unread_comments from post_views "
-                                   f"where post_views.post_id = posts.id "
-                                   f"and post_views.user_id = '{user.id}'"
-            })  # TODO: i've been trying to use .annotate() here for 2 hours and I have no idea why it's not working
+        vote_qs = PostVote.objects.filter(post=OuterRef('pk'), user=user)
+        view_qs = PostView.objects.filter(post=OuterRef('pk'), user=user)
+
+        return cls.visible_objects_for_user(user)\
+            .annotate(
+                upvoted_at=Subquery(
+                    vote_qs.annotate(
+                        epoch_ms=Round(Extract('created_at', 'epoch') * 1000)
+                    ).values('epoch_ms')[:1],
+                    output_field=BigIntegerField(),
+                ),
+                unread_comments=Subquery(
+                    view_qs.values('unread_comments')[:1],
+                ),
+            )
+
+    @classmethod
+    def count_user_posts(cls, user, viewer=None):
+        qs = cls.visible_objects_for_user(viewer)
+        return (
+            qs.filter(author=user)
+            .exclude(type__in=[cls.TYPE_INTRO, cls.TYPE_WEEKLY_DIGEST])
+            .count()
+            + qs.filter(coauthors__contains=[user.slug])
+            .exclude(author=user)
+            .exclude(type__in=[cls.TYPE_INTRO, cls.TYPE_WEEKLY_DIGEST])
+            .count()
+        )
 
     @classmethod
     def check_rate_limits(cls, user):
@@ -343,7 +406,7 @@ class Post(models.Model, ModelDiffMixin):
                 slug=user.slug,
                 title=f"#intro от @{user.slug}",
                 text=text,
-                is_visible=is_visible,
+                visibility=Post.VISIBILITY_EVERYWHERE if is_visible else Post.VISIBILITY_DRAFT,
                 is_public=False,
             ),
         )
@@ -360,17 +423,19 @@ class Post(models.Model, ModelDiffMixin):
         self.save()
 
     def publish(self):
-        self.is_visible = True
+        self.moderation_status = Post.MODERATION_PENDING
+        self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()
         self.save()
 
     def unpublish(self):
-        self.is_visible = False
+        self.visibility = Post.VISIBILITY_DRAFT
         self.published_at = None
         self.save()
 
     def delete(self, *args, **kwargs):
+        self.visibility = Post.VISIBILITY_DRAFT
         self.deleted_at = datetime.utcnow()
         self.save()
 

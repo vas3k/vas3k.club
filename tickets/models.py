@@ -2,6 +2,8 @@ from uuid import uuid4
 
 from django.db import models
 
+from users.models.achievements import Achievement
+
 
 class Ticket(models.Model):
     code = models.CharField(primary_key=True, max_length=32, null=False, unique=True)
@@ -10,7 +12,7 @@ class Ticket(models.Model):
     stripe_product_id = models.CharField(max_length=255, unique=True)
     stripe_payment_link_id = models.CharField(max_length=255, null=True, blank=True)
 
-    achievement = models.ForeignKey("users.Achievement", on_delete=models.SET_NULL, null=True, blank=True)
+    achievement = models.ForeignKey(Achievement, on_delete=models.SET_NULL, null=True, blank=True)
 
     send_email_title = models.CharField(max_length=255, null=True, blank=True)
     send_email_markdown = models.TextField(null=True, blank=True)

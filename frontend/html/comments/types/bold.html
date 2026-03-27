@@ -57,7 +57,7 @@
                              :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                              upvote-url="{% url "upvote_comment" comment.id %}"
                              retract-vote-url="{% url "retract_comment_vote" comment.id %}"
-                             {% if comment.is_voted %}
+                             {% if comment.upvoted_at %}
                                 initial-is-voted
                                 initial-upvote-timestamp="{{comment.upvoted_at}}"
                              {% endif %}
@@ -75,14 +75,14 @@
         </div>
         <div class="comment-footer">
             {% if me.id == comment.post.author_id or me.is_moderator %}
-                <a href="{% url "pin_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover"><i class="fas fa-thumbtack"></i></a>
+                <a href="{% url "pin_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover js-post-action"><i class="fas fa-thumbtack"></i></a>
             {% endif %}
 
             {% if me.id == comment.author_id or me.id == comment.post.author_id or me.is_moderator %}
                 {% if comment.is_deleted %}
-                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover" onclick="return confirm('Восстанавливаем?')"><i class="fas fa-trash-restore"></i></a>
+                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover js-post-action" data-confirm="Восстанавливаем?"><i class="fas fa-trash-restore"></i></a>
                 {% else %}
-                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover" onclick="return confirm('Удаляем?')"><i class="fas fa-trash"></i></a>
+                    <a href="{% url "delete_comment" comment.id %}" class="comment-footer-button comment-button-visible-on-hover js-post-action" data-confirm="Удаляем?"><i class="fas fa-trash"></i></a>
                 {% endif %}
             {% endif %}
 

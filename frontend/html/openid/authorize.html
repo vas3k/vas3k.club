@@ -37,7 +37,7 @@
 
             <div class="block-description">
                 <div class="form-row form-row-space-between">
-                    <a href="{% url "index" %}" class="button">Ну уж нет!</a>
+                    <a href="{% url "index" %}" class="button">Нет!</a>
                     <form action="{{ request.get_full_path }}" method="post">
                         <input type="hidden" name="confirmed" value="true">
                         <button class="button button-blue">Да, разрешить 👍</button>

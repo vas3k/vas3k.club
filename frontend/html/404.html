@@ -1,0 +1,2566 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    404 — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content page-404">
+        <h1 class="page-404-title">404 — такой страницы нет</h1>
+        <div id="worm-runner-game" class="page-404-game"></div>
+        <div class="page-404-game-description">Нажимай пробел чтобы снять стресс...</div>
+        <div class="page-404-buttons">
+            <a href="/" class="button">🏠&nbsp;&nbsp;На главную</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    new Runner('#worm-runner-game');
+  });
+  const GAME_TYPE = [];
+  Runner.spriteDefinitionByType = {
+    original: {
+      LDPI: {
+        BACKGROUND_EL: { x: 86, y: 2 },
+        CACTUS_LARGE: { x: 332, y: 2 },
+        CACTUS_SMALL: { x: 228, y: 2 },
+        OBSTACLE_2: { x: 332, y: 2 },
+        OBSTACLE: { x: 228, y: 2 },
+        CLOUD: { x: 86, y: 2 },
+        HORIZON: { x: 2, y: 54 },
+        MOON: { x: 484, y: 2 },
+        PTERODACTYL: { x: 134, y: 2 },
+        RESTART: { x: 2, y: 68 },
+        TEXT_SPRITE: { x: 655, y: 2 },
+        TREX: { x: 848, y: 2 },
+        STAR: { x: 645, y: 2 },
+        COLLECTABLE: { x: 2, y: 2 },
+        ALT_GAME_END: { x: 121, y: 2 },
+      },
+      HDPI: {
+        BACKGROUND_EL: { x: 166, y: 2 },
+        CACTUS_LARGE: { x: 652, y: 2 },
+        CACTUS_SMALL: { x: 446, y: 2 },
+        OBSTACLE_2: { x: 652, y: 2 },
+        OBSTACLE: { x: 446, y: 2 },
+        CLOUD: { x: 166, y: 2 },
+        HORIZON: { x: 2, y: 104 },
+        MOON: { x: 954, y: 2 },
+        PTERODACTYL: { x: 260, y: 2 },
+        RESTART: { x: 2, y: 130 },
+        TEXT_SPRITE: { x: 1294, y: 2 },
+        TREX: { x: 1678, y: 2 },
+        STAR: { x: 1276, y: 2 },
+        COLLECTABLE: { x: 4, y: 4 },
+        ALT_GAME_END: { x: 242, y: 4 },
+      },
+      MAX_GAP_COEFFICIENT: 1.5,
+      MAX_OBSTACLE_LENGTH: 3,
+      HAS_CLOUDS: 1,
+      BOTTOM_PAD: 10,
+      TREX: {
+        WAITING_1: { x: 44, w: 44, h: 47, xOffset: 0 },
+        WAITING_2: { x: 0, w: 44, h: 47, xOffset: 0 },
+        RUNNING_1: { x: 88, w: 44, h: 47, xOffset: 0 },
+        RUNNING_2: { x: 132, w: 44, h: 47, xOffset: 0 },
+        JUMPING: { x: 0, w: 44, h: 47, xOffset: 0 },
+        CRASHED: { x: 220, w: 44, h: 47, xOffset: 0 },
+        COLLISION_BOXES: [
+          new CollisionBox(22, 0, 17, 16),
+          new CollisionBox(1, 18, 30, 9),
+          new CollisionBox(10, 35, 14, 8),
+          new CollisionBox(1, 24, 29, 5),
+          new CollisionBox(5, 30, 21, 4),
+          new CollisionBox(9, 34, 15, 4),
+        ],
+      },
+      OBSTACLES: [
+        {
+          type: "CACTUS_SMALL",
+          width: 17,
+          height: 35,
+          yPos: 105,
+          multipleSpeed: 4,
+          minGap: 120,
+          minSpeed: 0,
+          collisionBoxes: [
+            new CollisionBox(0, 7, 5, 27),
+            new CollisionBox(4, 0, 6, 34),
+            new CollisionBox(10, 4, 7, 14),
+          ],
+        },
+        {
+          type: "CACTUS_LARGE",
+          width: 25,
+          height: 50,
+          yPos: 90,
+          multipleSpeed: 7,
+          minGap: 120,
+          minSpeed: 0,
+          collisionBoxes: [
+            new CollisionBox(0, 12, 7, 38),
+            new CollisionBox(8, 0, 7, 49),
+            new CollisionBox(13, 10, 10, 38),
+          ],
+        },
+        {
+          type: "PTERODACTYL",
+          width: 46,
+          height: 40,
+          yPos: [100, 75, 50],
+          yPosMobile: [100, 50],
+          multipleSpeed: 999,
+          minSpeed: 8.5,
+          minGap: 150,
+          collisionBoxes: [
+            new CollisionBox(15, 15, 16, 5),
+            new CollisionBox(18, 21, 24, 6),
+            new CollisionBox(2, 14, 4, 3),
+            new CollisionBox(6, 10, 4, 7),
+            new CollisionBox(10, 8, 6, 9),
+          ],
+          numFrames: 2,
+          frameRate: 1e3 / 6,
+          speedOffset: 0.8,
+        },
+      ],
+      BACKGROUND_EL: {
+        CLOUD: {
+          HEIGHT: 14,
+          MAX_CLOUD_GAP: 400,
+          MAX_SKY_LEVEL: 30,
+          MIN_CLOUD_GAP: 100,
+          MIN_SKY_LEVEL: 71,
+          OFFSET: 4,
+          WIDTH: 46,
+          X_POS: 1,
+          Y_POS: 120,
+        },
+      },
+      BACKGROUND_EL_CONFIG: {
+        MAX_BG_ELS: 1,
+        MAX_GAP: 400,
+        MIN_GAP: 100,
+        POS: 0,
+        SPEED: 0.5,
+        Y_POS: 125,
+      },
+      LINES: [
+        { SOURCE_X: 2, SOURCE_Y: 52, WIDTH: 600, HEIGHT: 12, YPOS: 127 },
+      ],
+    },
+  };
+  function Runner(t, e) {
+    if (Runner.instance_) return Runner.instance_;
+    ((Runner.instance_ = this),
+      (this.outerContainerEl = document.querySelector(t)),
+      (this.containerEl = null),
+      (this.snackbarEl = null),
+      (this.touchController = null),
+      (this.config =
+        e || Object.assign(Runner.config, Runner.normalConfig)),
+      (this.dimensions = Runner.defaultDimensions),
+      (this.gameType = null),
+      (Runner.spriteDefinition = Runner.spriteDefinitionByType.original),
+      (this.altGameImageSprite = null),
+      (this.altGameModeActive = !1),
+      (this.altGameModeFlashTimer = null),
+      (this.fadeInTimer = 0),
+      (this.canvas = null),
+      (this.canvasCtx = null),
+      (this.tRex = null),
+      (this.distanceMeter = null),
+      (this.distanceRan = 0),
+      (this.highestScore = 0),
+      (this.syncHighestScore = !1),
+      (this.time = 0),
+      (this.runningTime = 0),
+      (this.msPerFrame = 1e3 / FPS),
+      (this.currentSpeed = this.config.SPEED),
+      (Runner.slowDown = !1),
+      (this.obstacles = []),
+      (this.activated = !1),
+      (this.playing = !1),
+      (this.crashed = !1),
+      (this.paused = !1),
+      (this.inverted = !1),
+      (this.invertTimer = 0),
+      (this.resizeTimerId_ = null),
+      (this.playCount = 0),
+      (this.audioBuffer = null),
+      (this.soundFx = {}),
+      (this.generatedSoundFx = null),
+      (this.audioContext = null),
+      (this.images = {}),
+      (this.imagesLoaded = 0),
+      (this.pollingGamepads = !1),
+      (this.gamepadIndex = void 0),
+      (this.previousGamepad = null),
+      (Runner.isAltGameModeEnabled() &&
+        (this.initAltGameType(), (Runner.gameType = this.gameType)),
+          this.loadImages(),
+          (window.initializeEasterEggHighScore =
+            this.initializeHighScore.bind(this))));
+  }
+  const DEFAULT_WIDTH = 600,
+    FPS = 60,
+    // there is no version for low dpi
+    IS_HIDPI = true,
+    IS_IOS = /CriOS/.test(window.navigator.userAgent),
+    IS_MOBILE = /Android/.test(window.navigator.userAgent) || IS_IOS,
+    IS_RTL = "rtl" == document.querySelector("html").dir,
+    ALT_SPRITE_CHANCE = 0.1,
+    ARCADE_MODE_URL = "chrome://dino/",
+    RESOURCE_POSTFIX = "offline-resources-",
+    A11Y_STRINGS = {
+      ariaLabel: "dinoGameA11yAriaLabel",
+      description: "dinoGameA11yDescription",
+      gameOver: "dinoGameA11yGameOver",
+      highScore: "dinoGameA11yHighScore",
+      jump: "dinoGameA11yJump",
+      started: "dinoGameA11yStartGame",
+      speedLabel: "dinoGameA11ySpeedToggle",
+    };
+  function GeneratedSoundFx() {
+    ((this.audioCues = !1), (this.context = null), (this.panner = null));
+  }
+  function speakPhrase(t) {
+    if ("speechSynthesis" in window) {
+      const e = new SpeechSynthesisUtterance(t);
+      window.speechSynthesis.getVoices();
+      ((e.text = t), speechSynthesis.speak(e));
+    }
+  }
+  function getRandomNum(t, e) {
+    return Math.floor(Math.random() * (e - t + 1)) + t;
+  }
+  function vibrate(t) {
+    IS_MOBILE && window.navigator.vibrate && window.navigator.vibrate(t);
+  }
+  function createCanvas(t, e, i) {
+    const n = document.createElement("canvas");
+    return (
+        (n.width = e),
+        (n.height = i),
+        t.appendChild(n),
+        n
+    );
+  }
+  function decodeBase64ToArrayBuffer(t) {
+    const e = (t.length / 4) * 3,
+      i = atob(t),
+      s = new ArrayBuffer(e),
+      n = new Uint8Array(s);
+    for (let t = 0; t < e; t++) n[t] = i.charCodeAt(t);
+    return n.buffer;
+  }
+  function getTimeStamp() {
+    return IS_IOS ? new Date().getTime() : performance.now();
+  }
+  function GameOverPanel(t, e, i, s, n, a) {
+    ((this.canvas = t),
+      (this.canvasCtx = t.getContext("2d")),
+      (this.canvasDimensions = s),
+      (this.textImgPos = e),
+      (this.restartImgPos = i),
+      (this.altGameEndImgPos = n),
+      (this.altGameModeActive = a),
+      (this.frameTimeStamp = 0),
+      (this.animTimer = 0),
+      (this.currentFrame = 0),
+      (this.gameOverRafId = null),
+      (this.flashTimer = 0),
+      (this.flashCounter = 0),
+      (this.originalText = !0));
+  }
+  function checkForCollision(t, e, i) {
+    (Runner.defaultDimensions.WIDTH, t.xPos);
+    const s = new CollisionBox(
+        e.xPos + 1,
+        e.yPos + 1,
+        e.config.WIDTH - 2,
+        e.config.HEIGHT - 2,
+      ),
+      n = new CollisionBox(
+        t.xPos + 1,
+        t.yPos + 1,
+        t.typeConfig.width * t.size - 2,
+        t.typeConfig.height - 2,
+      );
+    if ((i && drawCollisionBoxes(i, s, n), boxCompare(s, n))) {
+      const a = t.collisionBoxes;
+      let o = [];
+      o = Runner.isAltGameModeEnabled()
+        ? Runner.spriteDefinition.TREX.COLLISION_BOXES
+        : e.ducking
+          ? Trex.collisionBoxes.DUCKING
+          : Trex.collisionBoxes.RUNNING;
+      for (let t = 0; t < o.length; t++)
+        for (let e = 0; e < a.length; e++) {
+          const h = createAdjustedCollisionBox(o[t], s),
+            r = createAdjustedCollisionBox(a[e], n),
+            c = boxCompare(h, r);
+          if ((i && drawCollisionBoxes(i, h, r), c)) return [h, r];
+        }
+    }
+  }
+  function createAdjustedCollisionBox(t, e) {
+    return new CollisionBox(t.x + e.x, t.y + e.y, t.width, t.height);
+  }
+  function drawCollisionBoxes(t, e, i) {
+    (t.save(),
+      (t.strokeStyle = "#f00"),
+      t.strokeRect(e.x, e.y, e.width, e.height),
+      (t.strokeStyle = "#0f0"),
+      t.strokeRect(i.x, i.y, i.width, i.height),
+      t.restore());
+  }
+  function boxCompare(t, e) {
+    let i = !1;
+    (t.x, t.y);
+    const s = e.x;
+    e.y;
+    return (
+      t.x < s + e.width &&
+      t.x + t.width > s &&
+      t.y < e.y + e.height &&
+      t.height + t.y > e.y &&
+      (i = !0),
+        i
+    );
+  }
+  function CollisionBox(t, e, i, s) {
+    ((this.x = t), (this.y = e), (this.width = i), (this.height = s));
+  }
+  function Obstacle(t, e, i, s, n, a, o, h) {
+    ((this.canvasCtx = t),
+      (this.spritePos = i),
+      (this.typeConfig = e),
+      (this.gapCoefficient = Runner.slowDown ? 2 * n : n),
+      (this.size = getRandomNum(1, Obstacle.MAX_OBSTACLE_LENGTH)),
+      (this.dimensions = s),
+      (this.remove = !1),
+      (this.xPos = s.WIDTH + (o || 0)),
+      (this.yPos = 0),
+      (this.width = 0),
+      (this.collisionBoxes = []),
+      (this.gap = 0),
+      (this.speedOffset = 0),
+      (this.altGameModeActive = h),
+      (this.imageSprite =
+        "COLLECTABLE" == this.typeConfig.type
+          ? Runner.altCommonImageSprite
+          : this.altGameModeActive
+            ? Runner.altGameImageSprite
+            : Runner.imageSprite),
+      (this.currentFrame = 0),
+      (this.timer = 0),
+      this.init(a));
+  }
+  function Trex(t, e) {
+    ((this.canvas = t),
+      (this.canvasCtx = t.getContext("2d")),
+      (this.spritePos = e),
+      (this.xPos = 0),
+      (this.yPos = 0),
+      (this.xInitialPos = 0),
+      (this.groundYPos = 0),
+      (this.currentFrame = 0),
+      (this.currentAnimFrames = []),
+      (this.blinkDelay = 0),
+      (this.blinkCount = 0),
+      (this.animStartTime = 0),
+      (this.timer = 0),
+      (this.msPerFrame = 1e3 / FPS),
+      (this.config = Object.assign(Trex.config, Trex.normalJumpConfig)),
+      (this.status = Trex.status.RUNNING),
+      (this.jumping = !1),
+      (this.ducking = !1),
+      (this.jumpVelocity = 0),
+      (this.reachedMinHeight = !1),
+      (this.speedDrop = !1),
+      (this.jumpCount = 0),
+      (this.jumpspotX = 0),
+      (this.altGameModeEnabled = !1),
+      (this.flashing = !1),
+      this.init());
+  }
+  function DistanceMeter(t, e, i) {
+    ((this.canvas = t),
+      (this.canvasCtx = t.getContext("2d")),
+      (this.image = Runner.imageSprite),
+      (this.spritePos = e),
+      (this.x = 0),
+      (this.y = 5),
+      (this.currentDistance = 0),
+      (this.maxScore = 0),
+      (this.highScore = "0"),
+      (this.container = null),
+      (this.digits = []),
+      (this.achievement = !1),
+      (this.defaultString = ""),
+      (this.flashTimer = 0),
+      (this.flashIterations = 0),
+      (this.invertTrigger = !1),
+      (this.flashingRafId = null),
+      (this.highScoreBounds = {}),
+      (this.highScoreFlashing = !1),
+      (this.config = DistanceMeter.config),
+      (this.maxScoreUnits = this.config.MAX_DISTANCE_UNITS),
+      (this.canvasWidth = i),
+      this.init(i));
+  }
+  function Cloud(t, e, i) {
+    ((this.canvas = t),
+      (this.canvasCtx = this.canvas.getContext("2d")),
+      (this.spritePos = e),
+      (this.containerWidth = i),
+      (this.xPos = i),
+      (this.yPos = 0),
+      (this.remove = !1),
+      (this.gap = getRandomNum(
+        Cloud.config.MIN_CLOUD_GAP,
+        Cloud.config.MAX_CLOUD_GAP,
+      )),
+      this.init());
+  }
+  function BackgroundEl(t, e, i, s) {
+    ((this.canvas = t),
+      (this.canvasCtx = this.canvas.getContext("2d")),
+      (this.spritePos = e),
+      (this.containerWidth = i),
+      (this.xPos = i),
+      (this.yPos = 0),
+      (this.remove = !1),
+      (this.type = s),
+      (this.gap = getRandomNum(
+        BackgroundEl.config.MIN_GAP,
+        BackgroundEl.config.MAX_GAP,
+      )),
+      (this.animTimer = 0),
+      (this.switchFrames = !1),
+      (this.spriteConfig = {}),
+      this.init());
+  }
+  function NightMode(t, e, i) {
+    ((this.spritePos = e),
+      (this.canvas = t),
+      (this.canvasCtx = t.getContext("2d")),
+      (this.xPos = i - 50),
+      (this.yPos = 30),
+      (this.currentPhase = 0),
+      (this.opacity = 0),
+      (this.containerWidth = i),
+      (this.stars = []),
+      (this.drawStars = !1),
+      this.placeStars());
+  }
+  function HorizonLine(t, e) {
+    let i = e.SOURCE_X,
+      s = e.SOURCE_Y;
+    (IS_HIDPI && ((i *= 2), (s *= 2)),
+      (this.spritePos = { x: i, y: s }),
+      (this.canvas = t),
+      (this.canvasCtx = t.getContext("2d")),
+      (this.sourceDimensions = {}),
+      (this.dimensions = e),
+      (this.sourceXPos = [
+        this.spritePos.x,
+        this.spritePos.x + this.dimensions.WIDTH,
+      ]),
+      (this.xPos = []),
+      (this.yPos = 0),
+      (this.bumpThreshold = 0.5),
+      this.setSourceDimensions(e),
+      this.draw());
+  }
+  function Horizon(t, e, i, s) {
+    ((this.canvas = t),
+      (this.canvasCtx = this.canvas.getContext("2d")),
+      (this.config = Horizon.config),
+      (this.dimensions = i),
+      (this.gapCoefficient = s),
+      (this.obstacles = []),
+      (this.obstacleHistory = []),
+      (this.horizonOffsets = [0, 0]),
+      (this.cloudFrequency = this.config.CLOUD_FREQUENCY),
+      (this.spritePos = e),
+      (this.nightMode = null),
+      (this.altGameModeActive = !1),
+      (this.clouds = []),
+      (this.cloudSpeed = this.config.BG_CLOUD_SPEED),
+      (this.backgroundEls = []),
+      (this.lastEl = null),
+      (this.backgroundSpeed = this.config.BG_CLOUD_SPEED),
+      (this.horizonLine = null),
+      (this.horizonLines = []),
+      this.init());
+  }
+  ((Runner.resources = {
+    sprite: 'data:image/png;base64,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',
+    spriteAlt: 'data:image/png;base64,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',
+    sound: {
+      press: 'data:audio/mpeg;base64,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',
+      hit: 'data:audio/mpeg;base64,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',
+      reached: 'data:audio/mpeg;base64,T2dnUwACAAAAAAAAAABVDxppAAAAABYzHfUBHgF2b3JiaXMAAAAAAkSsAAD/////AHcBAP////+4AU9nZ1MAAAAAAAAAAAAAVQ8aaQEAAAC9PVXbEEf//////////////////+IDdm9yYmlzNwAAAEFPOyBhb1R1ViBiNSBbMjAwNjEwMjRdIChiYXNlZCBvbiBYaXBoLk9yZydzIGxpYlZvcmJpcykAAAAAAQV2b3JiaXMlQkNWAQBAAAAkcxgqRqVzFoQQGkJQGeMcQs5r7BlCTBGCHDJMW8slc5AhpKBCiFsogdCQVQAAQAAAh0F4FISKQQghhCU9WJKDJz0IIYSIOXgUhGlBCCGEEEIIIYQQQgghhEU5aJKDJ0EIHYTjMDgMg+U4+ByERTlYEIMnQegghA9CuJqDrDkIIYQkNUhQgwY56ByEwiwoioLEMLgWhAQ1KIyC5DDI1IMLQoiag0k1+BqEZ0F4FoRpQQghhCRBSJCDBkHIGIRGQViSgwY5uBSEy0GoGoQqOQgfhCA0ZBUAkAAAoKIoiqIoChAasgoAyAAAEEBRFMdxHMmRHMmxHAsIDVkFAAABAAgAAKBIiqRIjuRIkiRZkiVZkiVZkuaJqizLsizLsizLMhAasgoASAAAUFEMRXEUBwgNWQUAZAAACKA4iqVYiqVoiueIjgiEhqwCAIAAAAQAABA0Q1M8R5REz1RV17Zt27Zt27Zt27Zt27ZtW5ZlGQgNWQUAQAAAENJpZqkGiDADGQZCQ1YBAAgAAIARijDEgNCQVQAAQAAAgBhKDqIJrTnfnOOgWQ6aSrE5HZxItXmSm4q5Oeecc87J5pwxzjnnnKKcWQyaCa0555zEoFkKmgmtOeecJ7F50JoqrTnnnHHO6WCcEcY555wmrXmQmo21OeecBa1pjppLsTnnnEi5eVKbS7U555xzzjnnnHPOOeec6sXpHJwTzjnnnKi9uZab0MU555xPxunenBDOOeecc84555xzzjnnnCA0ZBUAAAQAQBCGjWHcKQjS52ggRhFiGjLpQffoMAkag5xC6tHoaKSUOggllXFSSicIDVkFAAACAEAIIYUUUkghhRRSSCGFFGKIIYYYcsopp6CCSiqpqKKMMssss8wyyyyzzDrsrLMOOwwxxBBDK63EUlNtNdZYa+4555qDtFZaa621UkoppZRSCkJDVgEAIAAABEIGGWSQUUghhRRiiCmnnHIKKqiA0JBVAAAgAIAAAAAAT/Ic0REd0REd0REd0REd0fEczxElURIlURIt0zI101NFVXVl15Z1Wbd9W9iFXfd93fd93fh1YViWZVmWZVmWZVmWZVmWZVmWIDRkFQAAAgAAIIQQQkghhRRSSCnGGHPMOegklBAIDVkFAAACAAgAAABwFEdxHMmRHEmyJEvSJM3SLE/zNE8TPVEURdM0VdEVXVE3bVE2ZdM1XVM2XVVWbVeWbVu2dduXZdv3fd/3fd/3fd/3fd/3fV0HQkNWAQASAAA6kiMpkiIpkuM4jiRJQGjIKgBABgBAAACK4iiO4ziSJEmSJWmSZ3mWqJma6ZmeKqpAaMgqAAAQAEAAAAAAAACKpniKqXiKqHiO6IiSaJmWqKmaK8qm7Lqu67qu67qu67qu67qu67qu67qu67qu67qu67qu67qu67quC4SGrAIAJAAAdCRHciRHUiRFUiRHcoDQkFUAgAwAgAAAHMMxJEVyLMvSNE/zNE8TPdETPdNTRVd0gdCQVQAAIACAAAAAAAAADMmwFMvRHE0SJdVSLVVTLdVSRdVTVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTdM0TRMIDVkJAJABAKAQW0utxdwJahxi0nLMJHROYhCqsQgiR7W3yjGlHMWeGoiUURJ7qihjiknMMbTQKSet1lI6hRSkmFMKFVIOWiA0ZIUAEJoB4HAcQLIsQLI0AAAAAAAAAJA0DdA8D7A8DwAAAAAAAAAkTQMsTwM0zwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQNI0QPM8QPM8AAAAAAAAANA8D/BEEfBEEQAAAAAAAAAszwM80QM8UQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwNE0QPM8QPM8AAAAAAAAALA8D/BEEfA8EQAAAAAAAAA0zwM8UQQ8UQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABDgAAAQYCEUGrIiAIgTADA4DjQNmgbPAziWBc+D50EUAY5lwfPgeRBFAAAAAAAAAAAAADTPg6pCVeGqAM3zYKpQVaguAAAAAAAAAAAAAJbnQVWhqnBdgOV5MFWYKlQVAAAAAAAAAAAAAE8UobpQXbgqwDNFuCpcFaoLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAABhwAAAIMKEMFBqyIgCIEwBwOIplAQCA4ziWBQAAjuNYFgAAWJYligAAYFmaKAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAGHAAAAgwoQwUGrISAIgCADAoimUBy7IsYFmWBTTNsgCWBtA8gOcBRBEACAAAKHAAAAiwQVNicYBCQ1YCAFEAAAZFsSxNE0WapmmaJoo0TdM0TRR5nqZ5nmlC0zzPNCGKnmeaEEXPM02YpiiqKhBFVRUAAFDgAAAQYIOmxOIAhYasBABCAgAMjmJZnieKoiiKpqmqNE3TPE8URdE0VdVVaZqmeZ4oiqJpqqrq8jxNE0XTFEXTVFXXhaaJommaommqquvC80TRNE1TVVXVdeF5omiapqmqruu6EEVRNE3TVFXXdV0giqZpmqrqurIMRNE0VVVVXVeWgSiapqqqquvKMjBN01RV15VdWQaYpqq6rizLMkBVXdd1ZVm2Aarquq4ry7INcF3XlWVZtm0ArivLsmzbAgAADhwAAAKMoJOMKouw0YQLD0ChISsCgCgAAMAYphRTyjAmIaQQGsYkhBJCJiWVlEqqIKRSUikVhFRSKiWjklJqKVUQUikplQpCKqWVVAAA2IEDANiBhVBoyEoAIA8AgCBGKcYYYwwyphRjzjkHlVKKMeeck4wxxphzzkkpGWPMOeeklIw555xzUkrmnHPOOSmlc84555yUUkrnnHNOSiklhM45J6WU0jnnnBMAAFTgAAAQYKPI5gQjQYWGrAQAUgEADI5jWZqmaZ4nipYkaZrneZ4omqZmSZrmeZ4niqbJ8zxPFEXRNFWV53meKIqiaaoq1xVF0zRNVVVVsiyKpmmaquq6ME3TVFXXdWWYpmmqquu6LmzbVFXVdWUZtq2aqiq7sgxcV3Vl17aB67qu7Nq2AADwBAcAoAIbVkc4KRoLLDRkJQCQAQBAGIOMQgghhRBCCiGElFIICQAAGHAAAAgwoQwUGrISAEgFAACQsdZaa6211kBHKaWUUkqpcIxSSimllFJKKaWUUkoppZRKSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoppZRSSimllFJKKaWUUkoFAC5VOADoPtiwOsJJ0VhgoSErAYBUAADAGKWYck5CKRVCjDkmIaUWK4QYc05KSjEWzzkHoZTWWiyecw5CKa3FWFTqnJSUWoqtqBQyKSml1mIQwpSUWmultSCEKqnEllprQQhdU2opltiCELa2klKMMQbhg4+xlVhqDD74IFsrMdVaAABmgwMARIINqyOcFI0FFhqyEgAICQAgjFGKMcYYc8455yRjjDHmnHMQQgihZIwx55xzDkIIIZTOOeeccxBCCCGEUkrHnHMOQgghhFBS6pxzEEIIoYQQSiqdcw5CCCGEUkpJpXMQQgihhFBCSSWl1DkIIYQQQikppZRCCCGEEkIoJaWUUgghhBBCKKGklFIKIYRSQgillJRSSimFEEoIpZSSUkkppRJKCSGEUlJJKaUUQggllFJKKimllEoJoYRSSimlpJRSSiGUUEIpBQAAHDgAAAQYQScZVRZhowkXHoBCQ1YCAGQAAJSyUkoorVVAIqUYpNpCR5mDFHOJLHMMWs2lYg4pBq2GyjGlGLQWMgiZUkxKCSV1TCknLcWYSuecpJhzjaVzEAAAAEEAgICQAAADBAUzAMDgAOFzEHQCBEcbAIAgRGaIRMNCcHhQCRARUwFAYoJCLgBUWFykXVxAlwEu6OKuAyEEIQhBLA6ggAQcnHDDE294wg1O0CkqdSAAAAAAAAwA8AAAkFwAERHRzGFkaGxwdHh8gISIjJAIAAAAAAAYAHwAACQlQERENHMYGRobHB0eHyAhIiMkAQCAAAIAAAAAIIAABAQEAAAAAAACAAAABARPZ2dTAABARwAAAAAAAFUPGmkCAAAAZa2xyCElHh4dHyQvOP8T5v8NOEo2/wPOytDN39XY2P8N/w2XhoCs0CKt8NEKLdIKH63ShlVlwuuiLze+3BjtjfZGe0lf6As9ggZstNJFphRUtpUuMqWgsqrasj2IhOA1F7LFMdFaWzkAtNBFpisIQgtdZLqCIKjqAAa9WePLkKr1MMG1FlwGtNJFTSkIcitd1JSCIKsCAQWISK0Cyzw147T1tAK00kVNKKjQVrqoCQUVqqr412m+VKtZf9h+TDaaztAAtNRFzVEQlJa6qDkKgiIrc2gtfES4nSQ1mlvfMxfX4+b2t7ICVNGwkKiiYSGxTQtK1YArN+DgTqdjMwyD1q8dL6RfOzXZ0yO+qkZ8+Ub81WP+DwNkWcJhvlmWcJjvSbUK/WVm3LgxClkyiuxpIFtS5Gwi5FBkj2DGWEyHYBiLcRJkWnQSZGbRGYGZAHr6vWVJAWGE5q724ldv/B8Kp5II3dPvLUsKCCM0d7UXv3rj/1A4lUTo+kCUtXqtWimLssjIyMioViORobCJAQLYFnpaAACCAKEWAMCiQGqMABAIUKknAFkUIGsBIBBAHYBtgAFksAFsEySQgQDWQ4J1AOpiVBUHd1FE1d2IGDfGAUzmKiiTyWQyuY6Lx/W4jgkQZQKioqKuqioAiIqKwagqCqKiogYxCgACCiKoAAAIqAuKAgAgjyeICQAAvAEXmQAAmYNhMgDAZD5MJqYzppPpZDqMwzg0TVU9epXf39/9xw5lBaCpqJiG3VOsht0wRd8FgAeoB8APKOABQFT23GY0GgoAolkyckajHgBoZEYujQY+230BUoD/uf31br/7qCHLXLWwIjMIz3ZfgBTgf25/vdvvPmrIMlctrMgMwiwCAAB4FgAAggAAAM8CAEAgkNG0DgCeBQCAIAAAmEUBynoASKANMIAMNoBtAAlkMAGoAzKQgDoAdQYAKOoEANFgAoAyKwAAGIOiAACVBACyAAAAFYMDAAAyxyMAAMBMfgQAAMi8GAAACDfoFQAAYHgxACA16QiK4CoWcTcVAADDdNpc7AAAgJun080DAAAwPTwxDQAAxYanm1UFAAAVD0MsAA4AyCUztwBwBgAyQOTMTZYA0AAiySW3Clar/eRUAb5fPDXA75e8QH//jkogHmq1n5wqwPeLpwb4/ZIX6O/fUQnEgwf9fr/f72dmZmoaRUREhMLTADSVgCAgVLKaCT0tAABk2AFgAyQgEEDTSABtQiSQwQDUARksYBtAAgm2AQSQYBtAAuYPOK5rchyPLxAABFej4O7uAIgYNUYVEBExbozBGHdVgEoCYGZmAceDI0mGmZlrwYDHkQQAiLhxo6oKSHJk/oBrZgYASI4XAwDAXMMnIQAA5DoyDAAACa8AAMDM5JPEZDIZhiFJoN33vj4X6N19v15gxH8fAE1ERMShbm5iBYCOAAMFgAzaZs3ITURECAAhInKTNbNtfQDQNnuWHBERFgBUVa4iDqyqXEUc+AKkZlkmZCoJgIOBBaubqwoZ2SDNgJlj5MgsMrIV44xgKjCFYTS36QRGQafwylRZAhMXr7IEJi7+AqQ+gajAim2S1W/71ACEi4sIxsXVkSNDQRkgzGp6eNgMJDO7kiVXcmStkCVL0Ry0MzMgzRklI2dLliQNEbkUVFvaCApWW9oICq7rpRlKs2MBn8eVJRlk5JARjONMdGSYZArDOA0ZeKHD6+KN9oZ5MBDTCO8bmrptBBLgcnnOcBmk/KMhS2lL6rYRSIDL5TnDZZDyj4YspS3eIOoN9Uq1KIsMpp1gsU0gm412AISQyICYRYmsFQCQwWIgwWRCABASGRDawAKYxcCAyYQFgLhB1Rg17iboGF6v1+fIcR2TyeR4PF7HdVzHdVzHcYXPbzIAQNTFuBoVBQAADJOL15WBhNcFAADAI9cAAAAAAJAEmIsMAOBlvdTLVcg4mTnJzBnTobzDfKPRaDSaI1IAnUyHhr6LALxFo5FmyZlL1kAU5lW+LIBGo9lym1OF5ikAOsyctGkK8fgfAfgPIQDAvBLgmVsGoM01lwRAvCwAHje0zTiA/oUDAOYAHqv9+AQC4gEDMJ/bIrXsH0Ggyh4rHKv9+AQC4gEDMJ/bIrXsH0Ggyh4rDPUsAADAogBCk3oCQBAAAABBAAAg6FkAANCzAAAgBELTAACGQAAoGoFBFoWoAQDaBPoBQ0KdAQAAAK7iqkAVAABQNixAoRoAAKgE4CAiAAAAACAYow6IGjcAAAAAAPL4DfZ6kkZkprlkj6ACu7i7u5sKAAAOd7vhAAAAAEBxt6m6CjSAgKrFasUOAAAoAABic/d0EwPIBjAA0CAggABojlxzLQD+mv34BQXEBQvYH5sijDr0/FvZOwu/Zj9+QQFxwQL2x6YIow49/1b2zsI9CwAAeBYAAIBANGlSDQAABAEAAKBnIQEAeloAABgCCU0AAEMgAGQTYNAG+gCwAeiBIWMAGmYAAICogRg16gAAABB1gwVkNlgAAIDIGnCMOwIAAACAgmPA8CpgBgAAAIDMG/QbII/PLwAAaKN9vl4Pd3G6maoAAAAAapiKaQUAANPTxdXhJkAWXHBzcRcFAAAHAABqNx2YEQAHHIADOAEAvpp9fyMBscACmc9Lku7s1RPB+kdWs+9vJCAWWCDzeUnSnb16Ilj/CNOzAACAZwEAAAhEk6ZVAAAIAgAAQc8CAICeFgAAhiAAABgCAUAjMGgDPQB6CgCikmDIGIDqCAAAkDUQdzUOAAAAKg3WIKsCAABkFkAJAAAAQFzFQXh8QQMAAAAABCMCKEhAAACAkXcOo6bDxCgqOMXV6SoKAAAAoGrabDYrAAAiHq5Ww80EBMiIi01tNgEAAAwAAKiHGGpRQADUKpgGAAAOEABogFFAAN6K/fghBIQ5cH0+roo0efVEquyBaMV+/BACwhy4Ph9XRZq8eiJV9kCQ9SwAAMCiAGhaDwAIAgAAIAgAAAQ9CwAAehYAAIQgAAAYAgGgaAAGWRTKBgBAG4AMADI2ANVFAAAAgKNqFKgGAACKRkpQqAEAgCKBAgAAAIAibkDFuDEAAAAAYODzA1iQoAEAAI3+ZYOMNls0AoEdN1dPiwIAgNNp2JwAAAAAYHgaLoa7QgNwgKeImAoAAA4AALU5XNxFoYFaVNxMAQCAjADAAQaeav34QgLiAQM4H1dNGbXoH8EIlT2SUKr14wsJiAcM4HxcNWXUon8EI1T2SEJMzwIAgJ4FAAAgCAAAhCAAABD0LAAA6GkBAEAIAgCAIRAAqvUAgywK2QgAyKIAoBEYAiGqCQB1BQAAqCNAmQEAAOqGFZANCwAAoBpQJgAAAKDiuIIqGAcAAAAA3Ig64LgoAADQHJ+WmYbJdMzQBsGuVk83mwIAAAIAgFNMV1cBUz1xKAAAgAEAwHR3sVldBRxAQD0d6uo0FAAADAAA6orNpqIAkMFqqMNAAQADKABkICgAfmr9+AUFxB0ANh+vita64VdPLCP9acKn1o9fUEDcAWDz8aporRt+9cQy0p8mjHsWAADwLAAAAEEAAAAEAQCAoGchAAD0LAAADIHQpAIADIEAUCsSDNpACwA2AK2EIaOVgLoCAACUBZCVAACAKBssIMqGFQAAoKoAjIMLAAAAAAgYIyB8BAUAAAAACPMJkN91ZAAA5O6kwzCtdAyIVd0cLi4KAAAAIFbD4uFiAbW5mu42AAAAAFBPwd1DoIEjgNNF7W4WQAEABwACODxdPcXIAAIHAEEBflr9/A0FxAULtD9eJWl006snRuXfq8Rp9fM3FBAXLND+eJWk0U2vnhiVf68STM8CAACeBQAAIAgAAIAgAAAQ9CwAAOhpAQBgCITGOgAwBAJAYwYYZFGoFgEAZFEAKCsBhkDIGgAoqwAAAFVAVCUAAKhU1aCIhgAAIMoacKNGVAEAAABwRBRQXEUUAAAAABUxCGAMRgAAAABNpWMnaZOWmGpxt7kAAAAAIBimq9pAbOLuYgMAAAAAww0300VBgAMRD0+HmAAAZAAAAKvdZsNUAAcoaAAgA04BXkr9+EIC4gQD2J/XRWjmV0/syr0xpdSPLyQgTjCA/XldhGZ+9cSu3BvD9CwAAOBZAAAAggAAAAgCgAQIehYAAPQsAAAIQQAAMAQCQJNMMMiiUDTNBABZFACyHmBIyCoAACAKoCIBACCLBjMhGxYAACCzAhQFAAAAYMBRFMUYAwAAAAAorg5gPZTJOI4yzhiM0hI1TZvhBgAAAIAY4mZxNcBQV1dXAAAAAAA3u4u7h4ICIYOni7u7qwGAAqAAAIhaHKI2ICCGXe2mAQBAgwwAAQIKQK6ZuREA/hm9dyCg9xrQforH3TSBf2dENdKfM5/RewcCeq8B7ad43E0T+HdGVCP9OWN6WgAA5CkANERJCAYAAIBgAADIAD0LAAB6WgAAmCBCUW8sAMAQCEBqWouAQRZFaigBgDaBSBgCIeoBAFkAwAiou6s4LqqIGgAAKMsKKKsCAAColIgbQV3ECAAACIBRQVzVjYhBVQEAAADJ55chBhUXEQEAIgmZOXNmTSNLthmTjNOZM8cMw2RIa9pdPRx2Q01VBZGNquHTq2oALBfQxKcAh/zVDReL4SEqIgBAbqcKYhiGgdXqblocygIAdL6s7qbaDKfdNE0FAQ4AVFVxeLi7W51DAgIAAwSWDoAPoHUAAt6YvDUqoHcE7If29ZNi2H/k+ir/85yQNiZvjQroHQH7oX39pBj2H7m+yv88J6QWi7cXgKFPJtNOABIEEGVEvUljJckAbdhetBOgpwFkZFbqtWqAUBgysL2AQR2gHoDYE3Dld12P18HkOuY1r+M4Hr/HAAAVBRejiCN4HE/QLOAGPJhMgAJi1BhXgwCAyZUCmOuHZuTMkTUia47sGdIs2TPajKwZqUiTNOKl/1fyvHS8fOn/1QGU+5U0SaOSzCxpmiNntsxI0LhZ+/0dmt1CVf8HNAXKl24AoM0D7jsIAMAASbPkmpvssuTMktIgALMAUESaJXuGzCyZQQBwgEZl5JqbnBlvgIyT0TAdSgG+6Px/rn+NclEGFGDR+f9c/xrlogwoAKjPiKKfIvRhGKYgzZLZbDkz2hC4djgeCVkXEKJlXz1uAosCujLkrDz6p0CZorVVOjvIQOAp3aVcLyCErGACSRKImCRMETeKzA6cFNd2X3KG1pyLgOnTDtnHXMSpVY1A6IXSjlNoh70ubc2VzXgfgd6uEQOBEmCt1O4wOHBQB2ANvtj8f65/jXKiAkiwWGz+P9e/RjlRASRYAODhfxqlH5QGhuxAobUGtOqEll3GqBEhYLIJQLMr6oQooHFcGpIsDK4yPg3UfMJtO/hTFVma3lrt+JI/EFBxbvlT2OiH0mhEfBofQDudLtq0lTiGSOKaVl6peD3XTDACuSXYNQAp4JoD7wjgUAC+2Px/rn+NcqIMKDBebP4/179GOVEGFBgDQPD/fxBW4I7k5DEgDtxdcwFpcNNx+JoDICRCTtO253ANTbn7DmF+TXalagLadQ23yhGw1Pj7SzpOajGmpeeYyqUY1/Y6KfuTVOU5cvu0gW2boGlMfFv5TejrOmkOl0iEpuQMpAYBB09nZ1MABINhAAAAAAAAVQ8aaQMAAAB/dp+bB5afkaKgrlp+2Px/rn+NchECSMBh8/+5/jXKRQggAQAI/tMRHf0LRqDj05brTRlASvIy1PwPFcajBhcoY0BtuEqvBZw0c0jJRaZ4n0f7fOKW0Y8QZ/M7xFeaGJktZ2ePGFTOLl4XzRCQMnJET4bVsFhMiiHf5vXtJ9vtMsf/Wzy030v3dqzCbkfN7af9JmpkTSXXICMpLAVO16AZoAF+2Px/rn91uQgGDOCw+f9c/+pyEQwYAACCH51SxFCg6SCEBi5Yzvla/iwJC4ekcPjs4PTWuY3tqJ0BKbo3cSYE4Oxo+TYjMXbYRhO+7lamNITiY2u0SUbFcZRMTaC5sUlWteBp+ZP4wUl9lzksq8hUQ5JOZZBAjfd98+8O6pvScEnEsrp/Z5BczwfWpkx5PwQ37EoIH7fMBgYGgusZAQN+2Px/rn91uQgGFOCw+f9c/+pyEQwoAPD/I8YfOD1cxsESTiLRCq0XjEpMtryCW+ZYCL2OrG5/pdkExMrQmjY9KVY4h4vfDR0No9dovrC2mxka1Pr0+Mu09SplWO6YXqWclpXdoVKuagQllrWfCaGA0R7bvLk41ZsRTBiieZFaqyFRFbasq0GwHT0MKbUIB2QAftj8f65/NbkIAQxwOGz+P9e/mlyEAAY4gEcfPYMyMh8UBxBogIAtTU0qrERaVBLhCkJQ3MmgzZNrxplCg6xVj5AdH8J2IE3bUNgyuD86evYivJmI+NREqmWbKqosI6xblSnNmJJUum+0qsMe4o8fIeCXELdErT52+KQtXSIl3XJNKOKv3BnKtS2cKmmnGpCqP/5YNQ9MCB2P8VUnCJiYDEAAXrj8f65/jXIiGJCAwuX/c/1rlBPBgAQA/ymlCDEi+hsNB2RoT865unFOQZiOpcy11YPQ6BiMettS0AZ0JqI4PV/Neludd25CqZDuiL82RhzdohJXt36nH+HlZiHE5ILqVSQL+T5/0h9qFzBVn0OFT9herDG3XzXz299VNY2RkejrK96EGyybKbXyG3IUUv5QEvq2bAP5CjJa9IiDeD5OOF64/H8uf3W5lAAmULj8fy5/dbmUACYAPEIfUcpgMGh0GgjCGlzQcHwGnb9HCrHg86LPrV1SbrhY+nX/N41X2DMb5NsNtkcRS9rs95w9uDtvP+KP/MupnfH3yHIbPG/1zDBygJimTvFcZywqne6OX18E1zluma5AShnVx4aqfxLo6K/C8P2fxH5cuaqtqE3Lbru4hT4283zc0Hqv2xINtisxZXBVfQuOAK6kCHjBAF6o/H+uf09ycQK6w6IA40Ll/3P9e5KLE9AdFgUYAwAAAgAAgDD4g+AgXAEEyAAEoADiPAAIcHGccHEAxN271+bn5+dt4B2YmGziAIrZMgZ4l2nedkACHggIAA==',
+    }
+  }),
+    (Runner.config = {
+    AUDIOCUE_PROXIMITY_THRESHOLD: 190,
+    AUDIOCUE_PROXIMITY_THRESHOLD_MOBILE_A11Y: 250,
+    BG_CLOUD_SPEED: 0.2,
+    BOTTOM_PAD: 10,
+    CANVAS_IN_VIEW_OFFSET: -10,
+    CLEAR_TIME: 3e3,
+    CLOUD_FREQUENCY: 0.5,
+    FADE_DURATION: 1,
+    FLASH_DURATION: 1e3,
+    GAMEOVER_CLEAR_TIME: 1200,
+    INITIAL_JUMP_VELOCITY: 12,
+    INVERT_FADE_DURATION: 12e3,
+    MAX_BLINK_COUNT: 3,
+    MAX_CLOUDS: 6,
+    MAX_OBSTACLE_LENGTH: 3,
+    MAX_OBSTACLE_DUPLICATION: 2,
+    RESOURCE_TEMPLATE_ID: "audio-resources",
+    SPEED: 6,
+    SPEED_DROP_COEFFICIENT: 3,
+    ARCADE_MODE_INITIAL_TOP_POSITION: 35,
+    ARCADE_MODE_TOP_POSITION_PERCENT: 0.1,
+  }),
+    (Runner.normalConfig = {
+      ACCELERATION: 0.001,
+      AUDIOCUE_PROXIMITY_THRESHOLD: 190,
+      AUDIOCUE_PROXIMITY_THRESHOLD_MOBILE_A11Y: 250,
+      GAP_COEFFICIENT: 0.6,
+      INVERT_DISTANCE: 700,
+      MAX_SPEED: 13,
+      MOBILE_SPEED_COEFFICIENT: 1.2,
+      SPEED: 6,
+    }),
+    (Runner.slowConfig = {
+      ACCELERATION: 5e-4,
+      AUDIOCUE_PROXIMITY_THRESHOLD: 170,
+      AUDIOCUE_PROXIMITY_THRESHOLD_MOBILE_A11Y: 220,
+      GAP_COEFFICIENT: 0.3,
+      INVERT_DISTANCE: 350,
+      MAX_SPEED: 9,
+      MOBILE_SPEED_COEFFICIENT: 1.5,
+      SPEED: 4.2,
+    }),
+    (Runner.defaultDimensions = { WIDTH: 600, HEIGHT: 150 }),
+    (Runner.sounds = {
+      BUTTON_PRESS: "press",
+      HIT: "hit",
+      SCORE: "reached",
+    }),
+    (Runner.keycodes = {
+      JUMP: { 38: 1, 32: 1 },
+      DUCK: { 40: 1 },
+      RESTART: { 13: 1 },
+    }),
+    (Runner.events = {
+      ANIM_END: "webkitAnimationEnd",
+      CLICK: "click",
+      KEYDOWN: "keydown",
+      KEYUP: "keyup",
+      POINTERDOWN: "pointerdown",
+      POINTERUP: "pointerup",
+      RESIZE: "resize",
+      TOUCHEND: "touchend",
+      TOUCHSTART: "touchstart",
+      VISIBILITY: "visibilitychange",
+      BLUR: "blur",
+      FOCUS: "focus",
+      LOAD: "load",
+      GAMEPADCONNECTED: "gamepadconnected",
+    }),
+    (Runner.prototype = {
+      initAltGameType() {
+        GAME_TYPE.length > 0 &&
+        (this.gameType = "");
+      },
+      updateConfigSetting(t, e) {
+        if (t in this.config && void 0 !== e)
+          switch (((this.config[t] = e), t)) {
+            case "GRAVITY":
+            case "MIN_JUMP_HEIGHT":
+            case "SPEED_DROP_COEFFICIENT":
+              this.tRex.config[t] = e;
+              break;
+            case "INITIAL_JUMP_VELOCITY":
+              this.tRex.setJumpVelocity(e);
+              break;
+            case "SPEED":
+              this.setSpeed(e);
+          }
+      },
+      loadImages() {
+        ((this.spriteDef = Runner.spriteDefinition.HDPI),
+          (Runner.imageSprite = document.createElement('img')),
+            (Runner.imageSprite.src = Math.random() > ALT_SPRITE_CHANCE
+                ? Runner.resources.sprite
+                : Runner.resources.spriteAlt),
+          (Runner.imageSprite.style.display = "none"),
+          (Runner.origImageSprite = Runner.imageSprite),
+        ((Runner.isAltGameModeEnabled = () => !1),
+          (this.altGameModeActive = !1)),
+          Runner.imageSprite.complete
+            ? this.init()
+            : Runner.imageSprite.addEventListener(
+              Runner.events.LOAD,
+              this.init.bind(this),
+            ));
+      },
+      loadSounds() {
+        if (!IS_IOS) {
+          this.audioContext = new AudioContext();
+          for (const e in Runner.sounds) {
+            let i = Runner.resources.sound[Runner.sounds[e]];
+            const s = decodeBase64ToArrayBuffer(
+              (i = i.substr(i.indexOf(",") + 1)),
+            );
+            this.audioContext.decodeAudioData(
+              s,
+              function (t, e) {
+                this.soundFx[t] = e;
+              }.bind(this, e),
+            );
+          }
+        }
+      },
+      setSpeed(t) {
+        const e = t || this.currentSpeed;
+        if (this.dimensions.WIDTH < 600) {
+          const t = Runner.slowDown
+            ? e
+            : ((e * this.dimensions.WIDTH) / 600) *
+            this.config.MOBILE_SPEED_COEFFICIENT;
+          this.currentSpeed = t > e ? e : t;
+        } else t && (this.currentSpeed = t);
+      },
+      init() {
+        (this.adjustDimensions(),
+          this.setSpeed());
+        ((this.containerEl = document.createElement("div")),
+          Object.assign(this.containerEl.style, {
+            margin: '0 auto',
+            maxWidth: '600px',
+          }),
+          this.containerEl.setAttribute(
+            "role",
+            IS_MOBILE ? "button" : "application",
+          ),
+          this.containerEl.setAttribute("tabindex", "0"),
+          (this.canvas = createCanvas(
+            this.containerEl,
+            this.dimensions.WIDTH,
+            this.dimensions.HEIGHT,
+          )),
+          (this.generatedSoundFx = new GeneratedSoundFx()),
+          (this.canvasCtx = this.canvas.getContext("2d")),
+          (this.canvasCtx.fillStyle = "#f7f7f7"),
+          this.canvasCtx.fill(),
+          Runner.updateCanvasScaling(this.canvas),
+          (this.horizon = new Horizon(
+            this.canvas,
+            this.spriteDef,
+            this.dimensions,
+            this.config.GAP_COEFFICIENT,
+          )),
+          (this.distanceMeter = new DistanceMeter(
+            this.canvas,
+            this.spriteDef.TEXT_SPRITE,
+            this.dimensions.WIDTH,
+          )),
+          (this.tRex = new Trex(this.canvas, this.spriteDef.TREX)),
+          this.outerContainerEl.appendChild(this.containerEl),
+          this.startListening(),
+          this.update(),
+          window.addEventListener(
+            Runner.events.RESIZE,
+            this.debounceResize.bind(this),
+          ));
+        const e = window.matchMedia("(prefers-color-scheme: dark)");
+        ((this.isDarkMode = e && e.matches),
+          e.addListener((t) => {
+            this.isDarkMode = t.matches;
+          }));
+      },
+      createTouchController() {
+        ((this.touchController = document.createElement("div")),
+          (Object.assign(this.touchController.style, {
+            height: '100vh',
+            left: '0',
+            position: 'absolute',
+            top: '0',
+            width: '100vw',
+            zIndex: '9',
+          })),
+          this.touchController.addEventListener(
+            Runner.events.TOUCHSTART,
+            this,
+          ),
+          this.touchController.addEventListener(
+            Runner.events.TOUCHEND,
+            this,
+          ),
+          this.outerContainerEl.appendChild(this.touchController));
+      },
+      debounceResize() {
+        this.resizeTimerId_ ||
+        (this.resizeTimerId_ = setInterval(
+          this.adjustDimensions.bind(this),
+          250,
+        ));
+      },
+      adjustDimensions() {
+        (clearInterval(this.resizeTimerId_), (this.resizeTimerId_ = null));
+        const t = window.getComputedStyle(this.outerContainerEl),
+          e = Number(t.paddingLeft.substr(0, t.paddingLeft.length - 2));
+        const nd = Math.min(Runner.defaultDimensions.WIDTH, this.outerContainerEl.offsetWidth - 2 * e);
+        if (nd === this.dimensions.WIDTH) return;
+        (this.dimensions.WIDTH = nd,
+        this.canvas &&
+        ((this.canvas.width = this.dimensions.WIDTH),
+          (this.canvas.height = this.dimensions.HEIGHT),
+          Runner.updateCanvasScaling(this.canvas),
+          this.distanceMeter.calcXPos(this.dimensions.WIDTH),
+          this.clearCanvas(),
+          this.horizon.update(0, 0, !0),
+          this.tRex.update(0),
+          this.playing || this.crashed || this.paused
+            ? (this.distanceMeter.update(0, Math.ceil(this.distanceRan)),
+              this.stop())
+            : this.tRex.draw(0, 0),
+        this.crashed &&
+        this.gameOverPanel &&
+        (this.gameOverPanel.updateDimensions(this.dimensions.WIDTH),
+          this.gameOverPanel.draw(this.altGameModeActive, this.tRex))));
+      },
+      playIntro() {
+        if (this.activated || this.crashed) this.crashed && this.restart();
+        else {
+          ((this.playingIntro = !0), (this.tRex.playingIntro = !0));
+          (this.setPlayStatus(!0),
+            (this.activated = !0),
+            this.startGame());
+        }
+      },
+      startGame() {
+        ((this.runningTime = 0),
+          (this.playingIntro = !1),
+          (this.tRex.playingIntro = !1),
+          this.playCount++,
+          this.generatedSoundFx.background(),
+        Runner.audioCues &&
+          document.addEventListener(
+            Runner.events.VISIBILITY,
+            this.onVisibilityChange.bind(this),
+          ),
+          window.addEventListener(
+            Runner.events.BLUR,
+            this.onVisibilityChange.bind(this),
+          ),
+          window.addEventListener(
+            Runner.events.FOCUS,
+            this.onVisibilityChange.bind(this),
+          ));
+      },
+      clearCanvas() {
+        this.canvasCtx.clearRect(
+          0,
+          0,
+          this.dimensions.WIDTH,
+          this.dimensions.HEIGHT,
+        );
+      },
+      isCanvasInView() {
+        return (
+          this.containerEl.getBoundingClientRect().top >
+          Runner.config.CANVAS_IN_VIEW_OFFSET
+        );
+      },
+      enableAltGameMode() {
+        ((Runner.imageSprite = Runner.altGameImageSprite),
+          (Runner.spriteDefinition =
+            Runner.spriteDefinitionByType[Runner.gameType]),
+          (this.spriteDef = IS_HIDPI
+            ? Runner.spriteDefinition.HDPI
+            : Runner.spriteDefinition.LDPI),
+          (this.altGameModeActive = !0),
+          this.tRex.enableAltGameMode(this.spriteDef.TREX),
+          this.horizon.enableAltGameMode(this.spriteDef),
+          this.generatedSoundFx.background());
+      },
+      update() {
+        this.updatePending = !1;
+        const t = getTimeStamp();
+        let e = t - (this.time || t);
+        let re = e;
+        if (
+          (this.altGameModeFlashTimer < 0 ||
+          0 === this.altGameModeFlashTimer
+            ? ((this.altGameModeFlashTimer = null),
+              this.tRex.setFlashing(!1),
+              this.enableAltGameMode())
+            : this.altGameModeFlashTimer > 0 &&
+            ((this.altGameModeFlashTimer -= e),
+              this.tRex.update(e),
+              (e = 0)),
+            (this.time = t))
+        ) {
+          (this.clearCanvas(),
+            this.altGameModeActive &&
+            this.fadeInTimer <= this.config.FADE_DURATION
+              ? ((this.fadeInTimer += e / 1e3),
+                (this.canvasCtx.globalAlpha = this.fadeInTimer))
+              : (this.canvasCtx.globalAlpha = 1),
+          this.tRex.jumping && this.tRex.updateJump(e),
+            (this.runningTime += e));
+          const t = this.runningTime > this.config.CLEAR_TIME;
+          if (
+            (1 !== this.tRex.jumpCount ||
+            this.playingIntro ||
+            this.playIntro(),
+              this.playingIntro)
+          )
+            this.horizon.update(0, this.currentSpeed, t);
+          else if (!this.crashed) {
+            const i = this.isDarkMode ^ this.inverted;
+            ((e = this.activated ? e : 0), this.horizon.update(this.activated ? e : 0, this.currentSpeed, t, i, re));
+          }
+          let i =
+            t && checkForCollision(this.horizon.obstacles[0], this.tRex);
+          if (Runner.audioCues && t) {
+            const t =
+              "COLLECTABLE" != this.horizon.obstacles[0].typeConfig.type;
+            if (!this.horizon.obstacles[0].jumpAlerted) {
+              const e = Runner.isMobileMouseInput
+                  ? Runner.config.AUDIOCUE_PROXIMITY_THRESHOLD_MOBILE_A11Y
+                  : Runner.config.AUDIOCUE_PROXIMITY_THRESHOLD,
+                i =
+                  e +
+                  e * Math.log10(this.currentSpeed / Runner.config.SPEED);
+              this.horizon.obstacles[0].xPos < i &&
+              (t && this.generatedSoundFx.jump(),
+                (this.horizon.obstacles[0].jumpAlerted = !0));
+            }
+          }
+          (Runner.isAltGameModeEnabled() &&
+          i &&
+          "COLLECTABLE" == this.horizon.obstacles[0].typeConfig.type &&
+          (this.horizon.removeFirstObstacle(),
+            this.tRex.setFlashing(!0),
+            (i = !1),
+            (this.altGameModeFlashTimer = this.config.FLASH_DURATION),
+            (this.runningTime = 0),
+            this.generatedSoundFx.collect()),
+            i
+              ? this.gameOver()
+              : ((this.distanceRan +=
+                (this.currentSpeed * e) / this.msPerFrame),
+              this.currentSpeed < this.config.MAX_SPEED &&
+              (this.currentSpeed += this.config.ACCELERATION)));
+          const s = this.distanceMeter.update(
+            e,
+            Math.ceil(this.distanceRan),
+          );
+          if (
+            (!Runner.audioCues && s && this.playSound(this.soundFx.SCORE),
+              !Runner.isAltGameModeEnabled())
+          )
+            if (this.invertTimer > this.config.INVERT_FADE_DURATION)
+              ((this.invertTimer = 0),
+                (this.invertTrigger = !1),
+                this.invert(!1));
+            else if (this.invertTimer) this.invertTimer += e;
+            else {
+              const t = this.distanceMeter.getActualDistance(
+                Math.ceil(this.distanceRan),
+              );
+              t > 0 &&
+              ((this.invertTrigger = !(t % this.config.INVERT_DISTANCE)),
+              this.invertTrigger &&
+              0 === this.invertTimer &&
+              ((this.invertTimer += e), this.invert(!1)));
+            }
+        }
+        (this.playing ||
+          !this.activated) &&
+        (this.tRex.update(re), this.scheduleNextUpdate());
+      },
+      handleEvent(t) {
+        return function (e, i) {
+          switch (e) {
+            case i.KEYDOWN:
+            case i.TOUCHSTART:
+            case i.POINTERDOWN:
+              this.onKeyDown(t);
+              break;
+            case i.KEYUP:
+            case i.TOUCHEND:
+            case i.POINTERUP:
+              this.onKeyUp(t);
+              break;
+            case i.GAMEPADCONNECTED:
+              this.onGamepadConnected(t);
+          }
+        }.bind(this)(t.type, Runner.events);
+      },
+      handleCanvasKeyPress(t) {
+        this.activated || Runner.audioCues
+          ? t.keyCode &&
+          Runner.keycodes.JUMP[t.keyCode] &&
+          this.onKeyDown(t)
+          : (this.toggleSpeed(),
+            (Runner.audioCues = !0),
+            this.generatedSoundFx.init(),
+            (Runner.generatedSoundFx = this.generatedSoundFx),
+            (Runner.config.CLEAR_TIME *= 1.2));
+      },
+      preventScrolling(t) {
+        32 === t.keyCode && t.preventDefault();
+      },
+      toggleSpeed() {
+      },
+      startListening() {
+        (this.containerEl.addEventListener(
+          Runner.events.KEYDOWN,
+          this.handleCanvasKeyPress.bind(this),
+        ),
+          this.canvas.addEventListener(
+            Runner.events.KEYDOWN,
+            this.preventScrolling.bind(this),
+          ),
+          this.canvas.addEventListener(
+            Runner.events.KEYUP,
+            this.preventScrolling.bind(this),
+          ),
+          document.addEventListener(Runner.events.KEYDOWN, this),
+          document.addEventListener(Runner.events.KEYUP, this),
+          this.containerEl.addEventListener(Runner.events.TOUCHSTART, this),
+          document.addEventListener(Runner.events.POINTERDOWN, this),
+          document.addEventListener(Runner.events.POINTERUP, this));
+      },
+      stopListening() {
+        (document.removeEventListener(Runner.events.KEYDOWN, this),
+          document.removeEventListener(Runner.events.KEYUP, this),
+        this.touchController &&
+        (this.touchController.removeEventListener(
+          Runner.events.TOUCHSTART,
+          this,
+        ),
+          this.touchController.removeEventListener(
+            Runner.events.TOUCHEND,
+            this,
+          )),
+          this.containerEl.removeEventListener(
+            Runner.events.TOUCHSTART,
+            this,
+          ),
+          document.removeEventListener(Runner.events.POINTERDOWN, this),
+          document.removeEventListener(Runner.events.POINTERUP, this));
+      },
+      onKeyDown(t) {
+        if (
+          (IS_MOBILE && this.playing && t.preventDefault(),
+            this.isCanvasInView())
+        ) {
+          if (!this.crashed && !this.paused) {
+            const e =
+              (IS_MOBILE &&
+                t.type === Runner.events.POINTERDOWN &&
+                "mouse" == t.pointerType &&
+                t.target == this.containerEl) ||
+              (IS_IOS &&
+                "touch" == t.pointerType &&
+                document.activeElement == this.containerEl);
+            Runner.keycodes.JUMP[t.keyCode] ||
+            t.type === Runner.events.TOUCHSTART ||
+            e ||
+            (Runner.keycodes.DUCK[t.keyCode] && this.altGameModeActive)
+              ? (t.preventDefault(),
+              this.playing ||
+              (this.touchController ||
+              t.type !== Runner.events.TOUCHSTART ||
+              this.createTouchController(),
+              e && this.handleCanvasKeyPress(t),
+                this.loadSounds(),
+                this.setPlayStatus(!0),
+                this.update(),
+              window.errorPageController &&
+              errorPageController.trackEasterEgg()),
+              this.tRex.jumping ||
+              this.tRex.ducking ||
+              (Runner.audioCues
+                ? this.generatedSoundFx.cancelFootSteps()
+                : this.playSound(this.soundFx.BUTTON_PRESS),
+                this.tRex.startJump(this.currentSpeed)))
+              : !this.altGameModeActive &&
+              this.playing &&
+              Runner.keycodes.DUCK[t.keyCode] &&
+              (t.preventDefault(),
+                this.tRex.jumping
+                  ? this.tRex.setSpeedDrop()
+                  : this.tRex.jumping ||
+                  this.tRex.ducking ||
+                  this.tRex.setDuck(!0));
+          }
+        }
+      },
+      onKeyUp(t) {
+        const e = String(t.keyCode),
+          i =
+            Runner.keycodes.JUMP[e] ||
+            t.type === Runner.events.TOUCHEND ||
+            t.type === Runner.events.POINTERUP;
+        if (this.isRunning() && i) this.tRex.endJump();
+        else if (Runner.keycodes.DUCK[e])
+          ((this.tRex.speedDrop = !1), this.tRex.setDuck(!1));
+        else if (this.crashed) {
+          const i = getTimeStamp() - this.time;
+          this.isCanvasInView() &&
+          (Runner.keycodes.RESTART[e] ||
+            this.isLeftClickOnCanvas(t) ||
+            (i >= this.config.GAMEOVER_CLEAR_TIME &&
+              Runner.keycodes.JUMP[e])) &&
+          this.handleGameOverClicks(t);
+        } else this.paused && i && (this.tRex.reset(), this.play());
+      },
+      onGamepadConnected(t) {
+        this.pollingGamepads || this.pollGamepadState();
+      },
+      pollGamepadState() {
+        const t = navigator.getGamepads();
+        (this.pollActiveGamepad(t),
+          (this.pollingGamepads = !0),
+          requestAnimationFrame(this.pollGamepadState.bind(this)));
+      },
+      pollForActiveGamepad(t) {
+        for (let e = 0; e < t.length; ++e)
+          if (t[e] && t[e].buttons.length > 0 && t[e].buttons[0].pressed)
+            return (
+              (this.gamepadIndex = e),
+                void this.pollActiveGamepad(t)
+            );
+      },
+      pollActiveGamepad(t) {
+        if (void 0 === this.gamepadIndex)
+          return void this.pollForActiveGamepad(t);
+        const e = t[this.gamepadIndex];
+        if (!e)
+          return (
+            (this.gamepadIndex = void 0),
+              void this.pollForActiveGamepad(t)
+          );
+        (this.pollGamepadButton(e, 0, 38),
+        e.buttons.length >= 2 && this.pollGamepadButton(e, 1, 40),
+        e.buttons.length >= 10 && this.pollGamepadButton(e, 9, 13),
+          (this.previousGamepad = e));
+      },
+      pollGamepadButton(t, e, i) {
+        const s = t.buttons[e].pressed;
+        let n = !1;
+        if (
+          (this.previousGamepad &&
+          (n = this.previousGamepad.buttons[e].pressed),
+          s !== n)
+        ) {
+          const t = new KeyboardEvent(
+            s ? Runner.events.KEYDOWN : Runner.events.KEYUP,
+            { keyCode: i },
+          );
+          document.dispatchEvent(t);
+        }
+      },
+      handleGameOverClicks(t) {
+        (t.preventDefault(),
+          this.distanceMeter.hasClickedOnHighScore(t) && this.highestScore
+            ? this.distanceMeter.isHighScoreFlashing()
+              ? (this.saveHighScore(0, !0),
+                this.distanceMeter.resetHighScore())
+              : this.distanceMeter.startHighScoreFlashing()
+            : (this.distanceMeter.cancelHighScoreFlashing(),
+              this.restart()));
+      },
+      isLeftClickOnCanvas(t) {
+        return (
+          null != t.button &&
+          t.button < 2 &&
+          t.type === Runner.events.POINTERUP &&
+          (t.target === this.canvas ||
+            (IS_MOBILE &&
+              Runner.audioCues &&
+              t.target === this.containerEl))
+        );
+      },
+      scheduleNextUpdate() {
+        this.updatePending ||
+        ((this.updatePending = !0),
+          (this.raqId = requestAnimationFrame(this.update.bind(this))));
+      },
+      isRunning() {
+        return !!this.raqId;
+      },
+      initializeHighScore(t) {
+        ((this.syncHighestScore = !0),
+          (t = Math.ceil(t)) < this.highestScore
+            ? window.errorPageController &&
+            errorPageController.updateEasterEggHighScore(
+              this.highestScore,
+            )
+            : ((this.highestScore = t),
+              this.distanceMeter.setHighScore(this.highestScore)));
+      },
+      saveHighScore(t, e) {
+        ((this.highestScore = Math.ceil(t)),
+          this.distanceMeter.setHighScore(this.highestScore),
+        this.syncHighestScore &&
+        window.errorPageController &&
+        (e
+          ? errorPageController.resetEasterEggHighScore()
+          : errorPageController.updateEasterEggHighScore(
+            this.highestScore,
+          )));
+      },
+      gameOver() {
+        if (
+          (this.playSound(this.soundFx.HIT),
+            vibrate(200),
+            this.stop(),
+            (this.crashed = !0),
+            (this.distanceMeter.achievement = !1),
+            this.tRex.update(100, Trex.status.CRASHED),
+            !this.gameOverPanel)
+        ) {
+          const t = IS_HIDPI
+            ? Runner.spriteDefinitionByType.original.HDPI
+            : Runner.spriteDefinitionByType.original.LDPI;
+          this.canvas &&
+          (Runner.isAltGameModeEnabled
+            ? (this.gameOverPanel = new GameOverPanel(
+              this.canvas,
+              t.TEXT_SPRITE,
+              t.RESTART,
+              this.dimensions,
+              t.ALT_GAME_END,
+              this.altGameModeActive,
+            ))
+            : (this.gameOverPanel = new GameOverPanel(
+              this.canvas,
+              t.TEXT_SPRITE,
+              t.RESTART,
+              this.dimensions,
+            )));
+        }
+        (this.gameOverPanel.draw(this.altGameModeActive, this.tRex),
+        this.distanceRan > this.highestScore &&
+        this.saveHighScore(this.distanceRan),
+          (this.time = getTimeStamp()),
+        Runner.audioCues &&
+        (this.generatedSoundFx.stopAll()));
+      },
+      stop() {
+        (this.setPlayStatus(!1),
+          (this.paused = !0),
+          cancelAnimationFrame(this.raqId),
+          (this.raqId = 0),
+          this.generatedSoundFx.stopAll());
+      },
+      play() {
+        this.crashed ||
+        (this.setPlayStatus(!0),
+          (this.paused = !1),
+          this.tRex.update(0, Trex.status.RUNNING),
+          (this.time = getTimeStamp()),
+          this.update(),
+          this.generatedSoundFx.background());
+      },
+      restart() {
+        this.raqId ||
+        (this.playCount++,
+          (this.runningTime = 0),
+          this.setPlayStatus(!0),
+          this.toggleSpeed(),
+          (this.paused = !1),
+          (this.crashed = !1),
+          (this.distanceRan = 0),
+          this.setSpeed(this.config.SPEED),
+          (this.time = getTimeStamp()),
+          this.clearCanvas(),
+          this.distanceMeter.reset(),
+          this.horizon.reset(),
+          this.tRex.reset(),
+          this.playSound(this.soundFx.BUTTON_PRESS),
+          this.invert(!0),
+          (this.flashTimer = null),
+          this.update(),
+          this.gameOverPanel.reset(),
+          this.generatedSoundFx.background());
+      },
+      setPlayStatus(t) {
+        (this.touchController &&
+        (this.touchController.hidden = !t),
+          (this.playing = t));
+      },
+      onVisibilityChange(t) {
+        document.hidden ||
+        document.webkitHidden ||
+        "blur" === t.type ||
+        "visible" !== document.visibilityState
+          ? this.stop()
+          : this.crashed || (this.tRex.reset(), this.play());
+      },
+      playSound(t) {
+        if (t) {
+          const e = this.audioContext.createBufferSource();
+          ((e.buffer = t),
+            e.connect(this.audioContext.destination),
+            e.start(0));
+        }
+      },
+      invert(t) {
+        // const e = document.firstElementChild;
+        // t
+        //   ? (e.classList.toggle(Runner.classes.INVERTED, !1),
+        //     (this.invertTimer = 0),
+        //     (this.inverted = !1))
+        //   : (this.inverted = e.classList.toggle(
+        //     Runner.classes.INVERTED,
+        //     this.invertTrigger,
+        //   ));
+      },
+    }),
+    (Runner.updateCanvasScaling = function (t, e, i) {
+      const s = t.getContext("2d"),
+        n = Math.floor(window.devicePixelRatio) || 1,
+        a = Math.floor(s.webkitBackingStorePixelRatio) || 1,
+        o = n / a;
+      if (n !== a) {
+        const n = e || t.width,
+          a = i || t.height;
+        return (
+          (t.width = n * o),
+            (t.height = a * o),
+            (t.style.width = n + "px"),
+            (t.style.height = a + "px"),
+            s.scale(o, o),
+            !0
+        );
+      }
+      return (
+        1 === n &&
+        ((t.style.width = t.width + "px"),
+          (t.style.height = t.height + "px")),
+          !1
+      );
+    }),
+    (Runner.isAltGameModeEnabled = function () {
+      return false;
+    }),
+    (GeneratedSoundFx.prototype = {
+      init() {
+        ((this.audioCues = !0),
+        this.context ||
+        ((this.context = window.webkitAudioContext
+          ? new webkitAudioContext()
+          : new AudioContext()),
+        IS_IOS &&
+        ((this.context.onstatechange = function () {
+          "running" != this.context.state && this.context.resume();
+        }.bind(this)),
+          this.context.resume()),
+          (this.panner = this.context.createStereoPanner
+            ? this.context.createStereoPanner()
+            : null)));
+      },
+      stopAll() {
+        this.cancelFootSteps();
+      },
+      playNote(t, e, i, s, n) {
+        const a = this.context.createOscillator(),
+          o = this.context.createOscillator(),
+          h = this.context.createGain();
+        ((a.type = "triangle"),
+          (o.type = "triangle"),
+          (h.gain.value = 0.1),
+          this.panner
+            ? ((this.panner.pan.value = n || 0),
+              a.connect(h).connect(this.panner),
+              o.connect(h).connect(this.panner),
+              this.panner.connect(this.context.destination))
+            : (a.connect(h),
+              o.connect(h),
+              h.connect(this.context.destination)),
+          (a.frequency.value = t + 1),
+          (o.frequency.value = t - 2),
+          h.gain.setValueAtTime(s || 0.01, e + i - 0.05),
+          h.gain.linearRampToValueAtTime(1e-5, e + i),
+          a.start(e),
+          o.start(e),
+          a.stop(e + i),
+          o.stop(e + i));
+      },
+      background() {
+        if (this.audioCues) {
+          const t = this.context.currentTime;
+          (this.playNote(493.883, t, 0.116),
+            this.playNote(659.255, t + 0.116, 0.232),
+            this.loopFootSteps());
+        }
+      },
+      loopFootSteps() {
+        this.audioCues &&
+        !this.bgSoundIntervalId &&
+        (this.bgSoundIntervalId = setInterval(
+          function () {
+            (this.playNote(73.42, this.context.currentTime, 0.05, 0.16),
+              this.playNote(
+                69.3,
+                this.context.currentTime + 0.116,
+                0.116,
+                0.16,
+              ));
+          }.bind(this),
+          280,
+        ));
+      },
+      cancelFootSteps() {
+        this.audioCues &&
+        this.bgSoundIntervalId &&
+        (clearInterval(this.bgSoundIntervalId),
+          (this.bgSoundIntervalId = null),
+          this.playNote(103.83, this.context.currentTime, 0.232, 0.02),
+          this.playNote(
+            116.54,
+            this.context.currentTime + 0.116,
+            0.232,
+            0.02,
+          ));
+      },
+      collect() {
+        if (this.audioCues) {
+          this.cancelFootSteps();
+          const t = this.context.currentTime;
+          (this.playNote(830.61, t, 0.116),
+            this.playNote(1318.51, t + 0.116, 0.232));
+        }
+      },
+      jump() {
+        if (this.audioCues) {
+          const t = this.context.currentTime;
+          (this.playNote(659.25, t, 0.116, 0.3, -0.6),
+            this.playNote(880, t + 0.116, 0.232, 0.3, -0.6));
+        }
+      },
+    }),
+    (GameOverPanel.RESTART_ANIM_DURATION = 875),
+    (GameOverPanel.LOGO_PAUSE_DURATION = 875),
+    (GameOverPanel.FLASH_ITERATIONS = 5),
+    (GameOverPanel.animConfig = {
+      frames: [0, 36, 72, 108, 144, 180, 216, 252],
+      msPerFrame: GameOverPanel.RESTART_ANIM_DURATION / 8,
+    }),
+    (GameOverPanel.dimensions = {
+      TEXT_X: 0,
+      TEXT_Y: 13,
+      TEXT_WIDTH: 191,
+      TEXT_HEIGHT: 11,
+      RESTART_WIDTH: 36,
+      RESTART_HEIGHT: 32,
+    }),
+    (GameOverPanel.prototype = {
+      updateDimensions(t, e) {
+        ((this.canvasDimensions.WIDTH = t),
+        e && (this.canvasDimensions.HEIGHT = e),
+          (this.currentFrame = GameOverPanel.animConfig.frames.length - 1));
+      },
+      drawGameOverText(t, e) {
+        const i = this.canvasDimensions.WIDTH / 2;
+        let s = t.TEXT_X,
+          n = t.TEXT_Y,
+          a = t.TEXT_WIDTH,
+          o = t.TEXT_HEIGHT;
+        const h = Math.round(i - t.TEXT_WIDTH / 2),
+          r = Math.round((this.canvasDimensions.HEIGHT - 25) / 3),
+          c = t.TEXT_WIDTH,
+          l = t.TEXT_HEIGHT;
+        (IS_HIDPI && ((n *= 2), (s *= 2), (a *= 2), (o *= 2)),
+        e || ((s += this.textImgPos.x), (n += this.textImgPos.y)));
+        const d = e ? Runner.altCommonImageSprite : Runner.origImageSprite;
+        (this.canvasCtx.save(),
+        IS_RTL &&
+        (this.canvasCtx.translate(this.canvasDimensions.WIDTH, 0),
+          this.canvasCtx.scale(-1, 1)),
+          this.canvasCtx.drawImage(d, s, n, a, o, h, r, c, l),
+          this.canvasCtx.restore());
+      },
+      drawAltGameElements(t) {
+        if (
+          this.altGameModeActive &&
+          Runner.spriteDefinition.ALT_GAME_END_CONFIG
+        ) {
+          const e = Runner.spriteDefinition.ALT_GAME_END_CONFIG;
+          let i = e.WIDTH,
+            s = e.HEIGHT;
+          const n = t.xPos + e.X_OFFSET,
+            a = t.yPos + e.Y_OFFSET;
+          (IS_HIDPI && ((i *= 2), (s *= 2)),
+            this.canvasCtx.drawImage(
+              Runner.altCommonImageSprite,
+              this.altGameEndImgPos.x,
+              this.altGameEndImgPos.y,
+              i,
+              s,
+              n,
+              a,
+              e.WIDTH,
+              e.HEIGHT,
+            ));
+        }
+      },
+      drawRestartButton() {
+        const t = GameOverPanel.dimensions;
+        let e = GameOverPanel.animConfig.frames[this.currentFrame],
+          i = t.RESTART_WIDTH,
+          s = t.RESTART_HEIGHT;
+        const n = this.canvasDimensions.WIDTH / 2 - t.RESTART_WIDTH / 2,
+          a = this.canvasDimensions.HEIGHT / 2;
+        (IS_HIDPI && ((i *= 2), (s *= 2), (e *= 2)),
+          this.canvasCtx.save(),
+        IS_RTL &&
+        (this.canvasCtx.translate(this.canvasDimensions.WIDTH, 0),
+          this.canvasCtx.scale(-1, 1)),
+          this.canvasCtx.drawImage(
+            Runner.origImageSprite,
+            this.restartImgPos.x + e,
+            this.restartImgPos.y,
+            i,
+            s,
+            n,
+            a,
+            t.RESTART_WIDTH,
+            t.RESTART_HEIGHT,
+          ),
+          this.canvasCtx.restore());
+      },
+      draw(t, e) {
+        (t && (this.altGameModeActive = t),
+          this.drawGameOverText(GameOverPanel.dimensions, !1),
+          this.drawRestartButton(),
+          this.drawAltGameElements(e),
+          this.update());
+      },
+      update() {
+        const t = getTimeStamp(),
+          e = t - (this.frameTimeStamp || t);
+        if (
+          ((this.frameTimeStamp = t),
+            (this.animTimer += e),
+            (this.flashTimer += e),
+          0 == this.currentFrame &&
+          this.animTimer > GameOverPanel.LOGO_PAUSE_DURATION)
+        )
+          ((this.animTimer = 0),
+            this.currentFrame++,
+            this.drawRestartButton());
+        else if (
+          this.currentFrame > 0 &&
+          this.currentFrame < GameOverPanel.animConfig.frames.length
+        )
+          this.animTimer >= GameOverPanel.animConfig.msPerFrame &&
+          (this.currentFrame++, this.drawRestartButton());
+        else if (
+          !this.altGameModeActive &&
+          this.currentFrame == GameOverPanel.animConfig.frames.length
+        )
+          return void this.reset();
+        if (
+          this.altGameModeActive &&
+          Runner.spriteDefinitionByType.original.ALT_GAME_OVER_TEXT_CONFIG
+        ) {
+          const t =
+            Runner.spriteDefinitionByType.original
+              .ALT_GAME_OVER_TEXT_CONFIG;
+          if (
+            this.flashCounter < GameOverPanel.FLASH_ITERATIONS &&
+            this.flashTimer > t.FLASH_DURATION
+          )
+            ((this.flashTimer = 0),
+              (this.originalText = !this.originalText),
+              this.clearGameOverTextBounds(),
+              this.originalText
+                ? (this.drawGameOverText(GameOverPanel.dimensions, !1),
+                  this.flashCounter++)
+                : this.drawGameOverText(t, !0));
+          else if (this.flashCounter >= GameOverPanel.FLASH_ITERATIONS)
+            return void this.reset();
+        }
+        this.gameOverRafId = requestAnimationFrame(this.update.bind(this));
+      },
+      clearGameOverTextBounds() {
+        (this.canvasCtx.save(),
+          this.canvasCtx.clearRect(
+            Math.round(
+              this.canvasDimensions.WIDTH / 2 -
+              GameOverPanel.dimensions.TEXT_WIDTH / 2,
+            ),
+            Math.round((this.canvasDimensions.HEIGHT - 25) / 3),
+            GameOverPanel.dimensions.TEXT_WIDTH,
+            GameOverPanel.dimensions.TEXT_HEIGHT + 4,
+          ),
+          this.canvasCtx.restore());
+      },
+      reset() {
+        (this.gameOverRafId &&
+        (cancelAnimationFrame(this.gameOverRafId),
+          (this.gameOverRafId = null)),
+          (this.animTimer = 0),
+          (this.frameTimeStamp = 0),
+          (this.currentFrame = 0),
+          (this.flashTimer = 0),
+          (this.flashCounter = 0),
+          (this.originalText = !0));
+      },
+    }),
+    (Obstacle.MAX_GAP_COEFFICIENT = 1.5),
+    (Obstacle.MAX_OBSTACLE_LENGTH = 3),
+    (Obstacle.prototype = {
+      init(t) {
+        if (
+          (this.cloneCollisionBoxes(),
+          this.size > 1 &&
+          this.typeConfig.multipleSpeed > t &&
+          (this.size = 1),
+            (this.width = this.typeConfig.width * this.size),
+            Array.isArray(this.typeConfig.yPos))
+        ) {
+          const t = IS_MOBILE
+            ? this.typeConfig.yPosMobile
+            : this.typeConfig.yPos;
+          this.yPos = t[getRandomNum(0, t.length - 1)];
+        } else this.yPos = this.typeConfig.yPos;
+        (this.draw(),
+        this.size > 1 &&
+        ((this.collisionBoxes[1].width =
+          this.width -
+          this.collisionBoxes[0].width -
+          this.collisionBoxes[2].width),
+          (this.collisionBoxes[2].x =
+            this.width - this.collisionBoxes[2].width)),
+        this.typeConfig.speedOffset &&
+        (this.speedOffset =
+          Math.random() > 0.5
+            ? this.typeConfig.speedOffset
+            : -this.typeConfig.speedOffset),
+          (this.gap = this.getGap(this.gapCoefficient, t)),
+        Runner.audioCues && (this.gap *= 2));
+      },
+      draw() {
+        let t = this.typeConfig.width,
+          e = this.typeConfig.height;
+        IS_HIDPI && ((t *= 2), (e *= 2));
+        let i = t * this.size * (0.5 * (this.size - 1)) + this.spritePos.x;
+        (this.currentFrame > 0 && (i += t * this.currentFrame),
+          this.canvasCtx.drawImage(
+            this.imageSprite,
+            i,
+            this.spritePos.y,
+            t * this.size,
+            e,
+            this.xPos,
+            this.yPos,
+            this.typeConfig.width * this.size,
+            this.typeConfig.height,
+          ));
+      },
+      update(t, e) {
+        this.remove ||
+        (this.typeConfig.speedOffset && (e += this.speedOffset),
+          (this.xPos -= Math.floor(((e * FPS) / 1e3) * t)),
+        this.typeConfig.numFrames &&
+        ((this.timer += t),
+        this.timer >= this.typeConfig.frameRate &&
+        ((this.currentFrame =
+          this.currentFrame === this.typeConfig.numFrames - 1
+            ? 0
+            : this.currentFrame + 1),
+          (this.timer = 0))),
+          this.draw(),
+        this.isVisible() || (this.remove = !0));
+      },
+      getGap(t, e) {
+        const i = Math.round(this.width * e + this.typeConfig.minGap * t);
+        return getRandomNum(
+          i,
+          Math.round(i * Obstacle.MAX_GAP_COEFFICIENT),
+        );
+      },
+      isVisible() {
+        return this.xPos + this.width > 0;
+      },
+      cloneCollisionBoxes() {
+        const t = this.typeConfig.collisionBoxes;
+        for (let e = t.length - 1; e >= 0; e--)
+          this.collisionBoxes[e] = new CollisionBox(
+            t[e].x,
+            t[e].y,
+            t[e].width,
+            t[e].height,
+          );
+      },
+    }),
+    (Trex.config = {
+      DROP_VELOCITY: -5,
+      FLASH_OFF: 175,
+      FLASH_ON: 100,
+      HEIGHT: 47,
+      HEIGHT_DUCK: 25,
+      INTRO_DURATION: 1500,
+      SPEED_DROP_COEFFICIENT: 3,
+      SPRITE_WIDTH: 262,
+      START_X_POS: 50,
+      WIDTH: 44,
+      WIDTH_DUCK: 59,
+    }),
+    (Trex.slowJumpConfig = {
+      GRAVITY: 0.25,
+      MAX_JUMP_HEIGHT: 50,
+      MIN_JUMP_HEIGHT: 45,
+      INITIAL_JUMP_VELOCITY: -20,
+    }),
+    (Trex.normalJumpConfig = {
+      GRAVITY: 0.6,
+      MAX_JUMP_HEIGHT: 30,
+      MIN_JUMP_HEIGHT: 30,
+      INITIAL_JUMP_VELOCITY: -10,
+    }),
+    (Trex.collisionBoxes = {
+      DUCKING: [new CollisionBox(1, 18, 55, 25)],
+      RUNNING: [
+        new CollisionBox(22, 0, 17, 16),
+        new CollisionBox(1, 18, 30, 9),
+        new CollisionBox(10, 35, 14, 8),
+        new CollisionBox(1, 24, 29, 5),
+        new CollisionBox(5, 30, 21, 4),
+        new CollisionBox(9, 34, 15, 4),
+      ],
+    }),
+    (Trex.status = {
+      CRASHED: "CRASHED",
+      DUCKING: "DUCKING",
+      JUMPING: "JUMPING",
+      RUNNING: "RUNNING",
+      WAITING: "WAITING",
+    }),
+    (Trex.BLINK_TIMING = 7e3),
+    (Trex.animFrames = {
+      WAITING: { frames: [44, 0], msPerFrame: 1e3 / 3 },
+      RUNNING: { frames: [88, 132], msPerFrame: 1e3 / 12 },
+      CRASHED: { frames: [220], msPerFrame: 1e3 / 60 },
+      JUMPING: { frames: [0], msPerFrame: 1e3 / 60 },
+      DUCKING: { frames: [264, 323], msPerFrame: 125 },
+    }),
+    (Trex.prototype = {
+      init() {
+        ((this.groundYPos =
+          Runner.defaultDimensions.HEIGHT -
+          this.config.HEIGHT -
+          Runner.config.BOTTOM_PAD),
+          (this.yPos = this.groundYPos),
+          (this.minJumpHeight =
+            this.groundYPos - this.config.MIN_JUMP_HEIGHT),
+          this.draw(0, 0),
+          this.update(0, Trex.status.RUNNING));
+      },
+      enableSlowConfig: function () {
+        const t = Runner.slowDown
+          ? Trex.slowJumpConfig
+          : Trex.normalJumpConfig;
+        ((Trex.config = Object.assign(Trex.config, t)),
+          this.adjustAltGameConfigForSlowSpeed());
+      },
+      enableAltGameMode: function (t) {
+        ((this.altGameModeEnabled = !0), (this.spritePos = t));
+        const e = Runner.spriteDefinition.TREX;
+        ((Trex.animFrames.RUNNING.frames = [e.RUNNING_1.x, e.RUNNING_2.x]),
+          (Trex.animFrames.CRASHED.frames = [e.CRASHED.x]),
+          "object" == typeof e.JUMPING.x
+            ? (Trex.animFrames.JUMPING.frames = e.JUMPING.x)
+            : (Trex.animFrames.JUMPING.frames = [e.JUMPING.x]),
+          (Trex.animFrames.DUCKING.frames = [e.RUNNING_1.x, e.RUNNING_2.x]),
+          (Trex.config.GRAVITY = e.GRAVITY || Trex.config.GRAVITY),
+          (Trex.config.HEIGHT = e.RUNNING_1.h),
+          (Trex.config.INITIAL_JUMP_VELOCITY = e.INITIAL_JUMP_VELOCITY),
+          (Trex.config.MAX_JUMP_HEIGHT = e.MAX_JUMP_HEIGHT),
+          (Trex.config.MIN_JUMP_HEIGHT = e.MIN_JUMP_HEIGHT),
+          (Trex.config.WIDTH = e.RUNNING_1.w),
+          (Trex.config.WIDTH_JUMP = e.JUMPING.w),
+          (Trex.config.INVERT_JUMP = e.INVERT_JUMP),
+          this.adjustAltGameConfigForSlowSpeed(e.GRAVITY),
+          (this.config = Trex.config),
+          (this.groundYPos =
+            Runner.defaultDimensions.HEIGHT -
+            this.config.HEIGHT -
+            Runner.spriteDefinition.BOTTOM_PAD),
+          (this.yPos = this.groundYPos),
+          this.reset());
+      },
+      adjustAltGameConfigForSlowSpeed: function (t) {
+        Runner.slowDown &&
+        (t && (Trex.config.GRAVITY = t / 1.5),
+          (Trex.config.MIN_JUMP_HEIGHT *= 1.5),
+          (Trex.config.MAX_JUMP_HEIGHT *= 1.5),
+          (Trex.config.INITIAL_JUMP_VELOCITY =
+            1.5 * Trex.config.INITIAL_JUMP_VELOCITY));
+      },
+      setFlashing: function (t) {
+        this.flashing = t;
+      },
+      setJumpVelocity(t) {
+        ((this.config.INITIAL_JUMP_VELOCITY = -t),
+          (this.config.DROP_VELOCITY = -t / 2));
+      },
+      update(t, e) {
+        ((this.timer += t),
+        e &&
+        ((this.status = e),
+          (this.currentFrame = 0),
+          (this.msPerFrame = Trex.animFrames[e].msPerFrame),
+          (this.currentAnimFrames = Trex.animFrames[e].frames),
+        e === Trex.status.WAITING &&
+        ((this.animStartTime = getTimeStamp()),
+          this.setBlinkDelay())),
+        this.playingIntro &&
+        this.xPos < this.config.START_X_POS &&
+        ((this.xPos += Math.round(
+          (this.config.START_X_POS / this.config.INTRO_DURATION) * t,
+        )),
+          (this.xInitialPos = this.xPos)),
+          this.status === Trex.status.WAITING
+            ? this.blink(getTimeStamp())
+            : this.draw(this.currentAnimFrames[this.currentFrame], 0),
+        !this.flashing &&
+        this.timer >= this.msPerFrame &&
+        ((this.currentFrame =
+          this.currentFrame == this.currentAnimFrames.length - 1
+            ? 0
+            : this.currentFrame + 1),
+          (this.timer = 0)),
+        this.altGameModeEnabled ||
+        (this.speedDrop &&
+          this.yPos === this.groundYPos &&
+          ((this.speedDrop = !1), this.setDuck(!0))));
+      },
+      draw(t, e) {
+        let i = t,
+          s = e,
+          n =
+            this.ducking && this.status !== Trex.status.CRASHED
+              ? this.config.WIDTH_DUCK
+              : this.config.WIDTH,
+          a = this.config.HEIGHT;
+        const o = a;
+        let h = Runner.spriteDefinition.TREX.JUMPING.xOffset;
+        (this.altGameModeEnabled &&
+        this.jumping &&
+        this.status !== Trex.status.CRASHED &&
+        (n = this.config.WIDTH_JUMP),
+        IS_HIDPI && ((i *= 2), (s *= 2), (n *= 2), (a *= 2), (h *= 2)),
+          (i += this.spritePos.x),
+          (s += this.spritePos.y),
+        this.flashing &&
+        (this.timer < this.config.FLASH_ON
+          ? (this.canvasCtx.globalAlpha = 0.5)
+          : this.timer > this.config.FLASH_OFF && (this.timer = 0)),
+          !this.altGameModeEnabled &&
+          this.ducking &&
+          this.status !== Trex.status.CRASHED
+            ? this.canvasCtx.drawImage(
+              Runner.imageSprite,
+              i,
+              s,
+              n,
+              a,
+              this.xPos,
+              this.yPos,
+              this.config.WIDTH_DUCK,
+              o,
+            )
+            : this.altGameModeEnabled &&
+            this.jumping &&
+            this.status !== Trex.status.CRASHED
+              ? this.canvasCtx.drawImage(
+                Runner.imageSprite,
+                i,
+                s,
+                n,
+                a,
+                this.xPos - h,
+                this.yPos,
+                this.config.WIDTH_JUMP,
+                o,
+              )
+              : (this.ducking &&
+              this.status === Trex.status.CRASHED &&
+              this.xPos++,
+                this.canvasCtx.drawImage(
+                  Runner.imageSprite,
+                  i,
+                  s,
+                  n,
+                  a,
+                  this.xPos,
+                  this.yPos,
+                  this.config.WIDTH,
+                  o,
+                )),
+          (this.canvasCtx.globalAlpha = 1));
+      },
+      setBlinkDelay() {
+        this.blinkDelay = Math.ceil(Math.random() * Trex.BLINK_TIMING);
+      },
+      blink(t) {
+        t - this.animStartTime >= this.blinkDelay &&
+        (this.draw(this.currentAnimFrames[this.currentFrame], 0),
+        1 === this.currentFrame &&
+        (this.setBlinkDelay(),
+          (this.animStartTime = t),
+          this.blinkCount++));
+      },
+      startJump(t) {
+        this.jumping ||
+        (this.update(0, Trex.status.JUMPING),
+          (this.jumpVelocity = this.config.INITIAL_JUMP_VELOCITY - t / 10),
+          (this.jumping = !0),
+          (this.reachedMinHeight = !1),
+          (this.speedDrop = !1),
+        this.config.INVERT_JUMP &&
+        (this.minJumpHeight =
+          this.groundYPos + this.config.MIN_JUMP_HEIGHT));
+      },
+      endJump() {
+        this.reachedMinHeight &&
+        this.jumpVelocity < this.config.DROP_VELOCITY &&
+        (this.jumpVelocity = this.config.DROP_VELOCITY);
+      },
+      updateJump(t) {
+        const e = t / Trex.animFrames[this.status].msPerFrame;
+        (this.speedDrop
+          ? (this.yPos += Math.round(
+            this.jumpVelocity * this.config.SPEED_DROP_COEFFICIENT * e,
+          ))
+          : this.config.INVERT_JUMP
+            ? (this.yPos -= Math.round(this.jumpVelocity * e))
+            : (this.yPos += Math.round(this.jumpVelocity * e)),
+          (this.jumpVelocity += this.config.GRAVITY * e),
+        ((this.config.INVERT_JUMP && this.yPos > this.minJumpHeight) ||
+          (!this.config.INVERT_JUMP && this.yPos < this.minJumpHeight) ||
+          this.speedDrop) &&
+        (this.reachedMinHeight = !0),
+        ((this.config.INVERT_JUMP &&
+            this.yPos > -this.config.MAX_JUMP_HEIGHT) ||
+          (!this.config.INVERT_JUMP &&
+            this.yPos < this.config.MAX_JUMP_HEIGHT) ||
+          this.speedDrop) &&
+        this.endJump(),
+        ((this.config.INVERT_JUMP && this.yPos) < this.groundYPos ||
+          (!this.config.INVERT_JUMP && this.yPos) > this.groundYPos) &&
+        (this.reset(),
+          this.jumpCount++,
+        Runner.audioCues && Runner.generatedSoundFx.loopFootSteps()));
+      },
+      setSpeedDrop() {
+        ((this.speedDrop = !0), (this.jumpVelocity = 1));
+      },
+      setDuck(t) {
+        t && this.status !== Trex.status.DUCKING
+          ? (this.update(0, Trex.status.DUCKING), (this.ducking = !0))
+          : this.status === Trex.status.DUCKING &&
+          (this.update(0, Trex.status.RUNNING), (this.ducking = !1));
+      },
+      reset() {
+        ((this.xPos = this.xInitialPos),
+          (this.yPos = this.groundYPos),
+          (this.jumpVelocity = 0),
+          (this.jumping = !1),
+          (this.ducking = !1),
+          this.update(0, Trex.status.RUNNING),
+          (this.midair = !1),
+          (this.speedDrop = !1),
+          (this.jumpCount = 0));
+      },
+    }),
+    (DistanceMeter.dimensions = { WIDTH: 10, HEIGHT: 13, DEST_WIDTH: 11 }),
+    (DistanceMeter.yPos = [0, 13, 27, 40, 53, 67, 80, 93, 107, 120]),
+    (DistanceMeter.config = {
+      MAX_DISTANCE_UNITS: 5,
+      ACHIEVEMENT_DISTANCE: 100,
+      COEFFICIENT: 0.025,
+      FLASH_DURATION: 250,
+      FLASH_ITERATIONS: 3,
+      HIGH_SCORE_HIT_AREA_PADDING: 4,
+    }),
+    (DistanceMeter.prototype = {
+      init(t) {
+        let e = "";
+        (this.calcXPos(t), (this.maxScore = this.maxScoreUnits));
+        for (let t = 0; t < this.maxScoreUnits; t++)
+          (this.draw(t, 0), (this.defaultString += "0"), (e += "9"));
+        this.maxScore = parseInt(e, 10);
+      },
+      calcXPos(t) {
+        this.x =
+          t -
+          DistanceMeter.dimensions.DEST_WIDTH * (this.maxScoreUnits + 1);
+      },
+      draw(t, e, i) {
+        let s = DistanceMeter.dimensions.WIDTH,
+          n = DistanceMeter.dimensions.HEIGHT,
+          a = DistanceMeter.dimensions.WIDTH * e,
+          o = 0;
+        const h = t * DistanceMeter.dimensions.DEST_WIDTH,
+          r = this.y,
+          c = DistanceMeter.dimensions.WIDTH,
+          l = DistanceMeter.dimensions.HEIGHT;
+        if (
+          (IS_HIDPI && ((s *= 2), (n *= 2), (a *= 2)),
+            (a += this.spritePos.x),
+            (o += this.spritePos.y),
+            this.canvasCtx.save(),
+            IS_RTL)
+        )
+          (i
+            ? this.canvasCtx.translate(
+              this.canvasWidth -
+              DistanceMeter.dimensions.WIDTH * (this.maxScoreUnits + 3),
+              this.y,
+            )
+            : this.canvasCtx.translate(
+              this.canvasWidth - DistanceMeter.dimensions.WIDTH,
+              this.y,
+            ),
+            this.canvasCtx.scale(-1, 1));
+        else {
+          const t =
+            this.x -
+            2 * this.maxScoreUnits * DistanceMeter.dimensions.WIDTH;
+          i
+            ? this.canvasCtx.translate(t, this.y)
+            : this.canvasCtx.translate(this.x, this.y);
+        }
+        (this.canvasCtx.drawImage(this.image, a, o, s, n, h, r, c, l),
+          this.canvasCtx.restore());
+      },
+      getActualDistance(t) {
+        return t ? Math.round(t * this.config.COEFFICIENT) : 0;
+      },
+      update(t, e) {
+        let i = !0,
+          s = !1;
+        if (this.achievement)
+          this.flashIterations <= this.config.FLASH_ITERATIONS
+            ? ((this.flashTimer += t),
+              this.flashTimer < this.config.FLASH_DURATION
+                ? (i = !1)
+                : this.flashTimer > 2 * this.config.FLASH_DURATION &&
+                ((this.flashTimer = 0), this.flashIterations++))
+            : ((this.achievement = !1),
+              (this.flashIterations = 0),
+              (this.flashTimer = 0));
+        else if (
+          ((e = this.getActualDistance(e)) > this.maxScore &&
+          this.maxScoreUnits == this.config.MAX_DISTANCE_UNITS
+            ? (this.maxScoreUnits++,
+              (this.maxScore = parseInt(this.maxScore + "9", 10)))
+            : (this.distance = 0),
+          e > 0)
+        ) {
+          e % this.config.ACHIEVEMENT_DISTANCE == 0 &&
+          ((this.achievement = !0), (this.flashTimer = 0), (s = !0));
+          const t = (this.defaultString + e).substr(-this.maxScoreUnits);
+          this.digits = t.split("");
+        } else this.digits = this.defaultString.split("");
+        if (i)
+          for (let t = this.digits.length - 1; t >= 0; t--)
+            this.draw(t, parseInt(this.digits[t], 10));
+        return (this.drawHighScore(), s);
+      },
+      drawHighScore() {
+        if (parseInt(this.highScore, 10) > 0) {
+          (this.canvasCtx.save(), (this.canvasCtx.globalAlpha = 0.8));
+          for (let t = this.highScore.length - 1; t >= 0; t--)
+            this.draw(t, parseInt(this.highScore[t], 10), !0);
+          this.canvasCtx.restore();
+        }
+      },
+      setHighScore(t) {
+        t = this.getActualDistance(t);
+        const e = (this.defaultString + t).substr(-this.maxScoreUnits);
+        this.highScore = ["10", "11", ""].concat(e.split(""));
+      },
+      hasClickedOnHighScore(t) {
+        let e = 0,
+          i = 0;
+        if (t.touches) {
+          const s = this.canvas.getBoundingClientRect();
+          ((e = t.touches[0].clientX - s.left),
+            (i = t.touches[0].clientY - s.top));
+        } else ((e = t.offsetX), (i = t.offsetY));
+        return (
+          (this.highScoreBounds = this.getHighScoreBounds()),
+          e >= this.highScoreBounds.x &&
+          e <= this.highScoreBounds.x + this.highScoreBounds.width &&
+          i >= this.highScoreBounds.y &&
+          i <= this.highScoreBounds.y + this.highScoreBounds.height
+        );
+      },
+      getHighScoreBounds() {
+        return {
+          x:
+            this.x -
+            2 * this.maxScoreUnits * DistanceMeter.dimensions.WIDTH -
+            DistanceMeter.config.HIGH_SCORE_HIT_AREA_PADDING,
+          y: this.y,
+          width:
+            DistanceMeter.dimensions.WIDTH * (this.highScore.length + 1) +
+            DistanceMeter.config.HIGH_SCORE_HIT_AREA_PADDING,
+          height:
+            DistanceMeter.dimensions.HEIGHT +
+            2 * DistanceMeter.config.HIGH_SCORE_HIT_AREA_PADDING,
+        };
+      },
+      flashHighScore() {
+        const t = getTimeStamp(),
+          e = t - (this.frameTimeStamp || t);
+        let i = !0;
+        ((this.frameTimeStamp = t),
+          this.flashIterations > 2 * this.config.FLASH_ITERATIONS
+            ? this.cancelHighScoreFlashing()
+            : ((this.flashTimer += e),
+              this.flashTimer < this.config.FLASH_DURATION
+                ? (i = !1)
+                : this.flashTimer > 2 * this.config.FLASH_DURATION &&
+                ((this.flashTimer = 0), this.flashIterations++),
+              i ? this.drawHighScore() : this.clearHighScoreBounds(),
+              (this.flashingRafId = requestAnimationFrame(
+                this.flashHighScore.bind(this),
+              ))));
+      },
+      clearHighScoreBounds() {
+        (this.canvasCtx.save(),
+          (this.canvasCtx.fillStyle = "#fff"),
+          this.canvasCtx.rect(
+            this.highScoreBounds.x,
+            this.highScoreBounds.y,
+            this.highScoreBounds.width,
+            this.highScoreBounds.height,
+          ),
+          this.canvasCtx.fill(),
+          this.canvasCtx.restore());
+      },
+      startHighScoreFlashing() {
+        ((this.highScoreFlashing = !0), this.flashHighScore());
+      },
+      isHighScoreFlashing() {
+        return this.highScoreFlashing;
+      },
+      cancelHighScoreFlashing() {
+        (this.flashingRafId && cancelAnimationFrame(this.flashingRafId),
+          (this.flashIterations = 0),
+          (this.flashTimer = 0),
+          (this.highScoreFlashing = !1),
+          this.clearHighScoreBounds(),
+          this.drawHighScore());
+      },
+      resetHighScore() {
+        (this.setHighScore(0), this.cancelHighScoreFlashing());
+      },
+      reset() {
+        (this.update(0, 0), (this.achievement = !1));
+      },
+    }),
+    (Cloud.config = {
+      HEIGHT: 14,
+      MAX_CLOUD_GAP: 400,
+      MAX_SKY_LEVEL: 30,
+      MIN_CLOUD_GAP: 100,
+      MIN_SKY_LEVEL: 71,
+      WIDTH: 46,
+    }),
+    (Cloud.prototype = {
+      init() {
+        ((this.yPos = getRandomNum(
+          Cloud.config.MAX_SKY_LEVEL,
+          Cloud.config.MIN_SKY_LEVEL,
+        )),
+          this.draw());
+      },
+      draw() {
+        this.canvasCtx.save();
+        let t = Cloud.config.WIDTH,
+          e = Cloud.config.HEIGHT;
+        const i = t,
+          s = e;
+        (IS_HIDPI && ((t *= 2), (e *= 2)),
+          this.canvasCtx.drawImage(
+            Runner.imageSprite,
+            this.spritePos.x,
+            this.spritePos.y,
+            t,
+            e,
+            this.xPos,
+            this.yPos,
+            i,
+            s,
+          ),
+          this.canvasCtx.restore());
+      },
+      update(t) {
+        this.remove ||
+        ((this.xPos -= Math.ceil(t)),
+          this.draw(),
+        this.isVisible() || (this.remove = !0));
+      },
+      isVisible() {
+        return this.xPos + Cloud.config.WIDTH > 0;
+      },
+    }),
+    (BackgroundEl.config = {
+      MAX_BG_ELS: 0,
+      MAX_GAP: 0,
+      MIN_GAP: 0,
+      POS: 0,
+      SPEED: 0,
+      Y_POS: 0,
+      MS_PER_FRAME: 0,
+    }),
+    (BackgroundEl.prototype = {
+      init() {
+        ((this.spriteConfig =
+          Runner.spriteDefinition.BACKGROUND_EL[this.type]),
+        this.spriteConfig.FIXED &&
+        (this.xPos = this.spriteConfig.FIXED_X_POS),
+          (this.yPos =
+            BackgroundEl.config.Y_POS -
+            this.spriteConfig.HEIGHT +
+            this.spriteConfig.OFFSET),
+          this.draw());
+      },
+      draw() {
+        this.canvasCtx.save();
+        let t = this.spriteConfig.WIDTH,
+          e = this.spriteConfig.HEIGHT,
+          i = this.spriteConfig.X_POS;
+        const s = t,
+          n = e;
+        (IS_HIDPI && ((t *= 2), (e *= 2), (i *= 2)),
+          this.canvasCtx.drawImage(
+            Runner.imageSprite,
+            i,
+            this.spritePos.y,
+            t,
+            e,
+            this.xPos,
+            this.yPos,
+            s,
+            n,
+          ),
+          this.canvasCtx.restore());
+      },
+      update(t) {
+        this.remove ||
+        (this.spriteConfig.FIXED
+          ? ((this.animTimer += t),
+          this.animTimer > BackgroundEl.config.MS_PER_FRAME &&
+          ((this.animTimer = 0),
+            (this.switchFrames = !this.switchFrames)),
+          this.spriteConfig.FIXED_Y_POS_1 &&
+          this.spriteConfig.FIXED_Y_POS_2 &&
+          (this.yPos = this.switchFrames
+            ? this.spriteConfig.FIXED_Y_POS_1
+            : this.spriteConfig.FIXED_Y_POS_2))
+          : (this.xPos -= BackgroundEl.config.SPEED),
+          this.draw(),
+        this.isVisible() || (this.remove = !0));
+      },
+      isVisible() {
+        return this.xPos + this.spriteConfig.WIDTH > 0;
+      },
+    }),
+    (NightMode.config = {
+      FADE_SPEED: 0.035,
+      HEIGHT: 40,
+      MOON_SPEED: 0.25,
+      NUM_STARS: 2,
+      STAR_SIZE: 9,
+      STAR_SPEED: 0.3,
+      STAR_MAX_Y: 70,
+      WIDTH: 20,
+    }),
+    (NightMode.phases = [140, 120, 100, 60, 40, 20, 0]),
+    (NightMode.prototype = {
+      update(t) {
+        if (
+          (t &&
+          0 === this.opacity &&
+          (this.currentPhase++,
+          this.currentPhase >= NightMode.phases.length &&
+          (this.currentPhase = 0)),
+            t && (this.opacity < 1 || 0 === this.opacity)
+              ? (this.opacity += NightMode.config.FADE_SPEED)
+              : this.opacity > 0 &&
+              (this.opacity -= NightMode.config.FADE_SPEED),
+          this.opacity > 0)
+        ) {
+          if (
+            ((this.xPos = this.updateXPos(
+              this.xPos,
+              NightMode.config.MOON_SPEED,
+            )),
+              this.drawStars)
+          )
+            for (let t = 0; t < NightMode.config.NUM_STARS; t++)
+              this.stars[t].x = this.updateXPos(
+                this.stars[t].x,
+                NightMode.config.STAR_SPEED,
+              );
+          this.draw();
+        } else ((this.opacity = 0), this.placeStars());
+        this.drawStars = !0;
+      },
+      updateXPos(t, e) {
+        return (
+          t < -NightMode.config.WIDTH
+            ? (t = this.containerWidth)
+            : (t -= e),
+            t
+        );
+      },
+      draw() {
+        let t =
+            3 === this.currentPhase
+              ? 2 * NightMode.config.WIDTH
+              : NightMode.config.WIDTH,
+          e = NightMode.config.HEIGHT,
+          i = this.spritePos.x + NightMode.phases[this.currentPhase];
+        const s = t;
+        let n = NightMode.config.STAR_SIZE,
+          a = Runner.spriteDefinitionByType.original.LDPI.STAR.x;
+        if (
+          (IS_HIDPI &&
+          ((t *= 2),
+            (e *= 2),
+            (i =
+              this.spritePos.x + 2 * NightMode.phases[this.currentPhase]),
+            (n *= 2),
+            (a = Runner.spriteDefinitionByType.original.HDPI.STAR.x)),
+            this.canvasCtx.save(),
+            (this.canvasCtx.globalAlpha = this.opacity),
+            this.drawStars)
+        )
+          for (let t = 0; t < NightMode.config.NUM_STARS; t++)
+            this.canvasCtx.drawImage(
+              Runner.origImageSprite,
+              a,
+              this.stars[t].sourceY,
+              n,
+              n,
+              Math.round(this.stars[t].x),
+              this.stars[t].y,
+              NightMode.config.STAR_SIZE,
+              NightMode.config.STAR_SIZE,
+            );
+        (this.canvasCtx.drawImage(
+          Runner.origImageSprite,
+          i,
+          this.spritePos.y,
+          t,
+          e,
+          Math.round(this.xPos),
+          this.yPos,
+          s,
+          NightMode.config.HEIGHT,
+        ),
+          (this.canvasCtx.globalAlpha = 1),
+          this.canvasCtx.restore());
+      },
+      placeStars() {
+        const t = Math.round(
+          this.containerWidth / NightMode.config.NUM_STARS,
+        );
+        for (let e = 0; e < NightMode.config.NUM_STARS; e++)
+          ((this.stars[e] = {}),
+            (this.stars[e].x = getRandomNum(t * e, t * (e + 1))),
+            (this.stars[e].y = getRandomNum(
+              0,
+              NightMode.config.STAR_MAX_Y,
+            )),
+            (this.stars[e].sourceY = IS_HIDPI
+              ? Runner.spriteDefinitionByType.original.HDPI.STAR.y +
+              2 * NightMode.config.STAR_SIZE * e
+              : Runner.spriteDefinitionByType.original.LDPI.STAR.y +
+              NightMode.config.STAR_SIZE * e));
+      },
+      reset() {
+        ((this.currentPhase = 0), (this.opacity = 0), this.update(!1));
+      },
+    }),
+    (HorizonLine.dimensions = { WIDTH: 600, HEIGHT: 12, YPOS: 127 }),
+    (HorizonLine.prototype = {
+      setSourceDimensions(t) {
+        for (const e in t)
+          "SOURCE_X" !== e &&
+          "SOURCE_Y" !== e &&
+          (IS_HIDPI
+            ? "YPOS" !== e && (this.sourceDimensions[e] = 2 * t[e])
+            : (this.sourceDimensions[e] = t[e]),
+            (this.dimensions[e] = t[e]));
+        ((this.xPos = [0, t.WIDTH]), (this.yPos = t.YPOS));
+      },
+      getRandomType() {
+        return Math.random() > this.bumpThreshold
+          ? this.dimensions.WIDTH
+          : 0;
+      },
+      draw() {
+        (this.canvasCtx.drawImage(
+          Runner.imageSprite,
+          this.sourceXPos[0],
+          this.spritePos.y,
+          this.sourceDimensions.WIDTH,
+          this.sourceDimensions.HEIGHT,
+          this.xPos[0],
+          this.yPos,
+          this.dimensions.WIDTH,
+          this.dimensions.HEIGHT,
+        ),
+          this.canvasCtx.drawImage(
+            Runner.imageSprite,
+            this.sourceXPos[1],
+            this.spritePos.y,
+            this.sourceDimensions.WIDTH,
+            this.sourceDimensions.HEIGHT,
+            this.xPos[1],
+            this.yPos,
+            this.dimensions.WIDTH,
+            this.dimensions.HEIGHT,
+          ));
+      },
+      updateXPos(t, e) {
+        const i = t,
+          s = 0 === t ? 1 : 0;
+        ((this.xPos[i] -= e),
+          (this.xPos[s] = this.xPos[i] + this.dimensions.WIDTH),
+        this.xPos[i] <= -this.dimensions.WIDTH &&
+        ((this.xPos[i] += 2 * this.dimensions.WIDTH),
+          (this.xPos[s] = this.xPos[i] - this.dimensions.WIDTH),
+          (this.sourceXPos[i] =
+            this.getRandomType() + this.spritePos.x)));
+      },
+      update(t, e) {
+        const i = Math.floor(e * (FPS / 1e3) * t);
+        (this.xPos[0] <= 0 ? this.updateXPos(0, i) : this.updateXPos(1, i),
+          this.draw());
+      },
+      reset() {
+        ((this.xPos[0] = 0), (this.xPos[1] = this.dimensions.WIDTH));
+      },
+    }),
+    (Horizon.config = {
+      BG_CLOUD_SPEED: 0.2,
+      BUMPY_THRESHOLD: 0.3,
+      CLOUD_FREQUENCY: 0.5,
+      HORIZON_HEIGHT: 16,
+      MAX_CLOUDS: 6,
+    }),
+    (Horizon.prototype = {
+      init() {
+        ((Obstacle.types =
+          Runner.spriteDefinitionByType.original.OBSTACLES),
+          this.addCloud());
+        for (let t = 0; t < Runner.spriteDefinition.LINES.length; t++)
+          this.horizonLines.push(
+            new HorizonLine(this.canvas, Runner.spriteDefinition.LINES[t]),
+          );
+        this.nightMode = new NightMode(
+          this.canvas,
+          this.spritePos.MOON,
+          this.dimensions.WIDTH,
+        );
+      },
+      adjustObstacleSpeed: function () {
+        for (let t = 0; t < Obstacle.types.length; t++)
+          Runner.slowDown &&
+          ((Obstacle.types[t].multipleSpeed =
+            Obstacle.types[t].multipleSpeed / 2),
+            (Obstacle.types[t].minGap *= 1.5),
+            (Obstacle.types[t].minSpeed = Obstacle.types[t].minSpeed / 2),
+          "object" == typeof Obstacle.types[t].yPos &&
+          ((Obstacle.types[t].yPos = Obstacle.types[t].yPos[0]),
+            (Obstacle.types[t].yPosMobile = Obstacle.types[t].yPos[0])));
+      },
+      enableAltGameMode: function (t) {
+        ((this.clouds = []),
+          (this.backgroundEls = []),
+          (this.altGameModeActive = !0),
+          (this.spritePos = t),
+          (Obstacle.types = Runner.spriteDefinition.OBSTACLES),
+          this.adjustObstacleSpeed(),
+          (Obstacle.MAX_GAP_COEFFICIENT =
+            Runner.spriteDefinition.MAX_GAP_COEFFICIENT),
+          (Obstacle.MAX_OBSTACLE_LENGTH =
+            Runner.spriteDefinition.MAX_OBSTACLE_LENGTH),
+          (BackgroundEl.config =
+            Runner.spriteDefinition.BACKGROUND_EL_CONFIG),
+          (this.horizonLines = []));
+        for (let t = 0; t < Runner.spriteDefinition.LINES.length; t++)
+          this.horizonLines.push(
+            new HorizonLine(this.canvas, Runner.spriteDefinition.LINES[t]),
+          );
+        this.reset();
+      },
+      update(t, e, i, s, rt) {
+        ((this.runningTime += t),
+        this.altGameModeActive && this.updateBackgroundEls(t, e));
+        for (let i = 0; i < this.horizonLines.length; i++)
+          this.horizonLines[i].update(rt, e);
+        ((this.altGameModeActive && !Runner.spriteDefinition.HAS_CLOUDS) ||
+        (this.nightMode.update(s), this.updateClouds(rt, e)),
+        i && this.updateObstacles(t, e));
+      },
+      updateBackgroundEl(t, e, i, s, n) {
+        const a = e.length;
+        if (a) {
+          for (let i = a - 1; i >= 0; i--) e[i].update(t);
+          const o = e[a - 1];
+          a < i &&
+          this.dimensions.WIDTH - o.xPos > o.gap &&
+          n > Math.random() &&
+          s();
+        } else s();
+      },
+      updateClouds(t, e) {
+        const i = (this.cloudSpeed / 1e3) * t * e;
+        (this.updateBackgroundEl(
+          i,
+          this.clouds,
+          this.config.MAX_CLOUDS,
+          this.addCloud.bind(this),
+          this.cloudFrequency,
+        ),
+          (this.clouds = this.clouds.filter((t) => !t.remove)));
+      },
+      updateBackgroundEls(t, e) {
+        (this.updateBackgroundEl(
+          t,
+          this.backgroundEls,
+          BackgroundEl.config.MAX_BG_ELS,
+          this.addBackgroundEl.bind(this),
+          this.cloudFrequency,
+        ),
+          (this.backgroundEls = this.backgroundEls.filter(
+            (t) => !t.remove,
+          )));
+      },
+      updateObstacles(t, e) {
+        const i = this.obstacles.slice(0);
+        for (let s = 0; s < this.obstacles.length; s++) {
+          const n = this.obstacles[s];
+          (n.update(t, e), n.remove && i.shift());
+        }
+        if (((this.obstacles = i), this.obstacles.length > 0)) {
+          const t = this.obstacles[this.obstacles.length - 1];
+          t &&
+          !t.followingObstacleCreated &&
+          t.isVisible() &&
+          t.xPos + t.width + t.gap < this.dimensions.WIDTH &&
+          (this.addNewObstacle(e), (t.followingObstacleCreated = !0));
+        } else this.addNewObstacle(e);
+      },
+      removeFirstObstacle() {
+        this.obstacles.shift();
+      },
+      addNewObstacle(t) {
+        const e =
+            (Runner.isAltGameModeEnabled() && !this.altGameModeActive) ||
+            this.altGameModeActive
+              ? Obstacle.types.length - 1
+              : Obstacle.types.length - 2,
+          i = e > 0 ? getRandomNum(0, e) : 0,
+          s = Obstacle.types[i];
+        if (
+          (e > 0 && this.duplicateObstacleCheck(s.type)) ||
+          t < s.minSpeed
+        )
+          this.addNewObstacle(t);
+        else {
+          const e = this.spritePos[s.type];
+          (this.obstacles.push(
+            new Obstacle(
+              this.canvasCtx,
+              s,
+              e,
+              this.dimensions,
+              this.gapCoefficient,
+              t,
+              s.width,
+              this.altGameModeActive,
+            ),
+          ),
+            this.obstacleHistory.unshift(s.type),
+          this.obstacleHistory.length > 1 &&
+          this.obstacleHistory.splice(
+            Runner.config.MAX_OBSTACLE_DUPLICATION,
+          ));
+        }
+      },
+      duplicateObstacleCheck(t) {
+        let e = 0;
+        for (let i = 0; i < this.obstacleHistory.length; i++)
+          e = this.obstacleHistory[i] === t ? e + 1 : 0;
+        return e >= Runner.config.MAX_OBSTACLE_DUPLICATION;
+      },
+      reset() {
+        this.obstacles = [];
+        for (let t = 0; t < this.horizonLines.length; t++)
+          this.horizonLines[t].reset();
+        this.nightMode.reset();
+      },
+      resize(t, e) {
+        ((this.canvas.width = t), (this.canvas.height = e));
+      },
+      addCloud() {
+        this.clouds.push(
+          new Cloud(
+            this.canvas,
+            this.spritePos.CLOUD,
+            this.dimensions.WIDTH,
+          ),
+        );
+      },
+      addBackgroundEl() {
+        const t = Object.keys(Runner.spriteDefinition.BACKGROUND_EL);
+        if (t.length > 0) {
+          let e = getRandomNum(0, t.length - 1),
+            i = t[e];
+          for (; i == this.lastEl && t.length > 1; )
+            i = t[(e = getRandomNum(0, t.length - 1))];
+          ((this.lastEl = i),
+            this.backgroundEls.push(
+              new BackgroundEl(
+                this.canvas,
+                this.spritePos.BACKGROUND_EL,
+                this.dimensions.WIDTH,
+                i,
+              ),
+            ));
+        }
+      },
+    }));
+</script>
+{% endblock %}

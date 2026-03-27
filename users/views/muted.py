@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
-from notifications.telegram.users import notify_admin_user_on_mute
+from notifications.telegram.muted import notify_admins_on_mute
 from users.models.mute import UserMuted
 from users.models.user import User
 
@@ -59,7 +59,7 @@ def toggle_mute(request, user_slug):
 
     if is_created:
         # notify admins
-        notify_admin_user_on_mute(
+        notify_admins_on_mute(
             user_from=request.me,
             user_to=user_to,
             comment=comment,

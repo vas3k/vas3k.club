@@ -13,7 +13,6 @@ class TestApi(TestCase):
 
     def test_date_rfc3339(self):
         post = self.creator.create_post(
-            is_visible=True,
             is_public=True,
         )
         post.published_at = self.time
@@ -32,7 +31,6 @@ class TestApi(TestCase):
 
     def test_content_text_is_not_none(self):
         post = self.creator.create_post(
-            is_visible=True,
             is_public=False,
         )
         converted_post = post.to_dict()

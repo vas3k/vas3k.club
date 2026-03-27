@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
         random_good_post = Post.visible_objects()\
             .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-            .filter(Q(is_approved_by_moderator=True) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
+            .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
             .filter(
                 published_at__gte=now - timedelta(days=random_day_in_the_past + DELTA_DAYS),
                 published_at__lte=now - timedelta(days=random_day_in_the_past - DELTA_DAYS),

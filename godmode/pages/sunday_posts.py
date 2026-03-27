@@ -16,7 +16,7 @@ def sunday_posts(request, admin_page):
         random_date_in_the_past = random_date_in_range(settings.LAUNCH_DATE, datetime.utcnow() - new_posts_cutoff)
         top_old_post = Post.visible_objects() \
             .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
-            .filter(is_approved_by_moderator=True) \
+            .filter(moderation_status=Post.MODERATION_APPROVED) \
             .filter(
                 published_at__gte=random_date_in_the_past,
                 published_at__lte=random_date_in_the_past + timedelta(days=days_range)

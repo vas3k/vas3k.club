@@ -1,6 +1,7 @@
 import re
 
 USERNAME_RE = re.compile(r"(?:\s|\n|^)@([A-Za-z0-9_-]{3,})")
+USER_URL_RE = re.compile(r"^https?://[^/]+/user/([A-Za-z0-9_-]+)")
 IMAGE_RE = re.compile(r"https?://[^\s/$.?#].[^\s]*\.(?:jpg|jpeg|gif|png)")
 VIDEO_RE = re.compile(r"https?://[^\s/$.?#].[^\s]*\.(?:mov|mp4)")
 YOUTUBE_RE = re.compile(

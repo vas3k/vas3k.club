@@ -54,7 +54,7 @@
             </div>
 
             <div class="top-users top-users-medium">
-                {% for user in top_users|slice:"5:25" %}
+                {% for user in top_users|slice:"5:19" %}
                     <a class="user user-round zoom-on-hover" href="{% url "profile" user.slug %}">
                         <span class="avatar user-round-avatar">
                             <img src="{{ user.get_avatar }}" alt="Аватар {{ user.full_name }}" loading="lazy" />
@@ -66,7 +66,7 @@
             </div>
 
             <div class="top-users top-users-small">
-                {% for user in top_users|slice:"25:64" %}
+                {% for user in top_users|slice:"19:58" %}
                     {% include "users/widgets/round.html" with user=user show_name=False %}
                 {% endfor %}
             </div>
@@ -142,48 +142,28 @@
         <div class="stats-description">
             Ачивки выдаются Парламентом за вклад в развитие Клуба.<br>
             Чтобы получить ачивку — напишите на почту <strong><a href="mailto:moderator@pmi.moscow">moderator@pmi.moscow</a></strong> с пруфами и ссылками на аккаунты.
-            Для оффлайн-ачивок потребуется фото-подтверждение.
         </div>
 
-        {% for achievement in achievements %}
-            <div class="stats-achievements">
-                <div class="stats-achievements-badge">
-                    {% include "achievements/widgets/achievement.html" %}
+        <div class="stats-achievements">
+            {% for achievement in achievements %}
+                <div class="stats-achievement">
+                    <div class="stats-achievement-badge">
+                        {% include "achievements/widgets/achievement.html" %}
+                    </div>
+                    <div class="stats-achievement-users">
+                        {% for user in achievement.achievement_users|slice:":5" %}
+                            {% include "users/widgets/round.html" with user=user show_name=False %}
+                        {% endfor %}
+                    </div>
+                    <a class="stats-achievements-count" href="{% url "show_achievement" achievement.code %}">{{ achievement.user_count }} {{ achievement.user_count|rupluralize:"человек,человека,человек" }}</a>
                 </div>
-                <div class="top-users top-users-medium stats-achievements-users">
-                    {% for user in achievement.achievement_users|slice:":10" %}
-                        {% include "users/widgets/round.html" with user=user show_name=True %}
-                    {% endfor %}
-                    {% if achievement.user_count > 10 %}
-                       <a class="top-users-more" href="{% url "show_achievement" achievement.code %}">+ ещё {{ achievement.user_count|add:-10 }} {{ achievement.user_count|add:-10|rupluralize:"клубень,клубня,клубней" }}</a>
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
-
-        <div class="stats-header" id="parliament">🏛 Парламент</div>
-
-        <div class="stats-description">
-            Парламент — это совет активных членов Клуба. Они собирают фидбек и определяют каким мы хотим видеть Клуб.
-            Зачем он нужен и как попасть — читайте <a href="{{ settings.PARLIAMENT_GUIDE_URL }}">в нашем гайде</a>.
-        </div>
-
-        <div class="top-users top-users-medium">
-            {% for user in parliament %}
-                {% include "users/widgets/round.html" with user=user show_name=True %}
             {% endfor %}
         </div>
 
-        <div class="stats-header" id="moderators">🌚 Модераторы</div>
-
         <div class="stats-description">
-            Они обычно очень заняты, так что если хотите с ними связаться — пингуйте в комментах мета-аккаунт <a href="/user/moderator/"><strong>@moderator</strong></a> или пользуйтесь нашей почтой.
-        </div>
+            <a href="{% url "write_to_crew" "parliament" %}?reason=achievement" class="button">Подать заявку на ачивку</a>
 
-        <div class="top-users top-users-medium">
-            {% for user in moderators %}
-                {% include "users/widgets/round.html" with user=user show_name=True %}
-            {% endfor %}
+            <p>Для оффлайн-ачивок потребуется фото-подтверждение.</p>
         </div>
     </div>
 {% endblock %}

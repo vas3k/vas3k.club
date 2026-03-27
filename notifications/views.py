@@ -1,4 +1,5 @@
 import base64
+import binascii
 import hashlib
 import hmac
 import json
@@ -16,11 +17,16 @@ from notifications.digests import generate_daily_digest, generate_weekly_digest
 from users.models.user import User
 
 
-def email_confirm(request, secret, legacy_code=None):
-    # secret is user.id (uuid)
-    user = get_object_or_404(User, id=secret)
+def email_confirm(request, user_id, secret):
+    try:
+        # new emails use base64-encoded secret, old ones have it raw
+        secret = base64.b64decode(secret.encode("utf-8")).decode()
+    except (binascii.Error, UnicodeDecodeError):
+        pass
+
+    user = get_object_or_404(User, id=user_id, secret_hash=secret, deleted_at__isnull=True)
     user.is_email_verified = True
-    user.save()
+    user.save(update_fields=["is_email_verified"])
 
     return render(request, "message.html", {
         "title": "💌 Ваш адрес почты подтвержден",
@@ -30,16 +36,16 @@ def email_confirm(request, secret, legacy_code=None):
 
 def email_unsubscribe(request, user_id, secret):
     try:
-        # dirty hack to support legacy non-base64 codes
+        # new emails use base64-encoded secret, old ones have it raw
         secret = base64.b64decode(secret.encode("utf-8")).decode()
-    except:
+    except (binascii.Error, UnicodeDecodeError):
         pass
 
-    user = get_object_or_404(User, id=user_id, secret_hash=secret)
+    user = get_object_or_404(User, id=user_id, secret_hash=secret, deleted_at__isnull=True)
 
     user.is_email_unsubscribed = True
     user.email_digest_type = User.EMAIL_DIGEST_TYPE_NOPE
-    user.save()
+    user.save(update_fields=["is_email_unsubscribed", "email_digest_type"])
 
     return render(request, "message.html", {
         "title": "🙅‍♀️ Вы отписались от всех писем Клуба",
@@ -51,19 +57,19 @@ def email_unsubscribe(request, user_id, secret):
 
 def email_digest_switch(request, digest_type, user_id, secret):
     try:
-        # dirty hack to support legacy non-base64 codes
+        # new emails use base64-encoded secret, old ones have it raw
         secret = base64.b64decode(secret.encode("utf-8")).decode()
-    except:
+    except (binascii.Error, UnicodeDecodeError):
         pass
 
-    user = get_object_or_404(User, id=user_id, secret_hash=secret)
+    user = get_object_or_404(User, id=user_id, secret_hash=secret, deleted_at__isnull=True)
 
     if not dict(User.EMAIL_DIGEST_TYPES).get(digest_type):
         raise Http404()
 
     user.email_digest_type = digest_type
     user.is_email_unsubscribed = False
-    user.save()
+    user.save(update_fields=["email_digest_type", "is_email_unsubscribed"])
 
     if digest_type == User.EMAIL_DIGEST_TYPE_DAILY:
         return render(request, "message.html", {
@@ -150,4 +156,4 @@ def is_valid_telegram_data(data, bot_token):
         hashlib.sha256,
     ).hexdigest()
 
-    return hmac_hash == check_hash
+    return hmac.compare_digest(hmac_hash, check_hash)

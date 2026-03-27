@@ -1,4 +1,5 @@
-.stats {
+.stats,
+.crew {
     padding-top: 40px;
     margin: 0 auto;
     max-width: var(--max-content-width);
@@ -87,51 +88,51 @@
             max-width: 60px;
         }
 
-    .top-users-more {
-        align-self: center;
-        text-decoration: none;
-        display: block;
-        background-color: rgba(128, 128, 128, 0.1);
-        border-radius: 50px;
-        min-width: 190px;
-        font-size: 120%;
-        padding: 10px 20px;
-    }
-
 .stats-achievements {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
-    align-content: stretch;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
     padding-bottom: 50px;
 }
 
-    .stats-achievements-badge {
-        width: 200px;
-    }
-
-    .stats-achievements-users {
+    .stats-achievement {
         display: flex;
+        flex-direction: column;
         flex-wrap: wrap;
-        justify-content: flex-start;
-        padding-top: 50px;
-        width: 100%;
+        align-items: center;
+        max-width: 220px;
+        padding-bottom: 30px;
     }
 
-    @media only screen and (max-width : 570px) {
-        .stats-achievements {
-            flex-wrap: wrap;
-            flex-direction: column;
+        .stats-achievement-badge {
+            width: 200px;
         }
-        .stats-achievements-badge {
+
+        .stats-achievement-users {
             display: flex;
+            flex-direction: row;
+            gap: 5px;
+            flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
             width: 100%;
+            padding: 0;
         }
-        .stats-achievements-users {
-            justify-content: center;
+
+            .stats-achievement-users .user {
+                max-width: 28px;
+                max-height: 28px;
+            }
+
+        .stats-achievements-count {
+            font-size: 110%;
+            font-weight: 500;
+            opacity: 0.8;
+            text-decoration: none;
+            padding-top: 10px;
         }
-    }
 
 .stats-achievement-details {
     display: flex;

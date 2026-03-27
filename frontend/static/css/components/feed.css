@@ -25,6 +25,7 @@
         padding-right: 30px;
         font-size: 110%;
     }
+
         @media only screen and (max-width : 570px) {
             .feed-sidebar {
                 transform: translate(-100%);
@@ -93,7 +94,14 @@
             }
 
                 .feed-sidebar-menu-small li {
-                    padding-bottom: 5px;
+                    padding-bottom: 1px;
+                }
+
+                .feed-sidebar-menu-small i {
+                    padding-left: 2px;
+                    padding-right: 3px;
+                    opacity: 0.8;
+                    filter: grayscale(1);
                 }
 
         .feed-sidebar-topics {
@@ -322,6 +330,12 @@
         outline: auto;
     }
 
+    .feed-post-header .link-favicon {
+        height: 1.5em;
+        width: 1.6em;
+        padding: 0;
+    }
+
     .feed-post a {
         z-index: 1;
     }
@@ -539,6 +553,8 @@
     font-size: 30px;
     padding-right: 10px;
     line-height: 1em;
+    top: -3px;
+    position: relative;
 }
 
 .feed-post-type-event {

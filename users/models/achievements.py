@@ -29,6 +29,15 @@ class Achievement(models.Model):
             .filter(achievements__achievement_id=self.code)\
             .order_by("-achievements__created_at")
 
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "name": self.name,
+            "image": self.image,
+            "description": self.description,
+            "style": self.style,
+        }
+
 
 class UserAchievement(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -40,3 +49,9 @@ class UserAchievement(models.Model):
         db_table = "user_achievements"
         unique_together = [["achievement", "user"]]
         ordering = ["-created_at"]
+
+    def to_dict(self):
+        return {
+            "achievement": self.achievement.to_dict(),
+            "created_at": self.created_at.isoformat(),
+        }

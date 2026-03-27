@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    {% if mode == "edit" %}
-        Редактируем пост — {{ block.super }}
+    {% if mode == "create" %}
+        Новая дока — {{ block.super }}
     {% else %}
-        Новый пост — {{ block.super }}
+        Редактируем доку — {{ block.super }}
     {% endif %}
 {% endblock %}
 
@@ -12,10 +12,8 @@
     <div class="content compose">
         {% if mode == "create" %}
             <div class="content-header">Новая дока</div>
-        {% elif mode == "edit" %}
-            <div class="content-header">Редактируем доку</div>
         {% else %}
-            <div class="content-header">Дока</div>
+            <div class="content-header">Редактируем доку</div>
         {% endif %}
 
         <div class="block compose-text">

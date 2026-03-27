@@ -2,11 +2,13 @@ from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from ai.assistant import ask_assistant
+from bot.decorators import ensure_fresh_db_connection
 from ai.rate_limiter import is_rate_limited
 from bot.handlers.common import get_club_user
 from common.markdown.markdown import markdown_tg
 
 
+@ensure_fresh_db_connection
 def llm_response(update: Update, context: CallbackContext) -> None:
     if not update.message:
         return None
@@ -54,7 +56,7 @@ def llm_response(update: Update, context: CallbackContext) -> None:
     answer = ask_assistant("\n".join(user_input))
     if answer:
         update.message.reply_text(
-            markdown_tg("\n\n".join(answer)),
+            markdown_tg(answer),
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True
         )

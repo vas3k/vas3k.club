@@ -1,11 +1,13 @@
 import logging
 
 from django.conf import settings
+from django.db import transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from django_q.tasks import async_task
 
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
@@ -14,6 +16,7 @@ from comments.models import Comment, CommentVote
 from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.request import parse_ip_address, parse_useragent
 from authn.decorators.api import api
+from notifications.telegram.comments import notify_on_comment_created
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -42,6 +45,9 @@ def create_comment(request, post_slug):
     if request.method == "POST":
         form = ProperCommentForm(request.POST)
         if form.is_valid():
+            if form.instance.reply_to and form.instance.reply_to.post_id != post.id:
+                raise AccessDenied(title="Нельзя ответить на комментарий из другого поста")
+
             if is_comment_rate_limit_exceeded(post, request.me):
                 raise RateLimitException(
                     title="🙅‍♂️ Вы комментируете слишком часто",
@@ -79,6 +85,10 @@ def create_comment(request, post_slug):
             )
             SearchIndex.update_comment_index(comment)
             LinkedPost.create_links_from_text(post, comment.text)
+
+            # send all kind of notifications
+            async_task(notify_on_comment_created, comment)
+
             return redirect(comment.get_absolute_url())
         else:
             log.error(f"Comment form error: {form.errors}")
@@ -86,7 +96,7 @@ def create_comment(request, post_slug):
                 "title": "Какая-то ошибка при публикации комментария 🤷‍♂️",
                 "message": f"Мы уже получили оповещение и скоро пофиксим. "
                            f"Ваш коммент мы сохранили чтобы вы могли скопировать его и запостить еще раз:",
-                "data": {"saved_text": form.cleaned_data.get("text")}
+                "data": {"saved_text": request.POST.get("text")}
             }, status=500)
 
     raise Http404()
@@ -101,7 +111,7 @@ def show_comment(request, post_slug, comment_id):
 
 @require_auth
 def edit_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post", "author"), id=comment_id)
 
     if not request.me.is_moderator:
         if comment.author != request.me:
@@ -120,7 +130,7 @@ def edit_comment(request, comment_id):
                 message=f"Комментарий можно редактировать только в течение {hours} часов после создания"
             )
 
-        if not comment.post.is_visible or not comment.post.is_commentable:
+        if comment.post.is_draft or not comment.post.is_commentable:
             raise AccessDenied(title="Комментарии к этому посту закрыты")
 
     post = comment.post
@@ -151,11 +161,11 @@ def edit_comment(request, comment_id):
 
 
 @require_auth
+@require_http_methods(["POST"])
 def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post"), id=comment_id)
 
     if not request.me.is_moderator:
-        # only comment author, post author or moderator can delete comments
         if comment.author != request.me and request.me != comment.post.author:
             raise AccessDenied(
                 title="Нельзя!",
@@ -169,26 +179,34 @@ def delete_comment(request, comment_id):
                         "Потом только автор или модератор может это сделать."
             )
 
-        if not comment.post.is_visible:
+        if comment.post.visibility == Post.VISIBILITY_DRAFT:
             raise AccessDenied(
                 title="Пост скрыт!",
                 message="Нельзя удалять комментарии к скрытому посту"
             )
 
-    if not comment.is_deleted:
-        # delete comment
-        comment.delete(deleted_by=request.me)
-        PostView.decrement_unread_comments(comment)
-    else:
-        # undelete comment
-        if comment.deleted_by == request.me.id or request.me.is_moderator:
-            comment.undelete()
-            PostView.increment_unread_comments(comment)
+    with transaction.atomic():
+        comment = Comment.objects.select_related("post").select_for_update().get(id=comment_id)
+
+        if not comment.is_deleted:
+            comment.delete(deleted_by=request.me)
+            was_deleted = True
         else:
-            raise AccessDenied(
-                title="Нельзя!",
-                message="Только тот, кто удалил комментарий, может его восстановить"
-            )
+            if comment.deleted_by == request.me.id or request.me.is_moderator:
+                comment.undelete()
+                was_deleted = False
+            else:
+                raise AccessDenied(
+                    title="Нельзя!",
+                    message="Только тот, кто удалил комментарий, может его восстановить"
+                )
+
+    if was_deleted:
+        PostView.decrement_unread_comments(comment)
+        SearchIndex.objects.filter(comment=comment).delete()
+    else:
+        PostView.increment_unread_comments(comment)
+        SearchIndex.update_comment_index(comment)
 
     Comment.update_post_counters(comment.post, update_activity=False)
 
@@ -196,8 +214,9 @@ def delete_comment(request, comment_id):
 
 
 @require_auth
+@require_http_methods(["POST"])
 def delete_comment_thread(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post"), id=comment_id)
 
     if not request.me.is_moderator:
         # only moderator can delete whole threads
@@ -214,8 +233,9 @@ def delete_comment_thread(request, comment_id):
 
 
 @require_auth
+@require_http_methods(["POST"])
 def pin_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("post__author", "reply_to"), id=comment_id)
 
     if not request.me.is_moderator and comment.post.author != request.me:
         raise AccessDenied(
@@ -238,7 +258,7 @@ def pin_comment(request, comment_id):
 @api(require_auth=True)
 @require_http_methods(["POST"])
 def upvote_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("author", "post"), id=comment_id)
 
     post_vote, is_created = CommentVote.upvote(
         user=request.me,
@@ -257,7 +277,7 @@ def upvote_comment(request, comment_id):
 @api(require_auth=True)
 @require_http_methods(["POST"])
 def retract_comment_vote(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+    comment = get_object_or_404(Comment.objects.select_related("author"), id=comment_id)
 
     is_retracted = CommentVote.retract_vote(
         request=request,

@@ -1,3 +1,4 @@
+import hmac
 from datetime import timedelta, datetime
 from uuid import uuid4
 
@@ -64,7 +65,7 @@ class OAuth2App(models.Model, ClientMixin):
         return redirect_uri in self.redirect_uris
 
     def check_client_secret(self, client_secret):
-        return self.client_secret == client_secret
+        return hmac.compare_digest(self.client_secret, client_secret)
 
     def check_endpoint_auth_method(self, method, endpoint):
         if endpoint == "token":
@@ -112,6 +113,9 @@ class OAuth2Token(models.Model, TokenMixin):
 
     def get_scope(self):
         return self.scope
+
+    def get_scopes(self):
+        return set(self.scope.split(" ") if self.scope else [])
 
     def get_expires_in(self):
         return self.expires_in
