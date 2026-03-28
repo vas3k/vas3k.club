@@ -45,6 +45,27 @@ def api_friend(request, user_slug):
         }
 
 
+@api(require_auth=True)
+def api_friends(request):
+    user_friends = Friend.user_friends(user_from=request.me)\
+        .select_related("user_to")
+
+    page = paginate(request, user_friends, page_size=settings.FRIENDS_PAGE_SIZE)
+
+    return {
+        "friends": [
+            {
+                **f.to_dict(),
+                "user": f.user_to.to_dict(),
+            }
+            for f in page
+        ],
+        "page": page.number,
+        "total_pages": page.paginator.num_pages,
+        "has_next": page.has_next(),
+    }
+
+
 @require_auth
 def friends(request, user_slug):
     if request.me.slug != user_slug:
