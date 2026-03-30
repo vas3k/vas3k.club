@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
+from ai.moderation import ai_rate_post_quality
 from common.regexp import USERNAME_RE
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, \
     send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE, VIBES_CHAT
@@ -63,7 +64,7 @@ REJECT_POST_REASONS = {
 
 
 def send_published_post_to_moderators(post):
-    send_telegram_message(
+    message = send_telegram_message(
         chat=ADMIN_CHAT,
         text=render_html_message("moderator_new_post_review.html", post=post),
         reply_markup=telegram.InlineKeyboardMarkup([
@@ -79,6 +80,14 @@ def send_published_post_to_moderators(post):
                 telegram.InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),
             ],
         ])
+    )
+
+    ai_post_rate_text = ai_rate_post_quality(post)
+    send_telegram_message(
+        chat=ADMIN_CHAT,
+        text=ai_post_rate_text,
+        parse_mode=telegram.ParseMode.HTML,
+        reply_to_message_id=message.message_id,
     )
 
 

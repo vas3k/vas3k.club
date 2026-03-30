@@ -101,7 +101,7 @@ Important information for everyone willing to contribute to this project.
 
 **For new features:** open a new Issue describing the new feature you're interested in. Wait for the contributors to get back to you and give you the green light for implementation. If the contributors don't reply, it means the feature isn't of interest at the moment. ONLY after that should you open a PR for that feature.
 
-The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues) and our Dev-chat (@vas3k_club_dev in telegram). DO NOT DISCUSS FORKS THERE.
+The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues) and our [Dev-chat in telegram](https://t.me/vas3k_club_dev). DO NOT DISCUSS FORKS THERE.
 
 If you want to contribute but don't know where to start — come to the chat and just ask! 
 
