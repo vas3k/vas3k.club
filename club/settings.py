@@ -289,7 +289,7 @@ STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWIbII"
 
-WEBHOOK_SECRETS = set(os.getenv("WEBHOOK_SECRETS", "").split(","))
+WEBHOOK_SECRETS = set(filter(None, os.getenv("WEBHOOK_SECRETS", "").split(",")))
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
