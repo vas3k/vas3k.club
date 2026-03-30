@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from types import SimpleNamespace
+from unittest.mock import patch, MagicMock
 
 import django
 from django.conf import settings
@@ -10,7 +11,7 @@ django.setup()  # todo: how to run tests from PyCharm without this workaround?
 from authn.helpers import is_safe_url, get_access_denied_reason
 from authn.decorators.api import api
 from authn.models.session import Code
-from club.exceptions import ApiAccessDenied, RateLimitException, InvalidCode
+from club.exceptions import ApiAccessDenied, ApiAuthRequired, RateLimitException, InvalidCode
 from users.models.user import User
 
 
@@ -132,6 +133,108 @@ class ApiDecoratorAccessControlTests(TestCase):
                 moderation_status=User.MODERATION_STATUS_ON_REVIEW,
             ))
         self.assertEqual(ctx.exception.code, "on_review")
+
+
+class ApiDecoratorAuthResolutionTests(TestCase):
+    """Tests that auth is resolved before require_auth check,
+    so require_auth=False endpoints can still identify the user."""
+
+    @staticmethod
+    @api(require_auth=False)
+    def _public_view(request):
+        return {"has_user": request.me is not None}
+
+    @staticmethod
+    @api(require_auth=True)
+    def _private_view(request):
+        return {"ok": True}
+
+    @staticmethod
+    def _make_request(me=None, headers=None, get_params=None):
+        return SimpleNamespace(
+            me=me,
+            headers=headers or {},
+            GET=get_params or {},
+            COOKIES={},
+        )
+
+    def test_public_endpoint_anonymous_succeeds(self):
+        """require_auth=False with no credentials should succeed."""
+        request = self._make_request()
+        result = self._public_view(request)
+        self.assertEqual(result.status_code, 200)
+
+    @patch("authn.decorators.api.OAuth2Token")
+    @patch("authn.decorators.api.app_by_service_token")
+    def test_public_endpoint_resolves_service_token(self, mock_app_by_token, mock_token_cls):
+        owner = GetAccessDeniedReasonTests._make_user()
+        mock_app = MagicMock()
+        mock_app.owner = owner
+        mock_app.client_id = "test-client"
+        mock_app.scope = "all"
+        mock_app_by_token.return_value = mock_app
+        mock_token_cls.return_value = MagicMock()
+
+        request = self._make_request(
+            headers={"X-Service-Token": "valid-token"},
+        )
+        result = self._public_view(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(request.me, owner)
+        self.assertIsNotNone(request.oauth_token)
+        mock_app_by_token.assert_called_once_with("valid-token")
+
+    @patch("authn.decorators.api.app_by_service_token")
+    def test_public_endpoint_invalid_service_token_raises(self, mock_app_by_token):
+        """Invalid service token should raise even on require_auth=False endpoints."""
+        mock_app_by_token.return_value = None
+
+        request = self._make_request(
+            headers={"X-Service-Token": "bad-token"},
+        )
+        with self.assertRaises(ApiAuthRequired):
+            self._public_view(request)
+
+    @patch("authn.decorators.api.oauth2_token_validator")
+    def test_public_endpoint_resolves_oauth_token(self, mock_validator):
+        owner = GetAccessDeniedReasonTests._make_user()
+        mock_token = MagicMock()
+        mock_token.user = owner
+        mock_validator.acquire_token.return_value = mock_token
+
+        request = self._make_request(
+            headers={"Authorization": "Bearer test-token"},
+        )
+        result = self._public_view(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(request.me, owner)
+        self.assertEqual(request.oauth_token, mock_token)
+
+    def test_private_endpoint_no_auth_raises(self):
+        """require_auth=True with no credentials should raise ApiAuthRequired."""
+        request = self._make_request()
+        with self.assertRaises(ApiAuthRequired):
+            self._private_view(request)
+
+    @patch("authn.decorators.api.OAuth2Token")
+    @patch("authn.decorators.api.app_by_service_token")
+    def test_service_token_via_query_param(self, mock_app_by_token, mock_token_cls):
+        """Service token passed as query param should also be resolved."""
+        owner = GetAccessDeniedReasonTests._make_user()
+        mock_app = MagicMock()
+        mock_app.owner = owner
+        mock_app.client_id = "test-client"
+        mock_app.scope = "all"
+        mock_app_by_token.return_value = mock_app
+        mock_token_cls.return_value = MagicMock()
+
+        request = self._make_request(
+            get_params={"service_token": "valid-token"},
+        )
+        result = self._public_view(request)
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(request.me, owner)
+        mock_app_by_token.assert_called_once_with("valid-token")
 
 
 class ModelCodeTests(TestCase):
