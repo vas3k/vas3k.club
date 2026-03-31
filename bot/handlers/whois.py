@@ -31,8 +31,8 @@ def command_whois(update: Update, context: CallbackContext) -> None:
             )
             return None
 
-        username = parts[1].lstrip("@").strip()
-        if not username:
+        telegram_nick_or_id = parts[1].strip()
+        if not telegram_nick_or_id:
             update.effective_chat.send_message(
                 "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                 "или в формате /whois @username",
@@ -40,10 +40,23 @@ def command_whois(update: Update, context: CallbackContext) -> None:
             )
             return None
 
-        user = User.objects.filter(telegram_id__isnull=False, telegram_data__username__iexact=username).first()
+        # If argument is a number – treat it as telegram_id, otherwise as @username
+        if telegram_nick_or_id.isdigit():
+            user = User.objects.filter(telegram_id=telegram_nick_or_id).first()
+        else:
+            username = telegram_nick_or_id.lstrip("@").strip()
+            if not username:
+                update.effective_chat.send_message(
+                    "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
+                    "или в формате /whois @username",
+                    quote=True
+                )
+                return None
+            user = User.objects.filter(telegram_id__isnull=False, telegram_data__username__iexact=username).first()
+
         if not user:
             update.effective_chat.send_message(
-                "🤨 Пользователь с таким телеграм-никнеймом не найден в Клубе.",
+                "🤨 Пользователь с таким телеграм-никнеймом или ID не найден в Клубе.",
                 quote=True
             )
             return None
