@@ -13,20 +13,55 @@ from users.models.user import User
 @is_club_member
 @ensure_fresh_db_connection
 def command_whois(update: Update, context: CallbackContext) -> None:
-    is_private_forward = update.message is not None \
-        and update.message.forward_date is not None \
-        and update.message.chat.type == TGChat.PRIVATE
+    message = update.message
+    is_private_forward = message is not None \
+        and message.forward_date is not None \
+        and message.chat.type == TGChat.PRIVATE
 
-    if not update.message or not update.message.reply_to_message and not is_private_forward:
-        update.effective_chat.send_message(
-            "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать",
+    # If there is no reply/forward – try `/whois <telegram_username>` using the raw message text
+    if not message or (not message.reply_to_message and not is_private_forward):
+        text = (message.text or "").strip() if message else ""
+        parts = text.split(maxsplit=1)
+
+        if len(parts) < 2:
+            update.effective_chat.send_message(
+                "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
+                "или в формате /whois @username",
+                quote=True
+            )
+            return None
+
+        username = parts[1].lstrip("@").strip()
+        if not username:
+            update.effective_chat.send_message(
+                "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
+                "или в формате /whois @username",
+                quote=True
+            )
+            return None
+
+        user = User.objects.filter(telegram_id__isnull=False, telegram_data__username__iexact=username).first()
+        if not user:
+            update.effective_chat.send_message(
+                "🤨 Пользователь с таким телеграм-никнеймом не найден в Клубе.",
+                quote=True
+            )
+            return None
+
+        profile_url = settings.APP_HOST + reverse("profile", kwargs={
+            "user_slug": user.slug,
+        })
+
+        message.reply_text(
+            f"""Кажется, это <a href="{profile_url}">{html.escape(user.full_name)}</a>""",
+            parse_mode=ParseMode.HTML,
             quote=True
         )
         return None
 
-    original_message = update.message  # look at the author of this message (works only in private chats)
-    if update.message.reply_to_message:
-        original_message = update.message.reply_to_message  # look at the author of replied message
+    original_message = message  # look at the author of this message (works only in private chats)
+    if message.reply_to_message:
+        original_message = message.reply_to_message  # look at the author of replied message
 
     from_user = original_message.from_user
     if original_message.forward_date:
