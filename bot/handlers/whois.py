@@ -1,8 +1,8 @@
 import html
 
 from django.urls import reverse
-from telegram import Update, ParseMode
-from telegram import Chat as TGChat
+from telegram import Chat as TGChat, MessageOrigin, Update
+from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
 
 from bot.decorators import is_club_member, ensure_fresh_db_connection
@@ -10,9 +10,12 @@ from club import settings
 from users.models.user import User
 
 
-@is_club_member
 @ensure_fresh_db_connection
-def command_whois(update: Update, context: CallbackContext) -> None:
+@is_club_member
+async def command_whois(update: Update, context: CallbackContext) -> None:
+    if not update.message:
+        return None
+          
     message = update.message
     is_private_forward = message is not None \
         and message.forward_date is not None \
@@ -24,7 +27,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         parts = text.split(maxsplit=1)
 
         if len(parts) < 2:
-            update.effective_chat.send_message(
+            await update.effective_chat.send_message(
                 "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                 "или в формате /whois @username",
                 quote=True
@@ -33,7 +36,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
 
         telegram_nick_or_id = parts[1].strip()
         if not telegram_nick_or_id:
-            update.effective_chat.send_message(
+            await update.effective_chat.send_message(
                 "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                 "или в формате /whois @username",
                 quote=True
@@ -46,7 +49,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         else:
             username = telegram_nick_or_id.lstrip("@").strip()
             if not username:
-                update.effective_chat.send_message(
+                await update.effective_chat.send_message(
                     "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                     "или в формате /whois @username",
                     quote=True
@@ -55,7 +58,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
             user = User.objects.filter(telegram_id__isnull=False, telegram_data__username__iexact=username).first()
 
         if not user:
-            update.effective_chat.send_message(
+            await update.effective_chat.send_message(
                 "🤨 Пользователь с таким телеграм-никнеймом или ID не найден в Клубе.",
                 quote=True
             )
@@ -65,7 +68,7 @@ def command_whois(update: Update, context: CallbackContext) -> None:
             "user_slug": user.slug,
         })
 
-        message.reply_text(
+        await message.reply_text(
             f"""Кажется, это <a href="{profile_url}">{html.escape(user.full_name)}</a>""",
             parse_mode=ParseMode.HTML,
             quote=True
@@ -77,34 +80,36 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         original_message = message.reply_to_message  # look at the author of replied message
 
     from_user = original_message.from_user
-    if original_message.forward_date:
-        if not original_message.forward_from:
-            update.effective_chat.send_message(
-                f"🤨 Кажется, {original_message.forward_sender_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
-                quote=True
+    origin = original_message.forward_origin
+    if origin is not None:
+        if origin.type == MessageOrigin.HIDDEN_USER:
+            await update.message.reply_text(
+                f"🤨 Кажется, {origin.sender_user_name} скрыл свой профиль для пересылаемых сообщений. Попробуй дать команду в ответ на исходное сообщение",
+                do_quote=True,
             )
             return None
-        from_user = original_message.forward_from
+        if origin.type == MessageOrigin.USER:
+            from_user = origin.sender_user
 
     if from_user.is_bot:
         if getattr(original_message, 'sender_chat', None):
-            update.message.reply_text(
+            await update.message.reply_text(
                 "Сообщение отправлено от имени чата/канала",
-                quote=True
+                do_quote=True
             )
             return
-        update.message.reply_text(
+        await update.message.reply_text(
             "Это бот, глупышка",
-            quote=True
+            do_quote=True
         )
         return None
 
     telegram_id = from_user.id
     user = User.objects.filter(telegram_id=telegram_id).first()
     if not user:
-        update.message.reply_text(
+        await update.message.reply_text(
             f"🤨 Пользователь не найден в Клубе. Гоните его, насмехайтесь над ним!",
-            quote=True
+            do_quote=True
         )
         return None
 
@@ -112,10 +117,10 @@ def command_whois(update: Update, context: CallbackContext) -> None:
         "user_slug": user.slug,
     })
 
-    update.message.reply_text(
+    await update.message.reply_text(
         f"""Кажется, это <a href="{profile_url}">{html.escape(user.full_name)}</a>""",
         parse_mode=ParseMode.HTML,
-        quote=True
+        do_quote=True
     )
 
     return None

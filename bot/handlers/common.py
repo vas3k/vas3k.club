@@ -2,7 +2,8 @@ import logging
 from enum import Enum
 from typing import Optional
 
-from telegram import Update, ParseMode
+from telegram import Update
+from telegram.constants import ParseMode
 
 from bot.config import COMMENT_URL_RE, POST_URL_RE
 from comments.models import Comment
@@ -38,13 +39,13 @@ class PostRejectReason(Enum):
     false_dilemma = "false_dilemma"
 
 
-def get_club_user(update: Update):
+async def get_club_user(update: Update):
     user = User.objects.filter(telegram_id=update.effective_user.id).first()
     if not user:
         if update.callback_query:
-            update.callback_query.answer(text=f"☝️ Привяжи бота к профилю, братишка")
+            await update.callback_query.answer(text=f"☝️ Привяжи бота к профилю, братишка")
         else:
-            update.message.reply_text(
+            await update.message.reply_text(
                 f"😐 Привяжи <a href=\"https://vas3k.club/user/me/edit/bot/\">бота</a> к профилю, братишка",
                 parse_mode=ParseMode.HTML
             )
@@ -52,25 +53,25 @@ def get_club_user(update: Update):
 
     if user.is_banned:
         if update.callback_query:
-            update.callback_query.answer(text=f"🙈 Ты в бане, мы больше не дружим")
+            await update.callback_query.answer(text=f"🙈 Ты в бане, мы больше не дружим")
         else:
-            update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
+            await update.message.reply_text(f"🙈 Ты в бане, мы больше не дружим")
         return None
 
     if not user.is_member:
         if update.callback_query:
-            update.callback_query.answer(text=f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
+            await update.callback_query.answer(text=f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
         else:
-            update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
+            await update.message.reply_text(f"😣 Твой профиль в Клубе неактивен. Плоти долор!")
         return None
 
     return user
 
 
-def get_club_comment(update: Update) -> Optional[Comment]:
+async def get_club_comment(update: Update) -> Optional[Comment]:
     entities = update.message.reply_to_message.entities or update.message.reply_to_message.caption_entities or []
     url_entities = [
-        entity["url"] for entity in entities if entity["type"] == "text_link"
+        entity.url for entity in entities if entity.type == "text_link"
     ]
 
     for url_entity in url_entities:
@@ -85,16 +86,16 @@ def get_club_comment(update: Update) -> Optional[Comment]:
 
     comment = Comment.objects.filter(id=comment_id).first()
     if not comment:
-        update.message.reply_text(f"🤨 Коммент '{comment_id}' был удален или куда-то делся")
+        await update.message.reply_text(f"🤨 Коммент '{comment_id}' был удален или куда-то делся")
         return None
 
     return comment
 
 
-def get_club_post(update: Update) -> Optional[Post]:
+async def get_club_post(update: Update) -> Optional[Post]:
     entities = update.message.reply_to_message.entities or update.message.reply_to_message.caption_entities or []
     url_entities = [
-        entity["url"] for entity in entities if entity["type"] == "text_link"
+        entity.url for entity in entities if entity.type == "text_link"
     ]
 
     for url_entity in url_entities:
@@ -109,7 +110,7 @@ def get_club_post(update: Update) -> Optional[Post]:
 
     post = Post.objects.filter(slug=post_id).first()
     if not post or not post.is_commentable:
-        update.message.reply_text(f"🤨 Пост был удален, скрыт или украден, сорян")
+        await update.message.reply_text(f"🤨 Пост был удален, скрыт или украден, сорян")
         return None
 
     return post

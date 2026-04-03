@@ -14,8 +14,8 @@ log = logging.getLogger(__name__)
 
 
 @ensure_fresh_db_connection
-def subscribe(update: Update, context: CallbackContext) -> None:
-    user = get_club_user(update)
+async def subscribe(update: Update, context: CallbackContext) -> None:
+    user = await get_club_user(update)
     if not user or not user.telegram_id:
         return None
 
@@ -31,14 +31,14 @@ def subscribe(update: Update, context: CallbackContext) -> None:
     )
 
     if user.telegram_id:
-        update.callback_query.answer(
+        await update.callback_query.answer(
             text=f"Вы подписались на уведомления о новых комментариях к посту «{post.title}» 🔔"
         )
 
 
 @ensure_fresh_db_connection
-def unsubscribe(update: Update, context: CallbackContext) -> None:
-    user = get_club_user(update)
+async def unsubscribe(update: Update, context: CallbackContext) -> None:
+    user = await get_club_user(update)
     if not user or not user.telegram_id:
         return None
 
@@ -59,10 +59,10 @@ def unsubscribe(update: Update, context: CallbackContext) -> None:
         })
 
         if is_unsubscribed:
-            update.callback_query.answer(
+            await update.callback_query.answer(
                 text=f"Вы отписались от о комментариев к посту «{post.title}» 🔕"
             )
         else:
-            update.callback_query.answer(
+            await update.callback_query.answer(
                 text="Вы и не были подписаны на уведомления к этому посту ❌"
             )

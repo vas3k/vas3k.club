@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import pytz
+from zoneinfo import ZoneInfo
 from django import forms
 from django.conf import settings
 from django.contrib.postgres.forms import SimpleArrayField
@@ -437,7 +437,7 @@ class PostEventForm(AbstractPostForm):
                     "month": cleaned_data["event_month"],
                     "time": str(cleaned_data["event_time"]),
                     "timezone": cleaned_data["event_timezone"],
-                    "utc_offset": datetime.now(pytz.timezone(cleaned_data["event_timezone"]))
+                    "utc_offset": datetime.now(ZoneInfo(cleaned_data["event_timezone"]))
                     .utcoffset().total_seconds() // 60,
                     "location": cleaned_data["event_location"],
                     "participants": self.instance.metadata.get("event", {}).get("participants", []) \
