@@ -196,10 +196,10 @@ class TestSyncBotFromAsyncContext(TestCase):
         self._server_thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self._server_thread.start()
 
-        sync_bot = SyncBot(Bot(
+        sync_bot = SyncBot(
             token=BaseTelegramTest.TOKEN,
             base_url=f"http://127.0.0.1:{server_port}/bot",
-        ))
+        )
 
         self.server.expect_requests([
             ExpectedRequest(
@@ -245,6 +245,26 @@ class TestSyncBotFromAsyncContext(TestCase):
 
         asyncio.run(_run())
         self.server.check_requests()
+
+
+class TestSyncBotAfterFork(TestCase):
+    """django-q2 forks worker processes. Daemon threads don't survive fork,
+    so SyncBot must recreate its event loop in the child process."""
+
+    def test_sync_bot_recreates_loop_on_pid_change(self):
+        from notifications.telegram.bot import SyncBot
+
+        bot = SyncBot(token=BaseTelegramTest.TOKEN)
+        bot._ensure_loop()
+        original_loop = bot._loop
+        original_pid = bot._owner_pid
+
+        # simulate fork by changing the recorded pid
+        bot._owner_pid = -1
+
+        bot._ensure_loop()
+        self.assertIsNot(bot._loop, original_loop)
+        self.assertEqual(bot._owner_pid, original_pid)
 
 
 class TestSyncBotInSyncContext(BaseTelegramTest, TestCase):
