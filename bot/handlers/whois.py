@@ -12,7 +12,7 @@ from users.models.user import User
 
 @ensure_fresh_db_connection
 @is_club_member
-def command_whois(update: Update, context: CallbackContext) -> None:
+async def command_whois(update: Update, context: CallbackContext) -> None:
     if not update.message:
         return None
           
