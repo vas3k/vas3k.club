@@ -86,6 +86,49 @@ class TestNotifyProfileNeedsReview(TestCase):
         self.assertTrue(any(cb.startswith("approve_user:") for cb in callbacks))
         self.assertTrue(any(cb.startswith("reject_user_intro:") for cb in callbacks))
 
+    @patch("notifications.telegram.users.ai_rate_intro_quality", side_effect=Exception("OpenAI down"))
+    @patch("notifications.telegram.users.send_telegram_message")
+    @patch("notifications.telegram.users.render_html_message", return_value="<b>review</b>")
+    def test_ai_error_sends_fallback_to_moderators(self, mock_render, mock_send, mock_ai):
+        user = _create_user("ai_error_user")
+        intro = Post.objects.create(
+            type=Post.TYPE_INTRO,
+            slug="ai-error-intro",
+            title="Intro",
+            text="Hello",
+            author=user,
+            visibility=Post.VISIBILITY_EVERYWHERE,
+        )
+
+        mock_message = MagicMock()
+        mock_message.message_id = 1
+        mock_send.return_value = mock_message
+
+        notify_profile_needs_review(user, intro)
+
+        self.assertEqual(mock_send.call_count, 2)
+        fallback_call = mock_send.call_args_list[1]
+        self.assertIn("Не удалось", fallback_call.kwargs["text"])
+
+    @patch("notifications.telegram.users.ai_rate_intro_quality")
+    @patch("notifications.telegram.users.send_telegram_message", return_value=None)
+    @patch("notifications.telegram.users.render_html_message", return_value="<b>review</b>")
+    def test_skips_ai_review_when_first_message_fails(self, mock_render, mock_send, mock_ai):
+        user = _create_user("msg_fail_user")
+        intro = Post.objects.create(
+            type=Post.TYPE_INTRO,
+            slug="msg-fail-intro",
+            title="Intro",
+            text="Hello",
+            author=user,
+            visibility=Post.VISIBILITY_EVERYWHERE,
+        )
+
+        notify_profile_needs_review(user, intro)
+
+        mock_send.assert_called_once()
+        mock_ai.assert_not_called()
+
 
 class TestNotifyUserProfileApproved(TestCase):
     @patch("notifications.telegram.users.send_telegram_message")

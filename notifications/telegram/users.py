@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
@@ -5,6 +7,8 @@ from django.template import TemplateDoesNotExist
 from django.urls import reverse
 
 from ai.moderation import ai_rate_intro_quality
+
+log = logging.getLogger(__name__)
 from notifications.telegram.common import Chat, ADMIN_CHAT, send_telegram_message, render_html_message
 from bot.handlers.common import UserRejectReason
 from users.models.user import User
@@ -48,13 +52,25 @@ def notify_profile_needs_review(user, intro):
         ])
     )
 
-    ai_intro_rate_text = ai_rate_intro_quality(user, intro)
-    send_telegram_message(
-        chat=ADMIN_CHAT,
-        text=ai_intro_rate_text,
-        parse_mode=ParseMode.HTML,
-        reply_to_message_id=message.message_id,
-    )
+    if not message:
+        log.warning(f"Failed to send intro review for user {user.slug} to moderators, skipping AI review")
+        return
+
+    try:
+        ai_intro_rate_text = ai_rate_intro_quality(user, intro)
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=ai_intro_rate_text,
+            parse_mode=ParseMode.HTML,
+            reply_to_message_id=message.message_id,
+        )
+    except Exception:
+        log.exception(f"Failed to send AI intro review for user {user.slug}")
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text="⚠️ Не удалось получить оценку от ИИ",
+            reply_to_message_id=message.message_id,
+        )
 
 
 def notify_user_profile_approved(user):
