@@ -483,3 +483,66 @@ class SendTelegramMessageTest(BaseTelegramTest, TestCase):
         send_telegram_image(
             self.test_chat, image_url, caption, parse_mode="Markdown"
         )
+
+    def test_send_telegram_message_returns_message_object(self):
+        text = "Return value test"
+
+        self.server.expect_requests(
+            [
+                ExpectedRequest(
+                    Request(
+                        "POST",
+                        SendTelegramMessageTest.SEND_MESSAGE_PATH,
+                        {
+                            **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE,
+                            "text": text,
+                        },
+                    ),
+                    SendTelegramMessageTest.RESPONSE,
+                )
+            ]
+        )
+
+        result = send_telegram_message(self.test_chat, text)
+
+        self.assertIsNotNone(result, "send_telegram_message returned None instead of Message")
+        self.assertEqual(result.message_id, 123456)
+
+    def test_send_telegram_message_consecutive_calls(self):
+        """Second call uses message_id from the first as reply_to."""
+        self.server.expect_requests(
+            [
+                ExpectedRequest(
+                    Request(
+                        "POST",
+                        SendTelegramMessageTest.SEND_MESSAGE_PATH,
+                        {
+                            **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE,
+                            "text": "First message",
+                        },
+                    ),
+                    SendTelegramMessageTest.RESPONSE,
+                ),
+                ExpectedRequest(
+                    Request(
+                        "POST",
+                        SendTelegramMessageTest.SEND_MESSAGE_PATH,
+                        {
+                            **SendTelegramMessageTest.MESSAGE_BODY_TEMPLATE,
+                            "text": "Reply to first",
+                            "reply_parameters": '{"message_id": 123456}',
+                        },
+                    ),
+                    SendTelegramMessageTest.RESPONSE,
+                ),
+            ]
+        )
+
+        first = send_telegram_message(self.test_chat, "First message")
+        self.assertIsNotNone(first)
+
+        second = send_telegram_message(
+            self.test_chat, "Reply to first",
+            reply_to_message_id=first.message_id,
+        )
+        self.assertIsNotNone(second)
