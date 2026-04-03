@@ -258,3 +258,26 @@ class TestSendPublishedPostToModerators(TestCase):
         self.assertTrue(any(cb.startswith("approve_post:") for cb in callbacks))
         self.assertTrue(any(cb.startswith("reject_post:") for cb in callbacks))
 
+    @patch("notifications.telegram.posts.ai_rate_post_quality", side_effect=Exception("OpenAI down"))
+    @patch("notifications.telegram.posts.send_telegram_message")
+    @patch("notifications.telegram.posts.render_html_message", return_value="<b>review</b>")
+    def test_ai_error_sends_fallback_to_moderators(self, mock_render, mock_send, mock_ai):
+        mock_message = MagicMock()
+        mock_message.message_id = 42
+        mock_send.return_value = mock_message
+
+        send_published_post_to_moderators(self.post)
+
+        self.assertEqual(mock_send.call_count, 2)
+        fallback_call = mock_send.call_args_list[1]
+        self.assertIn("Не удалось", fallback_call.kwargs["text"])
+
+    @patch("notifications.telegram.posts.ai_rate_post_quality")
+    @patch("notifications.telegram.posts.send_telegram_message", return_value=None)
+    @patch("notifications.telegram.posts.render_html_message", return_value="<b>review</b>")
+    def test_skips_ai_review_when_first_message_fails(self, mock_render, mock_send, mock_ai):
+        send_published_post_to_moderators(self.post)
+
+        mock_send.assert_called_once()
+        mock_ai.assert_not_called()
+

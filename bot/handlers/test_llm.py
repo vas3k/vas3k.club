@@ -376,3 +376,42 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
         asyncio.run(llm_response(update, context))
 
         mock_ask_assistant.assert_called_once()
+
+    @patch("bot.handlers.llm.ask_assistant")
+    def test_assistant_error_sends_fallback_message(self, mock_ask_assistant):
+        mock_ask_assistant.side_effect = Exception("OpenAI API error")
+
+        update = self._create_update("Hello bot")
+        context = MagicMock()
+        context.bot = self.sync_bot.bot
+
+        self.server.expect_requests(
+            [
+                ExpectedRequest(
+                    Request(
+                        "POST",
+                        self.SEND_CHAT_ACTION_PATH,
+                        {
+                            "chat_id": "12345",
+                            "action": "typing",
+                        },
+                    ),
+                    self.CHAT_ACTION_RESPONSE,
+                ),
+                ExpectedRequest(
+                    Request(
+                        "POST",
+                        self.SEND_MESSAGE_PATH,
+                        {
+                            "chat_id": "12345",
+                            "text": "Что-то сломалось, попробуй ещё раз позже 🤷",
+                        },
+                    ),
+                    self.RESPONSE,
+                ),
+            ]
+        )
+
+        asyncio.run(llm_response(update, context))
+
+        self.assertTrue(self.server.wait_for_completion(timeout=5))

@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
@@ -6,6 +8,8 @@ from django.urls import reverse
 
 from ai.moderation import ai_rate_post_quality
 from common.regexp import USERNAME_RE
+
+log = logging.getLogger(__name__)
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, \
     send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE, VIBES_CHAT
 from posts.models.post import Post
@@ -83,13 +87,25 @@ def send_published_post_to_moderators(post):
         ])
     )
 
-    ai_post_rate_text = ai_rate_post_quality(post)
-    send_telegram_message(
-        chat=ADMIN_CHAT,
-        text=ai_post_rate_text,
-        parse_mode=ParseMode.HTML,
-        reply_to_message_id=message.message_id,
-    )
+    if not message:
+        log.warning(f"Failed to send post {post.id} to moderators, skipping AI review")
+        return
+
+    try:
+        ai_post_rate_text = ai_rate_post_quality(post)
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text=ai_post_rate_text,
+            parse_mode=ParseMode.HTML,
+            reply_to_message_id=message.message_id,
+        )
+    except Exception:
+        log.exception(f"Failed to send AI review for post {post.id}")
+        send_telegram_message(
+            chat=ADMIN_CHAT,
+            text="⚠️ Не удалось получить оценку от ИИ",
+            reply_to_message_id=message.message_id,
+        )
 
 
 def send_intro_changes_to_moderators(post):

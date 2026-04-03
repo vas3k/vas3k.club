@@ -1,7 +1,7 @@
 import logging
 from collections import namedtuple
 
-from telegram import InlineKeyboardMarkup, LinkPreviewOptions, ReplyParameters
+from telegram import InlineKeyboardMarkup, LinkPreviewOptions, Message, ReplyParameters
 from telegram.constants import ParseMode
 from telegram.error import TelegramError
 from django.conf import settings
@@ -32,7 +32,7 @@ def send_telegram_message(
     reply_markup: InlineKeyboardMarkup | None = None,
     reply_to_message_id: int | None = None,
     disable_preview: bool = True,
-):
+) -> Message | None:
     if not bot:
         log.warning("No telegram token. Skipping")
         return
@@ -76,7 +76,7 @@ def send_telegram_image(
     image_url: str,
     text: str,
     parse_mode: str = ParseMode.HTML,
-):
+) -> Message | None:
     if not bot:
         log.warning("No telegram token. Skipping")
         return

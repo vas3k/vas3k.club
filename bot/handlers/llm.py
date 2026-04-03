@@ -1,3 +1,5 @@
+import asyncio
+
 from telegram import LinkPreviewOptions, Update
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
@@ -54,7 +56,12 @@ async def llm_response(update: Update, context: CallbackContext) -> None:
     if reply_to_text:
         user_input = [f"Предыдущее сообщение: {reply_to_text}"] + user_input
 
-    answer = ask_assistant("\n".join(user_input))
+    try:
+        answer = await asyncio.to_thread(ask_assistant, "\n".join(user_input))
+    except Exception:
+        await update.message.reply_text("Что-то сломалось, попробуй ещё раз позже 🤷")
+        return None
+
     if answer:
         await update.message.reply_text(
             markdown_tg(answer),
