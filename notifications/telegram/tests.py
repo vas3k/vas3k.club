@@ -183,10 +183,8 @@ class BaseTelegramTest:
         server_thread.start()
 
         self.sync_bot = SyncBot(
-            Bot(
-                token=BaseTelegramTest.TOKEN,
-                base_url=f"http://127.0.0.1:{server_port}/bot",
-            )
+            token=BaseTelegramTest.TOKEN,
+            base_url=f"http://127.0.0.1:{server_port}/bot",
         )
 
         self.server.expect_requests([
