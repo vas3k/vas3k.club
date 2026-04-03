@@ -1,5 +1,8 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from telegram import (
-    Bot,
     ForceReply,
     InlineKeyboardMarkup,
     LinkPreviewOptions,
@@ -10,20 +13,21 @@ from telegram import (
 )
 from telegram.constants import ParseMode
 
+if TYPE_CHECKING:
+    from telegram import Bot
+
 from helpdeskbot import config
-from notifications.telegram.bot import SyncBot
-
-bot = SyncBot(Bot(token=config.TELEGRAM_HELP_DESK_BOT_TOKEN))
 
 
-def send_message(
+async def send_message(
+    bot: Bot,
     chat_id: int,
     text: str,
     reply_to_message_id: int = None,
     parse_mode: str = ParseMode.HTML,
     disable_preview: bool = True,
 ):
-    return bot.send_message(
+    return await bot.send_message(
         chat_id=chat_id,
         text=text,
         reply_parameters=ReplyParameters(message_id=reply_to_message_id) if reply_to_message_id else None,
@@ -32,13 +36,14 @@ def send_message(
     )
 
 
-def edit_message(
+async def edit_message(
+    bot: Bot,
     chat_id: int,
     message_id: int,
     new_text: str,
     parse_mode: str = ParseMode.HTML
 ):
-    return bot.edit_message_text(text=new_text, chat_id=chat_id, message_id=message_id, parse_mode=parse_mode)
+    return await bot.edit_message_text(text=new_text, chat_id=chat_id, message_id=message_id, parse_mode=parse_mode)
 
 
 async def send_reply(

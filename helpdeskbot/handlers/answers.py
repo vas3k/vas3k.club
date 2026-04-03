@@ -49,7 +49,7 @@ async def handle_answer_from_channel(update: Update) -> None:
 
     Answer.create_from_update(question, update)
 
-    notify_user_about_answer(update, question)
+    await notify_user_about_answer(update, question)
 
 
 async def handle_answer_from_room_chat(update: Update) -> None:
@@ -72,10 +72,13 @@ async def handle_answer_from_room_chat(update: Update) -> None:
 
     Answer.create_from_update(question, update)
 
-    notify_user_about_answer(update, question)
+    bot = update.get_bot()
+
+    await notify_user_about_answer(update, question)
 
     # Forward message to the main channel
-    send_message(
+    await send_message(
+        bot,
         chat_id=config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID,
         text=render_html_message(
             template="helpdeskbot_answer_from_room.html",
@@ -90,15 +93,17 @@ async def handle_answer_from_room_chat(update: Update) -> None:
 
     # Send confirmation to the room
     question_channel_id = config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID.replace("-100", "")
-    send_message(
+    await send_message(
+        bot,
         chat_id=int(room_chat_id),
         text=f"➜ <a "
              f"href=\"https://t.me/c/{question_channel_id}/{question.channel_msg_id}\">"
              f"Отвечено</a> 👍"
     )
+    return None
 
 
-def notify_user_about_answer(update: Update, question: Question) -> None:
+async def notify_user_about_answer(update: Update, question: Question) -> None:
     if not question.user:
         log.info(f"User is null for question {question.id}")
         return None
@@ -111,7 +116,8 @@ def notify_user_about_answer(update: Update, question: Question) -> None:
         return None
 
     # Send notification to the user
-    send_message(
+    await send_message(
+        update.get_bot(),
         chat_id=int(user_id),
         text=render_html_message(
             template="helpdeskbot_answer_notification.html",
@@ -123,3 +129,4 @@ def notify_user_about_answer(update: Update, question: Question) -> None:
             text=update.message.text,
         )
     )
+    return None

@@ -240,7 +240,10 @@ async def publish_question(update: Update, user_data: Dict[str, str]) -> str | N
         json_text=data.to_json()
     )
 
-    channel_message = send_message(
+    bot = update.get_bot()
+
+    channel_message = await send_message(
+        bot,
         chat_id=config.TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID,
         text=render_html_message(
             "helpdeskbot_question_in_channel.html",
@@ -256,7 +259,8 @@ async def publish_question(update: Update, user_data: Dict[str, str]) -> str | N
 
     if room and room.chat_id:
         try:
-            room_message = send_message(
+            room_message = await send_message(
+                bot,
                 chat_id=room.chat_id,
                 text=render_html_message(
                     "helpdeskbot_question_in_room.html",
