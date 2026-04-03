@@ -59,8 +59,8 @@ async def approve_post(update: Update, context: CallbackContext) -> None:
 
     await update.callback_query.edit_message_reply_markup(reply_markup=None)
 
-    notify_post_approved(post)
-    announce_in_club_chats(post)
+    async_task(notify_post_approved, post)
+    async_task(announce_in_club_chats, post)
 
     if post.collectible_tag_code:
         async_task(notify_post_collectible_tag_owners, post)
@@ -145,7 +145,7 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
 
     SearchIndex.update_post_index(post)
 
-    notify_post_rejected(post, reason)
+    async_task(notify_post_rejected, post, reason)
 
     await update.effective_chat.send_message(
         f"👎 Пост «{post.title}» перенесен в черновики по причине «{reason.value}» ({update.effective_user.full_name})"
@@ -190,9 +190,9 @@ async def approve_user_profile(update: Update, context: CallbackContext) -> None
 
     SearchIndex.update_user_index(user)
 
-    notify_user_profile_approved(user)
+    async_task(notify_user_profile_approved, user)
     send_welcome_drink(user)
-    announce_in_club_chats(intro)
+    async_task(announce_in_club_chats, intro)
 
     await update.effective_chat.send_message(
         f"✅ Пользователь «{user.full_name}» одобрен ({update.effective_user.full_name})"
@@ -235,7 +235,7 @@ async def reject_user_profile(update: Update, context: CallbackContext):
     user.moderation_status = User.MODERATION_STATUS_REJECTED
     user.save()
 
-    notify_user_profile_rejected(user, reason)
+    async_task(notify_user_profile_rejected, user, reason)
     send_user_rejected_email(user, reason)
 
     await update.effective_chat.send_message(
