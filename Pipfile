@@ -19,7 +19,7 @@ mistune = "==3.1.4"
 click = "*"
 pillow = ">=9.0.1"
 django-simple-history = "==3.7.0"
-python-telegram-bot = {extras = ["webhooks"], version = "==22.6"}
+python-telegram-bot = {extras = ["webhooks"], version = "==22.7"}
 django-q2 = {extras = ["sentry"], version = "==1.7.6"}
 redis = "==5.2.1"
 python-dotenv = ">=0.12"
