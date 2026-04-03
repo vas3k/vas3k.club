@@ -178,6 +178,75 @@ class TestHelpdeskSendMessageAsync(TestCase):
         self.server.check_requests()
 
 
+class TestSyncBotFromAsyncContext(TestCase):
+    """SyncBot uses a separate thread for its event loop, so it should not crash
+    even when called from within an existing async event loop."""
+
+    def _create_sync_bot(self):
+        from notifications.telegram.tests import MockTelegramServer, MockTelegramHandler
+        from notifications.telegram.bot import SyncBot
+
+        self.server = MockTelegramServer(
+            test_case=self,
+            server_address=("127.0.0.1", 0),
+            RequestHandlerClass=MockTelegramHandler,
+        )
+        import threading
+        server_port = self.server.server_address[1]
+        self._server_thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self._server_thread.start()
+
+        sync_bot = SyncBot(Bot(
+            token=BaseTelegramTest.TOKEN,
+            base_url=f"http://127.0.0.1:{server_port}/bot",
+        ))
+
+        self.server.expect_requests([
+            ExpectedRequest(
+                Request("POST", BaseTelegramTest.GET_ME_PATH, {}),
+                GET_ME_RESPONSE,
+            ),
+        ])
+        _ = sync_bot.bot
+        self.server.wait_for_completion(timeout=5)
+        self.server.remaining_expected_requests = None
+
+        return sync_bot
+
+    def tearDown(self):
+        if hasattr(self, "server"):
+            self.server.shutdown()
+            self.server.server_close()
+        super().tearDown()
+
+    def test_sync_bot_works_inside_async_event_loop(self):
+        sync_bot = self._create_sync_bot()
+
+        async def _run():
+            self.server.expect_requests([
+                ExpectedRequest(
+                    Request("POST", BaseTelegramTest.SEND_MESSAGE_PATH, {
+                        "chat_id": "12345",
+                        "text": "From async context",
+                        "parse_mode": "HTML",
+                        "link_preview_options": '{"is_disabled": true}',
+                    }),
+                    SEND_MESSAGE_RESPONSE,
+                ),
+            ])
+
+            result = sync_bot.send_message(
+                chat_id=12345,
+                text="From async context",
+                parse_mode="HTML",
+                link_preview_options={"is_disabled": True},
+            )
+            self.assertIsNotNone(result)
+
+        asyncio.run(_run())
+        self.server.check_requests()
+
+
 class TestSyncBotInSyncContext(BaseTelegramTest, TestCase):
 
     def test_sync_bot_sends_message(self):
