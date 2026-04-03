@@ -18,7 +18,7 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
           
     message = update.message
     is_private_forward = message is not None \
-        and message.forward_date is not None \
+        and message.forward_origin is not None \
         and message.chat.type == TGChat.PRIVATE
 
     # If there is no reply/forward – try `/whois <telegram_username>` using the raw message text
@@ -27,19 +27,19 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
         parts = text.split(maxsplit=1)
 
         if len(parts) < 2:
-            await update.effective_chat.send_message(
+            await message.reply_text(
                 "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                 "или в формате /whois @username",
-                quote=True
+                do_quote=True
             )
             return None
 
         telegram_nick_or_id = parts[1].strip()
         if not telegram_nick_or_id:
-            await update.effective_chat.send_message(
+            await message.reply_text(
                 "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                 "или в формате /whois @username",
-                quote=True
+                do_quote=True
             )
             return None
 
@@ -49,18 +49,18 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
         else:
             username = telegram_nick_or_id.lstrip("@").strip()
             if not username:
-                await update.effective_chat.send_message(
+                await message.reply_text(
                     "Эту команду нужно вызывать реплаем на сообщение человека, о котором вы хотите узнать "
                     "или в формате /whois @username",
-                    quote=True
+                    do_quote=True
                 )
                 return None
             user = User.objects.filter(telegram_id__isnull=False, telegram_data__username__iexact=username).first()
 
         if not user:
-            await update.effective_chat.send_message(
+            await message.reply_text(
                 "🤨 Пользователь с таким телеграм-никнеймом или ID не найден в Клубе.",
-                quote=True
+                do_quote=True
             )
             return None
 
@@ -71,7 +71,7 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
         await message.reply_text(
             f"""Кажется, это <a href="{profile_url}">{html.escape(user.full_name)}</a>""",
             parse_mode=ParseMode.HTML,
-            quote=True
+            do_quote=True
         )
         return None
 
