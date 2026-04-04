@@ -78,7 +78,7 @@ def search_users(query, order_by="-rank", limit=7):
 def search_chats(query, limit=30):
     rooms = []
     for word in query.split(" "):
-        rooms.append(Room.objects.filter(
+        rooms += list(Room.objects.filter(
             Q(title__icontains=word) |
             Q(chat_name__icontains=word) |
             Q(description__icontains=word)
