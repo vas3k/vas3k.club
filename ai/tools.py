@@ -84,7 +84,7 @@ def search_chats(query, limit=30):
             Q(description__icontains=word)
         ).all())
 
-    rooms = list({r.id: r for r in rooms}.values())[:limit]  # only uniq rooms
+    rooms = list({r.slug: r for r in rooms}.values())[:limit]  # only uniq rooms
     return [r.to_dict() for r in rooms]
 
 
