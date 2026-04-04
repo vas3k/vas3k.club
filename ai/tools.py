@@ -76,12 +76,15 @@ def search_users(query, order_by="-rank", limit=7):
 
 
 def search_chats(query, limit=30):
-    rooms = Room.objects.filter(
-        Q(title__icontains=query) |
-        Q(chat_name__icontains=query) |
-        Q(description__icontains=query)
-    ).distinct()[:limit]
+    rooms = []
+    for word in query.split(" "):
+        rooms.append(Room.objects.filter(
+            Q(title__icontains=word) |
+            Q(chat_name__icontains=word) |
+            Q(description__icontains=word)
+        ).all())
 
+    rooms = list({r.id: r for r in rooms}.values())[:limit]  # only uniq rooms
     return [r.to_dict() for r in rooms]
 
 

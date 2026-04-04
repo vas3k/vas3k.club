@@ -24,7 +24,7 @@
 {% if upcoming_events %}
 📅 <b>Предстоящие события</b>
 {% for post in upcoming_events %}
-{{ post.event_datetime|date:"j E" }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a>
+{{ post.event_datetime|date:"j E" }}: <a href="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">{{ post.title }}</a>
 {% endfor %}{% endif %}
 {% if top_old_post %}
 ⏱️ <b>Топ пост год назад</b>
