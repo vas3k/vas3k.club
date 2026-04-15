@@ -101,7 +101,6 @@ class Command(BaseCommand):
 
             for participant in participants:
                 total_count += 1
-                is_admin = participant.id in admin_ids
                 telegram_id = str(participant.id)
 
                 user = User.objects.filter(telegram_id=telegram_id).first()
@@ -125,9 +124,14 @@ class Command(BaseCommand):
                     reason = None
                     active_count += 1
 
+                # force skip admins/moderators
+                is_admin = participant.id in admin_ids
+                if user and user.is_moderator:
+                    is_admin = True
+
                 self.stdout.write(f"{telegram_id} {status_emoji} {slug} {full_name}")
 
-                if execute and reason in {"not_registered", "expired"} and not is_admin and not user.is_moderator:
+                if execute and reason in {"not_registered", "expired"} and not is_admin:
                     try:
                         # Kick without permanent ban: restrict briefly so they can rejoin later
                         client.edit_permissions(
