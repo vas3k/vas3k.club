@@ -93,6 +93,8 @@ jobs:
           secret_STRIPE_TICKETS_WEBHOOK_SECRET: ${{ secrets.STRIPE_TICKETS_WEBHOOK_SECRET }}
           secret_PATREON_CLIENT_ID: ${{ secrets.PATREON_CLIENT_ID }}
           secret_PATREON_CLIENT_SECRET: ${{ secrets.PATREON_CLIENT_SECRET }}
+          secret_YOOKASSA_API_KEY: ${{ secrets.YOOKASSA_API_KEY }}
+          secret_YOOKASSA_SHOP_ID: ${{ secrets.YOOKASSA_SHOP_ID }}
           secret_JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
           secret_WEBHOOK_SECRETS: ${{ secrets.WEBHOOK_SECRETS }}
           secret_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}

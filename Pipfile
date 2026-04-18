@@ -41,6 +41,7 @@ django-webpack-loader = "==3.1.1"
 openai = "*"
 psycopg = {extras = ["pool"], version = "*"}
 telethon = "*"
+yookassa = "==3.10.0"
 
 [requires]
 python_version = "3.12"

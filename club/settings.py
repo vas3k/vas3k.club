@@ -1,3 +1,4 @@
+import ipaddress
 import os
 from datetime import timedelta, datetime
 
@@ -288,7 +289,17 @@ STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWIbII"
 
-YOOKASSA_URL = "/monies/yookassa/"
+YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY") or ""
+YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID") or ""
+YOOKASSA_IP_WHITELIST = [
+    ipaddress.ip_network("185.71.76.0/27"),
+    ipaddress.ip_network("185.71.77.0/27"),
+    ipaddress.ip_network("77.75.153.0/25"),
+    ipaddress.ip_network("77.75.156.11/32"),
+    ipaddress.ip_network("77.75.156.35/32"),
+    ipaddress.ip_network("77.75.154.128/25"),
+    ipaddress.ip_network("2a02:5180::/32"),
+]
 
 WEBHOOK_SECRETS = set(filter(None, os.getenv("WEBHOOK_SECRETS", "").split(",")))
 

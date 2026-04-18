@@ -125,6 +125,7 @@ def pay(request):
         "product": product,
         "payment": payment,
         "user": user,
+        "is_invite": is_invite,
     })
 
 

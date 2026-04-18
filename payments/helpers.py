@@ -1,10 +1,15 @@
+import ipaddress
+import json
 import logging
 from datetime import timedelta, datetime
 
 import stripe
+from django.conf import settings
 from django.db import transaction
+from yookassa.domain.notification import WebhookNotification
 
 from club.exceptions import BadRequest, InsufficientFunds
+from common.request import parse_ip_address
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -64,3 +69,28 @@ def gift_membership_days(days, from_user, to_user, deduct_from_original_user=Tru
             from_user.save()
 
     return to_user.membership_expires_at
+
+
+def parse_yookassa_webhook_event(request, **kwargs):
+    if not request.body:
+        raise BadRequest(code=400, message="[missing payload]")
+
+    try:
+        ip = ipaddress.ip_address(parse_ip_address(request))
+    except ValueError:
+        raise BadRequest(code=400, message="[invalid IP address]")
+
+    if not any(ip in network for network in settings.YOOKASSA_IP_WHITELIST):
+        raise BadRequest(code=403, message="[unauthorized IP]")
+
+    try:
+        payload = json.loads(request.body)
+    except Exception:
+        raise BadRequest(code=400, message="[invalid payload]")
+
+    try:
+        event = WebhookNotification(payload)
+    except Exception:
+        raise BadRequest(code=400, message="[bad webhook data]")
+
+    return event

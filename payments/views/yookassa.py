@@ -1,15 +1,25 @@
 import logging
+import uuid
 from datetime import datetime
 
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
+from yookassa import Configuration, Payment as YookassaPayment
 
+from club.exceptions import BadRequest
+from payments.exceptions import PaymentException
+from payments.helpers import parse_yookassa_webhook_event
+from payments.models import Payment
+from payments.products import YOOKASSA_PRODUCTS
 from users.models.user import User
 
 log = logging.getLogger()
 
+Configuration.account_id = settings.YOOKASSA_SHOP_ID
+Configuration.secret_key = settings.YOOKASSA_API_KEY
 
-def pay_yookassa(request):
+def rubles(request):
     now = datetime.utcnow()
 
     if not request.me:  # scenario 1: new user
@@ -39,30 +49,59 @@ def pay_yookassa(request):
     else:  # scenario 2: account renewal or invite purchase
         user = request.me
 
-    return render(request, "payments/yookassa/pay.html", {
+    product = YOOKASSA_PRODUCTS["club1_ru"]
+    session = YookassaPayment.create({
+        "amount": {
+            "value": product["amount"],
+            "currency": "RUB"
+        },
+        "confirmation": {
+            "type": "redirect",
+            "return_url": settings.APP_HOST + "/user/me/"
+        },
+        "capture": True,
+        "description": f"{product['description']} для {user.email}",
+        "metadata": {
+            "email": user.email,
+            "product": product["code"],
+        }
+    }, uuid.uuid4())
+
+    payment = Payment.create(
+        reference=session.id,
+        user=user,
+        product=product,
+        data=session.json(),
+    )
+
+    return render(request, "payments/rubles.html", {
         "user": user,
+        "payment": payment,
+        "session": session,
     })
 
 
 def yookassa_webhook(request):
-    payload = request.body
+    try:
+        webhook = parse_yookassa_webhook_event(request)
+    except BadRequest as ex:
+        return HttpResponse(ex.message, status=ex.code)
 
-    print(payload)
-    log.error(payload)
+    if webhook.event == "payment.succeeded":
+        user = User.objects.filter(email=webhook.object.metadata["email"]).first()
 
-    # if event["type"] == "invoice.paid":
-    #     invoice = event["data"]["object"]
-    #     user = User.objects.filter(stripe_id=invoice["customer"]).first()
-    #     payment = Payment.create(
-    #         reference=invoice["id"],
-    #         user=user,
-    #         product=find_by_stripe_id(invoice["lines"]["data"][0]["plan"]["id"]),
-    #         data=invoice,
-    #         status=Payment.STATUS_SUCCESS,
-    #     )
-    #     product = PRODUCTS[payment.product_code]
-    #     product["activator"](product, payment, user)
-    #     return HttpResponse("[ok]", status=200)
+        try:
+            payment = Payment.finish(
+                reference=webhook.object.id,
+                status=Payment.STATUS_SUCCESS,
+                data=webhook.json(),
+            )
+        except PaymentException:
+            return HttpResponse("[payment not found]", status=400)
 
-    return HttpResponse("[unknown event]", status=400)
+        product = YOOKASSA_PRODUCTS["club1_ru"]
+        product["activator"](product, payment, user)
+        return HttpResponse("[ok]", status=200)
+
+    return HttpResponse("[unknown event]", status=200)
 

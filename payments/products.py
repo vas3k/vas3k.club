@@ -199,6 +199,19 @@ PRODUCTS = {
     },
 }
 
+YOOKASSA_PRODUCTS = {
+    "club1_ru": {
+        "code": "club1_ru",
+        "description": "+1 год в Клубе",
+        "amount": "3400.00",
+        "recurrent": False,
+        "activator": club_subscription_activator,
+        "data": {
+            "timedelta": timedelta(days=366),
+        },
+    }
+}
+
 
 def find_by_stripe_id(price_id):
     for product in PRODUCTS.values():
