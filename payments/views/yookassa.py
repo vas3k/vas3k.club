@@ -64,6 +64,25 @@ def rubles(request):
         "metadata": {
             "email": user.email,
             "product": product["code"],
+        },
+        "receipt": {
+            "customer": {
+                "full_name": user.full_name,
+                "email": user.email,
+            },
+            "items": [
+                {
+                    "description": product["description"],
+                    "quantity": "1.00",
+                    "amount": {
+                        "value": product["amount"],
+                        "currency": "RUB"
+                    },
+                    "payment_mode": "full_payment",
+                    "payment_subject": "payment",
+                    "vat_code": 1,
+                },
+            ]
         }
     }, uuid.uuid4())
 
