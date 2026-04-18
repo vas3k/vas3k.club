@@ -87,6 +87,8 @@ def yookassa_webhook(request):
     except BadRequest as ex:
         return HttpResponse(ex.message, status=ex.code)
 
+    log.info(f"YOOKASSA WEBHOOK: {webhook.json()}")
+
     if webhook.event == "payment.succeeded":
         user = User.objects.filter(email=webhook.object.metadata["email"]).first()
 

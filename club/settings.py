@@ -289,8 +289,8 @@ STRIPE_CANCEL_URL = APP_HOST + "/join/"
 STRIPE_SUCCESS_URL = APP_HOST + "/monies/done/?reference={CHECKOUT_SESSION_ID}"
 STRIPE_CUSTOMER_PORTAL_URL = "https://billing.stripe.com/p/login/6oEcMM7Sj7YfaWIbII"
 
-YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY") or ""
-YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID") or ""
+YOOKASSA_API_KEY = os.getenv("YOOKASSA_API_KEY")
+YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID")
 YOOKASSA_IP_WHITELIST = [
     ipaddress.ip_network("185.71.76.0/27"),
     ipaddress.ip_network("185.71.77.0/27"),
