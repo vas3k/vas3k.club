@@ -120,6 +120,9 @@ def yookassa_webhook(request):
         except PaymentException:
             return HttpResponse("[payment not found]", status=400)
 
+        if not user:
+            user = payment.user
+
         product = YOOKASSA_PRODUCTS["club1_ru"]
         product["activator"](product, payment, user)
         return HttpResponse("[ok]", status=200)

@@ -93,4 +93,7 @@ def parse_yookassa_webhook_event(request, **kwargs):
     except Exception:
         raise BadRequest(code=400, message="[bad webhook data]")
 
+    if not settings.DEBUG and event.object.test:
+        raise BadRequest(code=400, message="[test webhook data]")
+
     return event
