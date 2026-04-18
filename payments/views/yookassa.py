@@ -29,10 +29,7 @@ def rubles(request):
             email = email.lower().strip()
 
         if not email or "@" not in email:
-            return render(request, "error.html", {
-                "title": "Плохой e-mail адрес 😣",
-                "message": "Нам ведь нужно будет как-то привязать аккаунт к платежу"
-            })
+            return render(request, "payments/rubles.html", {})
 
         user, _ = User.objects.get_or_create(
             email=email,

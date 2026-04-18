@@ -5,14 +5,26 @@
         <div class="block pay-description">
             <div class="pay-title">
                 Платим рублями 💰<br>
-                <small>
-                    ваш аккаунт: <strong>{{ user.email }}</strong>
-                </small>
+                {% if user %}
+                    <small>
+                        ваш аккаунт: <strong>{{ user.email }}</strong>
+                    </small>
+                {% endif %}
             </div>
 
-            <a href="{{ session.confirmation.confirmation_url }}" class="button button-big pay-button">
-                +1 год через ЮКассу
-            </a>
+            {% if user and session %}
+                <a href="{{ session.confirmation.confirmation_url }}" class="button button-big pay-button">
+                    +1 год через ЮКассу
+                </a>
+            {% else %}
+                <p>
+                    Укажите ваш e-mail или <a href="{% url "login" %}">войдите</a> в существующий аккаунт
+                </p>
+                <form action="." method="get">
+                    <input type="email" name="email" placeholder="your@mail.ru" required>
+                    <input type="submit" value="▶︎" class="button">
+                </form>
+            {% endif %}
 
             <p style="font-size: 300%; margin: 20px 0;">
                 ☝️
@@ -22,7 +34,7 @@
                 ❌ Бот продает +1 год без автопродления (потом можно докупить ещё)
             </p>
             <p style="font-size: 90%;">
-                ❌ Бот берет комиссию. Сервис неофициальный, автору тоже нужно кушать
+                ❌ В цену включена комиссия бота. Он неофициальный, его автору тоже нужно кушать
             </p>
             <p style="font-size: 90%;">
                 ❌ НЕТ рефандов. Если вам не понравится или вы не пройдете модерацию — мы не сможем вернуть деньги. Подумайте дважды!
