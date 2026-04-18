@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content pay">
+        <div class="block pay-description">
+            <div class="pay-title">
+                Платим рублями 💰<br>
+                <small>
+                    ваш аккаунт: <strong>{{ user.email }}</strong>
+                </small>
+            </div>
+
+            <a href="#" class="button button-big pay-button">
+                +1 год через Юкассу
+            </a>
+
+            <p style="font-size: 300%; margin: 20px 0;">
+                ☝️
+            </p>
+
+            <p style="font-size: 90%;">
+                ❌ Бот продает +1 год без автопродления (потом можно докупить ещё)
+            </p>
+            <p style="font-size: 90%;">
+                ❌ Бот берет комиссию. Сервис неофициальный, автору тоже нужно кушать
+            </p>
+            <p style="font-size: 90%;">
+                ❌ НЕТ рефандов. Если вам не понравится или вы не пройдете модерацию — мы не сможем вернуть деньги. Подумайте дважды!
+            </p>
+        </div>
+
+        <div class="block pay-warning">
+            <p>
+                🤔 За другими вариантами заходите на почту <a href="mailto:club@vas3k.club"><strong>club@vas3k.club</strong></a> или читайте <strong><a href="{% url "show_post" "docs" "blocked_dolor" %}">наш гайд</a></strong>
+            </p>
+        </div>
+    </div>
+{% endblock %}

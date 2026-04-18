@@ -25,6 +25,7 @@ from godmode.views.main import godmode, godmode_list_model, godmode_edit_model, 
 from misc.fun import mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement, \
     crew, write_to_crew
+from payments.views.yookassa import yookassa_webhook, pay_yookassa
 from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
 from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
     link_telegram
@@ -90,10 +91,12 @@ urlpatterns = [
 
     path("monies/", pay, name="pay"),
     path("monies/done/", done, name="done"),
+    path("monies/yookassa/", pay_yookassa, name="pay_yookassa"),
     path("monies/membership_expired/", membership_expired, name="membership_expired"),
     path("monies/subscription/<str:subscription_id>/stop/", stop_subscription, name="stop_subscription"),
     path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
     path("monies/stripe/webhook_tickets/", stripe_ticket_sale_webhook, name="stripe_tickets_webhook"),
+    path("monies/yookassa/webhook/", yookassa_webhook, name="yookassa_webhook"),
     path("monies/gift/<int:days>/<slug:user_slug>.json", api_gift_days, name="api_gift_days"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
