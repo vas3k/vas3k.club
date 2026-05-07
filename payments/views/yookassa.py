@@ -19,6 +19,7 @@ log = logging.getLogger()
 Configuration.account_id = settings.YOOKASSA_SHOP_ID
 Configuration.secret_key = settings.YOOKASSA_API_KEY
 
+
 def rubles(request):
     now = datetime.utcnow()
 
@@ -27,7 +28,6 @@ def rubles(request):
         email = request.GET.get("email") or ""
         if email:
             email = email.lower().strip()
-
         if not email or "@" not in email:
             return render(request, "payments/rubles.html", {})
 
@@ -46,7 +46,8 @@ def rubles(request):
     else:  # scenario 2: account renewal or invite purchase
         user = request.me
 
-    product = YOOKASSA_PRODUCTS["club1_ru"]
+    product = YOOKASSA_PRODUCTS["club1_ru"]  # hardcoded for now
+
     session = YookassaPayment.create({
         "amount": {
             "value": product["amount"],
@@ -106,7 +107,43 @@ def yookassa_webhook(request):
     log.info(f"YOOKASSA WEBHOOK: {webhook.json()}")
 
     if webhook.event == "payment.succeeded":
-        user = User.objects.filter(email=webhook.object.metadata["email"]).first()
+        try:
+            real_payment = YookassaPayment.find_one(webhook.object.id)
+        except Exception as ex:
+            log.error(
+                f"Не удалось верифицировать платёж "
+                f"{webhook.object.id} в ЮКассе: {ex}"
+            )
+            return HttpResponse("[verification failed]", status=400)
+
+        # Проверяем статус из ответа API, а не из тела webhook
+        if real_payment.status != "succeeded":
+            log.warning(
+                f"Статус платежа {webhook.object.id} "
+                f"не совпадает: {real_payment.status}"
+            )
+            return HttpResponse("[invalid payment status]", status=400)
+
+        # Берём email и product из верифицированного ответа ЮКассы
+        email = real_payment.metadata.get("email")
+        product_code = real_payment.metadata.get("product")
+
+        if not email or not product_code:
+            log.warning(
+                f"Отсутствуют метаданные в платеже {webhook.object.id}"
+            )
+            return HttpResponse("[invalid metadata]", status=400)
+
+        # Проверяем что продукт существует в нашем каталоге
+        product = YOOKASSA_PRODUCTS.get(product_code)
+        if not product:
+            log.warning(
+                f"Неизвестный код продукта в платеже "
+                f"{webhook.object.id}: {product_code}"
+            )
+            return HttpResponse("[unknown product]", status=400)
+
+        user = User.objects.filter(email=email).first()
 
         try:
             payment = Payment.finish(
@@ -120,9 +157,7 @@ def yookassa_webhook(request):
         if not user:
             user = payment.user
 
-        product = YOOKASSA_PRODUCTS["club1_ru"]
         product["activator"](product, payment, user)
         return HttpResponse("[ok]", status=200)
 
     return HttpResponse("[unknown event]", status=200)
-

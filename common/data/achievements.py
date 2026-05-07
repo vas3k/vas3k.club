@@ -353,6 +353,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2025.webp",
         "style": "background-color: #FF9F4B; font-size: 130%;",
     }),
+    ("vas3k_camp_2026", {
+        "name": "Вастрик 🔥 Кэмп 2026",
+        "description": "Участник Вастрик Кэмпа в Либерленде летом 2026",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2026.png",
+        "style": "background-color: #FF9400; font-size: 130%;",
+    }),
     ("vas3k_quest_2024", {
         "name": "Золотая говнотерка",
         "description": "Призёр первого Вастрик.Квеста, проходившего в Сербии в 2024 году",
@@ -376,6 +382,18 @@ ACHIEVEMENTS = [
         "description": "Участнику Вастрик Флота в Турции осенью 2025",
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2025.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
+    }),
+    ("vas3k_skipper", {
+        "name": "Вастрик ⛵ Шкиппер",
+        "description": "Прошедшему обучение на шкиппера в Клубе",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_skipper.png",
+        "style": "background-color: #1976D2; font-size: 120%;",
+    }),
+    ("vas3k_burn_2026", {
+        "name": "Вастрик 🔥 Бёрнер",
+        "description": "Участнику лагеря на AfrikaBurn 2026",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_burn_2026.png",
+        "style": "background-color: #EBB90A; font-size: 120%;",
     }),
     ("spooky", {
         "name": "Спуки",
