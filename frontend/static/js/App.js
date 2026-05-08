@@ -50,9 +50,12 @@ const App = {
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
                 const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes });
+                const autosaveId = `${location.pathname}:${element.id || element.name || "text"}`;
                 const editor = createMarkdownEditor(element, {
                     autosave: {
-                        enabled: false,
+                        enabled: true,
+                        uniqueId: autosaveId,
+                        delay: 1000,
                     },
                     hideIcons: ["preview", "side-by-side", "fullscreen", "guide"],
                     showIcons: ["heading-2", "code"],
@@ -118,6 +121,9 @@ const App = {
                 });
 
                 editor.element.form.addEventListener("keydown", handleFormSubmissionShortcuts);
+                editor.element.form.addEventListener("submit", () => {
+                    editor.clearAutosavedValue();
+                });
                 inlineAttachment.editors.codemirror4.attach(editor.codemirror, { ...imageUploadOptions, fileInputEl });
 
                 return [...editors, editor];
