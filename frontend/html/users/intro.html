@@ -124,6 +124,19 @@
                 {% if form.company.errors %}<span class="form-row-errors">{{ form.company.errors }}</span>{% endif %}
             </div>
 
+            <div class="form-row">
+                <label for="{{ form.country.id_for_label }}" class="form-label">
+                    {{ form.referer.label }}
+                </label>
+                {{ form.referer }}
+
+                {% if form.referer.errors %}<span class="form-row-errors">{{ form.referer.errors }}</span>{% endif %}
+
+                <span class="form-row-help">
+                    Если вы узнали о Клубе от кого-то лично — напишите его имя или ссылку на профиль здесь. В противном случае оставьте пустым.
+                </span>
+            </div>
+
             <div class="block-header">😎<br>Расскажите Клубу о себе</div>
 
             <div class="block-description">
@@ -218,7 +231,7 @@
                 <div class="network-channels">
                     <a href="{{ settings.TELEGRAM_CLUB_CHANNEL_URL }}" rel="noreferrer" target="_blank" class="network-channel">
                         <span class="avatar network-channel-image" style="background-image: url('https://i.vas3k.club/1ef8c7b8404af4c0d2d9fc71bacb3e25c2e5d2f944ced3263cbe155f55ca8b7f.jpg');"></span>
-                        <span class="network-channel-name text-120">Телеграм-канал Клуба</span>
+                        <span class="network-channel-name text-120">Телеграм-канал</span>
                         <span class="network-channel-description">Лучшие посты, отобранные руками</span>
                     </a>
 
@@ -239,16 +252,22 @@
                         <span class="network-channel-name text-120">Твиттер-фид</span>
                         <span class="network-channel-description">Бездушная машина постит ссылки на новые посты</span>
                     </a>
+
+                    <a href="https://instagram.com/vas3k_club" target="_blank" class="network-channel">
+                        <span class="avatar network-channel-image" style="background-image: url('https://i.vas3k.club/2a3f496215bc2cb6d2a22986b25abcf7ef5534e7439322c085a31059e754c31b.jpg');"></span>
+                        <span class="network-channel-name text-120">Инстаграм</span>
+                        <span class="network-channel-description">Фотки со сходок и ивентов</span>
+                    </a>
                 </div>
             </div>
 
             <div class="clearfix50"></div>
 
-            <div class="block-header">🤖<br>Познакомьтесь с ботом</div>
+            <div class="block-header">🤖<br>Познакомьтесь с нашим ботом</div>
 
             <div class="block-description">
                 <p>
-                    На бота завязано много фич Клуба — он присылает ответы на комментарии, через него можно отвечать и получать статистику.
+                    Бот — важная часть верификации. На него завязано много фич Клуба: он присылает ответы на комментарии, через него можно отвечать и получать статистику.
                     Лучше сразу его подключить, иначе потом забудете и пропустите всё важное.
                 </p>
 

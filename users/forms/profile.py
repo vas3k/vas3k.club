@@ -58,6 +58,11 @@ class ProfileEditForm(ModelForm):
         widget=forms.RadioSelect(),
         required=False,
     )
+    referer = forms.CharField(
+        label="Кто рассказал вам про Клуб?",
+        required=False,
+        max_length=128,
+    )
 
     class Meta:
         model = User
@@ -70,6 +75,7 @@ class ProfileEditForm(ModelForm):
             "bio",
             "geo",
             "profile_publicity_level",
+            "referer",
         ]
 
     def clean(self):

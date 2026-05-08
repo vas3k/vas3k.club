@@ -94,6 +94,11 @@
             display: block;
         }
 
+        .profile-user-referer {
+            display: block;
+            opacity: 0.7;
+        }
+
         .profile-user-hat {
             padding-top: 10px;
             font-size: 120%;
@@ -265,9 +270,10 @@
             display: flex;
             position: relative;
             align-items: center;
-            width: 150px;
-            margin: 20px;
-            min-height: 170px;
+            font-size: 80%;
+            width: 145px;
+            margin: 10px;
+            min-height: 140px;
             font-weight: bold;
             text-align: center;
             text-decoration: none;
