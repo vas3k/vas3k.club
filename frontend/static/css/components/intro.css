@@ -65,6 +65,11 @@
             font-weight: 500;
         }
 
+        .form-row #id_referer {
+            max-width: 500px;
+            font-weight: 500;
+        }
+
         .intro-form-counter {
             display: block;
             text-align: right;
@@ -80,3 +85,7 @@
             .intro-form-counter.good {
                 color: #53AA68;
             }
+
+    .intro .network-block {
+        max-width: 600px;
+    }

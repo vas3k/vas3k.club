@@ -81,6 +81,7 @@ class User(models.Model, ModelDiffMixin):
     bio = models.TextField(null=True)
     contact = models.CharField(max_length=256, null=True)
     hat = models.JSONField(null=True)
+    referer = models.CharField(max_length=128, null=True)
 
     balance = models.IntegerField(default=0)
     upvotes = models.IntegerField(default=0)

@@ -61,6 +61,11 @@ class UserInitialIntroForm(ModelForm):
         required=True,
         max_length=128
     )
+    referer = forms.CharField(
+        label="Кто рассказал вам про Клуб?",
+        required=False,
+        max_length=128,
+    )
     intro = forms.CharField(
         label="#intro",
         required=True,
@@ -76,12 +81,13 @@ class UserInitialIntroForm(ModelForm):
         label="Подписка на дайджест",
         required=True,
         choices=User.EMAIL_DIGEST_TYPES,
-        initial=User.EMAIL_DIGEST_TYPE_WEEKLY,
+        initial=User.EMAIL_DIGEST_TYPE_DAILY,
         widget=forms.RadioSelect(),
     )
     privacy_policy_accepted = forms.BooleanField(
         label="Даю согласие на обработку своих персональных данных", required=True
     )
+
 
     class Meta:
         model = User
@@ -95,6 +101,7 @@ class UserInitialIntroForm(ModelForm):
             "city",
             "country",
             "bio",
+            "referer",
             "email_digest_type",
         ]
 
