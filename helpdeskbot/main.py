@@ -47,6 +47,7 @@ async def on_telegram_admin_bot_message(update: Update, context: CallbackContext
         await update_discussion_message_id(update)
 
 
+# In your app setup:
 def main() -> None:
     application = Application.builder().token(config.TELEGRAM_HELP_DESK_BOT_TOKEN).build()
 

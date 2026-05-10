@@ -338,44 +338,48 @@ async def error_fallback(update: Update, context: CallbackContext) -> int:
 class QuestionHandler(ConversationHandler):
     def __init__(self, command):
         super().__init__(
-            entry_points=[CommandHandler(command, start)],
+            entry_points=[
+                CommandHandler(command, start, filters=filters.ChatType.PRIVATE)
+            ],
             states={
                 State.REQUEST_FOR_INPUT: [
                     MessageHandler(
-                        filters.Regex(f"^{QuestionKeyboard.TITLE.value}$"),
+                        filters.ChatType.PRIVATE & filters.Regex(f"^{QuestionKeyboard.TITLE.value}$"),
                         request_title_value
                     ),
                     MessageHandler(
-                        filters.Regex(f"^{QuestionKeyboard.BODY.value}$"),
+                        filters.ChatType.PRIVATE & filters.Regex(f"^{QuestionKeyboard.BODY.value}$"),
                         request_body_value
                     ),
                     MessageHandler(
-                        filters.Regex(f"^{QuestionKeyboard.ROOM.value}$"),
+                        filters.ChatType.PRIVATE & filters.Regex(f"^{QuestionKeyboard.ROOM.value}$"),
                         request_room_choose
                     ),
                     MessageHandler(
-                        filters.Regex(f"^{QuestionKeyboard.CANCEL.value}|{ReviewKeyboard.CANCEL.value}$"),
+                        filters.Regex(
+                            f"^{QuestionKeyboard.CANCEL.value}|{ReviewKeyboard.CANCEL.value}$"
+                        ),
                         cancel_question
                     ),
                     MessageHandler(
-                        filters.Regex(f"^{QuestionKeyboard.REVIEW.value}$"),
+                        filters.ChatType.PRIVATE & filters.Regex(f"^{QuestionKeyboard.REVIEW.value}$"),
                         review_question
                     ),
                     MessageHandler(
-                        filters.TEXT & ~filters.COMMAND,
+                        filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND,
                         fallback
                     ),
-                    CommandHandler("start", start),
+                    CommandHandler("start", start, filters=filters.ChatType.PRIVATE),
                 ],
                 State.INPUT_RESPONSE: [
                     MessageHandler(
-                        filters.TEXT & ~filters.COMMAND,
+                        filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND,
                         input_response,
                     ),
                 ],
                 State.FINISH_REVIEW: [
                     MessageHandler(
-                        filters.TEXT & ~filters.COMMAND,
+                        filters.ChatType.PRIVATE & filters.TEXT & ~filters.COMMAND,
                         finish_review,
                     )
                 ]
