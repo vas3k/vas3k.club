@@ -384,8 +384,8 @@ ACHIEVEMENTS = [
         "style": "background-color: #4c98d5; font-size: 120%;",
     }),
     ("vas3k_skipper", {
-        "name": "Вастрик ⛵ Шкиппер",
-        "description": "Прошедшему обучение на шкиппера в Клубе",
+        "name": "Вастрик ⛵ Шкипер",
+        "description": "Прошедшему обучение на шкипера в Клубе",
         "image": "https://vas3k.club/static/images/achievements/vas3k_skipper.png",
         "style": "background-color: #1976D2; font-size: 120%;",
     }),
