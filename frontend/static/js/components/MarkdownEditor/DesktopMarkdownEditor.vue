@@ -21,7 +21,7 @@
         }"
             >
                 <div
-                    v-for="(user, index) in users.slice(0, 5)"
+                    v-for="(user, index) in users"
                     :key="user.slug"
                     :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
                     @click="insertSuggestion(user)"
@@ -45,12 +45,12 @@
 </template>
 
 <script>
-import { throttle } from "../../common/utils";
 import {
     createMarkdownEditor,
     handleFormSubmissionShortcuts,
     imageUploadOptions
 } from "../../common/markdown-editor";
+import { throttle } from "../../common/utils";
 
 const DEFAULT_AVATAR = "https://i.vas3k.club/v.png";
 
@@ -192,23 +192,47 @@ export default {
             );
         },
         populateCacheWithCommentAuthors: function() {
-            document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
-                const slug = linkEl.dataset.authorSlug;
-                const full_name = linkEl.innerText.trim();
-                const commentRoot = linkEl.closest(".comment") || linkEl.closest(".reply");
-                const avatarImg = commentRoot && commentRoot.querySelector(".comment-side-avatar img, .reply-avatar img");
-                const avatar = (avatarImg && avatarImg.src) || DEFAULT_AVATAR;
+            const usersBySlug = {};
+            const seenSlugs = new Set();
 
-                if (!slug || !full_name) {
+            document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
+                if (linkEl.dataset.authorDeleted === "1") {
                     return;
                 }
 
-                this.autocompleteCache.users[slug] = {
+                const slug = (linkEl.dataset.authorSlug || "").trim();
+                const full_name = linkEl.innerText.trim();
+
+                if (!slug || !full_name || seenSlugs.has(slug)) {
+                    return;
+                }
+
+                seenSlugs.add(slug);
+
+                const avatarImg = this.findAuthorAvatarImgNearLink(linkEl);
+                const avatar = (avatarImg && avatarImg.src) || DEFAULT_AVATAR;
+
+                usersBySlug[slug] = {
                     slug,
                     full_name,
                     avatar,
                 };
             });
+
+            this.autocompleteCache.users = usersBySlug;
+        },
+        findAuthorAvatarImgNearLink(linkEl) {
+            const replyRoot = linkEl.closest(".reply");
+            if (replyRoot) {
+                return replyRoot.querySelector(".reply-avatar img");
+            }
+
+            const commentRoot = linkEl.closest(".comment");
+            if (commentRoot) {
+                return commentRoot.querySelector(".comment-side-avatar img");
+            }
+
+            return null;
         },
         fetchAutocompleteSuggestions: throttle(function(sample) {
             const encoded = encodeURIComponent(sample);
@@ -273,12 +297,12 @@ export default {
             const cursor = this.editor.codemirror.getCursor();
             const sample = line.substring(this.autocomplete.ch, cursor.ch).substring(1);
 
-            // For short samples lookup users directly
+            // For short samples: everyone on the page (cache), filtered by slug substring
             if (sample.length < 3) {
                 const cacheKeys = Object.keys(this.autocompleteCache.users).filter((k) => k.includes(sample));
-                if (cacheKeys) {
-                    this.users = cacheKeys.map((k) => this.autocompleteCache.users[k]);
-                }
+                this.users = cacheKeys
+                    .map((k) => this.autocompleteCache.users[k])
+                    .sort((a, b) => a.full_name.localeCompare(b.full_name, undefined, { sensitivity: "base" }));
 
                 return;
             }

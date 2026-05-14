@@ -20,6 +20,7 @@
                 <a
                     href="{% url "profile" comment.author.slug %}"
                     data-author-slug="{{ comment.author.slug }}"
+                    {% if comment.author.deleted_at %}data-author-deleted="1"{% endif %}
                     class="comment-header-author-name"
                 >
                     {{ comment.author.full_name }}

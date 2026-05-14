@@ -586,7 +586,8 @@ input[type=range]:focus::-ms-fill-upper {
     .intro .link-favicon,
     .post-header .link-favicon,
     .landing .link-favicon,
-    .people .link-favicon {
+    .people .link-favicon,
+    .feed-sidebar .link-favicon {
         display: none;
     }
 
