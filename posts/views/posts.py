@@ -68,6 +68,13 @@ def show_post(request, post_type, post_slug):
 
 @require_auth
 def unpublish_post(request, post_slug):
+    if request.method != "POST":
+        return render(request, "confirm.html", {
+            "title": f"Перенести пост в черновики?",
+            "message": "Пост больше не будет виден в фиде, но останется у вас в черновиках",
+            "button": "Да, в черновики его!"
+        })
+
     post = get_object_or_404(Post, slug=post_slug)
     if not request.me.is_moderator:
         if post.author != request.me:
@@ -87,6 +94,14 @@ def unpublish_post(request, post_slug):
 
 @require_auth
 def clear_post(request, post_slug):
+    if request.method != "POST":
+        return render(request, "confirm.html", {
+            "title": f"Очистить пост?",
+            "message": "Контент поста будет удален, а автор анонимизирован. "
+                       "От поста останется только заголовок и комментарии под ним",
+            "button": "Очищаем!"
+        })
+
     post = get_object_or_404(Post, slug=post_slug)
     if post.author != request.me and not request.me.is_moderator:
         raise AccessDenied(title="Только автор или модератор может очистить пост")
@@ -104,9 +119,23 @@ def delete_post(request, post_slug):
 
     if post.deleted_at:
         # restore post
+        if request.method != "POST":
+            return render(request, "confirm.html", {
+                "title": f"Восстановить пост?",
+                "message": "Он снова появится у вас в черновиках",
+                "button": "Да, восстанавливаем"
+            })
+
         post.undelete()
     else:
         # delete post
+        if request.method != "POST":
+            return render(request, "confirm.html", {
+                "title": f"Удалить пост?",
+                "message": "Он пропадёт с главной и из ваших черновиков",
+                "button": "Да, удаляем"
+            })
+
         post.delete()
 
     return redirect("compose")

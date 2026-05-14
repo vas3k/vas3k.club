@@ -58,7 +58,6 @@
                         <a
                             href="{% url 'godmode_delete_model' model_name=admin_model.name item_id=item|get_attr:primary_key_field %}"
                             class="button button-inverted"
-                            onclick="return confirm('Точно удаляем? Действие необратимо');"
                         >Удалить</a>
                     {% else %}
                         <span>&nbsp;</span>

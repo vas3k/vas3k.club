@@ -336,10 +336,10 @@
         grid-template-rows: auto auto;
         box-shadow: none;
         margin-bottom: 0;
-        padding: 40px 30px;
+        padding: 30px 25px;
         border-radius: 0;
         height: 100%;
-        font-size: 70%;
+        font-size: 80%;
         aspect-ratio: 8.5/5.5;
         align-items: center;
     }

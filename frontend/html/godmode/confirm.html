@@ -1,0 +1,19 @@
+{% extends "godmode/layout.html" %}
+{% load text_filters %}
+
+{% block content %}
+    <div class="message">
+        {% if title %}
+            <h2>{{ title }}</h2>
+        {% endif %}
+
+        <p>{{ message | markdown }}</p>
+
+        <form method="post" action=".">
+            {% csrf_token %}
+            <button type="submit" class="button button-red">
+                {{ button }}
+            </button>
+        </form>
+    </div>
+{% endblock %}

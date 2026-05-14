@@ -133,6 +133,13 @@ def godmode_edit_model(request, model_name, item_id):
 
 @require_auth
 def godmode_delete_model(request, model_name, item_id):
+    if request.method != "POST":
+        return render(request, "godmode/confirm.html", {
+            "title": f"Удалить {model_name}: {item_id}?",
+            "message": "Это действие необратимо",
+            "button": "Да, удаляем"
+        })
+
     if not ADMIN.has_access(request.me):
         raise AccessDenied()
 
