@@ -14,7 +14,9 @@
                 Сохранить черновик
             </button>
 
-            <a href="{% url 'delete_post' form.instance.slug %}" class="button button-inverted"><i class="fas fa-trash"></i></a>
+            {% if form.instance.slug %}
+                <a href="{% url 'delete_post' form.instance.slug %}" class="button button-inverted"><i class="fas fa-trash"></i></a>
+            {% endif %}
         </div>
 
         {% if form.instance.slug %}
