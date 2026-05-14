@@ -22,11 +22,22 @@
             >
                 <div
                     v-for="(user, index) in users.slice(0, 5)"
+                    :key="user.slug"
                     :class="{ 'mention-autocomplete-hint__option--suggested': index === selectedUserIndex }"
                     @click="insertSuggestion(user)"
                     class="mention-autocomplete-hint__option"
                 >
-                    {{ user.slug }}<span class="mention-autocomplete-hint__option-full_name">{{ user.full_name }}</span>
+                    <div class="mention-autocomplete-hint__option-row">
+                        <img
+                            class="mention-autocomplete-hint__option-avatar"
+                            :src="avatarUrl(user)"
+                            alt=""
+                            loading="lazy"
+                            width="22"
+                            height="22"
+                        />
+                        <span class="mention-autocomplete-hint__option-name">{{ user.full_name }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,6 +51,8 @@ import {
     handleFormSubmissionShortcuts,
     imageUploadOptions
 } from "../../common/markdown-editor";
+
+const DEFAULT_AVATAR = "https://i.vas3k.club/v.png";
 
 export default {
     props: {
@@ -104,6 +117,14 @@ export default {
         };
     },
     methods: {
+        avatarUrl(user) {
+            if (!user) {
+                return DEFAULT_AVATAR;
+            }
+
+            return user.avatar || DEFAULT_AVATAR;
+        },
+
         handleKeydown(event) {
             if (
                 event.code !== "ArrowDown" &&
@@ -173,7 +194,10 @@ export default {
         populateCacheWithCommentAuthors: function() {
             document.querySelectorAll(".comment-header-author-name").forEach((linkEl) => {
                 const slug = linkEl.dataset.authorSlug;
-                const full_name = linkEl.innerText;
+                const full_name = linkEl.innerText.trim();
+                const commentRoot = linkEl.closest(".comment") || linkEl.closest(".reply");
+                const avatarImg = commentRoot && commentRoot.querySelector(".comment-side-avatar img, .reply-avatar img");
+                const avatar = (avatarImg && avatarImg.src) || DEFAULT_AVATAR;
 
                 if (!slug || !full_name) {
                     return;
@@ -181,14 +205,16 @@ export default {
 
                 this.autocompleteCache.users[slug] = {
                     slug,
-                    full_name
+                    full_name,
+                    avatar,
                 };
             });
         },
         fetchAutocompleteSuggestions: throttle(function(sample) {
-            fetch(`/search/users.json?prefix=${sample}`)
+            const encoded = encodeURIComponent(sample);
+            fetch(`/search/users.json?q=${encoded}`)
                 .then((res) => {
-                    if (!res.url.includes(`prefix=${sample}`)) {
+                    if (!res.url.includes(`q=${encoded}`)) {
                         return { users: [] };
                     }
 
@@ -199,7 +225,13 @@ export default {
                         return;
                     }
 
-                    this.users = data.users;
+                    const users = (data.users || []).map((user) => ({
+                        slug: user.slug,
+                        full_name: user.full_name,
+                        avatar: user.avatar || DEFAULT_AVATAR,
+                    }));
+
+                    this.users = users;
 
                     this.autocompleteCache.samples[sample] = this.users;
 

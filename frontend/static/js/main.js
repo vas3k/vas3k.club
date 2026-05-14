@@ -28,6 +28,7 @@ Vue.component("clicker", () => import("./components/Clicker.vue"));
 Vue.component("v-select", vSelect);
 Vue.component("tag-select", () => import("./components/TagSelect.vue"));
 Vue.component("simple-select", () => import("./components/SimpleSelect.vue"));
+Vue.component("coauthors-select", () => import("./components/CoauthorsSelect.vue"));
 Vue.component("reply-form", () => import("./components/ReplyForm.vue"));
 Vue.component("theme-switcher", () => import("./components/ThemeSwitcher.vue"));
 Vue.component("location-select", () => import("./components/LocationSelect.vue"));

@@ -25,7 +25,7 @@
         </simple-select>
 
         {% if form.room.errors %}
-            <span class="form-row-errors">{{ form.room.errors }}</span>
+        <span class="form-row-errors">{{ form.room.errors }}</span>
         {% endif %}
     </div>
 
@@ -34,7 +34,7 @@
         <label for="{{ form.is_room_only.id_for_label }}">{{ form.is_room_only.label }}</label>
 
         {% if form.is_room_only.errors %}
-            <span class="form-row-errors">{{ form.is_room_only.errors }}</span>
+        <span class="form-row-errors">{{ form.is_room_only.errors }}</span>
         {% endif %}
     </div>
 </details>
@@ -52,19 +52,27 @@
         <div class="clearfix50"></div>
 
         <div class="form-row compose-form-coauthors">
-            {{ form.coauthors }}
+            <coauthors-select
+                id="{{ form.coauthors.html_name }}"
+                search-url="/search/users.json?q="
+                exclude-slug="{{ me.slug }}"
+                {% if form.is_bound %}
+                initial-slugs="{{ form.coauthors.data|default:'' }}"
+                {% else %}
+                :initial-users="[{% for user in form.instance.coauthors_with_details %}{slug: '{{ user.slug|escapejs }}', full_name: '{{ user.full_name|escapejs }}', avatar: '{{ user.get_avatar|escapejs }}'}{% if not forloop.last %}, {% endif %}{% endfor %}]"
+                {% endif %}
+            ></coauthors-select>
 
             {% if form.coauthors.errors %}
                 <span class="form-row-errors">{{ form.coauthors.errors }}</span>
             {% endif %}
 
             <span class="form-row-help form-row-help-wide">
-                Список никнеймов через запятую
+                Введите имя или ник. Можно добавить сразу несколько человек.
             </span>
         </div>
     </details>
 {% endif %}
-
 
 <details class="block compose-form-advanced" {% if form.instance.collectible_tag_code %}open{% endif %}>
     <summary class="compose-form-advanced-summary">🏷️ Прикрепить коллекционный тег</summary>
@@ -72,7 +80,8 @@
     <div class="clearfix50"></div>
 
     <div class="block-description-center">
-        Пользователи могут подписываться на коллекционные теги и автоматически получать уведомления, когда кто-то пишет новый пост с интересным им тегом.
+        Пользователи могут подписываться на коллекционные теги и автоматически получать уведомления, когда кто-то пишет
+        новый пост с интересным им тегом.
     </div>
 
     <div class="clearfix50"></div>
@@ -91,40 +100,40 @@
         </tag-select>
 
         <span class="form-row-help form-row-help-wide">
-            Каждый тег обязан начинаться с <a href="https://emojipedia.org/" target="_blank">emoji</a>, потом идёт пробел и название.
+            Каждый тег обязан начинаться с <a href="https://emojipedia.org/" target="_blank">emoji</a>, потом идёт
+            пробел и название.
         </span>
 
         {% if form.collectible_tag_code.errors %}
-            <span class="form-row-errors">{{ form.collectible_tag_code.errors }}</span>
+        <span class="form-row-errors">{{ form.collectible_tag_code.errors }}</span>
         {% endif %}
     </div>
 </details>
 
 {% if mode == "create" or form.instance.is_public or form.instance.comment_count < 10 or form.instance.published_at is None or me.is_moderator %}
-    <div class="big-radio compose-visibility">
-        <div class="big-radio-item">
-            {{ form.is_public.0.tag }}
-            <label for="{{ form.is_public.0.id_for_label }}" class="big-radio-label">
-                <i class="fas fa-globe-americas"></i>
-                <span class="big-radio-title">{{ form.is_public.0.choice_label }}</span>
-                <span class="big-radio-description">
-                    Пост виден снаружи, его можно пошарить в соцсеточки.
-                    Такие посты развивают Клуб и чаще попадают в дайджесты.
-                </span>
-            </label>
-        </div>
-
-        <div class="big-radio-item">
-            {{ form.is_public.1.tag }}
-            <label for="{{ form.is_public.1.id_for_label }}" class="big-radio-label">
-                <i class="fas fa-lock"></i>
-                <span class="big-radio-title">{{ form.is_public.1.choice_label }}</span>
-                <span class="big-radio-description">
-                    Пост для членов Клуба.
-                    Для обсуждения чувствительных тем и организации внутренних движух.
-                    Сменить тип потом нельзя.
-                </span>
-            </label>
-        </div>
+<div class="big-radio compose-visibility">
+    <div class="big-radio-item">
+        {{ form.is_public.0.tag }}
+        <label for="{{ form.is_public.0.id_for_label }}" class="big-radio-label">
+            <i class="fas fa-globe-americas"></i>
+            <span class="big-radio-title">{{ form.is_public.0.choice_label }}</span>
+            <span class="big-radio-description">
+                Пост виден снаружи, его можно пошарить в соцсеточки. Такие посты развивают Клуб и чаще попадают в
+                дайджесты.
+            </span>
+        </label>
     </div>
+
+    <div class="big-radio-item">
+        {{ form.is_public.1.tag }}
+        <label for="{{ form.is_public.1.id_for_label }}" class="big-radio-label">
+            <i class="fas fa-lock"></i>
+            <span class="big-radio-title">{{ form.is_public.1.choice_label }}</span>
+            <span class="big-radio-description">
+                Пост для членов Клуба. Для обсуждения чувствительных тем и организации внутренних движух. Сменить тип
+                потом нельзя.
+            </span>
+        </label>
+    </div>
+</div>
 {% endif %}

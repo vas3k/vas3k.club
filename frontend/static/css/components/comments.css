@@ -689,13 +689,32 @@
     .mention-autocomplete-hint__option {
         background: var(--input-bg-color);
         font-weight: 400;
-        padding: 0 5px;
+        padding: 5px 8px;
     }
 
-    .mention-autocomplete-hint__option span {
-        font-weight: 200;
+    .mention-autocomplete-hint__option-row {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        min-width: 0;
+    }
+
+    .mention-autocomplete-hint__option-avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .mention-autocomplete-hint__option-name {
+        font-weight: 400;
         color: #737373;
-        padding-left: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
+        flex: 1;
     }
 
     .mention-autocomplete-hint__option:hover {
@@ -704,7 +723,7 @@
         color: #fff;
     }
 
-    .mention-autocomplete-hint__option:hover span {
+    .mention-autocomplete-hint__option:hover .mention-autocomplete-hint__option-name {
         color: #fff;
     }
 
@@ -713,7 +732,7 @@
         color: #fff;
     }
 
-    .mention-autocomplete-hint__option--suggested span {
+    .mention-autocomplete-hint__option--suggested .mention-autocomplete-hint__option-name {
         color: #fff;
     }
 

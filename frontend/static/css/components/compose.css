@@ -94,6 +94,11 @@
         padding-top: 5px;
     }
 
+    .compose-form-coauthors input,
+    .compose-form-collectible-tag input {
+        text-align: left !important;
+    }
+
 .compose-visibility {
     padding-top: 20px;
     padding-bottom: 80px;
