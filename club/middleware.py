@@ -1,3 +1,6 @@
+import logging
+import traceback
+
 import sentry_sdk
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -5,6 +8,7 @@ from django.shortcuts import render
 from authn.helpers import authorized_user_with_session
 from club.exceptions import ClubException, ApiException
 
+log = logging.getLogger(__name__)
 
 def me(get_response):
     def middleware(request):
@@ -51,3 +55,16 @@ class ExceptionMiddleware:
                 "message": exception.message,
                 "data": exception.data,
             }, status=400)
+
+
+class CrashLoggingMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            response = self.get_response(request)
+            return response
+        except Exception:
+            log.error(traceback.format_exc())
+            raise
