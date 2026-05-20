@@ -406,6 +406,9 @@
         height: 20px;
         padding: 3px;
         border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
 /* Mobile responsive styles */
