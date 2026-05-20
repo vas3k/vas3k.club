@@ -347,6 +347,7 @@
     .badge-generator-results .profile-card-info {
         font-size: 85%;
         padding-top: 0;
+        max-height: 138px;
     }
 
 
