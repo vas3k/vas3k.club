@@ -328,9 +328,7 @@
             .user-achievement-front {
                 padding: 15px 20px;
                 font-size: 140%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
+                display: block;
             }
 
             .user-achievement-back {

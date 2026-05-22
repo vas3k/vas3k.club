@@ -356,7 +356,7 @@ ACHIEVEMENTS = [
     ("vas3k_camp_2026", {
         "name": "Вастрик 🔥 Кэмп 2026",
         "description": "Участник Вастрик Кэмпа в Либерленде летом 2026",
-        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2026.png",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_camp_2026.webp",
         "style": "background-color: #FF9400; font-size: 130%;",
     }),
     ("vas3k_quest_2024", {
