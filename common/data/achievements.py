@@ -421,13 +421,13 @@ ACHIEVEMENTS = [
     }),
     ("geoguessr_lite", {
         "name": "Мидуэй атолл",
-        "description": "Отличает Англию от Австралии по кенгуру, а Польшу от Перу — по надписям на стенах",
+        "description": "Почти не путает континенты в Geoguessr",
         "image": "https://vas3k.club/static/images/achievements/geoguessr_lite.png",
-        "style": "background-color: #C4D9D7; font-size: 130%;",
+        "style": "background-color: #C4D9D7; font-size: 140%;",
     }),
     ("geoguessr_beast", {
         "name": "Реюньон",
-        "description": "Знает индийские языки, все шоссе длиннее 300 км и цвет грязи на каждом континенте",
+        "description": "Угадывает любую индийскую деревню в Geoguessr",
         "image": "https://vas3k.club/static/images/achievements/geoguessr_beast.png",
         "style": "background-color: #F37857; font-size: 130%;",
     }),
@@ -471,6 +471,24 @@ ACHIEVEMENTS = [
         "name": "Вастрик Квизер",
         "description": "Призовое место в одном из клубных квизов",
         "image": "https://vas3k.club/static/images/achievements/vas3k_quizz.webp",
+        "style": "background-color: #FF5154; font-size: 130%;",
+    }),
+    ("club_chef", {
+        "name": "Клубный Повар",
+        "description": "Готовил вкусных едов клубням в оффлайне",
+        "image": "https://vas3k.club/static/images/achievements/club_chef.webp",
+        "style": "background-color: #FF5154; font-size: 130%;",
+    }),
+    ("club_engineer", {
+        "name": "Инженер конструктор",
+        "description": "DIY-ил что-то в оффлайне вместе с другими клубнями",
+        "image": "https://vas3k.club/static/images/achievements/club_engineer.webp",
+        "style": "background-color: #FF5154; font-size: 130%;",
+    }),
+    ("vibe_creator", {
+        "name": "Творец вайбов",
+        "description": "За особые заслуги в вытворении чудачеств в оффлайне",
+        "image": "https://vas3k.club/static/images/achievements/vibe_creator.webp",
         "style": "background-color: #FF5154; font-size: 130%;",
     }),
 ]
