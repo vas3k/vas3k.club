@@ -491,6 +491,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vibe_creator.webp",
         "style": "background-color: #FF6BC5; font-size: 140%;",
     }),
+    ("wine_lover_2026", {
+        "name": "Затейливый дегустатор",
+        "description": "За участие в Винной Затее 2026",
+        "image": "https://vas3k.club/static/images/achievements/wine_lover_2026.webp",
+        "style": "background-color: #63C7CC; font-size: 130%;",
+    }),
 ]
 
 # VIP: https://i.vas3k.club/3cb.png
