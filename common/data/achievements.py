@@ -476,19 +476,19 @@ ACHIEVEMENTS = [
     ("club_chef", {
         "name": "Клубный Повар",
         "description": "Готовил вкусных едов клубням в оффлайне",
-        "image": "http://127.0.0.1:8000/static/images/achievements/club_chef.webp",
+        "image": "https://vas3k.club/static/images/achievements/club_chef.webp",
         "style": "background-color: #F6DBA8; font-size: 130%;",
     }),
     ("club_engineer", {
         "name": "Инженер конструктор",
         "description": "DIY-ил что-то в оффлайне вместе с другими клубнями",
-        "image": "http://127.0.0.1:8000/static/images/achievements/club_engineer.webp",
+        "image": "https://vas3k.club/static/images/achievements/club_engineer.webp",
         "style": "background-color: #C98F43; font-size: 130%;",
     }),
     ("vibe_creator", {
         "name": "Творец вайбов",
         "description": "За особые заслуги в вытворении чудачеств в оффлайне",
-        "image": "http://127.0.0.1:8000/static/images/achievements/vibe_creator.webp",
+        "image": "https://vas3k.club/static/images/achievements/vibe_creator.webp",
         "style": "background-color: #FF6BC5; font-size: 140%;",
     }),
 ]
