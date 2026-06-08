@@ -85,11 +85,14 @@ class ClubRenderer(mistune.HTMLRenderer):
             playlist = f"list={html.escape(youtube_match.group(2))}&listType=playlist&"
         video_tag = (
             f'<span class="ratio-16-9">'
-            f'<iframe loading="lazy" src="https://www.youtube.com/embed/{html.escape(youtube_match.group(1) or "")}'
+            f'<iframe loading="lazy" frameborder="0"'
+            f' src="https://www.youtube.com/embed/{html.escape(youtube_match.group(1) or "")}'
             f'?{playlist}autoplay=0&amp;controls=1&amp;showinfo=1&amp;vq=hd1080"'
-            f'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"'
-            f'allowfullscreen></iframe>'
-            f"</span>"
+            f' title="YouTube video player"'
+            f' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"'
+            f' referrerpolicy="strict-origin-when-cross-origin"'
+            f' allowfullscreen></iframe>'
+            f'</span>'
         )
         caption = f"<figcaption>{html.escape(title)}</figcaption>" if title else ""
         return f"<figure>{video_tag}{caption}</figure>"
