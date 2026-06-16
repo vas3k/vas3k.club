@@ -17,7 +17,7 @@ services:
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=vas3k
       - POSTGRES_HOST=host.docker.internal
-      - POSTGRES_USE_POOLING=1
+#      - POSTGRES_USE_POOLING=0
       - POSTGRES_PASSWORD
       - EMAIL_HOST
       - EMAIL_PORT
