@@ -73,7 +73,7 @@ def calculate_progressive_ban_days(user: User, min_days: int) -> int:
     # find next biggest number of days after last ban
     last_ban_days = int(user.metadata["last_ban"].get("days") or 0)
     for num in PROGRESSIVE_BAN_DAYS:
-        if num > last_ban_days:
+        if num > last_ban_days and num > min_days:
             return num
 
     # or just return the biggest one
