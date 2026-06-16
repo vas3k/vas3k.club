@@ -71,11 +71,17 @@ def post_ban_action(request, user: User, **context):
     form = UserBanForm(request.POST, request.FILES)
     if form.is_valid():
         data = form.cleaned_data
-        is_banned = False
 
         # Unban
         if data["is_unbanned"]:
             unban_user(user)
+            return render(request, "godmode/message.html", {
+                **context,
+                "title": f"Юзер {user.full_name} разбанен",
+                "message": f"Снова может щитпостить",
+            })
+
+        is_banned = False
 
         # Temporary ban
         if data["is_temporarily_banned"]:
