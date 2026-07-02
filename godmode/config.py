@@ -473,6 +473,7 @@ ADMIN = ClubAdmin(
                         "network_group",
                         "chat_url",
                         "chat_member_count",
+                        "admins",
                         "send_new_posts_to_chat",
                         "send_new_comments_to_chat",
                         "is_visible",

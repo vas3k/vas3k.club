@@ -4,6 +4,8 @@ from typing import Callable
 from typing_extensions import Optional
 
 from django import forms
+from django.contrib.postgres.fields import ArrayField as PostgresArrayField
+from django.contrib.postgres.forms import SimpleArrayField
 from django.db import models
 from django.template.loader import render_to_string
 
@@ -138,6 +140,14 @@ class ClubAdminModel:
                             related_obj = getattr(self.instance, field_name, None)
                             if related_obj:
                                 field.initial = related_obj.pk
+
+                    if isinstance(model_field, PostgresArrayField):
+                        self.fields[field_name] = SimpleArrayField(
+                            forms.CharField(max_length=model_field.base_field.max_length),
+                            required=field.required,
+                            label=field.label,
+                            initial=field.initial,
+                        )
 
                     # Set required based on model constraints
                     if not model_field.null and not model_field.blank and not model_field.has_default():

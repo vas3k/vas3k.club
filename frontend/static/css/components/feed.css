@@ -171,6 +171,19 @@
             font-size: 70%;
         }
 
+    .feed-topic-header-admins {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5px 10px;
+    }
+
+        .feed-topic-header-admins .user-tiny {
+            color: #FFF;
+            font-size: 90%;
+            line-height: 1.6em;
+        }
+
     .feed-topic-header-settings {
         display: flex;
         flex-wrap: wrap;

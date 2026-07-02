@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.urls import reverse
 
@@ -25,6 +26,7 @@ class Room(models.Model):
     chat_url = models.URLField(null=True, blank=True)
     chat_id = models.CharField(max_length=32, null=True, blank=True)
     chat_member_count = models.IntegerField(default=0)
+    admins = ArrayField(models.CharField(max_length=32), default=list, null=False, db_index=True)
     send_new_posts_to_chat = models.BooleanField(default=True)
     send_new_comments_to_chat = models.BooleanField(default=False)
 
@@ -54,6 +56,15 @@ class Room(models.Model):
     @classmethod
     def visible_rooms(cls):
         return cls.objects.filter(is_visible=True, is_open_for_posting=True)
+
+    @property
+    def admins_with_details(self):
+        if hasattr(self, "_admins_with_details"):
+            return self._admins_with_details
+        if not self.admins:
+            return []
+        users_by_slug = User.objects.in_bulk(self.admins, field_name="slug")
+        return [users_by_slug[slug] for slug in self.admins if slug in users_by_slug]
 
     def update_last_activity(self):
         now = datetime.utcnow()

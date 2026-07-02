@@ -12,6 +12,8 @@
         {{ room.description | markdown }}
     </span>
 
+    {% include "rooms/widgets/admins.html" %}
+
     {% if room.url %}
         <span class="feed-topic-header-footer">
             <i class="fas fa-link"></i>&nbsp;<strong>URL:</strong> <a href="{{ room.url }}" rel="noreferrer" target="_blank">{{ room.url }}</a>

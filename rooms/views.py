@@ -5,11 +5,34 @@ from django.views.decorators.http import require_http_methods
 from authn.decorators.api import api
 from authn.decorators.auth import require_auth
 from rooms.models import Room, RoomSubscription, RoomMuted
+from users.models.user import User
 
 
 @require_auth
 def list_rooms(request):
-    return render(request, "rooms/list_rooms.html")
+    rooms = list(Room.visible_rooms().order_by("-last_activity_at"))
+
+    # prefetch admins for all rooms (speed up)
+    admin_slugs = {
+        slug
+        for room in rooms
+        for slug in room.admins
+    }
+    if admin_slugs:
+        users_by_slug = User.objects.in_bulk(admin_slugs, field_name="slug")
+        for room in rooms:
+            room._admins_with_details = [
+                users_by_slug[slug]
+                for slug in room.admins
+                if slug in users_by_slug
+            ]
+    else:
+        for room in rooms:
+            room._admins_with_details = []
+
+    return render(request, "rooms/list_rooms.html", {
+        "rooms": rooms,
+    })
 
 
 @require_auth
