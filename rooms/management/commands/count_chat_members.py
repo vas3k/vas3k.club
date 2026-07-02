@@ -19,7 +19,7 @@ def sync_room_admins_from_telegram(room):
             continue
 
         user = User.objects.filter(telegram_id=str(chat_admin.user.id)).first()
-        if user:
+        if user and not user.is_god:
             admin_slugs.append(user.slug)
 
     return sorted(admin_slugs)
