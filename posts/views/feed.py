@@ -55,9 +55,14 @@ def feed(
     if not request.me:
         posts = posts.exclude(is_public=False).exclude(type=Post.TYPE_INTRO)
 
-    # hide room-only posts
+    # hide room-only posts (except from subscribed rooms)
     if not room and not label_code:
-        posts = posts.exclude(is_room_only=True)
+        if request.me:
+            posts = posts.exclude(
+                Q(is_room_only=True) & ~Q(room__subscriptions__user=request.me)
+            )
+        else:
+            posts = posts.exclude(is_room_only=True)
 
     # order posts by some metric
     posts = sort_feed(posts, ordering, ordering_param)

@@ -4,15 +4,16 @@ from django.views.decorators.http import require_http_methods
 
 from authn.decorators.api import api
 from authn.decorators.auth import require_auth
+from common.pagination import paginate
 from rooms.models import Room, RoomSubscription, RoomMuted
 from users.models.user import User
 
 
 @require_auth
 def list_rooms(request):
-    rooms = list(Room.visible_rooms().order_by("-last_activity_at"))
+    rooms = paginate(request, Room.visible_rooms().order_by("-last_activity_at"))
 
-    # prefetch admins for all rooms (speed up)
+    # prefetch admins for rooms on the current page
     admin_slugs = {
         slug
         for room in rooms

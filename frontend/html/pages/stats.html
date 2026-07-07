@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block og_tags %}
-    <meta property="og:title" content="Ачивки — {{ settings.APP_NAME }}">
+    <meta property="og:title" content="Доска Почёта — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}">
     <meta property="og:type" content="website" />
@@ -16,7 +16,7 @@
     <meta property="og:image" content="{% static "images/share.png" %}">
 
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Статистика — {{ settings.APP_NAME }}">
+    <meta name="twitter:title" content="Доска Почёта — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="">
     <meta name="twitter:image" content="{% static "images/share.png" %}">
 {% endblock %}
@@ -24,14 +24,13 @@
 
 {% block content %}
     <div class="stats">
-        <div class="stats-title">🏆<br>Статистика Клуба</div>
+        <div class="stats-title">🏆<br>Доска Почёта</div>
 
         <div class="stats-description">
-            Клубная доска почёта.
             Тут можно посмотреть выданные ачивки, награды, миллионеров Клуба и прочих достойных людей.
         </div>
 
-        <div class="stats-header">💎 Миллионеры</div>
+        <div class="stats-header">💎 Миллионеры Клуба</div>
 
         <div class="stats-description">
             Члены Клуба с самой длинной подпиской.
