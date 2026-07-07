@@ -1,10 +1,7 @@
 from datetime import datetime, timedelta
 import uuid
-import django
 from django.conf import settings
 from django.test import TestCase
-
-django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
 from payments.exceptions import PaymentNotFound
@@ -39,11 +36,11 @@ class TestPaymentModel(TestCase):
 
         # then
         self.assertIsNotNone(payment)
-        self.assertIsNotNone(payment.id)
-        self.assertTrue(
-            Payment.objects.filter(pk=payment.id).exists(),
-            "The only payment I expect is here, persisted, and correct."
-        )
+        self.assertEqual(payment.user_id, self.existed_user.id)
+        self.assertEqual(payment.status, Payment.STATUS_STARTED)
+        self.assertEqual(payment.product_code, PRODUCTS["club1"]["code"])
+        self.assertEqual(payment.amount, PRODUCTS["club1"]["amount"])
+        self.assertEqual(payment.data, '{"fake-prop": 1}')
 
     def test_get_payment_by_reference_positive(self):
         # when

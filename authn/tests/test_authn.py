@@ -2,11 +2,8 @@ from datetime import datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import patch, MagicMock
 
-import django
 from django.conf import settings
 from django.test import TestCase, override_settings
-
-django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from authn.helpers import is_safe_url, get_access_denied_reason
 from authn.decorators.api import api

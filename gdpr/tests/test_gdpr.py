@@ -3,13 +3,15 @@ import re
 import tempfile
 from types import SimpleNamespace
 from unittest.mock import patch
+from datetime import datetime, timedelta
 
-import django
+from django.core.management import call_command
 from django.test import TestCase
 
-django.setup()
-
 from gdpr.archive import generate_data_archive, delete_data_archive
+from gdpr.models import DataRequests
+from club.exceptions import RateLimitException
+from users.models.user import User
 
 MOCKED_TARGETS = [
     "gdpr.archive.dump_user_profile",
@@ -161,3 +163,69 @@ class DeleteDataArchiveTests(TestCase):
 
             with self.settings(GDPR_ARCHIVE_STORAGE_PATH=archive_dir):
                 delete_data_archive(filepath)  # no exception
+
+
+def _create_user(slug, **kwargs):
+    defaults = dict(
+        email=f"{slug}@test.com",
+        full_name=slug,
+        membership_started_at=datetime.utcnow() - timedelta(days=5),
+        membership_expires_at=datetime.utcnow() + timedelta(days=365),
+        moderation_status=User.MODERATION_STATUS_APPROVED,
+        is_email_verified=True,
+    )
+    defaults.update(kwargs)
+    return User.objects.create(slug=slug, **defaults)
+
+
+class DataRequestsTests(TestCase):
+    def setUp(self):
+        self.user = _create_user("gdpr_requests_user")
+
+    def test_register_archive_request_rate_limited(self):
+        DataRequests.register_archive_request(self.user)
+
+        with self.assertRaises(RateLimitException):
+            DataRequests.register_archive_request(self.user)
+
+    def test_register_archive_request_allows_after_timeout(self):
+        first = DataRequests.register_archive_request(self.user)
+        DataRequests.objects.filter(id=first.id).update(
+            created_at=datetime.utcnow() - timedelta(days=2)
+        )
+
+        second = DataRequests.register_archive_request(self.user)
+
+        self.assertEqual(second.type, DataRequests.TYPE_ARCHIVE)
+        self.assertEqual(
+            DataRequests.objects.filter(user=self.user, type=DataRequests.TYPE_ARCHIVE).count(),
+            2,
+        )
+
+    def test_register_forget_request_creates_record(self):
+        request = DataRequests.register_forget_request(self.user)
+        self.assertEqual(request.type, DataRequests.TYPE_FORGET)
+
+
+class DeleteUsersCommandTests(TestCase):
+    @patch("gdpr.management.commands.delete_users.delete_user_data")
+    def test_command_processes_only_eligible_users(self, mock_delete):
+        with self.settings(GDPR_DELETE_TIMEDELTA=timedelta(days=30)):
+            old_user = _create_user(
+                "gdpr_delete_old",
+                deleted_at=datetime.utcnow() - timedelta(days=31),
+            )
+            _create_user(
+                "gdpr_delete_recent",
+                deleted_at=datetime.utcnow() - timedelta(days=5),
+            )
+            _create_user(
+                "gdpr_delete_done",
+                deleted_at=datetime.utcnow() - timedelta(days=31),
+                moderation_status=User.MODERATION_STATUS_DELETED,
+            )
+
+            call_command("delete_users")
+
+        mock_delete.assert_called_once()
+        self.assertEqual(mock_delete.call_args[0][0].id, old_user.id)

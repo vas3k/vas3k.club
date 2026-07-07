@@ -3,7 +3,6 @@ from collections import namedtuple
 import os
 import uuid
 
-import django
 from django.urls import reverse
 from django.test import TestCase
 import json
@@ -15,8 +14,6 @@ from unittest.mock import patch
 from stripe.webhook import WebhookSignature
 
 import authn.models.session
-
-django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from payments.models import Payment
 from payments.products import PRODUCTS

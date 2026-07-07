@@ -1,12 +1,9 @@
 from datetime import datetime, timedelta
 
-import django
 from django.test import TestCase
 from django.urls import reverse
 from django_q import brokers
 from django_q.signing import SignedPackage
-
-django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from authn.models.session import Code, Session
 from debug.helpers import HelperClient

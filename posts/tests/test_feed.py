@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 
-from django.db import connection, reset_queries
 from django.test import TestCase, Client
 
 from authn.models.session import Session
 from posts.models.post import Post
+from rooms.models import Room, RoomMuted, RoomSubscription
 from users.models.user import User
 
 
@@ -33,6 +33,18 @@ def _create_post(slug, author, **kwargs):
     )
     defaults.update(kwargs)
     return Post.objects.create(slug=slug, author=author, **defaults)
+
+
+def _create_room(slug, **kwargs):
+    defaults = dict(
+        title=slug,
+        description=f"{slug} description",
+        color="#333333",
+        is_visible=True,
+        is_open_for_posting=True,
+    )
+    defaults.update(kwargs)
+    return Room.objects.create(slug=slug, **defaults)
 
 
 def _login(client, user):
@@ -135,3 +147,107 @@ class TestFeedPinnedPosts(TestCase):
 
         self.assertEqual(pinned_posts, [])
         self.assertIn(pinned.id, feed_ids)
+
+
+class TestFeedSortingAndVisibility(TestCase):
+    def setUp(self):
+        self.user = _create_user("tfeed_sort_user")
+        self.client = Client()
+        _login(self.client, self.user)
+
+    def test_new_ordering_sorts_by_published_at_desc(self):
+        older = _create_post(
+            "tfeed_new_old",
+            self.user,
+            published_at=datetime.utcnow() - timedelta(days=2),
+        )
+        newer = _create_post(
+            "tfeed_new_new",
+            self.user,
+            published_at=datetime.utcnow() - timedelta(hours=1),
+        )
+
+        response = self.client.get("/all/new/")
+        posts = list(response.context["posts"])
+        feed_ids = [post.id for post in posts]
+
+        self.assertLess(feed_ids.index(newer.id), feed_ids.index(older.id))
+
+    def test_hot_ordering_sorts_by_hotness_desc(self):
+        cold = _create_post("tfeed_hot_cold", self.user, hotness=1)
+        hot = _create_post("tfeed_hot_hot", self.user, hotness=100)
+
+        response = self.client.get("/all/hot/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertLess(feed_ids.index(hot.id), feed_ids.index(cold.id))
+
+    def test_activity_ordering_sorts_by_last_activity_desc(self):
+        stale = _create_post(
+            "tfeed_activity_stale",
+            self.user,
+            last_activity_at=datetime.utcnow() - timedelta(days=1),
+        )
+        active = _create_post(
+            "tfeed_activity_active",
+            self.user,
+            last_activity_at=datetime.utcnow() - timedelta(minutes=5),
+        )
+
+        response = self.client.get("/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertLess(feed_ids.index(active.id), feed_ids.index(stale.id))
+
+    def test_muted_room_hidden_on_main_feed_but_visible_in_room_feed(self):
+        room = _create_room("tfeed-muted-room")
+        post = _create_post("tfeed_muted_room_post", self.user, room=room)
+        RoomMuted.objects.create(user=self.user, room=room)
+
+        main_response = self.client.get("/")
+        room_response = self.client.get(f"/room/{room.slug}/")
+
+        self.assertNotIn(post.id, [p.id for p in main_response.context["posts"]])
+        self.assertIn(post.id, [p.id for p in room_response.context["posts"]])
+
+    def test_room_only_posts_hidden_for_unsubscribed_user(self):
+        room = _create_room("tfeed-room-only")
+        room_only = _create_post("tfeed_room_only", self.user, room=room, is_room_only=True)
+        regular = _create_post("tfeed_regular_visible", self.user)
+
+        response = self.client.get("/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertNotIn(room_only.id, feed_ids)
+        self.assertIn(regular.id, feed_ids)
+
+    def test_room_only_posts_visible_for_subscribed_user(self):
+        room = _create_room("tfeed-room-only-sub")
+        room_only = _create_post("tfeed_room_only_sub", self.user, room=room, is_room_only=True)
+        RoomSubscription.objects.create(user=self.user, room=room)
+
+        response = self.client.get("/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertIn(room_only.id, feed_ids)
+
+    def test_invalid_top_month_ordering_param_returns_404(self):
+        response = self.client.get("/all/top_month:2024-99/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_invalid_top_year_ordering_param_returns_404(self):
+        response = self.client.get("/all/top_year:twenty/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_moderator_sees_pending_posts_in_activity_feed(self):
+        moderator = _create_user("tfeed_mod", roles=[User.ROLE_MODERATOR])
+        other = _create_user("tfeed_pending_author")
+        own_pending = _create_post("tfeed_own_pending", moderator, moderation_status=Post.MODERATION_PENDING)
+        other_pending = _create_post("tfeed_other_pending", other, moderation_status=Post.MODERATION_PENDING)
+
+        _login(self.client, moderator)
+        response = self.client.get("/")
+        pending_ids = [post.id for post in response.context["waiting_for_moderation_posts"]]
+
+        self.assertIn(other_pending.id, pending_ids)
+        self.assertNotIn(own_pending.id, pending_ids)

@@ -12,7 +12,7 @@ from telegram import Bot, Update, Message, User as TgUser, Chat as TgChat
 from helpdeskbot.help_desk_common import send_message, edit_message
 from notifications.telegram.bot import SyncBot
 from notifications.telegram.common import send_telegram_message, Chat
-from notifications.telegram.tests import (
+from notifications.tests.telegram.test_common import (
     BaseTelegramTest,
     MockTelegramServer,
     MockTelegramHandler,

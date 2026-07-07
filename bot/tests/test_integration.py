@@ -23,7 +23,7 @@ import urllib3
 from telegram import Update, Message, User as TgUser, Chat as TgChat, MessageEntity
 from telegram.ext import Application
 
-from notifications.telegram.tests import BaseTelegramTest, ExpectedRequest, Request
+from notifications.tests.telegram.test_common import BaseTelegramTest, ExpectedRequest, Request
 from users.models.user import User
 
 log = logging.getLogger(__name__)

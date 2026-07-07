@@ -33,7 +33,7 @@ class ModelCreator:
             slug="ujlbu4_{}".format(self._exist_users),
         )
 
-class TestPaymentModel(TestCase):
+class TestPostViews(TestCase):
     def setUp(self):
         self.creator = ModelCreator()
         self.user = self.creator.create_user()

@@ -1,9 +1,6 @@
 from datetime import datetime, timedelta
 
-import django
 from django.test import SimpleTestCase
-
-django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from authn.providers.common import Membership
 from authn.providers.patreon import parse_active_membership

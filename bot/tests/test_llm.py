@@ -16,7 +16,7 @@ from django.test import TransactionTestCase
 from telegram import Update, Message, User as TgUser, Chat as TgChat
 
 from bot.handlers.llm import llm_response
-from notifications.telegram.tests import BaseTelegramTest, ExpectedRequest, Request
+from notifications.tests.telegram.test_common import BaseTelegramTest, ExpectedRequest, Request
 from users.models.user import User
 
 

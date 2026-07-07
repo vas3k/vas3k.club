@@ -1,3 +1,9 @@
+from datetime import datetime, timedelta
+
+from authn.models.session import Session
+from users.models.user import User
+
+
 def todict(obj, include_class_attrs=False, convert_private=False, include_none_fields=True):
     """Convert object to dict"""
     if isinstance(obj, dict):
@@ -33,3 +39,21 @@ def todict(obj, include_class_attrs=False, convert_private=False, include_none_f
         return data
     else:
         return obj
+
+
+def create_approved_user(slug, **kwargs):
+    defaults = dict(
+        email=f"{slug}@test.com",
+        full_name=slug,
+        membership_started_at=datetime.utcnow() - timedelta(days=5),
+        membership_expires_at=datetime.utcnow() + timedelta(days=365),
+        moderation_status=User.MODERATION_STATUS_APPROVED,
+        is_email_verified=True,
+    )
+    defaults.update(kwargs)
+    return User.objects.create(slug=slug, **defaults)
+
+
+def login(client, user):
+    session = Session.create_for_user(user)
+    client.cookies["token"] = session.token

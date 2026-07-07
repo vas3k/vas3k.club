@@ -81,8 +81,13 @@ class TestPostObjectsForUser(TestCase):
         self.assertIsNone(post.unread_comments)
 
     def test_returns_visible_objects_for_none_user(self):
-        qs = Post.objects_for_user(None)
-        self.assertTrue(qs.filter(id=self.post.id).exists())
+        draft = self.creator.create_post()
+        draft.visibility = Post.VISIBILITY_DRAFT
+        draft.save(update_fields=["visibility"])
+        ids = list(Post.objects_for_user(None).values_list("id", flat=True))
+
+        self.assertIn(self.post.id, ids)
+        self.assertNotIn(draft.id, ids)
 
     def test_executes_in_single_query(self):
         PostVote.objects.create(user=self.user, post=self.post)

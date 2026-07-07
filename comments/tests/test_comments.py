@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.test.client import RequestFactory
 from django.urls import reverse
+from unittest.mock import patch
 
 from comments.models import Comment
 from comments.views import create_comment
@@ -277,7 +278,8 @@ class TestCommentThreadDeletion(TestCase):
         response = client.get(url)
 
         self.assertEqual(response.status_code, 405)
-        self.assertTrue(Comment.objects.filter(id=self.comment.id).exists())
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.text, "Parent comment")
 
     def test_delete_thread_accepts_post_request(self):
         """POST request to delete_comment_thread should work"""
@@ -289,3 +291,96 @@ class TestCommentThreadDeletion(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())
+
+
+class TestCommentCreateAndEditEdgeCases(TestCase):
+    def setUp(self):
+        self.creator = ModelCreator()
+        self.post = self.creator.create_post(is_public=True)
+        self.author = self.post.author
+        self.other_user = self.creator.create_user()
+        self.moderator = self.creator.create_user()
+        self.moderator.roles = ["moderator"]
+        self.moderator.save()
+
+    def test_create_comment_rejects_closed_post_for_non_moderator(self):
+        self.post.is_commentable = False
+        self.post.save(update_fields=["is_commentable"])
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        response = client.post(reverse("create_comment", args=[self.post.slug]), data={"text": "Blocked"})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Comment.objects.filter(post=self.post).count(), 0)
+
+    def test_create_comment_rejects_reply_to_comment_from_another_post(self):
+        other_post = self.creator.create_post(is_public=True)
+        foreign_comment = Comment.objects.create(author=other_post.author, post=other_post, text="Foreign")
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        response = client.post(
+            reverse("create_comment", args=[self.post.slug]),
+            data={"text": "Reply", "reply_to_id": str(foreign_comment.id)},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Comment.objects.filter(post=self.post).count(), 0)
+
+    def test_create_comment_returns_500_for_invalid_form(self):
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        response = client.post(reverse("create_comment", args=[self.post.slug]), data={"text": ""})
+
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(Comment.objects.filter(post=self.post).count(), 0)
+
+    @patch("comments.views.is_comment_rate_limit_exceeded", return_value=True)
+    def test_create_comment_rate_limit_denied(self, _mock_rate_limit):
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        response = client.post(reverse("create_comment", args=[self.post.slug]), data={"text": "Too much"})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Comment.objects.filter(post=self.post).count(), 0)
+
+    def test_edit_deleted_comment_denied_for_author(self):
+        comment = Comment.objects.create(author=self.author, post=self.post, text="To be deleted")
+        comment.delete(deleted_by=self.author)
+        client = HelperClient(self.author)
+        client.authorise()
+
+        response = client.get(reverse("edit_comment", args=[comment.id]))
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_edit_deleted_comment_allowed_for_moderator(self):
+        comment = Comment.objects.create(author=self.author, post=self.post, text="To be edited")
+        comment.delete(deleted_by=self.author)
+        client = HelperClient(self.moderator)
+        client.authorise()
+
+        response = client.post(reverse("edit_comment", args=[comment.id]), data={"text": "Updated by mod"})
+
+        self.assertEqual(response.status_code, 302)
+        comment.refresh_from_db()
+        self.assertFalse(comment.is_deleted)
+        self.assertEqual(comment.text, "Updated by mod")
+
+    def test_upvote_and_retract_comment_vote(self):
+        comment = Comment.objects.create(author=self.author, post=self.post, text="Vote me")
+        client = HelperClient(self.other_user)
+        client.authorise()
+
+        upvote_response = client.post(reverse("upvote_comment", args=[comment.id]))
+        retract_response = client.post(reverse("retract_comment_vote", args=[comment.id]))
+
+        self.assertEqual(upvote_response.status_code, 200)
+        self.assertGreater(upvote_response.json()["upvoted_timestamp"], 0)
+        self.assertEqual(upvote_response.json()["comment"]["upvotes"], 1)
+        self.assertEqual(retract_response.status_code, 200)
+        self.assertTrue(retract_response.json()["success"])
+        self.assertEqual(retract_response.json()["comment"]["upvotes"], 0)

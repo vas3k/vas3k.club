@@ -2,7 +2,6 @@ import unittest
 import uuid
 from datetime import datetime, timedelta
 
-import django
 from django.test import TestCase
 from django.urls import reverse
 from django.http.response import HttpResponseNotAllowed, HttpResponseBadRequest
@@ -10,8 +9,6 @@ from django_q import brokers
 from django_q.signing import SignedPackage
 from unittest import skip
 from unittest.mock import patch
-
-django.setup()  # todo: how to run tests from PyCharm without this workaround?
 
 from authn.models.session import Code
 from authn.providers.common import Membership, Platform

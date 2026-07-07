@@ -160,3 +160,49 @@ class TestProfileCommentsTotal(TestCase):
         response = self.client.get(f"/user/{self.user.slug}/")
         self.assertEqual(len(response.context["comments"]), 3)
         self.assertEqual(response.context["comments_total"], 6)
+
+
+class TestProfileAccessAndRedirects(TestCase):
+    def setUp(self):
+        self.user = _create_user("tprof_access_user")
+        self.viewer = _create_user("tprof_access_viewer")
+        self.client = Client()
+
+    def test_user_me_redirects_to_real_profile(self):
+        _login(self.client, self.user)
+
+        response = self.client.get("/user/me/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, f"/user/{self.user.slug}/")
+
+    def test_anonymous_cannot_view_private_profile(self):
+        self.user.profile_publicity_level = User.PUBLICITY_LEVEL_PRIVATE
+        self.user.save(update_fields=["profile_publicity_level"])
+
+        response = self.client.get(f"/user/{self.user.slug}/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "auth/private_profile.html")
+
+    def test_authenticated_user_can_view_private_profile(self):
+        self.user.profile_publicity_level = User.PUBLICITY_LEVEL_PRIVATE
+        self.user.save(update_fields=["profile_publicity_level"])
+        _login(self.client, self.viewer)
+
+        response = self.client.get(f"/user/{self.user.slug}/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.context["user"].slug, self.viewer.slug)
+        self.assertEqual(response.context["user"].slug, self.user.slug)
+
+    def test_comments_are_hidden_for_anonymous_viewer(self):
+        self.user.profile_publicity_level = User.PUBLICITY_LEVEL_PUBLIC
+        self.user.save(update_fields=["profile_publicity_level"])
+        post = _create_post("tprof_access_post", self.user)
+        _create_comment(post, self.user)
+
+        response = self.client.get(f"/user/{self.user.slug}/")
+
+        self.assertEqual(response.context["comments_total"], 0)
+        self.assertEqual(list(response.context["comments"]), [])
