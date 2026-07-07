@@ -12,6 +12,7 @@ from users.models.user import User
 @require_auth
 def list_rooms(request):
     rooms = paginate(request, Room.visible_rooms().order_by("-last_activity_at"))
+    room_slugs = [room.slug for room in rooms]
 
     # prefetch admins for rooms on the current page
     admin_slugs = {
@@ -30,6 +31,23 @@ def list_rooms(request):
     else:
         for room in rooms:
             room._admins_with_details = []
+
+    if room_slugs:
+        subscribed_room_slugs = set(RoomSubscription.objects.filter(
+            user=request.me,
+            room_id__in=room_slugs,
+        ).values_list("room_id", flat=True))
+        muted_room_slugs = set(RoomMuted.objects.filter(
+            user=request.me,
+            room_id__in=room_slugs,
+        ).values_list("room_id", flat=True))
+    else:
+        subscribed_room_slugs = set()
+        muted_room_slugs = set()
+
+    for room in rooms:
+        room.is_subscribed_by_me = room.slug in subscribed_room_slugs
+        room.is_muted_by_me = room.slug in muted_room_slugs
 
     return render(request, "rooms/list_rooms.html", {
         "rooms": rooms,

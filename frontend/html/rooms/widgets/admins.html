@@ -1,8 +1,0 @@
-{% if room.admins %}
-    <span class="feed-topic-header-footer feed-topic-header-admins">
-        <span><i class="fas fa-user-shield"></i>&nbsp;<strong>Админы:</strong></span>
-        {% for admin in room.admins_with_details %}
-            {% include "users/widgets/tiny.html" with user=admin show_name=True %}
-        {% endfor %}
-    </span>
-{% endif %}

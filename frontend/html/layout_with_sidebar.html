@@ -29,7 +29,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="https://events.vas3k.club">
+                    <a href="https://events.vas3k.club" target="_blank">
                         🔥 Ивенты
                     </a>
                 </li>
@@ -85,14 +85,20 @@
         </div>
 
         <div class="feed-sidebar-block">
-            <div class="feed-sidebar-header">Комнаты</div>
+            <div class="feed-sidebar-header">
+                <a href="{% url "list_rooms" %}">
+                    Комнаты&nbsp;&rarr;
+                </a>
+            </div>
+
             <div class="feed-sidebar-topics">
                 {% for room in rooms|slice:":15" %}
                     {% include "rooms/widgets/room.html" with room=room type="card" %}
                 {% endfor %}
             </div>
+
             <div class="feed-sidebar-topics-more">
-                <a class="button button-small button-inverted" href="{% url "list_rooms" %}">Все комнаты &rarr;</a>
+                <a class="button button-small button-inverted" href="{% url "list_rooms" %}">Все {{ rooms|length }} {{ rooms|length|rupluralize:"комната,комнаты,комнат" }}...</a>
             </div>
         </div>
     </aside>

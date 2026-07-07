@@ -76,4 +76,16 @@ describe("Toggle.vue", () => {
 
         expect(wrapper.classes()).toContain("is-active");
     });
+
+    it("inverts API statuses when isInverted is true", async () => {
+        const wrapper = mountToggle({ isInverted: true, isActiveByDefault: true });
+
+        ClubApi.post.mockImplementationOnce((url, cb) => cb({ status: "created" }));
+        await wrapper.vm.toggle();
+        expect(wrapper.vm.isActive).toBe(false);
+
+        ClubApi.post.mockImplementationOnce((url, cb) => cb({ status: "deleted" }));
+        await wrapper.vm.toggle();
+        expect(wrapper.vm.isActive).toBe(true);
+    });
 });

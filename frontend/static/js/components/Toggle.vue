@@ -1,8 +1,8 @@
 <template>
-    <div :class="{ 'is-active': isActive }" @click.prevent="toggle">
+    <div :class="{ 'is-active': isActive }">
         <span v-if="isLoading">🤔 думаю...</span>
         <label v-else style="cursor: pointer;">
-            <input type="checkbox" v-model="isActive" @change.prevent="toggle" />
+            <input type="checkbox" :checked="isActive" @change.prevent="toggle" />
             <slot></slot>
         </label>
     </div>
@@ -24,6 +24,12 @@ export default {
             type: String,
             required: true,
         },
+        isInverted: {
+            type: Boolean,
+            default() {
+                return false;
+            },
+        },
     },
     data() {
         return {
@@ -38,11 +44,11 @@ export default {
                 this.isLoading = false;
 
                 if (data.status === "created") {
-                    this.isActive = true;
+                    this.isActive = !this.isInverted;
                 }
 
                 if (data.status === "deleted") {
-                    this.isActive = false;
+                    this.isActive = this.isInverted;
                 }
             });
         },

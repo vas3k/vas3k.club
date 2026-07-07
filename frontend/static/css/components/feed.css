@@ -56,11 +56,15 @@
             font-weight: 600;
         }
 
-        @media only screen and (max-width : 570px) {
-            .feed-sidebar-header {
-                padding: 5px 10px;
+            .feed-sidebar-header a {
+                text-decoration: none;
             }
-        }
+
+            @media only screen and (max-width : 570px) {
+                .feed-sidebar-header {
+                    padding: 5px 10px;
+                }
+            }
 
         .feed-sidebar-list {
             list-style: none;
@@ -157,15 +161,35 @@
                 border: solid 2px var(--bg-color);
             }
 
-    .feed-topic-header-desctiption {
+    .feed-topic-header-description {
         display: block;
+        font-size: 120%;
     }
 
     .feed-topic-header-footer {
-        display: block;
-        padding-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        padding-top: 10px;
         font-size: 115%;
     }
+
+        .feed-topic-header-footer > div {
+            width: 100%;
+        }
+
+        .feed-topic-header-footer-chat {
+            width: 100%;
+        }
+
+            .feed-topic-header-footer-chat .button {
+                width: 100%;
+            }
+
+        .feed-topic-header-footer-url {
+            text-align: center;
+        }
 
         .feed-topic-header-footer small {
             font-size: 70%;
@@ -173,31 +197,36 @@
 
     .feed-topic-header-admins {
         display: flex;
+        flex-direction: row;
         flex-wrap: wrap;
+        justify-content: center;
         align-items: center;
         gap: 5px 10px;
     }
 
-        .feed-topic-header-admins .user-tiny {
-            color: #FFF;
-            font-size: 90%;
-            line-height: 1.6em;
-        }
-
     .feed-topic-header-settings {
         display: flex;
         flex-wrap: wrap;
-        justify-content: flex-start;
+        justify-content: center;
         align-items: center;
         flex-direction: row;
-        gap: 20px;
-        padding-top: 40px;
+        gap: 16px;
+        padding-top: 0;
     }
+
+        .feed-topic-header-settings input[type="checkbox"] {
+            transform: scale(1.4);
+            transform-origin: center;
+            margin: 0 5px;
+            position: relative;
+            top: 1px;
+        }
 
         .feed-topic-header-toggle {
             display: inline-block;
             position: relative;
-            padding: 6px 13px 7px;
+            padding: 4px 10px 5px;
+            font-size: 95%;
             cursor: pointer;
             color: var(--text-color);
             background-color: var(--block-bg-color);
