@@ -56,8 +56,10 @@ class TestListRooms(TestCase):
             response = self.client.get("/rooms/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "подписка на комнату", count=3)
-        self.assertContains(response, "отображается на главной", count=3)
+        self.assertContains(response, "подписаться на комнату", count=3)
+        self.assertContains(response, "посты видны на главной", count=3)
+        self.assertContains(response, '/subscribe/"', count=3)
+        self.assertContains(response, '/mute/"', count=3)
         self.assertContains(response, "is-active-by-default", count=3)
 
         subscription_queries = [
