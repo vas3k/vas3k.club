@@ -139,6 +139,14 @@
             color: #FFF;
         }
 
+        .feed-topic-header a.button {
+            color: var(--button-color);
+        }
+
+        .feed-topic-header a.button:hover {
+            color: var(--button-hover-color);
+        }
+
         .feed-topic-header-title {
             display: flex;
             flex-direction: row;
