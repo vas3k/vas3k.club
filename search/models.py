@@ -4,7 +4,8 @@ from uuid import uuid4
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField, SearchVector, SearchRank, SearchQuery
-from django.db import models
+from django.core.exceptions import MultipleObjectsReturned
+from django.db import models, IntegrityError
 from django.db.models import F, Value, FloatField
 from django.db.models.functions import Coalesce, Ln
 
@@ -47,6 +48,23 @@ class SearchIndex(models.Model):
         ordering = ["-created_at"]
         indexes = [
             GinIndex(fields=["index"], fastupdate=False),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["type", "post"],
+                condition=models.Q(type="post", post__isnull=False),
+                name="search_index_unique_post_per_type",
+            ),
+            models.UniqueConstraint(
+                fields=["type", "comment"],
+                condition=models.Q(type="comment", comment__isnull=False),
+                name="search_index_unique_comment_per_type",
+            ),
+            models.UniqueConstraint(
+                fields=["type", "user"],
+                condition=models.Q(type="user", user__isnull=False),
+                name="search_index_unique_user_per_type",
+            ),
         ]
 
     @classmethod
@@ -111,23 +129,26 @@ class SearchIndex(models.Model):
         vector = _multi_search_vector("text", weight="B") \
                  + _multi_search_vector("author__slug", weight="C")
 
-        SearchIndex.objects.update_or_create(
-            comment=comment,
-            type=SearchIndex.TYPE_COMMENT,
-            defaults=dict(
-                post_id=comment.post_id,
-                index=Comment.objects
-                .annotate(vector=vector)
-                .filter(id=comment.id)
-                .values_list("vector", flat=True)
-                .first(),
-                created_at=comment.created_at,
-                author=comment.author.slug if comment.author else None,
-                upvotes=comment.upvotes,
-                title=comment.post.title if comment.post else None,
-                updated_at=datetime.utcnow(),
+        try:
+            SearchIndex.objects.update_or_create(
+                comment=comment,
+                type=SearchIndex.TYPE_COMMENT,
+                defaults=dict(
+                    post_id=comment.post_id,
+                    index=Comment.objects
+                    .annotate(vector=vector)
+                    .filter(id=comment.id)
+                    .values_list("vector", flat=True)
+                    .first(),
+                    created_at=comment.created_at,
+                    author=comment.author.slug if comment.author else None,
+                    upvotes=comment.upvotes,
+                    title=comment.post.title if comment.post else None,
+                    updated_at=datetime.utcnow(),
+                ),
             )
-        )
+        except (MultipleObjectsReturned, IntegrityError):
+            pass
 
     @classmethod
     def update_post_index(cls, post):
@@ -137,22 +158,25 @@ class SearchIndex(models.Model):
                  + _multi_search_vector("room__title", weight="C")
 
         if not post.is_draft:
-            SearchIndex.objects.update_or_create(
-                post=post,
-                type=SearchIndex.TYPE_POST,
-                defaults=dict(
-                    index=Post.objects
-                    .annotate(vector=vector)
-                    .filter(id=post.id)
-                    .values_list("vector", flat=True)
-                    .first(),
-                    created_at=post.published_at or post.created_at,
-                    author=post.author.slug if post.author else None,
-                    upvotes=post.upvotes,
-                    title=post.title,
-                    updated_at=datetime.utcnow(),
+            try:
+                SearchIndex.objects.update_or_create(
+                    post=post,
+                    type=SearchIndex.TYPE_POST,
+                    defaults=dict(
+                        index=Post.objects
+                        .annotate(vector=vector)
+                        .filter(id=post.id)
+                        .values_list("vector", flat=True)
+                        .first(),
+                        created_at=post.published_at or post.created_at,
+                        author=post.author.slug if post.author else None,
+                        upvotes=post.upvotes,
+                        title=post.title,
+                        updated_at=datetime.utcnow(),
+                    ),
                 )
-            )
+            except (MultipleObjectsReturned, IntegrityError):
+                pass
         else:
             SearchIndex.objects.filter(post=post).delete()
 
@@ -179,18 +203,21 @@ class SearchIndex(models.Model):
             .first()
 
         if user.moderation_status == User.MODERATION_STATUS_APPROVED:
-            SearchIndex.objects.update_or_create(
-                user=user,
-                type=SearchIndex.TYPE_USER,
-                defaults=dict(
-                    index=(user_index or "") + " " + (intro_index or ""),
-                    created_at=user.created_at,
-                    author=user.slug,
-                    upvotes=user.upvotes,
-                    title=user.full_name,
-                    updated_at=datetime.utcnow(),
+            try:
+                SearchIndex.objects.update_or_create(
+                    user=user,
+                    type=SearchIndex.TYPE_USER,
+                    defaults=dict(
+                        index=(user_index or "") + " " + (intro_index or ""),
+                        created_at=user.created_at,
+                        author=user.slug,
+                        upvotes=user.upvotes,
+                        title=user.full_name,
+                        updated_at=datetime.utcnow(),
+                    ),
                 )
-            )
+            except (MultipleObjectsReturned, IntegrityError):
+                pass
         else:
             SearchIndex.objects.filter(user=user).delete()
 
