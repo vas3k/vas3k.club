@@ -47,10 +47,15 @@
                     <div class="search-filters-ordering">
                         <select name="ordering" onchange="this.form.submit()">
                             <option value="-rank" {% if ordering == "-rank" %}selected{% endif %}>по релевантности</option>
+                            <option value="-upvotes" {% if ordering == "-upvotes" %}selected{% endif %}>по популярности</option>
                             <option value="-created_at" {% if ordering == "-created_at" %}selected{% endif %}>по свежести</option>
                             <option value="created_at" {% if ordering == "created_at" %}selected{% endif %}>по старости</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="search-filters-help">
+                    👓 <b>"Как какать"</b> — поиск по точному совпадению, <b>-выгорание</b> — исключить слово, <b>author:vas3k</b> — по нику автора, <b>title:борщ</b> — в заголовке поста, <b>since:2024</b> и <b>until:2024-03-09</b> — по дате, а еще <b>AND и OR</b>, если нужны.
                 </div>
             </form>
         </div>

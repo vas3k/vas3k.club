@@ -404,6 +404,12 @@
                 }
         }
 
+    .search-filters-help {
+        margin-top: 15px;
+        font-size: 90%;
+        opacity: 0.7;
+    }
+
 .search-results {
 }
 

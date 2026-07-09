@@ -6,7 +6,7 @@ from common.pagination import paginate
 from search.models import SearchIndex
 
 ALLOWED_TYPES = {"post", "comment", "user"}
-ALLOWED_ORDERING = {"-rank", "-created_at", "created_at"}
+ALLOWED_ORDERING = {"-rank", "-upvotes", "-created_at", "created_at"}
 
 
 @require_auth

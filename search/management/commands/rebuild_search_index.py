@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    help = "Rebuild search index for posts and users"
+    help = "Rebuild search index for comments, posts and users"
 
     def handle(self, *args, **options):
         SearchIndex.objects.all().delete()
@@ -22,7 +22,10 @@ class Command(BaseCommand):
         indexed_user_count = 0
 
         for chunk in chunked_queryset(
-            Comment.visible_objects().filter(is_deleted=False).exclude(post__visibility=Post.VISIBILITY_DRAFT)
+            Comment.visible_objects()
+            .filter(is_deleted=False)
+            .exclude(post__visibility=Post.VISIBILITY_DRAFT)
+            .select_related("author", "post")
         ):
             for comment in chunk:
                 self.stdout.write(f"Indexing comment: {comment.id}")
@@ -35,7 +38,9 @@ class Command(BaseCommand):
 
                 indexed_comment_count += 1
 
-        for chunk in chunked_queryset(Post.objects.exclude(visibility=Post.VISIBILITY_DRAFT)):
+        for chunk in chunked_queryset(
+            Post.objects.exclude(visibility=Post.VISIBILITY_DRAFT).select_related("author", "room")
+        ):
             for post in chunk:
                 self.stdout.write(f"Indexing post: {post.slug}")
 
