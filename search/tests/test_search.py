@@ -166,6 +166,23 @@ class SearchViewsTests(TestCase):
         self.assertIn("vas3k_post", slugs)
         self.assertNotIn("other_post", slugs)
 
+    def test_custom_author_operator_is_case_insensitive(self):
+        mixed_case_author = self.create_user(
+            slug="MrSparkline",
+            email="mrsparkline_test@example.com",
+        )
+        self.create_post(
+            slug="mixed_case_author_post",
+            title="AUTHOR CASE TOKEN",
+            text="AUTHOR CASE TOKEN",
+            author=mixed_case_author,
+        )
+
+        response = self.search("AUTHOR CASE TOKEN author:mrsparkline")
+        slugs = [result.post.slug for result in response.context["results"] if result.post_id]
+
+        self.assertIn("mixed_case_author_post", slugs)
+
     def test_custom_negative_author_operator(self):
         vas3k = self.create_user(slug="vas3kminus", email="vas3kminus_test@example.com")
         self.create_post(
@@ -404,6 +421,12 @@ class SearchViewsTests(TestCase):
         response = self.search("домен", ordering="-upvotes")
 
         self.assertEqual(response.context["ordering"], "-upvotes")
+
+    def test_ordering_form_keeps_selected_type(self):
+        response = self.search("домен", content_type="post", ordering="-upvotes")
+        content = response.content.decode()
+
+        self.assertIn('<input type="hidden" name="type" value="post">', content)
 
     def test_type_post_excludes_intro_posts(self):
         intro = self.create_post(

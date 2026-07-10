@@ -29,6 +29,9 @@
                 <div class="search-query show-on-iphone">
                     <input type="text" name="q" minlength="3" maxlength="200" value="{{ query }}" enterkeyhint="search" placeholder="Поиск..." class="search-query-input">
                 </div>
+                {% if type %}
+                    <input type="hidden" name="type" value="{{ type }}">
+                {% endif %}
 
                 <div class="search-filters-types">
                     <a href="{% append_query_param type="all" %}" class="search-filters-type {% if not type %}search-filters-type-selected{% endif %}">

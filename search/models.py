@@ -76,10 +76,10 @@ class SearchIndex(models.Model):
         result = SearchIndex.objects.all()
 
         if parsed["author"]:
-            result = result.filter(author=parsed["author"])
+            result = result.filter(author__iexact=parsed["author"])
 
         if parsed["-author"]:
-            result = result.exclude(author=parsed["-author"])
+            result = result.exclude(author__iexact=parsed["-author"])
 
         if parsed["type"]:
             result = result.filter(type=parsed["type"])
