@@ -3,7 +3,8 @@ FROM ghcr.io/astral-sh/uv:0.10.12-python3.12-trixie-slim AS python-builder
 ARG MODE=dev
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
-    UV_PYTHON_DOWNLOADS=never
+    UV_PYTHON_DOWNLOADS=never \
+    UV_PROJECT_ENVIRONMENT=/opt/venv
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -yq \
@@ -14,17 +15,13 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY Pipfile Pipfile.lock ./
+COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv venv /opt/venv \
-    && uv pip install --python=/opt/venv/bin/python pipenv==2026.0.3 \
-    && if [ "$MODE" = "production" ]; then \
-        /opt/venv/bin/pipenv requirements > requirements.txt; \
+    if [ "$MODE" = "production" ]; then \
+        uv sync --frozen --no-dev --no-install-project; \
     else \
-        /opt/venv/bin/pipenv requirements --dev > requirements.txt; \
-    fi \
-    && uv pip uninstall --python=/opt/venv/bin/python pipenv \
-    && uv pip install --python=/opt/venv/bin/python -r requirements.txt
+        uv sync --frozen --no-install-project; \
+    fi
 
 FROM node:22-slim@sha256:dd9d21971ec4395903fa6143c2b9267d048ae01ca6d3ea96f16cb30df6187d94 AS frontend-builder
 

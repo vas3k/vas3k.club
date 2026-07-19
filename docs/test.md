@@ -4,9 +4,9 @@
 
 Consider next required conditions for running tests:
 
-- **pipenv**
+- **uv**
 
-  Don't forget to run it under configured pipenv. Install dependencies with `pipenv install --dev`
+  Install dependencies with `uv sync`
 - **postgres**
 
   Due to tests make database queries the local postgres should be running.
@@ -17,7 +17,7 @@ Consider next required conditions for running tests:
   ```
   For first time run migrations (it needs only for fresh images)
   ```sh
-  $ pipenv run python3 manage.py migrate
+  $ uv run python manage.py migrate
   ```
 - **redis**
   Run redis:
@@ -52,9 +52,9 @@ Basically tests automatically runs in CI in opened PR, but if you want to run te
    ```sh
    $ make test
    ```
-2. pipenv shell
+2. uv run
    ```sh
-   $ TESTS_RUN=true pipenv run python3 manage.py test
+   $ TESTS_RUN=true uv run python manage.py test
    ```
 3. pycharm *profession edition*
    Use `django tests` template out of the box. Add `TESTS_RUN=true` to environment variables.

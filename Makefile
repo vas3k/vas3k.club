@@ -6,23 +6,23 @@ PROJECT_NAME := vas3k_club
 
 .PHONY: run-dev
 run-dev:  ## Run dev server
-	pipenv run python3 manage.py runserver 0.0.0.0:8000
+	uv run python manage.py runserver 0.0.0.0:8000
 
 .PHONY: run-queue
 run-queue:  ## Run task broker
-	pipenv run python3 manage.py qcluster
+	uv run python manage.py qcluster
 
 .PHONY: run-bot
 run-bot:  ## Run telegram bot
-	pipenv run python3 bot/main.py
+	uv run python bot/main.py
 
 .PHONY: run-uvicorn
 run-uvicorn:  ## Run uvicorn (ASGI) server
-	pipenv run uvicorn --fd 0 --lifespan off club.asgi:application
+	uv run uvicorn --fd 0 --lifespan off club.asgi:application
 
 .PHONY: migrate
 migrate:  ## Migrate database to the latest version
-	pipenv run python3 manage.py migrate
+	uv run python manage.py migrate
 
 .PHONY: psql
 psql:  ## Connect to local database
@@ -34,11 +34,11 @@ build-frontend:  ## Run webpack build
 
 .PHONY: lint
 lint:  ## Lint code with flake8
-	@pipenv run flake8 .
+	@uv run flake8 .
 
 .PHONY: test
 test:  ## Run backend tests
-	TESTS_RUN=true pipenv run python3 manage.py test
+	TESTS_RUN=true uv run python manage.py test
 
 .PHONY: test-frontend
 test-frontend:  ## Run frontend tests
@@ -48,8 +48,8 @@ test-frontend:  ## Run frontend tests
 test-all: test test-frontend  ## Run all tests (backend + frontend)
 
 .PHONY: test-ci
-test-ci:  ## Run backend tests (CI)
-	TESTS_RUN=true python3 manage.py test
+test-ci:  ## Run backend tests (CI / Docker; expects venv on PATH)
+	TESTS_RUN=true python manage.py test
 
 .PHONY: test-frontend-ci
 test-frontend-ci:  ## Run frontend tests (CI)

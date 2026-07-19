@@ -14,7 +14,7 @@ We're a bullshitless community!
 
 ## 🛠 Tech stack
 
-👨‍💻 **TL;DR: Django, Postgres, Redis, Vue.js, Webpack**
+👨‍💻 **TL;DR: Django, Postgres, Redis, Vue.js, Webpack, UV**
 
 We try to keep our stack as simple and stupid as possible. Because we're not very smart either.
 

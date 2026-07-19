@@ -4,11 +4,11 @@
 
 Once you decided to code something in the project you'll need to setup your environment. Here's how you can make it.
 
-### Setup pipenv
+### Setup UV
 
-1. Get pipenv: `pip3 install --user pipenv`
-2. Install packages and activate virtual environment: `pipenv install --dev`
-3. Check that it was installed correctly: `pipenv shell`
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
+2. Install packages: `uv sync`
+3. Check that it works: `uv run python -c "import django; print(django.get_version())"`
 
 ### Setup postgres
 
@@ -66,13 +66,13 @@ After you have setup postgres, venv and build frontend (look this steps above) c
 $ docker-compose -f docker-compose.yml up redis
 
 # run queue
-$ pipenv run python manage.py qcluster
+$ uv run python manage.py qcluster
 
 # run db migration
-$ pipenv run python manage.py migrate
+$ uv run python manage.py migrate
 
 # run dev server
-$ pipenv run python manage.py runserver 0.0.0.0:8000
+$ uv run python manage.py runserver 0.0.0.0:8000
 ```
 
 ## Telegram bot or help-desk-bot

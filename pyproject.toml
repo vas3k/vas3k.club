@@ -1,0 +1,46 @@
+[project]
+name = "vas3k-club"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "authlib==1.6.9",
+    "awesome-slugify>=1.6.5",
+    "click>=8.4.2",
+    "croniter>=6.2.4",
+    "cryptography>=39.0.2",
+    "django==5.1.13",
+    "django-q2[sentry]==1.7.6",
+    "django-redis==5.4.0",
+    "django-simple-history==3.7.0",
+    "django-webpack-loader==3.1.1",
+    "gunicorn==23.0.0",
+    "httptools>=0.8.0",
+    "icalendar>=7.2.0",
+    "lxml[html-clean]==5.3.0",
+    "mistune==3.1.4",
+    "newspaper4k==0.9.3.1",
+    "openai>=2.46.0",
+    "patreon>=0.5",
+    "pillow>=9.0.1",
+    "premailer==3.6.1",
+    "psycopg[pool]>=3.3.4",
+    "pyjwt==2.10.1",
+    "python-dotenv>=0.12",
+    "python-telegram-bot[webhooks]==22.7",
+    "redis==5.2.1",
+    "requests==2.32.3",
+    "sentry-sdk==2.20.0",
+    "stripe==11.4.1",
+    "telethon>=1.44.0",
+    "typus>=0.2.2",
+    "uvicorn>=0.51.0",
+    "uvloop>=0.21.0",
+    "yookassa==3.10.0",
+]
+
+[dependency-groups]
+dev = [
+    "django-debug-toolbar>=6.3.0",
+    "flake8>=7.3.0",
+    "pytest>=9.1.1",
+]
