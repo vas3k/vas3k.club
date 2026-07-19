@@ -3,11 +3,10 @@ from collections import namedtuple
 from typing import Optional, Tuple
 from urllib.parse import urljoin, urlparse
 
-import newspaper
 import requests
+from bs4 import BeautifulSoup
 from common.url_security import is_url_safe_for_fetch
 from django.utils.html import strip_tags
-from newspaper import Article, ArticleException
 from requests import RequestException
 from urllib3.exceptions import InsecureRequestWarning
 
@@ -33,21 +32,83 @@ def parse_url_preview(url: str) -> Optional[ParsedURL]:
     if not content_type or not content_type.startswith("text/"):
         return None
 
-    try:
-        article = load_and_parse_full_article_text_and_image(real_url)
-    except ArticleException:
+    html = load_page_safe(real_url)
+    if not html:
         return None
 
-    canonical_url = article.canonical_link or real_url
-    return ParsedURL(
-        url=canonical_url,
-        domain=urlparse(canonical_url).netloc,
-        title=strip_tags(article.title),
-        favicon=strip_tags(urljoin(article.url, article.meta_favicon)),
-        summary="",
-        image=article.top_image,
-        description=article.meta_description,
+    parsed = parse_html_preview(real_url, html)
+    if not parsed:
+        return None
+
+    return parsed
+
+
+def parse_html_preview(url: str, html: str | bytes) -> Optional[ParsedURL]:
+    soup = BeautifulSoup(html, "html.parser")
+
+    canonical = _meta_link(soup, rel="canonical") or url
+    title = (
+        _meta_content(soup, property="og:title")
+        or _meta_content(soup, name="twitter:title")
+        or (soup.title.string if soup.title and soup.title.string else None)
+        or ""
     )
+    description = (
+        _meta_content(soup, property="og:description")
+        or _meta_content(soup, name="twitter:description")
+        or _meta_content(soup, name="description")
+        or ""
+    )
+    image = (
+        _meta_content(soup, property="og:image")
+        or _meta_content(soup, name="twitter:image")
+        or ""
+    )
+    favicon = (
+        _meta_link(soup, rel="icon")
+        or _meta_link(soup, rel="shortcut icon")
+        or _meta_link(soup, rel="apple-touch-icon")
+        or ""
+    )
+
+    if image:
+        image = urljoin(canonical, image)
+    if favicon:
+        favicon = urljoin(canonical, favicon)
+
+    return ParsedURL(
+        url=canonical,
+        domain=urlparse(canonical).netloc,
+        title=strip_tags(title).strip(),
+        favicon=strip_tags(favicon),
+        summary="",
+        image=image,
+        description=strip_tags(description).strip(),
+    )
+
+
+def _meta_content(soup: BeautifulSoup, **attrs) -> Optional[str]:
+    tag = soup.find("meta", attrs=attrs)
+    if not tag:
+        return None
+    content = tag.get("content")
+    return content.strip() if content else None
+
+
+def _meta_link(soup: BeautifulSoup, rel: str) -> Optional[str]:
+    wanted = rel.lower()
+
+    def matches(value) -> bool:
+        if not value:
+            return False
+        tokens = value if isinstance(value, list) else value.split()
+        return wanted in {token.lower() for token in tokens}
+
+    tag = soup.find("link", rel=matches)
+    if not tag:
+        return None
+    href = tag.get("href")
+    return href.strip() if href else None
 
 
 def resolve_url(entry_link: str) -> Tuple[Optional[str], Optional[str], int]:
@@ -101,11 +162,3 @@ def load_page_safe(url: str) -> str:
         return ""
     # https://stackoverflow.com/a/23514616
     return response.raw.read(MAX_PARSABLE_CONTENT_LENGTH, decode_content=True)
-
-
-def load_and_parse_full_article_text_and_image(url: str) -> Article:
-    article = Article(url)
-    article.download(input_html=load_page_safe(url))
-    article.parse()
-
-    return article

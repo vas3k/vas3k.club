@@ -5,6 +5,7 @@ requires-python = ">=3.14"
 dependencies = [
     "authlib==1.7.2",
     "awesome-slugify>=1.6.5",
+    "beautifulsoup4>=4.14.3",
     "click>=8.4.2",
     "croniter>=6.2.4",
     "cryptography>=39.0.2",
@@ -15,9 +16,8 @@ dependencies = [
     "django-webpack-loader==3.2.4",
     "gunicorn==26.0.0",
     "icalendar>=7.2.0",
-    "lxml[html-clean]==5.3.0",
+    "lxml==6.1.1",
     "mistune==3.3.3",
-    "newspaper4k==0.9.5",
     "openai>=2.46.0",
     "patreon>=0.5",
     "pillow>=10.1.0",

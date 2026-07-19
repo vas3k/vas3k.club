@@ -130,11 +130,6 @@ jobs:
           npm ci
           npm run build
 
-      - name: Install system build deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y libxml2-dev libxslt1-dev
-
       - name: Install dependencies
         run: uv sync --frozen
 

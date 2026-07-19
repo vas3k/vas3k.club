@@ -11,8 +11,6 @@ RUN apt-get update \
       build-essential \
       libgdal-dev \
       libpq-dev \
-      libxml2-dev \
-      libxslt1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -48,6 +46,8 @@ RUN apt-get update \
       curl \
       gdal-bin \
       libpq5 \
+      libxml2 \
+      libxslt1.1 \
       make \
     && curl -fsSLO "$SUPERCRONIC_URL" \
     && echo "${SUPERCRONIC_SHA1SUM}  supercronic-linux-amd64" | sha1sum -c - \
