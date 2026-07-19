@@ -133,7 +133,7 @@ if TESTS_RUN:
     DATABASES["default"]["CONN_MAX_AGE"] = 0
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 elif bool(os.getenv("POSTGRES_USE_POOLING")):
-    DATABASES["default"]["CONN_MAX_AGE"] = None
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = False
     DATABASES["default"]["OPTIONS"] = {
         "pool": {
