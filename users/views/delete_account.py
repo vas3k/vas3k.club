@@ -4,6 +4,7 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from django_q.tasks import async_task
 
+from authn.cache import clear_auth_token_cache_for_user
 from authn.decorators.auth import require_auth
 from authn.models.session import Session, Code
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
@@ -60,6 +61,7 @@ def confirm_delete_account(request):
     request.me.save()
 
     # remove sessions
+    clear_auth_token_cache_for_user(request.me)
     Session.objects.filter(user=request.me).delete()
 
     # notify user

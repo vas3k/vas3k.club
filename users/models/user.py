@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
+from django.core.cache import cache
 from django.db import models
 from django.db.models import F
 from django.urls import reverse
@@ -11,6 +12,8 @@ from common.models import ModelDiffMixin
 from users.models.geo import geo_coordinates
 from utils.slug import generate_unique_slug
 from utils.strings import random_string
+
+USER_ACTIVITY_CACHE_TIMEOUT = 5 * 60
 
 
 class User(models.Model, ModelDiffMixin):
@@ -175,10 +178,12 @@ class User(models.Model, ModelDiffMixin):
         return reverse("profile", kwargs={"user_slug": self.slug})
 
     def update_last_activity(self):
+        cache_key = f"user:{self.id}:last_activity"
+        if cache.get(cache_key):
+            return None
+        cache.set(cache_key, 1, timeout=USER_ACTIVITY_CACHE_TIMEOUT)
         now = datetime.utcnow()
-        if self.last_activity_at < now - timedelta(minutes=5):
-            return User.objects.filter(id=self.id).update(last_activity_at=now)
-        return None
+        return User.objects.filter(id=self.id).update(last_activity_at=now)
 
     def membership_days_left(self):
         return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24

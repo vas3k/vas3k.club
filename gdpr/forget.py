@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db.models import Value
 from django.db.models.functions import Replace
 
+from authn.cache import clear_auth_token_cache_for_user
 from authn.models.session import Session, Code
 from bookmarks.models import PostBookmark
 from comments.models import Comment
@@ -79,6 +80,7 @@ def delete_user_data(user: User):
     # drop related data
     UserAchievement.objects.filter(user=user).delete()
     UserTag.objects.filter(user=user).delete()
+    clear_auth_token_cache_for_user(user)
     Session.objects.filter(user=user).delete()
     Code.objects.filter(user=user).delete()
     PostBookmark.objects.filter(user=user).delete()

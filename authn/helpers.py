@@ -4,11 +4,12 @@ from enum import StrEnum, unique
 from typing import Optional, Tuple
 from urllib.parse import urlparse
 
+from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from django.conf import settings
-
+from authn.cache import AUTH_TOKEN_CACHE_TIMEOUT, auth_token_cache_key, clear_auth_token_cache
 from authn.models.session import Session
 from users.models.user import User
 
@@ -42,6 +43,15 @@ def authorized_user_with_session(request) -> Tuple[Optional[User], Optional[Sess
 
 
 def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
+    cache_key = auth_token_cache_key(token)
+    cached = cache.get(cache_key)
+    if cached is not None:
+        user, session = cached
+        if not session or session.expires_at <= datetime.utcnow():
+            clear_auth_token_cache(token)
+            return None, None
+        return user, session
+
     session = Session.objects\
         .filter(token=token)\
         .order_by()\
@@ -51,6 +61,7 @@ def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
     if not session or session.expires_at <= datetime.utcnow():
         return None, None  # session is expired
 
+    cache.set(cache_key, (session.user, session), timeout=AUTH_TOKEN_CACHE_TIMEOUT)
     return session.user, session
 
 

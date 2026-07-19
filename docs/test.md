@@ -26,7 +26,7 @@ Consider next required conditions for running tests:
   ```
 - build **frontend**
 
-  For [views tests](https://docs.djangoproject.com/en/5.1/intro/tutorial05/#a-test-for-a-view) its essential to build our frontend upfront.
+  For [views tests](https://docs.djangoproject.com/en/6.0/intro/tutorial05/#a-test-for-a-view) its essential to build our frontend upfront.
   Hot to build front look [setup-frontend](#setup-frontend) section, for now just run next commands:
   ```sh
   $ cd frontend
@@ -69,7 +69,7 @@ Basically tests automatically runs in CI in opened PR, but if you want to run te
      django.setup()
      ```
 
-For more information about testing in django look well written [official documentation](https://docs.djangoproject.com/en/5.1/topics/testing/overview/)
+For more information about testing in django look well written [official documentation](https://docs.djangoproject.com/en/6.0/topics/testing/overview/)
 
 ## Frontend tests
 

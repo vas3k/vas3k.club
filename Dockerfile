@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.10.12-python3.12-trixie-slim AS python-builder
+FROM ghcr.io/astral-sh/uv:0.10.12-python3.14-trixie-slim AS python-builder
 
 ARG MODE=dev
 ENV UV_COMPILE_BYTECODE=1 \
@@ -32,7 +32,7 @@ RUN npm ci
 COPY frontend/ .
 RUN npm run build
 
-FROM python:3.12-slim-trixie@sha256:39e4e1ccb01578e3c86f7a0cf7b7fd89b8dbe2c27a88de11cf726ba669469f49
+FROM python:3.14-slim-trixie@sha256:cea0e6040540fb2b965b6e7fb5ffa00871e632eef63719f0ea54bca189ce14a6
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.shortcuts import render
 
+from authn.cache import clear_auth_token_cache_for_user
 from authn.models.session import Session
 from notifications.email.users import send_delete_account_confirm_email
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
@@ -59,6 +60,7 @@ def post_delete_action(request, user: User, **context):
             user.save()
 
             # remove sessions
+            clear_auth_token_cache_for_user(user)
             Session.objects.filter(user=user).delete()
 
             # notify user

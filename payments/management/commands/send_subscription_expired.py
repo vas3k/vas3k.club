@@ -25,7 +25,7 @@ class Command(BaseCommand):
         # select daily subscribers
         if not options.get("production"):
             about_to_expire_users = User.objects.filter(
-                email__in=dict(settings.ADMINS).values(),
+                email__in=settings.ADMINS,
                 telegram_id__isnull=False
             )
         else:

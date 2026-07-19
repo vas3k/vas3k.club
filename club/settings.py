@@ -19,8 +19,8 @@ ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "ru.vas
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
-    ("admin", "club@vas3k.club"),
-    ("vas3k", "me@vas3k.ru"),
+    "club@vas3k.club",
+    "me@vas3k.ru",
 ]
 
 INSTALLED_APPS = [
@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.sitemaps",
+    "django.contrib.postgres",
     "club",
     "authn.apps.AuthnConfig",
     "bookmarks.apps.BookmarksConfig",
@@ -73,7 +74,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "helpdeskbot/templates"),
             os.path.join(BASE_DIR, "frontend/html"),
         ],
-        "APP_DIRS": True,
+        "APP_DIRS": DEBUG,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -83,7 +84,15 @@ TEMPLATES = [
                 "users.context_processors.users.me",
                 "posts.context_processors.feed.rooms",
                 "posts.context_processors.feed.ordering",
-            ]
+            ],
+            **({} if DEBUG else {
+                "loaders": [
+                    (
+                        "django.template.loaders.cached.Loader",
+                        ["django.template.loaders.filesystem.Loader"],
+                    ),
+                ],
+            }),
         },
     }
 ]
@@ -102,7 +111,7 @@ LOGGING = {
     "loggers": {
         "": {  # "catch all" loggers by referencing it with the empty string
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "DEBUG" if DEBUG else "INFO",
         },
     },
 }
@@ -119,19 +128,24 @@ DATABASES = {
     }
 }
 
-if bool(os.getenv("POSTGRES_USE_POOLING")):
+if TESTS_RUN:
+    # Persistent connections break test DB teardown
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+elif bool(os.getenv("POSTGRES_USE_POOLING")):
     DATABASES["default"]["CONN_MAX_AGE"] = None
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = False
     DATABASES["default"]["OPTIONS"] = {
         "pool": {
-            "min_size": 3,
-            "max_size": 10,
-            "timeout": 10, # fail in 10 sec under load
-            "max_idle": 300, # close idle after 5 min
+            "min_size": 1,
+            "max_size": 4,  # keep small: one pool per gunicorn worker process
+            "timeout": 10,  # fail in 10 sec under load
+            "max_idle": 300,  # close idle after 5 min
         }
     }
 else:
-    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    # Reuse connections inside each worker (0 was opening a new PG connection per request)
+    DATABASES["default"]["CONN_MAX_AGE"] = int(os.getenv("POSTGRES_CONN_MAX_AGE") or 60)
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 
@@ -140,8 +154,10 @@ else:
 LANGUAGE_CODE = "ru"
 TIME_ZONE = "UTC"
 USE_I18N = True
-USE_L10N = True
 USE_TZ = False
+
+# Prefer HTTPS when urlize expands scheme-less URLs 
+URLIZE_ASSUME_HTTPS = True
 
 # Static files (CSS, JavaScript, Images)
 
