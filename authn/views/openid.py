@@ -1,7 +1,6 @@
 import logging
 
 from authlib.integrations.django_oauth2 import RevocationEndpoint
-from authlib.jose import JsonWebKey
 from authlib.oauth2 import OAuth2Error
 from authlib.oauth2.rfc6749 import InvalidClientError, UnsupportedResponseTypeError, UnsupportedGrantTypeError, \
     InvalidScopeError
@@ -9,6 +8,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from joserfc.jwk import RSAKey
 
 from authn.decorators.auth import require_auth
 from authn.providers.openid import server
@@ -99,13 +99,13 @@ def openid_well_known_configuration(request):
 
 @api(require_auth=False)
 def openid_well_known_jwks(request):
-    openid_jwk = JsonWebKey.import_key(raw=settings.JWT_PUBLIC_KEY)
+    openid_jwk = RSAKey.import_key(settings.JWT_PUBLIC_KEY)
     return {
         "keys": [
             {
                 "use": "sig",
                 "alg": settings.OPENID_JWT_ALGORITHM,
-                **openid_jwk.tokens
+                **openid_jwk.as_dict(),
             },
         ]
     }
