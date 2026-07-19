@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -14,8 +14,8 @@ def _create_user(slug):
         slug=slug,
         email=f"{slug}@test.com",
         full_name=slug,
-        membership_started_at=datetime.utcnow() - timedelta(days=30),
-        membership_expires_at=datetime.utcnow() + timedelta(days=30),
+        membership_started_at=datetime.now(timezone.utc) - timedelta(days=30),
+        membership_expires_at=datetime.now(timezone.utc) + timedelta(days=30),
         moderation_status=User.MODERATION_STATUS_APPROVED,
         is_email_verified=True,
     )
@@ -48,14 +48,14 @@ class TestInviteModel(TestCase):
         invite = Invite.objects.create(user=user, payment=payment, code="FLAGSCODE12345")
 
         Invite.objects.filter(id=invite.id).update(
-            created_at=datetime.utcnow() - timedelta(days=INVITE_EXPIRATION_DAYS + 1)
+            created_at=datetime.now(timezone.utc) - timedelta(days=INVITE_EXPIRATION_DAYS + 1)
         )
         invite.refresh_from_db()
 
         self.assertTrue(invite.is_expired)
         self.assertFalse(invite.is_used)
 
-        invite.used_at = datetime.utcnow()
+        invite.used_at = datetime.now(timezone.utc)
         invite.save(update_fields=["used_at"])
         invite.refresh_from_db()
         self.assertTrue(invite.is_used)

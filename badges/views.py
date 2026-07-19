@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
@@ -58,7 +58,7 @@ def create_badge_for_post(request, post_slug):
     async_task(send_new_badge_message, user_badge)
 
     # bump post on home page by updating its last_activity_at
-    Post.objects.filter(id=post.id).update(last_activity_at=datetime.utcnow())
+    Post.objects.filter(id=post.id).update(last_activity_at=datetime.now(timezone.utc))
 
     # show insufficient funds warning if < 3 months
     membership_days_remaining = request.me.membership_days_left() - user_badge.badge.price_days
@@ -122,7 +122,7 @@ def create_badge_for_comment(request, comment_id):
     async_task(send_new_badge_message, user_badge)
 
     # bump post on home page by updating its last_activity_at
-    Post.objects.filter(id=comment.post_id).update(last_activity_at=datetime.utcnow())
+    Post.objects.filter(id=comment.post_id).update(last_activity_at=datetime.now(timezone.utc))
 
     # show insufficient funds warning if < 3 months
     membership_days_remaining = request.me.membership_days_left() - user_badge.badge.price_days

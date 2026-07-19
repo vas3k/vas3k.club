@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -23,13 +23,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         best_comments = Comment.visible_objects().filter(
-            created_at__gte=datetime.utcnow() - TIME_INTERVAL,
+            created_at__gte=datetime.now(timezone.utc) - TIME_INTERVAL,
             post__moderation_status=Post.MODERATION_APPROVED,
             upvotes__gte=MIN_UPVOTES,
         ).order_by("-upvotes")[:SELECT_LIMIT]
 
         new_badges = UserBadge.objects.filter(
-            created_at__gte=datetime.utcnow() - TIME_INTERVAL,
+            created_at__gte=datetime.now(timezone.utc) - TIME_INTERVAL,
             comment__isnull=False,
         ).order_by("-created_at")[:SELECT_LIMIT]
 

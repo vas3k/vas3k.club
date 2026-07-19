@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import uuid
 from django.conf import settings
 from django.test import TestCase
@@ -78,10 +78,10 @@ class TestProducts(TestCase):
 
     def test_club_subscription_activator_positive_membership_expires_in_future(self):
         # given
-        future_membership_expiration = datetime.utcnow() + timedelta(days=5)
+        future_membership_expiration = datetime.now(timezone.utc) + timedelta(days=5)
         existed_user: User = User.objects.create(
             email="testemail@xx.com",
-            membership_started_at=datetime.utcnow() - timedelta(days=5),
+            membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
             membership_expires_at=future_membership_expiration,
         )
         new_payment: Payment = Payment.create(reference=f"random-reference-{uuid.uuid4()}",
@@ -105,10 +105,10 @@ class TestProducts(TestCase):
 
     def test_club_subscription_activator_positive_membership_expires_in_past(self):
         # given
-        membership_expiration_in_past = datetime.utcnow() - timedelta(days=5)
+        membership_expiration_in_past = datetime.now(timezone.utc) - timedelta(days=5)
         existed_user: User = User.objects.create(
             email="testemail@xx.com",
-            membership_started_at=datetime.utcnow() - timedelta(days=10),
+            membership_started_at=datetime.now(timezone.utc) - timedelta(days=10),
             membership_expires_at=membership_expiration_in_past,
         )
         new_payment: Payment = Payment.create(reference=f"random-reference-{uuid.uuid4()}",
@@ -124,7 +124,7 @@ class TestProducts(TestCase):
         self.assertTrue(result)
 
         user = User.objects.get(id=existed_user.id)
-        self.assertAlmostEqual(user.membership_expires_at, datetime.utcnow() + timedelta(days=366),
+        self.assertAlmostEqual(user.membership_expires_at, datetime.now(timezone.utc) + timedelta(days=366),
                                 delta=timedelta(seconds=10))
         self.assertEqual(user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
         self.assertEqual(user.membership_platform_data, {"reference": new_payment.reference,

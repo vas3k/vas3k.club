@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         users = User.objects\
-            .filter(deleted_at__lte=datetime.utcnow() - settings.GDPR_DELETE_TIMEDELTA)\
+            .filter(deleted_at__lte=datetime.now(timezone.utc) - settings.GDPR_DELETE_TIMEDELTA)\
             .exclude(moderation_status=User.MODERATION_STATUS_DELETED)
 
         for user in users:

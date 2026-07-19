@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -45,7 +45,7 @@ def ordering(request):
                 {
                     "text": f"{year}",
                     "value": f"{ORDERING_TOP_YEAR}:{year}",
-                } for year in range(datetime.utcnow().year, settings.LAUNCH_DATE.year, -1)
+                } for year in range(datetime.now(timezone.utc).year, settings.LAUNCH_DATE.year, -1)
             ]
         ],
         "feed_ordering_months": [
@@ -58,7 +58,7 @@ def ordering(request):
                     "text": f"{_(d.strftime("%B"))} {d.year}".lower(),
                     "value": f"{ORDERING_TOP_MONTH}:{d.year}-{d.month}",
                 } for d in [
-                    datetime.utcnow().replace(day=1) - relativedelta(months=i)
+                    datetime.now(timezone.utc).replace(day=1) - relativedelta(months=i)
                     for i in range(ORDERING_LAST_MONTHS)
                 ]
             ]

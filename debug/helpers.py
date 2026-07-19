@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 
 from django.test import Client
@@ -76,7 +76,7 @@ class HelperClient(Client):
 
         session = Session.create_for_user(self.user)
         self.cookies["token"] = session.token
-        self.cookies["token"]["expires"] = datetime.utcnow() + timedelta(days=30)
+        self.cookies["token"]["expires"] = datetime.now(timezone.utc) + timedelta(days=30)
         self.cookies["token"]['httponly'] = True
         self.cookies["token"]['secure'] = True
 

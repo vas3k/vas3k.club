@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.test import TestCase, Client
 
@@ -10,8 +10,8 @@ def _create_user(slug, **kwargs):
     defaults = dict(
         email=f"{slug}@test.com",
         full_name=slug,
-        membership_started_at=datetime.utcnow() - timedelta(days=5),
-        membership_expires_at=datetime.utcnow() + timedelta(days=365),
+        membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
+        membership_expires_at=datetime.now(timezone.utc) + timedelta(days=365),
         moderation_status=User.MODERATION_STATUS_APPROVED,
         is_email_verified=True,
     )
@@ -25,8 +25,8 @@ def _create_post(slug, author, **kwargs):
         text=f"Text of {slug}",
         type=Post.TYPE_POST,
         visibility=Post.VISIBILITY_EVERYWHERE,
-        published_at=datetime.utcnow() - timedelta(hours=1),
-        last_activity_at=datetime.utcnow() - timedelta(hours=1),
+        published_at=datetime.now(timezone.utc) - timedelta(hours=1),
+        last_activity_at=datetime.now(timezone.utc) - timedelta(hours=1),
         moderation_status=Post.MODERATION_APPROVED,
         is_public=True,
     )

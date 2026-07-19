@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.contrib.postgres.search import SearchQuery
@@ -60,7 +60,7 @@ def people(request):
             users = users.filter(city=request.me.city)
 
         if "activity" in filters:
-            users = users.filter(last_activity_at__gte=datetime.utcnow() - timedelta(days=30))
+            users = users.filter(last_activity_at__gte=datetime.now(timezone.utc) - timedelta(days=30))
 
         if "friends" in filters:
             users = users.filter(friends_to__user_from=request.me)

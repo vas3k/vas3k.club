@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django import forms
 from django.shortcuts import render
@@ -47,7 +47,7 @@ def post_feeds_action(request, post: Post, **context):
 
         # Moving up
         if data["move_up"]:
-            post.last_activity_at = datetime.utcnow()
+            post.last_activity_at = datetime.now(timezone.utc)
             post.save()
 
         # Moving down

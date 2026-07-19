@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
@@ -70,7 +70,7 @@ def feed(
     # for main page — add pinned posts
     pinned_posts = []
     if ordering == ORDERING_ACTIVITY:
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
@@ -90,5 +90,5 @@ def feed(
         "posts": paginate(request, posts),
         "pinned_posts": pinned_posts,
         "waiting_for_moderation_posts": waiting_for_moderation_posts,
-        "date_month_ago": datetime.utcnow() - timedelta(days=30),
+        "date_month_ago": datetime.now(timezone.utc) - timedelta(days=30),
     })

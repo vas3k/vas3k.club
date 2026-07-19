@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.test import TestCase, override_settings
 
@@ -16,8 +16,8 @@ class WeeklyDigestRenderingTest(TestCase):
             slug="digest_user",
             email="digest@test.com",
             full_name="Test User",
-            membership_started_at=datetime.utcnow() - timedelta(days=5),
-            membership_expires_at=datetime.utcnow() + timedelta(days=365),
+            membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
+            membership_expires_at=datetime.now(timezone.utc) + timedelta(days=365),
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
         ProTip.objects.create(title="Tip", text="Be nice", is_visible=True)
@@ -27,7 +27,7 @@ class WeeklyDigestRenderingTest(TestCase):
             author=self.user,
             visibility=Post.VISIBILITY_EVERYWHERE,
             moderation_status=Post.MODERATION_APPROVED,
-            published_at=datetime.utcnow() - timedelta(hours=1),
+            published_at=datetime.now(timezone.utc) - timedelta(hours=1),
         )
         defaults.update(kwargs)
         return Post.objects.create(**defaults)

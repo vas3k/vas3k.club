@@ -1,6 +1,6 @@
 import base64
 import logging
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         parser.add_argument("--production", nargs=1, type=bool, required=False, default=False)
 
     def handle(self, *args, **options):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         scan_dates = [
             now.replace(year=y) for y in range(settings.LAUNCH_DATE.year, now.year)
         ]  # scan every year for the same date

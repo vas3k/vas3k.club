@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -48,7 +48,7 @@ def pay(request):
         })
 
     payment_data = {}
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # parse email
     email = request.GET.get("email") or ""

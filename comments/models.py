@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -79,7 +79,7 @@ class Comment(models.Model):
         if self.reply_to and self.reply_to.reply_to and self.reply_to.reply_to.reply_to_id:
             raise BadRequest(message="3 уровня комментариев это максимум")
 
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         return super().save(*args, **kwargs)
 
     def delete(self, deleted_by=None, *args, **kwargs):
@@ -115,14 +115,14 @@ class Comment(models.Model):
 
     @property
     def is_editable(self):
-        return self.created_at >= datetime.utcnow() - settings.COMMENT_EDITABLE_TIMEDELTA
+        return self.created_at >= datetime.now(timezone.utc) - settings.COMMENT_EDITABLE_TIMEDELTA
 
     def is_deletable_by(self, user):
         if user == self.author:
-            return self.created_at >= datetime.utcnow() - settings.COMMENT_DELETABLE_TIMEDELTA
+            return self.created_at >= datetime.now(timezone.utc) - settings.COMMENT_DELETABLE_TIMEDELTA
 
         if user == self.post.author:
-            return self.created_at >= datetime.utcnow() - settings.COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA
+            return self.created_at >= datetime.now(timezone.utc) - settings.COMMENT_DELETABLE_BY_POST_AUTHOR_TIMEDELTA
 
         return user.is_moderator
 
@@ -162,7 +162,7 @@ class Comment(models.Model):
     def update_post_counters(cls, post, update_activity=True):
         post.comment_count = Comment.visible_objects().filter(post=post, is_deleted=False).count()
         if update_activity:
-            post.last_activity_at = datetime.utcnow()
+            post.last_activity_at = datetime.now(timezone.utc)
         post.save()
 
     @classmethod
@@ -197,7 +197,7 @@ class CommentVote(models.Model):
 
     @property
     def is_retractable(self):
-        return self.created_at >= datetime.utcnow() - settings.RETRACT_VOTE_TIMEDELTA
+        return self.created_at >= datetime.now(timezone.utc) - settings.RETRACT_VOTE_TIMEDELTA
 
     @classmethod
     def upvote(cls, user, comment, request=None):

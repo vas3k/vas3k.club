@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -15,8 +15,8 @@ def _create_user(slug, telegram_id=None):
         email=f"{slug}@test.com",
         full_name=slug,
         telegram_id=telegram_id,
-        membership_started_at=datetime.utcnow() - timedelta(days=10),
-        membership_expires_at=datetime.utcnow() + timedelta(days=10),
+        membership_started_at=datetime.now(timezone.utc) - timedelta(days=10),
+        membership_expires_at=datetime.now(timezone.utc) + timedelta(days=10),
         moderation_status=User.MODERATION_STATUS_APPROVED,
         is_email_verified=True,
     )

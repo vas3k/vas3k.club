@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.shortcuts import redirect, get_object_or_404
@@ -26,10 +26,10 @@ def debug_dev_login(request):
             company="FAANG",
             position="Team Lead конечно",
             balance=10000,
-            membership_started_at=datetime.utcnow(),
-            membership_expires_at=datetime.utcnow() + timedelta(days=365 * 100),
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            membership_started_at=datetime.now(timezone.utc),
+            membership_expires_at=datetime.now(timezone.utc) + timedelta(days=365 * 100),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             is_email_verified=True,
             moderation_status=User.MODERATION_STATUS_APPROVED,
             roles=["god"],
@@ -59,10 +59,10 @@ def debug_random_login(request):
             company="Acme Corp.",
             position=random.choice(["Подниматель пингвинов", "Опускатель серверов", "Коллектор пивных бутылок"]),
             balance=10000,
-            membership_started_at=datetime.utcnow(),
-            membership_expires_at=datetime.utcnow() + timedelta(days=365 * 100),
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            membership_started_at=datetime.now(timezone.utc),
+            membership_expires_at=datetime.now(timezone.utc) + timedelta(days=365 * 100),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
             is_email_verified=True,
             moderation_status=User.MODERATION_STATUS_APPROVED,
         ),

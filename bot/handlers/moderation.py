@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.urls import reverse
@@ -36,8 +36,8 @@ async def approve_post(update: Update, context: CallbackContext) -> None:
 
     post.moderation_status = Post.MODERATION_APPROVED
     post.visibility = Post.VISIBILITY_EVERYWHERE
-    post.last_activity_at = datetime.utcnow()
-    post.published_at = datetime.utcnow()
+    post.last_activity_at = datetime.now(timezone.utc)
+    post.published_at = datetime.now(timezone.utc)
     post.save()
 
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
@@ -88,8 +88,8 @@ async def forgive_post(update: Update, context: CallbackContext) -> None:
 
     post.moderation_status = Post.MODERATION_FORGIVEN
     post.visibility = Post.VISIBILITY_EVERYWHERE
-    post.last_activity_at = datetime.utcnow()
-    post.published_at = datetime.utcnow()
+    post.last_activity_at = datetime.now(timezone.utc)
+    post.published_at = datetime.now(timezone.utc)
     post.collectible_tag_code = None
     post.save()
 
@@ -173,17 +173,17 @@ async def approve_user_profile(update: Update, context: CallbackContext) -> None
         return None
 
     user.moderation_status = User.MODERATION_STATUS_APPROVED
-    if user.created_at > datetime.utcnow() - timedelta(days=30):
+    if user.created_at > datetime.now(timezone.utc) - timedelta(days=30):
         # to avoid zeroing out the profiles of the old users
-        user.created_at = datetime.utcnow()
+        user.created_at = datetime.now(timezone.utc)
     user.save()
 
     intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
     intro.moderation_status = Post.MODERATION_APPROVED
     intro.visibility = Post.VISIBILITY_EVERYWHERE
-    intro.last_activity_at = datetime.utcnow()
+    intro.last_activity_at = datetime.now(timezone.utc)
     if not intro.published_at:
-        intro.published_at = datetime.utcnow()
+        intro.published_at = datetime.now(timezone.utc)
     intro.save()
 
     PostSubscription.subscribe(user, intro, type=PostSubscription.TYPE_ALL_COMMENTS)

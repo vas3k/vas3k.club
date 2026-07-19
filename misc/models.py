@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from django.db import models
@@ -20,7 +20,7 @@ class ProTip(models.Model):
         ordering = ["-created_at"]
 
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         return super().save(*args, **kwargs)
 
     @classmethod

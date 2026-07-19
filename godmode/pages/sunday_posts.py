@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -13,7 +13,7 @@ def sunday_posts(request, admin_page):
     posts = []
 
     while len(posts) < 20:
-        random_date_in_the_past = random_date_in_range(settings.LAUNCH_DATE, datetime.utcnow() - new_posts_cutoff)
+        random_date_in_the_past = random_date_in_range(settings.LAUNCH_DATE, datetime.now(timezone.utc) - new_posts_cutoff)
         top_old_post = Post.visible_objects() \
             .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
             .filter(moderation_status=Post.MODERATION_APPROVED) \

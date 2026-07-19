@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from django.db import models
@@ -55,4 +55,4 @@ class HelpDeskUser(models.Model):
 
     @property
     def is_banned(self) -> bool:
-        return self.banned_until and self.banned_until > datetime.utcnow()
+        return self.banned_until and self.banned_until > datetime.now(timezone.utc)

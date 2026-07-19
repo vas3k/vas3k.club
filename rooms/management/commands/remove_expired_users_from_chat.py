@@ -1,6 +1,6 @@
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -138,7 +138,7 @@ class Command(BaseCommand):
                             chat_entity,
                             participant,
                             view_messages=False,
-                            until_date=datetime.utcnow() + timedelta(minutes=5),
+                            until_date=datetime.now(timezone.utc) + timedelta(minutes=5),
                         )
                         removed_count += 1
                         time.sleep(1.5)

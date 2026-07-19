@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -122,7 +122,7 @@ def _warm_comment_html_cache(comments):
         return
 
     to_update = []
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     for comment in comments:
         if comment.is_deleted or comment.html:
             continue

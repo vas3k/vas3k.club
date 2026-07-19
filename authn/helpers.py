@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import StrEnum, unique
 from typing import Optional, Tuple
 from urllib.parse import urlparse
@@ -47,7 +47,7 @@ def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
     cached = cache.get(cache_key)
     if cached is not None:
         user, session = cached
-        if not session or session.expires_at <= datetime.utcnow():
+        if not session or session.expires_at <= datetime.now(timezone.utc):
             clear_auth_token_cache(token)
             return None, None
         return user, session
@@ -58,7 +58,7 @@ def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
         .select_related("user")\
         .first()
 
-    if not session or session.expires_at <= datetime.utcnow():
+    if not session or session.expires_at <= datetime.now(timezone.utc):
         return None, None  # session is expired
 
     cache.set(cache_key, (session.user, session), timeout=AUTH_TOKEN_CACHE_TIMEOUT)
@@ -121,7 +121,7 @@ def set_session_cookie(response, user, session):
     response.set_cookie(
         key="token",
         value=session.token,
-        expires=max(user.membership_expires_at, datetime.utcnow() + timedelta(days=30)),
+        expires=max(user.membership_expires_at, datetime.now(timezone.utc) + timedelta(days=30)),
         httponly=True,
         secure=not settings.DEBUG,
     )

@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -67,7 +67,7 @@ class Room(models.Model):
         return [users_by_slug[slug] for slug in self.admins if slug in users_by_slug]
 
     def update_last_activity(self):
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if self.last_activity_at < now - timedelta(minutes=5):
             return Room.objects.filter(slug=self.slug).update(last_activity_at=now)
         return None

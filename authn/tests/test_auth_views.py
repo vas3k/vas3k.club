@@ -1,6 +1,6 @@
 import unittest
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.test import TestCase
 from django.urls import reverse
@@ -310,7 +310,7 @@ class ViewPatreonOauthCallbackTests(TestCase):
         self.stub_patreon_response_oauth_token = {
             "access_token": "xxx-access-token",
             "refresh_token": "xxx-refresh-token",
-            "expires_in": (datetime.utcnow() + timedelta(minutes=5)).microsecond,
+            "expires_in": (datetime.now(timezone.utc) + timedelta(minutes=5)).microsecond,
             "scope": "scope??",
             "token_type": "Bearer"
         }
@@ -321,9 +321,9 @@ class ViewPatreonOauthCallbackTests(TestCase):
             full_name="PatreonMember FullName",
             email="platform@patreon.com",
             image="http://xxx.url",
-            started_at=datetime.utcnow(),
+            started_at=datetime.now(timezone.utc),
             charged_at=None,
-            expires_at=datetime.utcnow() + timedelta(days=100 * 365),
+            expires_at=datetime.now(timezone.utc) + timedelta(days=100 * 365),
             lifetime_support_cents=400,
             currently_entitled_amount_cents=0
         )

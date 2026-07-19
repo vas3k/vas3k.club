@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -41,14 +41,14 @@ class PostView(models.Model):
         last_view_at = post_view.last_view_at
 
         # increment view counter for new views or for re-opens after cooldown period
-        if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
-            post_view.registered_view_at = datetime.utcnow()
+        if is_view_created or post_view.registered_view_at < datetime.now(timezone.utc) - settings.POST_VIEW_COOLDOWN_PERIOD:
+            post_view.registered_view_at = datetime.now(timezone.utc)
             post.increment_view_count()
 
         # reset counters and store last view
         if not is_view_created:
             post_view.unread_comments = 0
-            post_view.last_view_at = datetime.utcnow()
+            post_view.last_view_at = datetime.now(timezone.utc)
 
         post_view.save()
 
@@ -71,8 +71,8 @@ class PostView(models.Model):
             is_view_created = True
 
         # increment view counter for new views or for re-opens after cooldown period
-        if is_view_created or post_view.registered_view_at < datetime.utcnow() - settings.POST_VIEW_COOLDOWN_PERIOD:
-            post_view.registered_view_at = datetime.utcnow()
+        if is_view_created or post_view.registered_view_at < datetime.now(timezone.utc) - settings.POST_VIEW_COOLDOWN_PERIOD:
+            post_view.registered_view_at = datetime.now(timezone.utc)
             post.increment_view_count()
             post_view.save()
 

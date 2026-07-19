@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 from django.conf import settings
 from django.db.models import Q
@@ -18,7 +18,7 @@ TOP_TIMEDELTA = timedelta(days=3)
 @is_club_member
 async def command_top(update: Update, context: CallbackContext) -> None:
     top_posts = Post.visible_objects()\
-        .filter(published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .filter(published_at__gte=datetime.now(timezone.utc) - TOP_TIMEDELTA)\
         .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES)) \
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
         .order_by("-upvotes")[:5]
@@ -29,12 +29,12 @@ async def command_top(update: Update, context: CallbackContext) -> None:
         .order_by("-hotness")[:3]
 
     top_intros = Post.visible_objects()\
-        .filter(type=Post.TYPE_INTRO, published_at__gte=datetime.utcnow() - TOP_TIMEDELTA)\
+        .filter(type=Post.TYPE_INTRO, published_at__gte=datetime.now(timezone.utc) - TOP_TIMEDELTA)\
         .select_related("author")\
         .order_by("-upvotes")[:3]
 
     top_comment = Comment.visible_objects() \
-        .filter(created_at__gte=datetime.utcnow() - TOP_TIMEDELTA) \
+        .filter(created_at__gte=datetime.now(timezone.utc) - TOP_TIMEDELTA) \
         .filter(is_deleted=False)\
         .exclude(post__type=Post.TYPE_BATTLE) \
         .select_related("author") \

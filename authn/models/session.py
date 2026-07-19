@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -26,8 +26,8 @@ class Session(models.Model):
         return Session.objects.create(
             user=user,
             token=random_string(length=32),
-            created_at=datetime.utcnow(),
-            expires_at=max(user.membership_expires_at, datetime.utcnow() + timedelta(days=30)),
+            created_at=datetime.now(timezone.utc),
+            expires_at=max(user.membership_expires_at, datetime.now(timezone.utc) + timedelta(days=30)),
         )
 
 
@@ -53,7 +53,7 @@ class Code(models.Model):
         recipient = recipient.lower()
         last_codes_count = Code.objects.filter(
             recipient=recipient,
-            created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
+            created_at__gte=datetime.now(timezone.utc) - settings.AUTH_MAX_CODE_TIMEDELTA,
         ).count()
         if last_codes_count >= settings.AUTH_MAX_CODE_COUNT:
             raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
@@ -62,8 +62,8 @@ class Code(models.Model):
             recipient=recipient,
             user=user,
             code=random_number(length),
-            created_at=datetime.utcnow(),
-            expires_at=datetime.utcnow() + settings.AUTH_CODE_EXPIRATION_TIMEDELTA,
+            created_at=datetime.now(timezone.utc),
+            expires_at=datetime.now(timezone.utc) + settings.AUTH_CODE_EXPIRATION_TIMEDELTA,
         )
 
     @classmethod
@@ -88,4 +88,4 @@ class Code(models.Model):
         return last_code.user
 
     def is_expired(self):
-        return self.expires_at <= datetime.utcnow()
+        return self.expires_at <= datetime.now(timezone.utc)

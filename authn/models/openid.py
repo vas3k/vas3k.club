@@ -1,5 +1,5 @@
 import hmac
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 from uuid import uuid4
 
 from authlib.oauth2.rfc6749 import ClientMixin, scope_to_list, list_to_scope, TokenMixin
@@ -103,7 +103,7 @@ class OAuth2Token(models.Model, TokenMixin):
         return self.client_id == client.client_id
 
     def is_expired(self):
-        return self.issued_at + timedelta(seconds=settings.OPENID_JWT_EXPIRE_SECONDS) < datetime.utcnow()
+        return self.issued_at + timedelta(seconds=settings.OPENID_JWT_EXPIRE_SECONDS) < datetime.now(timezone.utc)
 
     def is_revoked(self):
         return self.revoked
@@ -140,7 +140,7 @@ class OAuth2AuthorizationCode(models.Model, AuthorizationCodeMixin):
         db_table = "oauth_codes"
 
     def is_expired(self):
-        return self.auth_time + timedelta(seconds=settings.OPENID_CODE_EXPIRE_SECONDS) < datetime.utcnow()
+        return self.auth_time + timedelta(seconds=settings.OPENID_CODE_EXPIRE_SECONDS) < datetime.now(timezone.utc)
 
     def get_redirect_uri(self):
         return self.redirect_uri

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.core.management import BaseCommand
 
@@ -17,12 +17,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Cleaning up OAuth codes...")
         OAuth2AuthorizationCode.objects.filter(
-            auth_time__lt=datetime.utcnow() - OAUTH_CODE_CLEANUP_TIMEDELTA
+            auth_time__lt=datetime.now(timezone.utc) - OAUTH_CODE_CLEANUP_TIMEDELTA
         ).delete()
 
         self.stdout.write("Cleaning up expired OAuth tokens...")
         OAuth2Token.objects.filter(
-            issued_at__lt=datetime.utcnow() - OAUTH_TOKENS_CLEANUP_TIMEDELTA
+            issued_at__lt=datetime.now(timezone.utc) - OAUTH_TOKENS_CLEANUP_TIMEDELTA
         ).delete()
 
         self.stdout.write("Done 🥙")

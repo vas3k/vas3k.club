@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
@@ -87,13 +87,13 @@ def activate_invite(request, invite_code):
 
     if request.me and request.me.email == email:
         club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, request.me)
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         invite.used_at = now
         invite.invited_user = request.me
         invite.save()
         return redirect(reverse("profile", args=[request.me.slug]))
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     user, _ = User.objects.get_or_create(
         email=email,
         defaults=dict(
