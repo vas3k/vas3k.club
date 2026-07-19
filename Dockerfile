@@ -11,6 +11,8 @@ RUN apt-get update \
       build-essential \
       libgdal-dev \
       libpq-dev \
+      libxml2-dev \
+      libxslt1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

@@ -31,15 +31,15 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "**/uv.lock"
 
-      - name: Install dependencies
-        run: uv sync --frozen --only-dev
+      - name: Install flake8
+        run: uv sync --frozen --only-group dev --no-install-project
 
       - name: run flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
-          uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          uv run --no-sync flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings.
-          uv run flake8 . --count --exit-zero --statistics
+          uv run --no-sync flake8 . --count --exit-zero --statistics
 
   frontend-test:
     runs-on: ubuntu-latest
@@ -129,6 +129,11 @@ jobs:
           npm -v
           npm ci
           npm run build
+
+      - name: Install system build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libxml2-dev libxslt1-dev
 
       - name: Install dependencies
         run: uv sync --frozen
