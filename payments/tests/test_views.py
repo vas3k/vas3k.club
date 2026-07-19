@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.test import TestCase
 import json
 import time
-import yaml
 from unittest import skip
 from unittest.mock import patch
 
@@ -219,7 +218,7 @@ class TestStripeWebhookView(TestCase):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_dir, f'./_stubs/{event_file_name}.json')
         with open(file_path, 'r') as f:
-            json_event = yaml.safe_load(f.read())
+            json_event = json.load(f)
 
         return json_event
 
