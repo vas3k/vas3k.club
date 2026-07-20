@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -147,7 +147,7 @@ class User(models.Model, ModelDiffMixin):
         if not self.secret_hash:
             self.secret_hash = self.slug[:6] + random_string(length=18)
 
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         return super().save(*args, **kwargs)
 
     def to_dict(self, include_private=False):
@@ -182,14 +182,14 @@ class User(models.Model, ModelDiffMixin):
         if cache.get(cache_key):
             return None
         cache.set(cache_key, 1, timeout=USER_ACTIVITY_CACHE_TIMEOUT)
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         return User.objects.filter(id=self.id).update(last_activity_at=now)
 
     def membership_days_left(self):
-        return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
+        return (self.membership_expires_at - datetime.now(timezone.utc)).total_seconds() // 60 // 60 / 24
 
     def membership_created_days(self):
-        return (datetime.utcnow() - self.created_at).days
+        return (datetime.now(timezone.utc) - self.created_at).days
 
     def increment_vote_count(self):
         return User.objects.filter(id=self.id).update(upvotes=F("upvotes") + 1)
@@ -223,7 +223,7 @@ class User(models.Model, ModelDiffMixin):
     def is_banned(self):
         if self.is_god:
             return False
-        return self.is_banned_until and self.is_banned_until > datetime.utcnow()
+        return self.is_banned_until and self.is_banned_until > datetime.now(timezone.utc)
 
     @property
     def is_god(self):
@@ -257,7 +257,7 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def is_active_membership(self):
-        return self.membership_expires_at >= datetime.utcnow()
+        return self.membership_expires_at >= datetime.now(timezone.utc)
 
     @property
     def secret_auth_code(self):

@@ -1,6 +1,6 @@
 import base64
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -26,7 +26,7 @@ DAILY_DIGEST_CACHE_TIMEOUT_SECONDS = 30 * 60  # 30 min cache looks enough
 
 
 def generate_daily_digest(user):
-    end_date = datetime.utcnow()
+    end_date = datetime.now(timezone.utc)
 
     if end_date.weekday() == 1:
         # we don't have daily digest on weekends and mondays, we need to include all these posts at tuesday
@@ -83,9 +83,9 @@ def generate_daily_digest(user):
             .filter(type=Post.TYPE_EVENT)\
             .filter(
                 metadata__isnull=False,
-                published_at__gte=datetime.utcnow() - timedelta(days=300),
-                metadata__event__month=str(datetime.utcnow().month),
-                metadata__event__day__in=[str(datetime.utcnow().day + i) for i in range(0, 4)],
+                published_at__gte=datetime.now(timezone.utc) - timedelta(days=300),
+                metadata__event__month=str(datetime.now(timezone.utc).month),
+                metadata__event__day__in=[str(datetime.now(timezone.utc).day + i) for i in range(0, 4)],
             ).order_by("-upvotes")
         cache.set("daily_digest:upcoming_events", list(upcoming_events), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
 
@@ -144,7 +144,7 @@ def generate_daily_digest(user):
 
 
 def generate_weekly_digest(no_footer=False):
-    end_date = datetime.utcnow()
+    end_date = datetime.now(timezone.utc)
     start_date = end_date - timedelta(days=8)
 
     if settings.DEBUG:

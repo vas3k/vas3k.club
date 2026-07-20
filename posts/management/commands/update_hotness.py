@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.core.management import BaseCommand
 from django.db import connection
@@ -38,6 +38,6 @@ class Command(BaseCommand):
                     and last_activity_at > %s
             """, [
                 POST_HOTNESS_PERIOD.total_seconds(),
-                datetime.utcnow() - POST_HOTNESS_PERIOD,
-                datetime.utcnow() - POST_HOTNESS_PERIOD,
+                datetime.now(timezone.utc) - POST_HOTNESS_PERIOD,
+                datetime.now(timezone.utc) - POST_HOTNESS_PERIOD,
             ])

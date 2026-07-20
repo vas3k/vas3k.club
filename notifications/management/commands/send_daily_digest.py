@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -29,7 +29,7 @@ class Command(BaseCommand):
             subscribed_users = User.objects\
                 .filter(
                     email_digest_type=User.EMAIL_DIGEST_TYPE_DAILY,
-                    membership_expires_at__gte=datetime.utcnow(),
+                    membership_expires_at__gte=datetime.now(timezone.utc),
                     moderation_status=User.MODERATION_STATUS_APPROVED,
                     deleted_at__isnull=True,
                 )

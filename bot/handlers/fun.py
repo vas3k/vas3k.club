@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 from random import randint
 
 from django.conf import settings
@@ -27,7 +27,7 @@ async def command_random(update: Update, context: CallbackContext) -> None:
     while not post and attempt < 5:
         attempt += 1
         random_date = settings.LAUNCH_DATE + timedelta(
-            seconds=randint(0, int((datetime.utcnow() - settings.LAUNCH_DATE).total_seconds())),
+            seconds=randint(0, int((datetime.now(timezone.utc) - settings.LAUNCH_DATE).total_seconds())),
         )
 
         post = Post.visible_objects() \

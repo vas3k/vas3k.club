@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django import forms
 from django.conf import settings
@@ -41,8 +41,8 @@ def post_delete_action(request, user: User, **context):
 
         # Delete account
         if data["delete_account"] and request.me.is_god:
-            user.membership_expires_at = datetime.utcnow()
-            user.is_banned_until = datetime.utcnow() + timedelta(days=9999)
+            user.membership_expires_at = datetime.now(timezone.utc)
+            user.is_banned_until = datetime.now(timezone.utc) + timedelta(days=9999)
             user.metadata = {
                 **(user.metadata or {}),
                 "last_ban": {
@@ -56,7 +56,7 @@ def post_delete_action(request, user: User, **context):
             cancel_all_stripe_subscriptions(user.stripe_id)
 
             # mark user for deletion
-            user.deleted_at = datetime.utcnow()
+            user.deleted_at = datetime.now(timezone.utc)
             user.save()
 
             # remove sessions

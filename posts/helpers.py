@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.http import Http404
 
@@ -47,7 +47,7 @@ def sort_feed(posts, ordering, ordering_param=None):
 
     elif ordering == ORDERING_TOP_WEEK:
         return posts.filter(
-            published_at__gte=datetime.utcnow() - timedelta(days=7)
+            published_at__gte=datetime.now(timezone.utc) - timedelta(days=7)
         ).order_by("-upvotes")
 
     elif ordering == ORDERING_TOP_MONTH:
@@ -58,8 +58,8 @@ def sort_feed(posts, ordering, ordering_param=None):
             except ValueError:
                 raise Http404()
         else:
-            start_date = datetime.utcnow() - timedelta(days=31)
-            end_date = datetime.utcnow()
+            start_date = datetime.now(timezone.utc) - timedelta(days=31)
+            end_date = datetime.now(timezone.utc)
 
         return posts.filter(
             published_at__gte=start_date,
@@ -74,8 +74,8 @@ def sort_feed(posts, ordering, ordering_param=None):
             except ValueError:
                 raise Http404()
         else:
-            start_date = datetime.utcnow() - timedelta(days=365)
-            end_date = datetime.utcnow()
+            start_date = datetime.now(timezone.utc) - timedelta(days=365)
+            end_date = datetime.now(timezone.utc)
 
         return posts.filter(
             published_at__gte=start_date,

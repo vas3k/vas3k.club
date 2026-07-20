@@ -1,7 +1,7 @@
 import ipaddress
 import json
 import logging
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 import stripe
 from django.conf import settings
@@ -54,12 +54,12 @@ def gift_membership_days(days, from_user, to_user, deduct_from_original_user=Tru
 
     amount = timedelta(days=days)
 
-    if deduct_from_original_user and from_user.membership_expires_at - amount <= datetime.utcnow():
+    if deduct_from_original_user and from_user.membership_expires_at - amount <= datetime.now(timezone.utc):
         raise InsufficientFunds()
 
     with transaction.atomic():
-        if to_user.membership_expires_at <= datetime.utcnow():
-            to_user.membership_expires_at = datetime.utcnow()
+        if to_user.membership_expires_at <= datetime.now(timezone.utc):
+            to_user.membership_expires_at = datetime.now(timezone.utc)
         to_user.membership_expires_at += amount
         to_user.membership_platform_type = User.MEMBERSHIP_PLATFORM_DIRECT
         to_user.save()

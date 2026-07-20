@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.test import TestCase, Client
 
@@ -12,8 +12,8 @@ def _create_user(slug, **kwargs):
     defaults = dict(
         email=f"{slug}@test.com",
         full_name=slug,
-        membership_started_at=datetime.utcnow() - timedelta(days=5),
-        membership_expires_at=datetime.utcnow() + timedelta(days=365),
+        membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
+        membership_expires_at=datetime.now(timezone.utc) + timedelta(days=365),
         moderation_status=User.MODERATION_STATUS_APPROVED,
         is_email_verified=True,
     )
@@ -27,8 +27,8 @@ def _create_post(slug, author, **kwargs):
         text=f"Text of {slug}",
         type=Post.TYPE_POST,
         visibility=Post.VISIBILITY_EVERYWHERE,
-        published_at=datetime.utcnow() - timedelta(hours=1),
-        last_activity_at=datetime.utcnow() - timedelta(hours=1),
+        published_at=datetime.now(timezone.utc) - timedelta(hours=1),
+        last_activity_at=datetime.now(timezone.utc) - timedelta(hours=1),
         moderation_status=Post.MODERATION_NONE,
     )
     defaults.update(kwargs)
@@ -62,7 +62,7 @@ class TestFeedPinnedPosts(TestCase):
 
     def test_pinned_post_appears_in_pinned_list(self):
         pinned = _create_post("tfeed_pinned", self.user,
-                              is_pinned_until=datetime.utcnow() + timedelta(days=1))
+                              is_pinned_until=datetime.now(timezone.utc) + timedelta(days=1))
 
         response = self.client.get("/")
         pinned_posts = list(response.context["pinned_posts"])
@@ -72,7 +72,7 @@ class TestFeedPinnedPosts(TestCase):
 
     def test_pinned_post_excluded_from_main_feed(self):
         pinned = _create_post("tfeed_pinned", self.user,
-                              is_pinned_until=datetime.utcnow() + timedelta(days=1))
+                              is_pinned_until=datetime.now(timezone.utc) + timedelta(days=1))
         regular = _create_post("tfeed_regular", self.user)
 
         response = self.client.get("/")
@@ -83,7 +83,7 @@ class TestFeedPinnedPosts(TestCase):
 
     def test_expired_pinned_post_in_main_feed(self):
         expired = _create_post("tfeed_expired", self.user,
-                               is_pinned_until=datetime.utcnow() - timedelta(hours=1))
+                               is_pinned_until=datetime.now(timezone.utc) - timedelta(hours=1))
 
         response = self.client.get("/")
         pinned_posts = list(response.context["pinned_posts"])
@@ -115,7 +115,7 @@ class TestFeedPinnedPosts(TestCase):
 
     def test_pinned_and_regular_together(self):
         pinned = _create_post("tfeed_pinned", self.user,
-                              is_pinned_until=datetime.utcnow() + timedelta(days=1))
+                              is_pinned_until=datetime.now(timezone.utc) + timedelta(days=1))
         regulars = [_create_post(f"tfeed_reg_{i}", self.user) for i in range(3)]
 
         response = self.client.get("/")
@@ -139,7 +139,7 @@ class TestFeedPinnedPosts(TestCase):
 
     def test_non_activity_ordering_skips_pinning(self):
         pinned = _create_post("tfeed_pinned_new", self.user,
-                              is_pinned_until=datetime.utcnow() + timedelta(days=1))
+                              is_pinned_until=datetime.now(timezone.utc) + timedelta(days=1))
 
         response = self.client.get("/all/new/")
         pinned_posts = response.context["pinned_posts"]
@@ -159,12 +159,12 @@ class TestFeedSortingAndVisibility(TestCase):
         older = _create_post(
             "tfeed_new_old",
             self.user,
-            published_at=datetime.utcnow() - timedelta(days=2),
+            published_at=datetime.now(timezone.utc) - timedelta(days=2),
         )
         newer = _create_post(
             "tfeed_new_new",
             self.user,
-            published_at=datetime.utcnow() - timedelta(hours=1),
+            published_at=datetime.now(timezone.utc) - timedelta(hours=1),
         )
 
         response = self.client.get("/all/new/")
@@ -186,12 +186,12 @@ class TestFeedSortingAndVisibility(TestCase):
         stale = _create_post(
             "tfeed_activity_stale",
             self.user,
-            last_activity_at=datetime.utcnow() - timedelta(days=1),
+            last_activity_at=datetime.now(timezone.utc) - timedelta(days=1),
         )
         active = _create_post(
             "tfeed_activity_active",
             self.user,
-            last_activity_at=datetime.utcnow() - timedelta(minutes=5),
+            last_activity_at=datetime.now(timezone.utc) - timedelta(minutes=5),
         )
 
         response = self.client.get("/")

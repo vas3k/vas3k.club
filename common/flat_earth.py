@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 import requests
 from django.conf import settings
@@ -20,7 +20,7 @@ def parse_horoscope():
             soup = BeautifulSoup(requests.get(MAGIC_URL).text, features="html.parser")
         except RequestException:
             return {
-                "club_day": (datetime.utcnow() - settings.LAUNCH_DATE).days,
+                "club_day": (datetime.now(timezone.utc) - settings.LAUNCH_DATE).days,
                 "phase_num": "",
                 "phase_sign": "",
                 "phase_description": "",
@@ -39,7 +39,7 @@ def parse_horoscope():
         cache.set("moon_phase", moon_phase, timeout=60 * 60)
 
     return {
-        "club_day": (datetime.utcnow() - settings.LAUNCH_DATE).days,
+        "club_day": (datetime.now(timezone.utc) - settings.LAUNCH_DATE).days,
         "phase_num": moon_phase["phase_num"],
         "phase_sign": moon_phase["phase_sign"],
         "phase_description": moon_phase["phase_description"],

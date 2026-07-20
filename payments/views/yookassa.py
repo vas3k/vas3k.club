@@ -1,6 +1,6 @@
 import logging
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -21,7 +21,7 @@ Configuration.secret_key = settings.YOOKASSA_API_KEY
 
 
 def rubles(request):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     if not request.me:  # scenario 1: new user
         # parse email

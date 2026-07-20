@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.db import connection
 from django.test import Client, TestCase
@@ -14,8 +14,8 @@ def _create_user(slug):
         slug=slug,
         email=f"{slug}@test.com",
         full_name=slug,
-        membership_started_at=datetime.utcnow() - timedelta(days=5),
-        membership_expires_at=datetime.utcnow() + timedelta(days=365),
+        membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
+        membership_expires_at=datetime.now(timezone.utc) + timedelta(days=365),
         moderation_status=User.MODERATION_STATUS_APPROVED,
         is_email_verified=True,
     )

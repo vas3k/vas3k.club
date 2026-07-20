@@ -1,6 +1,6 @@
 import base64
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from telegram.constants import ParseMode
@@ -39,8 +39,8 @@ class Command(BaseCommand):
         digest_intro = ClubSettings.get("digest_intro")
 
         # save digest as a post
-        issue = (datetime.utcnow() - settings.LAUNCH_DATE).days // 7
-        year, week, _ = (datetime.utcnow() - timedelta(days=7)).isocalendar()
+        issue = (datetime.now(timezone.utc) - settings.LAUNCH_DATE).days // 7
+        year, week, _ = (datetime.now(timezone.utc) - timedelta(days=7)).isocalendar()
         post, _ = Post.objects.update_or_create(
             slug=f"{year}_{week}",
             type=Post.TYPE_WEEKLY_DIGEST,
@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 title=f"Клубный журнал. Выпуск #{issue}: {digest_title}",
                 html=digest_without_footer,
                 text=digest_without_footer,
-                is_pinned_until=datetime.utcnow() + timedelta(days=1),
+                is_pinned_until=datetime.now(timezone.utc) + timedelta(days=1),
                 moderation_status=Post.MODERATION_APPROVED,
                 visibility=Post.VISIBILITY_EVERYWHERE,
                 metadata={"og_description": og_description},
@@ -66,7 +66,7 @@ class Command(BaseCommand):
                 email_digest_type=User.EMAIL_DIGEST_TYPE_NOPE
             )\
             .filter(
-                membership_expires_at__gte=datetime.utcnow() - timedelta(days=30),
+                membership_expires_at__gte=datetime.now(timezone.utc) - timedelta(days=30),
                 moderation_status=User.MODERATION_STATUS_APPROVED,
                 telegram_id__isnull=False,
             )
@@ -91,7 +91,7 @@ class Command(BaseCommand):
         email_subscribers = User.objects\
             .filter(
                 is_email_verified=True,
-                membership_expires_at__gte=datetime.utcnow() - timedelta(days=14),
+                membership_expires_at__gte=datetime.now(timezone.utc) - timedelta(days=14),
                 moderation_status=User.MODERATION_STATUS_APPROVED,
             )\
             .exclude(email_digest_type=User.EMAIL_DIGEST_TYPE_NOPE)\

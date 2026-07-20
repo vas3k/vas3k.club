@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 from unittest.mock import patch, MagicMock
 
@@ -251,7 +251,7 @@ class ModelCodeTests(TestCase):
         self.assertEqual(code.recipient, recipient)
         self.assertEqual(self.new_user.id, code.user_id)
         self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH)
-        self.assertAlmostEqual(code.expires_at.second, (datetime.utcnow() + timedelta(minutes=15)).second, delta=5)
+        self.assertAlmostEqual(code.expires_at.second, (datetime.now(timezone.utc) + timedelta(minutes=15)).second, delta=5)
 
     def test_create_code_ratelimit(self):
         recipient = "ratelimit@a.com"
@@ -273,7 +273,7 @@ class ModelCodeTests(TestCase):
             self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH)
 
             # move creation time to deep enough past
-            code.created_at = datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA - timedelta(seconds=1)
+            code.created_at = datetime.now(timezone.utc) - settings.AUTH_MAX_CODE_TIMEDELTA - timedelta(seconds=1)
             code.save()
 
             # no exception raises
@@ -341,7 +341,7 @@ class ModelCodeTests(TestCase):
     def test_check_code_which_is_expired(self):
         recipient = "expired@a.com"
         code = Code.create_for_user(user=self.new_user, recipient=recipient, length=settings.AUTH_CODE_LENGTH)
-        code.expires_at = datetime.utcnow() - timedelta(seconds=1)
+        code.expires_at = datetime.now(timezone.utc) - timedelta(seconds=1)
         code.save()
 
         with self.assertRaises(InvalidCode):

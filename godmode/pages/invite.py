@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django import forms
 from django.template.loader import render_to_string
@@ -27,7 +27,7 @@ def invite_user_by_email(request, admin_page):
         if form.is_valid():
             email = form.cleaned_data["email"].lower().strip()
             days = form.cleaned_data["days"]
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
 
             user = User.objects.filter(email=email).first()
             if user:

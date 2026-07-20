@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import stripe
 from django.conf import settings
@@ -99,7 +99,7 @@ def edit_payments(request, user_slug):
     top_users = User.objects\
         .filter(
             moderation_status=User.MODERATION_STATUS_APPROVED,
-            membership_expires_at__gte=datetime.utcnow() + timedelta(days=70)
+            membership_expires_at__gte=datetime.now(timezone.utc) + timedelta(days=70)
         )\
         .order_by("-membership_expires_at")[:64]
 

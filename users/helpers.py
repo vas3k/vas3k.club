@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django_q.tasks import async_task
 
@@ -37,7 +37,7 @@ def custom_ban_user(user: User, days: int, reason: BanReason) -> bool:
     if days <= 0:
         return False
 
-    user.is_banned_until = datetime.utcnow() + timedelta(days=days)
+    user.is_banned_until = datetime.now(timezone.utc) + timedelta(days=days)
     user.metadata = {
         **(user.metadata or {}),
         "last_ban": {

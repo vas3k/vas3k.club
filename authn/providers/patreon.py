@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from json import JSONDecodeError
 from typing import Optional
 
@@ -106,7 +106,7 @@ def parse_active_membership(user_data: dict) -> Optional[Membership]:
         if membership["attributes"]["patron_status"] == "active_patron" \
                 and membership["attributes"]["last_charge_status"] == "Paid":
 
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
 
             membership_started_at = datetime.strptime(
                 str(membership["attributes"]["pledge_relationship_start"])[:10], "%Y-%m-%d"

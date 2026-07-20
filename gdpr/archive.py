@@ -5,7 +5,7 @@ import secrets
 import shutil
 from pathlib import Path
 import tempfile
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django_q.tasks import schedule
@@ -46,7 +46,7 @@ def generate_data_archive(user, save_path=settings.GDPR_ARCHIVE_STORAGE_PATH):
             schedule(
                 "gdpr.archive.delete_data_archive",
                 archive_path,
-                next_run=datetime.utcnow() + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA
+                next_run=datetime.now(timezone.utc) + settings.GDPR_ARCHIVE_DELETE_TIMEDELTA
             )
 
             # notify the user

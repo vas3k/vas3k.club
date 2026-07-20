@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -32,7 +32,7 @@ class DataRequests(models.Model):
             .order_by("-created_at")\
             .first()
 
-        if latest_request and latest_request.created_at > datetime.utcnow() - settings.GDPR_ARCHIVE_REQUEST_TIMEDELTA:
+        if latest_request and latest_request.created_at > datetime.now(timezone.utc) - settings.GDPR_ARCHIVE_REQUEST_TIMEDELTA:
             raise RateLimitException(
                 title="Вы уже запрашивали архив совсем недавно",
                 message="Генерация архива — сложная задача, "

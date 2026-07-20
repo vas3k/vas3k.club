@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import namedtuple
 import os
 import uuid
@@ -71,8 +71,8 @@ class TestDoneView(TestCase):
     def test_club_member(self):
         existed_user: User = User.objects.create(
             email="testemail@xx.com",
-            membership_started_at=datetime.utcnow() - timedelta(days=5),
-            membership_expires_at=datetime.utcnow() + timedelta(days=5),
+            membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
+            membership_expires_at=datetime.now(timezone.utc) + timedelta(days=5),
             moderation_status=User.MODERATION_STATUS_APPROVED,
             slug="ujlbu4",
         )
@@ -86,8 +86,8 @@ class TestDoneView(TestCase):
     def test_not_club_member(self):
         existed_user: User = User.objects.create(
             email="testemail@xx.com",
-            membership_started_at=datetime.utcnow() - timedelta(days=5),
-            membership_expires_at=datetime.utcnow() + timedelta(days=5),
+            membership_started_at=datetime.now(timezone.utc) - timedelta(days=5),
+            membership_expires_at=datetime.now(timezone.utc) + timedelta(days=5),
             moderation_status=User.MODERATION_STATUS_INTRO,
             slug="ujlbu4",
         )
@@ -139,8 +139,8 @@ class TestPayView(TestCase):
         self.assertEqual(created_user.email, email)
         self.assertEqual(created_user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
         self.assertEqual(created_user.full_name, email.replace("@email.com", ""))
-        self.assertAlmostEqual(created_user.membership_started_at, datetime.utcnow(), delta=timedelta(seconds=5))
-        self.assertAlmostEqual(created_user.membership_expires_at, datetime.utcnow(), delta=timedelta(seconds=5))
+        self.assertAlmostEqual(created_user.membership_started_at, datetime.now(timezone.utc), delta=timedelta(seconds=5))
+        self.assertAlmostEqual(created_user.membership_expires_at, datetime.now(timezone.utc), delta=timedelta(seconds=5))
         self.assertEqual(created_user.moderation_status, User.MODERATION_STATUS_INTRO)
 
         self.assertTrue(Payment.get(reference=session.id))

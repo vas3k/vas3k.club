@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum, auto
 from typing import Dict
 
@@ -112,7 +112,7 @@ async def start(update: Update, context: CallbackContext) -> State:
 
     if not user.is_moderator:
         question_count_24h = Question.objects.filter(user=user) \
-            .filter(created_at__gte=datetime.utcnow() - timedelta(hours=24)) \
+            .filter(created_at__gte=datetime.now(timezone.utc) - timedelta(hours=24)) \
             .count()
 
         if question_count_24h >= config.DAILY_QUESTION_LIMIT:

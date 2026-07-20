@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -208,9 +208,9 @@ class Post(models.Model, ModelDiffMixin):
             self.slug = generate_unique_slug(Post, str(Post.objects.count()))
 
         if not self.published_at and self.visibility != Post.VISIBILITY_DRAFT:
-            self.published_at = datetime.utcnow()
+            self.published_at = datetime.now(timezone.utc)
 
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -283,7 +283,7 @@ class Post(models.Model, ModelDiffMixin):
 
     @property
     def is_pinned(self):
-        return self.is_pinned_until and self.is_pinned_until > datetime.utcnow()
+        return self.is_pinned_until and self.is_pinned_until > datetime.now(timezone.utc)
 
     @property
     def is_safely_deletable_by_author(self):
@@ -312,7 +312,7 @@ class Post(models.Model, ModelDiffMixin):
             else:
                 year = self.effective_published_at.year
             return datetime(year, month, day, hour, minute, second)
-        return datetime.utcnow()
+        return datetime.now(timezone.utc)
 
     @property
     def event_participants(self):
@@ -388,7 +388,7 @@ class Post(models.Model, ModelDiffMixin):
             return True
 
         day_post_count = Post.visible_objects()\
-            .filter(author=user, created_at__gte=datetime.utcnow() - timedelta(hours=24))\
+            .filter(author=user, created_at__gte=datetime.now(timezone.utc) - timedelta(hours=24))\
             .count()
 
         return day_post_count < settings.RATE_LIMIT_POSTS_PER_DAY
@@ -425,8 +425,8 @@ class Post(models.Model, ModelDiffMixin):
     def publish(self):
         self.moderation_status = Post.MODERATION_PENDING
         self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
-        self.published_at = datetime.utcnow()
-        self.last_activity_at = datetime.utcnow()
+        self.published_at = datetime.now(timezone.utc)
+        self.last_activity_at = datetime.now(timezone.utc)
         self.save()
 
     def unpublish(self):
@@ -436,7 +436,7 @@ class Post(models.Model, ModelDiffMixin):
 
     def delete(self, *args, **kwargs):
         self.visibility = Post.VISIBILITY_DRAFT
-        self.deleted_at = datetime.utcnow()
+        self.deleted_at = datetime.now(timezone.utc)
         self.save()
 
     def undelete(self, *args, **kwargs):

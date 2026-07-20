@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from django.conf import settings
@@ -43,7 +43,7 @@ class PostVote(models.Model):
 
     @property
     def is_retractable(self):
-        return self.created_at >= datetime.utcnow() - settings.RETRACT_VOTE_TIMEDELTA
+        return self.created_at >= datetime.now(timezone.utc) - settings.RETRACT_VOTE_TIMEDELTA
 
     @classmethod
     def retract_vote(cls, request, user, post):

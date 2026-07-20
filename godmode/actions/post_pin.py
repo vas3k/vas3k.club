@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django import forms
 from django.shortcuts import render
@@ -41,7 +41,7 @@ def post_pin_action(request, post: Post, **context):
 
         # Pins
         if data["add_pin"]:
-            post.is_pinned_until = datetime.utcnow() + timedelta(days=data["pin_days"])
+            post.is_pinned_until = datetime.now(timezone.utc) + timedelta(days=data["pin_days"])
             post.save()
 
         if data["remove_pin"]:

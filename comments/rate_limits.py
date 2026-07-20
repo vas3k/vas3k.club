@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 
@@ -15,7 +15,7 @@ def check_post_rate_exceeded(post, user):
     custom_rate_limit_for_post = post.get_custom_comment_limit()
     if custom_rate_limit_for_post is not None:
         post_comments_count = Comment.visible_objects() \
-            .filter(author=user, post=post, created_at__gte=datetime.utcnow() - timedelta(hours=24)) \
+            .filter(author=user, post=post, created_at__gte=datetime.now(timezone.utc) - timedelta(hours=24)) \
             .count()
         return post_comments_count >= custom_rate_limit_for_post
     return False
@@ -28,7 +28,7 @@ def check_user_rate_exceeded(user):
         comments_per_day_limit = custom_rate_limit_for_user
 
     total_comments_count = Comment.visible_objects() \
-        .filter(author=user, created_at__gte=datetime.utcnow() - timedelta(hours=24)) \
+        .filter(author=user, created_at__gte=datetime.now(timezone.utc) - timedelta(hours=24)) \
         .count()
 
     return total_comments_count >= comments_per_day_limit

@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 from urllib.parse import urlencode
 
 from zoneinfo import ZoneInfo
@@ -32,7 +32,7 @@ def stats(request: HttpRequest) -> HttpResponse:
         .order_by('-created_at')[:20]
 
     top_badge_qs = UserBadge.objects\
-        .filter(created_at__gte=datetime.utcnow() - timedelta(days=150))\
+        .filter(created_at__gte=datetime.now(timezone.utc) - timedelta(days=150))\
         .values("to_user")\
         .annotate(sum_price=Sum("badge__price_days"))\
         .order_by("-sum_price")[:20]
@@ -53,7 +53,7 @@ def stats(request: HttpRequest) -> HttpResponse:
     top_users = User.objects\
         .filter(
             moderation_status=User.MODERATION_STATUS_APPROVED,
-            membership_expires_at__gte=datetime.utcnow() + timedelta(days=70)
+            membership_expires_at__gte=datetime.now(timezone.utc) + timedelta(days=70)
         )\
         .order_by("-membership_expires_at")[:64]
 

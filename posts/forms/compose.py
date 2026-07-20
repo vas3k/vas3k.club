@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from zoneinfo import ZoneInfo
 from django import forms
@@ -307,8 +307,8 @@ class PostEventForm(AbstractPostForm):
         instance = kwargs.get("instance")
         if instance and instance.metadata:
             kwargs.update(initial={
-                "event_day": instance.metadata.get("event", {}).get("day") or datetime.utcnow().day,
-                "event_month": instance.metadata.get("event", {}).get("month") or datetime.utcnow().month,
+                "event_day": instance.metadata.get("event", {}).get("day") or datetime.now(timezone.utc).day,
+                "event_month": instance.metadata.get("event", {}).get("month") or datetime.now(timezone.utc).month,
                 "event_time": instance.metadata.get("event", {}).get("time") or "00:00",
                 "event_timezone": instance.metadata.get("event", {}).get("timezone") or "UTC",
                 "event_location": instance.metadata.get("event", {}).get("location") or "",
@@ -324,13 +324,13 @@ class PostEventForm(AbstractPostForm):
     event_day = forms.ChoiceField(
         label="День",
         required=True,
-        initial=lambda: datetime.utcnow().day,
+        initial=lambda: datetime.now(timezone.utc).day,
         choices=[(i, i) for i in range(1, 32)],
     )
     event_month = forms.ChoiceField(
         label="Месяц",
         required=True,
-        initial=lambda: datetime.utcnow().month,
+        initial=lambda: datetime.now(timezone.utc).month,
         choices=[
             (1, "января"),
             (2, "февраля"),
@@ -416,7 +416,7 @@ class PostEventForm(AbstractPostForm):
 
         # validate event date
         try:
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             year = now.year if int(cleaned_data["event_month"]) >= now.year else now.year + 1
             datetime(
                 year=year,

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from django.contrib.postgres.fields import ArrayField
@@ -144,7 +144,7 @@ class SearchIndex(models.Model):
                     author=comment.author.slug if comment.author else None,
                     upvotes=comment.upvotes,
                     title=comment.post.title if comment.post else None,
-                    updated_at=datetime.utcnow(),
+                    updated_at=datetime.now(timezone.utc),
                 ),
             )
         except (MultipleObjectsReturned, IntegrityError):
@@ -172,7 +172,7 @@ class SearchIndex(models.Model):
                         author=post.author.slug if post.author else None,
                         upvotes=post.upvotes,
                         title=post.title,
-                        updated_at=datetime.utcnow(),
+                        updated_at=datetime.now(timezone.utc),
                     ),
                 )
             except (MultipleObjectsReturned, IntegrityError):
@@ -213,7 +213,7 @@ class SearchIndex(models.Model):
                         author=user.slug,
                         upvotes=user.upvotes,
                         title=user.full_name,
-                        updated_at=datetime.utcnow(),
+                        updated_at=datetime.now(timezone.utc),
                     ),
                 )
             except (MultipleObjectsReturned, IntegrityError):

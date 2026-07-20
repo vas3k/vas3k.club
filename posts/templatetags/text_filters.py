@@ -1,6 +1,6 @@
 import json
 import math
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django import template
 from django.conf import settings
@@ -69,7 +69,7 @@ def cool_date(dt):
     """
     datetime -> "two days ago"
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     if dt > now - timedelta(days=2):
         # recent
         return naturaltime(dt)

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from django.conf import settings
 from django_q.tasks import async_task
@@ -15,7 +15,7 @@ IS_TEST_STRIPE = settings.STRIPE_API_KEY.startswith("sk_test")
 
 
 def club_subscription_activator(product, payment, user):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     if user.membership_expires_at < now:
         user.membership_expires_at = now  # ignore days in the past
 

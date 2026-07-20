@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -57,7 +57,7 @@ def confirm_delete_account(request):
     cancel_all_stripe_subscriptions(request.me.stripe_id)
 
     # mark user for deletion
-    request.me.deleted_at = datetime.utcnow()
+    request.me.deleted_at = datetime.now(timezone.utc)
     request.me.save()
 
     # remove sessions
