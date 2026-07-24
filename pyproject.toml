@@ -19,7 +19,7 @@ dependencies = [
     "joserfc>=1.7.4",
     "lxml==6.1.1",
     "mistune==3.3.3",
-    "openai>=2.46.0",
+    "openai>=2.48.0",
     "patreon>=0.5",
     "pillow>=10.1.0",
     "premailer==3.10.0",
