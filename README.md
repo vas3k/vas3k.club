@@ -24,68 +24,89 @@ You don't really need to understand how the magic of webpack <-> django communic
 
 Feel free to propose "state of the art" refactorings for UI or backend code if you know how to do it better. We're open for best practices from both worlds.
 
-## 🔮 Installing and running locally
+## 🔮 Running locally
 
-1. Install [Docker](https://www.docker.com/get-started)
+The happy path is Docker. Install [Docker](https://www.docker.com/get-started), then:
 
-2. Clone the repo
+```sh
+git clone https://github.com/vas3k/vas3k.club.git
+cd vas3k.club
+docker compose up
+```
 
-    ```sh
-    $ git clone https://github.com/vas3k/vas3k.club.git
-    $ cd vas3k.club
-    ```
+This starts the app in development mode on [http://127.0.0.1:8000/](http://127.0.0.1:8000/), plus Postgres, Redis, the queue workers and Webpack.
 
-3. Run
+### Dev login
 
-    ```sh
-    $ docker compose up
-    ```
+First time you need a test account:
 
-This will start the application in development mode on [http://127.0.0.1:8000/](http://127.0.0.1:8000/), as well as other necessary services: postgres database, queue with workers, redis and webpack. 
+- [/godmode/dev_login/](http://127.0.0.1:8000/godmode/dev_login/) — creates an admin (`god`) account and logs you in
+- [/godmode/random_login/](http://127.0.0.1:8000/godmode/random_login/) — creates a fresh random member
 
-The first time you start it up, you'll probably need a test account to get right in. Go to [/godmode/dev_login/](http://127.0.0.1:8000/godmode/dev_login/) and it will create an admin account for you (and log you in automatically). To create new test user hit the [/godmode/random_login/](http://127.0.0.1:8000/godmode/random_login/) endpoint.
+These endpoints only work when `DEBUG=true` (which is the default in `docker compose`).
 
-Auto-reloading for backend and frontend is performed automatically on every code change. If everything is broken and not working (it happens), you can always rebuild the world from scratch using `docker compose up --build`.
+Backend and frontend hot-reload on every code change. If everything is broken (it happens), rebuild from scratch:
 
-## 🧑‍💻 Advanced setup for devs
+```sh
+docker compose up --build
+```
 
-For more information on how to test the telegram bot, run project without docker and other useful notes, read [docs/setup.md](docs/setup.md).
+## 🧑‍💻 Advanced setup
+
+Want to run without Docker, wire up the Telegram bot, or import public posts into a local DB? See [docs/setup.md](docs/setup.md).
+
+Useful `make` targets once you have [uv](https://docs.astral.sh/uv/) and Node 22+ locally:
+
+```sh
+make run-dev          # Django on :8000
+make run-queue        # django-q workers
+make build-frontend   # one-shot webpack build
+make migrate
+make test             # backend
+make test-frontend    # Jest
+make test-all
+```
 
 ## ☄️ Testing
 
-We use standard Django testing framework for backend and Jest for frontend. No magic, really.
+Backend: Django's test runner. Frontend: Jest. No magic.
 
-See [docs/test.md](docs/test.md) for more insights.
+```sh
+make test          # needs Postgres + Redis (easiest: docker compose up -d postgres redis)
+make test-frontend # needs Node only
+```
+
+More details: [docs/test.md](docs/test.md).
 
 ## 🚢 Deployment
 
-No k8s, no AWS, we ship dockers directly via ssh and it's beautiful!
+No k8s, no AWS, we ship dockers directly via SSH and it's beautiful!
 
-The entire production configuration is described in the [docker-compose.production.yml](docker-compose.production.yml) file. 
+Production config lives in [docker-compose.production.yml](docker-compose.production.yml). [GitHub Actions](.github/workflows/deploy.yml) build, test and deploy on every merge to `master` (maintainers only).
 
-Then, [Github Actions](.github/workflows/deploy.yml) have to take all the dirty work. They build, test and deploy changes to production on every merge to master (only official maintainers can do it).
+Explore the [.github](.github) folder for more insights.
 
-Explore the whole [.github](.github) folder for more insights.
-
-We're open for proposals on how to improve our deployments without overcomplicating it with modern devops bullshit.
+We're open for proposals on how to improve deployments without overcomplicating it with modern devops bullshit.
 
 ## 🛤 Forking and tweaking
 
-Forks are welcome. We're small and our engine is not universal like Wordpress, but with sufficient programming skills (and using grep), you can launch your own Club website in a couple of weeks. 
+Forks are welcome. We're small and our engine is not universal like Wordpress, but with sufficient programming skills (and using grep), you can launch your own Club website in a couple of weeks.
 
 Three huge requests for everyone:
 
-- Please give kudos the original authors. "Works on vas3k.club engine" in the footer of your site will be enough.
-- Please share new features you implement with us, so other folks can also benefit from them, and your own codebase minimally diverges from the original one (so you can sync updates and security fixes) . Use our [feature-flags](club/features.py).
+- Please give kudos to the original authors. "Works on vas3k.club engine" in the footer of your site will be enough.
+- Please share new features you implement with us, so other folks can also benefit from them, and your own codebase minimally diverges from the original one (so you can sync updates and security fixes). Use our [feature-flags](club/features.py).
 - Do not use our "issues" and chats as a support desk for your own fork.
 
 > ♥️ [Feature-flags](club/features.py) are great. Use them to tweak your fork. Create new flags to upstream your new features or disable existing ones.
 
+Practical checklists for running a fork: [docs/install_checklist.md](docs/install_checklist.md) and [docs/tech_guide.md](docs/tech_guide.md).
+
 ## 🙋‍♂️ How to report a bug or propose a feature?
 
-- 🆕Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new) using one of the existing templates. 
-- 🔦 Please, **use the search function** to make sure you aren't creating a duplicate.
-- 🖼 Provide ALL the details, screenshots, logs, etc. Bug reports without steps to reproduce will be closed.
+- Open [a new issue](https://github.com/vas3k/vas3k.club/issues/new) using one of the existing templates.
+- Please **use the search function** to make sure you aren't creating a duplicate.
+- Provide ALL the details, screenshots, logs, etc. Bug reports without steps to reproduce will be closed.
 
 ## 😍 Contributions
 
@@ -101,9 +122,9 @@ Important information for everyone willing to contribute to this project.
 
 **For new features:** open a new Issue describing the new feature you're interested in. Wait for the contributors to get back to you and give you the green light for implementation. If the contributors don't reply, it means the feature isn't of interest at the moment. ONLY after that should you open a PR for that feature.
 
-The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues) and our [Dev-chat in telegram](https://t.me/vas3k_club_dev). DO NOT DISCUSS FORKS THERE.
+The main point of interaction is the [Issues page](https://github.com/vas3k/vas3k.club/issues) and our [Dev-chat in Telegram](https://t.me/vas3k_club_dev). DO NOT DISCUSS FORKS THERE.
 
-If you want to contribute but don't know where to start — come to the chat and just ask! 
+If you want to contribute but don't know where to start — come to the chat and just ask!
 
 > The official development language at the moment is Russian, because 100% of our users speak it. We don't want to introduce unnecessary barriers for them. But we are used to writing commits and comments in English and we won't mind communicating with you in it.
 
@@ -113,7 +134,16 @@ If you think you've found a critical vulnerability that should not be exposed to
 
 Please do not test vulnerabilities in public. If you start spamming the website with "test-test-test" posts or comments, our moderators will ban you even if you had good intentions.
 
-## 👩‍💼 License 
+## 📚 Docs
+
+| Doc | What |
+| --- | --- |
+| [docs/setup.md](docs/setup.md) | Local setup without Docker, bots, sample data |
+| [docs/test.md](docs/test.md) | How to run tests |
+| [docs/tech_guide.md](docs/tech_guide.md) | Day-to-day club ops (rooms, tags, roles, dumps) |
+| [docs/install_checklist.md](docs/install_checklist.md) | Checklist for launching a fork |
+
+## 👩‍💼 License
 
 [MIT](LICENSE)
 

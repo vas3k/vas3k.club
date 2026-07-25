@@ -4,7 +4,7 @@
 0 13 * * 2 cd /app && python3 manage.py notify_expired_intros --production true
 30 */4 * * 1-6 cd /app && python3 manage.py send_best_comments
 0 10 * * 1 cd /app && python3 manage.py send_weekly_digest --production true
-0 12 * * * cd /app && python3 manage.py send_subscription_expired --production true
+0 12 * * * cd /app && python3 manage.py send_subscription_notifications --production
 0 2 * * 6 cd /app && python3 manage.py cleanup_post_views
 0 2 * * 7 cd /app && python3 manage.py rebuild_search_index
 0 0 * * 7 cd /app && python3 manage.py count_chat_members

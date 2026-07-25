@@ -1,119 +1,99 @@
-# Advanced Setup
+# Advanced setup
 
-## Local development
+For most contributors, `docker compose up` from the [README](../README.md) is enough. Use this guide when you want to run parts of the stack natively, enable bots, or seed local data.
 
-Once you decided to code something in the project you'll need to setup your environment. Here's how you can make it.
+## Native local development
 
-### Setup UV
+### 1. Python (uv)
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
-2. Install packages: `uv sync`
-3. Check that it works: `uv run python -c "import django; print(django.get_version())"`
+2. `uv sync`
+3. Check it works: `uv run python -c "import django; print(django.get_version())"`
 
-### Setup postgres
+Requires **Python 3.14+** (see `pyproject.toml`).
 
-#### locally
-  Easies way is to run postgres is to run in docker, just run it with follow command:
-  ```sh
-  $ docker-compose -f docker-compose.yml up -d postgres
-  ```
-  When you need to connect to postgres use next params:
-  ```dotenv
-  POSTGRES_DB=vas3k_club
-  POSTGRES_USER=postgres
-  POSTGRES_PASSWORD=postgres
-  POSTGRES_HOST=localhost
-  ```
+### 2. Postgres and Redis
 
-  <details><summary>In case you really want setup local postgres then go under cut...</summary>
+Easiest: start only the infra containers:
 
-    Brief instruction:
-  
-    1. Install postgresql (for macos https://postgresapp.com/ is easies start)
-    2. After you install and run postgress create a project database:
-          ```sh
-          # create db
-          $ psql postgres
-          postgres=# createdb vas3k_club
-
-          # create user (user: vas3k, password: vas3k)
-          postgres=# createuser --interactive --pwpromp
-
-          # grant priviliges
-          postgres=# GRANT ALL PRIVILEGES ON DATABASE vas3k_club TO vas3k;
-          postgres=# \connect vas3k_club
-          postgres=# GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO vas3k;
-          postgres=# GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public to vas3k;
-          postgres=# GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public to vas3k;
-          postgres=# \q
-
-          # check connection
-          $ psql -d vas3k_club -U vas3k
-          ```
-
-  </details>
-  
-#### Setup frontend
 ```sh
-$ cd frontend
-$ npm run watch # will implicitly run `npm ci`
+docker compose up -d postgres redis
 ```
 
-#### Run dev server
-After you have setup postgres, venv and build frontend (look this steps above) complete preparations with follow commands:
+Connection defaults (also used by Django when env vars are unset):
+
+```dotenv
+POSTGRES_DB=vas3k_club
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=localhost
+REDIS_HOST=localhost
+REDIS_DB=0
+```
+
+### 3. Frontend
+
+Needs **Node.js 22+**.
+
 ```sh
-# run redis
-$ docker-compose -f docker-compose.yml up redis
-
-# run queue
-$ uv run python manage.py qcluster
-
-# run db migration
-$ uv run python manage.py migrate
-
-# run dev server
-$ uv run python manage.py runserver 0.0.0.0:8000
+cd frontend
+npm run watch   # runs npm ci first, then webpack --watch
 ```
 
-## Telegram bot or help-desk-bot
+Or a one-shot build: `make build-frontend`.
 
-To run telegram bot you have to:
-  1. Copy env.exmaple file: `cp ./club/.env.example ./club/.env`
-  2. Fill all the requirement fields in `./club/.env`, such as `TELEGRAM_TOKEN` etc.
-      - `TELEGRAM_TOKEN` you can get from [@BotFather](https://t.me/BotFather)
-      - To get `TELEGRAM_CLUB_CHANNEL_URL`, `TELEGRAM_ADMIN_CHAT_ID` etc Just Simply Forward a message from your group/channel to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
-  3. Rebuild application: `docker compose up --build`
+### 4. Run the app
 
-## Docker-compose
-
-Check out our [docker-compose.yml](https://github.com/vas3k/vas3k.club/blob/master/docker-compose.yml) to understand the infrastructure.
-
-## Load posts from main vas3k.club to dev/local database
-
-Sometimes you need fill saome posts/users data from real project. For this case you can use `import_posts_to_dev` command.
-
-Command fetch https://vas3k.club/feed.json and copy `is_public=True` posts to your database:
-```bash
-# fetch first page
-$ python3 manage.py import_posts_to_dev
-
-# fetch first 10 pages
-$ python3 manage.py import_posts_to_dev --pages 10
-
-# fetch 10 pages, starts from page 5
-$ python3 manage.py import_posts_to_dev --pages 10 --skip 5
-
-# fetch 10 pages, starts from page 5 and update exists posts
-$ python3 manage.py import_posts_to_dev --pages 10 --skip 5 --force
-
-# if use docker-compose
-$ docker exec -it club_app python3 manage.py import_posts_to_dev --pages 2
+```sh
+make migrate
+make run-queue   # in one terminal
+make run-dev     # in another → http://127.0.0.1:8000/
 ```
-You can also import private posts and comments, but you will need to create an application (https://vas3k.club/apps/create/) and use `service_token` to do this.
-```bash
-# fetch first page with comments
-$ python3 manage.py import_posts_to_dev --with-comments --service-token XXX
 
-# fetch first page with private posts and comments
-$ python3 manage.py import_posts_to_dev --with-private --with-comments --service-token XXX
+Same thing without make:
+
+```sh
+uv run python manage.py migrate
+uv run python manage.py qcluster
+uv run python manage.py runserver 0.0.0.0:8000
 ```
+
+Dev login shortcuts still work: `/godmode/dev_login/` and `/godmode/random_login/` (only when `DEBUG=true`).
+
+## Telegram bot / helpdesk bot
+
+1. `cp ./club/.env.example ./club/.env`
+2. Fill the Telegram-related fields (`TELEGRAM_TOKEN`, chat/channel IDs, etc.)
+   - Token: [@BotFather](https://t.me/BotFather)
+   - Chat/channel IDs: forward a message to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
+3. Uncomment the `bot` / `helpdeskbot` services in `docker-compose.yml`, then:
+
+```sh
+docker compose up --build
+```
+
+Or run natively: `make run-bot`.
+
+## Import posts from production into a local DB
+
+`import_posts_to_dev` pulls public posts from https://vas3k.club/feed.json:
+
+```sh
+uv run python manage.py import_posts_to_dev
+uv run python manage.py import_posts_to_dev --pages 10
+uv run python manage.py import_posts_to_dev --pages 10 --skip 5 --force
+
+# inside docker
+docker exec -it club_app python3 manage.py import_posts_to_dev --pages 2
+```
+
+Private posts and comments need a [service app token](https://vas3k.club/apps/create/):
+
+```sh
+uv run python manage.py import_posts_to_dev --with-comments --service-token XXX
+uv run python manage.py import_posts_to_dev --with-private --with-comments --service-token XXX
+```
+
+## Infrastructure reference
+
+See [docker-compose.yml](../docker-compose.yml) for the full local stack.
