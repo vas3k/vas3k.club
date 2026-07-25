@@ -120,9 +120,9 @@ class SubscriptionNotificationTest(TestCase):
             telegram_id="123",
         )
         get_user_chats.return_value = [
-            SimpleNamespace(title="Чат А"),
-            SimpleNamespace(title="Чат Б"),
-            SimpleNamespace(title="Чат В"),
+            SimpleNamespace(chat_name="Чат А", icon="🅰️"),
+            SimpleNamespace(chat_name="Чат Б", icon="🅱️"),
+            SimpleNamespace(chat_name="Чат В", icon="©️"),
         ]
 
         call_command("send_subscription_notifications", production=True, stage="expire")
@@ -131,6 +131,7 @@ class SubscriptionNotificationTest(TestCase):
         self.assertIn("Чат А", body)
         self.assertIn("Чат Б", body)
         self.assertIn("Чат В", body)
+        self.assertIn("🅰️", body)
 
     @patch(f"{COMMAND}.get_user_chats")
     @patch(f"{COMMAND}.send_telegram_message")
@@ -148,8 +149,8 @@ class SubscriptionNotificationTest(TestCase):
             telegram_id="123",
         )
         get_user_chats.return_value = [
-            SimpleNamespace(title="Чат А"),
-            SimpleNamespace(title="Чат Б"),
+            SimpleNamespace(chat_name="Чат А", icon="🅰️"),
+            SimpleNamespace(chat_name="Чат Б", icon="🅱️"),
         ]
 
         call_command("send_subscription_notifications", production=True, stage="expire")
@@ -157,3 +158,31 @@ class SubscriptionNotificationTest(TestCase):
         body = send_email.call_args.kwargs["html"]
         self.assertNotIn("Чат А", body)
         self.assertNotIn("Например вот из этих", body)
+
+    @patch(f"{COMMAND}.get_user_chats")
+    @patch(f"{COMMAND}.send_telegram_message")
+    @patch(f"{COMMAND}.send_transactional_email")
+    def test_expire_limits_rooms_list_to_ten(
+        self,
+        send_email,
+        send_telegram,
+        get_user_chats,
+    ):
+        today = date.today()
+        self.create_user(
+            "expire_many_chats",
+            datetime.combine(today, datetime.min.time()),
+            telegram_id="123",
+        )
+        get_user_chats.return_value = [
+            SimpleNamespace(chat_name=f"Чат {i}", icon=None)
+            for i in range(12)
+        ]
+
+        call_command("send_subscription_notifications", production=True, stage="expire")
+
+        body = send_email.call_args.kwargs["html"]
+        self.assertIn("Чат 0", body)
+        self.assertIn("Чат 9", body)
+        self.assertNotIn("Чат 10", body)
+        self.assertNotIn("Чат 11", body)

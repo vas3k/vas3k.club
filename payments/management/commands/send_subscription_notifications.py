@@ -96,9 +96,9 @@ class Command(BaseCommand):
                 "settings": settings,
             }
             if stage.get("include_chats"):
-                chats = [room.title for room in get_user_chats(user)]
-                if len(chats) >= 3:
-                    context["chats"] = chats
+                rooms = get_user_chats(user)
+                if len(rooms) >= 3:
+                    context["rooms"] = rooms
 
             if not user.is_email_unsubscribed:
                 self.stdout.write(f"Sending email to {user.email}...")
