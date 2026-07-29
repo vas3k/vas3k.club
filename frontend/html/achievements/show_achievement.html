@@ -1,42 +1,40 @@
-{% extends "layout.html" %}
-{% load static %}
-{% load users %}
-{% load text_filters %}
+{% extends "layout.html" %} {% load static %} {% load users %} {% load text_filters %} {% block title %} Ачивка «{{
+achievement.name }}» — {{ block.super }} {% endblock %} {% block og_tags %}
+<meta property="og:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}" />
+<meta property="og:site_name" content="{{ settings.APP_NAME }}" />
+<meta property="og:url" content="{{ settings.APP_HOST }}" />
+<meta property="og:type" content="website" />
+<meta property="og:description" content="" />
+<meta property="og:image" content="{% static "images/share.png" %}">
 
-{% block title %}
-    Ачивка «{{ achievement.name }}» — {{ block.super }}
-{% endblock %}
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:image" content="{% static "images/share.png" %}"> {% endblock %} {% block content %}
+<div class="stats">
+    <div class="stats-achievement-details">
+        <div
+            class="block stats-achievement-header"
+            {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
+            <div class="stats-achievement-details__header-inner">
+                <div class="stats-achievement-details__card">
+                    {% include "achievements/widgets/achievement.html" %}
+                </div>
 
-{% block og_tags %}
-    <meta property="og:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}">
-    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
-    <meta property="og:url" content="{{ settings.APP_HOST }}">
-    <meta property="og:type" content="website" />
-    <meta property="og:description" content="">
-    <meta property="og:image" content="{% static "images/share.png" %}">
-
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}">
-    <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="{% static "images/share.png" %}">
-{% endblock %}
-
-
-{% block content %}
-    <div class="stats">
-        <div class="stats-achievement-details">
-            {% include "achievements/widgets/achievement.html" %}
-            <div class="stats-achievement-details__info">
-                <span><strong>Название:</strong> {{ achievement.name }}</span>
-                <span><strong>Описание:</strong> {{ achievement.description }}</span>
-                <span><strong>Награждено:</strong> {{ users|length }} {{ users|length|rupluralize:"человек,человека,человек" }}</span>
+                <div class="stats-achievement-details__info">
+                    <h1 class="stats-achievement-details__title">{{ achievement.name }}</h1>
+                    <p class="stats-achievement-details__description">{{ achievement.description }}</p>
+                    <div class="stats-achievement-details__count">
+                        <strong>Награждено:</strong>
+                        {{ users|length }} {{ users|length|rupluralize:"человек,человека,человек" }}
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="top-users top-users-medium stats-achievements-users">
-            {% for user in users %}
-                {% include "users/widgets/round.html" with user=user show_name=True %}
-            {% endfor %}
-        </div>
     </div>
+
+    <div class="top-users top-users-medium stats-achievements-users stats-achievement-users-list">
+        {% for user in users %} {% include "users/widgets/round.html" with user=user show_name=True %} {% endfor %}
+    </div>
+</div>
 {% endblock %}

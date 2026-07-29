@@ -137,9 +137,8 @@
         }
 
 .stats-achievement-details {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    width: 100%;
+    display: block;
 }
 
     .stats-achievement-details .user-achievement {
@@ -152,14 +151,94 @@
         max-height: 180px;
     }
 
+.stats-achievement-header {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 26px;
+}
+
+    .stats-achievement-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background:
+            radial-gradient(900px circle at 15% 25%, rgba(120, 255, 240, 0.18), transparent 60%),
+            linear-gradient(135deg, rgba(120, 255, 240, 0.10), rgba(255, 0, 200, 0.10), rgba(0, 0, 0, 0.72));
+    }
+
+    .stats-achievement-details__header-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+    }
+
+    .stats-achievement-details__card {
+        flex: 0 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .stats-achievement-details__info {
         max-width: 60%;
-        font-size: 150%;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         justify-content: center;
+        color: #FFF;
+        text-align: left;
     }
+
+    .stats-achievement-details__title {
+        margin: 0;
+        color: #FFF;
+        font-size: 230%;
+        font-weight: 700;
+        line-height: 1.05;
+    }
+
+    .stats-achievement-details__description {
+        margin: 0;
+        color: #FFF;
+        opacity: 0.95;
+        font-size: 135%;
+        line-height: 1.35;
+    }
+
+    .stats-achievement-details__count {
+        color: #FFF;
+        opacity: 0.95;
+        font-size: 125%;
+    }
+
+    @media only screen and (max-width : 800px) {
+        .stats-achievement-details__header-inner {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stats-achievement-details__info {
+            max-width: 100%;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stats-achievement-details__description {
+            max-width: 90%;
+        }
+    }
+
+.stats-achievement-users-list {
+    margin-top: 30px;
+}
 
 .stats-badges-latest {
     display: flex;

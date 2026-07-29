@@ -2,7 +2,7 @@
 
 Ваша подписка на Клуб сегодня закончилась. Мы еще ждем вашего возвращения, однако скоро наш бот начнет удалять вас из клубных чатов и из сервисов, которые не доступны без активной клубной карты.
 {% if rooms %}
-Например вот из этих: {% for room in rooms|slice:":10" %}{% if room.icon %}{{ room.icon }} {% endif %}{{ room.chat_name }}{% if not forloop.last %}, {% endif %}{% endfor %}.
+Например вот из этих: {% for room in rooms|slice:":20" %}{% if room.icon %}{{ room.icon }} {% endif %}{{ room.chat_name }}{% if not forloop.last %}, {% endif %}{% endfor %}.
 {% endif %}
 Вы всегда можете вернуться просто продлив подписку вот тут:
 

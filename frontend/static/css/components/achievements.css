@@ -1,0 +1,203 @@
+.user-achievement {
+    display: flex;
+    position: relative;
+    align-items: center;
+    font-size: 80%;
+    width: 145px;
+    margin: 10px;
+    min-height: 140px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #FFF;
+    height: 210px;
+    perspective: 1000px;
+    --shine-x: 50%;
+    --shine-y: 50%;
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    transition: 0.25s ease-out;
+    will-change: filter;
+}
+
+.user-achievement:hover {
+    color: #FFF;
+    text-decoration: none;
+    filter: drop-shadow(0 18px 45px rgba(70, 200, 255, 0.25))
+        drop-shadow(0 0 18px rgba(120, 255, 240, 0.25));
+}
+
+.user-achievement:hover .user-achievement-wrapper {
+    transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-4px) translateZ(0);
+}
+
+.user-achievement:focus-visible .user-achievement-wrapper,
+.user-achievement:active .user-achievement-wrapper {
+    transform: rotateX(8deg) rotateY(-10deg) translateY(-2px) translateZ(0);
+}
+
+.user-achievement:active .user-achievement-wrapper {
+    transform: rotateX(6deg) rotateY(-8deg) translateY(-1px) translateZ(0)
+        scale(0.99);
+}
+
+.user-achievement-wrapper {
+    text-overflow: ellipsis;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.65s;
+    transform-style: preserve-3d;
+    overflow-wrap: break-word;
+    border-radius: var(--block-border-radius);
+    overflow: hidden;
+    box-shadow: var(--block-shadow);
+}
+
+.user-achievement-wrapper::before,
+.user-achievement-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition:
+        opacity 0.25s ease,
+        transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1),
+        background-position 0.75s cubic-bezier(0.2, 0.8, 0.2, 1),
+        filter 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Specular "card glass" reflection sweep */
+.user-achievement-wrapper::before {
+    opacity: 0;
+    transform: translateZ(0) scale(1.01);
+    background:
+        radial-gradient(
+            240px circle at var(--shine-x) var(--shine-y),
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0) 62%
+        ),
+        radial-gradient(
+            120px circle at var(--shine-x) var(--shine-y),
+            rgba(120, 255, 240, 0.18),
+            rgba(255, 255, 255, 0) 72%
+        );
+    mix-blend-mode: screen;
+    filter: saturate(1.12);
+}
+
+/* Holo/prismatic sheen */
+.user-achievement-wrapper::after {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0.001deg);
+    background: linear-gradient(
+        125deg,
+        rgba(0, 255, 255, 0) 0%,
+        rgba(0, 255, 255, 0.28) 24%,
+        rgba(255, 0, 255, 0.22) 45%,
+        rgba(255, 255, 255, 0.36) 60%,
+        rgba(0, 255, 255, 0) 86%
+    );
+    background-size: 250% 250%;
+    background-position: var(--shine-x) var(--shine-y);
+    mix-blend-mode: screen;
+    filter: hue-rotate(10deg) saturate(1.25);
+}
+
+.user-achievement:hover .user-achievement-wrapper::before,
+.user-achievement:hover .user-achievement-wrapper::after,
+.user-achievement:focus-visible .user-achievement-wrapper::before,
+.user-achievement:focus-visible .user-achievement-wrapper::after,
+.user-achievement:active .user-achievement-wrapper::before,
+.user-achievement:active .user-achievement-wrapper::after {
+    opacity: 0.75;
+}
+
+.user-achievement:hover .user-achievement-wrapper::before,
+.user-achievement:focus-visible .user-achievement-wrapper::before,
+.user-achievement:active .user-achievement-wrapper::before {
+    transform: translateZ(0) scale(1.015);
+}
+
+.user-achievement:hover .user-achievement-wrapper::after,
+.user-achievement:focus-visible .user-achievement-wrapper::after,
+.user-achievement:active .user-achievement-wrapper::after {
+    filter: hue-rotate(18deg) saturate(1.18);
+}
+
+.user-achievement .user-badge-image {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 55%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.user-achievement-name {
+    display: block;
+    text-align: center;
+    line-height: 1.2em;
+    z-index: 2;
+    position: relative;
+    text-shadow: 0 2px 14px rgba(0, 255, 255, 0.10);
+    margin-top: 10px;
+    padding: 0 2px;
+    max-width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.user-achievement-front,
+.user-achievement-back {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--block-border-radius);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(0, 0, 0, 0.1) 55%,
+        rgba(0, 0, 0, 0.25) 100%
+    );
+    overflow: hidden;
+    z-index: 2;
+    padding: 15px 20px;
+}
+
+.user-achievement-front {
+    font-size: 140%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 1;
+    transform: translateZ(18px);
+    transition: opacity 0.25s ease, transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+        filter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.user-achievement-back {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 90% !important;
+    opacity: 0;
+    transform: translateZ(22px);
+    transition: opacity 0.25s ease, transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    backdrop-filter: blur(6px);
+    text-shadow: 0 2px 18px rgba(0, 255, 255, 0.12);
+    pointer-events: none;
+}
+

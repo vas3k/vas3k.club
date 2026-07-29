@@ -2,13 +2,13 @@ import Vue from "vue";
 
 import "../css/index.css";
 
-import "./inline-attachment";
 import "./codemirror-4.inline-attachment";
+import "./common/achievements-cards";
+import "./inline-attachment";
 
-import App from "./App.js";
-import ClubApi from "./common/api.service.js";
-import { handleCommentThreadCollapseToggle, collapseCommentThread } from "./common/comments.js";
 import vSelect from "vue-select";
+import App from "./App.js";
+import { collapseCommentThread, handleCommentThreadCollapseToggle } from "./common/comments.js";
 
 Vue.component("post-upvote", () => import("./components/PostUpvote.vue"));
 Vue.component("post-bookmark", () => import("./components/PostBookmark.vue"));
