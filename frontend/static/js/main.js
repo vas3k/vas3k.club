@@ -3,7 +3,6 @@ import Vue from "vue";
 import "../css/index.css";
 
 import "./codemirror-4.inline-attachment";
-import "./common/achievements-cards";
 import "./inline-attachment";
 
 import vSelect from "vue-select";

@@ -1,4 +1,9 @@
-<a href="{% url "show_achievement" achievement.code %}" class="user-achievement">
+<a
+    href="{% url "show_achievement" achievement.code %}"
+    class="user-achievement"
+    onmousemove="const card=this;const wrapper=card.querySelector('.user-achievement-wrapper');if(!wrapper||card.__achRaf)return;const cx=event.clientX,cy=event.clientY;card.__achRaf=requestAnimationFrame(function(){card.__achRaf=0;const r=card.getBoundingClientRect();const x=Math.min(1,Math.max(0,(cx-r.left)/(r.width||1)));const y=Math.min(1,Math.max(0,(cy-r.top)/(r.height||1)));const tiltX=((0.5-y)*18).toFixed(2);const tiltY=((x-0.5)*26).toFixed(2);card.style.setProperty('--shine-x',(x*100).toFixed(2)+'%');card.style.setProperty('--shine-y',(y*100).toFixed(2)+'%');wrapper.style.transform='rotateX('+tiltX+'deg) rotateY('+tiltY+'deg) translateY(-4px)';});"
+    onmouseleave="if(this.__achRaf){cancelAnimationFrame(this.__achRaf);this.__achRaf=0;}this.style.setProperty('--shine-x','50%');this.style.setProperty('--shine-y','50%');const wrapper=this.querySelector('.user-achievement-wrapper');if(wrapper)wrapper.style.transform='';"
+>
     <span class="user-achievement-wrapper">
         <span class="user-achievement-front" {% if achievement.style %}style="{{ achievement.style }}"{% endif %}>
             <img src="{{ achievement.image }}" class="user-badge-image" alt="{{ achievement.code }}">
