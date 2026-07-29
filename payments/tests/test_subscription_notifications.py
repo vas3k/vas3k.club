@@ -162,7 +162,7 @@ class SubscriptionNotificationTest(TestCase):
     @patch(f"{COMMAND}.get_user_chats")
     @patch(f"{COMMAND}.send_telegram_message")
     @patch(f"{COMMAND}.send_transactional_email")
-    def test_expire_limits_rooms_list_to_ten(
+    def test_expire_lists_rooms_when_many(
         self,
         send_email,
         send_telegram,
@@ -182,7 +182,7 @@ class SubscriptionNotificationTest(TestCase):
         call_command("send_subscription_notifications", production=True, stage="expire")
 
         body = send_email.call_args.kwargs["html"]
+        self.assertIn("Например вот из этих", body)
         self.assertIn("Чат 0", body)
-        self.assertIn("Чат 9", body)
-        self.assertNotIn("Чат 10", body)
-        self.assertNotIn("Чат 11", body)
+        self.assertIn("Чат 1", body)
+        self.assertIn("Чат 2", body)
