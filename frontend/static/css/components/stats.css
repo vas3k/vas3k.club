@@ -151,6 +151,10 @@
         max-height: 180px;
     }
 
+    .stats-achievement-details .user-achievement-name {
+        display: none;
+    }
+
 .stats-achievement-header {
     width: 100%;
     position: relative;

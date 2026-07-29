@@ -16,7 +16,7 @@
 
 <script>
 import { imageUploadOptions } from "../../common/markdown-editor";
-import { initSettings, isFileAllowed, uploadFile } from "../../inline-attachment";
+import { initSettings, isFileAllowed, uploadFile } from "../../vendor/inline-attachment";
 
 export default {
     props: {

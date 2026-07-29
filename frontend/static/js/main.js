@@ -2,8 +2,7 @@ import Vue from "vue";
 
 import "../css/index.css";
 
-import "./codemirror-4.inline-attachment";
-import "./inline-attachment";
+import "./vendor/inline-attachment";
 
 import vSelect from "vue-select";
 import App from "./App.js";
