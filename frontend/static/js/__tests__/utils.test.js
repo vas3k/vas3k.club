@@ -148,9 +148,9 @@ describe("debounce", () => {
 describe("isMobile", () => {
     const originalNavigator = navigator;
 
-    function setUserAgent(ua) {
+    function setUserAgent(ua, { maxTouchPoints = 0 } = {}) {
         Object.defineProperty(window, "navigator", {
-            value: { userAgent: ua, vendor: "" },
+            value: { userAgent: ua, vendor: "", maxTouchPoints },
             writable: true,
             configurable: true,
         });
@@ -173,6 +173,16 @@ describe("isMobile", () => {
 
     test("returns true for iPhone", () => {
         setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0)");
+        expect(isMobile()).toBe(true);
+    });
+
+    test("returns true for iPad in UA", () => {
+        setUserAgent("Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X)");
+        expect(isMobile()).toBe(true);
+    });
+
+    test("returns true for iPadOS desktop UA with touch", () => {
+        setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", { maxTouchPoints: 5 });
         expect(isMobile()).toBe(true);
     });
 

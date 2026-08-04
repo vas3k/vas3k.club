@@ -57,6 +57,11 @@ export function isMobile() {
         return true;
     }
 
+    // iPadOS 13+ reports as Macintosh in the UA; detect via touch support
+    if (/Macintosh/.test(userAgent) && navigator.maxTouchPoints > 1) {
+        return true;
+    }
+
     return false;
 }
 
