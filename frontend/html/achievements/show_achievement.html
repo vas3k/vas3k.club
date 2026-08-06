@@ -1,5 +1,5 @@
-{% extends "layout.html" %} {% load static %} {% load users %} {% load text_filters %} {% block title %} Ачивка «{{
-achievement.name }}» — {{ block.super }} {% endblock %} {% block og_tags %}
+{% extends "layout.html" %} {% load static %} {% load users %} {% load text_filters %}
+{% block title %} Ачивка «{{ achievement.name }}» — {{ block.super }} {% endblock %} {% block og_tags %}
 <meta property="og:title" content="Ачивка «{{ achievement.name }}» — {{ settings.APP_NAME }}" />
 <meta property="og:site_name" content="{{ settings.APP_NAME }}" />
 <meta property="og:url" content="{{ settings.APP_HOST }}" />
