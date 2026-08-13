@@ -395,6 +395,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_burn_2026.png",
         "style": "background-color: #EBB90A; font-size: 120%;",
     }),
+    ("vas3k_retreat", {
+        "name": "Вастрик Ретрит",
+        "description": "Участнику Вастрик Ретрита в Черногории",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_retreat.webp",
+        "style": "background-color: #000000; font-size: 120%;",
+    }),
     ("spooky", {
         "name": "Спуки",
         "description": "За лучшие украшения на Хэллоуин",
