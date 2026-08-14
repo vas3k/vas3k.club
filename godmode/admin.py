@@ -142,9 +142,8 @@ class ClubAdminModel:
                                 field.initial = related_obj.pk
 
                     if isinstance(model_field, PostgresArrayField):
-                        self.fields[field_name] = SimpleArrayField(
+                        field = self.fields[field_name] = SimpleArrayField(
                             forms.CharField(max_length=model_field.base_field.max_length),
-                            required=field.required,
                             label=field.label,
                             initial=field.initial,
                         )
