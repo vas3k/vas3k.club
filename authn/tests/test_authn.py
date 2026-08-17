@@ -215,14 +215,9 @@ class ApiDecoratorAuthResolutionTests(TestCase):
 
     @patch("authn.decorators.api.OAuth2Token")
     @patch("authn.decorators.api.app_by_service_token")
-    def test_service_token_via_query_param(self, mock_app_by_token, mock_token_cls):
-        """Service token passed as query param should also be resolved."""
-        owner = GetAccessDeniedReasonTests._make_user()
-        mock_app = MagicMock()
-        mock_app.owner = owner
-        mock_app.client_id = "test-client"
-        mock_app.scope = "all"
-        mock_app_by_token.return_value = mock_app
+    def test_service_token_via_query_param_is_ignored(self, mock_app_by_token, mock_token_cls):
+        """Service token in a query param must NOT be resolved (leaks via logs/history/Referer)."""
+        mock_app_by_token.return_value = MagicMock()
         mock_token_cls.return_value = MagicMock()
 
         request = self._make_request(
@@ -230,8 +225,8 @@ class ApiDecoratorAuthResolutionTests(TestCase):
         )
         result = self._public_view(request)
         self.assertEqual(result.status_code, 200)
-        self.assertEqual(request.me, owner)
-        mock_app_by_token.assert_called_once_with("valid-token")
+        self.assertIsNone(request.me)
+        mock_app_by_token.assert_not_called()
 
 
 class ModelCodeTests(TestCase):

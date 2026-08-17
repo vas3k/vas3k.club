@@ -122,6 +122,9 @@ class TestNotificationViews(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_render_weekly_digest_returns_html(self):
+        moderator = create_approved_user("digest_mod", roles=[User.ROLE_MODERATOR])
+        login(self.client, moderator)
+
         with patch("notifications.views.generate_weekly_digest", return_value=("<h1>Digest</h1>", None)):
             response = self.client.get(reverse("render_weekly_digest"))
 
@@ -129,7 +132,25 @@ class TestNotificationViews(TestCase):
         self.assertIn("Digest", response.content.decode())
 
     def test_render_weekly_digest_404_when_not_found(self):
+        moderator = create_approved_user("digest_mod2", roles=[User.ROLE_MODERATOR])
+        login(self.client, moderator)
+
         with patch("notifications.views.generate_weekly_digest", side_effect=NotFound()):
             response = self.client.get(reverse("render_weekly_digest"))
 
         self.assertEqual(response.status_code, 404)
+
+    def test_render_weekly_digest_anonymous_is_denied(self):
+        # security: digest contains private content excerpts and must not be public
+        with patch("notifications.views.generate_weekly_digest", return_value=("<h1>Digest</h1>", None)):
+            response = self.client.get(reverse("render_weekly_digest"))
+
+        self.assertNotIn("Digest", response.content.decode())
+
+    def test_render_weekly_digest_non_moderator_is_denied(self):
+        login(self.client, self.user)  # regular member, no moderator role
+
+        with patch("notifications.views.generate_weekly_digest", return_value=("<h1>Digest</h1>", None)):
+            response = self.client.get(reverse("render_weekly_digest"))
+
+        self.assertNotIn("Digest", response.content.decode())

@@ -206,6 +206,13 @@ urlpatterns = [
 
     # admin features
     path("godmode/", godmode, name="godmode_settings"),
+    # SECURITY: debug login routes only in debug/test mode, and they MUST stay
+    # before the catch-all "godmode/<slug:model_name>/" route below
+    *([
+        path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
+        path("godmode/random_login/", debug_random_login, name="debug_random_login"),
+        path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
+    ] if (settings.DEBUG or settings.TESTS_RUN) else []),
     path("godmode/page/<slug:page_name>/", godmode_show_page, name="godmode_show_page"),
     path("godmode/<slug:model_name>/", godmode_list_model, name="godmode_list_model"),
     path("godmode/<slug:model_name>/create/", godmode_create_model, name="godmode_create_model"),
@@ -241,15 +248,6 @@ urlpatterns = [
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
-
-# SECURITY: debug login routes are registered only in debug/test mode
-# (previously they were always registered and protected only by a runtime check)
-if settings.DEBUG or settings.TESTS_RUN:
-    urlpatterns += [
-        path("godmode/dev_login/", debug_dev_login, name="debug_dev_login"),
-        path("godmode/random_login/", debug_random_login, name="debug_random_login"),
-        path("godmode/login/<str:user_slug>/", debug_login, name="debug_login"),
-    ]
 
 # According to django doc: https://docs.djangoproject.com/en/3.1/topics/testing/overview/#other-test-conditions
 # Regardless of the value of the DEBUG setting in your configuration file, all Django tests run with DEBUG=False
