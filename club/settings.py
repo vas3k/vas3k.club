@@ -11,11 +11,20 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.getenv("SECRET_KEY") or "wow so secret"
-DEBUG = (os.getenv("DEBUG") != "false")  # SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY: fail-closed DEBUG (was: env != "false" => any missing/typo'ed env silently enabled DEBUG in prod)
+DEBUG = (os.getenv("DEBUG") == "true")
 TESTS_RUN = True if os.getenv("TESTS_RUN") else False
 
-ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost", "0.0.0.0", "vas3k.club", "ru.vas3k.club"]
+# SECURITY: no hardcoded SECRET_KEY fallback outside of dev/test
+SECRET_KEY = os.getenv("SECRET_KEY") or ("wow so secret" if (DEBUG or TESTS_RUN) else None)
+if not SECRET_KEY:
+    from django.core.exceptions import ImproperlyConfigured
+    raise ImproperlyConfigured("SECRET_KEY env variable must be set when DEBUG=false")
+
+# SECURITY: no wildcard hosts (host header injection / cache poisoning)
+ALLOWED_HOSTS = [h.strip() for h in os.getenv(
+    "ALLOWED_HOSTS", "vas3k.club,ru.vas3k.club,127.0.0.1,localhost"
+).split(",") if h.strip()]
 INTERNAL_IPS = ["127.0.0.1"]
 
 ADMINS = [
@@ -301,6 +310,8 @@ TELEGRAM_ONLINE_CHANNEL_ID = os.getenv("TELEGRAM_ONLINE_CHANNEL_ID")
 TELEGRAM_BOT_WEBHOOK_URL = os.getenv("TELEGRAM_BOT_WEBHOOK_URL", "https://vas3k.club/telegram/webhook/")
 TELEGRAM_BOT_WEBHOOK_HOST = "0.0.0.0"
 TELEGRAM_BOT_WEBHOOK_PORT = 8816
+# SECURITY: webhook authentication secret (previously anyone who knew the URL/token could forge Updates)
+TELEGRAM_WEBHOOK_SECRET = os.getenv("TELEGRAM_WEBHOOK_SECRET")
 TELEGRAM_API_ID = os.getenv("TELEGRAM_API_ID")
 TELEGRAM_API_HASH = os.getenv("TELEGRAM_API_HASH")
 

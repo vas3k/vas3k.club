@@ -1,7 +1,7 @@
 import json
 from uuid import uuid4
 
-from django.db import models
+from django.db import models, transaction
 
 from payments.exceptions import PaymentNotFound, PaymentAlreadyFinalized
 from users.models.user import User
@@ -49,17 +49,21 @@ class Payment(models.Model):
 
     @classmethod
     def finish(cls, reference, status=STATUS_SUCCESS, data=None):
-        payment = Payment.get(reference)
-        if not payment:
-            raise PaymentNotFound()
+        # SECURITY: serialize concurrent webhook processing with a row lock.
+        # Previously: SELECT → check → save without a transaction — concurrent webhooks
+        # both passed the "started" check and the activator granted membership days twice.
+        with transaction.atomic():
+            payment = Payment.objects.select_for_update().filter(reference=reference).first()
+            if not payment:
+                raise PaymentNotFound()
 
-        if payment.status != cls.STATUS_STARTED and status == cls.STATUS_SUCCESS:
-            raise PaymentAlreadyFinalized()
+            if payment.status != cls.STATUS_STARTED and status == cls.STATUS_SUCCESS:
+                raise PaymentAlreadyFinalized()
 
-        payment.status = status
-        if data:
-            payment.data = json.dumps(data)
-        payment.save()
+            payment.status = status
+            if data:
+                payment.data = json.dumps(data)
+            payment.save()
 
         return payment
 

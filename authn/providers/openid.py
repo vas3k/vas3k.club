@@ -98,5 +98,6 @@ class OpenIDImplicitGrant(OpenIDCode, oidc_grants.OpenIDImplicitGrant):
 
 
 server.register_grant(AuthorizationCodeGrant, [OpenIDCode(require_nonce=False)])
-server.register_grant(OpenIDImplicitGrant)
+# SECURITY: implicit grant disabled (deprecated by OAuth 2.1; it also made consent-CSRF
+# one-step — access_token landed directly in the redirect fragment)
 server.register_grant(RefreshTokenGrant)

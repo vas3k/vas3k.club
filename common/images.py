@@ -86,7 +86,8 @@ def upload_image_from_url(url, resize=(192, 192), convert_to="jpg", quality=90):
         image_name += ".jpg"
 
     try:
-        image_data = io.BytesIO(requests.get(url).content)
+        # SECURITY: explicit timeout (was: no timeout — worker hang); redirects stay disabled
+        image_data = io.BytesIO(requests.get(url, timeout=10, allow_redirects=False).content)
     except requests.exceptions.RequestException:
         return None
 

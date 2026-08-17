@@ -66,6 +66,12 @@ async def upvote_comment(update: Update, context: CallbackContext) -> None:
         log.info("Original comment not found. Skipping.")
         return None
 
+    # SECURITY: do not accept votes for deleted comments or comments on drafts
+    # (forged updates could stuff votes on invisible content)
+    if comment.is_deleted or comment.post.is_draft:
+        log.info("Vote rejected: deleted comment or draft post")
+        return None
+
     _, is_created = CommentVote.upvote(
         user=user,
         comment=comment,
@@ -91,6 +97,12 @@ async def upvote_post(update: Update, context: CallbackContext) -> None:
     post = Post.objects.filter(id=post_id).first()
     if not post:
         log.info("Original post not found. Skipping.")
+        return None
+
+    # SECURITY: do not accept votes for drafts / not-yet-approved / rejected posts
+    # (forged updates could pre-stuff votes on invisible posts before moderation)
+    if post.is_draft or post.moderation_status in (Post.MODERATION_PENDING, Post.MODERATION_REJECTED):
+        log.info("Vote rejected: draft or unmoderated post")
         return None
 
     _, is_created = PostVote.upvote(

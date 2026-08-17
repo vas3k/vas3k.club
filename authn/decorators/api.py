@@ -19,7 +19,8 @@ def api(require_auth=True, scopes=None):
 
             # try to resolve auth (always, even if not required)
             # requests on behalf of apps (user == owner, for simplicity)
-            service_token = request.headers.get("X-Service-Token") or request.GET.get("service_token")
+            # SECURITY: service token is no longer accepted via GET (leaks into logs/history/Referer)
+            service_token = request.headers.get("X-Service-Token")
             if service_token:
                 app = app_by_service_token(service_token)
                 if not app:
@@ -75,9 +76,10 @@ def api(require_auth=True, scopes=None):
                     data=ex.data,
                 )
             except Exception as ex:
+                # SECURITY: do not leak internal exception details to API clients
                 raise ApiException(
                     code=ex.__class__.__name__,
-                    title=str(ex),
+                    title="Internal error",
                 )
 
             # return results in expected format

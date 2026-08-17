@@ -97,6 +97,9 @@ def main() -> None:
             port=settings.TELEGRAM_BOT_WEBHOOK_PORT,
             url_path=settings.TELEGRAM_TOKEN,
             webhook_url=settings.TELEGRAM_BOT_WEBHOOK_URL + settings.TELEGRAM_TOKEN,
+            # SECURITY: authenticate incoming webhooks (previously anyone who knew the token
+            # could POST forged Updates: comments/moderation/impersonation)
+            secret_token=settings.TELEGRAM_WEBHOOK_SECRET,
         )
 
 

@@ -26,6 +26,26 @@ async def command_auth(update: Update, context: CallbackContext) -> None:
         await update.effective_chat.send_message("Пользователь с таким кодом не найден")
         return None
 
+    # SECURITY: never silently re-link an account that already has a telegram bound.
+    # A leaked secret_hash (it is embedded in every digest email footer) used to give
+    # a full account takeover: re-link → login codes are delivered to the attacker's telegram.
+    if user.telegram_id and str(user.telegram_id) != str(update.effective_user.id):
+        await update.effective_chat.send_message(
+            "⛔️ Этот аккаунт уже привязан к другому Telegram. "
+            "Если это ваш аккаунт — сначала отвяжите старый Telegram "
+            "или перегенерируйте секретный код в настройках профиля на сайте."
+        )
+        try:
+            await context.bot.send_message(
+                chat_id=int(user.telegram_id),
+                text="⚠️ Кто-то только что использовал ваш секретный код для привязки другого Telegram-аккаунта. "
+                     "Если это были не вы — срочно перегенерируйте секретный код "
+                     "в настройках профиля на сайте и сообщите модераторам.",
+            )
+        except Exception:
+            pass
+        return None
+
     user.telegram_id = update.effective_user.id
     user.telegram_data = {
         "id": update.effective_user.id,

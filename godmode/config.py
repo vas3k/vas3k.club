@@ -130,6 +130,22 @@ ADMIN = ClubAdmin(
                         "is_banned_until",
                         "deleted_at",
                     ],
+                    # SECURITY: explicit edit whitelist (was: all editable fields minus hide_fields).
+                    # A moderator could previously rewrite email (account takeover via login code),
+                    # membership dates (free membership), moderation_status, telegram_id, stripe_id etc.
+                    # Sensitive changes remain available via the curated per-field actions below.
+                    edit_fields=[
+                        "full_name",
+                        "company",
+                        "position",
+                        "city",
+                        "country",
+                        "bio",
+                        "contact",
+                        "hat",
+                        "email_digest_type",
+                        "profile_publicity_level",
+                    ],
                     hide_fields=["secret_hash", "roles"],
                     actions={
                         "profile": ClubAdminAction(
@@ -268,7 +284,10 @@ ADMIN = ClubAdmin(
                     name="posts",
                     title_field="title",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
-                    edit_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    # SECURITY: curator removed from edit_roles; explicit edit whitelist
+                    # (was: curator could edit ALL post fields — self-approve posts, reassign
+                    # authorship, manipulate upvotes/hotness/visibility)
+                    edit_roles={User.ROLE_MODERATOR, User.ROLE_GOD},
                     delete_roles=set(),
                     create_roles=set(),
                     list_fields=[
@@ -284,6 +303,15 @@ ADMIN = ClubAdmin(
                         "is_public",
                         "moderation_status",
                         "visibility",
+                    ],
+                    edit_fields=[
+                        "title",
+                        "label_code",
+                        "room",
+                        "is_public",
+                        "is_commentable",
+                        "is_pinned_until",
+                        "collectible_tag_code",
                     ],
                     hide_fields=["html", "deleted_at"],
                     actions={

@@ -62,7 +62,9 @@ class OAuth2App(models.Model, ClientMixin):
         return list_to_scope([s for s in scope.split() if s in allowed])
 
     def check_redirect_uri(self, redirect_uri):
-        return redirect_uri in self.redirect_uris
+        # SECURITY: exact match against the registered list
+        # (was: substring check — `redirect_uri in self.redirect_uris`)
+        return redirect_uri in [uri.strip() for uri in self.redirect_uris.split(",") if uri.strip()]
 
     def check_client_secret(self, client_secret):
         return hmac.compare_digest(self.client_secret, client_secret)

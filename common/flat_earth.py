@@ -17,7 +17,7 @@ def parse_horoscope():
     moon_phase = cache.get("moon_phase")
     if not moon_phase:
         try:
-            soup = BeautifulSoup(requests.get(MAGIC_URL).text, features="html.parser")
+            soup = BeautifulSoup(requests.get(MAGIC_URL, timeout=10).text, features="html.parser")  # SECURITY: explicit timeout
         except RequestException:
             return {
                 "club_day": (datetime.utcnow() - settings.LAUNCH_DATE).days,

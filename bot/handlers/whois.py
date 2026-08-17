@@ -64,6 +64,14 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
             )
             return None
 
+        # SECURITY: respect the "параноик" privacy level (mass deanonymization oracle)
+        if user.profile_publicity_level == User.PUBLICITY_LEVEL_PRIVATE:
+            await message.reply_text(
+                "🤨 Пользователь с таким телеграм-никнеймом или ID не найден в Клубе.",
+                do_quote=True
+            )
+            return None
+
         profile_url = settings.APP_HOST + reverse("profile", kwargs={
             "user_slug": user.slug,
         })

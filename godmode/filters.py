@@ -24,10 +24,13 @@ def apply_filters(queryset, model, filter_field, filter_operator, filter_value, 
 
     # Apply sorting
     if sort_field and sort_direction:
-        if sort_direction == "desc":
-            queryset = queryset.order_by(f"-{sort_field}")
-        else:
-            queryset = queryset.order_by(sort_field)
+        # SECURITY: whitelist sort fields (was: raw order_by with user input => relation traversal)
+        allowed_fields = {f.name for f in model._meta.fields}
+        if sort_field in allowed_fields:
+            if sort_direction == "desc":
+                queryset = queryset.order_by(f"-{sort_field}")
+            else:
+                queryset = queryset.order_by(sort_field)
 
     return queryset
 
@@ -60,6 +63,13 @@ def apply_field_filter(queryset, model, filter_field, filter_operator, filter_va
     Apply filter to a specific field using Django's built-in lookups.
     """
     try:
+        # SECURITY: whitelist direct model fields only. Previously any string (including
+        # relation traversal like "sessions__token") was accepted, turning the admin list
+        # into a boolean oracle for extracting session tokens / secret hashes character by character.
+        allowed_fields = {f.name for f in model._meta.fields}
+        if filter_field not in allowed_fields:
+            return queryset
+
         # Find the operator in FILTER_OPERATORS
         operator_info = next((op for op in FILTER_OPERATORS if op["value"] == filter_operator), None)
         if not operator_info:

@@ -204,6 +204,7 @@ def godmode_create_model(request, model_name):
     })
 
 
+@require_auth  # SECURITY: was missing — anonymous requests crashed with 500 instead of redirecting
 def godmode_show_page(request, page_name):
     if not ADMIN.has_access(request.me):
         raise AccessDenied()

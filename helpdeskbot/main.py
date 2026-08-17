@@ -64,6 +64,8 @@ def main() -> None:
             port=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_PORT,
             url_path=config.TELEGRAM_HELP_DESK_BOT_TOKEN,
             webhook_url=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_URL + config.TELEGRAM_HELP_DESK_BOT_TOKEN,
+            # SECURITY: authenticate incoming webhooks (forged "support answers" were DMed to users)
+            secret_token=config.TELEGRAM_HELP_DESK_BOT_WEBHOOK_SECRET,
         )
 
 

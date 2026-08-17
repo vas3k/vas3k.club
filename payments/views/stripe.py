@@ -6,8 +6,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from stripe.error import InvalidRequestError
 
+from django.views.decorators.http import require_http_methods
+
 from authn.decorators.auth import require_auth
-from club.exceptions import BadRequest
+from club.exceptions import BadRequest, AccessDenied
 from payments.exceptions import PaymentException
 from payments.helpers import parse_stripe_webhook_event
 from payments.models import Payment
@@ -130,6 +132,7 @@ def pay(request):
 
 
 @require_auth
+@require_http_methods(["POST"])  # SECURITY: destructive action must not be a GET (CSRF via a link)
 def stop_subscription(request, subscription_id):
     try:
         subscription = stripe.Subscription.retrieve(subscription_id)
@@ -138,6 +141,10 @@ def stop_subscription(request, subscription_id):
             "title": "Подписка не найдена",
             "message": "Подписка с таким ID не найдена. Возможно, она уже была отменена."
         })
+
+    # SECURITY: ownership check (previously any authenticated user could cancel anyone's subscription)
+    if not request.me.stripe_id or subscription.get("customer") != request.me.stripe_id:
+        raise AccessDenied()
 
     if subscription.status == "canceled":
         return render(request, "payments/messages/subscription_stopped.html")
@@ -187,17 +194,30 @@ def stripe_webhook(request):
 
     if event["type"] == "invoice.paid":
         invoice = event["data"]["object"]
-        if invoice["billing_reason"] == "subscription_create":
-            # already processed in "checkout.session.completed" event
-            return HttpResponse("[ok]", status=200)
+        if invoice["billing_reason"] != "subscription_cycle":
+            # SECURITY: only real subscription renewals grant days.
+            # Previously any invoice (proration/$0/manual) granted a full period.
+            return HttpResponse("[skipped: not a renewal]", status=200)
+
+        # SECURITY: idempotency — Stripe delivers webhooks at least once;
+        # duplicates previously granted the full period again
+        if Payment.get(reference=invoice["id"]):
+            return HttpResponse("[already processed]", status=200)
 
         user = User.objects.filter(stripe_id=invoice["customer"]).first()
-        # todo: do we need throw error in case user not found?
+        if not user:
+            log.warning(f"invoice.paid for unknown customer: {invoice['customer']}")
+            return HttpResponse("[skipped: unknown customer]", status=200)
+
+        product = find_by_stripe_id(invoice["lines"]["data"][0]["plan"]["id"])
+        if not product:
+            log.warning(f"invoice.paid for unknown price: {invoice['lines']['data'][0]['plan']['id']}")
+            return HttpResponse("[skipped: unknown product]", status=200)
 
         payment = Payment.create(
             reference=invoice["id"],
             user=user,
-            product=find_by_stripe_id(invoice["lines"]["data"][0]["plan"]["id"]),
+            product=product,
             data=invoice,
             status=Payment.STATUS_SUCCESS,
         )

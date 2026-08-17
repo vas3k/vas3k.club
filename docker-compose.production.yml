@@ -74,7 +74,8 @@ services:
         networks:
             - club_network
         ports:
-            - "8816:8816"
+            # SECURITY: bind to localhost (nginx proxies webhooks); previously exposed on 0.0.0.0
+            - "127.0.0.1:8816:8816"
 
     helpdeskbot:
         <<: *app
@@ -84,7 +85,7 @@ services:
         networks:
             - club_network
         ports:
-            - "8817:8817"
+            - "127.0.0.1:8817:8817"
 
     cron:
         <<: *app

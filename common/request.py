@@ -2,12 +2,14 @@ import ipaddress
 
 
 def parse_ip_address(request):
-    ip = request.META.get("HTTP_X_REAL_IP") \
-        or request.META.get("HTTP_X_FORWARDED_FOR") \
-        or request.environ.get("REMOTE_ADDR") or ""
-
-    if "," in ip:  # multiple ips in the header
-        ip = ip.split(",", 1)[0]
+    # SECURITY: X-Real-IP and the FIRST X-Forwarded-For entry are client-controlled and were
+    # spoofable (view/vote antifraud bypass, IP-ban evasion). The rightmost XFF entry is the
+    # one appended by our own nginx ($proxy_add_x_forwarded_for) and reflects the real peer.
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        ip = xff.split(",")[-1].strip()
+    else:
+        ip = request.environ.get("REMOTE_ADDR") or ""
 
     try:
         # Validate if it's a proper IP address

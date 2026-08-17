@@ -3,7 +3,7 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
-from authn.helpers import check_user_permissions
+from authn.helpers import check_user_permissions, get_access_denied_reason
 from authn.decorators.api import api
 from club.exceptions import ApiAuthRequired
 from common.pagination import paginate
@@ -42,8 +42,11 @@ def api_show_post(request, post_type, post_slug):
     if not post.can_view(request.me):
         raise Http404()
 
+    # SECURITY: unmask private content only for users in good standing
+    # (banned / expired / on-review users were able to read all private posts via .json)
+    denied_reason = get_access_denied_reason(request.me) if request.me else None
     return {
-        "post": post.to_dict(including_private=bool(request.me))
+        "post": post.to_dict(including_private=bool(request.me) and denied_reason is None)
     }
 
 
@@ -62,6 +65,10 @@ def json_feed(request, post_type=POST_TYPE_ALL, ordering=ORDERING_ACTIVITY):
     # paginate
     posts = paginate(request, posts)
 
+    # SECURITY: same access gate as api_show_post (was: any session unmasked everything)
+    denied_reason = get_access_denied_reason(request.me) if request.me else None
+    including_private = bool(request.me) and denied_reason is None
+
     return JsonResponse({
         "version": "https://jsonfeed.org/version/1.1",
         "title": "Вастрик Клуб — JSON Feed",
@@ -69,6 +76,6 @@ def json_feed(request, post_type=POST_TYPE_ALL, ordering=ORDERING_ACTIVITY):
         "feed_url": f"{settings.APP_HOST}{reverse('json_feed')}",
         "next_url": f"{settings.APP_HOST}{reverse('json_feed')}?page={page_number + 1}",
         "items": [
-            post.to_dict(including_private=bool(request.me)) for post in posts
+            post.to_dict(including_private=including_private) for post in posts
         ]
     }, json_dumps_params=dict(ensure_ascii=False), content_type="application/feed+json")

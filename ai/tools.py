@@ -16,20 +16,32 @@ def generic_search(query, limit=5):
     results = []
     for result in search_results:
         if result.type == SearchIndex.TYPE_POST and result.post:
-            results.append(result.post.to_dict(including_private=True))
+            # SECURITY: skip non-public posts (was: full text of pending posts leaked here)
+            if result.post.visibility == Post.VISIBILITY_EVERYWHERE \
+                    and result.post.moderation_status in (Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN):
+                results.append(result.post.to_dict(including_private=True))
         elif result.type == SearchIndex.TYPE_COMMENT and result.comment:
-            results.append(result.comment.to_dict())
+            if not result.comment.is_deleted:
+                results.append(result.comment.to_dict())
         elif result.type == SearchIndex.TYPE_USER and result.user:
-            if result.user.profile_publicity_level != User.PUBLICITY_LEVEL_PRIVATE:
+            # SECURITY: skip private profiles AND users who did not pass moderation
+            if result.user.profile_publicity_level != User.PUBLICITY_LEVEL_PRIVATE \
+                    and result.user.moderation_status == User.MODERATION_STATUS_APPROVED:
                 results.append(result.user.to_dict())
 
     return results
 
 
 def search_posts(query, post_type=None, order_by="-rank", limit=5):
+    # SECURITY: only fully public posts — previously pending (link_only) posts,
+    # invisible anywhere on the site, were readable through bot answers
     search_results = SearchIndex\
         .search(query) \
-        .filter(type=SearchIndex.TYPE_POST)
+        .filter(type=SearchIndex.TYPE_POST) \
+        .filter(
+            post__visibility=Post.VISIBILITY_EVERYWHERE,
+            post__moderation_status__in=(Post.MODERATION_APPROVED, Post.MODERATION_FORGIVEN),
+        )
 
     if post_type:
         search_results = search_results.filter(post__type=post_type)
@@ -45,7 +57,9 @@ def search_comments(query, order_by="-rank", limit=7):
     search_results = SearchIndex\
         .search(query) \
         .filter(type=SearchIndex.TYPE_COMMENT) \
-        .exclude(comment__isnull=True, comment__is_deleted=True) \
+        .exclude(comment__isnull=True) \
+        .exclude(comment__is_deleted=True) \
+        .filter(comment__post__moderation_status=Post.MODERATION_APPROVED) \
         .select_related("comment") \
         .order_by(order_by)[:limit]
 

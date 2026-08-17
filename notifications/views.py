@@ -97,7 +97,12 @@ def email_digest_switch(request, digest_type, user_id, secret):
         })
 
 
+@require_auth
 def render_weekly_digest(request):
+    # SECURITY: digest contains excerpts of private posts — previously available to anonymous users
+    if not request.me.is_moderator:
+        raise AccessDenied()
+
     try:
         digest, _ = generate_weekly_digest(no_footer=True)
     except NotFound:

@@ -77,16 +77,21 @@ class UserBadge(models.Model):
                 message="Это что такое-то вообще!"
             )
 
-        if badge.price_days >= from_user.membership_days_left():
-            raise InsufficientFunds(
-                title="💸 Недостаточно средств :(",
-                message=f"Вы не можете подарить юзеру эту награду, "
-                        f"так как у вас осталось {math.floor(from_user.membership_days_left())} дней членства, "
-                        f"а награда стоит {badge.price_days}. "
-                        f"Продлите членство в настройках своего профиля."
-            )
-
         with transaction.atomic():
+            # SECURITY: balance check moved INSIDE the transaction with a row lock.
+            # Previously the check ran before transaction.atomic() on a stale instance:
+            # parallel requests all passed the check and overdrew the balance (proven: -1135 days).
+            from_user = User.objects.select_for_update().get(id=from_user.id)
+
+            if badge.price_days >= from_user.membership_days_left():
+                raise InsufficientFunds(
+                    title="💸 Недостаточно средств :(",
+                    message=f"Вы не можете подарить юзеру эту награду, "
+                            f"так как у вас осталось {math.floor(from_user.membership_days_left())} дней членства, "
+                            f"а награда стоит {badge.price_days}. "
+                            f"Продлите членство в настройках своего профиля."
+                )
+
             # save user badge into the database
             try:
                 user_badge = UserBadge.objects.create(

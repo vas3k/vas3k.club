@@ -11,7 +11,8 @@ from bot.handlers.common import UserRejectReason, PostRejectReason
 from bot.decorators import is_moderator, ensure_fresh_db_connection
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
-    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers
+    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers, \
+    announce_in_online_channel
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -61,6 +62,7 @@ async def approve_post(update: Update, context: CallbackContext) -> None:
 
     async_task(notify_post_approved, post)
     async_task(announce_in_club_chats, post)
+    async_task(announce_in_online_channel, post)  # moved here from publish-time (only approved posts)
 
     if post.collectible_tag_code:
         async_task(notify_post_collectible_tag_owners, post)

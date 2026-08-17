@@ -62,7 +62,11 @@ def notify_on_comment_created(comment):
             notified_user_ids.add(thread_author.id)
 
     # post top level comments to "online" channel
-    if not comment.reply_to and comment.post.visibility != Post.VISIBILITY_DRAFT:
+    # SECURITY: only mirror comments of fully public posts
+    # (previously comments on link_only / room-only posts leaked to the channel)
+    if not comment.reply_to \
+            and comment.post.visibility == Post.VISIBILITY_EVERYWHERE \
+            and not comment.post.is_room_only:
         send_telegram_message(
             chat=CLUB_ONLINE,
             text=render_html_message("channel_comment_announce.html", comment=comment),

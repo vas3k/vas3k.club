@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from authn.decorators.auth import require_auth
 from django.conf import settings
+from django.db import transaction
 from django_q.tasks import async_task
 
 from authn.models.session import Code
@@ -54,44 +55,47 @@ def show_invite(request, invite_code):
 
 
 def activate_invite(request, invite_code):
-    invite = get_object_or_404(Invite, code=invite_code)
+    # SECURITY: the whole check-and-activate flow must be atomic with a row lock.
+    # Previously two parallel activations of the same invite both succeeded (double membership).
+    with transaction.atomic():
+        invite = get_object_or_404(Invite.objects.select_for_update(), code=invite_code)
 
-    if invite.is_used:
-        if request.me and request.me.is_moderator:
+        if invite.is_used:
+            if request.me and request.me.is_moderator:
+                return render(request, "error.html", {
+                    "title": "Этот инвайт-код уже использован 🥲",
+                    "message": f"Включен режим модератора. Пользователь: {invite.invited_user.slug}"
+                })
+
             return render(request, "error.html", {
                 "title": "Этот инвайт-код уже использован 🥲",
-                "message": f"Включен режим модератора. Пользователь: {invite.invited_user.slug}"
+                "message": "Кажется, кто-то уже использовал этот инвайт. "
+                           "Вы можете связаться с человеком, который вам его подарил, и спросить что случилось."
             })
 
-        return render(request, "error.html", {
-            "title": "Этот инвайт-код уже использован 🥲",
-            "message": "Кажется, кто-то уже использовал этот инвайт. "
-                       "Вы можете связаться с человеком, который вам его подарил, и спросить что случилось."
-        })
+        if invite.is_expired:
+            return render(request, "error.html", {
+                "title": "Этот инвайт истек 🥲",
+                "message": "Инвайт-код никто не использовал в течение года и он протух. "
+                           "По нему больше не получится зарегистрироваться."
+            })
 
-    if invite.is_expired:
-        return render(request, "error.html", {
-            "title": "Этот инвайт истек 🥲",
-            "message": "Инвайт-код никто не использовал в течение года и он протух. "
-                       "По нему больше не получится зарегистрироваться."
-        })
+        email = request.POST.get("email")
+        if not email or "@" not in email or "." not in email:
+            return render(request, "error.html", {
+                "title": "Странный email",
+                "message": "Пожалуйста, введите нормальный адрес почты, чтобы зарегистрироваться."
+            })
 
-    email = request.POST.get("email")
-    if not email or "@" not in email or "." not in email:
-        return render(request, "error.html", {
-            "title": "Странный email",
-            "message": "Пожалуйста, введите нормальный адрес почты, чтобы зарегистрироваться."
-        })
+        email = email.lower().strip()
 
-    email = email.lower().strip()
-
-    if request.me and request.me.email == email:
-        club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, request.me)
-        now = datetime.utcnow()
-        invite.used_at = now
-        invite.invited_user = request.me
-        invite.save()
-        return redirect(reverse("profile", args=[request.me.slug]))
+        if request.me and request.me.email == email:
+            club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, request.me)
+            now = datetime.utcnow()
+            invite.used_at = now
+            invite.invited_user = request.me
+            invite.save()
+            return redirect(reverse("profile", args=[request.me.slug]))
 
     now = datetime.utcnow()
     user, _ = User.objects.get_or_create(

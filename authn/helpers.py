@@ -35,7 +35,9 @@ def authorized_user(request):
 
 
 def authorized_user_with_session(request) -> Tuple[Optional[User], Optional[Session]]:
-    auth_token = request.COOKIES.get("token") or request.GET.get("token")
+    # SECURITY: session token is no longer accepted via GET parameter
+    # (it leaked into proxy logs, browser history and Referer headers)
+    auth_token = request.COOKIES.get("token")
     if auth_token:
         return user_by_token(auth_token)
 
@@ -124,5 +126,6 @@ def set_session_cookie(response, user, session):
         expires=max(user.membership_expires_at, datetime.utcnow() + timedelta(days=30)),
         httponly=True,
         secure=not settings.DEBUG,
+        samesite="Lax",  # SECURITY: explicit SameSite (CSRF mitigation), do not rely on browser defaults
     )
     return response

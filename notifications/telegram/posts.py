@@ -1,3 +1,4 @@
+import html
 import logging
 
 from django.conf import settings
@@ -95,7 +96,9 @@ def send_published_post_to_moderators(post):
         ai_post_rate_text = ai_rate_post_quality(post)
         send_telegram_message(
             chat=ADMIN_CHAT,
-            text=ai_post_rate_text,
+            # SECURITY: LLM output is attacker-influenced (post content goes into the prompt);
+            # escape it — previously raw HTML (incl. phishing links) landed in the admin chat
+            text=html.escape(ai_post_rate_text or ""),
             parse_mode=ParseMode.HTML,
             reply_to_message_id=message.message_id,
         )
@@ -117,6 +120,13 @@ def send_intro_changes_to_moderators(post):
 
 
 def announce_in_online_channel(post):
+    # SECURITY: never announce unmoderated or restricted posts.
+    # Previously it was called right at publish time (PENDING + LINK_ONLY),
+    # leaking pre-moderation content to the channel.
+    if post.moderation_status != Post.MODERATION_APPROVED or post.visibility != Post.VISIBILITY_EVERYWHERE:
+        log.info(f"Skipping online-channel announce for non-public post {post.slug}")
+        return
+
     send_telegram_message(
         chat=CLUB_ONLINE,
         text=render_html_message("channel_post_announce.html", post=post),
@@ -145,8 +155,10 @@ def announce_in_club_channel(post, announce_text=None, image=None):
 
 
 def announce_in_club_chats(post):
-    # announce to public chat
-    if post.visibility == Post.VISIBILITY_EVERYWHERE or not post.room or not post.room.chat_id:
+    # SECURITY: room-only posts must not be announced to the main club chat
+    # (previously they were announced there on approval despite the "room only" flag)
+    if (post.visibility == Post.VISIBILITY_EVERYWHERE and not post.is_room_only) \
+            or not post.room or not post.room.chat_id:
         send_telegram_message(
             chat=CLUB_CHAT,
             text=render_html_message("channel_post_announce.html", post=post),
@@ -289,7 +301,8 @@ def notify_admins_on_post_label_changed(post):
     for chat in [ADMIN_CHAT, VIBES_CHAT]:
         send_telegram_message(
             chat=chat,
-            text=f"🏷️ Посту «{post.title}» выдан лейбл «{post.label_code}»"
+            # SECURITY: escape user-controlled post title (HTML injection into the admin chat)
+            text=f"🏷️ Посту «{html.escape(post.title)}» выдан лейбл «{html.escape(post.label_code or '')}»"
         )
 
 

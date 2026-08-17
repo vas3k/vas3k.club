@@ -83,4 +83,9 @@ def api_profile_by_telegram_id(request, telegram_id):
         )
         user = same_telegram[0]
 
+    # SECURITY: respect the "параноик" privacy level — this endpoint was a mass
+    # deanonymization oracle (any member could enumerate telegram ids -> club identity)
+    if user.profile_publicity_level == User.PUBLICITY_LEVEL_PRIVATE and not request.me.is_moderator:
+        raise ApiAccessDenied(title="Этот пользователь скрыл свой профиль")
+
     return JsonResponse({"user": user.to_dict()})

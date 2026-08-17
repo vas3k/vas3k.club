@@ -1,3 +1,4 @@
+import html
 import logging
 
 from django.conf import settings
@@ -60,7 +61,9 @@ def notify_profile_needs_review(user, intro):
         ai_intro_rate_text = ai_rate_intro_quality(user, intro)
         send_telegram_message(
             chat=ADMIN_CHAT,
-            text=ai_intro_rate_text,
+            # SECURITY: LLM output is attacker-influenced (intro content goes into the prompt);
+            # escape it — previously raw HTML (incl. phishing links) landed in the admin chat
+            text=html.escape(ai_intro_rate_text or ""),
             parse_mode=ParseMode.HTML,
             reply_to_message_id=message.message_id,
         )
