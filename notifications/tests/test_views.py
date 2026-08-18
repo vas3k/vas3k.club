@@ -29,7 +29,11 @@ class TestNotificationViews(TestCase):
 
     def test_email_confirm_accepts_signed_token(self):
         secret = generate_notification_token(self.user)
-        response = self.client.get(reverse("email_confirm", args=[self.user.id, secret]))
+        url = reverse("email_confirm", args=[self.user.id, secret])
+        self.assertNotIn(self.user.secret_hash, secret)
+        self.assertNotIn(self.user.secret_hash, url)
+
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
@@ -41,9 +45,22 @@ class TestNotificationViews(TestCase):
         self.user.refresh_from_db()
         self.assertFalse(self.user.is_email_verified)
 
+    def test_email_confirm_rejects_another_users_token(self):
+        other = create_approved_user("notify_other")
+        response = self.client.get(
+            reverse("email_confirm", args=[self.user.id, generate_notification_token(other)])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_email_verified)
+
     def test_email_unsubscribe_sets_flags(self):
         secret = generate_notification_token(self.user)
-        response = self.client.get(reverse("email_unsubscribe", args=[self.user.id, secret]))
+        url = reverse("email_unsubscribe", args=[self.user.id, secret])
+        self.assertNotIn(self.user.secret_hash, secret)
+        self.assertNotIn(self.user.secret_hash, url)
+
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
@@ -54,15 +71,26 @@ class TestNotificationViews(TestCase):
         response = self.client.get(reverse("email_unsubscribe", args=[self.user.id, self.user.secret_hash]))
         self.assertEqual(response.status_code, 404)
 
+    def test_email_unsubscribe_rejects_another_users_token(self):
+        other = create_approved_user("notify_unsub_other")
+        response = self.client.get(
+            reverse("email_unsubscribe", args=[self.user.id, generate_notification_token(other)])
+        )
+        self.assertEqual(response.status_code, 404)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_email_unsubscribed)
+
     def test_email_digest_switch_to_daily_resets_unsubscribed(self):
         self.user.is_email_unsubscribed = True
         self.user.email_digest_type = User.EMAIL_DIGEST_TYPE_NOPE
         self.user.save(update_fields=["is_email_unsubscribed", "email_digest_type"])
 
         secret = generate_notification_token(self.user)
-        response = self.client.get(
-            reverse("email_digest_switch", args=[User.EMAIL_DIGEST_TYPE_DAILY, self.user.id, secret])
-        )
+        url = reverse("email_digest_switch", args=[User.EMAIL_DIGEST_TYPE_DAILY, self.user.id, secret])
+        self.assertNotIn(self.user.secret_hash, secret)
+        self.assertNotIn(self.user.secret_hash, url)
+
+        response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
@@ -146,3 +174,13 @@ class TestNotificationViews(TestCase):
             response = self.client.get(reverse("render_weekly_digest"))
 
         self.assertEqual(response.status_code, 404)
+
+    def test_welcome_email_does_not_leak_secret_hash(self):
+        from notifications.email.users import send_welcome_drink
+
+        with patch("notifications.email.users.send_transactional_email") as mock_send:
+            send_welcome_drink(self.user)
+
+        html = mock_send.call_args.kwargs["html"]
+        self.assertNotIn(self.user.secret_hash, html)
+        self.assertIn(str(self.user.id), html)
