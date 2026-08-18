@@ -1,4 +1,3 @@
-import base64
 import logging
 from datetime import datetime, timedelta
 
@@ -11,6 +10,7 @@ from godmode.models import ClubSettings
 from notifications.digests import generate_weekly_digest
 from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message, Chat
 from notifications.email.sender import send_mass_email
+from notifications.helpers import generate_notification_token
 from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.user import User
@@ -104,7 +104,7 @@ class Command(BaseCommand):
                 continue
 
             try:
-                secret_code = base64.b64encode(user.secret_hash.encode("utf-8")).decode()
+                secret_code = generate_notification_token(user)
 
                 digest = digest_template\
                     .replace("%user_id%", str(user.id))\

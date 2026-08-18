@@ -15,6 +15,7 @@ from authn.providers.common import Membership, Platform
 from authn.exceptions import PatreonException
 from club import features
 from debug.helpers import HelperClient, JWT_STUB_VALUES
+from notifications.helpers import generate_notification_token
 from users.models.user import User
 
 
@@ -454,7 +455,7 @@ class ViewEmailConfirmTests(TestCase):
 
     def test_valid_secret_confirms_email(self):
         response = self.client.get(
-            reverse("email_confirm", args=[self.new_user.id, self.new_user.secret_hash])
+            reverse("email_confirm", args=[self.new_user.id, generate_notification_token(self.new_user)])
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(User.objects.get(id=self.new_user.id).is_email_verified)
@@ -468,7 +469,10 @@ class ViewEmailConfirmTests(TestCase):
 
     def test_wrong_user_id_returns_404(self):
         response = self.client.get(
-            reverse("email_confirm", args=["00000000-0000-0000-0000-000000000000", self.new_user.secret_hash])
+            reverse(
+                "email_confirm",
+                args=["00000000-0000-0000-0000-000000000000", generate_notification_token(self.new_user)],
+            )
         )
         self.assertEqual(response.status_code, 404)
         self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)

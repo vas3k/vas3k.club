@@ -1,4 +1,3 @@
-import base64
 import random
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
@@ -14,6 +13,7 @@ from comments.models import Comment, CommentVote
 from common.data.greetings import DUMB_GREETINGS
 from godmode.models import ClubSettings
 from misc.models import ProTip
+from notifications.helpers import generate_notification_token
 from posts.models.post import Post
 from posts.models.votes import PostVote
 from users.models.achievements import UserAchievement
@@ -139,7 +139,7 @@ def generate_daily_digest(user):
         "settings": settings,  # why not automatically?
         "date": end_date,
         "greetings": random.choice(DUMB_GREETINGS),
-        "secret_code": base64.b64encode(user.secret_hash.encode("utf-8")).decode()
+        "secret_code": generate_notification_token(user)
     })
 
 

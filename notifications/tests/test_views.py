@@ -1,4 +1,3 @@
-import base64
 import hashlib
 import hmac
 import json
@@ -10,6 +9,7 @@ from django.urls import reverse
 
 from club.exceptions import NotFound
 from debug.utils_for_tests import create_approved_user, login
+from notifications.helpers import generate_notification_token
 from users.models.user import User
 
 
@@ -27,30 +27,41 @@ class TestNotificationViews(TestCase):
         self.user = create_approved_user("notify_user", is_email_verified=False, is_email_unsubscribed=False)
         self.client = Client()
 
-    def test_email_confirm_accepts_base64_secret(self):
-        secret_b64 = base64.b64encode(self.user.secret_hash.encode()).decode()
-
-        response = self.client.get(reverse("email_confirm", args=[self.user.id, secret_b64]))
+    def test_email_confirm_accepts_signed_token(self):
+        secret = generate_notification_token(self.user)
+        response = self.client.get(reverse("email_confirm", args=[self.user.id, secret]))
 
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_email_verified)
 
+    def test_email_confirm_rejects_secret_hash(self):
+        response = self.client.get(reverse("email_confirm", args=[self.user.id, self.user.secret_hash]))
+        self.assertEqual(response.status_code, 404)
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.is_email_verified)
+
     def test_email_unsubscribe_sets_flags(self):
-        response = self.client.get(reverse("email_unsubscribe", args=[self.user.id, self.user.secret_hash]))
+        secret = generate_notification_token(self.user)
+        response = self.client.get(reverse("email_unsubscribe", args=[self.user.id, secret]))
 
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.is_email_unsubscribed)
         self.assertEqual(self.user.email_digest_type, User.EMAIL_DIGEST_TYPE_NOPE)
 
+    def test_email_unsubscribe_rejects_secret_hash(self):
+        response = self.client.get(reverse("email_unsubscribe", args=[self.user.id, self.user.secret_hash]))
+        self.assertEqual(response.status_code, 404)
+
     def test_email_digest_switch_to_daily_resets_unsubscribed(self):
         self.user.is_email_unsubscribed = True
         self.user.email_digest_type = User.EMAIL_DIGEST_TYPE_NOPE
         self.user.save(update_fields=["is_email_unsubscribed", "email_digest_type"])
 
+        secret = generate_notification_token(self.user)
         response = self.client.get(
-            reverse("email_digest_switch", args=[User.EMAIL_DIGEST_TYPE_DAILY, self.user.id, self.user.secret_hash])
+            reverse("email_digest_switch", args=[User.EMAIL_DIGEST_TYPE_DAILY, self.user.id, secret])
         )
 
         self.assertEqual(response.status_code, 200)
@@ -59,7 +70,9 @@ class TestNotificationViews(TestCase):
         self.assertEqual(self.user.email_digest_type, User.EMAIL_DIGEST_TYPE_DAILY)
 
     def test_email_digest_switch_invalid_type_returns_404(self):
-        response = self.client.get(reverse("email_digest_switch", args=["invalid", self.user.id, self.user.secret_hash]))
+        response = self.client.get(
+            reverse("email_digest_switch", args=["invalid", self.user.id, generate_notification_token(self.user)])
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_link_telegram_persists_id_and_clears_cache_key(self):

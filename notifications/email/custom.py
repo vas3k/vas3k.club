@@ -1,4 +1,3 @@
-import base64
 import logging
 
 from django.conf import settings
@@ -7,6 +6,7 @@ from django.template import loader
 
 from common.markdown.markdown import markdown_tg
 from notifications.email.sender import send_mass_email, send_transactional_email
+from notifications.helpers import generate_notification_token
 from notifications.telegram.common import send_telegram_message, Chat
 from users.models.user import User
 
@@ -30,7 +30,7 @@ def send_custom_mass_email(emails_or_slugs: list[str], title: str, text: str, is
             log.info(f"User {user.email} is unsubscribed from promo emails. Skipping.")
             continue
 
-        secret_code = base64.b64encode(user.secret_hash.encode("utf-8")).decode()
+        secret_code = generate_notification_token(user)
         sender = send_mass_email if is_promo else send_transactional_email
         sender(
             recipient=user.email,

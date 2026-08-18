@@ -1,4 +1,3 @@
-import base64
 import logging
 from datetime import date, datetime, time, timedelta
 
@@ -8,6 +7,7 @@ from django.core.management import BaseCommand
 
 from common.messages import render_message_for_email, render_message_for_telegram
 from notifications.email.sender import send_transactional_email
+from notifications.helpers import generate_notification_token
 from notifications.telegram.common import Chat, send_telegram_message
 from rooms.helpers import ban_user_in_all_chats, get_user_chats
 from users.models.user import User
@@ -103,7 +103,7 @@ class Command(BaseCommand):
             if not user.is_email_unsubscribed:
                 self.stdout.write(f"Sending email to {user.email}...")
                 try:
-                    secret_code = base64.b64encode(user.secret_hash.encode("utf-8")).decode()
+                    secret_code = generate_notification_token(user)
                     email = render_message_for_email(
                         stage["template"],
                         title=stage["subject"],

@@ -3,6 +3,7 @@ from django.template import loader, TemplateDoesNotExist
 from authn.models.session import Code
 from bot.handlers.common import UserRejectReason
 from notifications.email.sender import send_transactional_email
+from notifications.helpers import generate_notification_token
 from users.models.user import User
 
 
@@ -31,7 +32,10 @@ def send_welcome_drink(user: User):
     send_transactional_email(
         recipient=user.email,
         subject=f"Велком дринк 🍸",
-        html=welcome_drink_template.render({"user": user}),
+        html=welcome_drink_template.render({
+            "user": user,
+            "secret_code": generate_notification_token(user),
+        }),
         tags=["welcome"]
     )
 

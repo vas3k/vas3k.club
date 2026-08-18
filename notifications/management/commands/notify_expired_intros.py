@@ -1,4 +1,3 @@
-import base64
 import logging
 from datetime import timedelta, datetime
 
@@ -7,6 +6,7 @@ from django.core.management import BaseCommand
 from django.template.loader import render_to_string
 
 from notifications.email.sender import send_mass_email
+from notifications.helpers import generate_notification_token
 from notifications.telegram.common import send_telegram_message, Chat
 from posts.models.post import Post
 from users.models.user import User
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                             "years": now.year - expired_intro.updated_at.year
                         })
 
-                        secret_code = base64.b64encode(user.secret_hash.encode("utf-8")).decode()
+                        secret_code = generate_notification_token(user)
                         email = email \
                             .replace("%user_id%", str(user.id)) \
                             .replace("%secret_code%", secret_code)
