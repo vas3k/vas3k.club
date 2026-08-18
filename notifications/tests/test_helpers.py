@@ -36,3 +36,8 @@ class NotificationTokenTest(TestCase):
         token = generate_notification_token(self.user)
         timestamp, signature = token.split(".", 1)
         self.assertFalse(verify_notification_token(self.user, f"{timestamp}.{signature[:-1]}x"))
+
+    def test_rotating_secret_hash_invalidates_token(self):
+        token = generate_notification_token(self.user)
+        self.user.secret_hash = "rotated" + self.user.secret_hash[7:]
+        self.assertFalse(verify_notification_token(self.user, token))
