@@ -68,7 +68,7 @@ def api_profile_achievements(request, user_slug):
 @api(require_auth=True)
 def api_profile_badges(request, user_slug):
     user = api_profile_user(request, user_slug)
-    user_badges = UserBadge.objects.filter(user=user).select_related("badge", "from_user")
+    user_badges = UserBadge.objects.filter(to_user=user).select_related("badge", "from_user")
     return JsonResponse({"user_badges": [ub.to_dict() for ub in user_badges]})
 
 
