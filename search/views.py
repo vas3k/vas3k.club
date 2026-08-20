@@ -39,7 +39,11 @@ def search(request):
     if ordering not in ALLOWED_ORDERING:
         ordering = "-rank"
 
-    results = results.order_by(ordering)
+    # append the unique primary key as a tiebreaker so rows with equal
+    # ordering values keep a stable, deterministic order across paginated
+    # LIMIT/OFFSET queries — otherwise Postgres may repeat or skip rows
+    # between pages (issue #1213).
+    results = results.order_by(ordering, "id")
 
     return render(request, "search.html", {
         "type": content_type,
