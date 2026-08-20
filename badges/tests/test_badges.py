@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from badges.models import Badge, UserBadge
 from club.exceptions import BadRequest, ContentDuplicated, InsufficientFunds
+from comments.models import Comment
 from posts.models.post import Post
 from users.models.user import User
 
@@ -97,3 +98,39 @@ class TestUserBadgeBusinessLogic(TestCase):
                 to_user=self.to_user,
                 post=self.post,
             )
+
+    def test_to_dict_handles_null_post_from_comment_badge(self):
+        comment_author = _create_user("badge_comment_author")
+        post = Post.objects.create(
+            slug="badge-comment-post",
+            type=Post.TYPE_POST,
+            title="Badge Comment Post",
+            text="Text",
+            author=comment_author,
+            visibility=Post.VISIBILITY_EVERYWHERE,
+            metadata={},
+        )
+        comment = Comment.objects.create(post=post, author=comment_author, text="Nice")
+
+        user_badge = UserBadge.create_user_badge(
+            badge=self.badge,
+            from_user=self.from_user,
+            to_user=comment_author,
+            comment=comment,
+        )
+
+        data = user_badge.to_dict()
+        self.assertIsNone(data["post"])
+        self.assertEqual(data["comment"], {"id": comment.id})
+
+    def test_to_dict_handles_null_comment_from_post_badge(self):
+        user_badge = UserBadge.create_user_badge(
+            badge=self.badge,
+            from_user=self.from_user,
+            to_user=self.to_user,
+            post=self.post,
+        )
+
+        data = user_badge.to_dict()
+        self.assertIsNone(data["comment"])
+        self.assertEqual(data["post"], {"id": self.post.id})
