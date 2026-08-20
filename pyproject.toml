@@ -39,6 +39,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "django-debug-toolbar==7.0.0",
+    "diff-cover>=9.2.0",
     "flake8>=7.3.0",
     "pytest>=9.1.1",
 ]
