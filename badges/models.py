@@ -158,9 +158,9 @@ class UserBadge(models.Model):
     def to_dict(self):
         return {
             "badge": self.badge.to_dict(),
-            "from_user": self.from_user.to_dict(),
+            "from_user": self.from_user.to_dict() if self.from_user else None,
             "created_at": self.created_at.isoformat(),
-            "post": {"id": self.post.id},
-            "comment": {"id": self.comment.id},
+            "post": {"id": self.post.id} if self.post else None,
+            "comment": {"id": self.comment.id} if self.comment else None,
             "note": self.note,
         }
