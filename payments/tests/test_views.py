@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from collections import namedtuple
+from types import SimpleNamespace
 import os
 import uuid
 
@@ -199,6 +200,46 @@ class TestPayView(TestCase):
 
         # check
         self.assertContains(response=response, text="Не выбран пакет", status_code=200)
+
+
+@patch("payments.views.stripe.stripe")
+class TestStopSubscriptionView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create(
+            email="subscriber@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+            stripe_id="cus_owner",
+            slug="subscriber",
+        )
+
+    def setUp(self):
+        self.client = HelperClient(user=self.user)
+        self.client.authorise()
+
+    def test_cancels_own_subscription(self, mocked_stripe):
+        mocked_stripe.Subscription.retrieve.return_value = SimpleNamespace(
+            status="active",
+            customer=self.user.stripe_id,
+        )
+
+        response = self.client.get(reverse("stop_subscription", args=["sub_own"]))
+
+        mocked_stripe.Subscription.cancel.assert_called_once_with("sub_own")
+        self.assertContains(response, "Автопополнение отключено", status_code=200)
+
+    def test_rejects_foreign_customer_id(self, mocked_stripe):
+        mocked_stripe.Subscription.retrieve.return_value = SimpleNamespace(
+            status="active",
+            customer="cus_someone_else",
+        )
+
+        response = self.client.get(reverse("stop_subscription", args=["sub_foreign"]))
+
+        mocked_stripe.Subscription.cancel.assert_not_called()
+        self.assertContains(response, "Подписка не найдена", status_code=200)
 
 
 class TestStripeWebhookView(TestCase):

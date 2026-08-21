@@ -134,9 +134,12 @@ def stop_subscription(request, subscription_id):
     try:
         subscription = stripe.Subscription.retrieve(subscription_id)
     except stripe.error.InvalidRequestError:
+        subscription = None
+
+    if not subscription or subscription.customer != request.me.stripe_id:
         return render(request, "error.html", {
             "title": "Подписка не найдена",
-            "message": "Подписка с таким ID не найдена. Возможно, она уже была отменена."
+            "message": "Подписка с таким ID не найдена. Возможно, она уже была отменена. Если с вас до сих пор списывается денежка — напишите нам на почту, проверим!"
         })
 
     if subscription.status == "canceled":
