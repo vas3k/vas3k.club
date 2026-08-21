@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
@@ -100,7 +100,7 @@ def activate_invite(request, invite_code):
             membership_platform_type=User.MEMBERSHIP_PLATFORM_DIRECT,
             full_name=email[:email.find("@")],
             membership_started_at=now,
-            membership_expires_at=now,
+            membership_expires_at=now + timedelta(days=1), # prevent "insufficient funds" error after redirect
             created_at=now,
             updated_at=now,
             moderation_status=User.MODERATION_STATUS_INTRO,

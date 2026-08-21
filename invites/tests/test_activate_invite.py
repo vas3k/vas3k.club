@@ -90,6 +90,11 @@ class ActivateInviteTests(TestCase):
 
         new_user = User.objects.filter(email=new_email).first()
         self.assertIsNotNone(new_user)
+        self.assertAlmostEqual(
+            new_user.membership_expires_at,
+            datetime.utcnow() + timedelta(days=1),
+            delta=timedelta(seconds=5),
+        )
 
         self.assertFalse(self.client.is_authorised())
 
@@ -97,6 +102,40 @@ class ActivateInviteTests(TestCase):
         self.assertIsNotNone(code)
 
         self.assertContains(response, "Вам отправлен код!", status_code=200)
+
+    def test_anonymous_new_user_activates_after_email_code(self):
+        new_email = "newbie@test.com"
+        self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": new_email},
+        )
+        code = Code.objects.filter(recipient=new_email).first()
+        self.assertIsNotNone(code)
+
+        goto = reverse("show_invite", kwargs={"invite_code": self.invite.code})
+        login_response = self.client.get(
+            reverse("email_login_code"),
+            data={"email": new_email, "code": code.code, "goto": goto},
+        )
+        self.assertRedirects(login_response, goto, fetch_redirect_response=False)
+        self.assertTrue(self.client.is_authorised())
+
+        response = self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": new_email},
+            follow=True,
+        )
+        redirect_urls = [url for url, _status in response.redirect_chain]
+        self.assertNotIn(reverse("membership_expired"), redirect_urls)
+
+        self.invite.refresh_from_db()
+        self.assertIsNotNone(self.invite.used_at)
+        new_user = User.objects.get(email=new_email)
+        self.assertEqual(self.invite.invited_user, new_user)
+        self.assertGreater(
+            new_user.membership_expires_at,
+            datetime.utcnow() + timedelta(days=360),
+        )
 
     def test_authenticated_user_activates_on_own_account(self):
         self.client.authorise()
