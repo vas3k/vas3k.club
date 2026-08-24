@@ -3,15 +3,13 @@ from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 
-from authn.helpers import check_user_permissions
 from authn.decorators.api import api
-from club.exceptions import ApiAuthRequired
 from common.pagination import paginate
 from posts.models.post import Post
 from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, sort_feed
 
 
-@api(require_auth=False)
+@api(require_auth=True)
 def md_show_post(request, post_type, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
@@ -21,18 +19,12 @@ def md_show_post(request, post_type, post_slug):
     if not post.can_view(request.me):
         raise Http404()
 
-    # don't show private posts into public
-    if not post.is_public:
-        access_denied = check_user_permissions(request, post=post)
-        if access_denied:
-            raise ApiAuthRequired()
-
     post_markdown = f"""# {post.title}\n\n{post.text}"""
 
     return HttpResponse(post_markdown, content_type="text/plain; charset=utf-8")
 
 
-@api(require_auth=False)
+@api(require_auth=True)
 def api_show_post(request, post_type, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
 
