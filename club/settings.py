@@ -340,6 +340,7 @@ RATE_LIMIT_COMMENTS_PER_DAY = 100
 RATE_LIMIT_COMMENT_PER_DAY_CUSTOM_KEY = "comments_per_day"
 POST_VIEW_COOLDOWN_PERIOD = timedelta(days=1)  # how much time must pass before a repeat viewing of a post counts
 POST_HOTNESS_PERIOD = timedelta(days=5)  # time window for hotness recalculation script
+POST_DESCRIPTION_LENGTH = 250  # truncated post text length in RSS/JSON feeds and previews
 MAX_COMMENTS_FOR_DELETE_VS_CLEAR = 10  # number of comments after which the post cannot be deleted
 MIN_DAYS_TO_GIVE_BADGES = 50  # minimum "days" balance to buy and gift any badge
 MAX_MUTE_COUNT = 25  # maximum number of users allowed to mute

@@ -295,7 +295,7 @@ class Post(models.Model, ModelDiffMixin):
 
     @property
     def description(self):
-        return truncatechars(strip_tags(self.html or ""), 400)
+        return truncatechars(strip_tags(self.html or ""), settings.POST_DESCRIPTION_LENGTH)
 
     @property
     def effective_published_at(self):
