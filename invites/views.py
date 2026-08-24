@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.db import transaction
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
@@ -86,11 +87,18 @@ def activate_invite(request, invite_code):
     email = email.lower().strip()
 
     if request.me and request.me.email == email:
-        club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, request.me)
         now = datetime.utcnow()
-        invite.used_at = now
-        invite.invited_user = request.me
-        invite.save()
+        with transaction.atomic():
+            is_claimed = Invite.objects.filter(id=invite.id, used_at__isnull=True)\
+                .update(used_at=now, invited_user=request.me)
+            if not is_claimed:
+                return render(request, "error.html", {
+                    "title": "Этот инвайт-код уже использован 🥲",
+                    "message": "Возможно вы уже активировали его ранее? Проверьте свой профиль."
+                })
+
+            club_subscription_activator(PRODUCTS[invite.payment.product_code], invite.payment, request.me)
+
         return redirect(reverse("profile", args=[request.me.slug]))
 
     now = datetime.utcnow()

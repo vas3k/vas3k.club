@@ -7,7 +7,7 @@ from django_q.signing import SignedPackage
 
 from authn.models.session import Code, Session
 from debug.helpers import HelperClient
-from invites.models import Invite
+from invites.models import INVITE_EXPIRATION_DAYS, Invite
 from payments.models import Payment
 from payments.products import PRODUCTS
 from users.models.user import User
@@ -194,3 +194,192 @@ class ActivateInviteTests(TestCase):
         self.assertIsNotNone(code)
 
         self.assertContains(response, "Вам отправлен код!", status_code=200)
+
+    def test_activation_adds_days_on_top_of_remaining_membership(self):
+        self.client.authorise()
+        expires_before = User.objects.get(id=self.existing_victim.id).membership_expires_at
+
+        self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": self.existing_victim.email},
+        )
+
+        self.existing_victim.refresh_from_db()
+        self.assertAlmostEqual(
+            self.existing_victim.membership_expires_at,
+            expires_before + timedelta(days=366),
+            delta=timedelta(minutes=1),
+        )
+
+    def test_expired_member_starts_new_membership_from_today(self):
+        expired_user = User.objects.create(
+            email="expired@test.com",
+            membership_started_at=datetime.now() - timedelta(days=400),
+            membership_expires_at=datetime.now() - timedelta(days=30),
+            slug="expired",
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+        )
+        client = HelperClient(user=expired_user).authorise()
+
+        response = client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": expired_user.email},
+        )
+
+        self.assertRedirects(
+            response,
+            expected_url=f"/user/{expired_user.slug}/",
+            fetch_redirect_response=False,
+        )
+
+        # days spent in the past must not eat into the freshly bought year
+        expired_user.refresh_from_db()
+        self.assertAlmostEqual(
+            expired_user.membership_expires_at,
+            datetime.utcnow() + timedelta(days=366),
+            delta=timedelta(minutes=1),
+        )
+
+    def test_same_user_cannot_activate_invite_twice(self):
+        self.client.authorise()
+
+        self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": self.existing_victim.email},
+        )
+        expires_after_first = User.objects.get(id=self.existing_victim.id).membership_expires_at
+
+        response = self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": self.existing_victim.email},
+        )
+
+        self.assertContains(response, "уже использован", status_code=200)
+
+        self.existing_victim.refresh_from_db()
+        self.assertEqual(self.existing_victim.membership_expires_at, expires_after_first)
+
+    def test_used_invite_cannot_be_activated_by_another_user(self):
+        self.client.authorise()
+        self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": self.existing_victim.email},
+        )
+
+        latecomer = User.objects.create(
+            email="latecomer@test.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+            slug="latecomer",
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+        )
+        expires_before = User.objects.get(id=latecomer.id).membership_expires_at
+
+        response = HelperClient(user=latecomer).authorise().post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": latecomer.email},
+        )
+
+        self.assertContains(response, "уже использован", status_code=200)
+
+        latecomer.refresh_from_db()
+        self.assertEqual(latecomer.membership_expires_at, expires_before)
+
+        self.invite.refresh_from_db()
+        self.assertEqual(self.invite.invited_user, self.existing_victim)
+
+    def test_expired_invite_cannot_be_activated(self):
+        Invite.objects.filter(id=self.invite.id).update(
+            created_at=datetime.utcnow() - timedelta(days=INVITE_EXPIRATION_DAYS + 1)
+        )
+        self.client.authorise()
+        expires_before = User.objects.get(id=self.existing_victim.id).membership_expires_at
+
+        response = self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": self.existing_victim.email},
+        )
+
+        self.assertContains(response, "Этот инвайт истек", status_code=200)
+
+        self.invite.refresh_from_db()
+        self.assertIsNone(self.invite.used_at)
+
+        self.existing_victim.refresh_from_db()
+        self.assertEqual(self.existing_victim.membership_expires_at, expires_before)
+
+    def test_anonymous_submitting_same_new_email_twice_creates_one_user(self):
+        new_email = "twice@test.com"
+
+        for _ in range(2):
+            response = self.client.post(
+                reverse("activate_invite", args=[self.invite.code]),
+                data={"email": new_email},
+            )
+            self.assertContains(response, "Вам отправлен код!", status_code=200)
+
+        self.assertEqual(User.objects.filter(email=new_email).count(), 1)
+
+        self.invite.refresh_from_db()
+        self.assertIsNone(self.invite.used_at)
+
+    def test_anonymous_can_switch_to_another_email_before_activating(self):
+        first_email = "first@test.com"
+        second_email = "second@test.com"
+
+        self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": first_email},
+        )
+        response = self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": second_email},
+        )
+
+        self.assertContains(response, second_email, status_code=200)
+        self.assertIsNotNone(Code.objects.filter(recipient=first_email).first())
+        self.assertIsNotNone(Code.objects.filter(recipient=second_email).first())
+
+        self.invite.refresh_from_db()
+        self.assertIsNone(self.invite.used_at)
+
+    def test_email_is_normalized_before_activation(self):
+        self.client.authorise()
+
+        response = self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": f"  {self.existing_victim.email.upper()} "},
+        )
+
+        self.assertRedirects(
+            response,
+            expected_url=f"/user/{self.existing_victim.slug}/",
+            fetch_redirect_response=False,
+        )
+
+        self.invite.refresh_from_db()
+        self.assertEqual(self.invite.invited_user, self.existing_victim)
+
+    def test_moderator_sees_who_used_the_invite(self):
+        self.client.authorise()
+        self.client.post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": self.existing_victim.email},
+        )
+
+        moderator = User.objects.create(
+            email="invite_moderator@test.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=365),
+            slug="invite_moderator",
+            roles=[User.ROLE_MODERATOR],
+            moderation_status=User.MODERATION_STATUS_APPROVED,
+        )
+
+        response = HelperClient(user=moderator).authorise().post(
+            reverse("activate_invite", args=[self.invite.code]),
+            data={"email": moderator.email},
+        )
+
+        self.assertContains(response, "Включен режим модератора", status_code=200)
+        self.assertContains(response, self.existing_victim.slug)
