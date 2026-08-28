@@ -173,7 +173,7 @@ class TestUserSessionsSettings(TestCase):
 
         response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
 
-        self.assertContains(response, "Завершить все, кроме активной")
+        self.assertContains(response, "Завершить все, кроме текущей")
         self.assertContains(response, reverse("deactivate_other_sessions", args=[self.user.slug]))
 
     def test_sessions_page_hides_deactivate_others_button_for_single_session(self):
@@ -181,7 +181,7 @@ class TestUserSessionsSettings(TestCase):
 
         response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
 
-        self.assertNotContains(response, "Завершить все, кроме активной")
+        self.assertNotContains(response, "Завершить все, кроме текущей")
 
     def test_deactivate_other_sessions_keeps_current(self):
         login(self.client, self.user)
