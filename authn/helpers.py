@@ -11,6 +11,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from authn.cache import AUTH_TOKEN_CACHE_TIMEOUT, auth_token_cache_key, clear_auth_token_cache
 from authn.models.session import Session
+from common.request import parse_ip_address, parse_useragent
 from users.models.user import User
 
 log = logging.getLogger(__name__)
@@ -36,10 +37,18 @@ def authorized_user(request):
 
 def authorized_user_with_session(request) -> Tuple[Optional[User], Optional[Session]]:
     auth_token = request.COOKIES.get("token") or request.GET.get("token")
-    if auth_token:
-        return user_by_token(auth_token)
+    if not auth_token:
+        return None, None
 
-    return None, None
+    user, session = user_by_token(auth_token)
+
+    # fill missing session request info if needed
+    if session and (session.ipaddress is None or session.useragent is None):
+        session.ipaddress = parse_ip_address(request)
+        session.useragent = parse_useragent(request)
+        session.save(update_fields=["ipaddress", "useragent"])
+
+    return user, session
 
 
 def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:

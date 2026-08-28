@@ -3,9 +3,9 @@ from types import SimpleNamespace
 from unittest.mock import patch, MagicMock
 
 from django.conf import settings
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, RequestFactory
 
-from authn.helpers import is_safe_url, get_access_denied_reason
+from authn.helpers import is_safe_url, get_access_denied_reason, authorized_user_with_session
 from authn.decorators.api import api
 from authn.models.session import Code, Session
 from club.exceptions import ApiAccessDenied, ApiAuthRequired, RateLimitException, InvalidCode
@@ -92,6 +92,72 @@ class GetAccessDeniedReasonTests(TestCase):
     def test_deleted_status_not_checked(self):
         user = self._make_user(moderation_status=User.MODERATION_STATUS_DELETED)
         self.assertIsNone(get_access_denied_reason(user))
+
+
+class AuthorizedUserWithSessionTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user: User = User.objects.create(
+            email="auth_session@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+        )
+
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def _request(self, token, ip="8.8.8.8", useragent="Mozilla/5.0 TestAgent"):
+        request = self.factory.get("/", HTTP_USER_AGENT=useragent, HTTP_X_REAL_IP=ip)
+        request.COOKIES["token"] = token
+        return request
+
+    def test_backfills_ip_and_useragent_on_valid_session(self):
+        session = Session.create_for_user(self.user)
+
+        user, result = authorized_user_with_session(self._request(session.token))
+
+        self.assertEqual(user.id, self.user.id)
+        self.assertEqual(result.ipaddress, "8.8.8.8")
+        self.assertEqual(result.useragent, "Mozilla/5.0 TestAgent")
+        session.refresh_from_db()
+        self.assertEqual(session.ipaddress, "8.8.8.8")
+        self.assertEqual(session.useragent, "Mozilla/5.0 TestAgent")
+
+    def test_does_not_overwrite_existing_ip_and_useragent(self):
+        session = Session.create_for_user(
+            self.user,
+            ipaddress="1.1.1.1",
+            useragent="OldAgent/1.0",
+        )
+
+        _, result = authorized_user_with_session(self._request(session.token))
+
+        self.assertEqual(result.ipaddress, "1.1.1.1")
+        self.assertEqual(result.useragent, "OldAgent/1.0")
+        session.refresh_from_db()
+        self.assertEqual(session.ipaddress, "1.1.1.1")
+        self.assertEqual(session.useragent, "OldAgent/1.0")
+
+    def test_backfills_only_missing_fields(self):
+        session = Session.create_for_user(self.user, ipaddress="1.1.1.1")
+
+        _, result = authorized_user_with_session(self._request(session.token))
+
+        self.assertEqual(result.ipaddress, "1.1.1.1")
+        self.assertEqual(result.useragent, "Mozilla/5.0 TestAgent")
+
+    def test_does_not_backfill_expired_session(self):
+        session = Session.create_for_user(self.user)
+        session.expires_at = datetime.utcnow() - timedelta(seconds=1)
+        session.save()
+
+        user, result = authorized_user_with_session(self._request(session.token))
+
+        self.assertIsNone(user)
+        self.assertIsNone(result)
+        session.refresh_from_db()
+        self.assertIsNone(session.ipaddress)
+        self.assertIsNone(session.useragent)
 
 
 class ApiDecoratorAccessControlTests(TestCase):
