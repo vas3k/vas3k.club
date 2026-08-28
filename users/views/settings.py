@@ -207,3 +207,23 @@ def deactivate_session(request, user_slug, session_id):
     if is_current:
         return redirect("index")
     return redirect("edit_sessions", user.slug)
+
+
+@require_auth
+@require_http_methods(["POST"])
+def deactivate_other_sessions(request, user_slug):
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    current_token = request.my_session.token if request.my_session else None
+    sessions = Session.objects.filter(user=user)
+    if current_token:
+        sessions = sessions.exclude(token=current_token)
+
+    tokens = list(sessions.values_list("token", flat=True))
+    sessions.delete()
+    for token in tokens:
+        clear_auth_token_cache(token)
+
+    return redirect("edit_sessions", user.slug)

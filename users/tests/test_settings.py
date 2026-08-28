@@ -166,3 +166,57 @@ class TestUserSessionsSettings(TestCase):
         )
 
         self.assertEqual(response.status_code, 405)
+
+    def test_sessions_page_contains_deactivate_others_button(self):
+        login(self.client, self.user)
+        Session.create_for_user(self.user, ipaddress="198.51.100.20")
+
+        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
+
+        self.assertContains(response, "Завершить все, кроме активной")
+        self.assertContains(response, reverse("deactivate_other_sessions", args=[self.user.slug]))
+
+    def test_sessions_page_hides_deactivate_others_button_for_single_session(self):
+        login(self.client, self.user)
+
+        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
+
+        self.assertNotContains(response, "Завершить все, кроме активной")
+
+    def test_deactivate_other_sessions_keeps_current(self):
+        login(self.client, self.user)
+        current = Session.objects.get(token=self.client.cookies["token"].value)
+        other_a = Session.create_for_user(self.user, ipaddress="198.51.100.20")
+        other_b = Session.create_for_user(self.user, ipaddress="203.0.113.10")
+
+        response = self.client.post(reverse("deactivate_other_sessions", args=[self.user.slug]))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("edit_sessions", args=[self.user.slug]))
+        self.assertTrue(Session.objects.filter(id=current.id).exists())
+        self.assertFalse(Session.objects.filter(id=other_a.id).exists())
+        self.assertFalse(Session.objects.filter(id=other_b.id).exists())
+
+    def test_deactivate_other_sessions_does_not_touch_another_user(self):
+        login(self.client, self.user)
+        foreign = Session.create_for_user(self.other, ipaddress="192.0.2.1")
+        Session.create_for_user(self.user, ipaddress="198.51.100.20")
+
+        response = self.client.post(reverse("deactivate_other_sessions", args=[self.user.slug]))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Session.objects.filter(id=foreign.id).exists())
+
+    def test_non_owner_cannot_deactivate_other_sessions(self):
+        login(self.client, self.other)
+
+        response = self.client.post(reverse("deactivate_other_sessions", args=[self.user.slug]))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_deactivate_other_sessions_rejects_get(self):
+        login(self.client, self.user)
+
+        response = self.client.get(reverse("deactivate_other_sessions", args=[self.user.slug]))
+
+        self.assertEqual(response.status_code, 405)
