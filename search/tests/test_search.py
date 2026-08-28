@@ -428,6 +428,17 @@ class SearchViewsTests(TestCase):
 
         self.assertIn('<input type="hidden" name="type" value="post">', content)
 
+    def test_topbar_search_form_keeps_type_and_ordering(self):
+        response = self.search("домен", content_type="post", ordering="-upvotes")
+        content = response.content.decode()
+
+        # the topbar form (menu-full.html) must carry type and ordering so that
+        # changing the query does not drop the active filters (issue #1206).
+        # the hidden ordering input is unique to the topbar form — the search.html
+        # form uses a <select name="ordering"> instead.
+        self.assertIn('<input type="hidden" name="ordering" value="-upvotes">', content)
+        self.assertIn('<input type="hidden" name="type" value="post">', content)
+
     def test_type_post_excludes_intro_posts(self):
         intro = self.create_post(
             slug="intro_hidden",
