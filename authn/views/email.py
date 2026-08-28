@@ -6,6 +6,7 @@ from django_q.tasks import async_task
 
 from authn.helpers import is_safe_url, set_session_cookie
 from authn.models.session import Session, Code
+from common.request import parse_ip_address, parse_useragent
 from notifications.email.users import send_auth_email
 from notifications.telegram.users import notify_user_auth
 from users.models.user import User
@@ -29,7 +30,13 @@ def email_login(request):
                        "Если совсем ничего не выйдет, напишите нам, попробуем помочь.",
         }, status=404)
 
-    code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
+    code = Code.create_for_user(
+        user=user,
+        recipient=user.email,
+        length=settings.AUTH_CODE_LENGTH,
+        ipaddress=parse_ip_address(request),
+        useragent=parse_useragent(request),
+    )
     async_task(send_auth_email, user, code)
     async_task(notify_user_auth, user, code)
 
@@ -51,7 +58,11 @@ def email_login_code(request):
     code = code.lower().strip()
 
     user = Code.check_code(recipient=email, code=code)
-    session = Session.create_for_user(user)
+    session = Session.create_for_user(
+        user,
+        ipaddress=parse_ip_address(request),
+        useragent=parse_useragent(request),
+    )
 
     if not user.is_email_verified:
         # save 1 click and verify email

@@ -10,7 +10,7 @@ from django_q.signing import SignedPackage
 from unittest import skip
 from unittest.mock import patch
 
-from authn.models.session import Code
+from authn.models.session import Code, Session
 from authn.providers.common import Membership, Platform
 from authn.exceptions import PatreonException
 from club import features
@@ -138,13 +138,19 @@ class ViewEmailLoginTests(TestCase):
 
     def test_login_by_email_positive(self):
         # when
-        response = self.client.post(reverse("email_login"),
-                                    data={"email_or_login": self.new_user.email, })
+        response = self.client.post(
+            reverse("email_login"),
+            data={"email_or_login": self.new_user.email},
+            HTTP_X_REAL_IP="203.0.113.10",
+            HTTP_USER_AGENT="Mozilla/5.0 TestAgent",
+        )
 
         # then
         self.assertContains(response=response, text="Вам отправлен код!", status_code=200)
         issued_code = Code.objects.filter(recipient=self.new_user.email).get()
         self.assertIsNotNone(issued_code)
+        self.assertEqual(issued_code.ipaddress, "203.0.113.10")
+        self.assertEqual(issued_code.useragent, "Mozilla/5.0 TestAgent")
 
         # check email was sent
         packages = self.broker.dequeue()
@@ -210,13 +216,20 @@ class ViewEmailLoginCodeTests(TestCase):
         self.assertFalse(User.objects.get(id=self.new_user.id).is_email_verified)
 
         # when
-        response = self.client.get(reverse("email_login_code"),
-                                   data={"email": self.new_user.email, "code": self.code.code})
+        response = self.client.get(
+            reverse("email_login_code"),
+            data={"email": self.new_user.email, "code": self.code.code},
+            HTTP_X_REAL_IP="203.0.113.10",
+            HTTP_USER_AGENT="Mozilla/5.0 TestAgent",
+        )
 
         self.assertRedirects(response=response, expected_url=f"/user/{self.new_user.slug}/",
                              fetch_redirect_response=False)
         self.assertTrue(self.client.is_authorised())
         self.assertTrue(User.objects.get(id=self.new_user.id).is_email_verified)
+        session = Session.objects.get(user=self.new_user)
+        self.assertEqual(session.ipaddress, "203.0.113.10")
+        self.assertEqual(session.useragent, "Mozilla/5.0 TestAgent")
 
     def test_empty_params(self):
         response = self.client.get(reverse("email_login_code"), data={})

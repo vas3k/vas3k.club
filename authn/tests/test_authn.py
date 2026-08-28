@@ -7,7 +7,7 @@ from django.test import TestCase, override_settings
 
 from authn.helpers import is_safe_url, get_access_denied_reason
 from authn.decorators.api import api
-from authn.models.session import Code
+from authn.models.session import Code, Session
 from club.exceptions import ApiAccessDenied, ApiAuthRequired, RateLimitException, InvalidCode
 from users.models.user import User
 
@@ -247,10 +247,18 @@ class ModelCodeTests(TestCase):
     def test_create_code_positive(self):
         recipient = "success@a.com"
 
-        code = Code.create_for_user(user=self.new_user, recipient=recipient, length=settings.AUTH_CODE_LENGTH)
+        code = Code.create_for_user(
+            user=self.new_user,
+            recipient=recipient,
+            length=settings.AUTH_CODE_LENGTH,
+            ipaddress="1.2.3.4",
+            useragent="TestAgent/1.0",
+        )
         self.assertEqual(code.recipient, recipient)
         self.assertEqual(self.new_user.id, code.user_id)
         self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH)
+        self.assertEqual(code.ipaddress, "1.2.3.4")
+        self.assertEqual(code.useragent, "TestAgent/1.0")
         self.assertAlmostEqual(code.expires_at.second, (datetime.utcnow() + timedelta(minutes=15)).second, delta=5)
 
     def test_create_code_ratelimit(self):
@@ -279,6 +287,63 @@ class ModelCodeTests(TestCase):
             # no exception raises
             code = Code.create_for_user(user=self.new_user, recipient=recipient)
             self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH)
+
+    def test_create_code_ip_ratelimit(self):
+        ipaddress = "10.0.0.1"
+
+        with self.settings(AUTH_MAX_CODE_COUNT_PER_IP=1, AUTH_MAX_CODE_COUNT=10):
+            code = Code.create_for_user(
+                user=self.new_user,
+                recipient="first@a.com",
+                ipaddress=ipaddress,
+            )
+            self.assertEqual(code.ipaddress, ipaddress)
+
+            with self.assertRaises(RateLimitException):
+                Code.create_for_user(
+                    user=self.new_user,
+                    recipient="second@a.com",
+                    ipaddress=ipaddress,
+                )
+
+    def test_create_code_ip_ratelimit_does_not_affect_other_ips(self):
+        with self.settings(AUTH_MAX_CODE_COUNT_PER_IP=1, AUTH_MAX_CODE_COUNT=10):
+            Code.create_for_user(
+                user=self.new_user,
+                recipient="first@a.com",
+                ipaddress="10.0.0.1",
+            )
+            code = Code.create_for_user(
+                user=self.new_user,
+                recipient="second@a.com",
+                ipaddress="10.0.0.2",
+            )
+            self.assertEqual(code.ipaddress, "10.0.0.2")
+
+    def test_create_code_ip_ratelimit_skipped_without_ip(self):
+        with self.settings(AUTH_MAX_CODE_COUNT_PER_IP=1, AUTH_MAX_CODE_COUNT=10):
+            Code.create_for_user(user=self.new_user, recipient="first@a.com")
+            code = Code.create_for_user(user=self.new_user, recipient="second@a.com")
+            self.assertIsNone(code.ipaddress)
+
+    def test_create_code_reset_ip_ratelimit(self):
+        ipaddress = "10.0.0.1"
+
+        with self.settings(AUTH_MAX_CODE_COUNT_PER_IP=1, AUTH_MAX_CODE_COUNT=10):
+            code = Code.create_for_user(
+                user=self.new_user,
+                recipient="first@a.com",
+                ipaddress=ipaddress,
+            )
+            code.created_at = datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA - timedelta(seconds=1)
+            code.save()
+
+            code = Code.create_for_user(
+                user=self.new_user,
+                recipient="second@a.com",
+                ipaddress=ipaddress,
+            )
+            self.assertEqual(code.ipaddress, ipaddress)
 
     def test_check_code_positive(self):
         recipient = "success@a.com"
@@ -346,3 +411,28 @@ class ModelCodeTests(TestCase):
 
         with self.assertRaises(InvalidCode):
             Code.check_code(recipient=recipient, code=code.code)
+
+
+class ModelSessionTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.new_user: User = User.objects.create(
+            email="session@xx.com",
+            membership_started_at=datetime.now() - timedelta(days=5),
+            membership_expires_at=datetime.now() + timedelta(days=5),
+        )
+
+    def test_create_session_stores_ip_and_useragent(self):
+        session = Session.create_for_user(
+            self.new_user,
+            ipaddress="1.2.3.4",
+            useragent="TestAgent/1.0",
+        )
+        self.assertEqual(session.user_id, self.new_user.id)
+        self.assertEqual(session.ipaddress, "1.2.3.4")
+        self.assertEqual(session.useragent, "TestAgent/1.0")
+
+    def test_create_session_without_ip_and_useragent(self):
+        session = Session.create_for_user(self.new_user)
+        self.assertIsNone(session.ipaddress)
+        self.assertIsNone(session.useragent)

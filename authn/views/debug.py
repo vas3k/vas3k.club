@@ -7,6 +7,7 @@ from django.shortcuts import redirect, get_object_or_404
 from authn.helpers import set_session_cookie
 from authn.models.session import Session
 from club.exceptions import AccessDenied
+from common.request import parse_ip_address, parse_useragent
 from posts.models.post import Post
 from users.models.user import User
 from utils.strings import random_string
@@ -39,7 +40,11 @@ def debug_dev_login(request):
     if is_created:
         Post.upsert_user_intro(user, "Очень плохое интро", is_visible=True)
 
-    session = Session.create_for_user(user)
+    session = Session.create_for_user(
+        user,
+        ipaddress=parse_ip_address(request),
+        useragent=parse_useragent(request),
+    )
 
     return set_session_cookie(redirect("profile", user.slug), user, session)
 
@@ -71,7 +76,11 @@ def debug_random_login(request):
     if is_created:
         Post.upsert_user_intro(user, "Интро как интро, аппрув прошло :Р", is_visible=True)
 
-    session = Session.create_for_user(user)
+    session = Session.create_for_user(
+        user,
+        ipaddress=parse_ip_address(request),
+        useragent=parse_useragent(request),
+    )
 
     return set_session_cookie(redirect("profile", user.slug), user, session)
 
@@ -81,6 +90,10 @@ def debug_login(request, user_slug):
         raise AccessDenied(title="Эта фича доступна только при DEBUG=true")
 
     user = get_object_or_404(User, slug=user_slug)
-    session = Session.create_for_user(user)
+    session = Session.create_for_user(
+        user,
+        ipaddress=parse_ip_address(request),
+        useragent=parse_useragent(request),
+    )
 
     return set_session_cookie(redirect("profile", user.slug), user, session)

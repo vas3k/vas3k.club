@@ -18,16 +18,21 @@ class Session(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField(null=True)
 
+    ipaddress = models.GenericIPAddressField(null=True)
+    useragent = models.CharField(max_length=512, null=True)
+
     class Meta:
         db_table = "sessions"
 
     @classmethod
-    def create_for_user(cls, user):
+    def create_for_user(cls, user, ipaddress=None, useragent=None):
         return Session.objects.create(
             user=user,
             token=random_string(length=32),
             created_at=datetime.utcnow(),
             expires_at=max(user.membership_expires_at, datetime.utcnow() + timedelta(days=30)),
+            ipaddress=ipaddress,
+            useragent=useragent,
         )
 
 
@@ -44,12 +49,15 @@ class Code(models.Model):
 
     attempts = models.PositiveIntegerField(default=0)
 
+    ipaddress = models.GenericIPAddressField(null=True, db_index=True)
+    useragent = models.CharField(max_length=512, null=True)
+
     class Meta:
         db_table = "codes"
         ordering = ["-created_at"]
 
     @classmethod
-    def create_for_user(cls, user: User, recipient: str, length=6):
+    def create_for_user(cls, user: User, recipient: str, length=6, ipaddress=None, useragent=None):
         recipient = recipient.lower()
         last_codes_count = Code.objects.filter(
             recipient=recipient,
@@ -58,12 +66,22 @@ class Code(models.Model):
         if last_codes_count >= settings.AUTH_MAX_CODE_COUNT:
             raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
 
+        if ipaddress:
+            last_codes_from_ip_count = Code.objects.filter(
+                ipaddress=ipaddress,
+                created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
+            ).count()
+            if last_codes_from_ip_count >= settings.AUTH_MAX_CODE_COUNT_PER_IP:
+                raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
+
         return Code.objects.create(
             recipient=recipient,
             user=user,
             code=random_number(length),
             created_at=datetime.utcnow(),
             expires_at=datetime.utcnow() + settings.AUTH_CODE_EXPIRATION_TIMEDELTA,
+            ipaddress=ipaddress,
+            useragent=useragent,
         )
 
     @classmethod

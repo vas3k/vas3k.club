@@ -10,6 +10,7 @@ from django.conf import settings
 from django_q.tasks import async_task
 
 from authn.models.session import Code
+from common.request import parse_ip_address, parse_useragent
 from notifications.email.users import send_auth_email
 from notifications.telegram.users import notify_user_auth
 from club.exceptions import AccessDenied
@@ -115,7 +116,13 @@ def activate_invite(request, invite_code):
         ),
     )
 
-    code = Code.create_for_user(user=user, recipient=user.email, length=settings.AUTH_CODE_LENGTH)
+    code = Code.create_for_user(
+        user=user,
+        recipient=user.email,
+        length=settings.AUTH_CODE_LENGTH,
+        ipaddress=parse_ip_address(request),
+        useragent=parse_useragent(request),
+    )
     async_task(send_auth_email, user, code)
     async_task(notify_user_auth, user, code)
 
