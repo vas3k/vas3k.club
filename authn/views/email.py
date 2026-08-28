@@ -16,13 +16,11 @@ def email_login(request):
         return redirect("login")
 
     goto = request.POST.get("goto")
-    email_or_login = request.POST.get("email_or_login")
-    if not email_or_login:
+    email = request.POST.get("email_or_login")
+    if not email or "." not in email or "@" not in email:
         return redirect("login")
 
-    email_or_login = email_or_login.strip()
-
-    user = User.objects.filter(Q(email=email_or_login.lower()) | Q(slug=email_or_login)).first()
+    user = User.objects.filter(email=email.strip().lower()).first()
     if not user:
         return render(request, "error.html", {
             "title": "Такого юзера нет 🤔",
