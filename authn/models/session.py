@@ -6,7 +6,7 @@ from django.db import models
 
 from club.exceptions import RateLimitException, InvalidCode
 from users.models.user import User
-from utils.strings import random_string, random_number
+from utils.strings import random_string, random_code
 
 
 class Session(models.Model):
@@ -74,10 +74,16 @@ class Code(models.Model):
             if last_codes_from_ip_count >= settings.AUTH_MAX_CODE_COUNT_PER_IP:
                 raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
 
+        last_codes_total_count = Code.objects.filter(
+            created_at__gte=datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA,
+        ).count()
+        if last_codes_total_count >= settings.AUTH_MAX_CODE_COUNT_TOTAL:
+            raise RateLimitException(title="Вы запросили слишком много кодов", message="Подождите немного")
+
         return Code.objects.create(
             recipient=recipient,
             user=user,
-            code=random_number(length),
+            code=random_code(length),
             created_at=datetime.utcnow(),
             expires_at=datetime.utcnow() + settings.AUTH_CODE_EXPIRATION_TIMEDELTA,
             ipaddress=ipaddress,
@@ -87,6 +93,7 @@ class Code(models.Model):
     @classmethod
     def check_code(cls, recipient: str, code: str) -> User:
         recipient = recipient.lower()
+        code = (code or "").strip().upper()
         last_code = Code.objects.filter(recipient=recipient).order_by("-created_at").first()
         if not last_code:
             raise InvalidCode()

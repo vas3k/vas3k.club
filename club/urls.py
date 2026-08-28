@@ -57,7 +57,7 @@ from users.views.muted import toggle_mute, muted
 from users.views.notes import edit_note
 from users.views.profile import profile, toggle_tag, profile_comments, profile_posts, profile_badges
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
-    edit_bot, edit_data, request_data
+    edit_bot, edit_data, request_data, edit_sessions, deactivate_session
 from users.views.intro import intro
 from users.views.people import people
 from search.api import api_search_users, api_search_tags
@@ -123,6 +123,12 @@ urlpatterns = [
     path("user/<slug:user_slug>/edit/monies/", edit_payments, name="edit_payments"),
     path("user/<slug:user_slug>/edit/data/", edit_data, name="edit_data"),
     path("user/<slug:user_slug>/edit/data/request/", request_data, name="request_user_data"),
+    path("user/<slug:user_slug>/edit/sessions/", edit_sessions, name="edit_sessions"),
+    path(
+        "user/<slug:user_slug>/edit/sessions/<uuid:session_id>/deactivate/",
+        deactivate_session,
+        name="deactivate_session",
+    ),
 
     path("apps/", list_apps, name="apps"),
     path("apps/create/", create_app, name="create_app"),

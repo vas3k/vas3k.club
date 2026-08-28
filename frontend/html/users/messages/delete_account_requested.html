@@ -11,7 +11,7 @@
         <div class="login-code-form">
             <form action="{% url "confirm_delete_account" %}" method="post">
                 {% csrf_token %}
-                <input type="text" pattern="[0-9]*" name="code" placeholder="000000000000" class="login-code-input" autocomplete="off" autofocus>
+                <input type="text" name="code" placeholder="A1B2C3D4E5F6G7" class="login-code-input" autocomplete="off" autocapitalize="characters" spellcheck="false" autofocus>
                 <input type="hidden" name="secret_hash" value="{{ user.secret_hash }}">
                 <button type="submit" class="button login-code-button">Удалиться</button>
             </form>

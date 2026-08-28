@@ -257,6 +257,7 @@ class ModelCodeTests(TestCase):
         self.assertEqual(code.recipient, recipient)
         self.assertEqual(self.new_user.id, code.user_id)
         self.assertEqual(len(code.code), settings.AUTH_CODE_LENGTH)
+        self.assertRegex(code.code, r"^[A-Z0-9]+$")
         self.assertEqual(code.ipaddress, "1.2.3.4")
         self.assertEqual(code.useragent, "TestAgent/1.0")
         self.assertAlmostEqual(code.expires_at.second, (datetime.utcnow() + timedelta(minutes=15)).second, delta=5)
@@ -345,12 +346,50 @@ class ModelCodeTests(TestCase):
             )
             self.assertEqual(code.ipaddress, ipaddress)
 
+    def test_create_code_global_ratelimit(self):
+        with self.settings(AUTH_MAX_CODE_COUNT_TOTAL=1, AUTH_MAX_CODE_COUNT=10, AUTH_MAX_CODE_COUNT_PER_IP=10):
+            Code.create_for_user(
+                user=self.new_user,
+                recipient="first@a.com",
+                ipaddress="10.0.0.1",
+            )
+            with self.assertRaises(RateLimitException):
+                Code.create_for_user(
+                    user=self.new_user,
+                    recipient="second@a.com",
+                    ipaddress="10.0.0.2",
+                )
+
+    def test_create_code_reset_global_ratelimit(self):
+        with self.settings(AUTH_MAX_CODE_COUNT_TOTAL=1, AUTH_MAX_CODE_COUNT=10, AUTH_MAX_CODE_COUNT_PER_IP=10):
+            code = Code.create_for_user(
+                user=self.new_user,
+                recipient="first@a.com",
+                ipaddress="10.0.0.1",
+            )
+            code.created_at = datetime.utcnow() - settings.AUTH_MAX_CODE_TIMEDELTA - timedelta(seconds=1)
+            code.save()
+
+            code = Code.create_for_user(
+                user=self.new_user,
+                recipient="second@a.com",
+                ipaddress="10.0.0.2",
+            )
+            self.assertEqual(code.recipient, "second@a.com")
+
     def test_check_code_positive(self):
         recipient = "success@a.com"
         code = Code.create_for_user(user=self.new_user, recipient=recipient, length=settings.AUTH_CODE_LENGTH)
 
         user = Code.check_code(recipient=recipient, code=code.code)
 
+        self.assertEqual(user.id, self.new_user.id)
+
+    def test_check_code_is_case_insensitive(self):
+        recipient = "case@a.com"
+        code = Code.create_for_user(user=self.new_user, recipient=recipient, length=settings.AUTH_CODE_LENGTH)
+
+        user = Code.check_code(recipient=recipient, code=code.code.lower())
         self.assertEqual(user.id, self.new_user.id)
 
     def test_check_code_which_is_incorrect(self):

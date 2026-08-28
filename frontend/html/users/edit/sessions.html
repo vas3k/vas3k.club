@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    Сессии — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <div class="content user-edit">
+        <div class="form-title">🔑<br>Сессии</div>
+
+        <div class="block-description block-description-center">
+            <p>
+                Здесь все устройства, с которых вы входили в Клуб.
+                Если видите незнакомый вход — завершите сессию.
+            </p>
+        </div>
+
+        <div class="sessions-list">
+            {% for session in sessions %}
+                <div class="block sessions-list-item{% if session.is_current %} sessions-list-item-current{% endif %}">
+                    <strong class="sessions-list-item-ip">
+                        {{ session.ipaddress|default:"IP неизвестен" }}{% if session.is_current %} (это устройство){% endif %}
+                    </strong>
+                    <span class="sessions-list-item-browser">
+                        <i class="fas fa-globe"></i>
+                        {{ session.browser|default:"браузер неизвестен" }}
+                    </span>
+                    <span class="sessions-list-item-time">
+                        {{ session.created_at|date:"j E Y, H:i" }}
+                    </span>
+                    <form class="sessions-list-item-action" action="{% url "deactivate_session" user.slug session.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="button button-small button-red" title="Завершить сессию" onclick="return confirm('Завершить эту сессию?')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            {% empty %}
+                <div class="block sessions-list-placeholder">
+                    Нет сохранённых сессий.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

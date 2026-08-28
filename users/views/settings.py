@@ -4,9 +4,13 @@ import stripe
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404, render
+from django.views.decorators.http import require_http_methods
 from django_q.tasks import async_task
 
+from authn.cache import clear_auth_token_cache
 from authn.decorators.auth import require_auth
+from authn.models.session import Session
+from common.request import browser_from_useragent
 from gdpr.archive import generate_data_archive
 from gdpr.models import DataRequests
 from search.models import SearchIndex
@@ -164,3 +168,42 @@ def request_data(request, user_slug):
         async_task(generate_data_archive, user=user)
 
     return render(request, "users/messages/data_requested.html")
+
+
+@require_auth
+def edit_sessions(request, user_slug):
+    if user_slug == "me" and request.me:
+        return redirect("edit_sessions", request.me.slug, permanent=False)
+
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    sessions = list(Session.objects.filter(user=user).order_by("-created_at"))
+    current_token = request.my_session.token if request.my_session else None
+    for session in sessions:
+        session.is_current = session.token == current_token
+        session.browser = browser_from_useragent(session.useragent)
+
+    return render(request, "users/edit/sessions.html", {
+        "user": user,
+        "sessions": sessions,
+    })
+
+
+@require_auth
+@require_http_methods(["POST"])
+def deactivate_session(request, user_slug, session_id):
+    user = get_object_or_404(User, slug=user_slug)
+    if user.id != request.me.id and not request.me.is_moderator:
+        raise Http404()
+
+    session = get_object_or_404(Session, id=session_id, user=user)
+    is_current = request.my_session and session.token == request.my_session.token
+    token = session.token
+    session.delete()
+    clear_auth_token_cache(token)
+
+    if is_current:
+        return redirect("index")
+    return redirect("edit_sessions", user.slug)

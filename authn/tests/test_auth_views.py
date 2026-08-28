@@ -47,7 +47,6 @@ class ViewsAuthTests(TestCase):
 
     def test_login_anonymous(self):
         response = self.client.get(reverse("login"))
-        # check auth/login.html is rendered
         self.assertContains(response=response, text="Вход по почте", status_code=200)
 
     def test_login_authorised(self):

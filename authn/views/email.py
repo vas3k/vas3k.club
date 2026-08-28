@@ -55,7 +55,7 @@ def email_login_code(request):
 
     goto = request.GET.get("goto")
     email = email.lower().strip()
-    code = code.lower().strip()
+    code = code.upper().strip()
 
     user = Code.check_code(recipient=email, code=code)
     session = Session.create_for_user(

@@ -15,3 +15,8 @@ def random_string(length: int = 10):
 def random_number(length: int = 10):
     letters = string.digits
     return "".join(secrets.choice(letters) for i in range(length))
+
+
+def random_code(length: int = 6):
+    alphabet = string.ascii_uppercase + string.digits
+    return "".join(secrets.choice(alphabet) for _ in range(length))
