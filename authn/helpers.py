@@ -42,11 +42,12 @@ def authorized_user_with_session(request) -> Tuple[Optional[User], Optional[Sess
 
     user, session = user_by_token(auth_token)
 
-    # fill missing session request info if needed
+    # fill missing session request info
     if session and (session.ipaddress is None or session.useragent is None):
         session.ipaddress = parse_ip_address(request)
         session.useragent = parse_useragent(request)
         session.save(update_fields=["ipaddress", "useragent"])
+        cache.set(auth_token_cache_key(auth_token), (user, session), timeout=AUTH_TOKEN_CACHE_TIMEOUT)
 
     return user, session
 
