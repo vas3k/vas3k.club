@@ -55,7 +55,7 @@ class ClubRenderer(mistune.HTMLRenderer):
 
         # users can try to "hack" our parser by using non-image urls
         # so, if its not an image or video, display it as a link to avoid auto-loading
-        return f'<a href="{html.escape(url)}">{html.escape(url)}</a>'
+        return f'<a href="{self.safe_url(url)}">{html.escape(url)}</a>'
 
     def embed(self, url, text="", title=None):
         if IMAGE_RE.match(url):
