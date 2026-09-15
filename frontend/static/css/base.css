@@ -426,6 +426,7 @@ input[type=range]:focus::-ms-fill-upper {
         display: block;
         padding-bottom: 70px;
         font-size: 130%;
+        scroll-margin-top: 20px;
     }
 
         .form-row-center {

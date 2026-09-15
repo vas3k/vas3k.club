@@ -88,7 +88,7 @@
                     {% if form.city.errors %}<span class="form-row-errors">{{ form.city.errors }}</span>{% endif %}
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="map-location">
                     <label class="form-label">
                         Где отображать вас на общей <strong><a href="{% url "people" %}">карте</a></strong>?
                     </label>

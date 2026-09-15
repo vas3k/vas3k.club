@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 from django.db.models import Count
+from django.test import TestCase
 
 from tags.models import Tag, UserTag
 from users.models.user import User
@@ -26,74 +26,12 @@ def _test_users():
     return User.objects.filter(slug__startswith=_SLUG_PREFIX)
 
 
-class TestTop(TestCase):
-
-    def test_returns_values_ranked_by_frequency(self):
-        from users.views.people import _top
-
-        _create_user("u1", company="TestCo_Google")
-        _create_user("u2", company="TestCo_Google")
-        _create_user("u3", company="TestCo_Google")
-        _create_user("u4", company="TestCo_Apple")
-        _create_user("u5", company="TestCo_Apple")
-        _create_user("u6", company="TestCo_Meta")
-
-        result = _top(_test_users(), "company")
-
-        self.assertEqual(result[0], ("TestCo_Google", 3))
-        self.assertEqual(result[1], ("TestCo_Apple", 2))
-        self.assertEqual(result[2], ("TestCo_Meta", 1))
-
-    def test_excludes_none_and_empty_values(self):
-        from users.views.people import _top
-
-        _create_user("u1", company="TestCo_Only")
-        _create_user("u2", company=None)
-        _create_user("u3", company="")
-
-        result = _top(_test_users(), "company")
-
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], ("TestCo_Only", 1))
-
-    def test_excludes_skipped_values(self):
-        from users.views.people import _top
-
-        _create_user("u1", company="TestCo_Real")
-        _create_user("u2", company="TestCo_Real")
-        _create_user("u3", company="-")
-
-        result = _top(_test_users(), "company", skip={"-"})
-
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0], ("TestCo_Real", 2))
-
-    def test_respects_default_limit_of_five(self):
-        from users.views.people import _top
-
-        for i in range(10):
-            _create_user(f"u{i}", company=f"UniqueCo_{i}")
-
-        result = _top(_test_users(), "company")
-
-        self.assertEqual(len(result), 5)
-
-    def test_executes_in_single_query(self):
-        from users.views.people import _top
-
-        _create_user("u1", company="TestCo_A")
-        _create_user("u2", company="TestCo_B")
-
-        with self.assertNumQueries(1):
-            _top(_test_users(), "company")
-
-
 class TestTagsWithStats(TestCase):
 
     def test_returns_correct_user_counts_per_tag(self):
         tag_a = Tag.objects.create(code="tpeople_a", group=Tag.GROUP_TECH, name="Tag A", is_visible=True)
         tag_b = Tag.objects.create(code="tpeople_b", group=Tag.GROUP_TECH, name="Tag B", is_visible=True)
-        tag_c = Tag.objects.create(code="tpeople_c", group=Tag.GROUP_TECH, name="Tag C", is_visible=True)
+        Tag.objects.create(code="tpeople_c", group=Tag.GROUP_TECH, name="Tag C", is_visible=True)
 
         u1 = _create_user("u1")
         u2 = _create_user("u2")

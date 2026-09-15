@@ -59,7 +59,8 @@ from users.views.profile import profile, toggle_tag, profile_comments, profile_p
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
     edit_bot, edit_data, request_data, edit_sessions, deactivate_session, deactivate_other_sessions
 from users.views.intro import intro
-from users.views.people import people
+from map.api import api_create_map_message, api_upvote_map_message
+from map.views import people
 from search.api import api_search_users, api_search_tags
 
 POST_TYPE_RE = r"(?P<post_type>(all|{}))".format("|".join(dict(Post.TYPES).keys()))
@@ -214,6 +215,9 @@ urlpatterns = [
     path("crew/write/<slug:crew>/", write_to_crew, name="write_to_crew"),
 
     path("clickers/<str:clicker_id>.json", api_clicker, name="api_clicker"),
+
+    path("map/messages/create.json", api_create_map_message, name="api_create_map_message"),
+    path("map/messages/<uuid:message_id>/upvote.json", api_upvote_map_message, name="api_upvote_map_message"),
 
     # admin features
     path("godmode/", godmode, name="godmode_settings"),

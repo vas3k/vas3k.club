@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "payments.apps.PaymentsConfig",
     "posts.apps.PostsConfig",
     "users.apps.UsersConfig",
+    "map.apps.MapConfig",
     "notifications.apps.NotificationsConfig",
     "search.apps.SearchConfig",
     "gdpr.apps.GdprConfig",

@@ -3,28 +3,17 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import render
 
 from authn.decorators.auth import require_auth
 from common.models import group_by
 from common.pagination import paginate
+from map.models import MapMessages
 from tags.models import Tag
 from users.models.user import User
 
 TAGS_CACHE_TIMEOUT_SECONDS = 24 * 60 * 60
-
-
-def _top(queryset, field, skip=None, limit=5):
-    qs = queryset.exclude(**{field: None}).exclude(**{field: ""})
-    if skip:
-        qs = qs.exclude(**{f"{field}__in": skip})
-    return list(
-        qs.values(field)
-          .annotate(count=Count(field))
-          .order_by("-count")
-          .values_list(field, "count")[:limit]
-    )
 
 
 @require_auth
@@ -33,12 +22,9 @@ def people(request):
 
     query = request.GET.get("query")
     if query:
-        users = users.filter(
-            index__index=(
-                SearchQuery(query, config="simple", search_type="websearch") |
-                SearchQuery(query, config="russian", search_type="websearch")
-            )
-        )
+        simple = SearchQuery(query, config="simple", search_type="websearch")
+        russian = SearchQuery(query, config="russian", search_type="websearch")
+        users = users.filter(index__index=(simple | russian))
 
     tags = request.GET.getlist("tags")
     if tags:
@@ -50,12 +36,6 @@ def people(request):
 
     filters = request.GET.getlist("filters")
     if filters:
-        if "faang" in filters:
-            users = users.filter(company__in=[
-                "Facebook", "Apple", "Google", "Amazon", "Netflix", "Microsoft",
-                "Фейсбук", "Гугл", "Амазон", "Нетфликс", "Майкрософт", "Микрософт"
-            ])
-
         if "same_city" in filters:
             users = users.filter(city=request.me.city)
 
@@ -64,6 +44,15 @@ def people(request):
 
         if "friends" in filters:
             users = users.filter(friends_to__user_from=request.me)
+
+        if "active_members" in filters:
+            now = datetime.utcnow()
+            users = users.filter(
+                deleted_at__isnull=True,
+                membership_expires_at__gte=now,
+            ).filter(
+                Q(is_banned_until__isnull=True) | Q(is_banned_until__lte=now)
+            )
 
     tag_stat_groups = cache.get("people_tag_stat_groups")
     tags_with_stats = cache.get("people_tags_with_stats")
@@ -96,15 +85,11 @@ def people(request):
 
     users_total = users.count()
 
-    map_stat_groups = {
-        "💼 Топ компаний": _top(users, "company", skip={"-"}),
-        "🌍 Страны": _top(users, "country"),
-        "🏰 Города": _top(users, "city"),
-    }
-
     users_for_map = users.filter(geo__isnull=False).order_by().values_list("slug", "avatar", "geo")
 
-    return render(request, "users/people.html", {
+    map_messages = MapMessages.visible_for_user(request.me)
+
+    return render(request, "map/people.html", {
         "people_query": {
             "query": query,
             "country": country,
@@ -113,9 +98,11 @@ def people(request):
         },
         "users_total": users_total,
         "users_for_map": users_for_map,
+        "map_messages": map_messages,
+        "max_map_message_length": MapMessages.MAX_TEXT_LENGTH,
+        "can_post_map_message": MapMessages.can_post(request.me),
         "users_paginated": paginate(request, users, page_size=settings.PEOPLE_PAGE_SIZE),
         "tag_stat_groups": tag_stat_groups,
-        "max_tag_user_count": max(tag.user_count for tag in tags_with_stats),
+        "max_tag_user_count": max((tag.user_count for tag in tags_with_stats), default=0),
         "active_countries": active_countries,
-        "map_stat_groups": map_stat_groups,
     })

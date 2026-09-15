@@ -9,7 +9,7 @@ from django.db.models import F
 from django.urls import reverse
 
 from common.models import ModelDiffMixin
-from users.models.geo import geo_coordinates
+from map.models import geo_coordinates
 from utils.slug import generate_unique_slug
 from utils.strings import random_string
 

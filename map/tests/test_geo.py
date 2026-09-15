@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from users.models.geo import geo_coordinates
-from users.templatetags.users import users_geo_json
+from map.models import geo_coordinates
+from map.templatetags.map import users_geo_json
 
 
 class TestGeoCoordinates(TestCase):
@@ -35,7 +35,7 @@ class TestGeoCoordinates(TestCase):
 
     def test_non_precise_applies_offset(self):
         geo = {"latitude": 52.52, "longitude": 13.405}
-        with patch("users.models.geo.random.uniform", return_value=0.05):
+        with patch("map.models.random.uniform", return_value=0.05):
             result = geo_coordinates(geo)
         self.assertEqual(result, (52.57, 13.455))
 

@@ -2,7 +2,7 @@ import logging
 
 from django.core.management import BaseCommand
 
-from users.models.geo import Geo
+from map.models import Geo
 from users.models.user import User
 
 log = logging.getLogger(__name__)

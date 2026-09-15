@@ -1,11 +1,8 @@
 {% extends "layout.html" %}
 {% load static %}
-{% load comments %}
-{% load posts %}
 {% load text_filters %}
-{% load query_params %}
 {% load paginator %}
-{% load users %}
+{% load map %}
 
 {% block title %}
     Люди — {{ block.super }}
@@ -32,7 +29,13 @@
 {% block content %}
     <div class="people">
         <div class="people-map">
-            <people-map :geojson="JSON.parse('{% users_geo_json users_for_map %}')" class="people-map-container"></people-map>
+            <people-map geojson="{% users_geo_json users_for_map %}"
+                        messages="{% map_messages_geo_json map_messages me %}"
+                        create-message-url="{% url "api_create_map_message" %}"
+                        edit-profile-url="{% url "edit_profile" me.slug %}#map-location"
+                        :can-post-message="{{ can_post_map_message|yesno:"true,false" }}"
+                        :max-message-length="{{ max_map_message_length }}"
+                        class="people-map-container"></people-map>
         </div>
 
         <form action="." method="get">
@@ -65,14 +68,6 @@
                     <div class="people-filters-title hide-on-iphone">
                         <a href="{% url "people" %}">Коммьюнити</a>
                         &nbsp;<a href="https://vas3k.club/post/2584/"><i class="fas fa-question-circle"></i></a>
-                    </div>
-
-                    <div class="people-filters-title show-on-iphone">
-                        {% if users_total %}
-                            <strong>{{ users_total }}</strong> {{ users_total|rupluralize:"человек,человека,человек" }}
-                        {% else %}
-                            Никого 😢
-                        {% endif %}
                     </div>
 
                     <div class="show-on-iphone">
@@ -109,6 +104,11 @@
                             <label for="filter_friends">🤝 Мои подписки</label>
                         </div>
 
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="filters" value="active_members" id="filter_active_members" {% if "active_members" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
+                            <label for="filter_active_members">💚 Активные юзеры</label>
+                        </div>
+
                         <div class="people-filters-header">Путешествия</div>
 
                         {% for tag in tag_stat_groups.travel %}
@@ -126,11 +126,6 @@
                                 <label for="tag_{{ tag.code }}">{{ tag.name }}</label>
                             </div>
                         {% endfor %}
-
-                        <div class="people-filters-tag">
-                            <input type="checkbox" name="filters" value="faang" id="filter_faang" {% if "faang" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
-                            <label for="filter_faang">📱 FAANG</label>
-                        </div>
 
                         <div class="people-filters-header">Взаимопомощь</div>
                         {% for tag in tag_stat_groups.grow %}
@@ -181,21 +176,6 @@
                 </div>
 
                 <div class="people-results">
-                    {% if users_total %}
-                        <div class="block people-stats hide-on-iphone">
-                            {% for header, stat in map_stat_groups.items %}
-                                <div class="people-stat">
-                                    <span class="people-stat-header">{{ header }}</span>
-                                    <ol class="people-stat-list">
-                                        {% for item in stat %}
-                                            <li><a href="{% append_query_param query=item.0 %}">{{ item.0 }}</a></li>
-                                        {% endfor %}
-                                    </ol>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
                     {% if users_paginated %}
                         {% for user in users_paginated %}
                             {% include "users/widgets/card.html" with user=user %}

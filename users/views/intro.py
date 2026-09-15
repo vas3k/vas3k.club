@@ -5,7 +5,7 @@ from authn.decorators.auth import require_auth
 from notifications.telegram.users import notify_profile_needs_review
 from posts.models.post import Post
 from users.forms.intro import UserInitialIntroForm
-from users.models.geo import Geo
+from map.models import Geo
 from users.models.user import User
 
 

@@ -4,6 +4,10 @@ const mockMarkerInstance = {
     remove: jest.fn(),
 };
 
+const mockCanvas = { style: {} };
+const mockContainer = { offsetWidth: 1200 };
+const mockSource = { setData: jest.fn() };
+
 const mockMap = {
     addSource: jest.fn(),
     addLayer: jest.fn(),
@@ -11,10 +15,19 @@ const mockMap = {
     querySourceFeatures: jest.fn().mockReturnValue([]),
     project: jest.fn((coords) => ({ x: coords[0], y: coords[1] })),
     getZoom: jest.fn().mockReturnValue(5),
+    getCanvas: jest.fn(() => mockCanvas),
+    getContainer: jest.fn(() => mockContainer),
+    getSource: jest.fn(() => mockSource),
     flyTo: jest.fn(),
+    easeTo: jest.fn(),
     on: jest.fn(),
     remove: jest.fn(),
 };
+
+jest.mock("../common/api.service", () => ({
+    __esModule: true,
+    default: { get: jest.fn(), post: jest.fn(), postForm: jest.fn() },
+}));
 
 jest.mock("mapbox-gl", () => ({
     __esModule: true,
@@ -94,6 +107,14 @@ describe("PeopleMap.vue", () => {
             expect(mockMap.addLayer).toHaveBeenCalledWith(expect.objectContaining({
                 id: "users",
                 source: "usersGeojson",
+            }));
+        });
+
+        it("accepts geojson as a json string", () => {
+            mountMap(JSON.stringify(makeGeojson([{ coords: [10, 20] }])));
+
+            expect(mockMap.addSource).toHaveBeenCalledWith("usersGeojson", expect.objectContaining({
+                type: "geojson",
             }));
         });
     });
@@ -348,6 +369,415 @@ describe("PeopleMap.vue", () => {
 
             expect(mockMap.remove).toHaveBeenCalled();
             wrapper = null; // prevent double destroy in afterEach
+        });
+    });
+
+    describe("map messages", () => {
+        var ClubApi = require("../common/api.service").default;
+
+        function makeMessages(messages) {
+            return JSON.stringify({
+                type: "FeatureCollection",
+                features: messages.map((m, i) => ({
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: m.coords || [10, 20] },
+                    properties: {
+                        id: m.id || `message-${i}`,
+                        text: m.text || "hello",
+                        author_name: m.authorName || "Alice",
+                        author_url: m.authorUrl || "/user/alice/",
+                        author_avatar: m.authorAvatar || "https://example.com/alice.jpg",
+                        upvotes: m.upvotes || 0,
+                        upvote_url: m.upvoteUrl || `/map/messages/message-${i}/upvote.json`,
+                        is_voted: m.isVoted || false,
+                        is_mine: m.isMine || false,
+                    },
+                })),
+            });
+        }
+
+        function zoomedInMessage(properties) {
+            mockMap.getZoom.mockReturnValue(10);
+            mockMap.querySourceFeatures.mockReturnValue([{
+                geometry: { coordinates: [10, 20] },
+                properties: Object.assign({
+                    id: "m1",
+                    text: "hi",
+                    author_url: "/user/alice/",
+                    upvotes: 0,
+                    upvote_url: "/map/messages/m1/upvote.json",
+                }, properties),
+            }]);
+            mountMapWithMessages(makeMessages([{ id: "m1", text: "hi" }]));
+            fireDataEvent("messagesGeojson");
+            return lastMarkerElement();
+        }
+
+        function mountMapWithMessages(messages) {
+            wrapper = shallowMount(PeopleMap, {
+                propsData: {
+                    geojson: makeGeojson([]),
+                    messages: messages,
+                    createMessageUrl: "/map/messages/create.json",
+                    editProfileUrl: "/user/me/edit/profile/#map-location",
+                    maxMessageLength: 512,
+                },
+                stubs: { default: true },
+            });
+            var loadCall = mockMap.on.mock.calls.find(([e]) => e === "load");
+            if (loadCall) loadCall[1]();
+        }
+
+        function lastMarkerElement() {
+            var MarkerCtor = require("mapbox-gl").default.Marker;
+            var calls = MarkerCtor.mock.calls;
+            return calls[calls.length - 1][0].element;
+        }
+
+        beforeEach(() => {
+            mockMap.getZoom.mockReturnValue(5);
+            mockMap.querySourceFeatures.mockReturnValue([]);
+            mockCanvas.style = {};
+        });
+
+        it("adds a clustered messages source when the feature is enabled", () => {
+            mountMapWithMessages(makeMessages([{ text: "hi" }]));
+
+            expect(mockMap.addSource).toHaveBeenCalledWith("messagesGeojson", expect.objectContaining({
+                type: "geojson",
+                cluster: true,
+            }));
+        });
+
+        it("does not touch the messages source when the feature is disabled", () => {
+            mountMap(makeGeojson([{ coords: [10, 20] }]));
+
+            expect(mockMap.addSource).not.toHaveBeenCalledWith("messagesGeojson", expect.anything());
+
+            // the shared move handler must stay harmless without a messages source
+            getHandler("move")();
+            expect(mockMap.querySourceFeatures).not.toHaveBeenCalledWith("messagesGeojson");
+        });
+
+        it("shows only an icon when zoomed out further than the city level", () => {
+            mockMap.querySourceFeatures.mockReturnValue([{
+                geometry: { coordinates: [10, 20] },
+                properties: { id: "m1", text: "secret plans", author_name: "Alice" },
+            }]);
+            mountMapWithMessages(makeMessages([{ text: "secret plans" }]));
+
+            fireDataEvent("messagesGeojson");
+
+            var el = lastMarkerElement();
+            expect(el.classList.contains("people-map-message-icon")).toBe(true);
+            expect(el.innerText).not.toContain("secret plans");
+        });
+
+        it("shows the full bubble with the avatar and text when zoomed in", () => {
+            mockMap.getZoom.mockReturnValue(10);
+            mockMap.querySourceFeatures.mockReturnValue([{
+                geometry: { coordinates: [10, 20] },
+                properties: {
+                    id: "m1",
+                    text: "secret plans",
+                    author_name: "Alice",
+                    author_url: "/user/alice/",
+                    author_avatar: "https://example.com/alice.jpg",
+                },
+            }]);
+            mountMapWithMessages(makeMessages([{ text: "secret plans" }]));
+
+            fireDataEvent("messagesGeojson");
+
+            var el = lastMarkerElement();
+            expect(el.classList.contains("people-map-message-full")).toBe(true);
+            expect(el.querySelector(".people-map-message-body").innerText).toBe("secret plans");
+
+            // the name is not rendered, the avatar alone links to the profile
+            var author = el.querySelector(".people-map-message-author");
+            expect(author.href).toContain("/user/alice/");
+            expect(author.title).toBe("Alice");
+            expect(author.textContent).toBe("");
+            expect(author.querySelectorAll(".people-map-message-avatar")).toHaveLength(1);
+        });
+
+        it("rebuilds markers when zoom crosses the text threshold", () => {
+            mockMap.querySourceFeatures.mockReturnValue([{
+                geometry: { coordinates: [10, 20] },
+                properties: { id: "m1", text: "hi", author_name: "Alice", author_url: "/user/alice/" },
+            }]);
+            mountMapWithMessages(makeMessages([{ text: "hi" }]));
+            fireDataEvent("messagesGeojson");
+            expect(lastMarkerElement().classList.contains("people-map-message-icon")).toBe(true);
+
+            mockMap.getZoom.mockReturnValue(10);
+            fireDataEvent("messagesGeojson");
+
+            expect(lastMarkerElement().classList.contains("people-map-message-full")).toBe(true);
+        });
+
+        it("renders message clusters with a counter and zooms in on click", () => {
+            mockMap.querySourceFeatures.mockReturnValue([{
+                geometry: { coordinates: [15, 25] },
+                properties: { cluster: true, cluster_id: "c1", point_count: 7 },
+            }]);
+            mountMapWithMessages(makeMessages([{ text: "hi" }]));
+
+            fireDataEvent("messagesGeojson");
+
+            var el = lastMarkerElement();
+            expect(el.classList.contains("people-map-message-cluster")).toBe(true);
+            expect(el.innerText).toContain("7");
+
+            el.click();
+            expect(mockMap.flyTo).toHaveBeenCalledWith(expect.objectContaining({ center: [15, 25] }));
+        });
+
+        it("upvotes a message once and shows the count returned by the server", () => {
+            var el = zoomedInMessage({ upvotes: 3 });
+            var button = el.querySelector(".people-map-message-upvote");
+            var counter = el.querySelector(".people-map-message-upvotes");
+
+            expect(button.disabled).toBe(false);
+            expect(counter.innerText).toBe(3);
+
+            ClubApi.postForm.mockImplementation((url, payload, callback) => callback({ upvotes: 4 }));
+            button.click();
+
+            expect(ClubApi.postForm).toHaveBeenCalledWith(
+                "/map/messages/m1/upvote.json", {}, expect.any(Function)
+            );
+            expect(counter.innerText).toBe(4);
+            expect(button.disabled).toBe(true);
+            expect(button.classList.contains("people-map-message-upvote-counted")).toBe(true);
+
+            // a second click can not happen, the vote is final
+            button.click();
+            expect(ClubApi.postForm).toHaveBeenCalledTimes(1);
+        });
+
+        it("keeps the vote in the geojson so rebuilt markers stay voted", () => {
+            var el = zoomedInMessage({ upvotes: 1 });
+            ClubApi.postForm.mockImplementation((url, payload, callback) => callback({ upvotes: 2 }));
+
+            el.querySelector(".people-map-message-upvote").click();
+
+            expect(mockSource.setData).toHaveBeenCalledWith(expect.objectContaining({
+                features: [expect.objectContaining({
+                    properties: expect.objectContaining({ id: "m1", upvotes: 2, is_voted: true }),
+                })],
+            }));
+        });
+
+        it("re-enables the button when the vote fails", () => {
+            var el = zoomedInMessage({ upvotes: 0 });
+            var button = el.querySelector(".people-map-message-upvote");
+            ClubApi.postForm.mockImplementation((url, payload, callback) => callback({ error: "Нельзя" }));
+
+            button.click();
+
+            expect(button.disabled).toBe(false);
+            expect(button.title).toBe("Нельзя");
+        });
+
+        it("does not let a user vote for the same message twice", () => {
+            var el = zoomedInMessage({ is_voted: true, upvotes: 2 });
+            var button = el.querySelector(".people-map-message-upvote");
+
+            expect(button.disabled).toBe(true);
+            expect(el.querySelector(".people-map-message-upvotes").innerText).toBe(2);
+
+            button.click();
+            expect(ClubApi.postForm).not.toHaveBeenCalled();
+        });
+
+        it("does not let a user vote for their own message", () => {
+            var el = zoomedInMessage({ is_mine: true, upvotes: 2 });
+            var button = el.querySelector(".people-map-message-upvote");
+
+            expect(button.disabled).toBe(true);
+            expect(button.title).toContain("свои сообщения");
+            expect(el.querySelector(".people-map-message-upvotes").innerText).toBe(2);
+
+            button.click();
+            expect(ClubApi.postForm).not.toHaveBeenCalled();
+        });
+
+        it("hides the button on own messages nobody voted for yet", () => {
+            var el = zoomedInMessage({ is_mine: true, upvotes: 0 });
+
+            expect(el.querySelector(".people-map-message-upvote")).toBe(null);
+        });
+
+        it("links to the profile settings anchor only when the url is given", () => {
+            mountMapWithMessages(makeMessages([]));
+            var link = wrapper.find(".people-map-buttons a");
+            expect(link.attributes("href")).toBe("/user/me/edit/profile/#map-location");
+            expect(link.text()).toContain("Передвинуть себя");
+
+            wrapper.destroy();
+            wrapper = shallowMount(PeopleMap, {
+                propsData: { geojson: makeGeojson([]) },
+                stubs: { default: true },
+            });
+            expect(wrapper.find(".people-map-buttons a").exists()).toBe(false);
+        });
+
+        it("disables the compose button while the author is on the daily cooldown", () => {
+            mountMapWithMessages(makeMessages([]));
+            expect(wrapper.find(".people-map-compose-button").attributes("disabled")).toBeFalsy();
+
+            wrapper.destroy();
+            wrapper = shallowMount(PeopleMap, {
+                propsData: {
+                    geojson: makeGeojson([]),
+                    createMessageUrl: "/map/messages/create.json",
+                    canPostMessage: false,
+                },
+                stubs: { default: true },
+            });
+
+            var button = wrapper.find(".people-map-compose-button");
+            expect(button.attributes("disabled")).toBeTruthy();
+            expect(button.text()).toContain("Подождите 24 часа");
+            expect(button.text()).not.toContain("Оставить сообщение");
+
+            wrapper.vm.toggleComposeMode();
+            expect(wrapper.vm.composeMode).toBe(false);
+        });
+
+        it("switches the map cursor to a crosshair while composing", () => {
+            mountMapWithMessages(makeMessages([]));
+
+            wrapper.vm.toggleComposeMode();
+            expect(mockCanvas.style.cursor).toBe("crosshair");
+
+            wrapper.vm.toggleComposeMode();
+            expect(mockCanvas.style.cursor).toBe("");
+        });
+
+        it("ignores map clicks until compose mode is activated", () => {
+            mountMapWithMessages(makeMessages([]));
+
+            wrapper.vm.onMapClick({ lngLat: { lat: 1, lng: 2 } });
+            expect(wrapper.vm.draft).toBe(null);
+
+            wrapper.vm.toggleComposeMode();
+            wrapper.vm.onMapClick({ lngLat: { lat: 1, lng: 2 } });
+
+            expect(wrapper.vm.draft).toEqual({ latitude: 1, longitude: 2 });
+            expect(wrapper.vm.composeMode).toBe(false);
+            expect(mockCanvas.style.cursor).toBe("");
+        });
+
+        it("pans the clicked point out from under the overlaying sidebar", () => {
+            mountMapWithMessages(makeMessages([]));
+            wrapper.vm.toggleComposeMode();
+
+            wrapper.vm.onMapClick({ lngLat: { lat: 52.5, lng: 13.4 } });
+
+            expect(mockMap.easeTo).toHaveBeenCalledWith(expect.objectContaining({
+                center: [13.4, 52.5],
+                offset: [160, 140],
+            }));
+        });
+
+        it("closes the draft on a click outside of the bubble and keeps it on a click inside", () => {
+            mountMapWithMessages(makeMessages([]));
+            wrapper.vm.toggleComposeMode();
+            wrapper.vm.onMapClick({ lngLat: { lat: 1, lng: 2 } });
+
+            wrapper.vm.onDocumentClick({ target: wrapper.vm.$refs.composeBubble });
+            expect(wrapper.vm.draft).not.toBe(null);
+
+            wrapper.vm.onDocumentClick({ target: document.body });
+            expect(wrapper.vm.draft).toBe(null);
+        });
+
+        it("listens for outside clicks only while a draft is open", () => {
+            jest.useFakeTimers();
+            var add = jest.spyOn(document, "addEventListener");
+            var remove = jest.spyOn(document, "removeEventListener");
+
+            mountMapWithMessages(makeMessages([]));
+            wrapper.vm.toggleComposeMode();
+            wrapper.vm.onMapClick({ lngLat: { lat: 1, lng: 2 } });
+
+            // the opening click must not reach the listener that closes the bubble
+            expect(add).not.toHaveBeenCalledWith("click", wrapper.vm.onDocumentClick);
+            jest.runAllTimers();
+            expect(add).toHaveBeenCalledWith("click", wrapper.vm.onDocumentClick);
+
+            wrapper.vm.cancelDraft();
+            expect(remove).toHaveBeenCalledWith("click", wrapper.vm.onDocumentClick);
+
+            add.mockRestore();
+            remove.mockRestore();
+            jest.useRealTimers();
+        });
+
+        it("posts the draft and adds the created message to the source", () => {
+            mountMapWithMessages(makeMessages([]));
+            wrapper.vm.toggleComposeMode();
+            wrapper.vm.onMapClick({ lngLat: { lat: 52.5, lng: 13.4 } });
+            wrapper.vm.draftText = "  hello map  ";
+
+            var newFeature = {
+                type: "Feature",
+                geometry: { coordinates: [13.4, 52.5] },
+                properties: { id: "new", text: "hello map" },
+            };
+            ClubApi.postForm.mockImplementation((url, payload, callback) => callback({
+                feature: newFeature,
+                can_post: false,
+            }));
+
+            wrapper.vm.saveDraft();
+
+            expect(ClubApi.postForm).toHaveBeenCalledWith(
+                "/map/messages/create.json",
+                { text: "hello map", latitude: 52.5, longitude: 13.4 },
+                expect.any(Function)
+            );
+            expect(mockSource.setData).toHaveBeenCalledWith(
+                expect.objectContaining({ features: [newFeature] })
+            );
+            expect(wrapper.vm.draft).toBe(null);
+            expect(wrapper.vm.postingAllowed).toBe(false);
+        });
+
+        it("keeps the draft and shows the error when saving fails", () => {
+            mountMapWithMessages(makeMessages([]));
+            wrapper.vm.toggleComposeMode();
+            wrapper.vm.onMapClick({ lngLat: { lat: 1, lng: 2 } });
+            wrapper.vm.draftText = "hello";
+
+            ClubApi.postForm.mockImplementation((url, payload, callback) => callback({ error: "Слишком длинное" }));
+
+            wrapper.vm.saveDraft();
+
+            expect(wrapper.vm.draftError).toBe("Слишком длинное");
+            expect(wrapper.vm.draft).not.toBe(null);
+            expect(wrapper.vm.isSaving).toBe(false);
+        });
+
+        it("does not post empty drafts", () => {
+            mountMapWithMessages(makeMessages([]));
+            wrapper.vm.toggleComposeMode();
+            wrapper.vm.onMapClick({ lngLat: { lat: 1, lng: 2 } });
+            wrapper.vm.draftText = "   ";
+
+            wrapper.vm.saveDraft();
+
+            expect(ClubApi.postForm).not.toHaveBeenCalled();
+        });
+
+        it("survives malformed messages json", () => {
+            mountMapWithMessages("{not json");
+
+            expect(mockMap.addSource).toHaveBeenCalledWith("messagesGeojson", expect.objectContaining({
+                data: { type: "FeatureCollection", features: [] },
+            }));
         });
     });
 });

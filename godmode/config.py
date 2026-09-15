@@ -37,7 +37,7 @@ from tags.models import Tag, UserTag
 from tickets.models import Ticket, TicketSale
 from users.models.achievements import Achievement, UserAchievement
 from users.models.friends import Friend
-from users.models.geo import Geo
+from map.models import Geo
 from users.models.mute import UserMuted
 from users.models.notes import UserNote
 from users.models.user import User
