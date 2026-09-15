@@ -48,10 +48,12 @@
 import mapboxgl from "mapbox-gl";
 
 import ClubApi from "../common/api.service";
+import { pluralize } from "../common/utils";
 
 const MESSAGES_SOURCE = "messagesGeojson";
 const MESSAGES_CLUSTER_RADIUS = 40;
 const MESSAGE_TEXT_MIN_ZOOM = 10;
+const ROOM_MARKER_LARGE_ZOOM = 4;
 
 export default {
     name: "PeopleMap",
@@ -79,6 +81,10 @@ export default {
         maxMessageLength: {
             type: Number,
             default: 128,
+        },
+        rooms: {
+            type: [Object, String],
+            default: "",
         },
     },
     data() {
@@ -108,6 +114,7 @@ export default {
         // making it reactive would cost a lot and buy nothing
         this.usersGeojson = this.parseFeatureCollection(this.geojson);
         this.messagesGeojson = this.parseFeatureCollection(this.messages);
+        this.roomsGeojson = this.parseFeatureCollection(this.rooms);
         this.messageMarkers = {};
         this.messageMarkersOnScreen = {};
         this.messagesSourceAdded = false;
@@ -262,6 +269,7 @@ export default {
             if (this.messagesEnabled) {
                 this.setupMessages();
             }
+            this.setupRooms();
         },
 
         parseFeatureCollection(value) {
@@ -277,6 +285,58 @@ export default {
             } catch (e) {
                 return empty;
             }
+        },
+
+        setupRooms() {
+            const markers = this.roomsGeojson;
+            if (!markers.features.length) return;
+
+            this.roomMarkerElements = markers.features.map((feature) => {
+                const element = this.createRoomMarker(feature.properties);
+                new mapboxgl.Marker({ element: element }).setLngLat(feature.geometry.coordinates).addTo(this.map);
+                return element;
+            });
+            this.applyRoomMarkerSize();
+            this.map.on("zoom", () => this.applyRoomMarkerSize());
+        },
+
+        applyRoomMarkerSize() {
+            if (!this.roomMarkerElements) return;
+
+            const compact = this.map.getZoom() < ROOM_MARKER_LARGE_ZOOM;
+            this.roomMarkerElements.forEach((element) => {
+                element.classList.toggle("people-map-room-marker-compact", compact);
+            });
+        },
+
+        createRoomMarker(props) {
+            const element = document.createElement(props.url ? "a" : "div");
+            element.classList.add("people-map-room-marker");
+            if (props.url) {
+                element.href = props.url;
+                element.target = "_blank";
+                element.rel = "noreferrer";
+            }
+            element.title = props.title || "";
+            element.style.color = props.color || "#333333";
+
+            if (props.image) {
+                element.style.backgroundImage = "url(" + JSON.stringify(props.image) + ")";
+            } else if (props.icon) {
+                element.classList.add("people-map-room-marker-icon");
+                element.innerText = props.icon;
+            }
+
+            const label = document.createElement("span");
+            label.classList.add("people-map-room-label");
+            const name = props.title || "";
+            const count = parseInt(props.member_count, 10) || 0;
+            label.innerText = count > 0
+                ? "Чат " + name + " ・ " + count + " " + pluralize(count, ["человек", "человека", "человек"])
+                : "Чат " + name;
+            element.appendChild(label);
+
+            return element;
         },
 
         setupMessages() {

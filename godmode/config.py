@@ -37,7 +37,7 @@ from tags.models import Tag, UserTag
 from tickets.models import Ticket, TicketSale
 from users.models.achievements import Achievement, UserAchievement
 from users.models.friends import Friend
-from map.models import Geo
+from map.models import Geo, MapMessages
 from users.models.mute import UserMuted
 from users.models.notes import UserNote
 from users.models.user import User
@@ -240,6 +240,25 @@ ADMIN = ClubAdmin(
                     icon="🌍",
                     name="geo",
                     list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                ),
+                ClubAdminModel(
+                    model=MapMessages,
+                    title="Сообщения на карте",
+                    icon="💬",
+                    name="map_messages",
+                    title_field="text",
+                    list_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    edit_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    delete_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                    create_roles=set(),
+                    list_fields=[
+                        "author",
+                        "text",
+                        "upvotes",
+                        "latitude",
+                        "longitude",
+                        "created_at",
+                    ],
                 ),
                 ClubAdminModel(
                     model=Invite,
@@ -471,6 +490,8 @@ ADMIN = ClubAdmin(
                         "description",
                         "color",
                         "network_group",
+                        "latitude",
+                        "longitude",
                         "chat_url",
                         "chat_member_count",
                         "admins",

@@ -31,6 +31,7 @@
         <div class="people-map">
             <people-map geojson="{% users_geo_json users_for_map %}"
                         messages="{% map_messages_geo_json map_messages me %}"
+                        rooms="{% rooms_map_geo_json geo_rooms %}"
                         create-message-url="{% url "api_create_map_message" %}"
                         edit-profile-url="{% url "edit_profile" me.slug %}#map-location"
                         :can-post-message="{{ can_post_map_message|yesno:"true,false" }}"

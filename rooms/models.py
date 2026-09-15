@@ -43,6 +43,10 @@ class Room(models.Model):
 
     index = models.PositiveIntegerField(default=0)
 
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    geojson = models.JSONField(null=True, blank=True)
+
     class Meta:
         db_table = "rooms"
         ordering = ["-chat_member_count", "index"]
@@ -86,6 +90,26 @@ class Room(models.Model):
             "chat_name": self.chat_name,
             "chat_url": f"{settings.APP_HOST}{self.get_private_url()}" if self.url or self.chat_url else None,
             "chat_member_count": self.chat_member_count,
+        }
+
+    def to_map_marker_feature(self):
+        if self.latitude is None or self.longitude is None:
+            return None
+        return {
+            "type": "Feature",
+            "properties": {
+                "id": self.slug,
+                "title": self.title,
+                "image": self.image,
+                "icon": self.emoji(),
+                "color": self.color,
+                "url": self.get_private_url(),
+                "member_count": self.chat_member_count or 0,
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [self.longitude, self.latitude],
+            },
         }
 
 

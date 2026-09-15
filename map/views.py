@@ -10,6 +10,7 @@ from authn.decorators.auth import require_auth
 from common.models import group_by
 from common.pagination import paginate
 from map.models import MapMessages
+from rooms.models import Room
 from tags.models import Tag
 from users.models.user import User
 
@@ -91,6 +92,14 @@ def people(request):
         users_for_map = users.filter(geo__isnull=False).order_by().values_list("slug", "avatar", "geo")
 
     map_messages = MapMessages.visible_for_user(request.me)
+    if "messages_only" in filters:
+        geo_rooms = Room.objects.none()
+    else:
+        geo_rooms = Room.objects.filter(
+            is_visible=True,
+            latitude__isnull=False,
+            longitude__isnull=False,
+        )
 
     return render(request, "map/people.html", {
         "people_query": {
@@ -102,6 +111,7 @@ def people(request):
         "users_total": users_total,
         "users_for_map": users_for_map,
         "map_messages": map_messages,
+        "geo_rooms": geo_rooms,
         "max_map_message_length": MapMessages.MAX_TEXT_LENGTH,
         "can_post_map_message": MapMessages.can_post(request.me),
         "users_paginated": paginate(request, users, page_size=settings.PEOPLE_PAGE_SIZE),

@@ -43,3 +43,18 @@ def map_messages_geo_json(messages, user=None):
         "id": "map-messages",
         "features": [message.to_geojson_feature(user) for message in messages],
     })
+
+
+@register.simple_tag()
+def rooms_map_geo_json(rooms):
+    """Build GeoJSON FeatureCollection of geo chat room markers."""
+    features = []
+    for room in rooms:
+        feature = room.to_map_marker_feature()
+        if feature:
+            features.append(feature)
+    return json.dumps({
+        "type": "FeatureCollection",
+        "id": "room-markers",
+        "features": features,
+    })

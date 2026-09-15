@@ -780,4 +780,96 @@ describe("PeopleMap.vue", () => {
             }));
         });
     });
+
+    describe("geo chat rooms", () => {
+        function makeRooms(rooms) {
+            return JSON.stringify({
+                type: "FeatureCollection",
+                features: rooms.map((room, i) => ({
+                    type: "Feature",
+                    geometry: { type: "Point", coordinates: room.coords || [13.4, 52.52] },
+                    properties: {
+                        id: room.id || `room-${i}`,
+                        title: room.title || "Берлин",
+                        image: room.image || "https://example.com/berlin.jpg",
+                        color: room.color || "#FFCC00",
+                        url: room.url === undefined ? "/room/berlin/chat/" : room.url,
+                        member_count: room.memberCount || 12,
+                        icon: room.icon || "",
+                    },
+                })),
+            });
+        }
+
+        function mountMapWithRooms(rooms) {
+            wrapper = shallowMount(PeopleMap, {
+                propsData: {
+                    geojson: makeGeojson([]),
+                    rooms: rooms,
+                },
+                stubs: { default: true },
+            });
+            var loadCall = mockMap.on.mock.calls.find(([e]) => e === "load");
+            if (loadCall) loadCall[1]();
+        }
+
+        it("does not add polygon layers for geo chats", () => {
+            mountMapWithRooms(makeRooms([{ title: "Берлин" }]));
+
+            expect(mockMap.addSource).not.toHaveBeenCalledWith("roomsAreas", expect.anything());
+            expect(mockMap.addLayer).not.toHaveBeenCalledWith(expect.objectContaining({
+                id: "rooms-areas-fill",
+            }));
+        });
+
+        it("renders a non-clickable marker when the room has no chat url", () => {
+            mountMapWithRooms(makeRooms([{ url: null }]));
+
+            var MarkerCtor = require("mapbox-gl").default.Marker;
+            var el = MarkerCtor.mock.calls[0][0].element;
+            expect(el.tagName).toBe("DIV");
+            expect(el.getAttribute("href")).toBe(null);
+        });
+
+        it("creates a room marker that links to the chat", () => {
+            mountMapWithRooms(makeRooms([{
+                title: "Берлин",
+                url: "/room/berlin/chat/",
+                memberCount: 2085,
+            }]));
+
+            var MarkerCtor = require("mapbox-gl").default.Marker;
+            var el = MarkerCtor.mock.calls[0][0].element;
+            expect(el.tagName).toBe("A");
+            expect(el.href).toContain("/room/berlin/chat/");
+            expect(el.classList.contains("people-map-room-marker")).toBe(true);
+            expect(el.style.backgroundImage).toContain("berlin.jpg");
+            expect(el.querySelector(".people-map-room-label").innerText).toBe("Чат Берлин ・ 2085 человек");
+        });
+
+        it("toggles the compact class when the map zoom changes", () => {
+            mockMap.getZoom.mockReturnValue(0);
+            mountMapWithRooms(makeRooms([{ title: "Берлин" }]));
+
+            var MarkerCtor = require("mapbox-gl").default.Marker;
+            var el = MarkerCtor.mock.calls[0][0].element;
+            expect(el.classList.contains("people-map-room-marker-compact")).toBe(true);
+
+            mockMap.getZoom.mockReturnValue(16);
+            getHandler("zoom")();
+            expect(el.classList.contains("people-map-room-marker-compact")).toBe(false);
+        });
+
+        it("does not add a rooms source when there are no geo chats", () => {
+            mountMap(makeGeojson([{ coords: [10, 20] }]));
+
+            expect(mockMap.addSource).not.toHaveBeenCalledWith("roomsAreas", expect.anything());
+        });
+
+        it("survives malformed rooms json", () => {
+            mountMapWithRooms("{not json");
+
+            expect(mockMap.addSource).not.toHaveBeenCalledWith("roomsAreas", expect.anything());
+        });
+    });
 });

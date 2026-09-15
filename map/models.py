@@ -85,6 +85,9 @@ class MapMessages(models.Model):
         db_table = "map_messages"
         ordering = ["-created_at"]
 
+    def __str__(self):
+        return self.text
+
     @classmethod
     def objects_for_user(cls, user):
         return cls.objects.select_related("author").annotate(
