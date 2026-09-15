@@ -110,15 +110,15 @@ class TestPeoplePageRendersRooms(TestCase):
         self.assertIn("rooms=", content)
         self.assertIn("&quot;id&quot;: &quot;berlin&quot;", content)
 
-    def test_skips_non_geo_hidden_and_unlocated_rooms(self):
+    def test_skips_hidden_and_unlocated_rooms(self):
         chats = _create_group("chats")
-        _create_room("tech-chat", chats, title="Тех")
+        tech = _create_room("tech-chat", chats, title="Тех")
         _create_room("hidden", self.group, is_visible=False)
         _create_room("no-coords", self.group, latitude=None, longitude=None)
 
         response = self.client.get("/people/")
 
-        self.assertEqual(list(response.context["geo_rooms"]), [])
+        self.assertEqual(list(response.context["geo_rooms"]), [tech])
 
     def test_keeps_visible_geo_rooms_closed_for_posting(self):
         ukraine = _create_room("ua", self.group, title="Украина", is_open_for_posting=False)
