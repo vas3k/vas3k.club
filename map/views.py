@@ -85,7 +85,10 @@ def people(request):
 
     users_total = users.count()
 
-    users_for_map = users.filter(geo__isnull=False).order_by().values_list("slug", "avatar", "geo")
+    if "messages_only" in filters:
+        users_for_map = []
+    else:
+        users_for_map = users.filter(geo__isnull=False).order_by().values_list("slug", "avatar", "geo")
 
     map_messages = MapMessages.visible_for_user(request.me)
 

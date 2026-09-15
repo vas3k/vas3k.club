@@ -109,6 +109,11 @@
                             <label for="filter_active_members">💚 Активные юзеры</label>
                         </div>
 
+                        <div class="people-filters-tag">
+                            <input type="checkbox" name="filters" value="messages_only" id="filter_messages_only" {% if "messages_only" in people_query.filters %}checked{% endif %} @change="$event.target.form.submit()">
+                            <label for="filter_messages_only">💬 Только сообщения</label>
+                        </div>
+
                         <div class="people-filters-header">Путешествия</div>
 
                         {% for tag in tag_stat_groups.travel %}

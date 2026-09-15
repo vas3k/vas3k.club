@@ -315,3 +315,16 @@ class TestPeoplePageRendersMessages(TestCase):
         self.assertIn("&lt;script&gt;", content)
         self.assertIn("&#x27;", content)
         self.assertIn("create-message-url=\"/map/messages/create.json\"", content)
+
+    def test_messages_only_filter_hides_users_from_the_map(self):
+        self.user.geo = {"latitude": 52.5, "longitude": 13.4, "precise": True}
+        self.user.save()
+
+        people_page = self.client.get("/people/")
+        self.assertEqual(list(people_page.context["users_for_map"]), [
+            (self.user.slug, self.user.avatar, self.user.geo),
+        ])
+
+        messages_only = self.client.get("/people/?filters=messages_only")
+        self.assertEqual(list(messages_only.context["users_for_map"]), [])
+        self.assertIn("messages_only", messages_only.context["people_query"]["filters"])
