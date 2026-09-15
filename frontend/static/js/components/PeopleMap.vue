@@ -78,7 +78,7 @@ export default {
         },
         maxMessageLength: {
             type: Number,
-            default: 512,
+            default: 128,
         },
     },
     data() {

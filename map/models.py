@@ -65,7 +65,7 @@ class Geo(models.Model):
 
 
 class MapMessages(models.Model):
-    MAX_TEXT_LENGTH = 512
+    MAX_TEXT_LENGTH = 128
     POST_COOLDOWN = timedelta(hours=24)
     MAX_MESSAGES_ON_MAP = 1000
     POPULAR_UPVOTES = 10

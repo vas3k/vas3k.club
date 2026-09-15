@@ -420,7 +420,7 @@ describe("PeopleMap.vue", () => {
                     messages: messages,
                     createMessageUrl: "/map/messages/create.json",
                     editProfileUrl: "/user/me/edit/profile/#map-location",
-                    maxMessageLength: 512,
+                    maxMessageLength: 128,
                 },
                 stubs: { default: true },
             });
