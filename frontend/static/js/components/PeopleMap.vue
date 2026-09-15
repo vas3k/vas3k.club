@@ -54,6 +54,7 @@ const MESSAGES_SOURCE = "messagesGeojson";
 const MESSAGES_CLUSTER_RADIUS = 40;
 const MESSAGE_TEXT_MIN_ZOOM = 10;
 const ROOM_MARKER_LARGE_ZOOM = 4;
+const CAMERA_ANIMATION_MS = 200;
 
 export default {
     name: "PeopleMap",
@@ -224,7 +225,12 @@ export default {
                             clusterElement.style.backgroundImage = cssBackgroundImage(clusterAvatar);
                             marker = new mapboxgl.Marker({ element: clusterElement }).setLngLat(coords);
                             clusterElement.addEventListener("click", function () {
-                                map.flyTo({ center: coords, zoom: map.getZoom() + 2, offset: [200, 0] });
+                                map.flyTo({
+                                    center: coords,
+                                    zoom: map.getZoom() + 2,
+                                    offset: [200, 0],
+                                    duration: CAMERA_ANIMATION_MS,
+                                });
                             });
                         } else {
                             let markerElement = document.createElement("a");
@@ -399,7 +405,11 @@ export default {
             element.classList.add("people-map-message", "people-map-message-cluster");
             element.innerText = "💬 " + props.point_count;
             element.addEventListener("click", () => {
-                this.map.flyTo({ center: coords, zoom: this.map.getZoom() + 2 });
+                this.map.flyTo({
+                    center: coords,
+                    zoom: this.map.getZoom() + 2,
+                    duration: CAMERA_ANIMATION_MS,
+                });
             });
             return element;
         },
@@ -413,7 +423,11 @@ export default {
                 element.innerText = "💬";
                 element.title = props.author_name || "";
                 element.addEventListener("click", () => {
-                    this.map.flyTo({ center: coords, zoom: MESSAGE_TEXT_MIN_ZOOM });
+                    this.map.flyTo({
+                        center: coords,
+                        zoom: MESSAGE_TEXT_MIN_ZOOM,
+                        duration: CAMERA_ANIMATION_MS,
+                    });
                 });
                 return element;
             }
@@ -583,7 +597,7 @@ export default {
             this.map.easeTo({
                 center: [lngLat.lng, lngLat.lat],
                 offset: isWide ? [160, 140] : [0, 120],
-                duration: 400,
+                duration: CAMERA_ANIMATION_MS,
             });
         },
 
