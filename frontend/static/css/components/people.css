@@ -336,8 +336,9 @@
     padding: 12px 15px;
     margin-bottom: 8px;
     line-height: 1.4;
+    font-weight: 500;
     background-color: var(--block-bg-color);
-    background-color: color-mix(in srgb, var(--block-bg-color) 60%, transparent);
+    background-color: color-mix(in srgb, var(--block-bg-color) 90%, transparent);
     color: var(--text-color);
     border: var(--block-border);
     border-radius: var(--block-border-radius);
