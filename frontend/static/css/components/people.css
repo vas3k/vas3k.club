@@ -338,12 +338,28 @@
     line-height: 1.4;
     font-weight: 500;
     background-color: var(--block-bg-color);
-    background-color: color-mix(in srgb, var(--block-bg-color) 90%, transparent);
     color: var(--text-color);
     border: var(--block-border);
     border-radius: var(--block-border-radius);
     box-shadow: var(--block-shadow), 0 2px 12px rgba(0, 0, 0, 0.15);
+    overflow: visible;
 }
+
+    .people-map-message-full::after,
+    .people-map-message-compose::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        width: 12px;
+        height: 12px;
+        transform: translateX(-50%) rotate(45deg);
+        background-color: var(--block-bg-color);
+        border-right: var(--block-border);
+        border-bottom: var(--block-border);
+        pointer-events: none;
+    }
 
     .people-map-message-full,
     .people-map-message-compose {
