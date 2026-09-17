@@ -21,8 +21,12 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
         and message.forward_origin is not None \
         and message.chat.type == TGChat.PRIVATE
 
+    is_public_reply = not is_private_forward \
+        and message.reply_to_message \
+        and message.reply_to_message != message.message_thread_id
+
     # If there is no reply/forward – try `/whois <telegram_username>` using the raw message text
-    if not message or (not message.reply_to_message and not is_private_forward):
+    if not is_public_reply:
         text = (message.text or "").strip() if message else ""
         parts = text.split(maxsplit=1)
 
