@@ -428,6 +428,40 @@ class SearchViewsTests(TestCase):
 
         self.assertIn('<input type="hidden" name="type" value="post">', content)
 
+    def test_pagination_does_not_duplicate_results_across_pages(self):
+        # create enough posts with an identical rank/upvotes tie to span two
+        # pages (SEARCH_PAGE_SIZE == 25). Without a unique tiebreaker in the
+        # ORDER BY, Postgres may return the same row on both pages (issue #1213).
+        for i in range(30):
+            self.create_post(
+                slug="dup_page_{}".format(i),
+                title="PAGINATION DUP TOKEN {}".format(i),
+                text="PAGINATION DUP TOKEN",
+                author=self.new_user,
+                upvotes=5,
+            )
+
+        page1 = self.client.get(
+            reverse("search"),
+            data={"q": "PAGINATION DUP TOKEN", "ordering": "-upvotes", "page": 1},
+        )
+        page2 = self.client.get(
+            reverse("search"),
+            data={"q": "PAGINATION DUP TOKEN", "ordering": "-upvotes", "page": 2},
+        )
+
+        page1_ids = [r.id for r in page1.context["results"]]
+        page2_ids = [r.id for r in page2.context["results"]]
+
+        # both pages must contain results and must not overlap
+        self.assertTrue(page1_ids)
+        self.assertTrue(page2_ids)
+        self.assertEqual(
+            set(page1_ids) & set(page2_ids),
+            set(),
+            "search results duplicated across paginated pages",
+        )
+
     def test_type_post_excludes_intro_posts(self):
         intro = self.create_post(
             slug="intro_hidden",
