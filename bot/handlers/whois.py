@@ -15,7 +15,7 @@ from users.models.user import User
 async def command_whois(update: Update, context: CallbackContext) -> None:
     if not update.message:
         return None
-          
+
     message = update.message
     is_private_forward = message is not None \
         and message.forward_origin is not None \
@@ -23,7 +23,7 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
 
     is_public_reply = not is_private_forward \
         and message.reply_to_message \
-        and message.reply_to_message != message.message_thread_id
+        and message.reply_to_message.id != message.message_thread_id
 
     # If there is no reply/forward – try `/whois <telegram_username>` using the raw message text
     if not is_public_reply:
