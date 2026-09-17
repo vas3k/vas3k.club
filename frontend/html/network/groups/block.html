@@ -1,4 +1,4 @@
-{% load text_filters %}
+{% load rooms text_filters %}
 
 <div class="block network-block" id="{{ group.code }}">
     <a href="#{{ group.code }}" class="network-header">{{ group.title }}</a>
@@ -13,7 +13,7 @@
                         {% endif %}
 
                         {% if room.icon %}
-                            <span class="network-channel-icon">{{ room.icon | safe }}</span>
+                            <span class="network-channel-icon">{{ room.icon | network_icon }}</span>
                         {% endif %}
 
                         {% if room.title %}
