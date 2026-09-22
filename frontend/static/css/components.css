@@ -207,11 +207,9 @@
     border-radius: var(--button-border-radius);
 }
 
-    @media (hover: hover) {
-        .upvote:hover {
-            background-color: var(--opposite-bg-color);
-            color: var(--opposite-text-color);
-        }
+    .upvote:hover {
+        background-color: var(--opposite-bg-color);
+        color: var(--opposite-text-color);
     }
 
     .upvote::before {
@@ -228,10 +226,8 @@
         color: var(--opposite-text-color);
     }
 
-        @media (hover: hover) {
-            .upvote-voted:hover {
-                color: var(--opposite-text-color);
-            }
+        .upvote-voted:hover {
+            color: var(--opposite-text-color);
         }
 
     .upvote-disabled {
