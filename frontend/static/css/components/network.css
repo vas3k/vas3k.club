@@ -110,6 +110,19 @@
                     border-radius: 1em;
                 }
 
+                .network-channel-icon .emoji-flags-multiple {
+                    display: grid;
+                    grid-template-columns: repeat(2, 0.68em);
+                    gap: 2px;
+                    padding: 2px;
+                    line-height: 0;
+                }
+
+                    .network-channel-icon .emoji-flags-multiple .emoji-flag {
+                        width: 0.68em;
+                        height: 0.68em;
+                    }
+
             .network-channel-name {
                 display: block;
                 padding-top: 10px;

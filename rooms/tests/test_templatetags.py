@@ -5,12 +5,25 @@ from rooms.templatetags.rooms import network_icon
 
 
 class NetworkIconTest(SimpleTestCase):
-    def test_replaces_flag_emoji_with_twemoji_image(self):
+    def test_replaces_single_flag_emoji_with_twemoji_image(self):
         rendered = network_icon("🇦🇲")
 
         self.assertIn('class="emoji-flag"', rendered)
         self.assertIn("1f1e6-1f1f2.svg", rendered)
         self.assertIn('alt="🇦🇲"', rendered)
+        self.assertNotIn("emoji-flags-multiple", rendered)
+
+    def test_groups_multiple_flag_emoji_for_compact_layout(self):
+        rendered = network_icon("🇷🇸 🇲🇪<br>🇦🇱 🇸🇮")
+
+        self.assertIn('class="emoji-flags emoji-flags-multiple"', rendered)
+        self.assertEqual(4, rendered.count('class="emoji-flag"'))
+        self.assertIn("1f1f7-1f1f8.svg", rendered)
+        self.assertIn("1f1f2-1f1ea.svg", rendered)
+        self.assertIn("1f1e6-1f1f1.svg", rendered)
+        self.assertIn("1f1f8-1f1ee.svg", rendered)
+        self.assertNotIn("<br", rendered)
+        self.assertNotRegex(rendered, r'loading="lazy">\s+<img')
 
     def test_preserves_non_flag_icons(self):
         rendered = network_icon('<i class="fas fa-comments"></i>')

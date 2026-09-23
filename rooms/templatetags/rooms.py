@@ -30,6 +30,8 @@ def network_icon(icon):
     if not icon:
         return ""
 
+    flag_count = len(FLAG_EMOJI_RE.findall(icon))
+
     def replace_flag(match):
         flag = match.group(0)
         codepoints = "-".join(format(ord(char), "x") for char in flag)
@@ -40,4 +42,15 @@ def network_icon(icon):
         )
 
     rendered_icon = FLAG_EMOJI_RE.sub(lambda match: str(replace_flag(match)), icon)
+    if flag_count > 1:
+        rendered_icon = re.sub(r"<br\s*/?>", "", rendered_icon, flags=re.IGNORECASE)
+        rendered_icon = re.sub(
+            r'(loading="lazy">)\s+(<img class="emoji-flag")',
+            r"\1\2",
+            rendered_icon,
+        )
+        return format_html(
+            '<span class="emoji-flags emoji-flags-multiple">{}</span>',
+            mark_safe(rendered_icon),
+        )
     return mark_safe(rendered_icon)
