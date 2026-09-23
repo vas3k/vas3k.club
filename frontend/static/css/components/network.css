@@ -110,6 +110,11 @@
                     border-radius: 1em;
                 }
 
+                .network-channel-icon:has(.emoji-flags-multiple) {
+                    top: 0;
+                    right: 0;
+                }
+
                 .network-channel-icon .emoji-flags-multiple {
                     display: grid;
                     grid-template-columns: repeat(2, 0.68em);
