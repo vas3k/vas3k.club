@@ -39,7 +39,7 @@ def search(request):
     if ordering not in ALLOWED_ORDERING:
         ordering = "-rank"
 
-    results = results.order_by(ordering)
+    results = results.order_by(ordering, "id")
 
     return render(request, "search.html", {
         "type": content_type,
