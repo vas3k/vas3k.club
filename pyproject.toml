@@ -29,7 +29,7 @@ dependencies = [
     "python-telegram-bot[webhooks]==22.8",
     "redis==8.0.1",
     "requests==2.34.2",
-    "sentry-sdk==2.66.0",
+    "sentry-sdk==2.66.1",
     "stripe==11.4.1",
     "telethon>=1.44.0",
     "typus>=0.2.2",
