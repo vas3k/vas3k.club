@@ -230,6 +230,13 @@
             color: var(--opposite-text-color);
         }
 
+    @media (any-hover: none) {
+        .upvote:not(.upvote-voted):hover {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+    }
+
     .upvote-disabled {
         padding-top: 18px;
         padding-bottom: 18px;
