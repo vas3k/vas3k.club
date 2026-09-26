@@ -1,0 +1,43 @@
+{% extends "layout_with_sidebar.html" %}
+{% load static %}
+{% load posts %}
+
+{% block title %}
+    Календарь событий — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="Календарь событий — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}{% url "event_calendar" %}">
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="{% static "images/share.png" %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Календарь событий — {{ settings.APP_NAME }}">
+    <meta name="twitter:image" content="{% static "images/share.png" %}">
+{% endblock %}
+
+{% block feed_content %}
+    {% now "Y-m-d" as today %}
+    <div class="event-calendar">
+        {% for post in posts %}
+            {% ifchanged post.event_datetime.year post.event_datetime.month %}
+                <div class="event-calendar-month">
+                    {{ post.event_datetime|date:"F Y" }}
+                </div>
+            {% endifchanged %}
+
+            <div class="event-calendar-row{% if post.event_datetime|date:'Y-m-d' == today %} event-calendar-row-today{% endif %}{% if post.event_datetime|date:'w' == '0' or post.event_datetime|date:'w' == '6' %} event-calendar-row-weekend{% endif %}">
+                <div class="event-calendar-date">
+                    {% ifchanged post.event_datetime.year post.event_datetime.month post.event_datetime.day %}
+                        <div class="event-calendar-date-day">{{ post.event_datetime|date:"j" }}</div>
+                        <div class="event-calendar-date-weekday">{{ post.event_datetime|date:"D" }}</div>
+                    {% endifchanged %}
+                </div>
+                <div class="event-calendar-line"></div>
+                {% include "posts/items/event.html" %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -41,6 +41,7 @@ from posts.user_rss import UserPostsRss
 from posts.sitemaps import sitemaps
 from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote, toggle_post_subscription, \
     toggle_post_event_participation
+from posts.views.calendar import event_calendar
 from posts.views.feed import feed
 from posts.views.posts import show_post, edit_post, compose, compose_type, \
     delete_post, unpublish_post, clear_post
@@ -143,6 +144,7 @@ urlpatterns = [
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
+    path("calendar/", event_calendar, name="event_calendar"),
     path("achievements/", RedirectView.as_view(url="/stats", permanent=True), name="achievements"),
     path("achievements/<slug:achievement_code>/", show_achievement, name="show_achievement"),
     path("stats/", stats, name="stats"),
