@@ -3,18 +3,18 @@
 {% load posts %}
 
 {% block title %}
-    Календарь событий — {{ block.super }}
+    Календарь — {{ block.super }}
 {% endblock %}
 
 {% block og_tags %}
-    <meta property="og:title" content="Календарь событий — {{ settings.APP_NAME }}">
+    <meta property="og:title" content="Календарь — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}{% url "event_calendar" %}">
     <meta property="og:type" content="website" />
     <meta property="og:image" content="{% static "images/share.png" %}">
 
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Календарь событий — {{ settings.APP_NAME }}">
+    <meta name="twitter:title" content="Календарь — {{ settings.APP_NAME }}">
     <meta name="twitter:image" content="{% static "images/share.png" %}">
 {% endblock %}
 
