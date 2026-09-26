@@ -27,7 +27,7 @@ def event_calendar(request):
             events.append(post)
     events.sort(key=lambda post: post.event_datetime)
 
-    return render(request, "posts/calendar.html", {
+    return render(request, "posts/items/calendar.html", {
         "post_type": "calendar",
         "posts": events,
     })

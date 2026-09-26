@@ -42,6 +42,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{% url "event_calendar" %}" class="{% if post_type == "calendar" %}feed-sidebar-menu-selected{% endif %}">
+                        <i class="fas fa-calendar-times"></i> Календарь
+                    </a>
+                </li>
+                <li>
                     <a href="{% url "feed_type" "guide" %}" class="{% if post_type == "guide" %}feed-sidebar-menu-selected{% endif %}">
                         <i class="fas fa-globe"></i> Путеводители
                     </a>
@@ -59,11 +64,6 @@
                 <li>
                     <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
                         <i class="fas fa-pencil-ruler"></i> Проекты
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url "event_calendar" %}" class="{% if post_type == "calendar" %}feed-sidebar-menu-selected{% endif %}">
-                        <i class="fas fa-calendar-times"></i> События
                     </a>
                 </li>
                 <li>
