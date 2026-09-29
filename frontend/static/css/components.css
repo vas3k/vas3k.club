@@ -290,6 +290,35 @@
             padding-right: 14px;
         }
 
+    .upvote-type-checkbox {
+        display: block;
+        width: 110px;
+        padding: 10px;
+        font-size: 100%;
+        text-align: center;
+        cursor: pointer;
+    }
+
+        .upvote-type-checkbox::before {
+            display: none;
+        }
+
+        .upvote-type-checkbox.upvote-disabled {
+            padding: 10px;
+        }
+
+        .upvote-checkbox-icon {
+            display: block;
+            font-size: 160%;
+            padding-bottom: 8px;
+        }
+
+        .upvote-checkbox-caption {
+            display: block;
+            font-size: 110%;
+            line-height: 1.2em;
+        }
+
     @media only screen and (max-width : 570px) {
         .upvote {
             padding: 18px 11px 5px;
@@ -329,6 +358,13 @@
             bottom: 0;
             content: "+";
             font-size: 110%;
+        }
+
+        .upvote-type-checkbox,
+        .upvote-type-checkbox.upvote-disabled {
+            width: 90px;
+            padding: 8px;
+            font-size: 14px;
         }
     }
 

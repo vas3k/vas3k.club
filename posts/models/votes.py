@@ -23,6 +23,13 @@ class PostVote(models.Model):
         unique_together = [["user", "post"]]
 
     @classmethod
+    def votes_for_post(cls, post, limit=100):
+        return cls.objects\
+            .filter(post=post, user__isnull=False, user__deleted_at__isnull=True)\
+            .select_related("user")\
+            .order_by("-created_at")[:limit]
+
+    @classmethod
     def upvote(cls, user, post, request=None):
         if not user.is_god and (user.id == post.author_id or user.slug in post.coauthors):
             return None, False

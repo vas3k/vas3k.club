@@ -103,4 +103,30 @@ describe("PostUpvote.vue", () => {
 
         expect(wrapper.classes()).toContain("upvote-disabled");
     });
+
+    it("renders checkbox variant with caption instead of counter", () => {
+        const wrapper = mountUpvote({ initialUpvotes: 42, variant: "checkbox", caption: "Мне тоже интересно!" });
+
+        expect(wrapper.classes()).toContain("upvote-type-checkbox");
+        expect(wrapper.text()).toContain("Мне тоже интересно!");
+        expect(wrapper.text()).not.toContain("42");
+        expect(wrapper.find(".far.fa-square").exists()).toBe(true);
+    });
+
+    it("renders disabled checkbox variant as checked without caption", () => {
+        const wrapper = mountUpvote({ variant: "checkbox", caption: "Мне тоже интересно!", isDisabled: true });
+
+        expect(wrapper.find(".fas.fa-check-square").exists()).toBe(true);
+        expect(wrapper.find(".upvote-checkbox-caption").exists()).toBe(false);
+    });
+
+    it("checks the checkbox variant after upvote", async () => {
+        ClubApi.post.mockImplementation((url, cb) => cb({ post: { upvotes: 6 }, upvoted_timestamp: 1000000 }));
+        const wrapper = mountUpvote({ variant: "checkbox" });
+
+        wrapper.vm.toggle();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.find(".fas.fa-check-square").exists()).toBe(true);
+    });
 });

@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
+from gunicorn.config import PostRequest
 from slugify import slugify_filename
 
 from common.regexp import EMOJI_RE
@@ -269,23 +270,24 @@ class PostQuestionForm(AbstractPostForm):
         ]
 
 
-class PostIdeaForm(AbstractPostForm):
+class PostRequestForm(AbstractPostForm):
     title = forms.CharField(
-        label="Суть идеи",
+        label="Хочу пост:",
         required=True,
         max_length=128,
-        widget=forms.TextInput(attrs={"placeholder": "Кратко суть идеи 🤔"}),
+        widget=forms.TextInput(attrs={"placeholder": "как получить альтушку с госуслуг"}),
     )
     text = forms.CharField(
-        label="Развернутое описание",
+        label="Расскажите подробнее о чем бы вы хотели прочитать в посте, "
+               "на какие вопросы получить ответы и какой личный опыт интересует 👇",
         required=True,
-        max_length=500000,
+        max_length=5000,
         widget=forms.Textarea(
             attrs={
-                "maxlength": 500000,
+                "maxlength": 5000,
                 "class": "markdown-editor-full",
-                "placeholder": "Поделитесь подробностями, предысторией и проблемами, которые легли в основу идеи. "
-                               "Приведите примеры похожих продуктов...",
+                "placeholder": "Чтобы автору не пришлось переспрашивать вас в комментах «а про что конкретно хотелось бы узнать?», "
+                               "опишите все свои вопросы здесь..."
             }
         ),
     )
@@ -295,9 +297,6 @@ class PostIdeaForm(AbstractPostForm):
         fields = [
             "title",
             "text",
-            "room",
-            "collectible_tag_code",
-            "is_room_only",
             "is_public",
         ]
 
@@ -745,10 +744,10 @@ POST_TYPE_MAP = {
     Post.TYPE_POST: PostTextForm,
     Post.TYPE_LINK: PostLinkForm,
     Post.TYPE_QUESTION: PostQuestionForm,
-    Post.TYPE_IDEA: PostIdeaForm,
     Post.TYPE_PROJECT: PostProjectForm,
     Post.TYPE_BATTLE: PostBattleForm,
     Post.TYPE_EVENT: PostEventForm,
     Post.TYPE_GUIDE: PostGuideForm,
     Post.TYPE_THREAD: PostThreadForm,
+    Post.TYPE_REQUEST: PostRequestForm,
 }

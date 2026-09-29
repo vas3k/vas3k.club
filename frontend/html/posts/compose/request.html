@@ -2,24 +2,25 @@
 
 {% block title %}
     {% if mode == "create" %}
-        Новая идея — {{ block.super }}
+        Новый запрос на пост — {{ block.super }}
     {% else %}
-        Идея — {{ block.super }}
+        Запрос на пост — {{ block.super }}
     {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="content compose">
-        <div class="content-header">Идея</div>
+        {% if mode == "create" %}
+            <div class="content-header">Новый запрос на пост</div>
+        {% else %}
+            <div class="content-header">Редактируем запрос</div>
+        {% endif %}
 
         {% if mode == "create" or form.instance.visibility == "draft" %}
             <div class="content-description">
                 <p>
-                    Делимся идеями, которые засели в голове или желаниями «вот бы был такой сервис, чтобы...»
-                </p>
-
-                <p>
-                    У людей часто появляются одинаковые идеи и только поделившись ими можно найти единомышленников.
+                    🙏 Если какого-то поста никогда не было в Клубе, но вас очень интересует личный опыт по этой теме —
+                    здесь вы можете создать официальный запрос на главную, может быть кто-то откликнется и решится написать такой пост!
                 </p>
             </div>
         {% endif %}
@@ -28,8 +29,11 @@
             <form action="." method="post" class="compose-form" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <div class="form-row compose-form-title">
-                    {{ form.title }}
+                <div class="form-row compose-form-title compose-form-title-idea">
+                    <div class="form-row form-row-center">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                        {{ form.title }}
+                    </div>
                     {% if form.title.errors %}<span class="form-row-errors">{{ form.title.errors }}</span>{% endif %}
                 </div>
 
@@ -40,7 +44,11 @@
                     <span class="form-row-help form-row-help-wide">Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a></span>
                 </div>
 
-                {% include "posts/compose/elements/post_settings.html" %}
+                <div class="post-publicity-preferences">
+                    <i class="fas fa-lock"></i> Все запросы видны только внутри Клуба
+                </div>
+
+                <div class="clearfix50"></div>
 
                 {% if form.non_field_errors %}
                     <div class="form-row form-row-center">

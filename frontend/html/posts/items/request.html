@@ -1,0 +1,34 @@
+{% load text_filters %}
+{% load posts %}
+<article class="feed-post feed-post-type-{{ post.type }} h-entry">
+    <div class="feed-post-header">
+        <div class="feed-post-title">
+            <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
+                <span>{{ post.emoji }} {{ post.prefix }} </span>
+                <span>{{ post.title }}</span>
+            </a>
+
+            {% if post.label %}
+                {% include "posts/widgets/label.html" with label=post.label %}
+            {% endif %}
+
+            <post-upvote :initial-upvotes="{{ post.upvotes }}"
+                         :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
+                         upvote-url="{% url "upvote_post" post.slug %}"
+                         retract-vote-url="{% url "retract_post_vote" post.slug %}"
+                         {% if post.upvoted_at %}
+                            initial-is-voted
+                            initial-upvote-timestamp={{post.upvoted_at}}
+                         {% endif %}
+                         {% if not me|can_upvote_post:post or upvote_disabled %}is-disabled{% endif %}
+                         is-inline>
+            </post-upvote>
+
+            {% if post.comment_count > 0 %}
+                <a href="{% url "show_post" post.type post.slug %}#comments" class="feed-post-comments">
+                    {{ post.comment_count }} {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</article>

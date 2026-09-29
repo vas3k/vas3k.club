@@ -53,6 +53,24 @@
         padding: 15px;
     }
 
+    .compose-form-title-idea {
+        padding-bottom: 10px;
+    }
+
+        .compose-form-title-idea label {
+            white-space: nowrap;
+            font-weight: 600;
+            position: relative;
+            top: 3px;
+            padding-right: 10px;
+        }
+
+        .compose-form-title-idea input {
+            padding: 5px 15px;
+            font-size: 120%;
+            text-align: left !important;
+        }
+
     .compose-form-text .CodeMirror,
     .compose-form-text .CodeMirror-focused,
     .compose-form-text .CodeMirror-scroll {

@@ -81,6 +81,11 @@
                         <i class="fas fa-trophy"></i> Посты месяца
                     </a>
                 </li>
+                <li>
+                    <a href="{% url "feed_type" "request" %}" class="{% if post_type == "request" %}feed-sidebar-menu-selected{% endif %}">
+                        <i class="fas fa-lightbulb"></i> Запросы на посты
+                    </a>
+                </li>
             </ul>
         </div>
 

@@ -6,7 +6,7 @@ AUTH_TOKEN_CACHE_TIMEOUT = 3 * 60  # seconds
 
 
 def auth_token_cache_key(token: str) -> str:
-    return f"auth:token:{token}"
+    return f"auth:session:{token}"
 
 
 def clear_auth_token_cache(token: str | None) -> None:

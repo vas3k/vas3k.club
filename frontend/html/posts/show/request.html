@@ -1,0 +1,101 @@
+{% extends "posts/show/layout.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{% block post %}
+<section class="content">
+    <article class="post block post-layout-block">
+        {% block post_upvote %}
+            {% if me.id != post.author_id %}
+                <div class="post-upvote">
+                    <post-upvote :initial-upvotes="{{ post.upvotes }}"
+                                 :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
+                                 upvote-url="{% url "upvote_post" post.slug %}"
+                                 retract-vote-url="{% url "retract_post_vote" post.slug %}"
+                                 variant="checkbox"
+                                 caption="Мне тоже интересно!"
+                                 {% if upvoted_at %}
+                                    initial-is-voted
+                                    initial-upvote-timestamp={{upvoted_at}}
+                                 {% endif %}
+                                 {% if not me|can_upvote_post:post or upvote_disabled %}is-disabled{% endif %}>
+                    </post-upvote>
+                </div>
+            {% endif %}
+        {% endblock %}
+
+        {% block post_header %}
+            <header class="post-header">
+                <div class="post-title">
+                    {% block post_title %}
+                        <h1 class="post-inline-title p-name">{{ post.emoji }} {{ post.prefix }} {{ post.title | rutypography }}</h1>
+                    {% endblock %}
+
+                    {% if post.label %}
+                        {% include "posts/widgets/label.html" with label=post.label %}
+                    {% endif %}
+
+                    {% if post.deleted_at %}
+                        <div class="post-label">
+                            <span class="label label-type-deleted">
+                                <span class="label-title">Удалённый пост</span>
+                            </span>
+                        </div>
+                    {% elif post.visibility == "draft" %}
+                        <div class="post-label">
+                            {% include "posts/widgets/draft_label.html" %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="post-info">
+                    {% if post.room %}
+                        {% include "rooms/widgets/room.html" with room=post.room type="inline" %}
+                    {% endif %}
+                    <div class="post-actions-line">
+                        {% include "posts/widgets/post_actions_line.html" %}
+                    </div>
+                </div>
+
+                {% if post.metadata.badges %}
+                    <a class="post-badges" href="{% url "profile_badges" post.author.slug %}">
+                        {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
+                    </a>
+                {% endif %}
+
+                {% if upvoted_users %}
+                    <div class="post-upvoters">
+                        <div class="post-upvoters-text">{{ post.upvotes }} {{ post.upvotes | rupluralize:"человек,человека,человек" }} тоже {{ post.upvotes | rupluralize:"ждёт,ждут,ждут" }} такой пост 👉</div>
+                        {% for user in upvoted_users %}
+                            {% include "users/widgets/round.html" with user=user show_name=False %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </header>
+        {% endblock %}
+
+        {% block post_text %}
+            <section class="text-body text-body-type-post e-content">
+                {% render_post post %}
+            </section>
+        {% endblock %}
+
+        {% block post_footer %}
+            <section class="post-footer p-author">
+                {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+            </section>
+        {% endblock %}
+    </article>
+
+    <div class="post-underpost-disclaimer">
+        <p>
+            ☝️ Это запрос на написание нового поста. Если у вас есть личный опыт по данной теме — напишите об этом пост
+            или скооперируйтесь с кем-то в комментариях, а потом прилинкуйте его сюда. Пост не обязательно должен быть один, любой опыт полезен!
+        </p>
+        <p>
+            Не забывайте награждать и благодарить авторов за их труды 🥇
+        </p>
+    </div>
+</section>
+{% endblock %}

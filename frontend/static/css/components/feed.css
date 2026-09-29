@@ -372,11 +372,13 @@
     }
 
     .feed-post-type-intro,
+    .feed-post-type-request,
     .feed-post-type-weekly_digest {
         min-height: 20px;
     }
 
-    .feed-post-type-intro .post-title-link:focus {
+    .feed-post-type-intro .post-title-link:focus,
+    .feed-post-type-request .post-title-link:focus {
         outline: auto;
     }
 
@@ -396,6 +398,7 @@
     }
 
         .feed-post-type-intro:hover,
+        .feed-post-type-request:hover,
         .feed-post-type-weekly_digest:hover {
             box-shadow: none;
         }
@@ -547,6 +550,7 @@
     }
 
 .feed-post-type-intro,
+.feed-post-type-request,
 .feed-post-type-weekly_digest {
     display: flex;
     justify-content: flex-start;
@@ -556,6 +560,7 @@
 }
 
     .feed-post-type-intro .feed-post-title,
+    .feed-post-type-request .feed-post-title,
     .feed-post-type-weekly_digest .feed-post-title {
         font-size: 100%;
         font-weight: 400;
@@ -581,7 +586,8 @@
         top: 0;
     }
 
-    .feed-post-type-intro .feed-post-comments {
+    .feed-post-type-intro .feed-post-comments,
+    .feed-post-type-request .feed-post-comments {
         font-weight: 400;
         font-size: 80%;
         opacity: 0.5;
@@ -589,6 +595,7 @@
 
     @media only screen and (max-width : 570px) {
         .feed-post-type-intro,
+        .feed-post-type-request,
         .feed-post-type-weekly_digest {
             margin-left: 10px;
             margin-bottom: 0;

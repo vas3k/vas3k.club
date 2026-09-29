@@ -6,10 +6,20 @@
             'upvote-voted': isVoted && !isDisabled,
             'upvote-disabled': isDisabled,
             'upvote-type-inline': isInline,
+            'upvote-type-checkbox': variant === 'checkbox',
         }"
         @click.prevent="toggle"
     >
-        {{ upvotes }}
+        <template v-if="variant === 'checkbox'">
+            <span class="upvote-checkbox-icon">
+                <i v-if="isVoted || isDisabled" class="fas fa-check-square"></i>
+                <i v-else class="far fa-square"></i>
+            </span>
+            <span v-if="caption && !isDisabled" class="upvote-checkbox-caption">{{ caption }}</span>
+        </template>
+        <template v-else>
+            {{ upvotes }}
+        </template>
     </a>
 </template>
 
@@ -56,6 +66,15 @@ export default {
         upvoteUrl: {
             type: String,
             required: true,
+        },
+        variant: {
+            type: String,
+            default: "upvote",
+            validator: (value) => ["upvote", "checkbox"].includes(value),
+        },
+        caption: {
+            type: String,
+            default: "",
         },
     },
     data() {

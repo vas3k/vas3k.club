@@ -47,31 +47,24 @@ def authorized_user_with_session(request) -> Tuple[Optional[User], Optional[Sess
         session.ipaddress = parse_ip_address(request)
         session.useragent = parse_useragent(request)
         session.save(update_fields=["ipaddress", "useragent"])
-        cache.set(auth_token_cache_key(auth_token), (user, session), timeout=AUTH_TOKEN_CACHE_TIMEOUT)
+        cache.set(auth_token_cache_key(auth_token), session, timeout=AUTH_TOKEN_CACHE_TIMEOUT)
 
     return user, session
 
 
 def user_by_token(token) -> Tuple[Optional[User], Optional[Session]]:
     cache_key = auth_token_cache_key(token)
-    cached = cache.get(cache_key)
-    if cached is not None:
-        user, session = cached
-        if not session or session.expires_at <= datetime.utcnow():
-            clear_auth_token_cache(token)
-            return None, None
-        return user, session
-
-    session = Session.objects\
-        .filter(token=token)\
-        .order_by()\
-        .select_related("user")\
-        .first()
+    session = cache.get(cache_key)
+    if session is None:
+        session = Session.objects \
+            .filter(token=token) \
+            .order_by() \
+            .first()
 
     if not session or session.expires_at <= datetime.utcnow():
         return None, None  # session is expired
 
-    cache.set(cache_key, (session.user, session), timeout=AUTH_TOKEN_CACHE_TIMEOUT)
+    cache.set(cache_key, session, timeout=AUTH_TOKEN_CACHE_TIMEOUT)
     return session.user, session
 
 

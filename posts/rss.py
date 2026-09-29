@@ -13,6 +13,7 @@ class NewPostsRss(Feed):
         return Post.visible_objects()\
            .filter(moderation_status=Post.MODERATION_APPROVED)\
            .exclude(type=Post.TYPE_INTRO)\
+           .exclude(type=Post.TYPE_REQUEST)\
            .order_by("-published_at", "-created_at")[:self.limit]
 
     def item_title(self, item):

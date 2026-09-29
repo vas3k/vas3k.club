@@ -25,7 +25,6 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_INTRO = "intro"
     TYPE_LINK = "link"
     TYPE_QUESTION = "question"
-    TYPE_IDEA = "idea"
     TYPE_PROJECT = "project"
     TYPE_EVENT = "event"
     TYPE_BATTLE = "battle"
@@ -33,12 +32,12 @@ class Post(models.Model, ModelDiffMixin):
     TYPE_GUIDE = "guide"
     TYPE_THREAD = "thread"
     TYPE_DOCS = "docs"
+    TYPE_REQUEST = "request"
     TYPES = [
         (TYPE_POST, "Текст"),
         (TYPE_INTRO, "#intro"),
         (TYPE_LINK, "Ссылка"),
         (TYPE_QUESTION, "Вопрос"),
-        (TYPE_IDEA, "Идея"),
         (TYPE_PROJECT, "Проект"),
         (TYPE_EVENT, "Событие"),
         (TYPE_BATTLE, "Батл"),
@@ -46,6 +45,7 @@ class Post(models.Model, ModelDiffMixin):
         (TYPE_GUIDE, "Путеводитель"),
         (TYPE_THREAD, "Тред"),
         (TYPE_DOCS, "Доки"),
+        (TYPE_REQUEST, "Запрос на пост"),
     ]
 
     TYPE_TO_EMOJI = {
@@ -53,20 +53,19 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_INTRO: "🙋‍♀️",
         TYPE_LINK: "🔗",
         TYPE_QUESTION: "❓",
-        TYPE_IDEA: "💡",
         TYPE_PROJECT: "🏗",
         TYPE_EVENT: "📅",
         TYPE_BATTLE: "🤜🤛",
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "🗄",
         TYPE_DOCS: "📚",
+        TYPE_REQUEST: "💡",
     }
 
     TYPE_TO_PREFIX = {
         TYPE_POST: "",
         TYPE_INTRO: "Интро",
         TYPE_LINK: "➜",
-        TYPE_IDEA: "Идея:",
         TYPE_QUESTION: "Вопрос:",
         TYPE_PROJECT: "Проект:",
         TYPE_EVENT: "Событие:",
@@ -74,6 +73,7 @@ class Post(models.Model, ModelDiffMixin):
         TYPE_GUIDE: "🗺",
         TYPE_THREAD: "Тред:",
         TYPE_DOCS: "",
+        TYPE_REQUEST: "Хочу пост:",
     }
 
     MODERATION_NONE = "none"

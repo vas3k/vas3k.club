@@ -58,6 +58,15 @@
     word-break: break-word;
 }
 
+.post-underpost-disclaimer {
+    width: 90%;
+    text-align: center;
+    margin: 40px auto 0;
+    opacity: 0.7;
+    font-size: 110%;
+    font-weight: 500;
+}
+
 .post-type-post {
 
 }
@@ -815,6 +824,23 @@
     font-size: 90%;
     padding-top: 10px;
 }
+
+.post-upvoters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 30px 0 0;
+}
+
+    .post-upvoters > .user-round {
+        width: 36px;
+    }
+
+    .post-upvoters-text {
+        font-size: 110%;
+        font-weight: 500;
+    }
 
 .post-event-participants {
     display: flex;

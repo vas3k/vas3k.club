@@ -432,6 +432,7 @@ input[type=range]:focus::-ms-fill-upper {
         .form-row-center {
             display: flex;
             justify-content: center;
+            align-items: center;
         }
 
         .form-row-right {

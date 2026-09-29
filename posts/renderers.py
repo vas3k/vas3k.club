@@ -21,6 +21,8 @@ POSSIBLE_COMMENT_ORDERS = {"created_at", "-created_at", "-upvotes"}
 
 COMMENT_DEFERRED_FIELDS = ("ipaddress", "useragent", "url")
 
+POST_TYPES_WITH_INCLUDED_UPVOTES = {Post.TYPE_REQUEST}
+
 
 def render_post(request, post, context=None):
     if post.type == Post.TYPE_WEEKLY_DIGEST:
@@ -105,6 +107,8 @@ def render_post(request, post, context=None):
         "collectible_tag": collectible_tag,
         "is_collectible_tag_collected": is_collectible_tag_collected,
         "is_comment_rate_exceeded": is_comment_rate_exceeded,
+        "upvoted_users": [vote.user for vote in PostVote.votes_for_post(post)] \
+            if post.type in POST_TYPES_WITH_INCLUDED_UPVOTES and post.upvotes > 0 else [],
     }
 
     # FIXME: too much hardcoded stuff here. implement a proper type->form mapping in future
