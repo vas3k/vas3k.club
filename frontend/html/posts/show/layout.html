@@ -96,15 +96,17 @@
                         {% include "comments/forms/comment.html" with post=post form=comment_form save_message="Отправить"%}
                     </div>
 
-                    <div class="post-comments-rules">
-                        <ul>
-                            <li>🤬 Помните, что за оскорбление других участников, пассивную агрессию, недружелюбность и прочие нарушения <a href="{% url "show_post" "docs" "about" %}">правил этикета</a> — будет бан</li>
-                            <li>☝️ Если кто-то ведёт себя плохо — скажите ему. Если он продолжает, позовите <a href="/user/moderator/">@moderator</a></li>
-                            <li>👀 Автор поста может и должен модерировать срачи в комментариях</li>
-                            <li>🥰 Не душните, расслабьтесь и будьте сладкими пирожочками</li>
-                            <li>✍️ Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a></li>
-                        </ul>
-                    </div>
+                    {% block comments_rules %}
+                        <div class="post-comments-rules">
+                            <ul>
+                                <li>🤬 Помните, что за оскорбление других участников, пассивную агрессию, недружелюбность и прочие нарушения <a href="{% url "show_post" "docs" "about" %}">правил этикета</a> — будет бан</li>
+                                <li>☝️ Если кто-то ведёт себя плохо — скажите ему. Если он продолжает, позовите <a href="/user/moderator/">@moderator</a></li>
+                                <li>👀 Автор поста может и должен модерировать срачи в комментариях</li>
+                                <li>🥰 Не душните, расслабьтесь и будьте сладкими пирожочками</li>
+                                <li>✍️ Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a></li>
+                            </ul>
+                        </div>
+                    {% endblock %}
                 {% endif %}
             </div>
         {% endblock %}
