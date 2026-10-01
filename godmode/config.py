@@ -571,6 +571,7 @@ ADMIN = ClubAdmin(
                     icon="🪪",
                     name="badge_generator",
                     view=badge_generator,
+                    access_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
                 ),
                 ClubAdminPage(
                     title="Нетленки",
