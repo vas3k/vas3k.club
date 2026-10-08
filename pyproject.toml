@@ -24,7 +24,7 @@ dependencies = [
     "pillow>=10.1.0",
     "premailer==3.10.0",
     "psycopg[pool]>=3.3.4",
-    "pyjwt==2.13.0",
+    "pyjwt==2.15.1",
     "python-dotenv>=0.12",
     "python-telegram-bot[webhooks]==22.8",
     "redis==8.0.1",
