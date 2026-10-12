@@ -65,14 +65,15 @@ class Command(BaseCommand):
                     })
 
                     try:
-                        send_telegram_message(
+                        sent_message = send_telegram_message(
                             chat=Chat(id=user.telegram_id),
                             text=message,
                         )
 
-                        continue
+                        if sent_message is not None:
+                            continue
                     except Exception as ex:
-                        self.stdout.write(f"Telegram to {user.email} failed: {ex}")
+                        self.stderr.write(f"Telegram to {user.email} failed: {ex}")
 
                 # try email
                 if not user.is_email_unsubscribed:
@@ -97,6 +98,6 @@ class Command(BaseCommand):
                             unsubscribe_link=f"{settings.APP_HOST}/notifications/unsubscribe/{user.id}/{secret_code}/"
                         )
                     except Exception as ex:
-                        self.stdout.write(f"Email to {user.email} failed: {ex}")
+                        self.stderr.write(f"Email to {user.email} failed: {ex}")
 
         self.stdout.write("Done 🥙")

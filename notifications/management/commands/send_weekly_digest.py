@@ -60,6 +60,7 @@ class Command(BaseCommand):
         # make it searchable
         SearchIndex.update_post_index(post)
 
+
         # sending telegrams
         telegram_subscribers = User.objects\
             .exclude(
@@ -73,19 +74,22 @@ class Command(BaseCommand):
 
         for user in telegram_subscribers:
             if user.telegram_id:
-                send_telegram_message(
-                    chat=Chat(id=user.telegram_id),
-                    text=render_html_message(
-                        "weekly_digest_announce.html",
-                        post=post,
-                        issue_number=issue,
-                        digest_title=digest_title,
-                        digest_intro=digest_intro,
-                        include_unsubscribe=True,
-                    ),
-                    disable_preview=False,
-                    parse_mode=ParseMode.HTML,
-                )
+                try:
+                    send_telegram_message(
+                        chat=Chat(id=user.telegram_id),
+                        text=render_html_message(
+                            "weekly_digest_announce.html",
+                            post=post,
+                            issue_number=issue,
+                            digest_title=digest_title,
+                            digest_intro=digest_intro,
+                            include_unsubscribe=True,
+                        ),
+                        disable_preview=False,
+                        parse_mode=ParseMode.HTML,
+                    )
+                except Exception as ex:
+                    self.stderr.write(f"Telegram to {user.email} failed: {ex}")
 
         # sending emails
         email_subscribers = User.objects\
@@ -117,7 +121,7 @@ class Command(BaseCommand):
                     unsubscribe_link=f"{settings.APP_HOST}/notifications/unsubscribe/{user.id}/{secret_code}/"
                 )
             except Exception as ex:
-                self.stdout.write(f"Sending to {user.email} failed: {ex}")
+                self.stderr.write(f"Sending to {user.email} failed: {ex}")
                 log.exception(f"Error while sending an email to {user.email}")
                 continue
 

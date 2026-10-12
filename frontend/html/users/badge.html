@@ -44,18 +44,21 @@
                 </div>
             {% endif %}
         </div>
-        <div class="user-badges">
-            {% if user.achievements.all %}
-                {% for user_achievement in user.achievements.all|slice:":10" %}
-                    <div class="user-badge-achievement" {% if user_achievement.achievement.style %}style="{{ user_achievement.achievement.style }}"{% endif %}>
-                        <img src="{{ user_achievement.achievement.image }}" class="user-badge-achievement-image" alt="{{ user_achievement.achievement.code }}">
-                    </div>
-                {% endfor %}
-            {% endif %}
 
-            {% if not hide_badges and user.badges %}
-                {% include "badges/widgets/badges.html" with badges=user.badges badge_size="small" %}
-            {% endif %}
-        </div>
+        {% if not hide_badges %}
+            <div class="user-badges">
+                {% if user.achievements.all %}
+                    {% for user_achievement in user.achievements.all|slice:":10" %}
+                        <div class="user-badge-achievement" {% if user_achievement.achievement.style %}style="{{ user_achievement.achievement.style }}"{% endif %}>
+                            <img src="{{ user_achievement.achievement.image }}" class="user-badge-achievement-image" alt="{{ user_achievement.achievement.code }}">
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if user.badges %}
+                    {% include "badges/widgets/badges.html" with badges=user.badges badge_size="small" %}
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>

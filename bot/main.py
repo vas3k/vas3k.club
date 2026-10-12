@@ -19,6 +19,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, CallbackCo
 
 from bot.cache import cached_telegram_users
 from bot.config import WELCOME_MESSAGE, BOT_MENTION_RE, ANONYMOUS_MESSAGE
+from bot.decorators import ensure_fresh_db_connection
 from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts, llm
 
 log = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ async def command_help(update: Update, context: CallbackContext) -> None:
     )
 
 
+@ensure_fresh_db_connection
 async def private_message(update: Update, context: CallbackContext) -> None:
     log.info("Private message handler triggered")
 

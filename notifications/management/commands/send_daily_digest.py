@@ -56,7 +56,7 @@ class Command(BaseCommand):
                     text=digest,
                 )
             except Exception as ex:
-                self.stdout.write(f"Sending to {user.email} failed: {ex}")
+                self.stderr.write(f"Sending to {user.email} failed: {ex}")
                 continue
 
         self.stdout.write("Done 🥙")

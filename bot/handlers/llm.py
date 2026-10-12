@@ -1,5 +1,6 @@
 import asyncio
 
+from django.db import close_old_connections, connections
 from telegram import LinkPreviewOptions, Update
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
@@ -9,6 +10,18 @@ from ai.rate_limiter import is_rate_limited
 from bot.decorators import ensure_fresh_db_connection
 from bot.handlers.common import get_club_user
 from common.markdown.markdown import markdown_tg
+
+
+def _ask_assistant_with_db_connection(user_input: str) -> str:
+    # asyncio.to_thread() owns a separate Django connection. The async handler
+    # cannot clean it up from the event-loop thread.
+    close_old_connections()
+    try:
+        return ask_assistant(user_input)
+    finally:
+        # Release it after every job, including when the assistant catches a DB error.
+        # With pooling enabled, this returns the connection to the pool.
+        connections.close_all()
 
 
 @ensure_fresh_db_connection
@@ -57,7 +70,7 @@ async def llm_response(update: Update, context: CallbackContext) -> None:
         user_input = [f"Предыдущее сообщение: {reply_to_text}"] + user_input
 
     try:
-        answer = await asyncio.to_thread(ask_assistant, "\n".join(user_input))
+        answer = await asyncio.to_thread(_ask_assistant_with_db_connection, "\n".join(user_input))
     except Exception:
         await update.message.reply_text("Что-то сломалось, попробуй ещё раз позже 🤷")
         return None

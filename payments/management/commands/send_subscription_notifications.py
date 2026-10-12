@@ -116,7 +116,7 @@ class Command(BaseCommand):
                         unsubscribe_link=f"{settings.APP_HOST}/notifications/unsubscribe/{user.id}/{secret_code}/",
                     )
                 except Exception as ex:
-                    self.stdout.write(f"Email to {user.email} failed: {ex}")
+                    self.stderr.write(f"Email to {user.email} failed: {ex}")
                     log.exception(f"Email to {user.email} failed: {ex}")
 
             if user.telegram_id:
@@ -127,4 +127,4 @@ class Command(BaseCommand):
                         text=render_message_for_telegram(stage["template"], context),
                     )
                 except Exception as ex:
-                    self.stdout.write(f"Telegram to {user.email} failed: {ex}")
+                    self.stderr.write(f"Telegram to {user.email} failed: {ex}")

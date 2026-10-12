@@ -136,9 +136,11 @@ if TESTS_RUN:
     # Persistent connections break test DB teardown
     DATABASES["default"]["CONN_MAX_AGE"] = 0
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
-elif bool(os.getenv("POSTGRES_USE_POOLING")):
+elif os.getenv("POSTGRES_USE_POOLING", "0").strip().lower() in {"1", "true", "yes", "on"}:
+    # Pooling is opt-in; "0", "false", and an unset flag leave it disabled.
     DATABASES["default"]["CONN_MAX_AGE"] = 0
-    DATABASES["default"]["CONN_HEALTH_CHECKS"] = False
+    # Check connections on checkout so a database restart does not hand out stale sockets.
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
     DATABASES["default"]["OPTIONS"] = {
         "pool": {
             "min_size": 1,
@@ -212,6 +214,7 @@ EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = 30
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Вастрик Клуб <club@vas3k.club>")
 
 # App

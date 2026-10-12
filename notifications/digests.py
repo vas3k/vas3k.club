@@ -57,7 +57,7 @@ def generate_daily_digest(user):
 
     # New posts (global)
     new_posts = cache.get("daily_digest:new_posts")
-    if not new_posts:
+    if new_posts is None:
         new_posts = Post.visible_objects()\
             .filter(**published_at_condition)\
             .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
@@ -67,7 +67,7 @@ def generate_daily_digest(user):
 
     # Hot posts (global)
     hot_posts = cache.get("daily_digest:hot_posts")
-    if not hot_posts:
+    if hot_posts is None:
         hot_posts = Post.visible_objects()\
             .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
             .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST]) \
@@ -77,7 +77,7 @@ def generate_daily_digest(user):
 
     # Upcoming events (global)
     upcoming_events = cache.get("daily_digest:upcoming_events")
-    if not upcoming_events:
+    if upcoming_events is None:
         upcoming_events = Post.visible_objects()\
             .filter(Q(moderation_status=Post.MODERATION_APPROVED))\
             .filter(type=Post.TYPE_EVENT)\
@@ -100,25 +100,31 @@ def generate_daily_digest(user):
 
     # New intros (global)
     intros = cache.get("daily_digest:intros")
-    if not intros:
+    if intros is None:
         intros = Post.visible_objects()\
             .filter(type=Post.TYPE_INTRO, **published_at_condition)\
             .order_by("-upvotes")[:3]
         cache.set("daily_digest:intros", list(intros), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
 
-    # Top post 1 year ago
-    top_old_post = Post.visible_objects()\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
-        .filter(
-            published_at__gte=start_date - timedelta(days=365),
-            published_at__lte=end_date - timedelta(days=364)
-         )\
-        .order_by("-upvotes")\
-        .first()
+    # The historical pick is shared by every recipient, including empty results.
+    old_post_cache_key = f"daily_digest:top_old_post:{end_date.date()}:{settings.DEBUG}"
+    old_posts = cache.get(old_post_cache_key)
+    if old_posts is None:
+        old_posts = list(
+            Post.visible_objects()
+            .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])
+            .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))
+            .filter(
+                published_at__gte=start_date - timedelta(days=365),
+                published_at__lte=end_date - timedelta(days=364),
+            )
+            .order_by("-upvotes")[:1]
+        )
+        cache.set(old_post_cache_key, old_posts, DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
+    top_old_post = old_posts[0] if old_posts else None
 
     # Filter out "bad" top posts
-    if top_old_post.upvotes < MIN_TOP_POST_UPVOTES:
+    if top_old_post and top_old_post.upvotes < MIN_TOP_POST_UPVOTES:
         top_old_post = None
 
     if not new_post_comments and not new_posts and not intros and not upcoming_events:
