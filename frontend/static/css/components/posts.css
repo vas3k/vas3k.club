@@ -458,6 +458,49 @@
     padding: 20px 25px;
 }
 
+.text-body pre {
+    position: relative;
+}
+
+.code-copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--opposite-block-bg-color);
+    color: var(--opposite-text-color);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.6;
+    user-select: none;
+    transition: opacity linear .1s;
+}
+
+.code-copy-button:hover,
+.code-copy-button:focus-visible {
+    opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .code-copy-button {
+        opacity: 0;
+    }
+
+    .text-body pre:hover .code-copy-button {
+        opacity: 0.6;
+    }
+
+    .text-body pre:hover .code-copy-button:hover,
+    .code-copy-button:focus-visible {
+        opacity: 1;
+    }
+}
+
 .text-body figure {
     display: block;
     width: 100%;

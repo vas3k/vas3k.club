@@ -11,6 +11,7 @@ import {
 import { getCollapsedCommentThreadsSet, collapseCommentThread } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
+const CODE_COPIED_STATE_DURATION = 2000;
 
 const App = {
     onCreate() {
@@ -19,6 +20,7 @@ const App = {
     },
     onMount() {
         this.initializeImageZoom();
+        this.initializeCodeCopyButtons();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
         this.initializePostActions();
@@ -159,6 +161,38 @@ const App = {
             cubicBezier: "cubic-bezier(.2, 0, .1, 1)",
             background: "rgba(0, 0, 0, .4)",
             zIndex: 1e6,
+        });
+    },
+    initializeCodeCopyButtons() {
+        if (!navigator.clipboard) return;
+
+        document.querySelectorAll(".text-body pre > code").forEach((code) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "code-copy-button";
+            button.title = "Скопировать";
+            button.setAttribute("aria-label", "Скопировать код");
+
+            const icon = document.createElement("i");
+            icon.className = "far fa-copy";
+            button.appendChild(icon);
+
+            let resetTimeout = null;
+            button.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(code.textContent.replace(/\n$/, ""));
+                } catch (e) {
+                    return;
+                }
+
+                icon.className = "fas fa-check";
+                clearTimeout(resetTimeout);
+                resetTimeout = setTimeout(() => {
+                    icon.className = "far fa-copy";
+                }, CODE_COPIED_STATE_DURATION);
+            });
+
+            code.parentElement.appendChild(button);
         });
     },
     blockCommunicationFormsResubmit() {
