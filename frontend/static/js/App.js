@@ -11,7 +11,6 @@ import {
 import { getCollapsedCommentThreadsSet, collapseCommentThread } from "./common/comments";
 
 const INITIAL_SYNC_DELAY = 50;
-const CODE_COPIED_STATE_DURATION = 2000;
 
 const App = {
     onCreate() {
@@ -169,29 +168,13 @@ const App = {
         document.querySelectorAll(".text-body pre > code").forEach((code) => {
             const button = document.createElement("button");
             button.type = "button";
-            button.className = "code-copy-button";
+            button.className = "code-copy-button fas fa-copy";
             button.title = "Скопировать";
-            button.setAttribute("aria-label", "Скопировать код");
-
-            const icon = document.createElement("i");
-            icon.className = "far fa-copy";
-            button.appendChild(icon);
-
-            let resetTimeout = null;
             button.addEventListener("click", async () => {
-                try {
-                    await navigator.clipboard.writeText(code.textContent.replace(/\n$/, ""));
-                } catch (e) {
-                    return;
-                }
-
-                icon.className = "fas fa-check";
-                clearTimeout(resetTimeout);
-                resetTimeout = setTimeout(() => {
-                    icon.className = "far fa-copy";
-                }, CODE_COPIED_STATE_DURATION);
+                await navigator.clipboard.writeText(code.textContent.trimEnd());
+                button.classList.replace("fa-copy", "fa-check");
+                setTimeout(() => button.classList.replace("fa-check", "fa-copy"), 2000);
             });
-
             code.parentElement.appendChild(button);
         });
     },
