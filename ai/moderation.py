@@ -2,15 +2,14 @@ import logging
 
 from openai.types.responses import Response
 
-from ai.config import OPENAI_CHAT_MODEL, CLUB_INFO_POST_SLUGS
-from ai.openai import openai
+from ai.config import CLUB_INFO_POST_SLUGS
+from ai.openai import create_response
 from ai.tools import search_posts
 from posts.models.post import Post
 from users.models.user import User
 
 log = logging.getLogger(__name__)
 
-MODERATION_TEMPERATURE = 0.3
 MODERATION_MAX_OUTPUT_TOKENS = 800
 
 POST_QUALITY_PROMPT = """Ты помощник модераторов нашего коммьюнити, которое называется Вастрик Клуб.
@@ -55,8 +54,7 @@ def ai_rate_post_quality(post: Post) -> str:
     )
     post_duplicates = [p for p in post_duplicates if p.get("id") != post.id]
 
-    response: Response = openai.responses.create(
-        model=OPENAI_CHAT_MODEL,
+    response: Response = create_response(
         instructions=POST_QUALITY_PROMPT,
         input=[
             {"role": "user", "content": "Основные правила и ценности Клуба:\n\n"
@@ -71,10 +69,7 @@ def ai_rate_post_quality(post: Post) -> str:
             },
             {"role": "user", "content": f"Похожие посты: {post_duplicates}"},
         ],
-        temperature=MODERATION_TEMPERATURE,
         max_output_tokens=MODERATION_MAX_OUTPUT_TOKENS,
-        truncation="auto",
-        store=False,
     )
 
     log.info(f"CHATGPT: {response}")
@@ -117,8 +112,7 @@ def ai_rate_intro_quality(user: User, intro: Post) -> str:
     moderation_guides = Post.visible_objects()\
         .filter(slug__in=CLUB_INFO_POST_SLUGS)
 
-    response: Response = openai.responses.create(
-        model=OPENAI_CHAT_MODEL,
+    response: Response = create_response(
         instructions=INTRO_QUALITY_PROMPT,
         input=[
             {"role": "user", "content": "Основные правила и ценности Клуба:\n\n"
@@ -132,10 +126,7 @@ def ai_rate_intro_quality(user: User, intro: Post) -> str:
                                         f"Интро (Markdown): {intro.text}"
             },
         ],
-        temperature=MODERATION_TEMPERATURE,
         max_output_tokens=MODERATION_MAX_OUTPUT_TOKENS,
-        truncation="auto",
-        store=False,
     )
 
     log.info(f"CHATGPT: {response}")

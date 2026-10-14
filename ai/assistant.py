@@ -3,13 +3,12 @@ import logging
 
 from openai.types.responses import Response, ResponseFunctionToolCall
 
-from ai.openai import openai
+from ai.openai import create_response
 from ai.tools import TOOLS_DESCRIPTION, TOOLS_MAP
-from ai.config import USER_INPUT_MAX_LEN, OPENAI_CHAT_MODEL
+from ai.config import USER_INPUT_MAX_LEN
 
 log = logging.getLogger(__name__)
 
-ASSISTANT_TEMPERATURE = 0.7
 ASSISTANT_MAX_OUTPUT_TOKENS = 1000
 
 RAG_BOT_PROMPT = """Ты чат-бот помощник для нашего коммьюнити под названием Вастрик Клуб.
@@ -32,16 +31,12 @@ def ask_assistant(user_input: str) -> str:
         {"role": "user", "content": user_input[:USER_INPUT_MAX_LEN]}
     ]
 
-    response: Response = openai.responses.create(
-        model=OPENAI_CHAT_MODEL,
+    response: Response = create_response(
         instructions=RAG_BOT_PROMPT,
         input=input_messages,
         tools=TOOLS_DESCRIPTION,
         tool_choice="auto",
-        temperature=ASSISTANT_TEMPERATURE,
         max_output_tokens=ASSISTANT_MAX_OUTPUT_TOKENS,
-        truncation="auto",
-        store=False,
     )
 
     log.info(f"CHATGPT: {response}")
@@ -88,14 +83,10 @@ def ask_assistant(user_input: str) -> str:
         })
 
     # один follow-up вызов со всеми результатами tool calls
-    follow_up: Response = openai.responses.create(
-        model=OPENAI_CHAT_MODEL,
+    follow_up: Response = create_response(
         instructions=RAG_BOT_PROMPT,
         input=input_messages,
-        temperature=ASSISTANT_TEMPERATURE,
         max_output_tokens=ASSISTANT_MAX_OUTPUT_TOKENS,
-        truncation="auto",
-        store=False,
     )
 
     log.info(f"CHATGPT follow-up: {follow_up}")
