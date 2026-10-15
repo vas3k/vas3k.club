@@ -1,3 +1,12 @@
+@font-face {
+    font-family: "Noto Color Emoji Flags";
+    src: url("../webfonts/NotoColorEmoji-flags.woff2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    unicode-range: U+1F1E6-1F1FF;
+}
+
 .network {
     font-size: 140%;
     padding-top: 30px;
@@ -100,7 +109,17 @@
                 line-height: 1em;
                 min-width: 1em;
                 border: solid 2px var(--bg-color);
+                font-family: "Apple Color Emoji", "Noto Color Emoji Flags", "Segoe UI Emoji", sans-serif;
             }
+
+                .network-channel-icon:has(br) {
+                    top: 0;
+                    right: 0;
+                    padding: 0.15em 0.2em;
+                    font-size: 120%;
+                    line-height: 0.9em;
+                    word-spacing: -0.25em;
+                }
 
             .network-channel-name {
                 display: block;
