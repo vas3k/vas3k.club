@@ -123,7 +123,6 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
         "reject_post_duplicate": PostRejectReason.duplicate,
         "reject_post_chat": PostRejectReason.chat,
         "reject_post_tldr": PostRejectReason.tldr,
-        "reject_post_github": PostRejectReason.github,
         "reject_post_bias": PostRejectReason.bias,
         "reject_post_hot": PostRejectReason.hot,
         "reject_post_ad": PostRejectReason.ad,
