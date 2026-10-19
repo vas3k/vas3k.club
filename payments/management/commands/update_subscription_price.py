@@ -62,7 +62,7 @@ class Command(BaseCommand):
             if result:
                 self.stdout.write(f"Sending email to {customer_email}, period ends {current_period_end}...")
 
-                email = render_to_string("emails/price_increase_3.html", {
+                email = render_to_string("notifications/emails/price_increase_3.html", {
                     "old_price": old_stripe_price.unit_amount // 100,
                     "new_price": new_stripe_price.unit_amount // 100,
                     "current_period_end": current_period_end,

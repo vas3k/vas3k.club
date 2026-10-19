@@ -1,0 +1,55 @@
+{% extends "notifications/emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    🎁 Вы купили инвайт
+{% endblock %}
+
+{% block body %}
+    <p>
+        Теперь можно подарить его другу.
+    </p>
+
+    <p>
+        Используйте вот эту ссылку: <strong><a href="{{ settings.APP_HOST }}{% url "show_invite" invite.code %}">{{ settings.APP_HOST }}{% url "show_invite" invite.code %}</a></strong>
+    </p>
+
+    <p>
+        Если ваш друг еще не в Клубе, он сразу сможет по ней зарегистрироваться, минуя оплату. Однако, ему всё так же придётся написать интро и пройти модерацию.
+    </p>
+
+    <p>
+        Инвайт ссылку можно подарить и тому, кто уже есть в Клубе. В этом случае купленные дни добавятся ему на аккаунт.
+    </p>
+
+    <p>
+        Инвайт истекает через год. Если за это время его не использовать — код протухнет :(
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

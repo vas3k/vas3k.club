@@ -42,7 +42,7 @@ class Command(BaseCommand):
         for comment in list(best_comments) + list(comments_with_badges):
             if not comment.metadata or not comment.metadata.get("in_best_comments"):
                 self.stdout.write(f"Comment {comment.id} +{comment.upvotes}")
-                message = render_to_string("messages/best_comments.html", {
+                message = render_to_string("notifications/telegram/best_comments.html", {
                     "comment": comment,
                     "settings": settings,
                 })

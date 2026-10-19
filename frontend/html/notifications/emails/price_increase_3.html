@@ -1,0 +1,82 @@
+{% extends "notifications/emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+    h1, h2, h3, header {
+        text-align: left;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 17px 30px;
+        box-sizing: border-box;
+        text-decoration: none;
+        border-radius: 20px;
+        background-color: #000;
+        border: solid 2px #000;
+        color: #FFF;
+        text-align: center;
+        cursor: pointer;
+        line-height: 1em;
+        font-size: 25px;
+        margin: 20px 0 30px;
+    }
+
+        .button:hover {
+            color: #000 !important;
+            background-color: #FFF !important;
+            border-color: #000 !important;
+        }
+
+p {
+    font-size: 19px;
+}
+
+</style>
+{% endblock %}
+
+{% block title %}
+     €{{ old_price }} -> €{{ new_price }} за 3 года
+{% endblock %}
+
+{% block body %}
+    <p>
+        Привет, это Вастрик! 👋
+    </p>
+
+    <p>
+        Во-первых, спасибо, что ты с нами давно и закупаешься сразу на три года вперед! Благодаря таким людям, которые много лет верят в Клуб, он и существует уже 5 лет.
+        И даже когда мы в 2022-м уже поднимали цены, мы решили оставить старые цены для тех, кто с тех пор не отменял подписку.
+    </p>
+
+    <p>
+        Во-вторых, поднимать цены все-таки приходится. Расходы на содержание Клуба растут, налоги растут, но и ценность Клуба как коммьюнити тоже растёт, так что, надеюсь, это компенсирует.
+    </p>
+
+    <p>
+        Для новых членов Клуба три года подписки стоят уже <strong>€70 + VAT</strong>, но для старых подписчиков, как ты, мы решили снова сделать подарок и <strong>в этом году поднять ее лишь до €{{ new_price }} + VAT</strong> (да, теперь нам приходится добавлять VAT вашей страны, потому что Клуб вырос и налоговая хочет его с нас).
+    </p>
+
+    <p>
+        Новая цена начнет действовать с момента следующего автопродления подписки, то есть с <strong>{{ current_period_end | date:"j E Y" }}</strong>. Посмотреть сколько еще осталось и управлять активными подписками можно вот по этой кнопке:
+    </p>
+
+    <p>
+        <a href="https://vas3k.club/user/me/edit/monies/" class="button">Мои подписки</a>
+    </p>
+
+    <p>
+        Клуб существует за счет взносов его членов, что позволяет нам окупаться без повесточки от инвесторов или агрессивной рекламы, как у других.
+    </p>
+
+    <p>
+        Спасибо за понимание 🙏
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}
+{% endblock %}

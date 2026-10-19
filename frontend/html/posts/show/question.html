@@ -66,6 +66,8 @@
             </header>
         {% endblock %}
 
+        {% include "posts/widgets/moderation_message.html" %}
+
         {% block post_text %}
             <section class="text-body text-body-type-post e-content">
                 {% render_post post %}

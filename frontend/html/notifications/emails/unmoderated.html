@@ -1,0 +1,59 @@
+{% extends "notifications/emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    😱 Вас размодерировали
+{% endblock %}
+
+{% block body %}
+    <p>
+        👋 Привет, это модератор Клуба.
+    </p>
+
+    <p>
+        Мы тут обнаружили, что ваш профиль не удовлетворяет нашим правилам об отсутствии анонимности. Может быть вы отредактировали его или проскочили из-за нашей ошибки.
+    </p>
+
+    <p>
+        Ничего страшного не случилось! Мы просто просим дополнить недостающую информацию перед тем, как вы продолжите использовать Клуб.
+    </p>
+
+    <p>
+        Скорее всего вы знакомы с нашими традициями и сделаете это без проблем. А то будет как-то стыдно перед людьми с большими intro :)
+    </p>
+
+    <p>
+        Вот кнопочка чтобы нажимать 👇
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "intro" %}" class="button">Починить профиль</a>
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

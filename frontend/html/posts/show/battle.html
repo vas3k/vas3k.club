@@ -46,6 +46,7 @@
     </div>
 
     <div class="content">
+        {% include "posts/widgets/moderation_message.html" %}
         <div class="block post post-layout-block post-type-battle">
             <div class="post-upvote">
                 <post-upvote :initial-upvotes="{{ post.upvotes }}"

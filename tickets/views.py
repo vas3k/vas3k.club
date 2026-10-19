@@ -101,7 +101,7 @@ def stripe_ticket_sale_webhook(request):
             # Send confirmation emails (unique by ticket code)
             emails_to_send = Ticket.objects.filter(code__in=ticket_codes_processed)
             for ticket_email_template in emails_to_send:
-                confirmation_template = loader.get_template("emails/custom_markdown.html")
+                confirmation_template = loader.get_template("notifications/emails/custom_markdown.html")
                 async_task(
                     send_transactional_email,
                     recipient=customer_email,

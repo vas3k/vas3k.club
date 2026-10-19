@@ -20,7 +20,7 @@ def send_custom_mass_email(emails_or_slugs: list[str], title: str, text: str, is
         return False
 
     non_club_users = set(emails_or_slugs) - {user.email for user in users} - {user.slug for user in users}
-    email_template = loader.get_template("emails/custom_markdown.html")
+    email_template = loader.get_template("notifications/emails/custom_markdown.html")
 
     # send emails to existing users
     for user in users:

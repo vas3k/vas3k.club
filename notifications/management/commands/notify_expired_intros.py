@@ -57,7 +57,7 @@ class Command(BaseCommand):
                 if user.telegram_id:
                     self.stdout.write(f"Sending telegram message to {user.slug}...")
 
-                    message = render_to_string("messages/intro_update.html", {
+                    message = render_to_string("notifications/telegram/intro_update.html", {
                         "user": user,
                         "intro": expired_intro,
                         "years": now.year - expired_intro.updated_at.year,
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                     self.stdout.write(f"Sending email to {user.email}...")
 
                     try:
-                        email = render_to_string("emails/intro_update.html", {
+                        email = render_to_string("notifications/emails/intro_update.html", {
                             "user": user,
                             "intro": expired_intro,
                             "years": now.year - expired_intro.updated_at.year

@@ -1237,3 +1237,41 @@
         width: 12px;
     }
 }
+
+.block-moderation {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background-color: #F6E4C4;
+    color: #6B3E12;
+    border: none;
+}
+
+    .block-moderation-icon {
+        flex: 0 0 auto;
+        font-size: 200%;
+        line-height: 1.2;
+    }
+
+    .block-moderation-message {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-family: var(--sans-font);
+        font-size: 120%;
+        line-height: 1.45;
+    }
+
+        .block-moderation-message p:first-child {
+            margin-top: 0;
+        }
+
+        .block-moderation-message p:last-child,
+        .block-moderation-message ul:last-child {
+            margin-bottom: 0;
+        }
+
+        .block-moderation-message a,
+        .block-moderation-message a:hover {
+            color: inherit;
+            font-weight: 600;
+        }

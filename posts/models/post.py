@@ -133,6 +133,7 @@ class Post(models.Model, ModelDiffMixin):
         choices=MODERATION_STATUSES,
         default=MODERATION_NONE
     )
+    moderation_message = models.TextField(null=True, blank=True)
 
     visibility = models.CharField(
         max_length=16,
@@ -161,6 +162,7 @@ class Post(models.Model, ModelDiffMixin):
             "hotness",
             "label_code",
             "moderation_status",
+            "moderation_message",
             "visibility",
             "is_room_only",
             "is_commentable",
@@ -424,6 +426,7 @@ class Post(models.Model, ModelDiffMixin):
 
     def publish(self):
         self.moderation_status = Post.MODERATION_PENDING
+        self.moderation_message = None
         self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()

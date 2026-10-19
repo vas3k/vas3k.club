@@ -1,0 +1,11 @@
+{% load text_filters %}
+{% if post.moderation_message and me %}
+    {% if post.author == me or me.is_moderator or me.is_curator %}
+        <div class="block block-moderation">
+            <div class="block-moderation-icon">🙏</div>
+            <div class="block-moderation-message">
+                {{ post.moderation_message|markdown }}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

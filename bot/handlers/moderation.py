@@ -11,7 +11,8 @@ from bot.handlers.common import UserRejectReason, PostRejectReason
 from bot.decorators import is_moderator, ensure_fresh_db_connection
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
-    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers
+    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers, \
+    render_post_rejected_message
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -141,6 +142,7 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
         return None
 
     post.moderation_status = Post.MODERATION_REJECTED
+    post.moderation_message = render_post_rejected_message(post, reason)
     post.unpublish()
 
     SearchIndex.update_post_index(post)

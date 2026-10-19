@@ -1,0 +1,43 @@
+{% extends "notifications/emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+
+ul {
+    list-style: none;
+    font-size: 19px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+    li {
+        display: block;
+        margin-top: 20px;
+        padding-left: 15px;
+    }
+
+</style>
+{% endblock %}
+
+{% block title %}
+    👋 Вам письмо
+{% endblock %}
+
+{% block body %}
+    <p>
+        <strong>Модератор Клуба написал вам личное сообщение.</strong> Вот оно:
+    </p>
+
+    <p>
+        {{ message | nl_to_p }}
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

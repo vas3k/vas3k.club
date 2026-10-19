@@ -8,7 +8,7 @@ from users.models.user import User
 
 
 def send_registration_email(user: User):
-    registration_template = loader.get_template("emails/registration.html")
+    registration_template = loader.get_template("notifications/emails/registration.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"Ваша Клубная Карта 🪪",
@@ -18,7 +18,7 @@ def send_registration_email(user: User):
 
 
 def send_renewal_email(user: User):
-    renewal_template = loader.get_template("emails/renewal.html")
+    renewal_template = loader.get_template("notifications/emails/renewal.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"Ваша подписка стала еще длиннее!",
@@ -28,7 +28,7 @@ def send_renewal_email(user: User):
 
 
 def send_welcome_drink(user: User):
-    welcome_drink_template = loader.get_template("emails/welcome.html")
+    welcome_drink_template = loader.get_template("notifications/emails/welcome.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"Велком дринк 🍸",
@@ -42,9 +42,9 @@ def send_welcome_drink(user: User):
 
 def send_user_rejected_email(user: User, reason: UserRejectReason):
     try:
-        rejected_template = loader.get_template(f"emails/rejected/{reason.value}.html")
+        rejected_template = loader.get_template(f"notifications/emails/rejected/{reason.value}.html")
     except TemplateDoesNotExist:
-        rejected_template = loader.get_template(f"emails/rejected/intro.html")
+        rejected_template = loader.get_template(f"notifications/emails/rejected/intro.html")
 
     send_transactional_email(
         recipient=user.email,
@@ -55,7 +55,7 @@ def send_user_rejected_email(user: User, reason: UserRejectReason):
 
 
 def send_auth_email(user: User, code: Code):
-    auth_template = loader.get_template("emails/auth.html")
+    auth_template = loader.get_template("notifications/emails/auth.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"{code.code} — ваш код для входа",
@@ -65,7 +65,7 @@ def send_auth_email(user: User, code: Code):
 
 
 def send_unmoderated_email(user: User):
-    rejected_template = loader.get_template("emails/unmoderated.html")
+    rejected_template = loader.get_template("notifications/emails/unmoderated.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"😱 Вас размодерировали",
@@ -78,7 +78,7 @@ def send_banned_email(user: User, days: int, reason: str):
     if not user.is_banned or not days:
         return  # not banned oO
 
-    banned_template = loader.get_template("emails/banned.html")
+    banned_template = loader.get_template("notifications/emails/banned.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"💩 Вас забанили",
@@ -92,7 +92,7 @@ def send_banned_email(user: User, days: int, reason: str):
 
 
 def send_ping_email(user: User, message: str):
-    ping_template = loader.get_template("emails/ping.html")
+    ping_template = loader.get_template("notifications/emails/ping.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"👋 Вам письмо",
@@ -102,7 +102,7 @@ def send_ping_email(user: User, message: str):
 
 
 def send_data_archive_ready_email(user: User, url: str):
-    auth_template = loader.get_template("emails/data_archive_ready.html")
+    auth_template = loader.get_template("notifications/emails/data_archive_ready.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"💽 Ваш архив с данными готов",
@@ -112,7 +112,7 @@ def send_data_archive_ready_email(user: User, url: str):
 
 
 def send_delete_account_request_email(user: User, code: Code):
-    auth_template = loader.get_template("emails/delete_account_request.html")
+    auth_template = loader.get_template("notifications/emails/delete_account_request.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"🧨 Код для удаления аккаунта",
@@ -122,7 +122,7 @@ def send_delete_account_request_email(user: User, code: Code):
 
 
 def send_delete_account_confirm_email(user: User):
-    auth_template = loader.get_template("emails/delete_account_confirm.html")
+    auth_template = loader.get_template("notifications/emails/delete_account_confirm.html")
     send_transactional_email(
         recipient=user.email,
         subject=f"✌️ Ваш аккаунт в Клубе будет удалён",

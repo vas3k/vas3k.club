@@ -95,7 +95,7 @@ def send_telegram_image(
 
 
 def render_html_message(template, **data):
-    template = loader.get_template(f"messages/{template}")
+    template = loader.get_template(f"notifications/telegram/{template}")
     return template.render({
         **data,
         "settings": settings

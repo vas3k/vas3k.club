@@ -6,7 +6,7 @@ from users.models.user import User
 
 
 def send_invite_purchase_confirmation(from_user: User, invite: Invite):
-    invite_template = loader.get_template("emails/invite_confirm.html")
+    invite_template = loader.get_template("notifications/emails/invite_confirm.html")
     send_transactional_email(
         recipient=from_user.email,
         subject=f"🎁 Вы купили инвайт",
@@ -16,7 +16,7 @@ def send_invite_purchase_confirmation(from_user: User, invite: Invite):
 
 
 def send_invited_email(from_user: User, to_user: User):
-    invite_template = loader.get_template("emails/invited.html")
+    invite_template = loader.get_template("notifications/emails/invited.html")
     send_transactional_email(
         recipient=to_user.email,
         subject=f"🚀 Вас пригласили в Клуб",
@@ -26,7 +26,7 @@ def send_invited_email(from_user: User, to_user: User):
 
 
 def send_account_renewed_email(from_user: User, to_user: User):
-    invite_template = loader.get_template("emails/invite_renewed.html")
+    invite_template = loader.get_template("notifications/emails/invite_renewed.html")
     send_transactional_email(
         recipient=to_user.email,
         subject=f"🚀 Вам оплатили аккаунт в Клубе",

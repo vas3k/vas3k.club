@@ -1,0 +1,35 @@
+{% extends "notifications/emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+{% endblock %}
+
+{% block title %}
+    Ваша Клубная Карта 🪪
+{% endblock %}
+
+{% block body %}
+    <p>
+        Ваш аккаунт в <a href="{{ settings.APP_HOST }}">Клубе</a> создан и успешно оплачен.
+        Однако, чтобы стать полноценным его участником, вам нужно написать о себе интро, заполнить профиль и пройти нашу модерацию.
+        Мы ценим искренность и не любим анонимов :)
+    </p>
+
+    <p>
+        Ваш юзернейм в Клубе: <b>@{{ user.slug }}</b><br>
+        Почта для входа: <b>{{ user.email }}</b>
+    </p>
+
+    <p>
+        <a href="{{ settings.APP_HOST }}{% url "login" %}?email={{ user.email }}" class="button">Начать писать интро</a>
+    </p>
+
+    <p>
+        Если вы не понимаете о каком Клубе речь или создали второй аккаунт по ошибке, обязательно ответьте нам на это письмо, мы разберёмся.
+    </p>
+
+    <br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

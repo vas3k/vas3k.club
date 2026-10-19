@@ -1,0 +1,40 @@
+{% extends "notifications/emails/layout.html" %}
+{% load static %}
+{% load text_filters %}
+
+{% block css %}
+<style>
+p {
+    font-size: 19px;
+}
+</style>
+{% endblock %}
+
+{% block title %}
+    ✌️ Ваш аккаунт будет удалён
+{% endblock %}
+
+{% block body %}
+    <p>
+        Спасибо, что были с нами.
+    </p>
+
+    <p>
+        Аккаунт <strong>{{ user.slug }}</strong> будет полностью удален <strong>через 3 дня</strong>.
+        Все ваши личные данные будут физически удалены без возможности восстановления.
+        Мы вводим такую задержку, чтобы вы могли отменить удаление если вдруг вас взломали или решение было эмоциональным.
+    </p>
+
+    <p>
+        В течение этих 3 дней вы ешё можете восстановить аккаунт, просто заново <a href="{{ settings.APP_HOST }}{% url "login" %}">войдя в Клуб</a> по почте.
+        Тогда удаление будет отменено.
+    </p>
+
+    <p>
+        Пака! 👋
+    </p>
+
+    <br><br><br>
+{% endblock %}
+
+{% block unsubscribe %}{% endblock %}

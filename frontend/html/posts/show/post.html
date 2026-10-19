@@ -73,6 +73,8 @@
             </header>
         {% endblock %}
 
+        {% include "posts/widgets/moderation_message.html" %}
+
         {% if post.text|length > 10000 %}
             <post-toc comments-count={{post.comment_count}}></post-toc>
         {% endif %}

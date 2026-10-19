@@ -21,9 +21,9 @@ from users.models.user import User
 REJECT_POST_REASONS = {
     "post": [
         ("title", "Плохой заголовок"),
-        ("design", "Текст недооформлен"),
         ("value", "Нет пользы/абстрактно"),
         ("inside", "Нет инсайдов и опыта"),
+        ("design", "Текст недооформлен"),
     ],
     "event": [
         ("title", "Плохой заголовок"),
@@ -40,9 +40,9 @@ REJECT_POST_REASONS = {
     ],
     "question": [
         ("title", "Плохой заголовок"),
+        ("chat", "Лучше в чат"),
         ("dyor", "Нет рисёрча, коротко"),
         ("hot", "Провокация/срач"),
-        ("chat", "Лучше в чат"),
         ("duplicate", "Дубликат"),
     ],
     "link": [
@@ -186,11 +186,15 @@ def notify_post_approved(post: Post):
     return None
 
 
-def notify_post_rejected(post, reason):
+def render_post_rejected_message(post, reason):
     try:
-        text = render_html_message(f"post_rejected/{reason.value}.html", post=post)
+        return render_html_message(f"post_rejected/{reason.value}.html", post=post)
     except TemplateDoesNotExist:
-        text = render_html_message(f"post_rejected/draft.html", post=post)
+        return render_html_message("post_rejected/draft.html", post=post)
+
+
+def notify_post_rejected(post, reason):
+    text = render_post_rejected_message(post, reason)
 
     if post.author.telegram_id:
         send_telegram_message(

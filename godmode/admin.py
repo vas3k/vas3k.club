@@ -75,6 +75,7 @@ class ClubAdminModel:
     list_fields: list | ClubAdminField = field(default_factory=list)
     edit_fields: list = field(default_factory=list)
     hide_fields: list = field(default_factory=list)
+    widgets: dict = field(default_factory=dict)
 
     list_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
     edit_roles: set[str] = field(default_factory=lambda: {User.ROLE_MODERATOR, User.ROLE_GOD})
@@ -147,6 +148,9 @@ class ClubAdminModel:
                             label=field.label,
                             initial=field.initial,
                         )
+
+                    if field_name in admin_model.widgets:
+                        field.widget = admin_model.widgets[field_name]
 
                     # Set required based on model constraints
                     if not model_field.null and not model_field.blank and not model_field.has_default():

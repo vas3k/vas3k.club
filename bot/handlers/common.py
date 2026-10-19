@@ -29,7 +29,6 @@ class PostRejectReason(Enum):
     duplicate = "duplicate"
     chat = "chat"
     tldr = "tldr"
-    github = "github"
     bias = "bias"
     hot = "hot"
     ad = "ad"

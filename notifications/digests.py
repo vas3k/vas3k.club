@@ -130,7 +130,7 @@ def generate_daily_digest(user):
     if not new_post_comments and not new_posts and not intros and not upcoming_events:
         raise NotFound()
 
-    return render_to_string("messages/good_morning.html", {
+    return render_to_string("notifications/telegram/good_morning.html", {
         "user": user,
         "intros": intros,
         "new_posts": new_posts,
@@ -265,12 +265,12 @@ def generate_weekly_digest(no_footer=False):
         "ava": settings.OG_MACHINE_AUTHOR_LOGO
     })
 
-    og_description = render_to_string("emails/weekly_og_description.html", {
+    og_description = render_to_string("notifications/emails/weekly_og_description.html", {
         "newbie_count": newbie_count,
         "post_count": post_count,
     })
 
-    return render_to_string("emails/weekly.html", {
+    return render_to_string("notifications/emails/weekly.html", {
         "posts": posts,
         "comments": comments,
         "intros": intros,
