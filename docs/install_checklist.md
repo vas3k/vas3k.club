@@ -27,7 +27,7 @@
 
 - [ ] [pepic](https://github.com/vas3k/pepic) для аплоада картинок + nginx + HTTPS
 - [ ] [ogimgd](https://github.com/nDmitry/ogimgd) для OG-картинок + nginx + HTTPS
-- [ ] Секреты `MEDIA_UPLOAD_URL` / `MEDIA_UPLOAD_CODE` в клубе
+- [ ] Секреты `MEDIA_UPLOAD_CODE` в клубе; URL аплоада задаётся в `club/settings.py` (`MEDIA_UPLOAD_URL`), не через env
 
 ## Клуб и бот
 

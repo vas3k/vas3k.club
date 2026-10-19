@@ -1,99 +1,67 @@
-# Advanced setup
+# Local development
 
-For most contributors, `docker compose up` from the [README](../README.md) is enough. Use this guide when you want to run parts of the stack natively, enable bots, or seed local data.
+The default [Docker setup](../README.md#-running-locally) starts Django, PostgreSQL, Redis, the shared queue, and webpack. It installs dependencies, applies migrations, and initializes tags. Neither Python/Node on the host nor a `.env` file is required.
 
-## Native local development
+## Native Python with uv
 
-### 1. Python (uv)
-
-1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
-2. `uv sync`
-3. Check it works: `uv run python -c "import django; print(django.get_version())"`
-
-Requires **Python 3.14+** (see `pyproject.toml`).
-
-### 2. Postgres and Redis
-
-Easiest: start only the infra containers:
+Run every command below from the repository root. Install [uv](https://docs.astral.sh/uv/getting-started/installation/), Node.js 22/npm, and PostgreSQL's `libpq` client library. uv uses `.python-version` and creates `.venv` automatically; no activation is needed.
 
 ```sh
-docker compose up -d postgres redis
+uv sync --frozen
+npm ci --prefix frontend
+npm run build --prefix frontend
 ```
 
-Connection defaults (also used by Django when env vars are unset):
+### Database and Redis
 
-```dotenv
-POSTGRES_DB=vas3k_club
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=localhost
-REDIS_HOST=localhost
-REDIS_DB=0
-```
+Use your own local PostgreSQL and Redis services. Create the database and configure `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` as needed; configure Redis through `REDIS_HOST` and `REDIS_PORT`.
 
-### 3. Frontend
+Django defaults to database `vas3k_club`, user `postgres`, no password, PostgreSQL at `localhost:5432`, and Redis at `localhost:6379`. These defaults do not provision services or credentials. Use PostgreSQL, not SQLite. The default Docker Compose stack does not publish database/Redis ports to the host.
 
-Needs **Node.js 22+**.
-
-```sh
-cd frontend
-npm run watch   # runs npm ci first, then webpack --watch
-```
-
-Or a one-shot build: `make build-frontend`.
-
-### 4. Run the app
-
-```sh
-make migrate
-make run-queue   # in one terminal
-make run-dev     # in another → http://127.0.0.1:8000/
-```
-
-Same thing without make:
+### Start Django
 
 ```sh
 uv run python manage.py migrate
-uv run python manage.py qcluster
+uv run python manage.py update_tags
 uv run python manage.py runserver 0.0.0.0:8000
 ```
 
-Dev login shortcuts still work: `/godmode/dev_login/` and `/godmode/random_login/` (only when `DEBUG=true`).
-
-## Telegram bot / helpdesk bot
-
-1. `cp ./club/.env.example ./club/.env`
-2. Fill the Telegram-related fields (`TELEGRAM_TOKEN`, chat/channel IDs, etc.)
-   - Token: [@BotFather](https://t.me/BotFather)
-   - Chat/channel IDs: forward a message to [@JsonDumpBot](https://t.me/JsonDumpBot) or [@getidsbot](https://t.me/getidsbot)
-3. Uncomment the `bot` / `helpdeskbot` services in `docker-compose.yml`, then:
+In separate terminals, start the shared queue and frontend watcher when needed:
 
 ```sh
-docker compose up --build
+uv run python manage.py qcluster
+npm run watch --prefix frontend
 ```
 
-Or run natively: `make run-bot`.
+Open [the local site](http://127.0.0.1:8000/). Use `/godmode/dev_login/` for an admin or `/godmode/random_login/` for a new member; these routes only work in debug mode. Create sample content locally through the site. Production imports are not part of setup.
 
-## Import posts from production into a local DB
+## Optional configuration
 
-`import_posts_to_dev` pulls public posts from https://vas3k.club/feed.json:
+Settings read exported variables or an ignored `.env` file. To keep configuration between terminals, copy `club/.env.example` to `.env` at the repository root, then uncomment and fill only the settings you need. The example is commented out so copying it does not enable fake credentials. Keep only one local `.env`; an old `club/.env` is found before the root file and can hide its values.
+
+The Docker development containers receive database/Redis settings from Compose; do not replace their service hosts with `localhost`. The root `.env` is also visible inside the bind-mounted app directory. Bot tokens, SMTP, payments, and AI credentials are optional for ordinary website development.
+
+## Telegram bots
+
+The Club bot and helpdeskbot are independent programs. Use separate development bots and chats. Keep `DEBUG=true` to use polling.
+
+- Club bot: set `TELEGRAM_TOKEN`, `TELEGRAM_BOT_URL`, and `TELEGRAM_ADMIN_CHAT_ID`; configure the other Club chat/channel IDs for the features you exercise.
+- Helpdeskbot: set `TELEGRAM_HELP_DESK_BOT_TOKEN`, `TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_ID`, and `TELEGRAM_HELP_DESK_BOT_QUESTION_CHANNEL_DISCUSSION_ID`. Link the question channel to its discussion group and give the bot access to both.
+
+Obtain bot tokens from [BotFather](https://t.me/BotFather). Keep the shared queue running for queued notifications and long-running work.
+
+Native commands, each in its own terminal:
 
 ```sh
-uv run python manage.py import_posts_to_dev
-uv run python manage.py import_posts_to_dev --pages 10
-uv run python manage.py import_posts_to_dev --pages 10 --skip 5 --force
-
-# inside docker
-docker exec -it club_app python3 manage.py import_posts_to_dev --pages 2
+uv run python bot/main.py
+uv run python helpdeskbot/main.py
 ```
 
-Private posts and comments need a [service app token](https://vas3k.club/apps/create/):
+With the Docker development stack already running, use its prepared app environment without editing Compose:
 
 ```sh
-uv run python manage.py import_posts_to_dev --with-comments --service-token XXX
-uv run python manage.py import_posts_to_dev --with-private --with-comments --service-token XXX
+docker compose exec club_app python3 bot/main.py
+docker compose exec club_app python3 helpdeskbot/main.py
 ```
 
-## Infrastructure reference
-
-See [docker-compose.yml](../docker-compose.yml) for the full local stack.
+These commands start real polling processes for the configured development bots. They are not required to start the website.

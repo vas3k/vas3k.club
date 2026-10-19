@@ -14,75 +14,74 @@ We're a bullshitless community!
 
 ## 🛠 Tech stack
 
-👨‍💻 **TL;DR: Django, Postgres, Redis, Vue.js, Webpack, UV**
+👨‍💻 **TL;DR: Django, Postgres, Redis, Vue 2, Webpack, uv**
 
 We try to keep our stack as simple and stupid as possible. Because we're not very smart either.
 
 The trickiest part of our stack is how we develop the frontend and backend as a single service. We don't use SPA, as many people do, but only make parts of the page dynamic by inserting Vue.js components directly into Django templates. This may seem weird, but it actually makes it very easy for one person to develop and maintain the entire site.
 
-You don't really need to understand how the magic of webpack <-> django communication works under the hood to develop new components. Just run `django runserver` and `npm run watch` at the same time and enjoy your coding.
+You don't really need to understand how the magic of webpack <-> django communication works under the hood to develop new components. Just run `uv run python manage.py runserver` and `npm run watch --prefix frontend` at the same time and enjoy your coding.
 
 Feel free to propose "state of the art" refactorings for UI or backend code if you know how to do it better. We're open for best practices from both worlds.
 
 ## 🔮 Running locally
 
-The happy path is Docker. Install [Docker](https://www.docker.com/get-started), then:
+Install Docker with Docker Compose, then run:
 
 ```sh
 git clone https://github.com/vas3k/vas3k.club.git
 cd vas3k.club
-docker compose up
-```
-
-This starts the app in development mode on [http://127.0.0.1:8000/](http://127.0.0.1:8000/), plus Postgres, Redis, the queue workers and Webpack.
-
-### Dev login
-
-First time you need a test account:
-
-- [/godmode/dev_login/](http://127.0.0.1:8000/godmode/dev_login/) — creates an admin (`god`) account and logs you in
-- [/godmode/random_login/](http://127.0.0.1:8000/godmode/random_login/) — creates a fresh random member
-
-These endpoints only work when `DEBUG=true` (which is the default in `docker compose`).
-
-Backend and frontend hot-reload on every code change. If everything is broken (it happens), rebuild from scratch:
-
-```sh
 docker compose up --build
 ```
 
-## 🧑‍💻 Advanced setup
+The development stack starts Django, PostgreSQL, Redis, queue workers, and the webpack watcher. Startup applies database migrations and initializes the built-in tags. Wait for Django and webpack to finish starting, then open [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
-Want to run without Docker, wire up the Telegram bot, or import public posts into a local DB? See [docs/setup.md](docs/setup.md).
+A fresh clone needs no `.env` or integration credentials for this setup. Python and Node run inside the containers. The Telegram bots are optional and are not started by default.
 
-Useful `make` targets once you have [uv](https://docs.astral.sh/uv/) and Node 22+ locally:
+On ARM machines, including Apple Silicon, the current Dockerfile requires amd64 emulation because it downloads an amd64 Supercronic binary. Use this command instead:
 
 ```sh
-make run-dev          # Django on :8000
-make run-queue        # django-q workers
-make build-frontend   # one-shot webpack build
-make migrate
-make test             # backend
-make test-frontend    # Jest
-make test-all
+DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose up --build --pull always
 ```
+
+### Dev login
+
+Use these local shortcuts to create sample accounts and sign in:
+
+- [Admin login](http://127.0.0.1:8000/godmode/dev_login/) creates or reuses the `dev` account. A newly created account has the `god` role.
+- [Random member login](http://127.0.0.1:8000/godmode/random_login/) creates and signs in as a new member each time.
+
+These routes are available in debug or test mode. The development Compose stack enables debug mode. After signing in as an admin, open [/godmode/](http://127.0.0.1:8000/godmode/).
+
+Django reloads Python changes, and webpack watches frontend sources. Rebuild the containers after changing Python dependencies or the Dockerfile. For startup failures, inspect `docker compose logs` for the failing service.
+
+## 🧑‍💻 Advanced setup
+
+For Python development on the host, use uv. `uv sync --frozen` creates the project environment; `uv run` uses it without manual activation. The project pins Python in [.python-version](.python-version) and uses Node.js 22 for frontend builds.
+
+Follow [docs/setup.md](docs/setup.md) for the complete native setup, local PostgreSQL/Redis requirements, optional environment settings, and instructions for each Telegram bot. The default Compose file does not publish database or Redis ports for host Python processes.
 
 ## ☄️ Testing
 
-Backend: Django's test runner. Frontend: Jest. No magic.
+Run relevant backend tests after substantial changes to business logic, persistence, or permissions. New coverage should focus on important Python behavior and persisted state, not templates, buttons, CSS, or notification wording. Browser checks are only run when requested.
+
+With the development stack running:
 
 ```sh
-make test          # needs Postgres + Redis (easiest: docker compose up -d postgres redis)
-make test-frontend # needs Node only
+# One app's tests
+docker compose exec -e TESTS_RUN=true club_app python3 manage.py test payments.tests
+
+# Full backend suite
+docker compose exec -e TESTS_RUN=true club_app python3 manage.py test
 ```
 
-More details: [docs/test.md](docs/test.md).
+[CI](.github/workflows/tests.yml) runs Flake8, backend tests, and the existing frontend Jest suite. A separate [build check](.github/workflows/check_build_and_run.yml) verifies Docker startup and webpack compilation. See [docs/test.md](docs/test.md) for test prerequisites and native uv commands.
 
 ## 🚢 Deployment
 
 No k8s, no AWS, we ship dockers directly via SSH and it's beautiful!
 
-Production config lives in [docker-compose.production.yml](docker-compose.production.yml). [GitHub Actions](.github/workflows/deploy.yml) build, test and deploy on every merge to `master` (maintainers only).
+Production config lives in [docker-compose.production.yml](docker-compose.production.yml). [GitHub Actions](.github/workflows/deploy.yml) run tests, build the image, and deploy on pushes to `master` or manual dispatch (maintainers only).
 
 Explore the [.github](.github) folder for more insights.
 

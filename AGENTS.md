@@ -30,7 +30,7 @@ Run from the repository root. A fresh clone has no `.venv`, `.env`, installed fr
 
 Native development requires uv, Node.js 22/npm, PostgreSQL with its `libpq` client library, and Redis. Create a local database and configure access through `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT`; configure Redis through `REDIS_HOST`/`REDIS_PORT`. Defaults are database `vas3k_club`, user `postgres`, no password, PostgreSQL at `localhost:5432`, and Redis at `localhost:6379`; these defaults do not provision services or credentials. Keep PostgreSQL, not a SQLite substitute.
 
-Export environment variables in the shell or put them in an optional ignored `.env` at the repository root, read by `club/settings.py` through `python-dotenv`; uv does not create it. `club/.env.example` is a reference for integrations, not a working configuration: leave unused credentials unset instead of copying placeholder Telegram tokens. Bot commands require development tokens and chat IDs; bots are optional for website work.
+Export environment variables in the shell or put them in an optional ignored `.env` at the repository root, read by `club/settings.py` through `python-dotenv`; uv does not create it. `club/.env.example` is a commented reference: uncomment and fill only the settings you need; leave unused credentials unset. Bot commands require development tokens and chat IDs; bots are optional for website work.
 
 For the first native run, install dependencies, build the frontend, apply local migrations, initialize tags, then start Django, in the order below. Start the queue and frontend watcher in separate terminals when needed.
 

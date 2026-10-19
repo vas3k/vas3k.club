@@ -1,39 +1,23 @@
 # Testing
 
-## Backend
+Cover important backend/Python business logic: permissions, state changes, payments, membership, votes, limits, privacy, and consequential bot/queue decisions. Assert outcomes and persisted state, not templates, buttons, CSS, or page/notification wording. Mock external services and queued sends.
 
-Needs **uv**, **Postgres**, **Redis**, and a built frontend (`webpack-stats.json`).
+Run relevant tests after substantial backend changes or when requested. Use the full suite for broad backend changes. Browser checks run only when explicitly requested.
 
-```sh
-docker compose up -d postgres redis
-cd frontend && npm ci && npm run build && cd ..
-make test
-# or: TESTS_RUN=true uv run python manage.py test
-```
-
-`make test` sets `TESTS_RUN=true` for you. If you run `manage.py test` by hand, also set:
-
-```dotenv
-TESTS_RUN=true
-POSTGRES_DB=vas3k_club
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_HOST=localhost
-REDIS_DB=0
-REDIS_HOST=localhost
-```
-
-CI runs the same suite on every PR ([`.github/workflows/tests.yml`](../.github/workflows/tests.yml)).
-
-Official Django testing docs: https://docs.djangoproject.com/en/6.0/topics/testing/overview/
-
-## Frontend
-
-Jest + jsdom. Covers utilities and DOM helpers. No Postgres/Redis/Python needed.
+## Existing Docker development stack
 
 ```sh
-make test-frontend
-# or: cd frontend && npm test
+docker compose exec -e TESTS_RUN=true club_app python3 manage.py test payments.tests
+docker compose exec -e TESTS_RUN=true club_app python3 manage.py test
 ```
 
-Requires Node.js 22+. CI runs this as a separate `frontend-test` job.
+## Native uv
+
+Complete [native setup](setup.md#native-python-with-uv), including the frontend build and reachable PostgreSQL/Redis services. The PostgreSQL role must be allowed to create test databases.
+
+```sh
+TESTS_RUN=true uv run python manage.py test payments.tests
+TESTS_RUN=true uv run python manage.py test
+```
+
+`TESTS_RUN` enables the project's test settings; set it only for test commands. [CI](../.github/workflows/tests.yml) runs Flake8, the backend suite, and the existing frontend Jest suite. The separate [build check](../.github/workflows/check_build_and_run.yml) verifies Docker startup and webpack compilation.
