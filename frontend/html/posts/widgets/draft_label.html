@@ -1,3 +1,10 @@
 <a href="{% url "edit_post" post.slug %}" class="label label-type-draft">
-    <span class="label-title"><i class="fas fa-edit"></i> Черновик</span>
+    <span class="label-title">
+        <i class="fas fa-edit"></i>
+        {% if post.moderation_status == "rejected" and post.moderation_message %}
+            Отбито модератором
+        {% else %}
+            Черновик
+        {% endif %}
+    </span>
 </a>

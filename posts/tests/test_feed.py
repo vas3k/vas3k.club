@@ -239,15 +239,47 @@ class TestFeedSortingAndVisibility(TestCase):
         response = self.client.get("/all/top_year:twenty/")
         self.assertEqual(response.status_code, 404)
 
-    def test_moderator_sees_pending_posts_in_activity_feed(self):
-        moderator = _create_user("tfeed_mod", roles=[User.ROLE_MODERATOR])
+    def test_moderation_roles_see_all_pending_posts_on_index(self):
         other = _create_user("tfeed_pending_author")
-        own_pending = _create_post("tfeed_own_pending", moderator, moderation_status=Post.MODERATION_PENDING)
-        other_pending = _create_post("tfeed_other_pending", other, moderation_status=Post.MODERATION_PENDING)
+        pending = _create_post("tfeed_pending", other, moderation_status=Post.MODERATION_PENDING)
+        linked = _create_post(
+            "tfeed_pending_link", other,
+            moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_LINK_ONLY,
+        )
+        _create_post(
+            "tfeed_pending_draft", other,
+            moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_DRAFT,
+        )
+        _create_post("tfeed_rejected", other, moderation_status=Post.MODERATION_REJECTED)
+        _create_post(
+            "tfeed_deleted_pending", other,
+            moderation_status=Post.MODERATION_PENDING, deleted_at=datetime.utcnow(),
+        )
+        own_pending = _create_post("tfeed_own_pending", self.user, moderation_status=Post.MODERATION_PENDING)
 
-        _login(self.client, moderator)
+        for role in [User.ROLE_CURATOR, User.ROLE_MODERATOR, User.ROLE_GOD]:
+            with self.subTest(role=role):
+                self.user.roles = [role]
+                self.user.save()
+                response = self.client.get("/")
+                pending_ids = {post.id for post in response.context["waiting_for_moderation_posts"]}
+                self.assertEqual(pending_ids, {pending.id, linked.id, own_pending.id})
+
+    def test_moderation_queue_is_not_available_to_regular_users(self):
+        _create_post("tfeed_pending_regular", self.user, moderation_status=Post.MODERATION_PENDING)
+
         response = self.client.get("/")
-        pending_ids = [post.id for post in response.context["waiting_for_moderation_posts"]]
 
-        self.assertIn(other_pending.id, pending_ids)
-        self.assertNotIn(own_pending.id, pending_ids)
+        self.assertEqual(response.context["waiting_for_moderation_posts"], [])
+
+    def test_moderation_queue_is_only_on_index(self):
+        self.user.roles = [User.ROLE_GOD]
+        self.user.save()
+        _create_post("tfeed_pending_elsewhere", self.user, moderation_status=Post.MODERATION_PENDING)
+        room = _create_room("tfeed-moderation-room")
+
+        for url in ["/post/", "/all/new/", "/all/activity/", f"/room/{room.slug}/", "/label/test/"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.context["waiting_for_moderation_posts"], [])

@@ -91,15 +91,15 @@
         </div>
     {% endif %}
 
-    {% for post in pinned_posts %}
-        {% include "posts/items/items.html" %}
-    {% endfor %}
-
     {% if waiting_for_moderation_posts %}
         {% for post in waiting_for_moderation_posts %}
             {% include "posts/items/items.html" %}
         {% endfor %}
     {% endif %}
+
+    {% for post in pinned_posts %}
+        {% include "posts/items/items.html" %}
+    {% endfor %}
 
     {% for post in posts %}
         {% include "posts/items/items.html" %}
