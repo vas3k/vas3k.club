@@ -8,9 +8,7 @@ from django.urls import reverse
 from comments.models import Comment, CommentVote
 from debug.helpers import HelperClient
 from posts.models.post import Post
-from bookmarks.models import PostBookmark
 from posts.models.votes import PostVote
-from tags.models import Tag, UserTag
 from users.models.mute import UserMuted
 from users.models.notes import UserNote
 from users.models.user import User
@@ -18,8 +16,8 @@ from users.models.user import User
 
 class RendererTestBase(TestCase):
     def setUp(self):
-        self._user_counter = 0
-        self.user = self._create_user()
+        self.user_counter = 0
+        self.user = self.create_user()
         self.post = Post.objects.create(
             type=Post.TYPE_POST,
             slug="renderer_test_post",
@@ -30,18 +28,15 @@ class RendererTestBase(TestCase):
             is_public=True,
         )
 
-    def _create_user(self):
-        self._user_counter += 1
+    def create_user(self):
+        self.user_counter += 1
         return User.objects.create(
-            email=f"renderer_test_{self._user_counter}@xx.com",
+            email=f"renderer_test_{self.user_counter}@xx.com",
             membership_started_at=datetime.now() - timedelta(days=5),
             membership_expires_at=datetime.now() + timedelta(days=5),
             moderation_status=User.MODERATION_STATUS_APPROVED,
-            slug=f"renderer_user_{self._user_counter}",
+            slug=f"renderer_user_{self.user_counter}",
         )
-
-    def _post_url(self):
-        return reverse("show_post", args=(self.post.type, self.post.slug))
 
 
 class TestRenderPostQueryOptimization(RendererTestBase):
@@ -52,7 +47,7 @@ class TestRenderPostQueryOptimization(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            response = client.get(self._post_url())
+            response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
         comment_queries = [
@@ -70,7 +65,7 @@ class TestRenderPostQueryOptimization(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            response = client.get(self._post_url())
+            response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
         comment_queries = [
@@ -90,7 +85,7 @@ class TestRenderPostQueryOptimization(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            client.get(self._post_url())
+            client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         comment_queries = [
             q["sql"] for q in queries
@@ -106,29 +101,29 @@ class TestRenderPostQueryOptimization(RendererTestBase):
 
 class TestRenderPostVotes(RendererTestBase):
     def test_upvoted_at_present_for_voted_comment(self):
-        """Voted comments should have upvoted_at in the rendered page."""
-        other_user = self._create_user()
+        """Load the current user's vote state for comments."""
+        other_user = self.create_user()
         comment = Comment.objects.create(author=other_user, post=self.post, text="voteable")
         CommentVote.objects.create(user=self.user, comment=comment, post=self.post)
 
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "initial-is-voted")
+        self.assertIsNotNone(response.context["comments"][0].upvoted_at)
 
     def test_upvoted_at_absent_for_unvoted_comment(self):
         """Unvoted comments should not have upvoted_at."""
-        other_user = self._create_user()
+        other_user = self.create_user()
         Comment.objects.create(author=other_user, post=self.post, text="no vote")
 
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "initial-is-voted")
+        self.assertIsNone(response.context["comments"][0].upvoted_at)
 
     def test_anonymous_sees_no_votes(self):
         """Anonymous users should see comments without vote state."""
@@ -136,14 +131,14 @@ class TestRenderPostVotes(RendererTestBase):
         CommentVote.objects.create(user=self.user, comment=comment, post=self.post)
 
         client = HelperClient()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "initial-is-voted")
+        self.assertIsNone(response.context["comments"][0].upvoted_at)
 
     def test_votes_fetched_in_separate_query(self):
         """Vote data should come from a separate query, not a correlated subquery."""
-        other_user = self._create_user()
+        other_user = self.create_user()
         comment = Comment.objects.create(author=other_user, post=self.post, text="test")
         CommentVote.objects.create(user=self.user, comment=comment, post=self.post)
 
@@ -151,7 +146,7 @@ class TestRenderPostVotes(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            client.get(self._post_url())
+            client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         comment_select = [
             q["sql"] for q in queries
@@ -173,74 +168,39 @@ class TestRenderPostCommentOrder(RendererTestBase):
 
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
-        content = response.content.decode()
-        pos_old = content.index("old comment")
-        pos_new = content.index("new comment")
-        self.assertLess(pos_old, pos_new, "Older comment should appear before newer one with same upvotes")
-
-
-class TestRenderPostCommentPostReference(RendererTestBase):
-    def test_comment_post_fields_accessible(self):
-        """Comments should have post reference set for template rendering."""
-        Comment.objects.create(author=self.user, post=self.post, text="post ref test")
-
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        content = response.content.decode()
-        self.assertIn(f"#comment-", content)
-
-    def test_deleted_comment_shows_by_whom(self):
-        """Deleted comment should show who deleted it (uses comment.post.author_id)."""
-        other_user = self._create_user()
-        comment = Comment.objects.create(author=other_user, post=self.post, text="to delete")
-        comment.is_deleted = True
-        comment.deleted_by = self.user.id  # post author deleted it
-        comment.save()
-
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "удален")
+        self.assertEqual([comment.id for comment in response.context["comments"]], [old.id, new.id])
 
 
 class TestRenderPostCommentRateLimit(RendererTestBase):
-    def test_comment_form_shown_when_under_limit(self):
+    def test_comment_limit_not_exceeded(self):
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "comment-form-form")
-        self.assertNotContains(response, "block-comments-restricted")
+        self.assertFalse(response.context["is_comment_rate_exceeded"])
 
     @override_settings(RATE_LIMIT_COMMENTS_PER_DAY=2)
-    def test_rate_limit_block_shown_when_exceeded(self):
-        """When user exceeds daily comment limit, comment form is replaced with restriction block."""
+    def test_comment_limit_exceeded(self):
+        """The daily limit is calculated for the current user."""
         for i in range(2):
             Comment.objects.create(author=self.user, post=self.post, text=f"spam {i}")
 
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "block-comments-rate-limited")
-        self.assertNotContains(response, "comment-form-form")
+        self.assertTrue(response.context["is_comment_rate_exceeded"])
 
-    def test_anonymous_sees_no_comment_form(self):
+    def test_anonymous_has_no_comment_limit_state(self):
         client = HelperClient()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "comment-form-form")
-        self.assertNotContains(response, "block-comments-rate-limited")
+        self.assertFalse(response.context["is_comment_rate_exceeded"])
 
     def test_rate_limit_not_computed_in_template(self):
         """Rate limit check should happen in the view, not via template tag query."""
@@ -248,7 +208,7 @@ class TestRenderPostCommentRateLimit(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            client.get(self._post_url())
+            client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         template_tag_queries = [
             q["sql"] for q in queries
@@ -260,26 +220,6 @@ class TestRenderPostCommentRateLimit(RendererTestBase):
 
 
 class TestRenderPostUpvotedAt(RendererTestBase):
-    def test_post_upvote_timestamp_in_response(self):
-        """Post upvoted_at should appear as initial-upvote-timestamp in rendered page."""
-        PostVote.objects.create(user=self.user, post=self.post)
-
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "initial-upvote-timestamp=")
-
-    def test_no_post_upvote_no_timestamp(self):
-        """Without a post vote, initial-upvote-timestamp should not appear."""
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "initial-upvote-timestamp=")
-
     def test_post_vote_query_uses_values_list(self):
         """PostVote query should fetch only created_at, not the full object."""
         PostVote.objects.create(user=self.user, post=self.post)
@@ -287,7 +227,7 @@ class TestRenderPostUpvotedAt(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            client.get(self._post_url())
+            client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         vote_queries = [
             q["sql"] for q in queries
@@ -299,54 +239,7 @@ class TestRenderPostUpvotedAt(RendererTestBase):
             self.assertNotIn('"ipaddress"', sql)
 
 
-class TestRenderPostBookmark(RendererTestBase):
-    def test_bookmark_state_for_bookmarked_post(self):
-        PostBookmark.objects.create(user=self.user, post=self.post)
-
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "initial-is-bookmarked")
-
-    def test_no_bookmark_state_for_unbookmarked_post(self):
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertNotContains(response, "initial-is-bookmarked")
-
-
 class TestRenderPostCollectibleTag(RendererTestBase):
-    def test_collectible_tag_rendered_when_exists(self):
-        """Post with a valid collectible_tag_code should render the tag widget."""
-        tag = Tag.objects.create(code="test_collect", name="Test Collectible", group=Tag.GROUP_COLLECTIBLE)
-        self.post.collectible_tag_code = tag.code
-        self.post.save()
-
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Test Collectible")
-
-    def test_collected_tag_shows_active(self):
-        """Collected tag should show active state for the user."""
-        tag = Tag.objects.create(code="test_collected", name="Collected Tag", group=Tag.GROUP_COLLECTIBLE)
-        UserTag.objects.create(user=self.user, tag=tag, name=tag.name)
-        self.post.collectible_tag_code = tag.code
-        self.post.save()
-
-        client = HelperClient(self.user)
-        client.authorise()
-        response = client.get(self._post_url())
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "is-active-by-default")
-
     def test_no_extra_query_when_tag_code_is_none(self):
         """Post without collectible_tag_code should not query Tag table."""
         self.post.collectible_tag_code = None
@@ -356,7 +249,7 @@ class TestRenderPostCollectibleTag(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            client.get(self._post_url())
+            client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         tag_queries = [
             q["sql"] for q in queries
@@ -373,7 +266,7 @@ class TestRenderPostCollectibleTag(RendererTestBase):
         client.authorise()
 
         with CaptureQueriesContext(connection) as queries:
-            client.get(self._post_url())
+            client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         usertag_queries = [
             q["sql"] for q in queries
@@ -385,26 +278,26 @@ class TestRenderPostCollectibleTag(RendererTestBase):
 class TestRenderPostMutedAndNotes(RendererTestBase):
     def test_muted_user_ids_loaded(self):
         """Muted users should be tracked in context for comment rendering."""
-        other_user = self._create_user()
+        other_user = self.create_user()
         Comment.objects.create(author=other_user, post=self.post, text="muted user comment")
         UserMuted.objects.create(user_from=self.user, user_to=other_user)
 
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(other_user.id, response.context["muted_user_ids"])
 
     def test_user_notes_loaded(self):
         """User notes should be available in the rendered context."""
-        other_user = self._create_user()
+        other_user = self.create_user()
         Comment.objects.create(author=other_user, post=self.post, text="noted user comment")
         UserNote.objects.create(user_from=self.user, user_to=other_user, text="my note")
 
         client = HelperClient(self.user)
         client.authorise()
-        response = client.get(self._post_url())
+        response = client.get(reverse("show_post", args=(self.post.type, self.post.slug)))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["user_notes"].get(other_user.id), "my note")

@@ -11,7 +11,10 @@ from notifications.models import WebhookEvent
 @require_POST
 def webhook_event(request, event_type):
     secret = request.GET.get("secret", "")
-    if not secret or not _is_valid_secret(secret):
+    if not secret or not any(
+        hmac.compare_digest(secret, expected)
+        for expected in settings.WEBHOOK_SECRETS
+    ):
         return HttpResponseForbidden("Forbidden")
 
     try:
@@ -25,13 +28,6 @@ def webhook_event(request, event_type):
         data=data,
     )
     return HttpResponse("OK")
-
-
-def _is_valid_secret(secret):
-    return any(
-        hmac.compare_digest(secret, expected)
-        for expected in settings.WEBHOOK_SECRETS
-    )
 
 
 def default_webhook_handler(event_type, data):

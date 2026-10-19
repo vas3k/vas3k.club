@@ -46,28 +46,28 @@ def parse_url_preview(url: str) -> Optional[ParsedURL]:
 def parse_html_preview(url: str, html: str | bytes) -> Optional[ParsedURL]:
     soup = BeautifulSoup(html, "html.parser")
 
-    canonical = _meta_link(soup, rel="canonical") or url
+    canonical = get_meta_link(soup, rel="canonical") or url
     title = (
-        _meta_content(soup, property="og:title")
-        or _meta_content(soup, name="twitter:title")
+        get_meta_content(soup, property="og:title")
+        or get_meta_content(soup, name="twitter:title")
         or (soup.title.string if soup.title and soup.title.string else None)
         or ""
     )
     description = (
-        _meta_content(soup, property="og:description")
-        or _meta_content(soup, name="twitter:description")
-        or _meta_content(soup, name="description")
+        get_meta_content(soup, property="og:description")
+        or get_meta_content(soup, name="twitter:description")
+        or get_meta_content(soup, name="description")
         or ""
     )
     image = (
-        _meta_content(soup, property="og:image")
-        or _meta_content(soup, name="twitter:image")
+        get_meta_content(soup, property="og:image")
+        or get_meta_content(soup, name="twitter:image")
         or ""
     )
     favicon = (
-        _meta_link(soup, rel="icon")
-        or _meta_link(soup, rel="shortcut icon")
-        or _meta_link(soup, rel="apple-touch-icon")
+        get_meta_link(soup, rel="icon")
+        or get_meta_link(soup, rel="shortcut icon")
+        or get_meta_link(soup, rel="apple-touch-icon")
         or ""
     )
 
@@ -87,7 +87,7 @@ def parse_html_preview(url: str, html: str | bytes) -> Optional[ParsedURL]:
     )
 
 
-def _meta_content(soup: BeautifulSoup, **attrs) -> Optional[str]:
+def get_meta_content(soup: BeautifulSoup, **attrs) -> Optional[str]:
     tag = soup.find("meta", attrs=attrs)
     if not tag:
         return None
@@ -95,7 +95,7 @@ def _meta_content(soup: BeautifulSoup, **attrs) -> Optional[str]:
     return content.strip() if content else None
 
 
-def _meta_link(soup: BeautifulSoup, rel: str) -> Optional[str]:
+def get_meta_link(soup: BeautifulSoup, rel: str) -> Optional[str]:
     wanted = rel.lower()
 
     def matches(value) -> bool:

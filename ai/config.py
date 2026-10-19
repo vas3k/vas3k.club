@@ -12,7 +12,7 @@ CLUB_INFO_POST_SLUGS = [
     "about",
     "values",
     "contact",
-    "10447", # good and bad content
+    "10447",  # good and bad content
     "10857",  # how to moderate
 ]
 CLUB_EXTRA_INFO_POST_SLUGS = [

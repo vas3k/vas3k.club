@@ -34,7 +34,7 @@ def api_create_map_message(request):
 
     # lock the author row so two parallel posts cannot both pass can_post()
     with transaction.atomic():
-        type(request.me).objects.select_for_update().get(pk=request.me.pk)
+        type(request.me).objects.select_for_update().get(id=request.me.id)
         if not MapMessages.can_post(request.me):
             raise ApiBadRequest(
                 title="Подождите 24 часа",

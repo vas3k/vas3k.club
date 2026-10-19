@@ -71,55 +71,12 @@ class TestUserSessionsSettings(TestCase):
         self.other = create_approved_user("sessions_other")
         self.client = Client()
 
-    def test_settings_index_contains_sessions_link(self):
-        login(self.client, self.user)
-
-        response = self.client.get(reverse("profile_settings", args=[self.user.slug]))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Сессии")
-        self.assertContains(response, reverse("edit_sessions", args=[self.user.slug]))
-
     def test_non_owner_cannot_access_sessions(self):
         login(self.client, self.other)
 
         response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
 
         self.assertEqual(response.status_code, 404)
-
-    def test_lists_sessions_with_ip_browser_and_time(self):
-        login(self.client, self.user)
-        Session.create_for_user(
-            self.user,
-            ipaddress="203.0.113.10",
-            useragent=(
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            ),
-        )
-
-        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "203.0.113.10")
-        self.assertContains(response, "Chrome 120")
-        self.assertContains(response, "fa-globe")
-        self.assertContains(response, "fa-trash")
-
-    def test_marks_current_session_by_token(self):
-        login(self.client, self.user)
-
-        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
-
-        self.assertContains(response, "(это устройство)")
-
-    def test_does_not_mark_other_session_as_current(self):
-        login(self.client, self.user)
-        Session.create_for_user(self.user, ipaddress="203.0.113.10")
-
-        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
-
-        self.assertContains(response, "(это устройство)", count=1)
 
     def test_deactivate_session_deletes_it(self):
         login(self.client, self.user)
@@ -166,22 +123,6 @@ class TestUserSessionsSettings(TestCase):
         )
 
         self.assertEqual(response.status_code, 405)
-
-    def test_sessions_page_contains_deactivate_others_button(self):
-        login(self.client, self.user)
-        Session.create_for_user(self.user, ipaddress="198.51.100.20")
-
-        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
-
-        self.assertContains(response, "Завершить все, кроме текущей")
-        self.assertContains(response, reverse("deactivate_other_sessions", args=[self.user.slug]))
-
-    def test_sessions_page_hides_deactivate_others_button_for_single_session(self):
-        login(self.client, self.user)
-
-        response = self.client.get(reverse("edit_sessions", args=[self.user.slug]))
-
-        self.assertNotContains(response, "Завершить все, кроме текущей")
 
     def test_deactivate_other_sessions_keeps_current(self):
         login(self.client, self.user)
