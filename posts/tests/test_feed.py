@@ -142,7 +142,7 @@ class TestFeedPinnedPosts(TestCase):
                               is_pinned_until=datetime.utcnow() + timedelta(days=1))
 
         response = self.client.get("/all/new/")
-        pinned_posts = response.context["pinned_posts"]
+        pinned_posts = list(response.context["pinned_posts"])
         feed_ids = [p.id for p in response.context["posts"]]
 
         self.assertEqual(pinned_posts, [])
@@ -274,10 +274,15 @@ class TestFeedSortingAndVisibility(TestCase):
                 self.assertNotIn(own_pending.id, feed_ids)
                 self.assertNotIn(own_pending.id, [p.id for p in response.context["pinned_posts"]])
 
-            for url in [
-                "/post/", "/question/", "/label/other/", f"/room/{room.slug}/",
-                "/all/new/", "/all/top_week/",
-            ]:
+            with self.subTest(role=role, url="/all/new/"):
+                response = self.client.get("/all/new/")
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(
+                    {p.id for p in response.context["moderation_posts"]}, {pending.id, own_pending.id},
+                )
+                self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
+
+            for url in ["/post/", "/question/", "/label/other/", f"/room/{room.slug}/", "/all/top_week/"]:
                 with self.subTest(role=role, url=url):
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, 200)
@@ -315,7 +320,7 @@ class TestFeedSortingAndVisibility(TestCase):
                     response = self.client.get(f"/all/{ordering}/")
                     self.assertEqual(response.status_code, 200)
 
-                    if ordering == "activity":
+                    if ordering in ["activity", "new"]:
                         self.assertEqual({post.id for post in response.context["posts"]}, {approved.id, rejected.id})
                         self.assertEqual({post.id for post in response.context["moderation_posts"]}, {pending.id})
                     else:
@@ -348,14 +353,14 @@ class TestFeedSortingAndVisibility(TestCase):
             visibility=Post.VISIBILITY_LINK_ONLY,
         )
 
-        for url in ["/", "/?page=2", "/all/", "/all/activity/"]:
+        for url in ["/", "/?page=2", "/all/", "/all/activity/", "/all/new/"]:
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertEqual({post.id for post in response.context["moderation_posts"]}, {pending.id, pinned.id})
                 self.assertEqual(list(response.context["posts"]), [])
                 self.assertEqual(list(response.context["pinned_posts"]), [])
 
-        for url in ["/all/new/", "/all/hot/", "/all/top/", "/post/", "/label/other/", f"/room/{room.slug}/"]:
+        for url in ["/all/hot/", "/all/top/", "/post/", "/label/other/", f"/room/{room.slug}/"]:
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertEqual(list(response.context["moderation_posts"]), [])

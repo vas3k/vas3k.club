@@ -68,14 +68,14 @@ def feed(
     posts = sort_feed(posts, ordering, ordering_param)
 
     # for main page — add pinned posts
-    pinned_posts = []
+    pinned_posts = Post.objects.none()
     if ordering == ORDERING_ACTIVITY:
         now = datetime.utcnow()
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
     # add more special posts for moderators and authors
-    moderation_posts = []
+    moderation_posts = Post.objects.none()
     if request.me and post_type == POST_TYPE_ALL \
         and ordering in {ORDERING_ACTIVITY, ORDERING_NEW} \
         and not room and not label_code:
