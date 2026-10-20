@@ -239,7 +239,7 @@ class TestFeedSortingAndVisibility(TestCase):
         response = self.client.get("/all/top_year:twenty/")
         self.assertEqual(response.status_code, 404)
 
-    def test_staff_see_all_pending_posts_only_above_index(self):
+    def test_staff_see_pending_posts_above_activity_feeds(self):
         other = _create_user("moderation_feed_author")
         room = _create_room("moderation-room")
         pending = _create_post(
@@ -274,13 +274,23 @@ class TestFeedSortingAndVisibility(TestCase):
                 self.assertNotIn(own_pending.id, feed_ids)
                 self.assertNotIn(own_pending.id, [p.id for p in response.context["pinned_posts"]])
 
-            for url in ["/post/", "/question/", "/all/new/", "/all/top_week/", "/label/other/", f"/room/{room.slug}/"]:
+            for url in ["/post/", "/question/", "/label/other/", f"/room/{room.slug}/"]:
+                with self.subTest(role=role, url=url):
+                    response = self.client.get(url)
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(
+                        {p.id for p in response.context["moderation_posts"]},
+                        {pending.id, own_pending.id},
+                    )
+                    self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
+                    self.assertNotIn(own_pending.id, [p.id for p in response.context["posts"]])
+
+            for url in ["/all/new/", "/all/top_week/"]:
                 with self.subTest(role=role, url=url):
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, 200)
                     self.assertEqual(list(response.context["moderation_posts"]), [])
-                    if url == "/post/":
-                        self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
+                    self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
             self.assertTrue(rejected.can_view(self.user))
 
     def test_staff_feed_orderings_include_only_expected_moderation_posts(self):
@@ -312,18 +322,14 @@ class TestFeedSortingAndVisibility(TestCase):
                 with self.subTest(role=role, ordering=ordering):
                     response = self.client.get(f"/all/{ordering}/")
                     self.assertEqual(response.status_code, 200)
-                    expected = {approved.id}
-
-                    if ordering in ["activity", "new"]:
-                        expected.add(pending.id)
+                    self.assertEqual({post.id for post in response.context["posts"]}, {approved.id, rejected.id})
 
                     if ordering == "activity":
-                        expected.add(rejected.id)
+                        self.assertEqual({post.id for post in response.context["moderation_posts"]}, {pending.id})
+                    else:
+                        self.assertEqual(list(response.context["moderation_posts"]), [])
 
-                    self.assertEqual({post.id for post in response.context["posts"]}, expected)
-                    self.assertEqual(list(response.context["moderation_posts"]), [])
-
-    def test_author_pending_posts_stay_above_index_without_duplicates(self):
+    def test_author_pending_posts_stay_in_the_normal_feed(self):
         room = _create_room("author_pending_room")
         RoomMuted.objects.create(user=self.user, room=room)
         pending = _create_post(
@@ -352,9 +358,9 @@ class TestFeedSortingAndVisibility(TestCase):
         for url in ["/", "/?page=2"]:
             with self.subTest(url=url):
                 response = self.client.get(url)
-                self.assertEqual({post.id for post in response.context["moderation_posts"]}, {pending.id, pinned.id})
+                self.assertEqual(list(response.context["moderation_posts"]), [])
                 self.assertEqual(list(response.context["posts"]), [])
-                self.assertEqual(list(response.context["pinned_posts"]), [])
+                self.assertEqual([post.id for post in response.context["pinned_posts"]], [pinned.id])
 
         for url in ["/all/new/", "/all/hot/", "/all/top/", "/post/"]:
             with self.subTest(url=url):
