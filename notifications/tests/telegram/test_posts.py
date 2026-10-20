@@ -251,7 +251,7 @@ class TestSendPublishedPostToModerators(TestCase):
             if btn.callback_data
         ]
         self.assertTrue(any(cb.startswith("approve_post:") for cb in callbacks))
-        self.assertTrue(any(cb.startswith("reject_post:") for cb in callbacks))
+        self.assertTrue(any(cb.startswith("reject_post_") for cb in callbacks))
 
     @patch("notifications.telegram.posts.ai_rate_post_quality", side_effect=Exception("OpenAI down"))
     @patch("notifications.telegram.posts.send_telegram_message")

@@ -23,7 +23,7 @@ log = logging.getLogger(__name__)
 def send_published_post_to_moderators(post):
     admin_profile_url = settings.APP_HOST + reverse("godmode_action", kwargs={
         "model_name": "users",
-        "item_id": post.user_id,
+        "item_id": post.author_id,
         "action_code": "message"
     })
 

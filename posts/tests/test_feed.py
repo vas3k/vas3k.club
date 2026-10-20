@@ -274,19 +274,15 @@ class TestFeedSortingAndVisibility(TestCase):
                 self.assertNotIn(own_pending.id, feed_ids)
                 self.assertNotIn(own_pending.id, [p.id for p in response.context["pinned_posts"]])
 
-            for url in ["/post/", "/question/", "/label/other/", f"/room/{room.slug}/"]:
+            for url in [
+                "/post/", "/question/", "/label/other/", f"/room/{room.slug}/",
+                "/all/new/", "/all/top_week/",
+            ]:
                 with self.subTest(role=role, url=url):
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, 200)
                     self.assertEqual(list(response.context["moderation_posts"]), [])
-                    self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
-
-            for url in ["/all/new/", "/all/top_week/"]:
-                with self.subTest(role=role, url=url):
-                    response = self.client.get(url)
-                    self.assertEqual(response.status_code, 200)
-                    self.assertEqual(list(response.context["moderation_posts"]), [])
-                    self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
+                    self.assertNotIn(rejected.id, [p.id for p in response.context["posts"]])
             self.assertTrue(rejected.can_view(self.user))
 
     def test_staff_feed_orderings_include_only_expected_moderation_posts(self):
@@ -318,11 +314,12 @@ class TestFeedSortingAndVisibility(TestCase):
                 with self.subTest(role=role, ordering=ordering):
                     response = self.client.get(f"/all/{ordering}/")
                     self.assertEqual(response.status_code, 200)
-                    self.assertEqual({post.id for post in response.context["posts"]}, {approved.id, rejected.id})
 
                     if ordering == "activity":
+                        self.assertEqual({post.id for post in response.context["posts"]}, {approved.id, rejected.id})
                         self.assertEqual({post.id for post in response.context["moderation_posts"]}, {pending.id})
                     else:
+                        self.assertEqual({post.id for post in response.context["posts"]}, {approved.id})
                         self.assertEqual(list(response.context["moderation_posts"]), [])
 
     def test_author_pending_posts_stay_above_main_feed(self):
