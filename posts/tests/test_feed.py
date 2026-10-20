@@ -278,10 +278,88 @@ class TestFeedSortingAndVisibility(TestCase):
                 with self.subTest(role=role, url=url):
                     response = self.client.get(url)
                     self.assertEqual(response.status_code, 200)
-                    self.assertEqual(response.context["moderation_posts"], [])
-                    if url in ["/post/", "/all/new/"]:
+                    self.assertEqual(list(response.context["moderation_posts"]), [])
+                    if url == "/post/":
                         self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
             self.assertTrue(rejected.can_view(self.user))
+
+    def test_staff_feed_orderings_include_only_expected_moderation_posts(self):
+        other = _create_user("ordering_moderation_author")
+        approved = _create_post("ordering_approved", other)
+        pending = _create_post(
+            "ordering_pending", other, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_LINK_ONLY,
+        )
+        rejected = _create_post(
+            "ordering_rejected", other, moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT,
+        )
+        _create_post("ordering_draft", other, visibility=Post.VISIBILITY_DRAFT)
+        _create_post(
+            "ordering_withdrawn", other, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_DRAFT,
+        )
+        _create_post(
+            "ordering_deleted", other, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_LINK_ONLY, deleted_at=datetime.utcnow(),
+        )
+
+        for role in [User.ROLE_CURATOR, User.ROLE_MODERATOR, User.ROLE_GOD]:
+            self.user.roles = [role]
+            self.user.save()
+
+            for ordering in ["activity", "new", "hot", "top", "top_week", "top_month", "top_year"]:
+                with self.subTest(role=role, ordering=ordering):
+                    response = self.client.get(f"/all/{ordering}/")
+                    self.assertEqual(response.status_code, 200)
+                    expected = {approved.id}
+
+                    if ordering in ["activity", "new"]:
+                        expected.add(pending.id)
+
+                    if ordering == "activity":
+                        expected.add(rejected.id)
+
+                    self.assertEqual({post.id for post in response.context["posts"]}, expected)
+                    self.assertEqual(list(response.context["moderation_posts"]), [])
+
+    def test_author_pending_posts_stay_above_index_without_duplicates(self):
+        room = _create_room("author_pending_room")
+        RoomMuted.objects.create(user=self.user, room=room)
+        pending = _create_post(
+            "author_pending", self.user, room=room, is_room_only=True,
+            moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_LINK_ONLY,
+            published_at=datetime.utcnow() - timedelta(days=800),
+        )
+        pinned = _create_post(
+            "author_pending_pinned", self.user, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_LINK_ONLY, is_pinned_until=datetime.utcnow() + timedelta(days=1),
+        )
+        _create_post(
+            "author_pending_draft", self.user, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_DRAFT,
+        )
+        _create_post(
+            "author_pending_deleted", self.user, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_LINK_ONLY,
+        ).delete()
+        other = _create_user("other_pending_author")
+        _create_post(
+            "other_author_pending", other, moderation_status=Post.MODERATION_PENDING,
+            visibility=Post.VISIBILITY_LINK_ONLY,
+        )
+
+        for url in ["/", "/?page=2"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual({post.id for post in response.context["moderation_posts"]}, {pending.id, pinned.id})
+                self.assertEqual(list(response.context["posts"]), [])
+                self.assertEqual(list(response.context["pinned_posts"]), [])
+
+        for url in ["/all/new/", "/all/hot/", "/all/top/", "/post/"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(list(response.context["moderation_posts"]), [])
 
     def test_regular_users_cannot_see_moderation_queue_or_rejected_drafts(self):
         other = _create_user("private_rejection_author")
@@ -292,7 +370,7 @@ class TestFeedSortingAndVisibility(TestCase):
         for url in ["/", "/post/", "/all/new/"]:
             with self.subTest(url=url):
                 response = self.client.get(url)
-                self.assertEqual(response.context["moderation_posts"], [])
+                self.assertEqual(list(response.context["moderation_posts"]), [])
                 self.assertEqual(list(response.context["posts"]), [])
         self.assertFalse(rejected.can_view(self.user))
         self.assertFalse(rejected.can_view(None))

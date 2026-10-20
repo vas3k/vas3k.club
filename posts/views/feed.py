@@ -28,11 +28,21 @@ def feed(
         posts = Post.visible_objects()
 
     can_moderate = request.me and (request.me.is_curator or request.me.is_moderator)
-    if can_moderate:
-        rejected_posts = Post.objects.filter(
-            moderation_status=Post.MODERATION_REJECTED, deleted_at__isnull=True,
+
+    if can_moderate and ordering in [ORDERING_ACTIVITY, ORDERING_NEW]:
+        moderation_statuses = (
+            [Post.MODERATION_PENDING, Post.MODERATION_REJECTED]
+            if ordering == ORDERING_ACTIVITY else [Post.MODERATION_PENDING]
         )
-        posts = (posts | rejected_posts).select_related("room", "author", "moderation_user")
+
+        staff_posts = Post.objects.filter(
+            moderation_status__in=moderation_statuses, deleted_at__isnull=True,
+        ).exclude(moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_DRAFT)
+        posts = (posts | staff_posts).select_related("room", "author", "moderation_user")
+
+        posts = posts.exclude(
+            moderation_status__in=[Post.MODERATION_REJECTED] if ordering == ORDERING_NEW else [],
+        )
 
     # filter posts by type
     if post_type != POST_TYPE_ALL:
@@ -82,8 +92,9 @@ def feed(
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
     moderation_posts = []
-    if can_moderate and request.resolver_match.url_name == "index":
+    if request.me and request.resolver_match.url_name == "index":
         moderation_posts = Post.objects.filter(
+            Q() if can_moderate else Q(author_id=request.me.id),
             moderation_status=Post.MODERATION_PENDING,
             deleted_at__isnull=True,
         ).exclude(
