@@ -1,7 +1,7 @@
 🔥 <b>NEW: {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.room %} [{{ post.room.title }}]{% endif %}</b>
 
 <b>Автор:</b>  {{ post.author.slug }} {% if post.author.telegram_data %}(tg: @{{ post.author.telegram_data.username  }}){% endif %}
-{% if post.url %}<b>Ссылка:</b> {{ post.url }}{% endif %}{% if post.collectible_tag_code %}🚨 <b>Прикреплён коллекционный тег:</b> {{ post.collectible_tag_code }}{% endif %}{% if post.is_room_only %}👀 <b>Пост виден только в комнате! Можно модерить без жести.</b>{% endif %}
+{% if post.url %}<b>Ссылка:</b> {{ post.url }}{% endif %}{% if post.collectible_tag_code %}🚨 <b>Прикреплён коллекционный тег:</b> {{ post.collectible_tag_code }}{% endif %}{% if post.is_room_only %}👀 <b>Пост виден только в комнате! Можно модерить без жести.</b>{% endif %}{% if post.label_code == "first_post" %}👶 <b>Это первый пост автора в Клубе, дайте ему чуть больше заботы!</b>{% endif %}
 
 {% load posts %}{% render_tg post.text 350 %}
 

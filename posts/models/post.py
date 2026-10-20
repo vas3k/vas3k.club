@@ -433,6 +433,21 @@ class Post(models.Model, ModelDiffMixin):
         self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()
+
+        is_first_published_post = not Post.objects.filter(
+            author_id=self.author_id,
+            deleted_at__isnull=True,
+        ).exclude(
+            id=self.id,
+        ).exclude(
+            visibility=Post.VISIBILITY_DRAFT,
+        ).exclude(
+            type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST],
+        ).exists()
+
+        if not self.label_code and is_first_published_post:
+            self.label_code = "first_post"
+
         self.save()
 
     def unpublish(self):

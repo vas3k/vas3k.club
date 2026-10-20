@@ -111,4 +111,11 @@ LABELS = {
         "related_achievement": "post_of_month",
         "notify": True
     },
+    "first_post": {
+        "title": "Первый пост",
+        "description": "Это первый опубликованный пост автора в Клубе!",
+        "emoji": "🥇",
+        "color": "#BCE8BC",
+        "notify": False
+    },
 }
