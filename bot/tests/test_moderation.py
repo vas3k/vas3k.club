@@ -30,13 +30,14 @@ class TestPostRejectionAttribution(TransactionTestCase):
             patch.dict("os.environ", {"DJANGO_ALLOW_ASYNC_UNSAFE": "true"}),
             patch("bot.handlers.moderation.async_task") as enqueue,
             patch("bot.handlers.moderation.SearchIndex.update_post_index"),
+            patch("bot.handlers.moderation.render_to_string", return_value="Rendered rejection"),
         ):
             asyncio.run(reject_post(update, None))
 
         post.refresh_from_db()
         self.assertEqual(post.moderation_data, {
             "reason": "title",
-            "template": "notifications/post_rejected/title.html",
+            "text": "Rendered rejection",
             "user": {
                 "slug": moderator.slug,
                 "avatar": moderator.get_avatar(),

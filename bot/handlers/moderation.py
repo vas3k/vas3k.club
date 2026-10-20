@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.urls import reverse
+from django.template.loader import render_to_string
 from django_q.tasks import async_task
 from telegram import LinkPreviewOptions, Update
 from telegram.ext import CallbackContext
@@ -144,7 +145,9 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
     post.moderation_status = Post.MODERATION_REJECTED
     post.moderation_data = {
         "reason": reason.value,
-        "template": f"notifications/post_rejected/{reason.value}.html",
+        "text": render_to_string(
+            f"notifications/post_rejected/{reason.value}.html", {"post": post, "settings": settings},
+        ),
         "user": {
             "slug": moderator.slug,
             "avatar": moderator.get_avatar(),

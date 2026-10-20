@@ -1,4 +1,6 @@
 from django import forms
+from django.conf import settings
+from django.template.loader import render_to_string
 from django.shortcuts import render
 from django_q.tasks import async_task
 
@@ -66,16 +68,15 @@ def post_moderate_action(request, post: Post, **context):
         post.moderation_status = Post.MODERATION_REJECTED
         post.moderation_data = {
             "reason": reason_value,
-            "template": template,
+            "text": render_to_string(template, {
+                "post": post, "settings": settings, "custom_reason": custom_reason,
+            }),
             "user": {
                 "slug": moderator.slug,
                 "avatar": moderator.get_avatar(),
                 "full_name": moderator.full_name,
             },
         }
-
-        if custom_reason:
-            post.moderation_data["custom_reason"] = custom_reason
 
         post.unpublish()
 

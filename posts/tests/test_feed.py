@@ -381,7 +381,7 @@ class TestFeedSortingAndVisibility(TestCase):
 
     def test_republish_clears_rejection_attribution(self):
         post = _create_post("rejected_to_republish", self.user, moderation_status=Post.MODERATION_REJECTED,
-                            moderation_data={"reason": "title", "user": {"slug": self.user.slug}},
+                            moderation_data={"text": "Rendered rejection", "user": {"slug": self.user.slug}},
                             visibility=Post.VISIBILITY_DRAFT)
         post.publish()
         post.refresh_from_db()
@@ -391,8 +391,7 @@ class TestFeedSortingAndVisibility(TestCase):
     def test_rejection_snapshot_survives_moderator_deletion(self):
         moderator = _create_user("departing_moderator")
         moderation_data = {
-            "reason": "title",
-            "template": "notifications/post_rejected/title.html",
+            "text": "Rendered rejection",
             "user": {"slug": moderator.slug, "avatar": moderator.get_avatar(), "full_name": moderator.full_name},
         }
         post = _create_post("moderator_deleted", self.user, moderation_status=Post.MODERATION_REJECTED,

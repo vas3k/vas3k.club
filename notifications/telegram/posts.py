@@ -154,16 +154,16 @@ def notify_post_approved(post: Post):
 
 
 def notify_post_rejected(post, reason=None):
-    if reason is not None:
+    data = post.moderation_data or {}
+    text = data.get("text")
+
+    if not text:
         template = loader.select_template([
-            f"notifications/post_rejected/{reason.value}.html",
+            f"notifications/post_rejected/{reason.value}.html" if reason else
+            data.get("template") or "notifications/post_rejected/draft.html",
             "notifications/post_rejected/draft.html",
         ])
-    else:
-        template = loader.get_template(
-            (post.moderation_data or {}).get("template") or "notifications/post_rejected/draft.html"
-        )
-    text = template.render({"post": post, "settings": settings})
+        text = template.render({"post": post, "settings": settings, "custom_reason": data.get("custom_reason")})
 
     if post.author.telegram_id:
         send_telegram_message(

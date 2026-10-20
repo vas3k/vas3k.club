@@ -3,7 +3,7 @@
     <div class="block block-moderation">
         <div class="block-moderation-icon">🙏</div>
         <div class="block-moderation-message">
-            <div class="block-moderation-reason">{% include post.moderation_data.template|default:"notifications/post_rejected/draft.html" %}</div>
+            <div class="block-moderation-reason">{{ post.moderation_data.text|safe }}</div>
             {% if post.moderation_data.user %}
                 <div class="block-moderation-user">
                     {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}

@@ -91,7 +91,7 @@ class TestNotifyPostRejected(TestCase):
 
     @patch("notifications.telegram.posts.send_telegram_message")
     def test_sends_rejection_to_author(self, mock_send):
-        self.post.moderation_data = {"reason": "draft", "template": "notifications/post_rejected/draft.html"}
+        self.post.moderation_data = {"text": "Rendered rejection"}
         notify_post_rejected(self.post)
 
         mock_send.assert_called_once()
@@ -112,7 +112,7 @@ class TestNotifyPostRejected(TestCase):
         self.author.telegram_id = None
         self.author.save()
 
-        self.post.moderation_data = {"reason": "draft", "template": "notifications/post_rejected/draft.html"}
+        self.post.moderation_data = {"text": "Rendered rejection"}
         notify_post_rejected(self.post)
 
         mock_send.assert_not_called()
