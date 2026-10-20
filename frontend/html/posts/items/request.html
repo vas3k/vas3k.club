@@ -2,9 +2,6 @@
 {% load posts %}
 <article class="feed-post feed-post-type-{{ post.type }} h-entry {% css_classes post %}">
     <div class="feed-post-header">
-        {% if me|can_view_post_moderation:post %}
-            {% include "posts/widgets/pending_moderation.html" %}
-        {% endif %}
         <div class="feed-post-title">
             <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
                 <span>{{ post.emoji }} {{ post.prefix }} </span>
@@ -13,6 +10,9 @@
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
+            {% endif %}
+            {% if post.moderation_status == "pending" %}
+                {% include "posts/widgets/moderation_pending_label.html" %}
             {% endif %}
 
             <post-upvote :initial-upvotes="{{ post.upvotes }}"

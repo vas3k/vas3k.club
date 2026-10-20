@@ -64,6 +64,12 @@
                         </div>
                     {% endif %}
 
+                    {% if post.moderation_status == "pending" %}
+                        <div class="post-label">
+                            {% include "posts/widgets/moderation_pending_label.html" %}
+                        </div>
+                    {% endif %}
+
                     {% if post.image %}
                         <div class="post-image">
                             <img src="{{ post.image }}" alt="{{ post.title }}">

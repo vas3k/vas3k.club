@@ -829,12 +829,3 @@
 .feed-post.feed-draft {
     border: 2px dashed var(--text-color);
 }
-
-.feed-moderation-user {
-    margin-bottom: 10px;
-    font-size: 0.9rem;
-}
-
-    .feed-moderation-user .label {
-        font-size: 100%;
-    }

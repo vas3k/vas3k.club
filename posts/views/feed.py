@@ -74,9 +74,11 @@ def feed(
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
+    # add more special posts for moderators and authors
     moderation_posts = []
     if request.me and post_type == POST_TYPE_ALL \
-        and ordering == ORDERING_ACTIVITY and not room and not label_code:
+        and ordering in {ORDERING_ACTIVITY, ORDERING_NEW} \
+        and not room and not label_code:
 
         # add moderated posts to moderators feeds
         is_moderator_mode = request.me.is_curator or request.me.is_moderator

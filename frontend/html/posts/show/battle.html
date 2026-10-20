@@ -23,6 +23,12 @@
                 {% include "posts/widgets/draft_label.html" %}
             </div>
         {% endif %}
+
+        {% if post.moderation_status == "pending" %}
+            <div class="post-label">
+                {% include "posts/widgets/moderation_pending_label.html" %}
+            </div>
+        {% endif %}
     </div>
     <div class="battle-title-main">
         <div class="block battle-title p-name" role="heading">

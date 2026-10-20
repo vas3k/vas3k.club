@@ -15,9 +15,6 @@
     {% endif %}
 
     <div class="feed-post-header">
-        {% if me|can_view_post_moderation:post %}
-            {% include "posts/widgets/pending_moderation.html" %}
-        {% endif %}
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 
@@ -27,6 +24,9 @@
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
+            {% endif %}
+            {% if post.moderation_status == "pending" %}
+                {% include "posts/widgets/moderation_pending_label.html" %}
             {% endif %}
         </div>
     </div>

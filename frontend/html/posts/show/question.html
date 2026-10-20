@@ -35,6 +35,9 @@
                     {% if post.label %}
                         {% include "posts/widgets/label.html" with label=post.label %}
                     {% endif %}
+                    {% if post.moderation_status == "pending" %}
+                        {% include "posts/widgets/moderation_pending_label.html" %}
+                    {% endif %}
 
                     {% if post.deleted_at %}
                         <div class="post-label">

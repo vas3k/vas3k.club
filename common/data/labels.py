@@ -115,7 +115,7 @@ LABELS = {
         "title": "Первый пост",
         "description": "Это первый опубликованный пост автора в Клубе!",
         "emoji": "🥇",
-        "color": "#BCE8BC",
+        "color": "#70dd92",
         "notify": False
     },
 }

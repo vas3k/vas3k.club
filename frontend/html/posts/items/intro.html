@@ -6,9 +6,6 @@
     </div>
 
     <div class="feed-post-header">
-        {% if me|can_view_post_moderation:post %}
-            {% include "posts/widgets/pending_moderation.html" %}
-        {% endif %}
         <div class="feed-post-title">
             <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
                 <span>{{ post.prefix }}:</span>

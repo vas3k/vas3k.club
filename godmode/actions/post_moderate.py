@@ -27,7 +27,7 @@ class PostModerateForm(forms.Form):
         reasons = REJECT_POST_REASONS.get(post.type) or []
         self.fields["reason"].choices = [
             (CUSTOM_REASON, "🚫 Кастомная причина"),
-            *[(code, title) for code, title in reasons],
+            *[(code, f'❌ {title}') for code, title in reasons],
         ]
         self.fields["reason"].initial = CUSTOM_REASON
 
