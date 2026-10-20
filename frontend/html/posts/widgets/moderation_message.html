@@ -1,5 +1,5 @@
 {% load posts %}
-{% if post.moderation_data and me|can_view_post_moderation:post %}
+{% if post.moderation_data.text and me|can_view_post_moderation:post %}
     <div class="block block-moderation">
         <div class="block-moderation-icon">🙏</div>
         <div class="block-moderation-message">
