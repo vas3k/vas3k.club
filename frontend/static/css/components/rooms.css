@@ -379,28 +379,57 @@
 .profile-rooms {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
 
 .room-membership {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     max-width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--text-color);
-    border-radius: var(--button-border-radius);
-    color: var(--text-color);
+    box-sizing: border-box;
+    margin: 0;
     text-decoration: none;
     overflow-wrap: anywhere;
 }
 
+    .room-membership,
+    .room-membership:hover {
+        color: var(--room-color);
+        border-color: currentColor;
+        border-width: 2.5px;
+    }
+
+    .room-membership:hover {
+        background-color: var(--room-color);
+        color: #FFF;
+        border-color: var(--room-color);
+    }
+
+    .room-membership-with-avatar {
+        margin-left: 20px;
+        padding-left: 46px;
+        min-height: 48px;
+        max-width: calc(100% - 20px);
+    }
+
     .room-membership-avatar {
-        width: 32px;
-        height: 32px;
+        position: absolute;
+        left: -13px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        box-sizing: border-box;
+        border: inherit;
+        border-color: var(--room-color);
         object-fit: cover;
         border-radius: 50%;
-        flex-shrink: 0;
     }
 
     .room-membership-icon {

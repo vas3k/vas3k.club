@@ -185,6 +185,59 @@ class TestRecalculateChatMembers(TestCase):
                         client.return_value.get_participants.return_value = result
 
                     with self.assertRaises(CommandError):
-                        call_command("recalculate_chat_members", stdout=StringIO())
+                        call_command("recalculate_chat_members", retries=0, stdout=StringIO())
 
                 self.assertTrue(RoomSubscription.get(self.user, self.room).is_chat_member)
+
+    def test_retry_recovers_without_rescanning_successful_rooms(self):
+        other_room = Room.objects.create(slug="retry-room", title="Retry", color="#333", chat_id="-100456")
+        participants = MagicMock()
+        participants.__iter__.side_effect = lambda: iter([SimpleNamespace(id=123, bot=False)])
+        participants.__len__.return_value = 1
+        participants.total = 1
+
+        with patch("rooms.management.commands.recalculate_chat_members.TelegramClient") as client, \
+                patch("rooms.management.commands.recalculate_chat_members.time.sleep") as sleep:
+            client.return_value.get_participants.side_effect = [participants, OSError("Disconnected"), participants]
+            call_command("recalculate_chat_members", stdout=StringIO())
+
+        self.assertEqual(client.return_value.get_participants.call_count, 3)
+        calls = client.return_value.get_participants.call_args_list
+        self.assertEqual(calls[2], calls[1])
+        sleep.assert_called_once_with(60)
+        self.assertTrue(RoomSubscription.get(self.user, self.room).is_chat_member)
+        self.assertTrue(RoomSubscription.get(self.user, other_room).is_chat_member)
+
+    def test_retry_exhaustion_preserves_membership_and_preferences(self):
+        RoomSubscription.join_chat(self.user, self.room)
+        RoomSubscription.subscribe(self.user, self.room)
+
+        with patch("rooms.management.commands.recalculate_chat_members.TelegramClient") as client, \
+                patch("rooms.management.commands.recalculate_chat_members.time.sleep") as sleep:
+            client.return_value.get_participants.side_effect = ValueError("Chat unavailable")
+
+            with self.assertRaises(CommandError):
+                call_command("recalculate_chat_members", stdout=StringIO())
+
+        self.assertEqual(client.return_value.get_participants.call_count, 3)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [60, 120])
+        subscription = RoomSubscription.get(self.user, self.room)
+        self.assertTrue(subscription.is_chat_member)
+        self.assertTrue(subscription.is_notified)
+
+    def test_long_flood_wait_is_respected_before_retry(self):
+        from telethon.errors import FloodWaitError
+
+        participants = MagicMock()
+        participants.__len__.return_value = 0
+        participants.total = 0
+
+        with patch("rooms.management.commands.recalculate_chat_members.TelegramClient") as client, \
+                patch("rooms.management.commands.recalculate_chat_members.time.sleep") as sleep:
+            client.return_value.get_participants.side_effect = [
+                FloodWaitError(request=None, capture=300), participants,
+            ]
+            call_command("recalculate_chat_members", retry_delay=0, stdout=StringIO())
+
+        self.assertEqual(sleep.call_args_list[0].args, (301,))
+        self.assertEqual(client.return_value.get_participants.call_count, 2)

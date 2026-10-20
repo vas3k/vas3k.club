@@ -1,11 +1,12 @@
 import logging
+import time
 from datetime import datetime
 
 from django.conf import settings
 from django.core.management import BaseCommand, CommandError
 from django.db import transaction
 from django.db.models import Q
-from telethon.errors import RPCError
+from telethon.errors import FloodWaitError, RPCError
 from telethon.sessions import StringSession
 from telethon.sync import TelegramClient
 
@@ -20,10 +21,18 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--chat-id", help="Recalculate only this Telegram chat")
+        parser.add_argument("--retries", type=int, default=2, help="Retry failed rooms this many times (default: 2)")
+        parser.add_argument(
+            "--retry-delay", type=int, default=60,
+            help="Initial delay between retry passes in seconds, doubled each pass (default: 60)",
+        )
 
     def handle(self, *args, **options):
         if not settings.TELEGRAM_API_ID or not settings.TELEGRAM_API_HASH or not settings.TELEGRAM_TOKEN:
             raise CommandError("TELEGRAM_API_ID, TELEGRAM_API_HASH and TELEGRAM_TOKEN are required")
+
+        if options["retries"] < 0 or options["retry_delay"] < 0:
+            raise CommandError("--retries and --retry-delay must be non-negative")
 
         rooms = Room.objects.filter(chat_id__isnull=False).exclude(chat_id="")
 
@@ -36,46 +45,69 @@ class Command(BaseCommand):
         try:
             client.start(bot_token=settings.TELEGRAM_TOKEN)
 
-            for room in rooms:
-                started_at = datetime.utcnow()
+            pending_rooms = list(rooms)
 
-                try:
-                    participants = client.get_participants(int(room.chat_id), limit=None)
-                except (RPCError, ValueError) as ex:
-                    log.warning("Failed to fetch members for %s: %s", room.slug, ex)
-                    failed_rooms.append(room.slug)
-                    continue
+            for attempt in range(options["retries"] + 1):
+                retry_rooms = []
 
-                if len(participants) < participants.total:
-                    log.warning("Incomplete member list for %s; skipping reconciliation", room.slug)
-                    failed_rooms.append(room.slug)
-                    continue
+                for room in pending_rooms:
+                    started_at = datetime.utcnow()
 
-                telegram_ids = [str(participant.id) for participant in participants if not participant.bot]
-                users = list(User.objects.filter(telegram_id__in=telegram_ids))
-                user_ids = [user.id for user in users]
+                    try:
+                        participants = client.get_participants(int(room.chat_id), limit=None)
+                    except (RPCError, ValueError, OSError) as ex:
+                        log.warning("Failed to fetch members for %s: %s", room.slug, ex)
 
-                with transaction.atomic():
-                    RoomSubscription.objects.bulk_create([
-                        RoomSubscription(
-                            user=user, room=room, is_chat_member=True, is_notified=False,
-                            chat_membership_updated_at=started_at,
+                        if isinstance(ex, FloodWaitError):
+                            wait_seconds = ex.seconds + 1
+                            self.stdout.write(f"Telegram rate limit: waiting {wait_seconds}s before continuing")
+                            time.sleep(wait_seconds)
+
+                        retry_rooms.append(room)
+                        continue
+
+                    if len(participants) < participants.total:
+                        log.warning("Incomplete member list for %s; skipping reconciliation", room.slug)
+                        failed_rooms.append(room.slug)
+                        continue
+
+                    telegram_ids = [str(participant.id) for participant in participants if not participant.bot]
+                    users = list(User.objects.filter(telegram_id__in=telegram_ids))
+                    user_ids = [user.id for user in users]
+
+                    with transaction.atomic():
+                        RoomSubscription.objects.bulk_create([
+                            RoomSubscription(
+                                user=user, room=room, is_chat_member=True, is_notified=False,
+                                chat_membership_updated_at=started_at,
+                            )
+                            for user in users
+                        ], ignore_conflicts=True, batch_size=1000)
+
+                        # Webhook events received during the fetch are newer than this snapshot.
+                        subscriptions = RoomSubscription.objects.filter(room=room).filter(
+                            Q(chat_membership_updated_at__isnull=True) | Q(chat_membership_updated_at__lte=started_at),
                         )
-                        for user in users
-                    ], ignore_conflicts=True, batch_size=1000)
+                        subscriptions.filter(user_id__in=user_ids).update(
+                            is_chat_member=True, chat_membership_updated_at=started_at,
+                        )
+                        subscriptions.exclude(user_id__in=user_ids).update(
+                            is_chat_member=False, chat_membership_updated_at=started_at,
+                        )
 
-                    # Webhook events received during the fetch are newer than this snapshot.
-                    subscriptions = RoomSubscription.objects.filter(room=room).filter(
-                        Q(chat_membership_updated_at__isnull=True) | Q(chat_membership_updated_at__lte=started_at),
-                    )
-                    subscriptions.filter(user_id__in=user_ids).update(
-                        is_chat_member=True, chat_membership_updated_at=started_at,
-                    )
-                    subscriptions.exclude(user_id__in=user_ids).update(
-                        is_chat_member=False, chat_membership_updated_at=started_at,
-                    )
+                    self.stdout.write(f"{room.slug}: {len(users)} club members")
 
-                self.stdout.write(f"{room.slug}: {len(users)} club members")
+                if not retry_rooms or attempt == options["retries"]:
+                    failed_rooms.extend(room.slug for room in retry_rooms)
+                    break
+
+                delay = options["retry_delay"] * (2 ** attempt)
+                self.stdout.write(
+                    f"Retrying {len(retry_rooms)} failed rooms in {delay}s "
+                    f"(retry {attempt + 1}/{options['retries']})"
+                )
+                time.sleep(delay)
+                pending_rooms = retry_rooms
         finally:
             client.disconnect()
 

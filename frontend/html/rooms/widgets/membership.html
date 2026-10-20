@@ -1,5 +1,5 @@
-<a href="{% url "feed_room" room.slug %}" class="room-membership">
+<a href="{% if room.chat_url %}{% url "redirect_to_room_chat" room.slug %}{% else %}{% url "feed_room" room.slug %}{% endif %}" class="user-tag room-membership{% if room.image %} room-membership-with-avatar{% endif %}" style="--room-color: {{ room.color }};">
     {% if room.image %}<img class="room-membership-avatar" src="{{ room.image }}" alt="" loading="lazy">{% endif %}
-    {% if room.icon %}<span class="room-membership-icon">{{ room.emoji }}</span>{% endif %}
     <span>{{ room.title }}</span>
+    {% if room.icon %}<span class="room-membership-icon">{{ room.emoji }}</span>{% endif %}
 </a>

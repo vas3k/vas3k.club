@@ -1,9 +1,10 @@
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
-from django.core.management import BaseCommand
+from django.core.management import BaseCommand, CommandError
+from telethon.errors import FloodWaitError, RPCError
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsRecent
@@ -11,6 +12,19 @@ from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsRece
 from users.models.user import User
 
 log = logging.getLogger(__name__)
+
+
+def telegram_request_with_retries(request, *args, retries, retry_delay, **kwargs):
+    for attempt in range(retries + 1):
+        try:
+            return request(*args, **kwargs)
+        except (RPCError, ValueError, OSError) as ex:
+            if attempt == retries:
+                raise
+
+            delay = ex.seconds + 1 if isinstance(ex, FloodWaitError) else retry_delay * (2 ** attempt)
+            log.warning("Telegram request failed: %s; retrying in %ss (%s/%s)", ex, delay, attempt + 1, retries)
+            time.sleep(delay)
 
 
 class Command(BaseCommand):
@@ -31,9 +45,19 @@ class Command(BaseCommand):
             help="Actually remove users from chat (false by default)",
         )
 
+        parser.add_argument("--retries", type=int, default=2, help="Retries per failed Telegram request (default: 2)")
+        parser.add_argument(
+            "--retry-delay", type=int, default=60,
+            help="Initial retry delay in seconds, doubled each retry (default: 60)",
+        )
+
     def handle(self, *args, **options):
         chat_id_raw = options.get("chat_id")
         execute = options.get("execute", False)
+        retry_options = {"retries": options["retries"], "retry_delay": options["retry_delay"]}
+
+        if min(retry_options.values()) < 0:
+            raise CommandError("--retries and --retry-delay must be non-negative")
 
         if not settings.TELEGRAM_API_ID or not settings.TELEGRAM_API_HASH:
             self.stderr.write(
@@ -67,37 +91,35 @@ class Command(BaseCommand):
         non_member_count = 0
 
         try:
-            client.start(bot_token=settings.TELEGRAM_TOKEN)
+            telegram_request_with_retries(client.start, bot_token=settings.TELEGRAM_TOKEN, **retry_options)
         except Exception as ex:
             log.exception("Telethon bot start failed")
-            self.stderr.write(f"Failed to start Telegram client: {ex}")
-            return
+            client.disconnect()
+            raise CommandError(f"Failed to start Telegram client: {ex}") from ex
 
         with client:
             try:
-                chat_entity = client.get_entity(int(chat_id_raw))
+                chat_entity = telegram_request_with_retries(client.get_entity, int(chat_id_raw), **retry_options)
             except Exception as ex:
                 log.warning("Failed to get chat entity %s: %s", chat_id_raw, ex)
-                self.stderr.write(f"Failed to get chat {chat_id_raw}: {ex}")
-                return
+                raise CommandError(f"Failed to get chat {chat_id_raw}: {ex}") from ex
 
             try:
-                participants = client.get_participants(
-                    chat_entity, limit=None, filter=ChannelParticipantsRecent
+                participants = telegram_request_with_retries(
+                    client.get_participants, chat_entity, limit=None, filter=ChannelParticipantsRecent, **retry_options,
                 )
             except Exception as ex:
                 log.warning("Failed to get participants for %s: %s", chat_id_raw, ex)
-                self.stderr.write(f"Failed to get participants for {chat_id_raw}: {ex}")
-                return
+                raise CommandError(f"Failed to get participants for {chat_id_raw}: {ex}") from ex
 
             try:
-                admins = client.get_participants(
-                    chat_entity, filter=ChannelParticipantsAdmins
+                admins = telegram_request_with_retries(
+                    client.get_participants, chat_entity, limit=None, filter=ChannelParticipantsAdmins, **retry_options,
                 )
                 admin_ids = {p.id for p in admins}
             except Exception as ex:
                 log.warning("Failed to get admins for %s: %s", chat_id_raw, ex)
-                admin_ids = set()
+                raise CommandError(f"Failed to get admins for {chat_id_raw}; no users removed: {ex}") from ex
 
             for participant in participants:
                 total_count += 1
@@ -133,12 +155,13 @@ class Command(BaseCommand):
 
                 if execute and reason in {"not_registered", "expired"} and not is_admin:
                     try:
-                        # Kick without permanent ban: restrict briefly so they can rejoin later
-                        client.edit_permissions(
-                            chat_entity,
+                        # A relative expiry stays in the future after retries; a past expiry would ban forever.
+                        telegram_request_with_retries(
+                            client.edit_permissions, chat_entity,
                             participant,
                             view_messages=False,
-                            until_date=datetime.utcnow() + timedelta(minutes=5),
+                            until_date=timedelta(minutes=5),
+                            **retry_options,
                         )
                         removed_count += 1
                         time.sleep(1.5)
