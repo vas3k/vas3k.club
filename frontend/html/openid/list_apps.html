@@ -75,23 +75,6 @@
                     — вернёт список комментов к посту в JSON.
                 </p>
 
-                <p>
-                    <code>POST</code> <a href="{{ settings.APP_HOST }}/post/2584/bookmark/">{{ settings.APP_HOST }}/post/2584/bookmark/</a>
-                    — добавить пост в закладки или убрать его оттуда.
-                    В ответе <code>{"status": "created"}</code> или <code>{"status": "deleted"}</code>.
-                </p>
-
-                <p>
-                    <code>POST</code> <a href="{{ settings.APP_HOST }}/post/2584/subscription/">{{ settings.APP_HOST }}/post/2584/subscription/</a>
-                    — подписаться на новые комменты к посту или отписаться. Ответ такой же: <code>created</code> или <code>deleted</code>.
-                </p>
-
-                <p>
-                    <code>POST</code> <a href="{{ settings.APP_HOST }}/post/2584/participate/">{{ settings.APP_HOST }}/post/2584/participate/</a>
-                    — отметиться участником события (или снять отметку). Имеет смысл для постов типа event.
-                    Ответ тоже <code>created</code> или <code>deleted</code>.
-                </p>
-
                 <br><br>
 
                 <h2>Юзеры</h2>
@@ -125,12 +108,6 @@
                     — значки, которые юзеру подарили другие.
                 </p>
 
-                <p>
-                    <code>GET</code> или <code>POST</code> <a href="{{ settings.APP_HOST }}/user/vas3k/friend/">{{ settings.APP_HOST }}/user/vas3k/friend/</a>
-                    — дружба. GET вернёт связь, если вы уже друзья. POST добавляет в друзья или удаляет, если дружба уже есть.
-                    В ответе на POST снова <code>created</code> или <code>deleted</code>. Себя в друзья добавить нельзя.
-                </p>
-
                 <br><br>
 
                 <h2>Поиск</h2>
@@ -158,12 +135,6 @@
                     <code>author:vas3k</code>, <code>title:борщ</code>, <code>since:2024</code>, <code>until:2024-03-09</code>, <code>AND</code> и <code>OR</code>.
                 </p>
 
-                <p>
-                    В ответе <code>query</code>, <code>type</code>, <code>ordering</code>, <code>page</code>, <code>pages</code> и <code>results</code>.
-                    Каждый результат — это <code>{"type": "post", "post": ...}</code>, <code>{"type": "comment", "comment": ...}</code>
-                    или <code>{"type": "user", "user": ...}</code> в тех же форматах, что и отдельные эндпоинты поста, коммента и профиля.
-                </p>
-
                 <br><br>
 
                 <h2>Комнаты</h2>
@@ -176,36 +147,6 @@
                 <p>
                     <code>POST</code> <a href="{{ settings.APP_HOST }}/room/dev/mute/">{{ settings.APP_HOST }}/room/dev/mute/</a>
                     — замьютить комнату или снять мьют. Ответ такой же.
-                </p>
-
-                <br><br>
-
-                <h2>Инвайты</h2>
-
-                <p>
-                    <a href="{{ settings.APP_HOST }}/invites.json">{{ settings.APP_HOST }}/invites.json</a>
-                    — GET вернёт ваши инвайты: код, ссылку, даты и кого пригласили.
-                </p>
-
-                <p>
-                    <code>POST</code> <a href="{{ settings.APP_HOST }}/invites.json">{{ settings.APP_HOST }}/invites.json</a>
-                    — выписать новый инвайт. Доступно только аккаунтам с ролью bank.
-                    Можно передать <code>reference</code> и <code>telegram_user_id</code>.
-                </p>
-
-                <p>
-                    <code>POST</code> <a href="{{ settings.APP_HOST }}/monies/gift/30/{{ request.me.slug }}.json">{{ settings.APP_HOST }}/monies/gift/30/{{ request.me.slug }}.json</a>
-                    — подарить человеку дни членства. Тоже только для роли bank: дни спишутся с вашего баланса.
-                </p>
-
-                <br><br>
-
-                <h2>Карта</h2>
-
-                <p>
-                    <code>POST</code> <a href="{{ settings.APP_HOST }}/map/messages/create.json">{{ settings.APP_HOST }}/map/messages/create.json</a>
-                    — оставить сообщение на карте людей. Поля формы: <code>text</code>, <code>latitude</code>, <code>longitude</code>.
-                    Одно сообщение в сутки.
                 </p>
             </div>
         </div>
