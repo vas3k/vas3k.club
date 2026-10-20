@@ -155,6 +155,29 @@ class TestFeedSortingAndVisibility(TestCase):
         self.client = Client()
         _login(self.client, self.user)
 
+    def test_rejected_posts_are_mixed_into_new_feed_by_date(self):
+        self.user.roles = [User.ROLE_MODERATOR]
+        self.user.save()
+        rejected = _create_post(
+            "new_feed_rejected",
+            _create_user("new_feed_rejected_author"),
+            moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT,
+            published_at=None,
+        )
+        Post.objects.filter(id=rejected.id).update(updated_at=datetime.utcnow() - timedelta(days=30))
+        newer = _create_post(
+            "new_feed_newer",
+            self.user,
+            published_at=datetime.utcnow() - timedelta(hours=1),
+        )
+
+        response = self.client.get("/all/new/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertLess(feed_ids.index(newer.id), feed_ids.index(rejected.id))
+        self.assertNotIn(rejected.id, [post.id for post in response.context["moderation_posts"]])
+
     def test_new_ordering_sorts_by_published_at_desc(self):
         older = _create_post(
             "tfeed_new_old",

@@ -84,10 +84,14 @@ def feed(
         is_moderator_mode = request.me.is_curator or request.me.is_moderator
         if is_moderator_mode:
             # show rejected by moderator posts in feed too
-            posts = (posts | Post.objects.filter(
-                moderation_status=Post.MODERATION_REJECTED,
-                deleted_at__isnull=True,
-            )).select_related("room", "author")
+            posts = sort_feed(
+                posts | Post.objects.filter(
+                    moderation_status=Post.MODERATION_REJECTED,
+                    deleted_at__isnull=True,
+                ),
+                ordering,
+                ordering_param,
+            ).select_related("room", "author")
 
         # show pending moderation posts for authors and moderators on top
         moderation_posts = Post.objects.filter(

@@ -1,6 +1,7 @@
 import re
 from datetime import datetime, timedelta
 
+from django.db.models.functions import Coalesce
 from django.http import Http404
 
 from posts.models.post import Post
@@ -37,7 +38,9 @@ def sort_feed(posts, ordering, ordering_param=None):
         return posts.order_by("-last_activity_at")
 
     elif ordering == ORDERING_NEW:
-        return posts.order_by("-published_at", "-created_at")
+        # Rejected posts are unpublished, so published_at is empty. Without a
+        # fallback, DESC ordering puts all of them before every normal post.
+        return posts.order_by(Coalesce("published_at", "updated_at").desc(), "-created_at")
 
     elif ordering == ORDERING_TOP:
         return posts.order_by("-upvotes")
