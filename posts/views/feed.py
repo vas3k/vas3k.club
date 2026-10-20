@@ -74,17 +74,20 @@ def feed(
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
-    is_moderator_mode = request.me and (request.me.is_curator or request.me.is_moderator)
     moderation_posts = []
-    if is_moderator_mode:
-        # show rejected by moderator posts in feed too
-        posts = (posts | Post.objects.filter(
-            moderation_status=Post.MODERATION_REJECTED,
-            deleted_at__isnull=True,
-        )).select_related("room", "author")
+    if request.me and post_type == POST_TYPE_ALL \
+        and ordering == ORDERING_ACTIVITY and not room and not label_code:
 
-    # show pending moderation posts in feed for authors and moderators
-    if request.me and ordering == ORDERING_ACTIVITY and not room and post_type == POST_TYPE_ALL and not label_code:
+        # add moderated posts to moderators feeds
+        is_moderator_mode = request.me.is_curator or request.me.is_moderator
+        if is_moderator_mode:
+            # show rejected by moderator posts in feed too
+            posts = (posts | Post.objects.filter(
+                moderation_status=Post.MODERATION_REJECTED,
+                deleted_at__isnull=True,
+            )).select_related("room", "author")
+
+        # show pending moderation posts for authors and moderators on top
         moderation_posts = Post.objects.filter(
             Q() if is_moderator_mode else Q(author_id=request.me.id),
             moderation_status=Post.MODERATION_PENDING,

@@ -6,6 +6,7 @@ from godmode.actions.post_announce import get_announce_action, post_announce_act
 from godmode.actions.post_comments import get_comments_action, post_comments_action
 from godmode.actions.post_feeds import get_feeds_action, post_feeds_action
 from godmode.actions.post_label import get_label_action, post_label_action
+from godmode.actions.post_moderate import get_moderate_action, post_moderate_action
 from godmode.actions.post_owner import get_owner_action, post_owner_action
 from godmode.actions.post_pin import get_pin_action, post_pin_action
 from godmode.actions.post_view import view_post_action
@@ -345,6 +346,11 @@ ADMIN = ClubAdmin(
                             get=get_owner_action,
                             post=post_owner_action,
                             access_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
+                        ),
+                        "moderate": ClubAdminAction(
+                            title="❌ Модерировать",
+                            get=get_moderate_action,
+                            post=post_moderate_action,
                         ),
                     }
                 ),

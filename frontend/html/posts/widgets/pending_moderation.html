@@ -1,11 +1,14 @@
 {% if post.is_waiting_for_moderation or post.moderation_status == "rejected" %}
     <div class="feed-moderation-user">
         {% if post.is_waiting_for_moderation %}
-            <span class="label"><span class="label-title">Пост на модерации</span></span>
+            Пост на модерации
         {% else %}
-            <span class="label"><span class="label-title">Нужно доработать</span></span>
-            {% if post.moderation_data.user %}
-                {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
+            Нужно доработать
+
+            {% if request.me.is_moderator or request.me.is_curator %}
+                {% if post.moderation_data.user %}
+                    &nbsp;&nbsp;{% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
+                {% endif %}
             {% endif %}
         {% endif %}
     </div>

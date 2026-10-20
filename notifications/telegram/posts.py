@@ -8,8 +8,7 @@ from django.urls import reverse
 
 from ai.moderation import ai_rate_post_quality
 from common.regexp import USERNAME_RE
-
-log = logging.getLogger(__name__)
+from posts.moderation import REJECT_POST_REASONS
 from notifications.telegram.common import Chat, CLUB_CHANNEL, send_telegram_message, render_html_message, \
     send_telegram_image, CLUB_CHAT, ADMIN_CHAT, CLUB_ONLINE, VIBES_CHAT
 from posts.models.post import Post
@@ -18,57 +17,22 @@ from tags.models import Tag, UserTag
 from users.models.friends import Friend
 from users.models.user import User
 
-REJECT_POST_REASONS = {
-    "post": [
-        ("title", "Плохой заголовок"),
-        ("value", "Нет пользы/абстрактно"),
-        ("inside", "Нет инсайдов и опыта"),
-        ("design", "Текст недооформлен"),
-    ],
-    "event": [
-        ("title", "Плохой заголовок"),
-        ("design", "Текст недооформлен"),
-    ],
-    "guide": [
-        ("title", "Плохой заголовок"),
-        ("design", "Текст недооформлен"),
-    ],
-    "thread": [
-        ("title", "Плохой заголовок"),
-        ("design", "Текст недооформлен"),
-        ("duplicate", "Дубликат"),
-    ],
-    "question": [
-        ("title", "Плохой заголовок"),
-        ("chat", "Лучше в чат"),
-        ("dyor", "Нет рисёрча, коротко"),
-        ("hot", "Провокация/срач"),
-        ("duplicate", "Дубликат"),
-    ],
-    "link": [
-        ("tldr_link", "Короткое описание"),
-        ("self", "Ссылка на себя"),
-        ("value", "Бесполезно/непонятно"),
-    ],
-    "battle": [
-        ("hot", "Срач"),
-        ("false_dilemma", "Ложная дилемма"),
-        ("duplicate", "Дубликат"),
-        ("bias", "Предвзят к одному варианту"),
-    ],
-    "project": [
-        ("ad", "Похоже на рекламу"),
-        ("inside", "Нет инсайдов и опыта"),
-    ],
-    "request": [
-        ("title", "Плохой заголовок"),
-        ("tldr", "Мало описания"),
-        ("duplicate", "Дубликат"),
-    ],
-}
+log = logging.getLogger(__name__)
 
 
 def send_published_post_to_moderators(post):
+    admin_profile_url = settings.APP_HOST + reverse("godmode_action", kwargs={
+        "model_name": "users",
+        "item_id": post.user_id,
+        "action_code": "message"
+    })
+
+    admin_moderate_url = settings.APP_HOST + reverse("godmode_action", kwargs={
+        "model_name": "posts",
+        "item_id": post.id,
+        "action_code": "moderate",
+    })
+
     message = send_telegram_message(
         chat=ADMIN_CHAT,
         text=render_html_message("moderator_new_post_review.html", post=post),
@@ -78,8 +42,11 @@ def send_published_post_to_moderators(post):
                 for reason, title in REJECT_POST_REASONS.get(post.type) or []
             ],
             [
-                InlineKeyboardButton("❌ В черновики", callback_data=f"reject_post:{post.id}"),
+                InlineKeyboardButton("🚫 Кастомная причина", url=admin_moderate_url),
+            ],
+            [
                 InlineKeyboardButton("😕 Так себе", callback_data=f"forgive_post:{post.id}"),
+                InlineKeyboardButton("✏️ Написать автору", url=admin_profile_url),
             ],
             [
                 InlineKeyboardButton("👍 Одобрить", callback_data=f"approve_post:{post.id}"),
