@@ -827,5 +827,5 @@
     }
 
 .feed-post.feed-draft {
-    border: 2px dashed var(--text-color);
+    border: var(--dashed-border);
 }

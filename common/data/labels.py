@@ -115,7 +115,7 @@ LABELS = {
         "title": "Первый пост",
         "description": "Это первый опубликованный пост автора в Клубе. Он охуенен, поддержите его!",
         "emoji": "🥇",
-        "style": "color: rgba(0, 0, 0, 0.3); background: transparent; border: 1.5px solid rgba(0, 0, 0, 0.1);",
+        "style": "color: color-mix(in srgb, var(--text-color) 50%, transparent); background: transparent; border: 1.5px solid color-mix(in srgb, var(--text-color) 20%, transparent);",
         "notify": False
     },
 }

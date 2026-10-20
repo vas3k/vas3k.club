@@ -4,9 +4,11 @@ from django import forms
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
 from django_q.tasks import async_task
 from telegram.error import TelegramError
 
+from common.markdown.markdown import markdown_tg
 from notifications.telegram.bot import bot
 from notifications.telegram.common import ADMIN_CHAT, send_telegram_message
 from notifications.telegram.posts import notify_post_rejected
@@ -77,7 +79,9 @@ def post_moderate_action(request, post: Post, **context):
         post.moderation_data = {
             "reason": reason_value,
             "text": render_to_string(template, {
-                "post": post, "settings": settings, "custom_reason": custom_reason,
+                "post": post,
+                "settings": settings,
+                "custom_reason": mark_safe(markdown_tg(custom_reason)) if custom_reason else None,
             }),
             "user": {
                 "slug": moderator.slug,

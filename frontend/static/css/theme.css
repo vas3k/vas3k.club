@@ -54,6 +54,8 @@ html, html[theme="light"] {
     --input-toolbar-button-color: #000;
     --input-link: #7f8c8d;
     --input-selection-color: #d7d4f0;
+
+    --dashed-border: 2px dashed #333;
 }
 
 html[theme="dark"] {
@@ -91,6 +93,8 @@ html[theme="dark"] {
     --input-toolbar-button-color: #fff;
     --input-link: #b3b6ff;
     --input-selection-color: #978fd8;
+
+    --dashed-border: 2px dashed #8A8A8A;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -117,6 +121,8 @@ html[theme="dark"] {
         --button-hover-color: #FFF;
         --button-hover-bg-color: #333;
         --button-hover-border: solid 2px #FFF;
+
+        --dashed-border: 2px dashed #8A8A8A;
     }
 }
 

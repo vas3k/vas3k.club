@@ -91,7 +91,7 @@
         </div>
     {% endif %}
 
-    {% if moderation_posts %}
+    {% if moderation_posts and posts.number == 1 %}
         {% for post in moderation_posts %}
             {% include "posts/items/items.html" %}
         {% endfor %}
