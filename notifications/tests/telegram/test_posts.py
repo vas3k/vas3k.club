@@ -229,6 +229,8 @@ class TestSendPublishedPostToModerators(TestCase):
         self.assertEqual(mock_send.call_count, 2)
         second_call = mock_send.call_args_list[1].kwargs
         self.assertEqual(second_call["reply_to_message_id"], 42)
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.moderation_data["message_id"], 42)
 
     @patch("notifications.telegram.posts.ai_rate_post_quality", return_value="<b>AI review</b>")
     @patch("notifications.telegram.posts.send_telegram_message")

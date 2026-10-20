@@ -1,13 +1,20 @@
+import logging
+
 from django import forms
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.shortcuts import render
 from django_q.tasks import async_task
+from telegram.error import TelegramError
 
+from notifications.telegram.bot import bot
+from notifications.telegram.common import ADMIN_CHAT, send_telegram_message
 from notifications.telegram.posts import notify_post_rejected
 from posts.moderation import REJECT_POST_REASONS
 from posts.models.post import Post
 from search.models import SearchIndex
+
+log = logging.getLogger(__name__)
 
 CUSTOM_REASON = "custom"
 
@@ -55,6 +62,7 @@ def post_moderate_action(request, post: Post, **context):
     if form.is_valid():
         data = form.cleaned_data
         moderator = request.me
+        message_id = (post.moderation_data or {}).get("message_id")
 
         if data["reason"] == CUSTOM_REASON:
             reason_value = CUSTOM_REASON
@@ -78,11 +86,34 @@ def post_moderate_action(request, post: Post, **context):
             },
         }
 
+        if message_id:
+            post.moderation_data["message_id"] = message_id
+
         post.unpublish()
 
         SearchIndex.update_post_index(post)
 
         async_task(notify_post_rejected, post)
+
+        if bot and ADMIN_CHAT and message_id:
+            try:
+                bot.edit_message_reply_markup(
+                    chat_id=ADMIN_CHAT.id,
+                    message_id=message_id,
+                    reply_markup=None,
+                )
+            except TelegramError as ex:
+                log.warning(f"Telegram error: {ex}")
+
+        if custom_reason:
+            send_telegram_message(
+                chat=ADMIN_CHAT,
+                text=(
+                    f"👎 Пост «{post.title}» перенесен в черновики "
+                    f"({moderator.full_name})\n\nКастомная причина: {custom_reason}"
+                ),
+                parse_mode=None,
+            )
 
         return render(request, "godmode/message.html", {
             **context,

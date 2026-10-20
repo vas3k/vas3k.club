@@ -58,6 +58,12 @@ def send_published_post_to_moderators(post):
         log.warning(f"Failed to send post {post.id} to moderators, skipping AI review")
         return
 
+    # save message_id so we can hide buttons in admin chat when using web interface
+    moderation_data = post.moderation_data or {}
+    moderation_data["message_id"] = message.message_id
+    Post.objects.filter(id=post.id).update(moderation_data=moderation_data)
+    post.moderation_data = moderation_data
+
     try:
         ai_post_rate_text = ai_rate_post_quality(post)
         send_telegram_message(
