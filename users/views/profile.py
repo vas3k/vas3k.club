@@ -85,6 +85,12 @@ def profile(request, user_slug):
             author=user, visibility=Post.VISIBILITY_DRAFT, deleted_at__isnull=True,
         ).exclude(moderation_status=Post.MODERATION_REJECTED).select_related("author", "room")[:100]
 
+    drafts = []
+    if request.me and (request.me.id == user.id or request.me.is_curator or request.me.is_moderator):
+        drafts = Post.objects.filter(
+            author=user, visibility=Post.VISIBILITY_DRAFT, deleted_at__isnull=True,
+        ).exclude(moderation_status=Post.MODERATION_REJECTED).select_related("author", "room")[:100]
+
     if request.me:
         comments = Comment.visible_objects()\
             .filter(author=user)\

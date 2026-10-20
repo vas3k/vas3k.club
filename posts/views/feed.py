@@ -27,23 +27,6 @@ def feed(
     else:
         posts = Post.visible_objects()
 
-    can_moderate = request.me and (request.me.is_curator or request.me.is_moderator)
-
-    if can_moderate and ordering in [ORDERING_ACTIVITY, ORDERING_NEW]:
-        moderation_statuses = (
-            [Post.MODERATION_PENDING, Post.MODERATION_REJECTED]
-            if ordering == ORDERING_ACTIVITY else [Post.MODERATION_PENDING]
-        )
-
-        staff_posts = Post.objects.filter(
-            moderation_status__in=moderation_statuses, deleted_at__isnull=True,
-        ).exclude(moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_DRAFT)
-        posts = (posts | staff_posts).select_related("room", "author", "moderation_user")
-
-        posts = posts.exclude(
-            moderation_status__in=[Post.MODERATION_REJECTED] if ordering == ORDERING_NEW else [],
-        )
-
     # filter posts by type
     if post_type != POST_TYPE_ALL:
         posts = posts.filter(type=post_type)
@@ -91,17 +74,26 @@ def feed(
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
+    # only for moderators
+    is_moderator_mode = request.me and (request.me.is_curator or request.me.is_moderator)
     moderation_posts = []
-    if request.me and request.resolver_match.url_name == "index":
-        moderation_posts = Post.objects.filter(
-            Q() if can_moderate else Q(author_id=request.me.id),
-            moderation_status=Post.MODERATION_PENDING,
+    if is_moderator_mode:
+        # show rejected by moderator posts in feed too
+        posts = (posts | Post.objects.filter(
+            moderation_status=Post.MODERATION_REJECTED,
             deleted_at__isnull=True,
-        ).exclude(
-            visibility=Post.VISIBILITY_DRAFT,
-        ).select_related("room", "author", "moderation_user")
-        posts = posts.exclude(id__in=moderation_posts.values("id"))
-        pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
+        )).select_related("room", "author", "moderation_user")
+
+        # show unmoderated posts on top of index page
+        if ordering == ORDERING_ACTIVITY:
+            moderation_posts = Post.objects.filter(
+                moderation_status=Post.MODERATION_PENDING,
+                deleted_at__isnull=True,
+            ).exclude(
+                visibility=Post.VISIBILITY_DRAFT,
+            ).select_related("room", "author", "moderation_user")
+            posts = posts.exclude(id__in=moderation_posts.values("id"))
+            pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
 
     return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
