@@ -253,9 +253,12 @@
         {% if room_subscriptions %}
             <div class="profile-header">Членство в чатах и комнатах</div>
             <div class="block profile-rooms">
-                {% for subscription in room_subscriptions %}
+                {% for subscription in room_subscriptions|slice:":10" %}
                     {% include "rooms/widgets/membership.html" with room=subscription.room %}
                 {% endfor %}
+                {% if room_subscriptions|length > 10 %}
+                    <span class="profile-rooms-more">и еще {{ room_subscriptions|length|add:"-10" }}...</span>
+                {% endif %}
             </div>
         {% endif %}
 

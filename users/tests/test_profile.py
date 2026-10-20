@@ -5,6 +5,8 @@ from django.test import TestCase, Client
 from authn.models.session import Session
 from comments.models import Comment
 from posts.models.post import Post
+from rooms.models import Room, RoomSubscription
+from users.models.notes import UserNote
 from users.models.user import User
 
 
@@ -270,3 +272,81 @@ class TestProfilePrivatePosts(TestCase):
         response = self.client.get(f"/user/{self.author.slug}/")
         self.assertEqual({p.id for p in response.context["posts"]}, {self.published.id, self.foreign_pending.id})
         self.assertEqual(response.context["drafts"], [])
+
+
+class TestProfileSections(TestCase):
+    def setUp(self):
+        self.author = _create_user("profile_sections_author", profile_publicity_level=User.PUBLICITY_LEVEL_PUBLIC)
+        self.viewer = _create_user("profile_sections_viewer")
+
+    def test_me_redirects_preserve_requested_section(self):
+        _login(self.client, self.viewer)
+
+        for section in ["", "posts/", "comments/", "badges/"]:
+            with self.subTest(section=section):
+                response = self.client.get(f"/user/me/{section}")
+                self.assertEqual(response.status_code, 302)
+                self.assertEqual(response.url, f"/user/{self.viewer.slug}/{section}")
+
+    def test_private_profile_sections_are_hidden_from_anonymous_viewers(self):
+        self.author.profile_publicity_level = User.PUBLICITY_LEVEL_PRIVATE
+        self.author.save()
+
+        for section in ["", "posts/", "badges/"]:
+            with self.subTest(section=section):
+                response = self.client.get(f"/user/{self.author.slug}/{section}")
+                self.assertEqual(response.status_code, 200)
+                self.assertTemplateUsed(response, "auth/private_profile.html")
+
+    def test_projects_show_only_authored_published_projects(self):
+        published = _create_post("profile_project_published", self.author, type=Post.TYPE_PROJECT)
+        _create_post("profile_project_link", self.author, type=Post.TYPE_PROJECT, visibility=Post.VISIBILITY_LINK_ONLY)
+        _create_post("profile_project_draft", self.author, type=Post.TYPE_PROJECT, visibility=Post.VISIBILITY_DRAFT)
+        _create_post("profile_project_pending", self.author, type=Post.TYPE_PROJECT,
+                     moderation_status=Post.MODERATION_PENDING)
+        _create_post("profile_project_coauthor", self.viewer, type=Post.TYPE_PROJECT, coauthors=[self.author.slug])
+
+        for viewer in [None, self.author, self.viewer]:
+            with self.subTest(viewer=viewer):
+                self.client.cookies.clear()
+
+                if viewer:
+                    _login(self.client, viewer)
+
+                response = self.client.get(f"/user/{self.author.slug}/")
+                self.assertEqual([post.id for post in response.context["projects"]], [published.id])
+
+    def test_room_subscriptions_remain_complete_ordered_and_private(self):
+        for index in range(12):
+            room = Room.objects.create(
+                slug=f"profile-room-{index}", title=f"Room {index}", color="#333", chat_member_count=index,
+            )
+            RoomSubscription.objects.create(user=self.author, room=room, is_chat_member=True, is_notified=False)
+
+        hidden = Room.objects.create(slug="profile-hidden-room", title="Hidden", color="#333", is_visible=False)
+        RoomSubscription.objects.create(user=self.author, room=hidden)
+        inactive = Room.objects.create(slug="profile-inactive-room", title="Inactive", color="#333")
+        RoomSubscription.objects.create(user=self.author, room=inactive, is_chat_member=False, is_notified=False)
+        response = self.client.get(f"/user/{self.author.slug}/")
+        self.assertFalse(response.context["room_subscriptions"].exists())
+        _login(self.client, self.viewer)
+        response = self.client.get(f"/user/{self.author.slug}/")
+        self.assertEqual(
+            [subscription.room.chat_member_count for subscription in response.context["room_subscriptions"]],
+            list(range(11, -1, -1)),
+        )
+
+    def test_other_users_notes_are_visible_only_to_staff(self):
+        other = _create_user("profile_sections_note_author")
+        own_note = UserNote.objects.create(user_from=self.viewer, user_to=self.author, text="My note")
+        other_note = UserNote.objects.create(user_from=other, user_to=self.author, text="Other note")
+        _login(self.client, self.viewer)
+        response = self.client.get(f"/user/{self.author.slug}/")
+        self.assertEqual(response.context["note"].id, own_note.id)
+        self.assertEqual(list(response.context["moderator_notes"]), [])
+        self.viewer.roles = [User.ROLE_MODERATOR]
+        self.viewer.save()
+        _login(self.client, self.viewer)
+        response = self.client.get(f"/user/{self.author.slug}/")
+        self.assertEqual(response.context["note"].id, own_note.id)
+        self.assertEqual([note.id for note in response.context["moderator_notes"]], [other_note.id])

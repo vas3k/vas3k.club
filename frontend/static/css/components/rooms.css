@@ -386,6 +386,11 @@
     padding-bottom: 30px;
 }
 
+    .profile-rooms-more {
+        align-self: center;
+        font-size: 110%;
+    }
+
 .room-membership {
     position: relative;
     display: inline-flex;
