@@ -74,7 +74,6 @@ def feed(
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
-    # only for moderators
     is_moderator_mode = request.me and (request.me.is_curator or request.me.is_moderator)
     moderation_posts = []
     if is_moderator_mode:
@@ -84,16 +83,17 @@ def feed(
             deleted_at__isnull=True,
         )).select_related("room", "author")
 
-        # show unmoderated posts on top of index page
-        if ordering == ORDERING_ACTIVITY:
-            moderation_posts = Post.objects.filter(
-                moderation_status=Post.MODERATION_PENDING,
-                deleted_at__isnull=True,
-            ).exclude(
-                visibility=Post.VISIBILITY_DRAFT,
-            ).select_related("room", "author")
-            posts = posts.exclude(id__in=moderation_posts.values("id"))
-            pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
+    # show pending moderation posts in feed for authors and moderators
+    if request.me and ordering == ORDERING_ACTIVITY and not room and post_type == POST_TYPE_ALL and not label_code:
+        moderation_posts = Post.objects.filter(
+            Q() if is_moderator_mode else Q(author_id=request.me.id),
+            moderation_status=Post.MODERATION_PENDING,
+            deleted_at__isnull=True,
+        ).exclude(
+            visibility=Post.VISIBILITY_DRAFT,
+        ).select_related("room", "author")
+        posts = posts.exclude(id__in=moderation_posts.values("id"))
+        pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
 
     return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
