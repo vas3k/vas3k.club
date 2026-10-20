@@ -250,6 +250,15 @@
             </div>
         {% endif %}
 
+        {% if room_subscriptions %}
+            <div class="profile-header">Членство в чатах и комнатах</div>
+            <div class="block profile-rooms">
+                {% for subscription in room_subscriptions %}
+                    {% include "rooms/widgets/membership.html" with room=subscription.room %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if collectible_tags %}
             <div class="profile-header" id="tags_collectible">Коллекционные теги</div>
             <div class="block profile-tags">

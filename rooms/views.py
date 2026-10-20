@@ -36,6 +36,7 @@ def list_rooms(request):
         subscribed_room_slugs = set(RoomSubscription.objects.filter(
             user=request.me,
             room_id__in=room_slugs,
+            is_notified=True,
         ).values_list("room_id", flat=True))
         muted_room_slugs = set(RoomMuted.objects.filter(
             user=request.me,
@@ -70,17 +71,12 @@ def redirect_to_room_chat(request, room_slug):
 def toggle_room_subscription(request, room_slug):
     room = get_object_or_404(Room, slug=room_slug)
 
-    subscription, is_created = RoomSubscription.subscribe(
-        user=request.me,
-        room=room,
-    )
+    is_created = not RoomSubscription.is_subscribed(user=request.me, room=room)
 
-    if not is_created:
-        # already exist? remove it
-        RoomSubscription.unsubscribe(
-            user=request.me,
-            room=room,
-        )
+    if is_created:
+        RoomSubscription.subscribe(user=request.me, room=room)
+    else:
+        RoomSubscription.unsubscribe(user=request.me, room=room)
 
     return {
         "status": "created" if is_created else "deleted"

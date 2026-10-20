@@ -15,12 +15,12 @@ from django.conf import settings
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackContext, filters, \
-    CallbackQueryHandler
+    CallbackQueryHandler, ChatMemberHandler
 
 from bot.cache import cached_telegram_users
 from bot.config import WELCOME_MESSAGE, BOT_MENTION_RE, ANONYMOUS_MESSAGE
 from bot.decorators import ensure_fresh_db_connection
-from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts, llm
+from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts, llm, membership
 
 log = logging.getLogger(__name__)
 
@@ -52,6 +52,8 @@ def build_application(base_url: str | None = None) -> Application:
     if base_url:
         builder = builder.base_url(base_url)
     application = builder.build()
+
+    application.add_handler(ChatMemberHandler(membership.chat_membership, ChatMemberHandler.CHAT_MEMBER))
 
     application.add_handler(CallbackQueryHandler(moderation.approve_post, pattern=r"^approve_post:.+"))
     application.add_handler(CallbackQueryHandler(moderation.forgive_post, pattern=r"^forgive_post:.+"))
@@ -92,9 +94,10 @@ def main() -> None:
     application = build_application()
 
     if settings.DEBUG:
-        application.run_polling()
+        application.run_polling(allowed_updates=Update.ALL_TYPES)
     else:
         application.run_webhook(
+            allowed_updates=Update.ALL_TYPES,
             listen=settings.TELEGRAM_BOT_WEBHOOK_HOST,
             port=settings.TELEGRAM_BOT_WEBHOOK_PORT,
             url_path=settings.TELEGRAM_TOKEN,

@@ -120,9 +120,15 @@ class RoomSubscription(models.Model):
     room = models.ForeignKey(Room, related_name="subscriptions", db_index=True, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    is_chat_member = models.BooleanField(default=False)
+    chat_membership_updated_at = models.DateTimeField(null=True, blank=True)
+    is_notified = models.BooleanField(default=True)
 
     class Meta:
         db_table = "room_subscriptions"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "room"], name="unique_room_subscription"),
+        ]
 
     @classmethod
     def get(cls, user, room):
@@ -130,22 +136,45 @@ class RoomSubscription(models.Model):
 
     @classmethod
     def subscribe(cls, user, room):
-        return cls.objects.update_or_create(user=user, room=room)
+        return cls.objects.update_or_create(user=user, room=room, defaults={"is_notified": True})
 
     @classmethod
     def unsubscribe(cls, user, room):
-        return cls.objects.filter(user=user, room=room).delete()
+        return cls.objects.filter(user=user, room=room).update(is_notified=False)
 
     @classmethod
     def is_subscribed(cls, user, room):
         return cls.objects.filter(
             user=user,
             room=room,
+            is_notified=True,
         ).exists()
 
     @classmethod
     def room_subscribers(cls, room):
-        return cls.objects.filter(room=room).select_related("user")
+        return cls.objects.filter(room=room, is_notified=True).select_related("user")
+
+    @classmethod
+    def join_chat(cls, user, room):
+        now = datetime.utcnow()
+        return cls.objects.update_or_create(
+            user=user, room=room,
+            defaults={"is_chat_member": True, "chat_membership_updated_at": now},
+            create_defaults={
+                "is_chat_member": True, "is_notified": False, "chat_membership_updated_at": now,
+            },
+        )
+
+    @classmethod
+    def leave_chat(cls, user, room):
+        now = datetime.utcnow()
+        return cls.objects.update_or_create(
+            user=user, room=room,
+            defaults={"is_chat_member": False, "chat_membership_updated_at": now},
+            create_defaults={
+                "is_chat_member": False, "is_notified": False, "chat_membership_updated_at": now,
+            },
+        )
 
 
 class RoomMuted(models.Model):

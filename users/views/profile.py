@@ -11,6 +11,7 @@ from common.pagination import paginate
 from authn.decorators.api import api
 from posts.models.post import Post
 from search.models import SearchIndex
+from rooms.models import RoomSubscription
 from users.models.achievements import UserAchievement
 from users.models.mute import UserMuted
 from tags.models import Tag, UserTag
@@ -120,6 +121,9 @@ def profile(request, user_slug):
         "tags": tags,
         "active_tags": active_tags,
         "collectible_tags": collectible_tags,
+        "room_subscriptions": RoomSubscription.objects.filter(
+            user=user, room__is_visible=True,
+        ).filter(Q(is_chat_member=True) | Q(is_notified=True)).select_related("room") if request.me else [],
         "achievements": [ua.achievement for ua in achievements],
         "comments": comments[:3] if comments else [],
         "comments_total": Comment.count_user_comments(user) if comments is not None else 0,

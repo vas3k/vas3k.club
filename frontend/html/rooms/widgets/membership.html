@@ -1,0 +1,5 @@
+<a href="{% url "feed_room" room.slug %}" class="room-membership">
+    {% if room.image %}<img class="room-membership-avatar" src="{{ room.image }}" alt="" loading="lazy">{% endif %}
+    {% if room.icon %}<span class="room-membership-icon">{{ room.emoji }}</span>{% endif %}
+    <span>{{ room.title }}</span>
+</a>

@@ -108,11 +108,11 @@
                     filter: grayscale(1);
                 }
 
-        .feed-sidebar-topics {
+        .feed-sidebar-rooms {
             max-width: 100%;
         }
 
-        .feed-sidebar-topics-more {
+        .feed-sidebar-rooms-more {
             text-align: center;
             padding: 20px 5px;
             font-weight: 500;
@@ -126,129 +126,6 @@
             display: none;
         }
     }
-
-    .feed-topic-header {
-        padding: 30px;
-        box-sizing: border-box;
-        color: #FFF;
-        font-size: 110%;
-        margin-bottom: 40px;
-    }
-
-        .feed-topic-header a {
-            color: #FFF;
-        }
-
-        .feed-topic-header a.button {
-            color: var(--button-color);
-        }
-
-        .feed-topic-header a.button:hover {
-            color: var(--button-hover-color);
-        }
-
-        .feed-topic-header-title {
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            align-items: center;
-        }
-
-            .feed-topic-header-name {
-                font-size: 210%;
-                font-weight: 700;
-                text-decoration: none;
-            }
-
-            .feed-topic-header-icon {
-                width: 64px;
-                height: 64px;
-                border-radius: 50%;
-                overflow: hidden;
-                position: relative;
-                border: solid 2px var(--bg-color);
-            }
-
-    .feed-topic-header-description {
-        display: block;
-        font-size: 120%;
-    }
-
-    .feed-topic-header-footer {
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-        align-items: center;
-        padding-top: 10px;
-        font-size: 115%;
-    }
-
-        .feed-topic-header-footer > div {
-            width: 100%;
-        }
-
-        .feed-topic-header-footer-chat {
-            width: 100%;
-        }
-
-            .feed-topic-header-footer-chat .button {
-                width: 100%;
-            }
-
-        .feed-topic-header-footer-url {
-            text-align: center;
-        }
-
-        .feed-topic-header-footer small {
-            font-size: 70%;
-        }
-
-    .feed-topic-header-admins {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        gap: 5px 10px;
-    }
-
-    .feed-topic-header-settings {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        flex-direction: row;
-        gap: 16px;
-        padding-top: 0;
-    }
-
-        .feed-topic-header-settings input[type="checkbox"] {
-            transform: scale(1.4);
-            transform-origin: center;
-            margin: 0 5px;
-            position: relative;
-            top: 1px;
-        }
-
-        .feed-topic-header-toggle {
-            display: inline-block;
-            position: relative;
-            padding: 4px 10px 5px;
-            font-size: 95%;
-            cursor: pointer;
-            color: var(--text-color);
-            background-color: var(--block-bg-color);
-            border-radius: var(--button-border-radius);
-            border: var(--button-border);
-            border-width: 0;
-        }
-
-            .feed-topic-header-toggle.is-active {
-                background-color: var(--button-bg-color);
-                border: var(--button-border);
-                border-color: var(--block-bg-color);
-                color: var(--button-color);
-            }
 
     .feed-ordering {
         display: flex;

@@ -9,7 +9,7 @@ from common.feature_flags import feature_switch, noop
 from common.pagination import paginate
 from posts.helpers import POST_TYPE_ALL, ORDERING_ACTIVITY, ORDERING_NEW, sort_feed, ORDERING_HOT
 from posts.models.post import Post
-from rooms.models import Room
+from rooms.models import Room, RoomSubscription
 
 
 @feature_switch(features.PRIVATE_FEED, yes=require_auth, no=noop)
@@ -59,7 +59,9 @@ def feed(
     if not room and not label_code:
         if request.me:
             posts = posts.exclude(
-                Q(is_room_only=True) & ~Q(room__subscriptions__user=request.me)
+                Q(is_room_only=True) & ~Q(room_id__in=RoomSubscription.objects.filter(
+                    user=request.me, is_notified=True,
+                ).values("room_id"))
             )
         else:
             posts = posts.exclude(is_room_only=True)

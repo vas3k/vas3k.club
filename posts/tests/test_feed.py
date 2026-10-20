@@ -429,6 +429,15 @@ class TestFeedSortingAndVisibility(TestCase):
 
         self.assertIn(room_only.id, feed_ids)
 
+    def test_room_only_posts_hidden_for_silent_chat_member(self):
+        room = _create_room("tfeed-silent-member")
+        room_only = _create_post("tfeed_silent_member", self.user, room=room, is_room_only=True)
+        RoomSubscription.join_chat(self.user, room)
+
+        response = self.client.get("/")
+        feed_ids = [post.id for post in response.context["posts"]]
+        self.assertNotIn(room_only.id, feed_ids)
+
     def test_invalid_top_month_ordering_param_returns_404(self):
         response = self.client.get("/all/top_month:2024-99/")
         self.assertEqual(response.status_code, 404)

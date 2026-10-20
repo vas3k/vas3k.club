@@ -33,7 +33,7 @@ from invites.models import Invite
 from misc.models import NetworkGroup, ProTip
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
-from rooms.models import Room
+from rooms.models import Room, RoomSubscription
 from tags.models import Tag, UserTag
 from tickets.models import Ticket, TicketSale
 from users.models.achievements import Achievement, UserAchievement
@@ -508,6 +508,20 @@ ADMIN = ClubAdmin(
                         "is_open_for_posting",
                         "index",
                     ]
+                ),
+                ClubAdminModel(
+                    model=RoomSubscription,
+                    title="Членство в чатах и комнатах",
+                    icon="👥",
+                    name="room_subscriptions",
+                    list_fields=[
+                        "user", "room", "created_at", "is_chat_member", "chat_membership_updated_at", "is_notified",
+                    ],
+                    edit_fields=["user", "room", "is_chat_member", "is_notified"],
+                    list_roles={User.ROLE_MODERATOR, User.ROLE_GOD},
+                    edit_roles={User.ROLE_GOD},
+                    create_roles={User.ROLE_GOD},
+                    delete_roles={User.ROLE_GOD},
                 ),
                 ClubAdminModel(
                     model=NetworkGroup,

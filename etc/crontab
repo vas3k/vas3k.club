@@ -13,3 +13,4 @@
 0 4 * * * find /app/gdpr/downloads/ -mindepth 1 -mtime +3 -type f -delete
 13 * * * * cd /app && python3 manage.py update_hotness
 0 7 * * 3,6 cd /app && python3 manage.py promote_one_old_post_on_main
+0 2 * * 7 cd /app && python3 manage.py recalculate_chat_members

@@ -7,7 +7,7 @@
 {% block post %}
     <div class="battle-header">
         {% if post.room %}
-            <div class="battle-header-topic">
+            <div class="battle-header-room">
                 {% include "rooms/widgets/room.html" with room=post.room type="post" %}
             </div>
         {% endif %}
