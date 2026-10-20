@@ -19,6 +19,7 @@ const App = {
     },
     onMount() {
         this.initializeImageZoom();
+        this.initializeCodeCopyButtons();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
         this.initializePostActions();
@@ -159,6 +160,22 @@ const App = {
             cubicBezier: "cubic-bezier(.2, 0, .1, 1)",
             background: "rgba(0, 0, 0, .4)",
             zIndex: 1e6,
+        });
+    },
+    initializeCodeCopyButtons() {
+        if (!navigator.clipboard) return;
+
+        document.querySelectorAll(".text-body pre > code").forEach((code) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "code-copy-button fas fa-copy";
+            button.title = "Скопировать";
+            button.addEventListener("click", async () => {
+                await navigator.clipboard.writeText(code.textContent.trimEnd());
+                button.classList.replace("fa-copy", "fa-check");
+                setTimeout(() => button.classList.replace("fa-check", "fa-copy"), 2000);
+            });
+            code.parentElement.appendChild(button);
         });
     },
     blockCommunicationFormsResubmit() {

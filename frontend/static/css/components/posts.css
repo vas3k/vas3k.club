@@ -441,6 +441,7 @@
 }
 
 .text-body pre {
+    position: relative;
     display: block;
     white-space: pre-wrap;
     background-color: var(--opposite-block-bg-color);
@@ -456,6 +457,23 @@
     font-family: Ubuntu, monospace;
     display: block;
     padding: 20px 25px;
+}
+
+.code-copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: var(--opposite-block-bg-color);
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.code-copy-button:hover {
+    opacity: 1;
 }
 
 .text-body figure {
