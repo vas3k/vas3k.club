@@ -5,6 +5,7 @@ from django.test import TestCase, Client
 from authn.models.session import Session
 from posts.models.post import Post
 from rooms.models import Room, RoomMuted, RoomSubscription
+from users.models.mute import UserMuted
 from users.models.user import User
 
 
@@ -165,7 +166,21 @@ class TestFeedSortingAndVisibility(TestCase):
             visibility=Post.VISIBILITY_DRAFT,
             published_at=None,
         )
-        Post.objects.filter(id=rejected.id).update(updated_at=datetime.utcnow() - timedelta(days=30))
+        Post.objects.filter(id=rejected.id).update(
+            updated_at=datetime.utcnow() - timedelta(days=2),
+            last_activity_at=datetime.utcnow() - timedelta(days=2),
+        )
+        stale = _create_post(
+            "new_feed_stale_rejected",
+            _create_user("new_feed_stale_author"),
+            moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT,
+            published_at=None,
+        )
+        Post.objects.filter(id=stale.id).update(
+            updated_at=datetime.utcnow() - timedelta(days=30),
+            last_activity_at=datetime.utcnow() - timedelta(days=30),
+        )
         newer = _create_post(
             "new_feed_newer",
             self.user,
@@ -176,6 +191,7 @@ class TestFeedSortingAndVisibility(TestCase):
         feed_ids = [post.id for post in response.context["posts"]]
 
         self.assertLess(feed_ids.index(newer.id), feed_ids.index(rejected.id))
+        self.assertNotIn(stale.id, feed_ids)
         self.assertNotIn(rejected.id, [post.id for post in response.context["moderation_posts"]])
 
     def test_new_ordering_sorts_by_published_at_desc(self):
@@ -195,6 +211,105 @@ class TestFeedSortingAndVisibility(TestCase):
         feed_ids = [post.id for post in posts]
 
         self.assertLess(feed_ids.index(newer.id), feed_ids.index(older.id))
+
+    def test_new_ordering_breaks_published_at_ties_by_created_at(self):
+        published_at = datetime.utcnow() - timedelta(days=1)
+        older = _create_post("tfeed_new_tie_old", self.user, published_at=published_at)
+        newer = _create_post("tfeed_new_tie_new", self.user, published_at=published_at)
+
+        response = self.client.get("/all/new/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertLess(feed_ids.index(newer.id), feed_ids.index(older.id))
+
+    def test_top_ordering_sorts_by_upvotes_desc(self):
+        low = _create_post("tfeed_top_low", self.user, upvotes=1)
+        high = _create_post("tfeed_top_high", self.user, upvotes=50)
+
+        response = self.client.get("/all/top/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [high.id, low.id])
+
+    def test_top_week_keeps_posts_from_the_last_seven_days(self):
+        recent = _create_post(
+            "tfeed_week_recent", self.user, upvotes=1,
+            published_at=datetime.utcnow() - timedelta(days=1),
+        )
+        older = _create_post(
+            "tfeed_week_older", self.user, upvotes=100,
+            published_at=datetime.utcnow() - timedelta(days=8),
+        )
+
+        response = self.client.get("/all/top_week/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [recent.id])
+        self.assertNotIn(older.id, feed_ids)
+
+    def test_top_month_uses_the_requested_month(self):
+        inside = _create_post(
+            "tfeed_month_inside", self.user, upvotes=2,
+            published_at=datetime(2024, 3, 15, 12, 0, 0),
+        )
+        outside = _create_post(
+            "tfeed_month_outside", self.user, upvotes=20,
+            published_at=datetime(2024, 4, 1, 0, 0, 0),
+        )
+
+        response = self.client.get("/all/top_month:2024-03/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [inside.id])
+        self.assertNotIn(outside.id, feed_ids)
+
+    def test_top_month_default_window_is_thirty_one_days(self):
+        recent = _create_post(
+            "tfeed_month_recent", self.user, upvotes=1,
+            published_at=datetime.utcnow() - timedelta(days=3),
+        )
+        older = _create_post(
+            "tfeed_month_old", self.user, upvotes=10,
+            published_at=datetime.utcnow() - timedelta(days=40),
+        )
+
+        response = self.client.get("/all/top_month/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [recent.id])
+        self.assertNotIn(older.id, feed_ids)
+
+    def test_top_year_uses_the_requested_year(self):
+        inside = _create_post(
+            "tfeed_year_inside", self.user, upvotes=3,
+            published_at=datetime(2024, 6, 1, 12, 0, 0),
+        )
+        outside = _create_post(
+            "tfeed_year_outside", self.user, upvotes=30,
+            published_at=datetime(2025, 1, 1, 0, 0, 0),
+        )
+
+        response = self.client.get("/all/top_year:2024/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [inside.id])
+        self.assertNotIn(outside.id, feed_ids)
+
+    def test_top_year_default_window_is_one_year(self):
+        recent = _create_post(
+            "tfeed_year_recent", self.user, upvotes=1,
+            published_at=datetime.utcnow() - timedelta(days=10),
+        )
+        older = _create_post(
+            "tfeed_year_old", self.user, upvotes=10,
+            published_at=datetime.utcnow() - timedelta(days=400),
+        )
+
+        response = self.client.get("/all/top_year/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [recent.id])
+        self.assertNotIn(older.id, feed_ids)
 
     def test_hot_ordering_sorts_by_hotness_desc(self):
         cold = _create_post("tfeed_hot_cold", self.user, hotness=1)
@@ -232,6 +347,66 @@ class TestFeedSortingAndVisibility(TestCase):
 
         self.assertNotIn(post.id, [p.id for p in main_response.context["posts"]])
         self.assertIn(post.id, [p.id for p in room_response.context["posts"]])
+        self.assertNotIn(post.id, [p.id for p in self.client.get("/all/hot/").context["posts"]])
+        self.assertIn(post.id, [p.id for p in self.client.get("/all/top/").context["posts"]])
+
+    def test_muted_author_is_hidden_in_main_and_room_feeds(self):
+        author = _create_user("tfeed_muted_author")
+        room = _create_room("tfeed-author-mute-room")
+        post = _create_post("tfeed_muted_author_post", author, room=room)
+        UserMuted.objects.create(user_from=self.user, user_to=author)
+
+        for url in ["/", f"/room/{room.slug}/"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertNotIn(post.id, [item.id for item in response.context["posts"]])
+
+    def test_room_only_post_is_visible_inside_its_room_without_subscription(self):
+        room = _create_room("tfeed-room-only-inside")
+        room_only = _create_post("tfeed_room_only_inside", self.user, room=room, is_room_only=True)
+
+        response = self.client.get(f"/room/{room.slug}/")
+
+        self.assertIn(room_only.id, [post.id for post in response.context["posts"]])
+
+    def test_label_feed_filters_by_label_and_keeps_room_only_posts(self):
+        room = _create_room("tfeed-label-room")
+        labeled = _create_post("tfeed_labeled", self.user, label_code="inside", room=room, is_room_only=True)
+        other = _create_post("tfeed_other_label", self.user, label_code="ama")
+
+        response = self.client.get("/label/inside/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertEqual(feed_ids, [labeled.id])
+        self.assertNotIn(other.id, feed_ids)
+        self.assertEqual(list(response.context["moderation_posts"]), [])
+
+    def test_type_feed_filters_by_post_type(self):
+        question = _create_post("tfeed_question", self.user, type=Post.TYPE_QUESTION)
+        post = _create_post("tfeed_plain_post", self.user)
+
+        question_ids = [item.id for item in self.client.get("/question/").context["posts"]]
+        post_ids = [item.id for item in self.client.get("/post/").context["posts"]]
+
+        self.assertEqual(question_ids, [question.id])
+        self.assertEqual(post_ids, [post.id])
+
+    def test_unknown_room_returns_404(self):
+        response = self.client.get("/room/missing-feed-room/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_link_only_posts_are_visible_only_to_their_author(self):
+        author = _create_user("tfeed_link_author")
+        foreign = _create_post(
+            "tfeed_foreign_link", author, visibility=Post.VISIBILITY_LINK_ONLY,
+        )
+        own = _create_post("tfeed_own_link", self.user, visibility=Post.VISIBILITY_LINK_ONLY)
+
+        response = self.client.get("/all/hot/")
+        feed_ids = [post.id for post in response.context["posts"]]
+
+        self.assertIn(own.id, feed_ids)
+        self.assertNotIn(foreign.id, feed_ids)
 
     def test_room_only_posts_hidden_for_unsubscribed_user(self):
         room = _create_room("tfeed-room-only")
@@ -333,6 +508,13 @@ class TestFeedSortingAndVisibility(TestCase):
             "ordering_deleted", other, moderation_status=Post.MODERATION_PENDING,
             visibility=Post.VISIBILITY_LINK_ONLY, deleted_at=datetime.utcnow(),
         )
+        stale_rejected = _create_post(
+            "ordering_stale_rejected", other, moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT,
+        )
+        Post.objects.filter(id=stale_rejected.id).update(
+            last_activity_at=datetime.utcnow() - timedelta(days=8),
+        )
 
         for role in [User.ROLE_CURATOR, User.ROLE_MODERATOR, User.ROLE_GOD]:
             self.user.roles = [role]
@@ -387,6 +569,39 @@ class TestFeedSortingAndVisibility(TestCase):
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertEqual(list(response.context["moderation_posts"]), [])
+
+    def test_author_sees_own_rejected_posts_in_main_feeds(self):
+        rejected = _create_post(
+            "own_rejection", self.user, moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT, published_at=None,
+        )
+        foreign = _create_post(
+            "foreign_rejection", _create_user("foreign_rejection_author"),
+            moderation_status=Post.MODERATION_REJECTED, visibility=Post.VISIBILITY_DRAFT,
+        )
+        deleted = _create_post(
+            "deleted_own_rejection", self.user, moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT, deleted_at=datetime.utcnow(),
+        )
+        stale = _create_post(
+            "stale_own_rejection", self.user, moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT,
+        )
+        Post.objects.filter(id=stale.id).update(last_activity_at=datetime.utcnow() - timedelta(days=8))
+
+        for url in ["/", "/all/new/"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                feed_ids = {post.id for post in response.context["posts"]}
+                self.assertIn(rejected.id, feed_ids)
+                self.assertNotIn(foreign.id, feed_ids)
+                self.assertNotIn(deleted.id, feed_ids)
+                self.assertNotIn(stale.id, feed_ids)
+
+        for url in ["/post/", "/all/hot/", "/all/top/"]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertNotIn(rejected.id, [post.id for post in response.context["posts"]])
 
     def test_regular_users_cannot_see_moderation_queue_or_rejected_drafts(self):
         other = _create_user("private_rejection_author")

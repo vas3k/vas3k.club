@@ -64,9 +64,6 @@ def feed(
         else:
             posts = posts.exclude(is_room_only=True)
 
-    # order posts by some metric
-    posts = sort_feed(posts, ordering, ordering_param)
-
     # for main page — add pinned posts
     pinned_posts = Post.objects.none()
     if ordering == ORDERING_ACTIVITY:
@@ -74,24 +71,23 @@ def feed(
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
-    # add more special posts for moderators and authors
+    # add more "special" posts for moderators and authors' feeds
     moderation_posts = Post.objects.none()
     if request.me and post_type == POST_TYPE_ALL \
         and ordering in {ORDERING_ACTIVITY, ORDERING_NEW} \
         and not room and not label_code:
 
-        # add moderated posts to moderators feeds
+        # show rejected posts to moderators and to their authors
         is_moderator_mode = request.me.is_curator or request.me.is_moderator
-        if is_moderator_mode:
-            # show rejected by moderator posts in feed too
-            posts = sort_feed(
-                posts | Post.objects.filter(
-                    moderation_status=Post.MODERATION_REJECTED,
-                    deleted_at__isnull=True,
-                ),
-                ordering,
-                ordering_param,
-            ).select_related("room", "author")
+        rejected_posts = Post.objects.filter(
+            moderation_status=Post.MODERATION_REJECTED,
+            deleted_at__isnull=True,
+            last_activity_at__gte=datetime.utcnow() - timedelta(days=7),
+        )
+        if not is_moderator_mode:
+            rejected_posts = rejected_posts.filter(author_id=request.me.id)
+
+        posts = (posts | rejected_posts).select_related("room", "author")
 
         # show pending moderation posts for authors and moderators on top
         moderation_posts = Post.objects.filter(
@@ -103,6 +99,8 @@ def feed(
         ).select_related("room", "author")
         posts = posts.exclude(id__in=moderation_posts.values("id"))
         pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
+
+    posts = sort_feed(posts, ordering, ordering_param)
 
     return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
