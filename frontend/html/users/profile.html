@@ -235,6 +235,15 @@
             </div>
         {% endif %}
 
+        {% if drafts %}
+            <div class="profile-header">Черновики</div>
+            <div class="profile-list">
+                {% for post in drafts %}
+                    {% include "posts/items/items.html" with post=post upvote_disabled=True %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if projects %}
             <div class="profile-header">Проекты</div>
 

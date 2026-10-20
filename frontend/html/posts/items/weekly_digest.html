@@ -2,6 +2,7 @@
 <div class="feed-post feed-post-type-{{ post.type }} h-entry">
     <div class="feed-post-author">💌</div>
     <div class="feed-post-header">
+        {% include "posts/widgets/pending_moderation.html" %}
         <div class="feed-post-title p-name">
             <a href="{% url "show_post" post.type post.slug %}" class="u-url">{{ post.title }}</a>
         </div>

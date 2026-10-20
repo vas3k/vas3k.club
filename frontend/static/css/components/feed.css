@@ -812,3 +812,25 @@
         margin-bottom: 12px;
     }
 }
+
+.feed-moderation {
+    position: relative;
+}
+
+    .feed-moderation-pending .feed-post,
+    .feed-moderation-rejected .feed-post {
+        --link-color: var(--moderation-text-color);
+        --link-hover-color: var(--moderation-text-color);
+        --visited-link-color: var(--moderation-text-color);
+        background-color: var(--moderation-bg-color);
+        color: var(--moderation-text-color);
+    }
+
+    .feed-moderation-user {
+        margin-bottom: 10px;
+        font-size: 1rem;
+    }
+
+.feed-draft .feed-post {
+    border: 2px dashed var(--text-color);
+}

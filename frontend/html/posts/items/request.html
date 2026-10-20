@@ -2,6 +2,7 @@
 {% load posts %}
 <article class="feed-post feed-post-type-{{ post.type }} h-entry">
     <div class="feed-post-header">
+        {% include "posts/widgets/pending_moderation.html" %}
         <div class="feed-post-title">
             <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
                 <span>{{ post.emoji }} {{ post.prefix }} </span>

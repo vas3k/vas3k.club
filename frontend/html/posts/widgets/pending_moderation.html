@@ -1,5 +1,15 @@
-<span title="Пост еще на модерации. Он виден только вам и по прямой ссылке" class="label" style="background-color: #AAA; color: #FFF;">
-    <span class="label-title">
-        🕓 Пост на модерации
-    </span>
-</span>
+{% load posts %}
+{% if me|can_view_post_moderation:post %}
+    {% if post.is_waiting_for_moderation or post.moderation_status == "rejected" %}
+        <div class="feed-moderation-user">
+            {% if post.moderation_status == "rejected" %}
+                Нужно доработать
+                {% if post.moderation_user_id %}
+                    {% include "users/widgets/tiny.html" with user=post.moderation_user show_name=True %}
+                {% endif %}
+            {% else %}
+                Пост на модерации
+            {% endif %}
+        </div>
+    {% endif %}
+{% endif %}

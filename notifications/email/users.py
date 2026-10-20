@@ -1,7 +1,7 @@
 from django.template import loader, TemplateDoesNotExist
 
 from authn.models.session import Code
-from bot.handlers.common import UserRejectReason
+from users.moderation import UserRejectReason
 from notifications.email.sender import send_transactional_email
 from notifications.helpers import generate_notification_token
 from users.models.user import User

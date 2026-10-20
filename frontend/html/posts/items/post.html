@@ -3,6 +3,7 @@
 {% load text_filters %}
 <article class="block feed-post h-entry {% css_classes post %}">
     <div class="feed-post-header">
+        {% include "posts/widgets/pending_moderation.html" %}
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 
@@ -12,10 +13,6 @@
 
             {% if post.label %}
                 {% include "posts/widgets/label.html" with label=post.label %}
-            {% endif %}
-
-            {% if post.is_waiting_for_moderation %}
-                {% include "posts/widgets/pending_moderation.html" %}
             {% endif %}
         </div>
     </div>

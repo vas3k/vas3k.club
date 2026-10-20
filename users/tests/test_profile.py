@@ -206,3 +206,67 @@ class TestProfileAccessAndRedirects(TestCase):
 
         self.assertEqual(response.context["comments_total"], 0)
         self.assertEqual(list(response.context["comments"]), [])
+
+
+class TestProfilePrivatePosts(TestCase):
+    def setUp(self):
+        self.author = _create_user("profile_private_author", profile_publicity_level=User.PUBLICITY_LEVEL_PUBLIC)
+        self.viewer = _create_user("profile_private_viewer")
+        self.published = _create_post("profile_published", self.author)
+        self.pending = _create_post("profile_pending", self.author, moderation_status=Post.MODERATION_PENDING,
+                                    visibility=Post.VISIBILITY_LINK_ONLY)
+        self.rejected = _create_post("profile_rejected", self.author, moderation_status=Post.MODERATION_REJECTED,
+                                     visibility=Post.VISIBILITY_DRAFT)
+        self.draft = _create_post("profile_draft", self.author, visibility=Post.VISIBILITY_DRAFT)
+        self.deleted = _create_post("profile_deleted", self.author, visibility=Post.VISIBILITY_DRAFT,
+                                    deleted_at=datetime.utcnow())
+        self.foreign_pending = _create_post(
+            "foreign_pending", self.viewer, coauthors=[self.author.slug],
+            moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_LINK_ONLY,
+        )
+
+    def test_author_sees_own_private_posts_and_drafts(self):
+        _login(self.client, self.author)
+        response = self.client.get(f"/user/{self.author.slug}/")
+        self.assertEqual({p.id for p in response.context["posts"]},
+                         {self.published.id, self.pending.id, self.rejected.id})
+        self.assertEqual([p.id for p in response.context["drafts"]], [self.draft.id])
+        self.assertEqual(response.context["posts_total"], 3)
+        response = self.client.get(f"/user/{self.author.slug}/posts/")
+        self.assertEqual({p.id for p in response.context["posts"]},
+                         {self.published.id, self.pending.id, self.rejected.id})
+
+    def test_staff_roles_see_private_posts_and_drafts(self):
+        for role in [User.ROLE_CURATOR, User.ROLE_MODERATOR, User.ROLE_GOD]:
+            with self.subTest(role=role):
+                self.viewer.roles = [role]
+                self.viewer.save()
+                _login(self.client, self.viewer)
+                response = self.client.get(f"/user/{self.author.slug}/")
+                self.assertEqual({p.id for p in response.context["posts"]},
+                                 {self.published.id, self.pending.id, self.rejected.id, self.foreign_pending.id})
+                self.assertEqual([p.id for p in response.context["drafts"]], [self.draft.id])
+                self.assertEqual(response.context["posts_total"], 4)
+                response = self.client.get(f"/user/{self.author.slug}/posts/")
+                self.assertEqual({p.id for p in response.context["posts"]},
+                                 {self.published.id, self.pending.id, self.rejected.id, self.foreign_pending.id})
+
+    def test_unrelated_and_anonymous_viewers_cannot_see_private_posts(self):
+        stranger = _create_user("profile_stranger")
+        for viewer in [None, stranger]:
+            with self.subTest(viewer=viewer):
+                self.client.cookies.clear()
+                if viewer:
+                    _login(self.client, viewer)
+                response = self.client.get(f"/user/{self.author.slug}/")
+                self.assertEqual([p.id for p in response.context["posts"]], [self.published.id])
+                self.assertEqual(response.context["drafts"], [])
+                self.assertEqual(response.context["posts_total"], 1)
+                response = self.client.get(f"/user/{self.author.slug}/posts/")
+                self.assertEqual([p.id for p in response.context["posts"]], [self.published.id])
+
+    def test_private_post_author_can_see_it_on_coauthor_profile(self):
+        _login(self.client, self.viewer)
+        response = self.client.get(f"/user/{self.author.slug}/")
+        self.assertEqual({p.id for p in response.context["posts"]}, {self.published.id, self.foreign_pending.id})
+        self.assertEqual(response.context["drafts"], [])

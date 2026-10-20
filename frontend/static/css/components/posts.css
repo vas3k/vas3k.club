@@ -1242,8 +1242,8 @@
     display: flex;
     align-items: flex-start;
     gap: 16px;
-    background-color: #F6E4C4;
-    color: #6B3E12;
+    background-color: var(--moderation-bg-color);
+    color: var(--moderation-text-color);
     border: none;
 }
 
@@ -1251,6 +1251,13 @@
         flex: 0 0 auto;
         font-size: 200%;
         line-height: 1.2;
+    }
+
+    .block-moderation-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
     }
 
     .block-moderation-message {
@@ -1276,9 +1283,13 @@
             font-weight: 600;
         }
 
+        .block-moderation-reason {
+            white-space: pre-line;
+        }
+
         .block-moderation-footnote {
-            font-size: 80%; 
+            font-size: 80%;
             line-height: 1.45;
             opacity: 0.7;
-            margin-top: 10px;
+            margin-top: 40px;
         }

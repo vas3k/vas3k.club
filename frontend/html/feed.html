@@ -91,8 +91,8 @@
         </div>
     {% endif %}
 
-    {% if waiting_for_moderation_posts %}
-        {% for post in waiting_for_moderation_posts %}
+    {% if moderation_posts %}
+        {% for post in moderation_posts %}
             {% include "posts/items/items.html" %}
         {% endfor %}
     {% endif %}

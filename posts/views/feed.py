@@ -27,6 +27,13 @@ def feed(
     else:
         posts = Post.visible_objects()
 
+    can_moderate = request.me and (request.me.is_curator or request.me.is_moderator)
+    if can_moderate:
+        rejected_posts = Post.objects.filter(
+            moderation_status=Post.MODERATION_REJECTED, deleted_at__isnull=True,
+        )
+        posts = (posts | rejected_posts).select_related("room", "author", "moderation_user")
+
     # filter posts by type
     if post_type != POST_TYPE_ALL:
         posts = posts.filter(type=post_type)
@@ -74,15 +81,16 @@ def feed(
         pinned_posts = posts.filter(is_pinned_until__gte=now)
         posts = posts.filter(Q(is_pinned_until__isnull=True) | Q(is_pinned_until__lt=now))
 
-    # for moderators — pending posts
-    waiting_for_moderation_posts = []
-    if request.resolver_match.url_name == "index" and request.me and (
-        request.me.is_curator or request.me.is_moderator
-    ):
-        waiting_for_moderation_posts = Post.objects.filter(
+    moderation_posts = []
+    if can_moderate and request.resolver_match.url_name == "index":
+        moderation_posts = Post.objects.filter(
             moderation_status=Post.MODERATION_PENDING,
             deleted_at__isnull=True,
-        ).exclude(visibility=Post.VISIBILITY_DRAFT).select_related("room", "author")
+        ).exclude(
+            visibility=Post.VISIBILITY_DRAFT,
+        ).select_related("room", "author", "moderation_user")
+        posts = posts.exclude(id__in=moderation_posts.values("id"))
+        pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
 
     return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
@@ -92,6 +100,6 @@ def feed(
         "label_code": label_code,
         "posts": paginate(request, posts),
         "pinned_posts": pinned_posts,
-        "waiting_for_moderation_posts": waiting_for_moderation_posts,
+        "moderation_posts": moderation_posts,
         "date_month_ago": datetime.utcnow() - timedelta(days=30),
     })

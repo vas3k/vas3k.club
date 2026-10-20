@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
-from django.template import TemplateDoesNotExist
+from django.template import loader
 from django.urls import reverse
 
 from ai.moderation import ai_rate_post_quality
@@ -186,15 +186,15 @@ def notify_post_approved(post: Post):
     return None
 
 
-def render_post_rejected_message(post, reason):
-    try:
-        return render_html_message(f"post_rejected/{reason.value}.html", post=post)
-    except TemplateDoesNotExist:
-        return render_html_message("post_rejected/draft.html", post=post)
-
-
-def notify_post_rejected(post, reason):
-    text = render_post_rejected_message(post, reason)
+def notify_post_rejected(post, reason=None):
+    if reason is not None:
+        template = loader.select_template([
+            f"notifications/post_rejected/{reason.value}.html",
+            "notifications/post_rejected/draft.html",
+        ])
+    else:
+        template = loader.get_template(post.moderation_reason_template)
+    text = template.render({"post": post, "settings": settings})
 
     if post.author.telegram_id:
         send_telegram_message(

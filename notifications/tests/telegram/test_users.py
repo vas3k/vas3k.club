@@ -11,7 +11,7 @@ from notifications.telegram.users import (
     notify_admin_user_ping,
     notify_user_auth,
 )
-from bot.handlers.common import UserRejectReason
+from users.moderation import UserRejectReason
 from posts.models.post import Post
 from users.models.user import User
 

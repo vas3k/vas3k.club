@@ -90,37 +90,32 @@ class TestNotifyPostRejected(TestCase):
         self.post = _create_post(self.author, slug="rejected-post")
 
     @patch("notifications.telegram.posts.send_telegram_message")
-    @patch("notifications.telegram.posts.render_html_message", return_value="<b>rejected</b>")
-    def test_sends_rejection_to_author(self, mock_render, mock_send):
-        from bot.handlers.common import PostRejectReason
-        notify_post_rejected(self.post, PostRejectReason.draft)
+    def test_sends_rejection_to_author(self, mock_send):
+        self.post.moderation_reason = "draft"
+        notify_post_rejected(self.post)
 
         mock_send.assert_called_once()
         call_kwargs = mock_send.call_args
         self.assertEqual(call_kwargs.kwargs["chat"].id, self.author.telegram_id)
 
     @patch("notifications.telegram.posts.send_telegram_message")
+    def test_delivers_previously_queued_rejection(self, mock_send):
+        from bot.handlers.common import PostRejectReason
+
+        notify_post_rejected(self.post, PostRejectReason.title)
+
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args.kwargs["chat"].id, self.author.telegram_id)
+
+    @patch("notifications.telegram.posts.send_telegram_message")
     def test_skips_author_without_telegram(self, mock_send):
         self.author.telegram_id = None
         self.author.save()
 
-        from bot.handlers.common import PostRejectReason
-        notify_post_rejected(self.post, PostRejectReason.draft)
+        self.post.moderation_reason = "draft"
+        notify_post_rejected(self.post)
 
         mock_send.assert_not_called()
-
-    @patch("notifications.telegram.posts.send_telegram_message")
-    @patch("notifications.telegram.posts.render_html_message")
-    def test_falls_back_to_draft_template_on_missing_template(self, mock_render, mock_send):
-        from django.template import TemplateDoesNotExist
-        from bot.handlers.common import PostRejectReason
-
-        mock_render.side_effect = [TemplateDoesNotExist("missing"), "<b>fallback</b>"]
-
-        notify_post_rejected(self.post, PostRejectReason.draft)
-
-        self.assertEqual(mock_render.call_count, 2)
-        self.assertEqual(mock_render.call_args_list[1].args[0], "post_rejected/draft.html")
 
 
 class TestAnnounceInClubChats(TestCase):

@@ -6,7 +6,8 @@ These instructions apply throughout the repository. Preserve the Django site, Vu
 
 - Read `git status`, relevant code, and its callers before editing. Preserve unrelated work; avoid opportunistic refactors, formatting sweeps, and dependency upgrades.
 - Keep logic in its owning domain app and reuse existing dependencies; do not introduce service/repository layers for a local feature.
-- Keep code explicit, with blank lines between semantic steps. Comments explain non-obvious reasons, not every statement. Follow Flake8 style for Python. Do not hard-wrap Markdown paragraphs.
+- Keep code explicit, with blank lines between semantic steps. Follow Flake8 style for Python. Add a newline before if, for, and any other blocks except they are following the same blocks on the upper line (like nested for loops or if's). Do not hard-wrap Markdown paragraphs.
+- Never comment on simple code or what a change did. Add comments only to explain a whole function’s purpose or unintuitive behavior that future reviewers must understand to avoid mistakes; do not narrate the implementation.
 - Extract utility helpers only with **3+ real call sites and 5+ meaningful lines**; inline everything else, including single-use helpers under 10 meaningful lines. Do not pad code or invent callers to qualify. Keep helpers used within one file there; put shared Python helpers in the owning app's `helpers.py` or existing shared module. Framework entry points such as views, form cleaners, and command handlers are not utility extractions.
 - Never introduce leading-underscore names for functions, methods, variables, or attributes. All names must explain their purpose; do not disguise helpers as magic methods.
 - Do not commit, push, or send real messages without authorization. **Never connect to or operate on production.**

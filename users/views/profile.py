@@ -51,13 +51,39 @@ def profile(request, user_slug):
 
     # select other stuff from this user
     intro = Post.get_user_intro(user)
-    projects = Post.visible_objects().filter(author=user, type=Post.TYPE_PROJECT).all()
+    projects = Post.visible_objects().filter(author=user, type=Post.TYPE_PROJECT).exclude(
+        moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED],
+    )
     badges = UserBadge.user_badges_grouped(user=user)
     achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
-    posts = Post.objects_for_user(request.me)\
-        .filter(Q(author=user) | Q(coauthors__contains=[user.slug]))\
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
-        .order_by("-published_at")
+    if request.me and (request.me.is_curator or request.me.is_moderator):
+        visible_posts = Q(visibility=Post.VISIBILITY_EVERYWHERE)
+        visible_posts |= Q(visibility=Post.VISIBILITY_LINK_ONLY, moderation_status=Post.MODERATION_PENDING)
+        visible_posts |= Q(visibility=Post.VISIBILITY_LINK_ONLY, author=request.me)
+        visible_posts |= Q(moderation_status=Post.MODERATION_REJECTED)
+        posts = Post.objects.filter(visible_posts)
+    else:
+        posts = Post.objects_for_user(request.me).exclude(
+            moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED],
+        )
+
+        if request.me:
+            own_moderation_posts = Post.objects.filter(
+                author=request.me,
+                moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED],
+                deleted_at__isnull=True,
+            ).exclude(moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_DRAFT)
+            posts = posts | own_moderation_posts
+
+    posts = posts.filter(Q(author=user) | Q(coauthors__contains=[user.slug])).exclude(
+        type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST],
+    ).filter(deleted_at__isnull=True).select_related("author", "room", "moderation_user").order_by("-published_at")
+
+    drafts = []
+    if request.me and (request.me.id == user.id or request.me.is_curator or request.me.is_moderator):
+        drafts = Post.objects.filter(
+            author=user, visibility=Post.VISIBILITY_DRAFT, deleted_at__isnull=True,
+        ).exclude(moderation_status=Post.MODERATION_REJECTED).select_related("author", "room")[:100]
 
     if request.me:
         comments = Comment.visible_objects()\
@@ -82,6 +108,7 @@ def profile(request, user_slug):
     return render(request, "users/profile.html", {
         "user": user,
         "intro": intro,
+        "drafts": drafts,
         "projects": projects,
         "badges": badges,
         "tags": tags,
@@ -91,7 +118,7 @@ def profile(request, user_slug):
         "comments": comments[:3] if comments else [],
         "comments_total": Comment.count_user_comments(user) if comments is not None else 0,
         "posts": posts[:15],
-        "posts_total": Post.count_user_posts(user, viewer=request.me),
+        "posts_total": posts.count(),
         "similarity": similarity,
         "muted": muted,
         "note": note,
@@ -127,10 +154,29 @@ def profile_posts(request, user_slug):
     if not user.can_view(request.me):
         return render(request, "auth/private_profile.html")
 
-    posts = Post.objects_for_user(request.me) \
-        .filter(Q(author=user) | Q(coauthors__contains=[user.slug])) \
-        .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_PROJECT, Post.TYPE_WEEKLY_DIGEST]) \
-        .order_by("-published_at")
+    if request.me and (request.me.is_curator or request.me.is_moderator):
+        visible_posts = Q(visibility=Post.VISIBILITY_EVERYWHERE)
+        visible_posts |= Q(visibility=Post.VISIBILITY_LINK_ONLY, moderation_status=Post.MODERATION_PENDING)
+        visible_posts |= Q(visibility=Post.VISIBILITY_LINK_ONLY, author=request.me)
+        visible_posts |= Q(moderation_status=Post.MODERATION_REJECTED)
+        posts = Post.objects.filter(visible_posts)
+    else:
+        posts = Post.objects_for_user(request.me).exclude(
+            moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED],
+        )
+        if request.me:
+            own_moderation_posts = Post.objects.filter(
+                author=request.me,
+                moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED],
+                deleted_at__isnull=True,
+            ).exclude(moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_DRAFT)
+            posts = posts | own_moderation_posts
+    posts = posts.filter(Q(author=user) | Q(coauthors__contains=[user.slug])).exclude(
+        type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST],
+    ).filter(deleted_at__isnull=True).select_related("author", "room", "moderation_user").order_by("-published_at")
+    posts = posts.exclude(
+        Q(type=Post.TYPE_PROJECT) & ~Q(moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED])
+    )
 
     return render(request, "users/profile/posts.html", {
         "user": user,

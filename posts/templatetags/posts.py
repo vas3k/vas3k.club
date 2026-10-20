@@ -121,6 +121,11 @@ def link_summary(post):
 
 
 @register.filter
+def can_view_post_moderation(user, post):
+    return post.can_view_post_moderation(user)
+
+
+@register.filter
 def can_upvote_post(user, post):
     return bool(user and user.is_active_membership and user != post.author and user.slug not in post.coauthors)
 

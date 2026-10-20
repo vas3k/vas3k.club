@@ -13,6 +13,7 @@ from simple_history.models import HistoricalRecords
 
 from common.data.labels import LABELS
 from common.models import ModelDiffMixin
+from posts.moderation import PostRejectReason
 from posts.models.views import PostView
 from posts.models.votes import PostVote
 from rooms.models import Room
@@ -133,7 +134,10 @@ class Post(models.Model, ModelDiffMixin):
         choices=MODERATION_STATUSES,
         default=MODERATION_NONE
     )
-    moderation_message = models.TextField(null=True, blank=True)
+    moderation_reason = models.CharField(max_length=32, null=True, blank=True)
+    moderation_user = models.ForeignKey(
+        User, related_name="moderated_posts", null=True, blank=True, on_delete=models.SET_NULL,
+    )
 
     visibility = models.CharField(
         max_length=16,
@@ -162,7 +166,8 @@ class Post(models.Model, ModelDiffMixin):
             "hotness",
             "label_code",
             "moderation_status",
-            "moderation_message",
+            "moderation_reason",
+            "moderation_user",
             "visibility",
             "is_room_only",
             "is_commentable",
@@ -245,6 +250,9 @@ class Post(models.Model, ModelDiffMixin):
     def can_view(self, user):
         return self.visibility != Post.VISIBILITY_DRAFT or self.can_view_draft(user)
 
+    def can_view_post_moderation(self, user):
+        return bool(user and (user.id == self.author_id or user.is_curator or user.is_moderator))
+
     def can_view_draft(self, user):
         if not user:
             return False
@@ -294,6 +302,12 @@ class Post(models.Model, ModelDiffMixin):
     @property
     def is_waiting_for_moderation(self):
         return self.moderation_status == Post.MODERATION_PENDING and self.visibility != Post.VISIBILITY_DRAFT
+
+    @property
+    def moderation_reason_template(self):
+        reasons = {reason.value for reason in PostRejectReason}
+        reason = self.moderation_reason if self.moderation_reason in reasons else PostRejectReason.draft.value
+        return f"notifications/post_rejected/{reason}.html"
 
     @property
     def description(self):
@@ -426,7 +440,8 @@ class Post(models.Model, ModelDiffMixin):
 
     def publish(self):
         self.moderation_status = Post.MODERATION_PENDING
-        self.moderation_message = None
+        self.moderation_reason = None
+        self.moderation_user_id = None
         self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()

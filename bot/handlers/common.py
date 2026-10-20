@@ -1,5 +1,4 @@
 import logging
-from enum import Enum
 from typing import Optional
 
 from telegram import Update
@@ -8,34 +7,11 @@ from telegram.constants import ParseMode
 from bot.config import COMMENT_URL_RE, POST_URL_RE
 from comments.models import Comment
 from posts.models.post import Post
+from posts.moderation import PostRejectReason
 from users.models.user import User
+from users.moderation import UserRejectReason
 
 log = logging.getLogger(__name__)
-
-
-class UserRejectReason(Enum):
-    intro = "intro"
-    data = "data"
-    ai = "ai"
-    aggression = "aggression"
-    general = "general"
-    name = "name"
-
-
-class PostRejectReason(Enum):
-    title = "title"
-    design = "design"
-    dyor = "dyor"
-    duplicate = "duplicate"
-    chat = "chat"
-    tldr = "tldr"
-    bias = "bias"
-    hot = "hot"
-    ad = "ad"
-    inside = "inside"
-    value = "value"
-    draft = "draft"
-    false_dilemma = "false_dilemma"
 
 
 async def get_club_user(update: Update):

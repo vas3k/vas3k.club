@@ -239,47 +239,78 @@ class TestFeedSortingAndVisibility(TestCase):
         response = self.client.get("/all/top_year:twenty/")
         self.assertEqual(response.status_code, 404)
 
-    def test_moderation_roles_see_all_pending_posts_on_index(self):
-        other = _create_user("tfeed_pending_author")
-        pending = _create_post("tfeed_pending", other, moderation_status=Post.MODERATION_PENDING)
-        linked = _create_post(
-            "tfeed_pending_link", other,
+    def test_staff_see_all_pending_posts_only_above_index(self):
+        other = _create_user("moderation_feed_author")
+        room = _create_room("moderation-room")
+        pending = _create_post(
+            "moderation_pending", other, room=room, is_room_only=True,
             moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_LINK_ONLY,
         )
-        _create_post(
-            "tfeed_pending_draft", other,
-            moderation_status=Post.MODERATION_PENDING, visibility=Post.VISIBILITY_DRAFT,
+        Post.objects.filter(id=pending.id).update(created_at=datetime.utcnow() - timedelta(days=800))
+        rejected = _create_post(
+            "moderation_rejected", other, moderation_status=Post.MODERATION_REJECTED,
+            visibility=Post.VISIBILITY_DRAFT, published_at=None,
         )
-        _create_post("tfeed_rejected", other, moderation_status=Post.MODERATION_REJECTED)
-        _create_post(
-            "tfeed_deleted_pending", other,
-            moderation_status=Post.MODERATION_PENDING, deleted_at=datetime.utcnow(),
-        )
-        own_pending = _create_post("tfeed_own_pending", self.user, moderation_status=Post.MODERATION_PENDING)
+        own_pending = _create_post("moderation_own_pending", self.user, moderation_status=Post.MODERATION_PENDING)
+        draft = _create_post("private_draft", other, visibility=Post.VISIBILITY_DRAFT)
+        _create_post("withdrawn_pending", other, visibility=Post.VISIBILITY_DRAFT,
+                     moderation_status=Post.MODERATION_PENDING)
+        deleted = _create_post("deleted_rejection", other, moderation_status=Post.MODERATION_REJECTED,
+                               visibility=Post.VISIBILITY_DRAFT, deleted_at=datetime.utcnow())
+        RoomMuted.objects.create(user=self.user, room=room)
 
         for role in [User.ROLE_CURATOR, User.ROLE_MODERATOR, User.ROLE_GOD]:
+            self.user.roles = [role]
+            self.user.save()
             with self.subTest(role=role):
-                self.user.roles = [role]
-                self.user.save()
                 response = self.client.get("/")
-                pending_ids = {post.id for post in response.context["waiting_for_moderation_posts"]}
-                self.assertEqual(pending_ids, {pending.id, linked.id, own_pending.id})
+                self.assertEqual(
+                    {p.id for p in response.context["moderation_posts"]}, {pending.id, own_pending.id},
+                )
+                feed_ids = {p.id for p in response.context["posts"]}
+                self.assertIn(rejected.id, feed_ids)
+                self.assertNotIn(draft.id, feed_ids)
+                self.assertNotIn(deleted.id, feed_ids)
+                self.assertNotIn(own_pending.id, feed_ids)
+                self.assertNotIn(own_pending.id, [p.id for p in response.context["pinned_posts"]])
 
-    def test_moderation_queue_is_not_available_to_regular_users(self):
-        _create_post("tfeed_pending_regular", self.user, moderation_status=Post.MODERATION_PENDING)
+            for url in ["/post/", "/question/", "/all/new/", "/all/top_week/", "/label/other/", f"/room/{room.slug}/"]:
+                with self.subTest(role=role, url=url):
+                    response = self.client.get(url)
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response.context["moderation_posts"], [])
+                    if url in ["/post/", "/all/new/"]:
+                        self.assertIn(rejected.id, [p.id for p in response.context["posts"]])
+            self.assertTrue(rejected.can_view(self.user))
 
-        response = self.client.get("/")
-
-        self.assertEqual(response.context["waiting_for_moderation_posts"], [])
-
-    def test_moderation_queue_is_only_on_index(self):
-        self.user.roles = [User.ROLE_GOD]
-        self.user.save()
-        _create_post("tfeed_pending_elsewhere", self.user, moderation_status=Post.MODERATION_PENDING)
-        room = _create_room("tfeed-moderation-room")
-
-        for url in ["/post/", "/all/new/", "/all/activity/", f"/room/{room.slug}/", "/label/test/"]:
+    def test_regular_users_cannot_see_moderation_queue_or_rejected_drafts(self):
+        other = _create_user("private_rejection_author")
+        rejected = _create_post("private_rejection", other, moderation_status=Post.MODERATION_REJECTED,
+                                visibility=Post.VISIBILITY_DRAFT)
+        _create_post("private_pending", other, moderation_status=Post.MODERATION_PENDING,
+                     visibility=Post.VISIBILITY_LINK_ONLY)
+        for url in ["/", "/post/", "/all/new/"]:
             with self.subTest(url=url):
                 response = self.client.get(url)
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.context["waiting_for_moderation_posts"], [])
+                self.assertEqual(response.context["moderation_posts"], [])
+                self.assertEqual(list(response.context["posts"]), [])
+        self.assertFalse(rejected.can_view(self.user))
+        self.assertFalse(rejected.can_view(None))
+
+    def test_republish_clears_rejection_attribution(self):
+        post = _create_post("rejected_to_republish", self.user, moderation_status=Post.MODERATION_REJECTED,
+                            moderation_user=self.user, moderation_reason="title", visibility=Post.VISIBILITY_DRAFT)
+        post.publish()
+        post.refresh_from_db()
+        self.assertEqual(post.moderation_status, Post.MODERATION_PENDING)
+        self.assertIsNone(post.moderation_user_id)
+        self.assertIsNone(post.moderation_reason)
+
+    def test_rejection_attribution_is_nullable_and_cleared_when_moderator_is_deleted(self):
+        moderator = _create_user("departing_moderator")
+        post = _create_post("moderator_deleted", self.user, moderation_status=Post.MODERATION_REJECTED,
+                            moderation_user=moderator, visibility=Post.VISIBILITY_DRAFT)
+        User.objects.filter(id=moderator.id).delete()
+        post.refresh_from_db()
+        self.assertIsNone(post.moderation_user_id)
+        self.assertEqual(post.moderation_status, Post.MODERATION_REJECTED)

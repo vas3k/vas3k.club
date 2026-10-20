@@ -302,6 +302,8 @@ ADMIN = ClubAdmin(
                         "published_at",
                         "is_public",
                         "moderation_status",
+                        "moderation_user",
+                        "moderation_reason",
                         "visibility",
                     ],
                     hide_fields=["html", "deleted_at"],

@@ -1,8 +1,8 @@
 <a href="{% url "edit_post" post.slug %}" class="label label-type-draft">
     <span class="label-title">
         <i class="fas fa-edit"></i>
-        {% if post.moderation_status == "rejected" and post.moderation_message %}
-            Отбито модератором
+        {% if post.moderation_status == "rejected" %}
+            Нужно доработать
         {% else %}
             Черновик
         {% endif %}

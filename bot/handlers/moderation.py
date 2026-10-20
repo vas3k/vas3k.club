@@ -7,12 +7,12 @@ from django_q.tasks import async_task
 from telegram import LinkPreviewOptions, Update
 from telegram.ext import CallbackContext
 
-from bot.handlers.common import UserRejectReason, PostRejectReason
+from users.moderation import UserRejectReason
+from posts.moderation import PostRejectReason
 from bot.decorators import is_moderator, ensure_fresh_db_connection
 from notifications.email.users import send_welcome_drink, send_user_rejected_email
 from notifications.telegram.posts import notify_post_approved, announce_in_club_chats, \
-    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers, \
-    render_post_rejected_message
+    notify_post_rejected, notify_post_collectible_tag_owners, notify_post_room_subscribers
 from notifications.telegram.users import notify_user_profile_approved, notify_user_profile_rejected
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -140,13 +140,14 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
+    post.moderation_user = User.objects.get(telegram_id=update.effective_user.id)
     post.moderation_status = Post.MODERATION_REJECTED
-    post.moderation_message = render_post_rejected_message(post, reason)
+    post.moderation_reason = reason.value
     post.unpublish()
 
     SearchIndex.update_post_index(post)
 
-    async_task(notify_post_rejected, post, reason)
+    async_task(notify_post_rejected, post)
 
     await update.effective_chat.send_message(
         f"👎 Пост «{post.title}» перенесен в черновики по причине «{reason.value}» ({update.effective_user.full_name})"
