@@ -235,15 +235,6 @@
             </div>
         {% endif %}
 
-        {% if drafts %}
-            <div class="profile-header">Черновики</div>
-            <div class="profile-list">
-                {% for post in drafts %}
-                    {% include "posts/items/items.html" with post=post upvote_disabled=True %}
-                {% endfor %}
-            </div>
-        {% endif %}
-
         {% if projects %}
             <div class="profile-header">Проекты</div>
 
@@ -383,6 +374,15 @@
                     <a href="{% url "profile_posts" user.slug  %}" class="button button-inverted">Все {{ posts_total }} {{ posts_total|rupluralize:"пост,поста,постов" }}...</a>
                 </div>
             {% endif %}
+        {% endif %}
+
+        {% if drafts %}
+            <div class="profile-header">Черновики</div>
+            <div class="profile-list">
+                {% for post in drafts %}
+                    {% include "posts/items/items.html" with post=post upvote_disabled=True %}
+                {% endfor %}
+            </div>
         {% endif %}
     </div>
 {% endblock %}

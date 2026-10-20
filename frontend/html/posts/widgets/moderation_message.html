@@ -3,13 +3,13 @@
     <div class="block block-moderation">
         <div class="block-moderation-icon">🙏</div>
         <div class="block-moderation-message">
+            <div class="block-moderation-reason">{% include post.moderation_reason_template %}</div>
             {% if post.moderation_user_id %}
                 <div class="block-moderation-user">
                     {% include "users/widgets/tiny.html" with user=post.moderation_user show_name=False %}
                     <a href="{% url "profile" post.moderation_user.slug %}">@{{ post.moderation_user.slug }}</a>
                 </div>
             {% endif %}
-            <div class="block-moderation-reason">{% include post.moderation_reason_template %}</div>
             <p class="block-moderation-footnote">
                 P.S.: Если же вы совсем не понимаете что делать — напишите <a href="{% url "crew" %}" target="_blank">модераторам</a>, мы не кусаемся и мисклики иногда случаются! Однако, мы не редакторы и не сможем сказать <i>«а как лучше написать, чтобы было хорошо»</i>, это вам задачка :)
             </p>

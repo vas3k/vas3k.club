@@ -13,6 +13,7 @@
     --button-hover-border: solid 2px #333;
 
     --moderation-bg-color: #F6E4C4;
+    --moderation-rejected-bg-color: #F9DDDD;
     --moderation-text-color: #6B3E12;
 
     --badge-color: rgba(255, 196, 85, 0.91);

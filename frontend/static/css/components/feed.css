@@ -826,6 +826,10 @@
         color: var(--moderation-text-color);
     }
 
+    .feed-moderation-rejected .feed-post {
+        background-color: var(--moderation-rejected-bg-color);
+    }
+
     .feed-moderation-user {
         margin-bottom: 10px;
         font-size: 1rem;

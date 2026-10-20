@@ -1257,7 +1257,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-bottom: 16px;
+        margin-top: 16px;
     }
 
     .block-moderation-message {
