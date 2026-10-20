@@ -1,8 +1,10 @@
 {% load text_filters %}
 {% load posts %}
-<article class="feed-post feed-post-type-{{ post.type }} h-entry">
+<article class="feed-post feed-post-type-{{ post.type }} h-entry {% css_classes post %}">
     <div class="feed-post-header">
-        {% include "posts/widgets/pending_moderation.html" %}
+        {% if me|can_view_post_moderation:post %}
+            {% include "posts/widgets/pending_moderation.html" %}
+        {% endif %}
         <div class="feed-post-title">
             <a href="{% url "show_post" post.type post.slug %}" class="p-name post-title-link">
                 <span>{{ post.emoji }} {{ post.prefix }} </span>

@@ -28,6 +28,13 @@ def css_classes(context, post):
     if me and hasattr(post, "unread_comments") and post.unread_comments:
         classes += ["feed-post-is-new"]
 
+    if post.can_view_post_moderation(me):
+        if post.is_draft:
+            classes.append("feed-draft")
+
+        if post.is_waiting_for_moderation or post.moderation_status == Post.MODERATION_REJECTED:
+            classes.append(f"feed-moderation-{post.moderation_status}")
+
     return " ".join(classes)
 
 

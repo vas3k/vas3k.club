@@ -1,15 +1,12 @@
-{% load posts %}
-{% if me|can_view_post_moderation:post %}
-    {% if post.is_waiting_for_moderation or post.moderation_status == "rejected" %}
-        <div class="feed-moderation-user">
-            {% if post.moderation_status == "rejected" %}
-                Нужно доработать
-                {% if post.moderation_data.user %}
-                    {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
-                {% endif %}
-            {% else %}
-                Пост на модерации
+{% if post.is_waiting_for_moderation or post.moderation_status == "rejected" %}
+    <div class="feed-moderation-user">
+        {% if post.is_waiting_for_moderation %}
+            <span class="label"><span class="label-title">Пост на модерации</span></span>
+        {% else %}
+            <span class="label"><span class="label-title">Нужно доработать</span></span>
+            {% if post.moderation_data.user %}
+                {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
             {% endif %}
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 {% endif %}

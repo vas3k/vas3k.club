@@ -1,8 +1,11 @@
+{% load posts %}
 {% load text_filters %}
-<div class="feed-post feed-post-type-{{ post.type }} h-entry">
+<div class="feed-post feed-post-type-{{ post.type }} h-entry {% css_classes post %}">
     <div class="feed-post-author">💌</div>
     <div class="feed-post-header">
-        {% include "posts/widgets/pending_moderation.html" %}
+        {% if me|can_view_post_moderation:post %}
+            {% include "posts/widgets/pending_moderation.html" %}
+        {% endif %}
         <div class="feed-post-title p-name">
             <a href="{% url "show_post" post.type post.slug %}" class="u-url">{{ post.title }}</a>
         </div>

@@ -15,7 +15,9 @@
     {% endif %}
 
     <div class="feed-post-header">
-        {% include "posts/widgets/pending_moderation.html" %}
+        {% if me|can_view_post_moderation:post %}
+            {% include "posts/widgets/pending_moderation.html" %}
+        {% endif %}
         <div class="feed-post-title">
             {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
 

@@ -1,10 +1,3 @@
-{% load posts %}
-{% if post.is_draft %}<div class="feed-draft">{% endif %}
-{% if me|can_view_post_moderation:post %}
-    {% if post.is_waiting_for_moderation or post.moderation_status == "rejected" %}
-        <div class="feed-moderation feed-moderation-{{ post.moderation_status }}">
-    {% endif %}
-{% endif %}
 {% if post.type == "post" %}
     {% include "posts/items/post.html" %}
 {% elif post.type == "intro" %}
@@ -27,9 +20,3 @@
     {# Use "post" by default #}
     {% include "posts/items/post.html" %}
 {% endif %}
-{% if me|can_view_post_moderation:post %}
-    {% if post.is_waiting_for_moderation or post.moderation_status == "rejected" %}
-        </div>
-    {% endif %}
-{% endif %}
-{% if post.is_draft %}</div>{% endif %}
