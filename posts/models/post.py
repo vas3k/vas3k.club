@@ -13,7 +13,6 @@ from simple_history.models import HistoricalRecords
 
 from common.data.labels import LABELS
 from common.models import ModelDiffMixin
-from posts.moderation import PostRejectReason
 from posts.models.views import PostView
 from posts.models.votes import PostVote
 from rooms.models import Room
@@ -134,10 +133,7 @@ class Post(models.Model, ModelDiffMixin):
         choices=MODERATION_STATUSES,
         default=MODERATION_NONE
     )
-    moderation_reason = models.CharField(max_length=32, null=True, blank=True)
-    moderation_user = models.ForeignKey(
-        User, related_name="moderated_posts", null=True, blank=True, on_delete=models.SET_NULL,
-    )
+    moderation_data = models.JSONField(null=True, blank=True)
 
     visibility = models.CharField(
         max_length=16,
@@ -166,8 +162,7 @@ class Post(models.Model, ModelDiffMixin):
             "hotness",
             "label_code",
             "moderation_status",
-            "moderation_reason",
-            "moderation_user",
+            "moderation_data",
             "visibility",
             "is_room_only",
             "is_commentable",
@@ -304,12 +299,6 @@ class Post(models.Model, ModelDiffMixin):
         return self.moderation_status == Post.MODERATION_PENDING and self.visibility != Post.VISIBILITY_DRAFT
 
     @property
-    def moderation_reason_template(self):
-        reasons = {reason.value for reason in PostRejectReason}
-        reason = self.moderation_reason if self.moderation_reason in reasons else PostRejectReason.draft.value
-        return f"notifications/post_rejected/{reason}.html"
-
-    @property
     def description(self):
         return truncatechars(strip_tags(self.html or ""), settings.POST_DESCRIPTION_LENGTH)
 
@@ -440,8 +429,7 @@ class Post(models.Model, ModelDiffMixin):
 
     def publish(self):
         self.moderation_status = Post.MODERATION_PENDING
-        self.moderation_reason = None
-        self.moderation_user_id = None
+        self.moderation_data = None
         self.visibility = Post.VISIBILITY_LINK_ONLY  # before moderation
         self.published_at = datetime.utcnow()
         self.last_activity_at = datetime.utcnow()

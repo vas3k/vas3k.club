@@ -140,9 +140,17 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
-    post.moderation_user = User.objects.get(telegram_id=update.effective_user.id)
+    moderator = User.objects.get(telegram_id=update.effective_user.id)
     post.moderation_status = Post.MODERATION_REJECTED
-    post.moderation_reason = reason.value
+    post.moderation_data = {
+        "reason": reason.value,
+        "template": f"notifications/post_rejected/{reason.value}.html",
+        "user": {
+            "slug": moderator.slug,
+            "avatar": moderator.get_avatar(),
+            "full_name": moderator.full_name,
+        },
+    }
     post.unpublish()
 
     SearchIndex.update_post_index(post)

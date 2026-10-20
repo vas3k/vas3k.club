@@ -77,7 +77,7 @@ def profile(request, user_slug):
 
     posts = posts.filter(Q(author=user) | Q(coauthors__contains=[user.slug])).exclude(
         type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST],
-    ).filter(deleted_at__isnull=True).select_related("author", "room", "moderation_user").order_by("-published_at")
+    ).filter(deleted_at__isnull=True).select_related("author", "room").order_by("-published_at")
 
     drafts = []
     if request.me and (request.me.id == user.id or request.me.is_curator or request.me.is_moderator):
@@ -179,7 +179,7 @@ def profile_posts(request, user_slug):
             posts = posts | own_moderation_posts
     posts = posts.filter(Q(author=user) | Q(coauthors__contains=[user.slug])).exclude(
         type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST],
-    ).filter(deleted_at__isnull=True).select_related("author", "room", "moderation_user").order_by("-published_at")
+    ).filter(deleted_at__isnull=True).select_related("author", "room").order_by("-published_at")
     posts = posts.exclude(
         Q(type=Post.TYPE_PROJECT) & ~Q(moderation_status__in=[Post.MODERATION_PENDING, Post.MODERATION_REJECTED])
     )

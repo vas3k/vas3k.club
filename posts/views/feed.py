@@ -82,7 +82,7 @@ def feed(
         posts = (posts | Post.objects.filter(
             moderation_status=Post.MODERATION_REJECTED,
             deleted_at__isnull=True,
-        )).select_related("room", "author", "moderation_user")
+        )).select_related("room", "author")
 
         # show unmoderated posts on top of index page
         if ordering == ORDERING_ACTIVITY:
@@ -91,7 +91,7 @@ def feed(
                 deleted_at__isnull=True,
             ).exclude(
                 visibility=Post.VISIBILITY_DRAFT,
-            ).select_related("room", "author", "moderation_user")
+            ).select_related("room", "author")
             posts = posts.exclude(id__in=moderation_posts.values("id"))
             pinned_posts = pinned_posts.exclude(id__in=moderation_posts.values("id"))
 

@@ -4,8 +4,8 @@
         <div class="feed-moderation-user">
             {% if post.moderation_status == "rejected" %}
                 Нужно доработать
-                {% if post.moderation_user_id %}
-                    {% include "users/widgets/tiny.html" with user=post.moderation_user show_name=True %}
+                {% if post.moderation_data.user %}
+                    {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
                 {% endif %}
             {% else %}
                 Пост на модерации

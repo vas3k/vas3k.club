@@ -383,18 +383,23 @@ class TestFeedSortingAndVisibility(TestCase):
 
     def test_republish_clears_rejection_attribution(self):
         post = _create_post("rejected_to_republish", self.user, moderation_status=Post.MODERATION_REJECTED,
-                            moderation_user=self.user, moderation_reason="title", visibility=Post.VISIBILITY_DRAFT)
+                            moderation_data={"reason": "title", "user": {"slug": self.user.slug}},
+                            visibility=Post.VISIBILITY_DRAFT)
         post.publish()
         post.refresh_from_db()
         self.assertEqual(post.moderation_status, Post.MODERATION_PENDING)
-        self.assertIsNone(post.moderation_user_id)
-        self.assertIsNone(post.moderation_reason)
+        self.assertIsNone(post.moderation_data)
 
-    def test_rejection_attribution_is_nullable_and_cleared_when_moderator_is_deleted(self):
+    def test_rejection_snapshot_survives_moderator_deletion(self):
         moderator = _create_user("departing_moderator")
+        moderation_data = {
+            "reason": "title",
+            "template": "notifications/post_rejected/title.html",
+            "user": {"slug": moderator.slug, "avatar": moderator.get_avatar(), "full_name": moderator.full_name},
+        }
         post = _create_post("moderator_deleted", self.user, moderation_status=Post.MODERATION_REJECTED,
-                            moderation_user=moderator, visibility=Post.VISIBILITY_DRAFT)
+                            moderation_data=moderation_data, visibility=Post.VISIBILITY_DRAFT)
         User.objects.filter(id=moderator.id).delete()
         post.refresh_from_db()
-        self.assertIsNone(post.moderation_user_id)
+        self.assertEqual(post.moderation_data, moderation_data)
         self.assertEqual(post.moderation_status, Post.MODERATION_REJECTED)

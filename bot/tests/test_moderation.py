@@ -34,8 +34,15 @@ class TestPostRejectionAttribution(TransactionTestCase):
             asyncio.run(reject_post(update, None))
 
         post.refresh_from_db()
-        self.assertEqual(post.moderation_reason, "title")
-        self.assertEqual(post.moderation_user_id, moderator.id)
+        self.assertEqual(post.moderation_data, {
+            "reason": "title",
+            "template": "notifications/post_rejected/title.html",
+            "user": {
+                "slug": moderator.slug,
+                "avatar": moderator.get_avatar(),
+                "full_name": moderator.full_name,
+            },
+        })
         self.assertEqual(post.moderation_status, Post.MODERATION_REJECTED)
         self.assertEqual(post.visibility, Post.VISIBILITY_DRAFT)
         enqueue.assert_called_once()

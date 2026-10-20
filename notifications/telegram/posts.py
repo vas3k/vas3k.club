@@ -193,7 +193,9 @@ def notify_post_rejected(post, reason=None):
             "notifications/post_rejected/draft.html",
         ])
     else:
-        template = loader.get_template(post.moderation_reason_template)
+        template = loader.get_template(
+            (post.moderation_data or {}).get("template") or "notifications/post_rejected/draft.html"
+        )
     text = template.render({"post": post, "settings": settings})
 
     if post.author.telegram_id:

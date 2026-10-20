@@ -1,0 +1,4 @@
+<a class="user user-tiny" href="{% url "profile" moderator.slug %}">
+    <span class="avatar user-avatar"><img src="{{ moderator.avatar }}" alt="Аватар {{ moderator.full_name }}" loading="lazy" /></span>
+    <span class="user-name">{{ moderator.full_name }} (@{{ moderator.slug }})</span>
+</a>

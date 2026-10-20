@@ -1,13 +1,12 @@
 {% load posts %}
-{% if post.moderation_reason and me|can_view_post_moderation:post %}
+{% if post.moderation_data and me|can_view_post_moderation:post %}
     <div class="block block-moderation">
         <div class="block-moderation-icon">🙏</div>
         <div class="block-moderation-message">
-            <div class="block-moderation-reason">{% include post.moderation_reason_template %}</div>
-            {% if post.moderation_user_id %}
+            <div class="block-moderation-reason">{% include post.moderation_data.template|default:"notifications/post_rejected/draft.html" %}</div>
+            {% if post.moderation_data.user %}
                 <div class="block-moderation-user">
-                    {% include "users/widgets/tiny.html" with user=post.moderation_user show_name=False %}
-                    <a href="{% url "profile" post.moderation_user.slug %}">@{{ post.moderation_user.slug }}</a>
+                    {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
                 </div>
             {% endif %}
             <p class="block-moderation-footnote">
