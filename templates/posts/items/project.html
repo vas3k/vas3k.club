@@ -1,0 +1,68 @@
+{% load posts %}
+{% load static %}
+{% load text_filters %}
+<article class="block feed-post h-entry {% css_classes post %}">
+    <div class="feed-post-header">
+        <div class="feed-post-title">
+            {% if post.is_pinned %}<i class="fas fa-thumbtack"></i>{% endif %}
+
+            <span class="p-name">
+                Проект: <a href="{% url "show_post" post.type post.slug %}" class="post-title-link">{{ post.title | rutypography }}</a>
+            </span>
+
+            {% if post.label %}
+                {% include "posts/widgets/label.html" with label=post.label %}
+            {% endif %}
+            {% if post.moderation_status == "pending" %}
+                {% include "posts/widgets/moderation_pending_label.html" %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="feed-post-image">
+        <a class="feed-post-image-link" href="{% url "show_post" post.type post.slug %}">
+            <img src="{{ post.image }}" alt="" loading="lazy" width="auto" height="auto">
+        </a>
+    </div>
+
+    <div class="feed-post-votes">
+        <span data-island="PostUpvote" data-json-initial-upvotes="{{ post.upvotes }}"
+                     data-json-hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
+                     data-prop-vote-url="{% url "toggle_post_vote" post.slug %}"
+                     {% if post.upvoted_at %}
+                        data-json-initial-is-voted="true"
+                        data-prop-initial-upvote-timestamp={{post.upvoted_at}}
+                     {% endif %}
+                     {% if not me|can_upvote_post:post or upvote_disabled %}data-json-is-disabled="true"{% endif %}>
+        </span>
+    </div>
+
+    <div class="feed-post-footer">
+        {% if post.room %}
+            <span class="feed-post-room">
+                {% include "rooms/widgets/room.html" with room=post.room type="inline" %}
+            </span>
+        {% endif %}
+
+        {% if post.metadata.badges %}
+            {% for badge_code, badge in post.metadata.badges.items %}
+                <img
+                    src="{% static "images/badges" %}/{{ badge_size|default:"small" }}/{{ badge_code }}.png"
+                    alt="{{ badge.title }}"
+                    class="feed-post-badge">
+            {% endfor %}
+        {% endif %}
+
+        <a href="{% url "show_post" post.type post.slug %}?comment_order=created_at#comments" class="feed-post-comments">
+            {{ post.comment_count }} {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }}
+        </a>
+
+        {% if post.unread_comments %}
+            <a href="{% url "show_post" post.type post.slug %}?comment_order=-created_at#comments" class="feed-post-comments-unread">
+                +{{ post.unread_comments }} {{ post.unread_comments | rupluralize:"новый,новых,новых" }}
+            </a>
+        {% endif %}
+
+        {% include "posts/widgets/bookmark_controls.html" %}
+    </div>
+</article>

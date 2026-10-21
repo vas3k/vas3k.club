@@ -1,0 +1,90 @@
+{% extends "posts/show/layout.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{% block post %}
+<section class="content">
+    <article class="post block post-layout-block">
+        {% block post_upvote %}
+            <div class="post-upvote">
+                <span data-island="PostUpvote" data-json-initial-upvotes="{{ post.upvotes }}"
+                             data-json-hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
+                             data-prop-vote-url="{% url "toggle_post_vote" post.slug %}"
+                             {% if upvoted_at %}
+                                data-json-initial-is-voted="true"
+                                data-prop-initial-upvote-timestamp={{upvoted_at}}
+                             {% endif %}
+                             {% if not me|can_upvote_post:post or upvote_disabled %}data-json-is-disabled="true"{% endif %}>
+                </span>
+            </div>
+        {% endblock %}
+
+        {% block post_header %}
+            <header class="post-header">
+                <div class="post-title">
+                    {% block post_title %}
+                        <h1 class="post-inline-title p-name">{{ post.title | rutypography }}</h1>
+                    {% endblock %}
+
+                    <span class="post-publicity-preferences">
+                        {% include "posts/widgets/publicity_preferences.html" with post=post %}
+                    </span>
+
+                    {% if post.label %}
+                        {% include "posts/widgets/label.html" with label=post.label %}
+                    {% endif %}
+                    {% if post.moderation_status == "pending" %}
+                        {% include "posts/widgets/moderation_pending_label.html" %}
+                    {% endif %}
+
+                    {% if post.deleted_at %}
+                        <div class="post-label">
+                            <span class="label label-type-deleted">
+                                <span class="label-title">Удалённый пост</span>
+                            </span>
+                        </div>
+                    {% elif post.visibility == "draft" %}
+                        <div class="post-label">
+                            {% include "posts/widgets/draft_label.html" %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="post-info">
+                    {% if post.room %}
+                        {% include "rooms/widgets/room.html" with room=post.room type="inline" %}
+                    {% endif %}
+                    <div class="post-actions-line">
+                        {% include "posts/widgets/post_actions_line.html" %}
+                    </div>
+                </div>
+
+                {% if post.metadata.badges %}
+                    <a class="post-badges" href="{% url "profile_badges" post.author.slug %}">
+                        {% include "badges/widgets/badges.html" with badges=post.metadata.badges %}
+                    </a>
+                {% endif %}
+            </header>
+        {% endblock %}
+
+        {% include "posts/widgets/moderation_message.html" %}
+
+        {% block post_text %}
+            <section class="text-body text-body-type-post e-content">
+                {% render_post post %}
+            </section>
+        {% endblock %}
+
+        {% block post_footer %}
+            <section class="post-footer p-author">
+                {% include "users/widgets/small.html" with user=post.author created_at=post.created_at %}
+            </section>
+        {% endblock %}
+    </article>
+
+    {% if me and me.is_active_membership and collectible_tag %}
+        {% include "posts/widgets/collectible_tag.html" %}
+    {% endif %}
+</section>
+{% endblock %}

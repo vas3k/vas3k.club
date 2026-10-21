@@ -310,11 +310,11 @@ class TestPeoplePageRendersMessages(TestCase):
 
         content = self.client.get("/people/").content.decode()
 
-        # the raw characters would break out of the html attribute and the vue template
+        # User content must stay inside the escaped island props.
         self.assertNotIn("<script>alert(1)</script>", content)
         self.assertIn("&lt;script&gt;", content)
         self.assertIn("&#x27;", content)
-        self.assertIn("create-message-url=\"/map/messages.json\"", content)
+        self.assertIn("&quot;createMessageUrl&quot;: &quot;/map/messages.json&quot;", content)
 
     def test_messages_only_filter_hides_users_from_the_map(self):
         self.user.geo = {"latitude": 52.5, "longitude": 13.4, "precise": True}

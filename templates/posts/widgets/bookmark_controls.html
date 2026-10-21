@@ -1,0 +1,9 @@
+{% if me and show_bookmark_controls %}
+    &nbsp;&nbsp;&nbsp;
+    <span data-island="PostBookmark"
+        data-prop-bookmark-url="{% url "toggle_post_bookmark" post.slug %}"
+        {% if is_bookmark %}
+            data-json-initial-is-bookmarked="true"
+        {% endif %}>
+    </span>
+{% endif %}

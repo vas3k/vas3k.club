@@ -340,6 +340,34 @@
             opacity: 0.7;
         }
 
+    @media only screen and (max-width : 570px) {
+        .profile-tags {
+            padding-top: 24px;
+            padding-bottom: 24px;
+        }
+
+        .profile-tags-group {
+            padding-top: 16px;
+            padding-bottom: 40px;
+        }
+
+        .collectible-tags-group {
+            font-size: 104%;
+            padding-bottom: 8px;
+        }
+
+        .user-tag {
+            font-size: 88%;
+            padding: 5.6px 16px;
+            margin-right: 16px;
+            margin-bottom: 16px;
+        }
+
+        .profile-tags-footer {
+            font-size: 96%;
+        }
+    }
+
     .profile-add-button {
         text-align: center;
         padding: 50px 0;
@@ -553,3 +581,6 @@
     justify-content: center;
     margin: 10px 0 40px;
 }
+
+.user-avatar-input { display: inline-block; }
+    .user-avatar-input .avatar { min-width: 200px; min-height: 200px; }

@@ -23,7 +23,7 @@ def render_clicker(renderer: "BaseRenderer", text: str, checked: bool = False) -
     safe_text = html.escape(strip_tags(text))
     renderer_uniq_id = renderer.uniq_id if hasattr(renderer, "uniq_id") else ""
     clicker_id = hashlib.sha1(f"{renderer_uniq_id}{safe_text}".encode()).hexdigest()
-    return f'<clicker clicker-id="{clicker_id}" text="{safe_text}"></clicker>'
+    return f'<span data-island="Clicker" data-prop-clicker-id="{clicker_id}" data-prop-text="{safe_text}"></span>'
 
 
 def clicker(md: "Markdown") -> None:

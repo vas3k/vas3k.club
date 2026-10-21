@@ -19,9 +19,12 @@ services:
     volumes:
       - .:/app:delegated
     depends_on:
-      - postgres
-      - redis
-      - webpack
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      vite:
+        condition: service_completed_successfully
 
   redis:
     image: redis:alpine@sha256:2afba59292f25f5d1af200496db41bea2c6c816b059f57ae74703a50a03a27d0
@@ -40,11 +43,11 @@ services:
     ports:
       - 5432
 
-  webpack:
+  vite:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    command: npm run watch
+    command: sh -c "npm ci && npm run build"
     restart: "no"
     volumes:
       - .:/app:delegated

@@ -1,0 +1,11 @@
+{% load static %}
+
+<script>
+    window.imageUploadUrl = "{{ settings.MEDIA_UPLOAD_URL }}";
+    window.imageUploadCode = "{{ settings.MEDIA_UPLOAD_CODE }}";
+</script>
+
+{% load django_vite %}
+{% vite_hmr_client %}
+{% vite_react_refresh %}
+{% vite_asset "src/main.js" %}

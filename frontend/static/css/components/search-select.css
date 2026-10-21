@@ -1,0 +1,14 @@
+.search-select {
+    min-width: 0;
+    width: 100%;
+}
+
+    .search-select > input { width: 100%; min-width: 0; }
+    .search-select-values { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .search-select-values:not(:empty) { margin-bottom: 0.5rem; }
+    .search-select-values button { white-space: normal; overflow-wrap: anywhere; }
+
+@media (max-width: 570px) {
+    .search-select > input { font-size: 16px; }
+    .search-select button { min-height: 44px; }
+}

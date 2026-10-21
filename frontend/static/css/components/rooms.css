@@ -401,18 +401,21 @@
     margin: 0;
     text-decoration: none;
     overflow-wrap: anywhere;
+    opacity: 1;
 }
 
-    .room-membership,
-    .room-membership:hover {
-        color: var(--room-color);
-        border-color: currentColor;
+    .user-tag.room-membership,
+    .user-tag.room-membership:hover {
+        color: #FFF;
+        background-color: var(--room-color);
+        border-color: var(--room-color);
         border-width: 2.5px;
+        opacity: 1;
     }
 
-    .room-membership:hover {
-        background-color: var(--room-color);
-        color: #FFF;
+    .user-tag.room-membership:hover {
+        color: var(--room-color);
+        background-color: transparent;
         border-color: var(--room-color);
     }
 
@@ -440,3 +443,24 @@
     .room-membership-icon {
         flex-shrink: 0;
     }
+
+@media only screen and (max-width : 570px) {
+    .profile-rooms {
+        gap: 16px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+
+    .profile-rooms-more {
+        font-size: 88%;
+    }
+
+    .room-membership {
+        gap: 6.4px;
+    }
+
+    .room-membership-with-avatar {
+        margin-left: 16px;
+        padding-left: 36.8px;
+    }
+}

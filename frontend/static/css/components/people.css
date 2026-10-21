@@ -363,7 +363,7 @@
 
     .people-map-message-full,
     .people-map-message-compose {
-        max-width: min(500px, 100vw);
+        max-width: min(500px, calc(100vw - 40px));
     }
 
     .people-map-message-full {

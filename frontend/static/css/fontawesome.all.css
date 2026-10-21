@@ -4392,8 +4392,7 @@ readers do not read off random characters that represent icons */
 .fa-vr-cardboard:before {
   content: "\f729"; }
 
-.fa-vuejs:before {
-  content: "\f41f"; }
+
 
 .fa-walking:before {
   content: "\f554"; }

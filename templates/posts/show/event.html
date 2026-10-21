@@ -1,0 +1,111 @@
+{% extends "posts/show/post.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{# this type in inherited from "post" #}
+{% block post_header %}
+    <header class="post-header">
+        <div class="post-info">
+            {% if post.room %}
+                {% include "rooms/widgets/room.html" with room=post.room type="post" %}
+            {% endif %}
+        </div>
+
+        <h1 class="post-title">
+            📅 {{ post.title | rutypography }}
+        </h1>
+
+        <div class="clearfix10"></div>
+
+        <span class="post-publicity-preferences">
+            {% include "posts/widgets/publicity_preferences.html" with post=post %}
+        </span>
+
+        <div class="post-data">
+            {% if post.deleted_at %}
+                <div class="post-label">
+                    <span class="label label-type-deleted">
+                        <span class="label-title">Удалённый пост</span>
+                    </span>
+                </div>
+            {% elif post.visibility == "draft" %}
+                <div class="post-label">
+                    {% include "posts/widgets/draft_label.html" %}
+                </div>
+            {% endif %}
+
+            <div class="post-actions-line">
+                {% include "posts/widgets/post_actions_line.html" %}
+            </div>
+
+            {% if post.label %}
+                <div class="post-label">
+                    {% include "posts/widgets/label.html" with label=post.label %}
+                </div>
+            {% endif %}
+
+            {% if post.moderation_status == "pending" %}
+                <div class="post-label">
+                    {% include "posts/widgets/moderation_pending_label.html" %}
+                </div>
+            {% endif %}
+
+            {% if post.image %}
+                <div class="post-image">
+                    <img src="{{ post.image }}" alt="{{ post.title }}">
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="block post-event">
+        <div class="post-event-side">
+            {% if post.metadata.event %}
+                <div class="post-event-date">
+                    <div class="post-event-date-day">
+                        {{ post.event_datetime|date:"d" }}
+                    </div>
+                    <div class="post-event-date-month">
+                        {{ post.event_datetime|date:"E"|lower  }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="post-event-title">
+            {{ post.event_datetime|date:"l" }}, в {{ post.event_datetime|date:"H" }}:{{ post.event_datetime|date:"i" }} {% if post.metadata.event.timezone %}{{ post.metadata.event.timezone|human_readable_timezone }}{% endif %}
+        </div>
+
+        <div class="post-event-location">
+            {% if post.metadata.event.location %}
+                <i class="fas fa-map-marker-alt"></i>&nbsp;{{ post.metadata.event.location | urlize }}
+            {% endif %}
+        </div>
+
+        <div class="post-event-calendar">
+            Добавить в&nbsp;
+            <a class="button button-small" href="{% url "generate_ical_invite" %}?title={{ post.title|urlencode }}&date={{ post.event_datetime|date:"c"|urlencode }}&timezone={{ post.metadata.event.timezone|urlencode }}{% if post.metadata.event.location %}&location={{ post.metadata.event.location|urlencode }}{% endif %}&url={{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank"><i class="fab fa-apple"></i>&nbsp;Apple Календарь</a>
+            <a class="button button-small" href="{% url "generate_google_invite" %}?title={{ post.title|urlencode }}&date={{ post.event_datetime|date:"c"|urlencode }}&timezone={{ post.metadata.event.timezone|urlencode }}{% if post.metadata.event.location %}&location={{ post.metadata.event.location|urlencode }}{% endif %}&url={{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}" target="_blank"><i class="fab fa-google"></i>&nbsp;Google Календарь</a>
+        </div>
+
+        <div class="post-event-rsvp">
+            {% if me and me.is_active_membership %}
+                <span data-island="PostRSVP"
+                    data-prop-url="{% url "toggle_post_event_participation" post.slug %}"
+                    {% if request.me.id|stringformat:"s" in post.metadata.event.participants %}data-json-is-active-by-default="true"{% endif %}
+                >
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="post-event-participants">
+        {% if post.metadata.event.participants %}
+            <div class="post-event-participants-text">{{ post.metadata.event.participants | length }} {{ post.metadata.event.participants | length | rupluralize:"человек,человека,человек" }} хотят прийти 👉</div>
+            {% for user in post.event_participants %}
+                {% include "users/widgets/round.html" with user=user show_name=False %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

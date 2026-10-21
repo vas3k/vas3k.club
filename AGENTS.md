@@ -1,6 +1,6 @@
 # vas3k.club contributor guidelines
 
-These instructions apply throughout the repository. Preserve the Django site, Vue 2 widgets, and homegrown CSS design system. Favor small, readable changes and reuse existing code and UI.
+These instructions apply throughout the repository. Preserve the Django site, React islands, and homegrown CSS design system. Favor small, readable changes and reuse existing code and UI.
 
 ## Working rules
 
@@ -18,12 +18,12 @@ These instructions apply throughout the repository. Preserve the Django site, Vu
 | --- | --- |
 | Django + PostgreSQL | `club/settings.py`, `club/urls.py`; domain apps own models, forms, views, APIs, and migrations |
 | Shared Python | `common/` for request, Markdown, image, and form behavior; `utils/` for existing general utilities |
-| Frontend | Django templates in `frontend/html/`; JavaScript in `frontend/static/js/`; styles in `frontend/static/css/`; images/fonts in `frontend/static/images/` and `frontend/static/webfonts/` |
+| Frontend | Django templates in `templates/`; JavaScript in `frontend/src/`; styles in `frontend/static/css/`; images/fonts in `frontend/static/images/` and `frontend/static/webfonts/` |
 | Club Telegram bot | `bot/main.py`, `bot/handlers/`: account linking, replies, votes, moderation, and AI assistance from `ai/` |
 | Helpdesk Telegram bot | `helpdeskbot/main.py`, `helpdeskbot/handlers/`, `helpdeskbot/models.py`, `helpdeskbot/config.py`; templates in `helpdeskbot/templates/messages/` |
 | Shared queue service | Redis + Django Q2 (`django_q`); `Q_CLUSTER` in `club/settings.py` |
 | Manual and periodic operations | `<app>/management/commands/`; periodic schedules in `etc/crontab` |
-| Administration | Custom Godmode: `godmode/config.py`, `godmode/admin.py`, `godmode/actions/`, `godmode/pages/`, and `frontend/html/godmode/` |
+| Administration | Custom Godmode: `godmode/config.py`, `godmode/admin.py`, `godmode/actions/`, `godmode/pages/`, and `templates/godmode/` |
 
 ## Fresh checkout and local commands
 
@@ -33,7 +33,7 @@ Native development requires uv, Node.js 22/npm, PostgreSQL with its `libpq` clie
 
 Export environment variables in the shell or put them in an optional ignored `.env` at the repository root, read by `club/settings.py` through `python-dotenv`; uv does not create it. `club/.env.example` is a commented reference: uncomment and fill only the settings you need; leave unused credentials unset. Bot commands require development tokens and chat IDs; bots are optional for website work.
 
-For the first native run, install dependencies, build the frontend, apply local migrations, initialize tags, then start Django, in the order below. Start the queue and frontend watcher in separate terminals when needed.
+For the first native run, install dependencies, build the frontend, apply local migrations, initialize tags, then start Django, in the order below. Start the queue and Vite dev server in separate terminals when needed.
 
 | Task | Command |
 | --- | --- |
@@ -45,10 +45,10 @@ For the first native run, install dependencies, build the frontend, apply local 
 | Queue workers | `uv run python manage.py qcluster` |
 | Club bot | `uv run python bot/main.py` |
 | Helpdesk bot | `uv run python helpdeskbot/main.py` |
-| Webpack watch | `npm run watch --prefix frontend` (its prewatch hook runs `npm ci`) |
+| Vite development | `npm run dev --prefix frontend` with `VITE_DEV_MODE=true` on Django |
 | Generate migrations after model changes | `uv run python manage.py makemigrations <app>` |
 
-Alternatively, use the complete development stack with `docker compose up --build --pull always`: it supplies the runtimes, PostgreSQL, Redis, queue, and webpack, and applies migrations at startup. The Dockerfile currently downloads an amd64 Supercronic binary; ARM hosts need `DOCKER_DEFAULT_PLATFORM=linux/amd64` for this image. Inside its prepared app container, run `docker compose exec club_app python3 manage.py <command>`. Compose does not publish PostgreSQL/Redis ports to the host; native uv commands need their own reachable services. Preserve both development paths.
+Alternatively, use the complete development stack with `docker compose up --build --pull always`: it supplies the runtimes, PostgreSQL, Redis, queue, and Vite, and applies migrations at startup. The Dockerfile currently downloads an amd64 Supercronic binary; ARM hosts need `DOCKER_DEFAULT_PLATFORM=linux/amd64` for this image. Inside its prepared app container, run `docker compose exec club_app python3 manage.py <command>`. Compose does not publish PostgreSQL/Redis ports to the host; native uv commands need their own reachable services. Preserve both development paths.
 
 Keep dependency declarations and locks consistent: `pyproject.toml`/`uv.lock`, `frontend/package.json`/`package-lock.json`.
 
@@ -66,21 +66,25 @@ Keep dependency declarations and locks consistent: `pyproject.toml`/`uv.lock`, `
 - Keep queries bounded and reuse `select_related`, `prefetch_related`, annotations, and pagination. Preserve `F()` counter updates, transactions, uniqueness, and duplicate-delivery safeguards for votes, payments, invites, and webhooks.
 - Reuse `common/markdown/`, image-upload helpers, and URL safety checks. Keep private data out of public serializers, browser props, and logs.
 
-## Vue 2 and Django templates
+## React islands and Django templates
 
-- Django owns pages, routing, forms, and initial data. Vue adds interaction inside those pages. Keep Vue 2 Options API (`props`, `data()`, `computed`, `methods`, lifecycle hooks); no SPA, Vue 3, React, router/store, or bundler migration unless explicitly requested.
-- Components live in `frontend/static/js/components/` and are registered in `main.js`, generally through lazy imports. Keep the existing `#app` and `#footer` mounts. The root's disabled interpolation delimiters protect user content containing `{{` and must remain disabled.
-- Pass URLs and initial values from Django through correctly typed props. Use explicit closing component tags in HTML templates and preserve named inputs for normal form submission. Reuse `frontend/static/js/common/api.service.js` (`ClubApi`) and its JSON/error conventions; shared browser helpers belong in that `common/` directory.
-- Extend existing layouts and reuse feature `widgets/` and form includes under `frontend/html/`. Keep template escaping; safely serialize structured data instead of interpolating untrusted JavaScript. Use `{% static %}` for static URLs.
-- Webpack + `django-webpack-loader` connects `frontend/static/js/main.js`, `frontend/static/css/index.css`, and `{% render_bundle %}`. Edit source, never generated `frontend/static/dist/` or `frontend/webpack-stats.json`.
+- Django owns pages, routes, forms, and initial data. Use plain JavaScript/JSX React islands for interaction. No SPA, TypeScript, client router, global store, or UI framework. Native controls and small inline handlers are welcome.
+- Keep CSS in `frontend/static/css/` and images in `frontend/static/images/`; never put stylesheets or images in `frontend/src/`.
+- Components live in `frontend/src/islands/`, shared UI in `components/`, and browser helpers in `lib/`. `core/islands.js` lazily mounts each island. Use function components for new UI; isolate imperative Mapbox/EasyMDE lifecycles. Never rewrite working map algorithms just to change syntax.
+- Effects synchronize external systems; derive values during render and handle user actions in event handlers. Clean up maps, editors, timers, object URLs, listeners, and stale requests. Extract shared hooks only when the helper rules above are met. Do not mirror props in state unless they are explicitly initial values.
+- Pass props with `{% load islands %}` and `{% island "Component" prop_name=value %}`. The tag escapes JSON and converts snake_case to camelCase. Preserve named form inputs, template escaping, and normal POST/redirect behavior. Use `{% static %}` for ordinary assets and named domain URLs ending in `.json` for JSON calls through `ClubApi`.
+- Vite and django-vite connect `src/main.js`, `static/css/index.css`, and the template asset tags. Edit source, never `frontend/static/dist/`. Use Vite's native JSX pipeline and Vitest; do not introduce Babel or a separate test transpiler. Keep package manifests and lockfiles synchronized.
+- Templates, including Markdown notifications, belong in `templates/`; `common/messages.py` renders `templates/messages/` through Django. Keep `authn/views/openid.py`, RSS/JSON feeds, and ordinary moderator POST actions intact during frontend work.
+- Keep EasyMDE and Mapbox. Preserve reply drafts, mentions, uploads, hidden coordinates, and cleanup. Reply portal wrappers participate in layout; battle replies use `.reply-form-container` in the `reply-form` grid area.
+- Treat touch, keyboard, and pointer interaction equally. Use real buttons/inputs, visible errors, accessible labels, and IME-safe shortcuts. Keep native textareas on iOS/Android, including touch-enabled iPadOS. Focus reply inputs within the opening interaction; delayed focus can fail to open phone keyboards. Honor reduced motion and preserve the three-position light/system/dark control.
 
 ## CSS is our design system
 
-- Read `theme.css`, `base.css`, `layout.css`, and the relevant `css/components/*.css` before adding styles. Reuse existing classes such as `content`, `block`, `block-header`, `button`, `form-row`, and `text-body`, plus existing template/Vue widgets.
+- Read `theme.css`, `base.css`, `layout.css`, and the relevant `css/components/*.css` before adding styles. Reuse existing classes such as `content`, `block`, `block-header`, `button`, `form-row`, and `text-body`, plus existing template/React widgets.
 - Preserve the deliberately padded/indented selector hierarchy: child and modifier rules are indented beneath the parent while remaining separate, flat CSS rules. Do not flatten formatting or convert it to Sass, CSS nesting, utility classes, or a new naming scheme.
 - `theme.css` owns shared colors, fonts, and theme tokens; `base.css` owns reusable primitives; `layout.css` owns layouts/grids. Feature styles go in `css/components/<feature>.css`, imported by `css/index.css`. `components.css` is legacy: do not add new rules there.
-- Use existing CSS variables and spacing/responsive patterns, including the common 570px mobile breakpoint. Account for light, dark, and automatic themes. Changes to theme detection must keep `frontend/html/layout.html` and `ThemeSwitcher.vue` consistent.
-- Prefer shared styles over duplicate rules or new inline styles. Keep existing component-local styles local when appropriate; do not move shared design primitives into Vue scoped styles. Do not add a UI kit, CSS framework, or parallel design system.
+- Use existing CSS variables and spacing/responsive patterns, including the common 570px mobile breakpoint. Account for light, dark, and automatic themes. Changes to theme detection must keep `templates/layout.html` and `ThemeSwitcher.jsx` consistent.
+- Prefer shared styles over duplicate rules or new inline styles. Keep existing component-local styles local when appropriate; do not move shared design primitives into component styles. Do not add a UI kit, CSS framework, or parallel design system.
 
 ## Telegram bots
 
@@ -90,7 +94,7 @@ Keep dependency declarations and locks consistent: `pyproject.toml`/`uv.lock`, `
 ## Shared queue service
 
 - The queue runs separately from Django's web process and both bots. All apps and both bots use `django_q.tasks.async_task` to enqueue async or long-running work for its workers. Queued jobs are ordinary synchronous functions; preserve their argument contracts and retry/idempotency behavior.
-- Notifications are one queue workload. Reuse `notifications/telegram/common.py`, `SyncBot` in `notifications/telegram/bot.py`, and `notifications/email/sender.py`; do not add event loops or route queued sends through a running bot. Preserve recipient filtering, mute rules, and deduplication. Club notification templates live in `frontend/html/notifications/`.
+- Notifications are one queue workload. Reuse `notifications/telegram/common.py`, `SyncBot` in `notifications/telegram/bot.py`, and `notifications/email/sender.py`; do not add event loops or route queued sends through a running bot. Preserve recipient filtering, mute rules, and deduplication. Club notification templates live in `templates/notifications/`.
 
 ## Management commands and periodic tasks
 
@@ -101,7 +105,6 @@ Keep dependency declarations and locks consistent: `pyproject.toml`/`uv.lock`, `
 
 - Cover only important backend/Python business logic: access control, state transitions, payments/membership, votes, limits, privacy, and consequential bot/job decisions. Assert outcomes and persisted state. Do not add tests for templates, buttons, CSS, page wording, or notification/message text. Existing frontend/UI tests are not a precedent; leave unrelated tests and CI alone.
 - Run relevant backend tests after substantial changes to business logic, persistence, permissions, or shared Python behavior, or when requested. Skip routine test runs for small edits and frontend-only changes. Use the full suite for broad backend changes.
-- Focused run: `TESTS_RUN=true uv run python manage.py test <app>.tests`; full backend suite: `TESTS_RUN=true uv run python manage.py test`. Use existing Django `TestCase`/`SimpleTestCase`, fixtures, and `debug/utils_for_tests.py` helpers. Mock external APIs and queue sends; never contact real Telegram, email, payment, or AI services in tests. Database tests need PostgreSQL and a local role allowed to create test databases; existing integration paths may also need Redis and a built webpack bundle.
 - Browser checks, screenshots, and browser automation run **only when explicitly requested**. Use scoped lint/build checks when warranted. Review the final diff, templates, props, CSS, and affected callers; report checks actually run and any limitations.
 
 ## Deployment and configuration

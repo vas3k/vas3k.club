@@ -64,7 +64,6 @@ WORKDIR /app
 COPY --link --from=python-builder /opt/venv /opt/venv
 COPY --link . .
 COPY --link --from=frontend-builder /app/frontend/static/dist/ ./frontend/static/dist/
-COPY --link --from=frontend-builder /app/frontend/webpack-stats.json ./frontend/webpack-stats.json
 COPY --link etc/crontab /app/etc/crontab
 RUN supercronic -test /app/etc/crontab
 

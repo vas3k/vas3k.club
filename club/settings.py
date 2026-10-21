@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "ai.apps.AiConfig",
     "simple_history",
     "django_q",
-    "webpack_loader",
+    "django_vite",
     "helpdeskbot.apps.HelpDeskBotConfig",
 ]
 
@@ -72,9 +72,9 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
             os.path.join(BASE_DIR, "helpdeskbot/templates"),
-            os.path.join(BASE_DIR, "frontend/html"),
+            os.path.join(BASE_DIR, "templates"),
         ],
-        "APP_DIRS": DEBUG,
+        "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -85,17 +85,6 @@ TEMPLATES = [
                 "posts.context_processors.feed.rooms",
                 "posts.context_processors.feed.ordering",
             ],
-            **({} if DEBUG else {
-                "loaders": [
-                    (
-                        "django.template.loaders.cached.Loader",
-                        [
-                            "django.template.loaders.filesystem.Loader",
-                            "django.template.loaders.app_directories.Loader",
-                        ],
-                    ),
-                ],
-            }),
         },
     }
 ]
@@ -454,17 +443,6 @@ SUPPORTED_TIME_ZONES = [
 	("Asia/Yakutsk", "по Якутску")
 ]
 
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "CACHE": not DEBUG,
-        "BUNDLE_DIR_NAME": "/dist/",  # must end with slash
-        "STATS_FILE": os.path.join(BASE_DIR, "frontend/webpack-stats.json"),
-        "POLL_INTERVAL": 0.1,
-        "TIMEOUT": None,
-        "IGNORE": [r".+\.hot-update.js", r".+\.map"],
-        "LOADER_CLASS": "webpack_loader.loader.WebpackLoader",
-    }
-}
 
 if SENTRY_DSN and not DEBUG:
     # activate sentry on production
@@ -481,3 +459,12 @@ if SENTRY_DSN and not DEBUG:
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
+
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": os.getenv("VITE_DEV_MODE", "false").lower() == "true" and not TESTS_RUN,
+        "static_url_prefix": "dist",
+        "dev_server_port": int(os.getenv("VITE_DEV_SERVER_PORT", "5173")),
+        "manifest_path": os.path.join(BASE_DIR, "frontend/static/dist/.vite/manifest.json"),
+    }
+}

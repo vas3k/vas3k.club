@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load posts %}
+{% load text_filters %}
+
+{% load islands %}
+
+{% block title %}
+    {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.room %} [{{ post.room.title }}]{% endif %} — {{ block.super }}
+{% endblock %}
+
+{% block og_tags %}
+    <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta property="og:site_name" content="{{ settings.APP_NAME }}">
+    <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="{% if post.is_public %}{{ post.description | truncatechars:150 }}{% else %}🔒 Это закрытый пост, доступный только членам Клуба{% endif %}">
+    <meta property="og:image" content="{% og_image post %}">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
+    <meta name="twitter:description" content="{% if post.is_public %}{{ post.description | truncatechars:150 }}{% else %}🔒 Это закрытый пост, доступный только членам Клуба{% endif %}">
+    <meta name="twitter:image" content="{% og_image post %}">
+{% endblock %}
+
+{% block content %}
+    {% block post %}
+        <div class="content h-entry">
+            {{ post }}
+        </div>
+    {% endblock %}
+
+    {% block pre_comments %}
+        {% if linked_posts %}
+            {% include "posts/widgets/linked_posts.html" %}
+        {% endif %}
+    {% endblock %}
+
+    <div class="content">
+        {% block comments %}
+            <div class="post-comments" id="comments">
+                <div class="comment-scroll-arrow-wrapper">
+                    <span data-island="CommentScrollArrow"></span>
+                </div>
+
+                <div class="post-comments-title" id="post-comments-title">
+                    <div class="post-comments-title-left">
+                        {% if post.comment_count > 0 %}
+                            <a href="#comments" class="post-comments-count">
+                                {{ post.comment_count }}  {{ post.comment_count | rupluralize:"комментарий,комментария,комментариев" }} 👇
+                            </a>
+
+                            <form action=".#comments" method="get" class="post-comments-order">
+                                <select name="comment_order" onchange="this.form.submit()">
+                                    <option value="-upvotes" {% if comment_order == "-upvotes" %}selected{% endif %}>по крутости</option>
+                                    <option value="-created_at" {% if comment_order == "-created_at" %}selected{% endif %}>по свежести</option>
+                                    <option value="created_at" {% if comment_order == "created_at" %}selected{% endif %}>по порядку</option>
+                                </select>
+                            </form>
+                        {% elif post.is_commentable %}
+                            <a href="#comments" class="post-comments-count">
+                                Откомментируйте первым 👇
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="post-comments-title-left">
+                        {% if me and me.is_active_membership %}
+                            <span data-island="Toggle"
+                                data-prop-url="{% url "toggle_post_subscription" post.slug %}"
+                                {% if subscription %}data-json-is-active-by-default="true"{% endif %}
+                                data-prop-class-name="post-comments-subscription"
+                            >
+                                подписка на комментарии
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if comments %}
+                    {% if post.is_commentable and me %}
+                        {% url "create_comment" post.slug as create_comment_url %}
+                        <div>{% island "ReplyForm" comment_order=comment_order avatar_url=me.get_avatar username=me.full_name create_comment_url=create_comment_url %}</div>
+                    {% endif %}
+
+                    <div class="post-comments-list">
+                        {% include "comments/list.html" with comments=comments reply_form=reply_form type="normal" muted_user_ids=muted_user_ids %}
+                    </div>
+                {% endif %}
+
+                {% if me and me.is_active_membership and post.is_commentable or me.is_moderator %}
+                    <div class="post-comments-form" id="post-comments-form">
+                        {% include "comments/forms/comment.html" with post=post form=comment_form save_message="Отправить"%}
+                    </div>
+
+                    {% block comments_rules %}
+                        <div class="post-comments-rules">
+                            <ul>
+                                <li>🤬 Помните, что за оскорбление других участников, пассивную агрессию, недружелюбность и прочие нарушения <a href="{% url "show_post" "docs" "about" %}">правил этикета</a> — будет бан</li>
+                                <li>☝️ Если кто-то ведёт себя плохо — скажите ему. Если он продолжает, позовите <a href="/user/moderator/">@moderator</a></li>
+                                <li>👀 Автор поста может и должен модерировать срачи в комментариях</li>
+                                <li>🥰 Не душните, расслабьтесь и будьте сладкими пирожочками</li>
+                                <li>✍️ Можно использовать <a href="https://doka.guide/tools/markdown/" target="_blank">Markdown</a></li>
+                            </ul>
+                        </div>
+                    {% endblock %}
+                {% endif %}
+            </div>
+        {% endblock %}
+
+        {% if me and not post.is_commentable %}
+            {% include "posts/widgets/not_commentable.html" %}
+        {% endif %}
+
+        {% if me and not me.is_active_membership %}
+            {% include "posts/widgets/membership_expired.html" %}
+        {% endif %}
+
+        {% if not me %}
+            {% include "posts/widgets/join_the_club.html" %}
+        {% endif %}
+    </div>
+{% endblock %}

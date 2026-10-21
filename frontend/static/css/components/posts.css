@@ -28,6 +28,7 @@
 }
 
 .post-actions-line-item {
+    display: inline-block;
     padding-right: 15px;
 }
 
@@ -1069,7 +1070,7 @@
 
 .battle-comments-list {
     display: grid;
-    grid-template-columns: 10% 1fr 10%;
+    grid-template-columns: 10% minmax(0, 1fr) 10%;
     grid-template-areas:
             "prefix prefix prefix"
             "left center right"
@@ -1081,7 +1082,7 @@
     grid-area: replies;
 }
 
-.battle-comments-list #comment-reply-form {
+.battle-comments-list > .reply-form-container {
     grid-area: reply-form;
 }
 
@@ -1138,10 +1139,6 @@
 
 .post-comments-subscription > * {
     cursor: pointer;
-}
-
-.post-comments-subscription > input {
-    margin-right: 5px;
 }
 
 .post-toc {

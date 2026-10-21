@@ -22,7 +22,6 @@ CHANGELOG.md
 CONTRIBUTING.md
 LICENSE
 README.md
-docs/
 setup.cfg
 **/.pytest_cache
 
@@ -37,3 +36,5 @@ db.sqlite3
 gdpr/downloads/*.zip
 pip-log.txt
 venv/
+
+frontend/static/dist/

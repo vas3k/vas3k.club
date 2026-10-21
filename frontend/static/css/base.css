@@ -761,3 +761,5 @@ input[type=range]:focus::-ms-fill-upper {
     .page-404-buttons {
         padding-top: 150px;
     }
+
+[data-island] { display: contents; }

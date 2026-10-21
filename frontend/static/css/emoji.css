@@ -1,0 +1,11 @@
+@import "@fontsource/noto-color-emoji/400.css";
+
+:root {
+    --sans-font: "Ubuntu", "Noto Color Emoji", Helvetica, Verdana, sans-serif;
+    --serif-font: "Merriweather", "Noto Color Emoji", Georgia, Times, serif;
+}
+
+.text-body code,
+.text-body pre code {
+    font-family: "Ubuntu", "Noto Color Emoji", monospace;
+}

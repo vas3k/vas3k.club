@@ -1,0 +1,21 @@
+<section class="block post-collectible-tag-block">
+    <div class="post-collectible-tag-bg">
+        💎
+    </div>
+
+    <div class="post-collectible-tag-header">
+        💎 Вы нашли коллекционный тег!
+    </div>
+
+    <span data-island="UserTag" data-prop-tag-name="{{ collectible_tag.name }}"
+              data-prop-tag-color="{{ collectible_tag.color }}"
+              data-prop-class-name="user-tag post-collectible-tag"
+              data-prop-url="{% url "toggle_tag" collectible_tag.code %}"
+              {% if is_collectible_tag_collected %}data-json-is-active-by-default="true"{% endif %}
+    ></span>
+
+    <div class="post-collectible-tag-description">
+        Если на него клацнуть — он добавится в ваш профиль.
+        Так все будут видеть, что вы интересуетесь данной темой, а вы начнёте получать уведомления о будущих постах с таким же тегом.
+    </div>
+</section>

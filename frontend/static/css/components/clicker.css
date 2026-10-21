@@ -1,0 +1,16 @@
+.clicker-checkbox {
+    appearance: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    cursor: inherit;
+}
+
+    .clicker-checkbox:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 4px;
+    }

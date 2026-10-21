@@ -303,6 +303,7 @@
     }
 
     .comment-form-body {
+        min-width: 0;
         flex: 1;
     }
 
@@ -386,7 +387,7 @@
 
 .reply-form {
     display: grid;
-    grid-template-columns: 40px auto 110px;
+    grid-template-columns: 40px minmax(0, 1fr) 110px;
     justify-content: stretch;
 }
 
@@ -448,9 +449,20 @@
     }
 
     @media only screen and (max-width : 570px) {
+        .comment-form-footer {
+            flex-wrap: wrap;
+            row-gap: 8px;
+        }
+
+        .comment-form-body-battle-side #id_battle_side {
+            display: block;
+            max-width: 100%;
+            margin-top: 8px;
+        }
+
         .reply-form {
             display: grid;
-            grid-template-columns: 25px auto;
+            grid-template-columns: 25px minmax(0, 1fr);
             grid-template-rows: auto auto;
             justify-content: stretch;
         }

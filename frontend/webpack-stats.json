@@ -1,0 +1,489 @@
+{
+  "status": "error",
+  "assets": {
+    "fonts/Merriweather-Italic.woff2": {
+      "name": "fonts/Merriweather-Italic.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Italic.woff2",
+      "publicPath": "/static/dist/fonts/Merriweather-Italic.woff2"
+    },
+    "fonts/Merriweather-Italic.woff": {
+      "name": "fonts/Merriweather-Italic.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Italic.woff",
+      "publicPath": "/static/dist/fonts/Merriweather-Italic.woff"
+    },
+    "fonts/Merriweather-Black.woff2": {
+      "name": "fonts/Merriweather-Black.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Black.woff2",
+      "publicPath": "/static/dist/fonts/Merriweather-Black.woff2"
+    },
+    "fonts/Merriweather-Black.woff": {
+      "name": "fonts/Merriweather-Black.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Black.woff",
+      "publicPath": "/static/dist/fonts/Merriweather-Black.woff"
+    },
+    "fonts/Merriweather-Bold.woff": {
+      "name": "fonts/Merriweather-Bold.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Bold.woff",
+      "publicPath": "/static/dist/fonts/Merriweather-Bold.woff"
+    },
+    "fonts/Merriweather-Light.woff2": {
+      "name": "fonts/Merriweather-Light.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Light.woff2",
+      "publicPath": "/static/dist/fonts/Merriweather-Light.woff2"
+    },
+    "fonts/Merriweather-Light.woff": {
+      "name": "fonts/Merriweather-Light.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Light.woff",
+      "publicPath": "/static/dist/fonts/Merriweather-Light.woff"
+    },
+    "fonts/Merriweather-Bold.woff2": {
+      "name": "fonts/Merriweather-Bold.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Bold.woff2",
+      "publicPath": "/static/dist/fonts/Merriweather-Bold.woff2"
+    },
+    "fonts/Merriweather-Regular.woff2": {
+      "name": "fonts/Merriweather-Regular.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Regular.woff2",
+      "publicPath": "/static/dist/fonts/Merriweather-Regular.woff2"
+    },
+    "fonts/Merriweather-Regular.woff": {
+      "name": "fonts/Merriweather-Regular.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Merriweather-Regular.woff",
+      "publicPath": "/static/dist/fonts/Merriweather-Regular.woff"
+    },
+    "fonts/Ubuntu-Italic.woff2": {
+      "name": "fonts/Ubuntu-Italic.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Italic.woff2",
+      "publicPath": "/static/dist/fonts/Ubuntu-Italic.woff2"
+    },
+    "fonts/Ubuntu-Italic.woff": {
+      "name": "fonts/Ubuntu-Italic.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Italic.woff",
+      "publicPath": "/static/dist/fonts/Ubuntu-Italic.woff"
+    },
+    "fonts/Ubuntu-BoldItalic.woff2": {
+      "name": "fonts/Ubuntu-BoldItalic.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-BoldItalic.woff2",
+      "publicPath": "/static/dist/fonts/Ubuntu-BoldItalic.woff2"
+    },
+    "fonts/Ubuntu-BoldItalic.woff": {
+      "name": "fonts/Ubuntu-BoldItalic.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-BoldItalic.woff",
+      "publicPath": "/static/dist/fonts/Ubuntu-BoldItalic.woff"
+    },
+    "fonts/Ubuntu-Medium.woff2": {
+      "name": "fonts/Ubuntu-Medium.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Medium.woff2",
+      "publicPath": "/static/dist/fonts/Ubuntu-Medium.woff2"
+    },
+    "fonts/Ubuntu-Medium.woff": {
+      "name": "fonts/Ubuntu-Medium.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Medium.woff",
+      "publicPath": "/static/dist/fonts/Ubuntu-Medium.woff"
+    },
+    "fonts/Ubuntu-Bold.woff2": {
+      "name": "fonts/Ubuntu-Bold.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Bold.woff2",
+      "publicPath": "/static/dist/fonts/Ubuntu-Bold.woff2"
+    },
+    "fonts/Ubuntu-Bold.woff": {
+      "name": "fonts/Ubuntu-Bold.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Bold.woff",
+      "publicPath": "/static/dist/fonts/Ubuntu-Bold.woff"
+    },
+    "fonts/Ubuntu-Regular.woff2": {
+      "name": "fonts/Ubuntu-Regular.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Regular.woff2",
+      "publicPath": "/static/dist/fonts/Ubuntu-Regular.woff2"
+    },
+    "fonts/Ubuntu-Regular.woff": {
+      "name": "fonts/Ubuntu-Regular.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-Regular.woff",
+      "publicPath": "/static/dist/fonts/Ubuntu-Regular.woff"
+    },
+    "fonts/Ubuntu-MediumItalic.woff2": {
+      "name": "fonts/Ubuntu-MediumItalic.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-MediumItalic.woff2",
+      "publicPath": "/static/dist/fonts/Ubuntu-MediumItalic.woff2"
+    },
+    "fonts/Ubuntu-MediumItalic.woff": {
+      "name": "fonts/Ubuntu-MediumItalic.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/Ubuntu-MediumItalic.woff",
+      "publicPath": "/static/dist/fonts/Ubuntu-MediumItalic.woff"
+    },
+    "fonts/fa-brands-400.eot": {
+      "name": "fonts/fa-brands-400.eot",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-brands-400.eot",
+      "publicPath": "/static/dist/fonts/fa-brands-400.eot"
+    },
+    "fonts/fa-brands-400.woff2": {
+      "name": "fonts/fa-brands-400.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-brands-400.woff2",
+      "publicPath": "/static/dist/fonts/fa-brands-400.woff2"
+    },
+    "fonts/fa-brands-400.woff": {
+      "name": "fonts/fa-brands-400.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-brands-400.woff",
+      "publicPath": "/static/dist/fonts/fa-brands-400.woff"
+    },
+    "fonts/fa-brands-400.svg": {
+      "name": "fonts/fa-brands-400.svg",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-brands-400.svg",
+      "publicPath": "/static/dist/fonts/fa-brands-400.svg"
+    },
+    "fonts/fa-regular-400.eot": {
+      "name": "fonts/fa-regular-400.eot",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-regular-400.eot",
+      "publicPath": "/static/dist/fonts/fa-regular-400.eot"
+    },
+    "fonts/fa-regular-400.woff2": {
+      "name": "fonts/fa-regular-400.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-regular-400.woff2",
+      "publicPath": "/static/dist/fonts/fa-regular-400.woff2"
+    },
+    "fonts/fa-regular-400.woff": {
+      "name": "fonts/fa-regular-400.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-regular-400.woff",
+      "publicPath": "/static/dist/fonts/fa-regular-400.woff"
+    },
+    "fonts/fa-regular-400.ttf": {
+      "name": "fonts/fa-regular-400.ttf",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-regular-400.ttf",
+      "publicPath": "/static/dist/fonts/fa-regular-400.ttf"
+    },
+    "fonts/fa-regular-400.svg": {
+      "name": "fonts/fa-regular-400.svg",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-regular-400.svg",
+      "publicPath": "/static/dist/fonts/fa-regular-400.svg"
+    },
+    "fonts/fa-solid-900.eot": {
+      "name": "fonts/fa-solid-900.eot",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-solid-900.eot",
+      "publicPath": "/static/dist/fonts/fa-solid-900.eot"
+    },
+    "fonts/fa-solid-900.woff2": {
+      "name": "fonts/fa-solid-900.woff2",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-solid-900.woff2",
+      "publicPath": "/static/dist/fonts/fa-solid-900.woff2"
+    },
+    "fonts/fa-solid-900.woff": {
+      "name": "fonts/fa-solid-900.woff",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-solid-900.woff",
+      "publicPath": "/static/dist/fonts/fa-solid-900.woff"
+    },
+    "fonts/fa-solid-900.ttf": {
+      "name": "fonts/fa-solid-900.ttf",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-solid-900.ttf",
+      "publicPath": "/static/dist/fonts/fa-solid-900.ttf"
+    },
+    "fonts/fa-solid-900.svg": {
+      "name": "fonts/fa-solid-900.svg",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-solid-900.svg",
+      "publicPath": "/static/dist/fonts/fa-solid-900.svg"
+    },
+    "fonts/fa-brands-400.ttf": {
+      "name": "fonts/fa-brands-400.ttf",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/fonts/fa-brands-400.ttf",
+      "publicPath": "/static/dist/fonts/fa-brands-400.ttf"
+    },
+    "main.css": {
+      "name": "main.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/main.css",
+      "publicPath": "/static/dist/main.css"
+    },
+    "main.js": {
+      "name": "main.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/main.js",
+      "publicPath": "/static/dist/main.js"
+    },
+    "static_js_components_PostUpvote_vue.js": {
+      "name": "static_js_components_PostUpvote_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostUpvote_vue.js",
+      "publicPath": "/static/dist/static_js_components_PostUpvote_vue.js"
+    },
+    "static_js_components_PostBookmark_vue.js": {
+      "name": "static_js_components_PostBookmark_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostBookmark_vue.js",
+      "publicPath": "/static/dist/static_js_components_PostBookmark_vue.js"
+    },
+    "static_js_components_PostRSVP_vue.js": {
+      "name": "static_js_components_PostRSVP_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostRSVP_vue.js",
+      "publicPath": "/static/dist/static_js_components_PostRSVP_vue.js"
+    },
+    "static_js_components_PostToC_vue.css": {
+      "name": "static_js_components_PostToC_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostToC_vue.css",
+      "publicPath": "/static/dist/static_js_components_PostToC_vue.css"
+    },
+    "static_js_components_PostToC_vue.js": {
+      "name": "static_js_components_PostToC_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostToC_vue.js",
+      "publicPath": "/static/dist/static_js_components_PostToC_vue.js"
+    },
+    "static_js_components_CommentUpvote_vue.js": {
+      "name": "static_js_components_CommentUpvote_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CommentUpvote_vue.js",
+      "publicPath": "/static/dist/static_js_components_CommentUpvote_vue.js"
+    },
+    "static_js_components_UserTag_vue.js": {
+      "name": "static_js_components_UserTag_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_UserTag_vue.js",
+      "publicPath": "/static/dist/static_js_components_UserTag_vue.js"
+    },
+    "static_js_components_PeopleMap_vue.js": {
+      "name": "static_js_components_PeopleMap_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PeopleMap_vue.js",
+      "publicPath": "/static/dist/static_js_components_PeopleMap_vue.js"
+    },
+    "static_js_components_UserAvatarInput_vue.css": {
+      "name": "static_js_components_UserAvatarInput_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_UserAvatarInput_vue.css",
+      "publicPath": "/static/dist/static_js_components_UserAvatarInput_vue.css"
+    },
+    "static_js_components_UserAvatarInput_vue.js": {
+      "name": "static_js_components_UserAvatarInput_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_UserAvatarInput_vue.js",
+      "publicPath": "/static/dist/static_js_components_UserAvatarInput_vue.js"
+    },
+    "static_js_components_StripeCheckoutButton_vue.js": {
+      "name": "static_js_components_StripeCheckoutButton_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_StripeCheckoutButton_vue.js",
+      "publicPath": "/static/dist/static_js_components_StripeCheckoutButton_vue.js"
+    },
+    "static_js_components_InputLengthCounter_vue.js": {
+      "name": "static_js_components_InputLengthCounter_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_InputLengthCounter_vue.js",
+      "publicPath": "/static/dist/static_js_components_InputLengthCounter_vue.js"
+    },
+    "static_js_components_FriendButton_vue.js": {
+      "name": "static_js_components_FriendButton_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_FriendButton_vue.js",
+      "publicPath": "/static/dist/static_js_components_FriendButton_vue.js"
+    },
+    "static_js_components_CommentScrollArrow_vue.js": {
+      "name": "static_js_components_CommentScrollArrow_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CommentScrollArrow_vue.js",
+      "publicPath": "/static/dist/static_js_components_CommentScrollArrow_vue.js"
+    },
+    "static_js_components_MarkdownEditor_MarkdownEditor_vue.js": {
+      "name": "static_js_components_MarkdownEditor_MarkdownEditor_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_MarkdownEditor_vue.js",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_MarkdownEditor_vue.js"
+    },
+    "static_js_components_Toggle_vue.js": {
+      "name": "static_js_components_Toggle_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_Toggle_vue.js",
+      "publicPath": "/static/dist/static_js_components_Toggle_vue.js"
+    },
+    "static_js_components_Clicker_vue.js": {
+      "name": "static_js_components_Clicker_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_Clicker_vue.js",
+      "publicPath": "/static/dist/static_js_components_Clicker_vue.js"
+    },
+    "static_js_components_TagSelect_vue.js": {
+      "name": "static_js_components_TagSelect_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_TagSelect_vue.js",
+      "publicPath": "/static/dist/static_js_components_TagSelect_vue.js"
+    },
+    "static_js_components_SimpleSelect_vue.js": {
+      "name": "static_js_components_SimpleSelect_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_SimpleSelect_vue.js",
+      "publicPath": "/static/dist/static_js_components_SimpleSelect_vue.js"
+    },
+    "static_js_components_CoauthorsSelect_vue.css": {
+      "name": "static_js_components_CoauthorsSelect_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CoauthorsSelect_vue.css",
+      "publicPath": "/static/dist/static_js_components_CoauthorsSelect_vue.css"
+    },
+    "static_js_components_CoauthorsSelect_vue.js": {
+      "name": "static_js_components_CoauthorsSelect_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CoauthorsSelect_vue.js",
+      "publicPath": "/static/dist/static_js_components_CoauthorsSelect_vue.js"
+    },
+    "static_js_components_ReplyForm_vue.js": {
+      "name": "static_js_components_ReplyForm_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_ReplyForm_vue.js",
+      "publicPath": "/static/dist/static_js_components_ReplyForm_vue.js"
+    },
+    "static_js_components_ThemeSwitcher_vue.css": {
+      "name": "static_js_components_ThemeSwitcher_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_ThemeSwitcher_vue.css",
+      "publicPath": "/static/dist/static_js_components_ThemeSwitcher_vue.css"
+    },
+    "static_js_components_ThemeSwitcher_vue.js": {
+      "name": "static_js_components_ThemeSwitcher_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_ThemeSwitcher_vue.js",
+      "publicPath": "/static/dist/static_js_components_ThemeSwitcher_vue.js"
+    },
+    "static_js_components_LocationSelect_vue.css": {
+      "name": "static_js_components_LocationSelect_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_LocationSelect_vue.css",
+      "publicPath": "/static/dist/static_js_components_LocationSelect_vue.css"
+    },
+    "static_js_components_LocationSelect_vue.js": {
+      "name": "static_js_components_LocationSelect_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_LocationSelect_vue.js",
+      "publicPath": "/static/dist/static_js_components_LocationSelect_vue.js"
+    },
+    "static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.css": {
+      "name": "static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.css",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.css"
+    },
+    "static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js": {
+      "name": "static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js"
+    },
+    "static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.css": {
+      "name": "static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.css",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.css",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.css"
+    },
+    "static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js": {
+      "name": "static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js"
+    },
+    "vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js": {
+      "name": "vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js",
+      "publicPath": "/static/dist/vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js"
+    },
+    "main.js.map": {
+      "name": "main.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/main.js.map",
+      "publicPath": "/static/dist/main.js.map"
+    },
+    "static_js_components_PostUpvote_vue.js.map": {
+      "name": "static_js_components_PostUpvote_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostUpvote_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_PostUpvote_vue.js.map"
+    },
+    "static_js_components_PostBookmark_vue.js.map": {
+      "name": "static_js_components_PostBookmark_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostBookmark_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_PostBookmark_vue.js.map"
+    },
+    "static_js_components_PostRSVP_vue.js.map": {
+      "name": "static_js_components_PostRSVP_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostRSVP_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_PostRSVP_vue.js.map"
+    },
+    "static_js_components_PostToC_vue.js.map": {
+      "name": "static_js_components_PostToC_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PostToC_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_PostToC_vue.js.map"
+    },
+    "static_js_components_CommentUpvote_vue.js.map": {
+      "name": "static_js_components_CommentUpvote_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CommentUpvote_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_CommentUpvote_vue.js.map"
+    },
+    "static_js_components_UserTag_vue.js.map": {
+      "name": "static_js_components_UserTag_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_UserTag_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_UserTag_vue.js.map"
+    },
+    "static_js_components_PeopleMap_vue.js.map": {
+      "name": "static_js_components_PeopleMap_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_PeopleMap_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_PeopleMap_vue.js.map"
+    },
+    "static_js_components_UserAvatarInput_vue.js.map": {
+      "name": "static_js_components_UserAvatarInput_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_UserAvatarInput_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_UserAvatarInput_vue.js.map"
+    },
+    "static_js_components_StripeCheckoutButton_vue.js.map": {
+      "name": "static_js_components_StripeCheckoutButton_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_StripeCheckoutButton_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_StripeCheckoutButton_vue.js.map"
+    },
+    "static_js_components_InputLengthCounter_vue.js.map": {
+      "name": "static_js_components_InputLengthCounter_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_InputLengthCounter_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_InputLengthCounter_vue.js.map"
+    },
+    "static_js_components_FriendButton_vue.js.map": {
+      "name": "static_js_components_FriendButton_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_FriendButton_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_FriendButton_vue.js.map"
+    },
+    "static_js_components_CommentScrollArrow_vue.js.map": {
+      "name": "static_js_components_CommentScrollArrow_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CommentScrollArrow_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_CommentScrollArrow_vue.js.map"
+    },
+    "static_js_components_MarkdownEditor_MarkdownEditor_vue.js.map": {
+      "name": "static_js_components_MarkdownEditor_MarkdownEditor_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_MarkdownEditor_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_MarkdownEditor_vue.js.map"
+    },
+    "static_js_components_Toggle_vue.js.map": {
+      "name": "static_js_components_Toggle_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_Toggle_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_Toggle_vue.js.map"
+    },
+    "static_js_components_Clicker_vue.js.map": {
+      "name": "static_js_components_Clicker_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_Clicker_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_Clicker_vue.js.map"
+    },
+    "static_js_components_TagSelect_vue.js.map": {
+      "name": "static_js_components_TagSelect_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_TagSelect_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_TagSelect_vue.js.map"
+    },
+    "static_js_components_SimpleSelect_vue.js.map": {
+      "name": "static_js_components_SimpleSelect_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_SimpleSelect_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_SimpleSelect_vue.js.map"
+    },
+    "static_js_components_CoauthorsSelect_vue.js.map": {
+      "name": "static_js_components_CoauthorsSelect_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_CoauthorsSelect_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_CoauthorsSelect_vue.js.map"
+    },
+    "static_js_components_ReplyForm_vue.js.map": {
+      "name": "static_js_components_ReplyForm_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_ReplyForm_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_ReplyForm_vue.js.map"
+    },
+    "static_js_components_ThemeSwitcher_vue.js.map": {
+      "name": "static_js_components_ThemeSwitcher_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_ThemeSwitcher_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_ThemeSwitcher_vue.js.map"
+    },
+    "static_js_components_LocationSelect_vue.js.map": {
+      "name": "static_js_components_LocationSelect_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_LocationSelect_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_LocationSelect_vue.js.map"
+    },
+    "static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js.map": {
+      "name": "static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_MobileMarkdownEditor_vue.js.map"
+    },
+    "static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js.map": {
+      "name": "static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js.map",
+      "publicPath": "/static/dist/static_js_components_MarkdownEditor_DesktopMarkdownEditor_vue.js.map"
+    },
+    "vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js.map": {
+      "name": "vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js.map",
+      "path": "/Users/vas3k/Dev/vas3k.club/frontend/static/dist/vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js.map",
+      "publicPath": "/static/dist/vendors-node_modules_mapbox-gl_dist_mapbox-gl_js-node_modules_vue-loader_lib_runtime_componen-8b1c76.js.map"
+    }
+  },
+  "chunks": {
+    "main": [
+      "main.css",
+      "main.js"
+    ]
+  },
+  "publicPath": "/static/dist/",
+  "error": "ModuleNotFoundError",
+  "message": "Module not found: Error: Can't resolve '/Users/vas3k/Dev/vas3k.club/frontend/static/js/main.js' in '/Users/vas3k/Dev/vas3k.club/frontend'"
+}

@@ -1,0 +1,67 @@
+{% load text_filters %}
+{% load static %}
+{% load rooms %}
+
+<div class="feed-room-header" style="background-color: {{ room.color }};">
+    <div class="feed-room-header-title">
+        <span class="feed-room-header-icon"><img src="{{ room.image }}" alt="Иконка комнаты {{ room.title }}" loading="lazy" /></span>
+        <a href="{% url "feed_room" room.slug %}" class="feed-room-header-name">{{ room.title }}</a>
+    </div>
+
+    <div class="feed-room-header-description">
+        {{ room.description | markdown }}
+    </div>
+
+    <div class="feed-room-header-footer">
+        {% if room.chat_url and room.chat_name %}
+            <div class="feed-room-header-footer-chat">
+                <a href="{{ room.get_private_url }}" rel="noreferrer" target="_blank" class="button">
+                    <i class="fab fa-telegram-plane"></i>&nbsp;&nbsp;Чат: {{ room.chat_name }}
+                    {% if room.chat_member_count %}<small>&nbsp;&nbsp;&nbsp;(~{{ room.chat_member_count }} человек)</small>{% endif %}
+                </a>
+            </div>
+        {% endif %}
+
+        {% if room.admins %}
+            <div class="feed-room-header-admins">
+                <span><i class="fas fa-user-shield"></i>&nbsp;<strong>Админы:</strong></span>
+                {% for admin in room.admins_with_details %}
+                    {% include "users/widgets/tiny.html" with user=admin show_name=True %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if room.url %}
+            <div class="feed-room-header-footer-url">
+                <i class="fas fa-link"></i>&nbsp;<strong>URL:</strong> <a href="{{ room.url }}" rel="noreferrer" target="_blank">{{ room.url }}</a>
+            </div>
+        {% endif %}
+
+        <div class="feed-room-header-settings">
+            <span data-island="Toggle"
+                data-prop-url="{% url "toggle_room_mute" room.slug %}"
+                data-json-is-inverted="true"
+                {% if use_preloaded_flags %}
+                    {% if not room.is_muted_by_me %}data-json-is-active-by-default="true"{% endif %}
+                {% else %}
+                    {% if not room|is_room_muted:request.me %}data-json-is-active-by-default="true"{% endif %}
+                {% endif %}
+                data-prop-class-name="feed-room-header-toggle"
+            >
+                посты видны на главной
+            </span>
+
+            <span data-island="Toggle"
+                data-prop-url="{% url "toggle_room_subscription" room.slug %}"
+                {% if use_preloaded_flags %}
+                    {% if room.is_subscribed_by_me %}data-json-is-active-by-default="true"{% endif %}
+                {% else %}
+                    {% if room|is_room_subscribed:request.me %}data-json-is-active-by-default="true"{% endif %}
+                {% endif %}
+                data-prop-class-name="feed-room-header-toggle"
+            >
+                подписаться на комнату
+            </span>
+        </div>
+    </div>
+</div>

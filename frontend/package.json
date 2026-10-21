@@ -2,58 +2,27 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack",
-    "prewatch": "npm ci",
-    "watch": "NODE_ENV=development npm run build -- --watch",
-    "test": "jest",
-    "test:ci": "jest --ci --coverage"
+    "build": "vite build",
+    "dev": "vite",
+    "test": "vitest run"
   },
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "~7.25.0",
-    "@babel/preset-env": "~7.25.0",
-    "@vue/test-utils": "^1.3.6",
-    "@vue/vue2-jest": "^27.0.0",
-    "autoprefixer": "^10.2.5",
-    "babel-jest": "^27.5.1",
-    "clean-webpack-plugin": "^3.0.0",
-    "css-loader": "^3.5.3",
-    "cssnano": "^5.1.11",
-    "file-loader": "^6.0.0",
-    "husky": "^6.0.0",
-    "jest": "^27.5.1",
-    "lint-staged": "^10.2.2",
-    "mini-css-extract-plugin": "^1.4.0",
-    "postcss-import": "^12.0.1",
-    "postcss-loader": "^3.0.0",
-    "postcss-preset-env": "^6.7.0",
-    "prettier": "^2.0.5",
-    "vue-hot-reload-api": "^2.3.4",
-    "vue-loader": "^15.10.1",
-    "vue-template-compiler": "^2.6.11",
-    "webpack": "^5.75.0",
-    "webpack-bundle-tracker": "^1.0.0",
-    "webpack-cli": "^4.6.0"
+    "@vitejs/plugin-react": "6.1.2",
+    "autoprefixer": "10.6.1",
+    "jsdom": "30.1.3",
+    "prettier": "3.9.10",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^1.11.0",
-    "easymde": "^2.20.0",
-    "inline-attachment": "^2.0.3",
-    "lightense-images": "^1.0.9",
-    "mapbox-gl": "^2.15.0",
+    "@fontsource/noto-color-emoji": "5.3.2",
+    "easymde": "2.21.0",
+    "lightense-images": "1.0.17",
+    "mapbox-gl": "3.33.0",
     "normalize.css": "^8.0.1",
-    "vue": "^2.6.11",
-    "vue-select": "^3.18.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "{*.js,*.vue}": [
-      "prettier --write"
-    ]
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   },
   "prettier": {
     "printWidth": 120

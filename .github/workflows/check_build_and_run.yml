@@ -1,4 +1,4 @@
-name: Check it could be build and run from scratch
+name: Check Docker builds and startup
 
 on: [pull_request]
 
@@ -9,13 +9,33 @@ concurrency:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   dockerize:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Build and start the docker-compose stack
-        run: docker compose up -d --wait --wait-timeout 120
-      - name: Check build frontend on container
+        run: docker compose up --build -d --wait --wait-timeout 180
+      - name: Check frontend build in the container
         run: |
-          docker compose exec -T webpack npm run build
+          docker compose exec -T vite npm run build
+
+      - name: Build and check production image
+        run: |
+          docker build --build-arg MODE=production -t club-production-check .
+          docker run --rm --network none -e DEBUG=false -e VITE_DEV_MODE=false club-production-check python manage.py check
+
+      - name: Show startup logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail 200
+
+      - name: Stop development stack
+        if: always()
+        run: docker compose down --volumes --remove-orphans

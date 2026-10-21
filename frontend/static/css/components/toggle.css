@@ -1,0 +1,17 @@
+.toggle-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    cursor: pointer;
+}
+
+    .toggle-control input[type="checkbox"] {
+        flex: none;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .post-comments-subscription input[type="checkbox"] {
+        width: 1.5em;
+        height: 1.5em;
+    }

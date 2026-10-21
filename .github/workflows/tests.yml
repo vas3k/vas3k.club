@@ -13,6 +13,10 @@ concurrency:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -20,11 +24,13 @@ jobs:
     steps:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         id: setup-python
         with:
-          python-version: '3.14'
+          python-version-file: .python-version
 
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
@@ -46,6 +52,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -59,15 +67,8 @@ jobs:
 
       - name: Run frontend tests
         working-directory: ./frontend
-        run: npm run test:ci
+        run: npm test
 
-      - name: Upload coverage report
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: frontend-coverage
-          path: frontend/coverage/
-          retention-days: 14
 
   test:
     runs-on: ubuntu-latest
@@ -87,19 +88,24 @@ jobs:
         ports:
           - 5432:5432
       redis:
-        image: redis:6-alpine
-        env:
-          ALLOW_EMPTY_PASSWORD: yes
+        image: redis:alpine@sha256:2afba59292f25f5d1af200496db41bea2c6c816b059f57ae74703a50a03a27d0
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 6379:6379
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         id: setup-python
         with:
-          python-version: '3.14'
+          python-version-file: .python-version
 
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
@@ -109,24 +115,12 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Cache webpack build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        id: cache-webpack
-        with:
-          path: |
-            frontend/static/dist
-            frontend/webpack-stats.json
-          key: ${{ runner.os }}-webpack-${{ hashFiles('frontend/package*.json', 'frontend/webpack*.js', 'frontend/static/js/**', 'frontend/static/css/**') }}
-          restore-keys: |
-            ${{ runner.os }}-webpack-
-
-      - name: Webpack build
-        if: steps.cache-webpack.outputs.cache-hit != 'true'
+      - name: Build frontend assets
         working-directory: ./frontend
         run: |
-          node -v
-          npm -v
           npm ci
           npm run build
 
@@ -142,7 +136,7 @@ jobs:
           REDIS_DB: 0
           REDIS_HOST: localhost
           PYTHONUNBUFFERED: 1
-          TESTS_RUN: da
+          TESTS_RUN: "true"
         run: |
           export PATH="$PWD/.venv/bin:$PATH"
           make test-ci

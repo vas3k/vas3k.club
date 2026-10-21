@@ -107,8 +107,8 @@ class TestPeoplePageRendersRooms(TestCase):
         content = response.content.decode()
 
         self.assertEqual(list(response.context["geo_rooms"]), [Room.objects.get(slug="berlin")])
-        self.assertIn("rooms=", content)
-        self.assertIn("&quot;id&quot;: &quot;berlin&quot;", content)
+        self.assertIn("&quot;rooms&quot;:", content)
+        self.assertIn(r"\&quot;id\&quot;: \&quot;berlin\&quot;", content)
 
     def test_skips_hidden_and_unlocated_rooms(self):
         chats = _create_group("chats")
@@ -126,7 +126,7 @@ class TestPeoplePageRendersRooms(TestCase):
         response = self.client.get("/people/")
 
         self.assertEqual(list(response.context["geo_rooms"]), [ukraine])
-        self.assertIn("&quot;id&quot;: &quot;ua&quot;", response.content.decode())
+        self.assertIn(r"\&quot;id\&quot;: \&quot;ua\&quot;", response.content.decode())
 
     def test_messages_only_filter_hides_geo_rooms(self):
         _create_room("berlin", self.group, title="Берлин")
@@ -138,4 +138,4 @@ class TestPeoplePageRendersRooms(TestCase):
         self.assertEqual(list(messages_only.context["geo_rooms"]), [])
         content = messages_only.content.decode()
         self.assertIn("room-markers", content)
-        self.assertIn("&quot;features&quot;: []", content)
+        self.assertIn(r"\&quot;features\&quot;: []", content)

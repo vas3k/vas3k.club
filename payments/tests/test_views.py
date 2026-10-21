@@ -122,8 +122,8 @@ class TestPayView(TestCase):
         # given
         product_code = "club1"
         email = f"new-user-{uuid.uuid4()}@email.com"
-        StripeSession = namedtuple('Session', "id")
-        session = StripeSession(id=f"{uuid.uuid4()}")
+        StripeSession = namedtuple('Session', "id url")
+        session = StripeSession(id=f"{uuid.uuid4()}", url="https://checkout.stripe.com/c/pay/test-session")
         mocked_stripe.checkout.Session.create.return_value = session
 
         # when
@@ -145,13 +145,14 @@ class TestPayView(TestCase):
         self.assertEqual(created_user.moderation_status, User.MODERATION_STATUS_INTRO)
 
         self.assertTrue(Payment.get(reference=session.id))
+        self.assertContains(response, f'href="{session.url}"')
         self.assertContains(response=response, text="Платим 💰", status_code=200)
 
     def test_positive_existed_authorised_user(self, mocked_stripe):
         # given
         product_code = "club1"
-        StripeSession = namedtuple('Session', "id")
-        session = StripeSession(id=f"{uuid.uuid4()}")
+        StripeSession = namedtuple('Session', "id url")
+        session = StripeSession(id=f"{uuid.uuid4()}", url="https://checkout.stripe.com/c/pay/test-session")
         mocked_stripe.checkout.Session.create.return_value = session
         self.client.authorise()
 
@@ -171,6 +172,7 @@ class TestPayView(TestCase):
         self.assertEqual(user_after.moderation_status, self.existed_user.moderation_status)
 
         self.assertTrue(Payment.get(reference=session.id))
+        self.assertContains(response, f'href="{session.url}"')
         self.assertContains(response=response, text="Платим 💰", status_code=200)
 
     def test_negative_new_user_with_broken_email(self, mocked_stripe):
