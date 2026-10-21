@@ -92,7 +92,7 @@
                     <label class="form-label">
                         Где отображать вас на общей <strong><a href="{% url "people" %}">карте</a></strong>?
                     </label>
-                    <div>{% island "LocationSelect" default_latitude=user.latitude|default:0 default_longitude=user.longitude|default:0 %}</div>
+                    <div>{% react "LocationSelect" default_latitude=user.latitude|default:0 default_longitude=user.longitude|default:0 %}</div>
                     {% if form.latitude.errors %}<span class="form-row-errors">Latitude: {{ form.latitude.errors }}</span>{% endif %}
                     {% if form.longitude.errors %}<span class="form-row-errors">Longitude: {{ form.longitude.errors }}</span>{% endif %}
                     {% if form.geo.errors %}<span class="form-row-errors">Geo: {{ form.geo.errors }}</span>{% endif %}

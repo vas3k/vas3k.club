@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@fontsource/noto-color-emoji": "5.3.2",
+    "@headlessui/react": "2.2.10",
     "easymde": "2.21.0",
     "lightense-images": "1.0.17",
     "mapbox-gl": "3.33.0",

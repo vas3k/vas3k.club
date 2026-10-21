@@ -35,7 +35,7 @@
             {% url "api_create_map_message" as create_message_url %}
             {% url "edit_profile" me.slug as edit_profile_url %}
             <div>
-                {% island "PeopleMap" geojson=users_geojson messages=messages_geojson rooms=rooms_geojson create_message_url=create_message_url edit_profile_url=edit_profile_url|add:"#map-location" can_post_message=can_post_map_message max_message_length=max_map_message_length %}
+                {% react "PeopleMap" geojson=users_geojson messages=messages_geojson rooms=rooms_geojson create_message_url=create_message_url edit_profile_url=edit_profile_url|add:"#map-location" can_post_message=can_post_map_message max_message_length=max_map_message_length %}
             </div>
         </div>
 

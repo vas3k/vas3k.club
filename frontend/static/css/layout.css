@@ -328,12 +328,15 @@
     }
 
     .comment-form-footer .button {
+        flex-shrink: 0;
+        white-space: nowrap;
         padding: 10px 16px;
         border-radius: var(--form-border-radius, var(--button-border-radius));
     }
 
     .comment-form-attach-image {
         display: block;
+        flex-shrink: 0;
         position: relative;
         font-size: 1.125rem;
         padding: 3px 9px;
@@ -449,11 +452,6 @@
     }
 
     @media only screen and (max-width : 570px) {
-        .comment-form-footer {
-            flex-wrap: wrap;
-            row-gap: 8px;
-        }
-
         .comment-form-body-battle-side #id_battle_side {
             display: block;
             max-width: 100%;

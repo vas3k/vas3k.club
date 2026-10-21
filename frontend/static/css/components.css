@@ -162,7 +162,7 @@
     vertical-align: middle;
     position: relative;
     top: -1px;
-    background-color: #000000;
+    background-color: var(--block-bg-color);
     height: 1.6em;
     line-height: 1.5em;
     overflow: hidden;

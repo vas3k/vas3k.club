@@ -8,7 +8,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def island(name, **props):
+def react(component_name, **props):
     converted_props = {}
 
     for key, value in props.items():
@@ -17,7 +17,7 @@ def island(name, **props):
 
     return format_html(
         '<div data-island="{}" data-props="{}"></div>',
-        name,
+        component_name,
         json.dumps(converted_props, cls=DjangoJSONEncoder),
     )
 
@@ -25,3 +25,8 @@ def island(name, **props):
 @register.filter
 def coauthors_options(users):
     return [{"slug": user.slug, "full_name": user.full_name, "avatar": user.get_avatar()} for user in users]
+
+
+@register.filter
+def room_options(rooms):
+    return [{"slug": room.slug, "title": room.title, "emoji": room.emoji(), "image": room.image} for room in rooms]

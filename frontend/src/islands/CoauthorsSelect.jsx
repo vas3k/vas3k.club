@@ -1,9 +1,8 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import ClubApi from "../lib/api.service";
-import "../../static/css/components/search-select.css";
+import SearchSelect from "../components/SearchSelect";
 
 export default function CoauthorsSelect({ id, searchUrl, initialUsers = [], initialSlugs = "", excludeSlug = "" }) {
-    const listId = useId();
     const [selected, setSelected] = useState(() =>
         initialSlugs
             ? initialSlugs
@@ -16,18 +15,22 @@ export default function CoauthorsSelect({ id, searchUrl, initialUsers = [], init
     const [query, setQuery] = useState("");
     const [options, setOptions] = useState([]);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         let disposed = false;
         setOptions([]);
         setError("");
-        if (query.length < 3) return;
+        setLoading(query.trim().length >= 3);
+        if (query.trim().length < 3) return;
         const timer = setTimeout(async () => {
             try {
-                const data = await ClubApi.get(`${searchUrl}${encodeURIComponent(query.slice(0, 15))}`);
+                const data = await ClubApi.get(`${searchUrl}${encodeURIComponent(query.trim())}`);
                 if (!disposed) setOptions(data.users || []);
             } catch (failure) {
                 if (!disposed) setError(failure.message);
+            } finally {
+                if (!disposed) setLoading(false);
             }
         }, 300);
         return () => {
@@ -36,67 +39,33 @@ export default function CoauthorsSelect({ id, searchUrl, initialUsers = [], init
         };
     }, [query, searchUrl]);
 
-    function choose(value) {
-        const user = options.find((option) => option.slug === value);
-        if (
-            !user ||
-            user.slug === excludeSlug ||
-            selected.some((item) => item.slug === user.slug) ||
-            selected.length >= 10
-        )
-            return;
-        setSelected((users) => [...users, user]);
-        setQuery("");
-        setOptions([]);
-    }
+    const items = options
+        .filter((user) => user.slug !== excludeSlug && !selected.some((item) => item.slug === user.slug))
+        .map((user) => ({ value: user.slug, label: user.full_name, image: user.avatar, detail: `@${user.slug}` }));
 
     return (
-        <div className="search-select">
-            <input type="hidden" name={id} value={selected.map((user) => user.slug).join(",")} />
-            <div className="search-select-values">
-                {selected.map((user) => (
-                    <button
-                        key={user.slug}
-                        type="button"
-                        className="button button-small"
-                        aria-label={`Убрать ${user.full_name}`}
-                        onClick={() => setSelected(selected.filter((item) => item.slug !== user.slug))}
-                    >
-                        {user.full_name} ×
-                    </button>
-                ))}
-            </div>
-            <input
-                type="text"
-                id={`id_${id}`}
-                list={listId}
-                value={query}
-                autoComplete="off"
-                autoCapitalize="none"
-                spellCheck={false}
-                disabled={selected.length >= 10}
-                placeholder="Имя или ник, минимум 3 символа"
-                onChange={(event) => {
-                    setQuery(event.target.value);
-                    choose(event.target.value);
-                }}
-                onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.nativeEvent.isComposing) {
-                        event.preventDefault();
-                        choose(query);
-                    }
-                }}
-            />
-            <datalist id={listId}>
-                {options
-                    .filter((user) => user.slug !== excludeSlug && !selected.some((item) => item.slug === user.slug))
-                    .map((user) => (
-                        <option key={user.slug} value={user.slug}>
-                            {user.full_name}
-                        </option>
-                    ))}
-            </datalist>
-            {error && <span role="alert">{error}</span>}
-        </div>
+        <SearchSelect
+            id={`id_${id}`}
+            name={id}
+            label="Соавторы"
+            placeholder="Найти по имени или нику"
+            multiple
+            selected={selected.map((user) => ({ value: user.slug, label: user.full_name, image: user.avatar }))}
+            onChange={(users) =>
+                setSelected(users.map((user) => ({ slug: user.value, full_name: user.label, avatar: user.image })))
+            }
+            items={items}
+            query={query}
+            onQueryChange={setQuery}
+            hint={
+                selected.length >= 10
+                    ? "Можно добавить не больше 10 соавторов"
+                    : query.length < 3
+                      ? "Введите минимум 3 символа для поиска"
+                      : ""
+            }
+            error={error}
+            loading={loading}
+        />
     );
 }

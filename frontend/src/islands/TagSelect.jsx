@@ -1,108 +1,74 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import ClubApi from "../lib/api.service";
-import "../../static/css/components/search-select.css";
+import SearchSelect from "../components/SearchSelect";
 
-export default function TagSelect({
-    id,
-    initialValue = "",
-    allowCreateNew = false,
-    allowMultiple = false,
-    validationRegExp,
-    searchUrl,
-    labelPrefixInput = "",
-    labelInvalidInput,
-    labelValidInput,
-}) {
-    const listId = useId();
+export default function TagSelect({ id, initialValue = "", searchUrl }) {
     const [selected, setSelected] = useState(() =>
-        initialValue ? (allowMultiple ? initialValue.split(",") : [initialValue]) : [],
+        initialValue ? { value: initialValue, label: initialValue } : null,
     );
     const [query, setQuery] = useState("");
-    const [options, setOptions] = useState([]);
+    const [results, setResults] = useState({ query: "", items: [] });
     const [error, setError] = useState("");
-    const valid = query.trim() && (!validationRegExp || new RegExp(validationRegExp).test(query));
+    const [loading, setLoading] = useState(false);
+    const text = query.trim();
+    const [emoji, ...words] = text.split(" ");
+    const first = [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(emoji || "")];
+    const valid =
+        first.length === 1 &&
+        /[\p{Extended_Pictographic}\p{Regional_Indicator}\u20e3]/u.test(emoji) &&
+        words.join(" ").trim() &&
+        [...text].length <= 32;
+    const items = results.query === query ? results.items : [];
+    const options =
+        valid && !items.some((item) => item.value === text)
+            ? [...items, { value: text, label: text, create: true }]
+            : items;
 
     useEffect(() => {
         let disposed = false;
-        setOptions([]);
         setError("");
-        if (query.length < 3) return;
+        setLoading(text.length >= 3);
+        if (text.length < 3) return;
         const timer = setTimeout(async () => {
             try {
-                const data = await ClubApi.get(`${searchUrl}${encodeURIComponent(query)}`);
-                if (!disposed) setOptions((data.tags || []).map((tag) => tag.name));
+                const data = await ClubApi.get(`${searchUrl}${encodeURIComponent([...text].slice(0, 15).join(""))}`);
+                if (!disposed)
+                    setResults({
+                        query,
+                        items: (data.tags || []).map((tag) => ({ value: tag.name, label: tag.name })),
+                    });
             } catch (failure) {
                 if (!disposed) setError(failure.message);
+            } finally {
+                if (!disposed) setLoading(false);
             }
-        }, 300);
+        }, 250);
         return () => {
             disposed = true;
             clearTimeout(timer);
         };
-    }, [query, searchUrl]);
-
-    function choose(value) {
-        if (!value.trim() || (!options.includes(value) && !(allowCreateNew && valid))) return;
-        setSelected((values) => (allowMultiple ? [...new Set([...values, value])] : [value]));
-        setQuery("");
-        setOptions([]);
-    }
+    }, [query, text, searchUrl]);
 
     return (
-        <div className="search-select">
-            <input type="hidden" name={id} value={selected.join(",")} />
-            <div className="search-select-values">
-                {selected.map((value) => (
-                    <button
-                        key={value}
-                        type="button"
-                        className="button button-small"
-                        aria-label={`Убрать ${value}`}
-                        onClick={() => setSelected(selected.filter((item) => item !== value))}
-                    >
-                        {value} ×
-                    </button>
-                ))}
-            </div>
-            <input
-                type="text"
-                id={`id_${id}`}
-                list={listId}
-                value={query}
-                autoComplete="off"
-                placeholder="Найти или добавить тег"
-                onChange={(event) => {
-                    const value = event.target.value;
-                    setQuery(value);
-                    if (options.includes(value)) choose(value);
-                }}
-                onKeyDown={(event) => {
-                    if (event.key === "Enter" && !event.nativeEvent.isComposing) {
-                        event.preventDefault();
-                        choose(query);
-                    }
-                }}
-            />
-            <datalist id={listId}>
-                {options.map((value) => (
-                    <option key={value} value={value} />
-                ))}
-            </datalist>
-            {query && allowCreateNew && (
-                <>
-                    <span className="form-row-help">{valid ? labelValidInput : labelInvalidInput}</span>
-                    <button
-                        type="button"
-                        className="button button-small"
-                        disabled={!valid}
-                        onClick={() => choose(query)}
-                    >
-                        {labelPrefixInput}
-                        {query}
-                    </button>
-                </>
-            )}
-            {error && <span role="alert">{error}</span>}
-        </div>
+        <SearchSelect
+            id={`id_${id}`}
+            name={id}
+            label="Коллекционный тег"
+            placeholder="Найти тег или ввести 🎉 Новый тег"
+            selected={selected}
+            onChange={setSelected}
+            items={options}
+            query={query}
+            onQueryChange={setQuery}
+            hint={
+                text && !valid
+                    ? "Для нового тега: emoji, пробел и название. Не больше 32 символов."
+                    : text.length < 3
+                      ? "Введите минимум 3 символа для поиска"
+                      : ""
+            }
+            error={error}
+            loading={loading}
+        />
     );
 }

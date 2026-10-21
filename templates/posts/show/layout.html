@@ -80,7 +80,7 @@
                 {% if comments %}
                     {% if post.is_commentable and me %}
                         {% url "create_comment" post.slug as create_comment_url %}
-                        <div>{% island "ReplyForm" comment_order=comment_order avatar_url=me.get_avatar username=me.full_name create_comment_url=create_comment_url %}</div>
+                        <div>{% react "ReplyForm" comment_order=comment_order avatar_url=me.get_avatar username=me.full_name create_comment_url=create_comment_url %}</div>
                     {% endif %}
 
                     <div class="post-comments-list">

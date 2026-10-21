@@ -12,7 +12,7 @@
     <div class="clearfix50"></div>
 
     <div class="form-row compose-form-room">
-        {{ form.room }}
+        {% react "RoomSelect" name=form.room.html_name id=form.room.id_for_label rooms=form.room.field.queryset|room_options initial_value=form.room.value|default:"" %}
 
         {% if form.room.errors %}
         <span class="form-row-errors">{{ form.room.errors }}</span>
@@ -44,19 +44,15 @@
         <div class="form-row compose-form-coauthors">
             <div>
                 {% if form.is_bound %}
-                    {% island "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=me.slug initial_slugs=form.coauthors.data|default:"" %}
+                    {% react "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=me.slug initial_slugs=form.coauthors.data|default:"" %}
                 {% else %}
-                    {% island "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=me.slug initial_users=form.instance.coauthors_with_details|coauthors_options %}
+                    {% react "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=me.slug initial_users=form.instance.coauthors_with_details|coauthors_options %}
                 {% endif %}
             </div>
 
             {% if form.coauthors.errors %}
                 <span class="form-row-errors">{{ form.coauthors.errors }}</span>
             {% endif %}
-
-            <span class="form-row-help form-row-help-wide">
-                Введите имя или ник. Можно добавить сразу несколько человек.
-            </span>
         </div>
     </details>
 {% endif %}
@@ -74,7 +70,7 @@
     <div class="clearfix50"></div>
 
     <div class="form-row compose-form-collectible-tag">
-        <div>{% island "TagSelect" initial_value=form.collectible_tag_code.value|default_if_none:"" id=form.collectible_tag_code.html_name search_url="/search/tags.json?group=collectible&prefix=" allow_create_new=True validation_reg_exp="^(©|®|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]) .+$" label_prefix_input="Добавить тег: " label_invalid_input="Каждый тег обязан начинаться с emoji, потом идёт пробел и название." label_valid_input="Вы добавите этот тег первым!" %}</div>
+        <div>{% react "TagSelect" initial_value=form.collectible_tag_code.value|default_if_none:"" id=form.collectible_tag_code.html_name search_url="/search/tags.json?group=collectible&prefix=" %}</div>
 
         <span class="form-row-help form-row-help-wide">
             Каждый тег обязан начинаться с <a href="https://emojipedia.org/" target="_blank">emoji</a>, потом идёт

@@ -53,10 +53,25 @@
         }
 
     .comment-form-subscribe {
+        display: flex;
+        align-items: center;
+        gap: 0.25em;
+        min-width: 0;
         opacity: 0.75;
         padding: 0 20px;
         margin-left: auto;
     }
+
+        .comment-form-subscribe input[type=checkbox] {
+            flex-shrink: 0;
+        }
+
+        .comment-form-subscribe label {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
     .reply-form-form {
         scroll-margin-top: 20px;

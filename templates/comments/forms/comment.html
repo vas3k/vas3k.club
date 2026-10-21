@@ -15,7 +15,7 @@
                 {% endif %}
             </div>
             <div class="comment-form-body comment-form-editor-container">
-                <div>{% island "MarkdownEditor" class_name="comment-form-body-text" value=form.text.value|default_if_none:"" %}</div>
+                <div>{% react "MarkdownEditor" class_name="comment-form-body-text" value=form.text.value|default_if_none:"" %}</div>
 
                 <div class="comment-form-footer">
                     <label class="comment-form-attach-image">
