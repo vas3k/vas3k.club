@@ -62,7 +62,7 @@ services:
         condition: service_healthy
 
   postgres:
-    image: postgres:14@sha256:b964c3211689ffe50cc65235ea338717520954dcf6ecd4d76bf887eba3cbc91f
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
     container_name: club_postgres
     environment:
       - POSTGRES_USER=postgres
