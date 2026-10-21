@@ -48,7 +48,7 @@ vi.mock("mapbox-gl", () => ({
 
 import { act } from "react";
 import { render } from "../../test/render";
-import PeopleMap from "../islands/PeopleMap";
+import PeopleMap from "../components/PeopleMap";
 
 function makeGeojson(features) {
     return {

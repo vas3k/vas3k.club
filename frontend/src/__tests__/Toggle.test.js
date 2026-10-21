@@ -1,6 +1,6 @@
 import { act } from "react";
 import { render } from "../../test/render";
-import Toggle from "../islands/Toggle";
+import Toggle from "../components/Toggle";
 import ClubApi from "../lib/api.service";
 
 vi.mock("../lib/api.service", () => ({ __esModule: true, default: { post: vi.fn(), delete: vi.fn() } }));

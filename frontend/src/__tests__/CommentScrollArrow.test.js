@@ -1,6 +1,6 @@
 import { act } from "react";
 import { render } from "../../test/render";
-import CommentScrollArrow from "../islands/CommentScrollArrow";
+import CommentScrollArrow from "../components/CommentScrollArrow";
 
 describe("CommentScrollArrow", () => {
     let view;

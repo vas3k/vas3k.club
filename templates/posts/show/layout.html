@@ -3,7 +3,7 @@
 {% load posts %}
 {% load text_filters %}
 
-{% load islands %}
+{% load react %}
 
 {% block title %}
     {% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}{% if post.room %} [{{ post.room.title }}]{% endif %} — {{ block.super }}

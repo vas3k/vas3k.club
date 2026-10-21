@@ -16,6 +16,6 @@ export default defineConfig({
         outDir: "static/dist",
         emptyOutDir: true,
         manifest: true,
-        rollupOptions: { input: ["src/main.js", "static/css/index.css"] },
+        rolldownOptions: { input: ["src/main.js", "static/css/index.css"] },
     },
 });

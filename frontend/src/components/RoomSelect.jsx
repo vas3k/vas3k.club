@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SearchSelect from "../components/SearchSelect";
+import SearchSelect from "./SearchSelect";
 
 export default function RoomSelect({ name, id, rooms = [], initialValue = "" }) {
     const options = rooms.map((room) => ({

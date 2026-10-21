@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ClubApi from "../lib/api.service";
-import SearchSelect from "../components/SearchSelect";
+import SearchSelect from "./SearchSelect";
 
 export default function TagSelect({ id, initialValue = "", searchUrl }) {
     const [selected, setSelected] = useState(() =>

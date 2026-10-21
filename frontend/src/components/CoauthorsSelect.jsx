@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ClubApi from "../lib/api.service";
-import SearchSelect from "../components/SearchSelect";
+import SearchSelect from "./SearchSelect";
 
 export default function CoauthorsSelect({ id, searchUrl, initialUsers = [], initialSlugs = "", excludeSlug = "" }) {
     const [selected, setSelected] = useState(() =>

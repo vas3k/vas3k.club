@@ -1,5 +1,5 @@
 const roots = new Map();
-const islands = import.meta.glob("../islands/*.jsx");
+const components = import.meta.glob("../components/*.jsx");
 
 export async function mountIslands(root = document) {
     const elements = [...root.querySelectorAll("[data-island]:not([data-island-mounted])")];
@@ -12,7 +12,7 @@ export async function mountIslands(root = document) {
     await Promise.all(
         elements.map(async (element) => {
             const name = element.dataset.island;
-            const load = islands[`../islands/${name}.jsx`];
+            const load = components[`../components/${name}.jsx`];
             if (!load) {
                 console.error(`Unknown island: ${name}`);
                 return;

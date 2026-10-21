@@ -1,13 +1,6 @@
-import EasyMDE from "easymde";
 import Lightense from "lightense-images";
 
 import { isCommunicationForm } from "./lib/utils";
-import {
-    createFileInput,
-    createMarkdownEditor,
-    handleFormSubmissionShortcuts,
-    imageUploadOptions,
-} from "./lib/markdown-editor";
 import { getCollapsedCommentThreadsSet, collapseCommentThread } from "./lib/comments";
 
 const INITIAL_SYNC_DELAY = 50;
@@ -17,13 +10,13 @@ const App = {
         this.initializeFavicon();
         this.stylizeExternalLinks();
     },
-    onMount() {
+    async onMount() {
         this.initializeImageZoom();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
         this.initializePostActions();
 
-        const registeredEditors = this.initializeMarkdownEditor();
+        const registeredEditors = await this.initializeMarkdownEditor();
 
         setTimeout(function () {
             registeredEditors.forEach((editor) => {
@@ -48,8 +41,15 @@ const App = {
         setFaviconHref(mediaQueryList);
         mediaQueryList.addEventListener("change", setFaviconHref);
     },
-    initializeMarkdownEditor() {
-        const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
+    async initializeMarkdownEditor() {
+        const elements = [...document.querySelectorAll(".markdown-editor-full")];
+        if (!elements.length) return [];
+
+        const [
+            { default: EasyMDE },
+            { createFileInput, createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions },
+        ] = await Promise.all([import("easymde"), import("./lib/markdown-editor")]);
+        const fullMarkdownEditors = elements.reduce(
             (editors, element) => {
                 const fileInputEl = createFileInput({ allowedTypes: imageUploadOptions.allowedTypes });
                 const editor = createMarkdownEditor(element, {

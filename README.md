@@ -66,7 +66,7 @@ npm run dev --prefix frontend
 
 Open [localhost:8000](http://127.0.0.1:8000/). Run `uv run python manage.py qcluster` in another terminal when you need background jobs.
 
-Djando and Vite restart on changes automatically.
+Django serves pages on port 8000; Vite serves frontend modules on port 5173. Keep both processes running and open the Django URL. React and CSS changes update through Vite; Cmd+R reloads the full Django page and the current frontend code. Python changes restart Django. After template changes, reload the page.
 
 ### Sign in and configure optional services
 

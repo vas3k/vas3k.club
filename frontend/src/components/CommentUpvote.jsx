@@ -1,4 +1,4 @@
-import Vote from "../components/Vote";
+import Vote from "./Vote";
 export default function CommentUpvote(props) {
     return <Vote {...props} resource="comment" />;
 }

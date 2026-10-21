@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal, flushSync } from "react-dom";
-import MarkdownEditor from "../components/MarkdownEditor";
+import MarkdownEditor from "./MarkdownEditor";
 
 export default function ReplyForm({ commentOrder, avatarUrl, username, createCommentUrl }) {
     const [reply, setReply] = useState(null);

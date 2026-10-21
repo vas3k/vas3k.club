@@ -1,6 +1,6 @@
 import { act } from "react";
 import { render } from "../../test/render";
-import PostUpvote from "../islands/PostUpvote";
+import PostUpvote from "../components/PostUpvote";
 import ClubApi from "../lib/api.service";
 
 vi.mock("../lib/api.service", () => ({ __esModule: true, default: { post: vi.fn(), delete: vi.fn() } }));
