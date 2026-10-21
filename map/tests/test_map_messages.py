@@ -247,10 +247,10 @@ class TestUpvoteMapMessage(TestCase):
         self.assertFalse(MapMessageVote.objects.exists())
 
     def test_fails_on_unknown_messages(self):
-        # the api decorator turns every exception, 404 included, into its own error response
         response = self.client.post("/map/messages/8ab5a3cf-3f5e-4f8a-9e6f-3e1b4a3d2c1b/votes.json")
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["error"]["code"], "not-found")
         self.assertFalse(MapMessageVote.objects.exists())
 
 

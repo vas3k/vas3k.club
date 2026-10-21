@@ -46,7 +46,7 @@ class ExceptionMiddleware:
                     "message": exception.message,
                     "data": exception.data,
                 }
-            }, status=400)
+            }, status=exception.status_code)
 
         if isinstance(exception, ClubException):
             return render(request, "error.html", {

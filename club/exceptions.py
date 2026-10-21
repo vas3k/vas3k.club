@@ -65,6 +65,13 @@ class ApiInsufficientFunds(ClubException):
 
 class ApiException(ClubException):
     default_message = None
+    status_code = 400
+
+
+class ApiNotFound(ApiException):
+    default_code = "not-found"
+    default_title = "Не найдено"
+    status_code = 404
 
 
 class ApiBadRequest(ClubException):

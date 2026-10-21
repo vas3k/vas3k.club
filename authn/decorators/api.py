@@ -4,13 +4,13 @@ from typing import Optional
 
 from authlib.oauth2 import OAuth2Error
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.http.response import HttpResponseBase
 
 from authn.models.openid import OAuth2App, OAuth2Token
 from authn.providers.openid import oauth2_token_validator
 from authn.helpers import get_access_denied_reason
-from club.exceptions import ApiAccessDenied, ApiException, ClubException, ApiAuthRequired
+from club.exceptions import ApiAccessDenied, ApiException, ClubException, ApiAuthRequired, ApiNotFound
 
 
 log = logging.getLogger(__name__)
@@ -68,6 +68,8 @@ def api(require_auth=True, scopes=None):
             # execute view and catch exceptions
             try:
                 results = view(request, *args, **kwargs)
+            except Http404 as ex:
+                raise ApiNotFound() from ex
             except ApiException:
                 raise  # simply re-raise
             except ClubException as ex:

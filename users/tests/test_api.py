@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from unittest.mock import patch
 
 from django.conf import settings
 from django.test import TestCase
@@ -26,6 +27,32 @@ class TestUserApi(TestCase):
         self.assertEqual(response.json()["user"]["id"], str(self.owner.id))
         self.assertNotIn("email", response.json()["user"])
         self.assertNotIn("telegram", response.json()["user"])
+
+    @patch("authn.decorators.api.log.exception")
+    def test_missing_telegram_user_returns_json_404_without_logging_a_crash(self, log_exception):
+        response = self.client.get(
+            reverse("api_profile_by_telegram_id", args=[8842720576]),
+            headers={"X-Service-Token": self.app.service_token},
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["error"]["code"], "not-found")
+        self.assertIsNone(response.json()["error"]["message"])
+        self.assertEqual(response.json()["error"]["data"], {})
+        self.assertNotIn("User", response.content.decode())
+        log_exception.assert_not_called()
+
+    def test_existing_telegram_user_returns_profile(self):
+        self.other.telegram_id = 8842720576
+        self.other.save(update_fields=["telegram_id"])
+
+        response = self.client.get(
+            reverse("api_profile_by_telegram_id", args=[self.other.telegram_id]),
+            headers={"X-Service-Token": self.app.service_token},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["user"]["id"], str(self.other.id))
 
     def test_contact_scope_controls_private_fields(self):
         for scope in ["openid", "openid contact"]:

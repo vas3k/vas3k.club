@@ -58,8 +58,8 @@ class TestPostApiPrivacy(TestCase):
             with self.subTest(endpoint=name):
                 response = self.client.get(reverse(name, args=[self.post.type, self.post.slug]))
 
-                self.assertEqual(response.status_code, 400)
-                self.assertEqual(response.json()["error"]["code"], "Http404")
+                self.assertEqual(response.status_code, 404)
+                self.assertEqual(response.json()["error"]["code"], "not-found")
                 self.assertNotIn(self.post.text, response.content.decode())
 
     def test_author_can_read_own_draft_without_query_flags(self):
