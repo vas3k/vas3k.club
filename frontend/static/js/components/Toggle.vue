@@ -40,7 +40,8 @@ export default {
     methods: {
         toggle() {
             this.isLoading = true;
-            return ClubApi.post(this.url, (data) => {
+            const method = (this.isInverted ? !this.isActive : this.isActive) ? "delete" : "post";
+            return ClubApi[method](this.url, (data) => {
                 this.isLoading = false;
 
                 if (data.status === "created") {

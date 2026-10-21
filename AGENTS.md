@@ -54,7 +54,7 @@ Keep dependency declarations and locks consistent: `pyproject.toml`/`uv.lock`, `
 
 ## Django and business logic
 
-- Prefer ordinary function views, Django forms, model methods, and ORM queries in the existing app. Routes live in `club/urls.py`; use named URLs and `reverse()`/`{% url %}`.
+- Prefer ordinary function views, Django forms, model methods, and ORM queries in the existing app. Routes live in `club/urls.py`; use named URLs and `reverse()`/`{% url %}`. Group JSON routes with their corresponding page/domain routes. Use resource URLs ending in `.json`, without a separate API prefix; a matching HTML view is not required. Use plural collection names. Keep normal POST actions that redirect in views.
 - Authentication is custom: `request.me`, `request.my_session`, `users.User`, and `authn` decorators. Use `require_auth`/role decorators and `@api(...)` as appropriate; do not assume Django's `request.user` or `login_required` works here. Keep errors compatible with `club/exceptions.py` and the existing API response shapes.
 - Enforce permissions, membership, moderation, rate limits, and HTTP methods on the server. Reuse visibility/query helpers, but also preserve caller-specific checks for public content, drafts, room-only posts, mutes, and private profiles. A visibility helper alone does not enforce every access rule.
 - Prefer `ModelForm` for model edits. Declare inputs and their labels/widgets explicitly; keep `Meta` focused on model/fields. Use `clean_<field>()` for individual validation, `clean()` with `super()` for cross-field checks, and keep initialization separate from validation and saving.
@@ -70,7 +70,7 @@ Keep dependency declarations and locks consistent: `pyproject.toml`/`uv.lock`, `
 
 - Django owns pages, routing, forms, and initial data. Vue adds interaction inside those pages. Keep Vue 2 Options API (`props`, `data()`, `computed`, `methods`, lifecycle hooks); no SPA, Vue 3, React, router/store, or bundler migration unless explicitly requested.
 - Components live in `frontend/static/js/components/` and are registered in `main.js`, generally through lazy imports. Keep the existing `#app` and `#footer` mounts. The root's disabled interpolation delimiters protect user content containing `{{` and must remain disabled.
-- Pass URLs and initial values from Django through correctly typed props. Use explicit closing component tags in HTML templates and preserve named inputs for normal form submission. Reuse `frontend/static/js/common/api.service.js` (`ClubApi`) and its `is_ajax`/error conventions; shared browser helpers belong in that `common/` directory.
+- Pass URLs and initial values from Django through correctly typed props. Use explicit closing component tags in HTML templates and preserve named inputs for normal form submission. Reuse `frontend/static/js/common/api.service.js` (`ClubApi`) and its JSON/error conventions; shared browser helpers belong in that `common/` directory.
 - Extend existing layouts and reuse feature `widgets/` and form includes under `frontend/html/`. Keep template escaping; safely serialize structured data instead of interpolating untrusted JavaScript. Use `{% static %}` for static URLs.
 - Webpack + `django-webpack-loader` connects `frontend/static/js/main.js`, `frontend/static/css/index.css`, and `{% render_bundle %}`. Edit source, never generated `frontend/static/dist/` or `frontend/webpack-stats.json`.
 

@@ -12,10 +12,9 @@ from django_q.tasks import async_task
 from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied, RateLimitException
 from comments.forms import CommentForm, ReplyForm, BattleCommentForm, edit_form_class_for_comment
-from comments.models import Comment, CommentVote
+from comments.models import Comment
 from comments.rate_limits import is_comment_rate_limit_exceeded
 from common.request import parse_ip_address, parse_useragent
-from authn.decorators.api import api
 from notifications.telegram.comments import notify_on_comment_created
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
@@ -213,6 +212,7 @@ def delete_comment(request, comment_id):
     return redirect("show_comment", comment.post.slug, comment.id)
 
 
+
 @require_auth
 @require_http_methods(["POST"])
 def delete_comment_thread(request, comment_id):
@@ -230,6 +230,7 @@ def delete_comment_thread(request, comment_id):
     Comment.objects.filter(id=comment_id).delete()
 
     return redirect("show_post", comment.post.type, comment.post.slug)
+
 
 
 @require_auth
@@ -253,41 +254,3 @@ def pin_comment(request, comment_id):
     comment.save()
 
     return redirect("show_comment", comment.post.slug, comment.id)
-
-
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def upvote_comment(request, comment_id):
-    comment = get_object_or_404(Comment.objects.select_related("author", "post"), id=comment_id)
-
-    post_vote, is_created = CommentVote.upvote(
-        user=request.me,
-        comment=comment,
-        request=request,
-    )
-
-    return {
-        "comment": {
-            "upvotes": comment.upvotes + (1 if is_created else 0)
-        },
-        "upvoted_timestamp": int(post_vote.created_at.timestamp() * 1000) if post_vote else 0
-    }
-
-
-@api(require_auth=True)
-@require_http_methods(["POST"])
-def retract_comment_vote(request, comment_id):
-    comment = get_object_or_404(Comment.objects.select_related("author"), id=comment_id)
-
-    is_retracted = CommentVote.retract_vote(
-        request=request,
-        user=request.me,
-        comment=comment,
-    )
-
-    return {
-        "success": is_retracted,
-        "comment": {
-            "upvotes": comment.upvotes - (1 if is_retracted else 0)
-        }
-    }

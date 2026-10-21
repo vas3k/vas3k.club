@@ -22,11 +22,11 @@ class TestBookmarksModel(TestCase):
             author=self.user,
             visibility=Post.VISIBILITY_EVERYWHERE,
         )
-        self.url = f"/post/{post.slug}/bookmark/"
+        self.url = f"/post/{post.slug}/bookmarks.json"
 
     def test_toggle_post_bookmark_creates_and_deletes_relation(self):
         create_response = self.client.post(self.url)
-        delete_response = self.client.post(self.url)
+        delete_response = self.client.delete(self.url)
 
         self.assertEqual(create_response.status_code, 200)
         self.assertEqual(create_response.json()["status"], "created")
@@ -34,9 +34,11 @@ class TestBookmarksModel(TestCase):
         self.assertEqual(delete_response.json()["status"], "deleted")
         self.assertEqual(PostBookmark.objects.count(), 0)
 
-    def test_toggle_post_bookmark_rejects_get_method(self):
+    def test_get_bookmark_does_not_create_relation(self):
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()["is_bookmarked"])
+        self.assertFalse(PostBookmark.objects.exists())
 
 
 class TestBookmarksView(TestCase):

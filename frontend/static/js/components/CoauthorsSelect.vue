@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import ClubApi from "../common/api.service";
 import { debounce } from "../common/utils";
 
 const DEFAULT_AVATAR = "https://i.vas3k.club/v.png";
@@ -113,8 +114,7 @@ export default {
     },
     created() {
         this.debouncedFetch = debounce((loading, prefix) => {
-            fetch(`${this.searchUrl}${encodeURIComponent(prefix)}`)
-                .then((res) => res.json())
+            ClubApi.get(`${this.searchUrl}${encodeURIComponent(prefix)}`)
                 .then((data) => {
                     if (!data.users) {
                         return;
@@ -128,6 +128,7 @@ export default {
                             avatar: u.avatar || DEFAULT_AVATAR,
                         }));
                 })
+                .catch(() => { this.searchResults = []; })
                 .finally(() => {
                     loading(false);
                 });

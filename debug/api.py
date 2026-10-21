@@ -1,10 +1,11 @@
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
+from authn.decorators.api import api
 from debug.utils_for_tests import todict
 from users.models.user import User
 
 
+@api(require_auth=False)
 def api_me(request):
     response = {}
 
@@ -15,4 +16,4 @@ def api_me(request):
     else:
         response["is_authorised"] = False
 
-    return JsonResponse(response)
+    return response

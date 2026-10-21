@@ -1,6 +1,6 @@
 <template>
     <a
-        :href="upvoteUrl"
+        :href="voteUrl"
         class="upvote"
         :class="{
             'upvote-voted': isVoted && !isDisabled,
@@ -56,11 +56,7 @@ export default {
                 return false;
             },
         },
-        retractVoteUrl: {
-            type: String,
-            required: true,
-        },
-        upvoteUrl: {
+        voteUrl: {
             type: String,
             required: true,
         },
@@ -74,23 +70,20 @@ export default {
     },
     methods: {
         toggle() {
-            if (!this.isVoted) {
-                return ClubApi.post(this.upvoteUrl, (data) => {
-                    this.upvotes = parseInt(data.comment.upvotes);
-                    this.isVoted = true;
-                    this.upvotedTimestamp = data.upvoted_timestamp;
-                });
+            if (this.isDisabled || (this.isVoted && this.getHoursSinceVote() > this.hoursToRetractVote)) {
+                return;
             }
 
-            if (this.isVoted && this.getHoursSinceVote() <= this.hoursToRetractVote) {
-                return ClubApi.post(this.retractVoteUrl, (data) => {
-                    this.upvotes = parseInt(data.comment.upvotes);
-                    if (data.success) {
-                        this.isVoted = false;
-                        this.upvotedTimestamp = undefined;
-                    }
-                });
-            }
+            const method = this.isVoted ? "delete" : "post";
+            return ClubApi[method](this.voteUrl, (data) => {
+                if (data.error) {
+                    return;
+                }
+
+                this.upvotes = parseInt(data.comment.upvotes);
+                this.isVoted = data.is_voted;
+                this.upvotedTimestamp = data.upvoted_timestamp || undefined;
+            });
         },
 
         getHoursSinceVote() {

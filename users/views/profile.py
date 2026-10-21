@@ -2,10 +2,8 @@ from functools import wraps
 
 from django.conf import settings
 from django.db.models import Q
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
-from authn.decorators.api import api
 from authn.decorators.auth import require_auth
 from authn.helpers import check_user_permissions, is_safe_url
 from badges.models import UserBadge
@@ -13,7 +11,6 @@ from comments.models import Comment
 from common.pagination import paginate
 from posts.models.post import Post
 from rooms.models import RoomSubscription
-from search.models import SearchIndex
 from tags.models import Tag, UserTag
 from users.models.achievements import UserAchievement
 from users.models.mute import UserMuted
@@ -171,25 +168,3 @@ def profile_badges(request, user):
         "user": user,
         "badges": paginate(request, UserBadge.user_badges(user), settings.PROFILE_BADGES_PAGE_SIZE),
     })
-
-
-@api(require_auth=True)
-def toggle_tag(request, tag_code):
-    if request.method != "POST":
-        raise Http404()
-
-    tag = get_object_or_404(Tag, code=tag_code)
-
-    user_tag, is_created = UserTag.objects.get_or_create(
-        user=request.me, tag=tag, defaults=dict(name=tag.name)
-    )
-
-    if not is_created:
-        user_tag.delete()
-
-    SearchIndex.update_user_tags(request.me)
-
-    return {
-        "status": "created" if is_created else "deleted",
-        "tag": {"code": tag.code, "name": tag.name, "color": tag.color},
-    }

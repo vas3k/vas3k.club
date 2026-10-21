@@ -5,6 +5,7 @@ jest.mock("../common/api.service", () => ({
     __esModule: true,
     default: {
         post: jest.fn(),
+        delete: jest.fn(),
     },
 }));
 
@@ -47,7 +48,7 @@ describe("Toggle.vue", () => {
     });
 
     it("sets isActive to false when API returns status 'deleted'", async () => {
-        ClubApi.post.mockImplementation((url, cb) => cb({ status: "deleted" }));
+        ClubApi.delete.mockImplementation((url, cb) => cb({ status: "deleted" }));
         const wrapper = mountToggle({ isActiveByDefault: true });
 
         await wrapper.vm.toggle();
@@ -84,7 +85,7 @@ describe("Toggle.vue", () => {
         await wrapper.vm.toggle();
         expect(wrapper.vm.isActive).toBe(false);
 
-        ClubApi.post.mockImplementationOnce((url, cb) => cb({ status: "deleted" }));
+        ClubApi.delete.mockImplementationOnce((url, cb) => cb({ status: "deleted" }));
         await wrapper.vm.toggle();
         expect(wrapper.vm.isActive).toBe(true);
     });

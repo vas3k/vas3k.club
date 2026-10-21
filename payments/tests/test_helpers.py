@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from club.exceptions import BadRequest, InsufficientFunds
-from payments.helpers import gift_membership_days, cancel_all_stripe_subscriptions
+from club.exceptions import BadRequest
+from payments.helpers import extend_membership, cancel_all_stripe_subscriptions
 from users.models.user import User
 
 
@@ -20,54 +20,41 @@ def _create_user(slug, days_left):
     )
 
 
-class TestGiftMembershipDays(TestCase):
-    def test_extends_expired_user_and_deducts_from_sender(self):
-        from_user = _create_user("gift_from", days_left=120)
-        to_user = _create_user("gift_to", days_left=-5)
-        from_before = from_user.membership_expires_at
+class TestExtendMembership(TestCase):
+    def test_extension_starts_now_for_expired_member(self):
+        user = _create_user("extend_expired", days_left=-5)
 
-        result = gift_membership_days(days=10, from_user=from_user, to_user=to_user)
+        result = extend_membership(days=10, user=user)
 
-        from_user.refresh_from_db()
-        to_user.refresh_from_db()
+        user.refresh_from_db()
+        self.assertEqual(result, user.membership_expires_at)
+        self.assertEqual(user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
+        self.assertAlmostEqual(result, datetime.utcnow() + timedelta(days=10), delta=timedelta(seconds=2))
 
-        self.assertEqual(result, to_user.membership_expires_at)
-        self.assertEqual(to_user.membership_platform_type, User.MEMBERSHIP_PLATFORM_DIRECT)
-        self.assertGreater(to_user.membership_expires_at, datetime.utcnow() + timedelta(days=9))
-        self.assertAlmostEqual(
-            from_user.membership_expires_at,
-            from_before - timedelta(days=10),
-            delta=timedelta(seconds=2),
-        )
+    def test_extension_adds_to_existing_membership_without_debiting_others(self):
+        user = _create_user("extend_active", days_left=30)
+        other = _create_user("extend_other", days_left=120)
+        user_before = user.membership_expires_at
+        other_before = other.membership_expires_at
 
-    def test_does_not_deduct_if_disabled(self):
-        from_user = _create_user("gift_from_no_deduct", days_left=120)
-        to_user = _create_user("gift_to_no_deduct", days_left=1)
-        from_before = from_user.membership_expires_at
+        extend_membership(days=7, user=user)
 
-        gift_membership_days(
-            days=7,
-            from_user=from_user,
-            to_user=to_user,
-            deduct_from_original_user=False,
-        )
+        user.refresh_from_db()
+        other.refresh_from_db()
+        self.assertEqual(user.membership_expires_at, user_before + timedelta(days=7))
+        self.assertEqual(other.membership_expires_at, other_before)
 
-        from_user.refresh_from_db()
-        self.assertEqual(from_user.membership_expires_at, from_before)
+    def test_non_positive_extension_leaves_membership_unchanged(self):
+        user = _create_user("extend_invalid", days_left=30)
+        before = user.membership_expires_at
 
-    def test_raises_insufficient_funds(self):
-        from_user = _create_user("gift_from_low", days_left=3)
-        to_user = _create_user("gift_to_low", days_left=30)
+        for days in [0, -1]:
+            with self.subTest(days=days):
+                with self.assertRaises(BadRequest):
+                    extend_membership(days=days, user=user)
 
-        with self.assertRaises(InsufficientFunds):
-            gift_membership_days(days=5, from_user=from_user, to_user=to_user)
-
-    def test_raises_bad_request_for_non_positive_days(self):
-        from_user = _create_user("gift_from_zero", days_left=10)
-        to_user = _create_user("gift_to_zero", days_left=10)
-
-        with self.assertRaises(BadRequest):
-            gift_membership_days(days=0, from_user=from_user, to_user=to_user)
+                user.refresh_from_db()
+                self.assertEqual(user.membership_expires_at, before)
 
 
 class TestCancelAllStripeSubscriptions(TestCase):

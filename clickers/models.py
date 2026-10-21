@@ -4,13 +4,12 @@ from django.db import models
 
 from users.models.user import User
 
-MAX_CLICKER_ID_LEN = 40
 
 class Click(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
 
     user = models.ForeignKey(User, related_name="clicks", on_delete=models.CASCADE)
-    clicker_id = models.CharField(max_length=MAX_CLICKER_ID_LEN, db_index=True)
+    clicker_id = models.CharField(max_length=40, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -20,11 +19,11 @@ class Click(models.Model):
 
     @classmethod
     def list(cls, clicker_id):
-        return cls.objects.filter(clicker_id=clicker_id[:MAX_CLICKER_ID_LEN]).select_related("user")
+        return cls.objects.filter(clicker_id=clicker_id[:40]).select_related("user")
 
     @classmethod
     def toggle(cls, user, clicker_id):
-        click, is_created = cls.objects.get_or_create(user=user, clicker_id=clicker_id[:MAX_CLICKER_ID_LEN])
+        click, is_created = cls.objects.get_or_create(user=user, clicker_id=clicker_id[:40])
         if not is_created:
             click.delete()
             return False

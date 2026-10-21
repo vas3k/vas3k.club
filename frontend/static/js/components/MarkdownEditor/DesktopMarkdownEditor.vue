@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import ClubApi from "../../common/api.service";
 import {
     createMarkdownEditor,
     handleFormSubmissionShortcuts,
@@ -236,14 +237,7 @@ export default {
         },
         fetchAutocompleteSuggestions: throttle(function(sample) {
             const encoded = encodeURIComponent(sample);
-            fetch(`/search/users.json?q=${encoded}`)
-                .then((res) => {
-                    if (!res.url.includes(`q=${encoded}`)) {
-                        return { users: [] };
-                    }
-
-                    return res.json();
-                })
+            ClubApi.get(`/search/users.json?q=${encoded}`)
                 .then((data) => {
                     if (!this.autocomplete) {
                         return;
@@ -262,7 +256,8 @@ export default {
                     this.users.forEach((user) => {
                         this.autocompleteCache.users[user.slug] = user;
                     });
-                });
+                })
+                .catch(() => { this.users = []; });
         }, 600),
         handleAutocompleteHintTrigger(cm, event) {
             if (this.autocomplete) {

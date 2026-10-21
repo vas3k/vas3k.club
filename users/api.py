@@ -1,11 +1,13 @@
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_http_methods
 
 from authn.decorators.api import api
 from badges.models import UserBadge
-from club.exceptions import ApiAccessDenied
-from tags.models import UserTag
+from club.exceptions import ApiAccessDenied, ApiException
+from search.models import SearchIndex
+from tags.models import Tag, UserTag
 from users.models.achievements import UserAchievement
+from users.models.friends import Friend
 from users.models.user import User
 
 
@@ -26,10 +28,11 @@ def api_profile_user(request, user_slug):
 
 
 @api(require_auth=True)
+@require_http_methods(["GET"])
 def api_profile(request, user_slug):
     user = api_profile_user(request, user_slug)
     scopes = request.oauth_token.get_scopes() if request.oauth_token else []
-    return JsonResponse({"user": user.to_dict(include_private="contact" in scopes)})
+    return {"user": user.to_dict(include_private="contact" in scopes)}
 
 
 @api(require_auth=True)
@@ -39,6 +42,7 @@ def api_profile_badge(request, user_slug):
 
 
 @api(require_auth=True)
+@require_http_methods(["GET"])
 def api_profile_tags(request, user_slug):
     user = api_profile_user(request, user_slug)
 
@@ -55,24 +59,27 @@ def api_profile_tags(request, user_slug):
                 "name": ut.tag.name,
             })
 
-    return JsonResponse({"tags": grouped_tags})
+    return {"tags": grouped_tags}
 
 
 @api(require_auth=True)
+@require_http_methods(["GET"])
 def api_profile_achievements(request, user_slug):
     user = api_profile_user(request, user_slug)
     user_achievements = UserAchievement.objects.filter(user=user).select_related("achievement")
-    return JsonResponse({"user_achievements": [ua.to_dict() for ua in user_achievements]})
+    return {"user_achievements": [ua.to_dict() for ua in user_achievements]}
 
 
 @api(require_auth=True)
+@require_http_methods(["GET"])
 def api_profile_badges(request, user_slug):
     user = api_profile_user(request, user_slug)
     user_badges = UserBadge.objects.filter(to_user=user).select_related("badge", "from_user")
-    return JsonResponse({"user_badges": [ub.to_dict() for ub in user_badges]})
+    return {"user_badges": [ub.to_dict() for ub in user_badges]}
 
 
 @api(require_auth=True)
+@require_http_methods(["GET"])
 def api_profile_by_telegram_id(request, telegram_id):
     try:
         user = get_object_or_404(User, telegram_id=telegram_id)
@@ -83,4 +90,48 @@ def api_profile_by_telegram_id(request, telegram_id):
         )
         user = same_telegram[0]
 
-    return JsonResponse({"user": user.to_dict()})
+    return {"user": user.to_dict()}
+
+
+@api(require_auth=True)
+@require_http_methods(["GET", "POST", "DELETE"])
+def api_friend(request, user_slug):
+    user_to = get_object_or_404(User, slug=user_slug)
+
+    if request.me == user_to:
+        raise ApiException(title="You can't add yourself as a friend")
+
+    if request.method == "POST":
+        Friend.add_friend(user_from=request.me, user_to=user_to)
+    elif request.method == "DELETE":
+        Friend.delete_friend(user_from=request.me, user_to=user_to)
+
+    friend = Friend.user_friends(request.me).filter(user_to=user_to).first()
+
+    return {
+        "status": "created" if friend else "deleted",
+        "is_friend": friend is not None,
+        "friend": friend.to_dict() if friend else None,
+    }
+
+
+@api(require_auth=True)
+@require_http_methods(["GET", "POST", "DELETE"])
+def toggle_tag(request, tag_code):
+    tag = get_object_or_404(Tag, code=tag_code)
+
+    if request.method == "POST":
+        UserTag.objects.get_or_create(user=request.me, tag=tag, defaults={"name": tag.name})
+    elif request.method == "DELETE":
+        UserTag.objects.filter(user=request.me, tag=tag).delete()
+
+    if request.method != "GET":
+        SearchIndex.update_user_tags(request.me)
+
+    is_active = UserTag.objects.filter(user=request.me, tag=tag).exists()
+
+    return {
+        "status": "created" if is_active else "deleted",
+        "is_active": is_active,
+        "tag": {"code": tag.code, "name": tag.name, "color": tag.color},
+    }

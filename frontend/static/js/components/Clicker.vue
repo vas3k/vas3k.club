@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     url() {
-      return `/clickers/${this.clickerId}.json`;
+      return `/clickers/${encodeURIComponent(this.clickerId)}.json`;
     },
 
     load() {
@@ -70,14 +70,18 @@ export default {
       if (this.loading) return;
       this.loading = true;
 
-      return ClubApi.post(this.url(), (data) => {
+      const method = this.active ? "delete" : "post";
+      return ClubApi[method](this.url(), (data) => {
         this.loading = false;
+
+        if (data.error) {
+          this.$emit("error", data.error);
+          return;
+        }
+
         this.clicks = data.clicks || [];
         this.count = data.count || 0;
         this.active = !!data.is_clicked;
-      }, (err) => {
-        this.loading = false;
-        this.$emit("error", err);
       });
     },
   },

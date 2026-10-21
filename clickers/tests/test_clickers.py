@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from clickers.models import Click, MAX_CLICKER_ID_LEN
+from clickers.models import Click
 from users.models.user import User
 
 
@@ -32,10 +32,10 @@ class TestClickersModel(TestCase):
 
     def test_list_truncates_clicker_id_to_max_length(self):
         user = _create_user("clicker_long_user")
-        long_id = "x" * (MAX_CLICKER_ID_LEN + 20)
+        long_id = "x" * 60
         Click.toggle(user, long_id)
 
         clicks = list(Click.list(long_id))
 
         self.assertEqual(len(clicks), 1)
-        self.assertEqual(clicks[0].clicker_id, "x" * MAX_CLICKER_ID_LEN)
+        self.assertEqual(clicks[0].clicker_id, "x" * 40)

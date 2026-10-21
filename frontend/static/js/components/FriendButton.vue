@@ -38,7 +38,8 @@ export default {
     methods: {
         toggle() {
             this.isLoading = true;
-            return ClubApi.post(this.url, (data) => {
+            const method = this.isFriend ? "delete" : "post";
+            return ClubApi[method](this.url, (data) => {
                 this.isLoading = false;
                 if (data.status === "created") this.isFriend = true;
                 if (data.status === "deleted") this.isFriend = false;

@@ -42,7 +42,7 @@ class TestSearchApiUsers(TestCase):
 
     def test_users_endpoint_rejects_post(self):
         response = self.client.post("/search/users.json", data={"prefix": "abc"})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 405)
 
 
 class TestSearchApiTags(TestCase):
@@ -156,3 +156,26 @@ class TestSearchJson(TestCase):
         self.assertEqual(payload["type"], "post")
         slugs = [item["post"]["_club"]["slug"] for item in payload["results"]]
         self.assertEqual(slugs, [self.post.slug])
+
+    def test_posts_resource_cannot_be_overridden_to_search_users(self):
+        response = self.client.get("/search/posts.json", {"q": "ZXQSEARCHTOKEN", "type": "user"})
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["type"], "post")
+        self.assertEqual([item["post"]["_club"]["slug"] for item in payload["results"]], [self.post.slug])
+
+    def test_posts_search_excludes_stale_drafts_and_deleted_posts(self):
+        self.post.visibility = Post.VISIBILITY_DRAFT
+        self.post.save()
+
+        response = self.client.get("/search/posts.json", {"q": "ZXQSEARCHTOKEN"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["results"], [])
+
+    def test_posts_search_requires_authentication(self):
+        response = Client().get("/search/posts.json", {"q": "ZXQSEARCHTOKEN"})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["error"]["code"], "api-auth-required")

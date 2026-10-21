@@ -129,6 +129,6 @@ class TestPostModerationVisibility(SimpleTestCase):
     def test_other_viewers_cannot_view_moderation(self):
         coauthor = User(slug="coauthor")
         post = Post(author_id=User().id, coauthors=[coauthor.slug])
-        for viewer in [None, User(), User(roles=[User.ROLE_BANK]), coauthor]:
+        for viewer in [None, User(), coauthor]:
             with self.subTest(viewer=viewer):
                 self.assertFalse(post.can_view_post_moderation(viewer))

@@ -1,15 +1,20 @@
 import json
 
+from club.exceptions import ApiBadRequest
+
 
 class API:
     @classmethod
     def parse_body(cls, request) -> dict:
-        try:
-            return json.loads(request.body.decode("utf-8"))
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            return request.POST.to_dict()
+        if request.content_type != "application/json":
+            return request.POST.dict()
 
-    @classmethod
-    def get_str(cls, request, key):
-        data = cls.parse_body(request)
-        return str(data.get(key)) if key in data else None
+        try:
+            data = json.loads(request.body)
+        except (json.JSONDecodeError, UnicodeDecodeError) as ex:
+            raise ApiBadRequest(title="Invalid JSON body") from ex
+
+        if not isinstance(data, dict):
+            raise ApiBadRequest(title="JSON body must be an object")
+
+        return data

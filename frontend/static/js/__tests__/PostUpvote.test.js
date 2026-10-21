@@ -5,6 +5,7 @@ jest.mock("../common/api.service", () => ({
     __esModule: true,
     default: {
         post: jest.fn(),
+        delete: jest.fn(),
     },
 }));
 
@@ -18,8 +19,7 @@ describe("PostUpvote.vue", () => {
     function mountUpvote(props = {}) {
         return shallowMount(PostUpvote, {
             propsData: {
-                upvoteUrl: "/upvote",
-                retractVoteUrl: "/retract",
+                voteUrl: "/vote",
                 initialUpvotes: 5,
                 ...props,
             },
@@ -31,20 +31,20 @@ describe("PostUpvote.vue", () => {
         expect(wrapper.text()).toContain("42");
     });
 
-    it("calls upvoteUrl and updates state on upvote", () => {
-        ClubApi.post.mockImplementation((url, cb) => cb({ post: { upvotes: 6 }, upvoted_timestamp: 1000000 }));
+    it("calls voteUrl and updates state on upvote", () => {
+        ClubApi.post.mockImplementation((url, cb) => cb({ post: { upvotes: 6 }, is_voted: true, upvoted_timestamp: 1000000 }));
         const wrapper = mountUpvote({ initialUpvotes: 5 });
 
         wrapper.vm.toggle();
 
-        expect(ClubApi.post).toHaveBeenCalledWith("/upvote", expect.any(Function));
+        expect(ClubApi.post).toHaveBeenCalledWith("/vote", expect.any(Function));
         expect(wrapper.vm.upvotes).toBe(6);
         expect(wrapper.vm.isVoted).toBe(true);
         expect(wrapper.vm.upvotedTimestamp).toBe(1000000);
     });
 
     it("retracts vote within hoursToRetractVote", () => {
-        ClubApi.post.mockImplementation((url, cb) => cb({ post: { upvotes: 4 }, success: true }));
+        ClubApi.delete.mockImplementation((url, cb) => cb({ post: { upvotes: 4 }, is_voted: false }));
         const wrapper = mountUpvote({
             initialUpvotes: 5,
             initialIsVoted: true,
@@ -54,7 +54,7 @@ describe("PostUpvote.vue", () => {
 
         wrapper.vm.toggle();
 
-        expect(ClubApi.post).toHaveBeenCalledWith("/retract", expect.any(Function));
+        expect(ClubApi.delete).toHaveBeenCalledWith("/vote", expect.any(Function));
         expect(wrapper.vm.upvotes).toBe(4);
         expect(wrapper.vm.isVoted).toBe(false);
     });
@@ -121,7 +121,7 @@ describe("PostUpvote.vue", () => {
     });
 
     it("checks the checkbox variant after upvote", async () => {
-        ClubApi.post.mockImplementation((url, cb) => cb({ post: { upvotes: 6 }, upvoted_timestamp: 1000000 }));
+        ClubApi.post.mockImplementation((url, cb) => cb({ post: { upvotes: 6 }, is_voted: true, upvoted_timestamp: 1000000 }));
         const wrapper = mountUpvote({ variant: "checkbox" });
 
         wrapper.vm.toggle();

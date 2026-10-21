@@ -55,8 +55,8 @@ class TestRoomMembership(TestCase):
         RoomSubscription.join_chat(self.user, self.room)
         login(self.client, self.user)
 
-        for expected in [True, False]:
-            response = self.client.post(reverse("toggle_room_subscription", args=[self.room.slug]))
+        for method, expected in [(self.client.post, True), (self.client.delete, False)]:
+            response = method(reverse("toggle_room_subscription", args=[self.room.slug]))
             self.assertEqual(response.status_code, 200)
             membership = RoomSubscription.get(self.user, self.room)
             self.assertEqual(membership.is_notified, expected)

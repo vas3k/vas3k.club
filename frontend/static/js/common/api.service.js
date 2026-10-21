@@ -1,64 +1,48 @@
 const ClubApi = {
-    post(href, callback) {
-        const params = {
-            method: "POST",
-            credentials: "include",
-        };
+    async request(href, params, callback) {
+        let data;
 
-        fetch(href + "?is_ajax=true", params)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => callback(data))
-            .catch((error) => {
-                callback({ error: error.message });
+        try {
+            const response = await fetch(href, {
+                credentials: "include",
+                ...params,
+                headers: { Accept: "application/json", ...params.headers },
             });
+            data = await response.json();
+
+            if (!response.ok) {
+                const error = data.error || {};
+                throw new Error(error.message || error.title || `HTTP error! status: ${response.status}`);
+            }
+        } catch (error) {
+            if (!callback) {
+                throw error;
+            }
+
+            return callback({ error: error.message });
+        }
+
+        return callback ? callback(data) : data;
+    },
+
+    post(href, callback) {
+        return this.request(href, { method: "POST" }, callback);
     },
 
     postForm(href, data, callback) {
-        const params = {
+        return this.request(href, {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
             body: new URLSearchParams(data).toString(),
-        };
+        }, callback);
+    },
 
-        fetch(href + "?is_ajax=true", params)
-            .then((response) => response.json().then((json) => ({ ok: response.ok, json })))
-            .then(({ ok, json }) => {
-                if (ok) {
-                    callback(json);
-                    return;
-                }
-                // club api errors come back as {"error": {"title": ..., "message": ...}}
-                const error = json.error || {};
-                callback({ error: error.message || error.title || "Что-то пошло не так" });
-            })
-            .catch((error) => {
-                callback({ error: error.message });
-            });
+    delete(href, callback) {
+        return this.request(href, { method: "DELETE" }, callback);
     },
 
     get(href, callback) {
-        const params = {
-            method: "GET",
-            credentials: "include",
-        };
-
-        fetch(href + "?is_ajax=true", params)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then((data) => callback(data))
-            .catch((error) => {
-                callback({ error: error.message });
-            });
+        return this.request(href, { method: "GET" }, callback);
     },
 };
 

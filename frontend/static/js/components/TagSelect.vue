@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import ClubApi from "../common/api.service";
 import { debounce } from "../common/utils";
 
 
@@ -155,8 +156,7 @@ export default {
         },
 
         search: debounce(((loading, search, vm) => {
-            fetch(`${vm.$props.searchUrl}${search}`)
-                .then(response => response.json())
+            ClubApi.get(`${vm.$props.searchUrl}${encodeURIComponent(search)}`)
                 .then(json => {
                     if (!json.tags) {
                         return;
@@ -168,6 +168,7 @@ export default {
                         }))
                     ;
                 })
+                .catch(() => { vm.options = []; })
                 .finally(() => {
                     loading(false);
                 });

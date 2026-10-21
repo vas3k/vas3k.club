@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from uuid import uuid4
 
 from django.conf import settings
@@ -37,12 +37,10 @@ class User(models.Model, ModelDiffMixin):
 
     ROLE_CURATOR = "curator"
     ROLE_MODERATOR = "moderator"
-    ROLE_BANK = "bank"
     ROLE_GOD = "god"
     ROLES = [
         (ROLE_CURATOR, "Куратор"),
         (ROLE_MODERATOR, "Модератор"),
-        (ROLE_BANK, "Банк"),
         (ROLE_GOD, "Бог"),
     ]
 
@@ -236,10 +234,6 @@ class User(models.Model, ModelDiffMixin):
     @property
     def is_curator(self):
         return (self.roles and self.ROLE_CURATOR in self.roles) or self.is_god
-
-    @property
-    def is_bank(self):
-        return (self.roles and self.ROLE_BANK in self.roles) or self.is_god
 
     @property
     def is_moderation_approved(self):

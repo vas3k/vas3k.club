@@ -14,9 +14,8 @@ from authn.views.patreon import patreon_sync, patreon_sync_callback
 from badges.views import create_badge_for_post, create_badge_for_comment
 from clickers.api import api_clicker
 from club import features
-from comments.api import api_list_post_comments
-from comments.views import create_comment, edit_comment, delete_comment, show_comment, upvote_comment, \
-    retract_comment_vote, pin_comment, delete_comment_thread
+from comments.api import api_list_post_comments, toggle_comment_vote
+from comments.views import create_comment, edit_comment, show_comment, delete_comment_thread, delete_comment, pin_comment
 from common.feature_flags import feature_switch
 from invites.views import show_invite, list_invites, activate_invite, godmode_generate_invite_code
 from landing.views import landing
@@ -26,12 +25,12 @@ from misc.fun import mass_note
 from misc.views import stats, network, robots, generate_ical_invite, generate_google_invite, show_achievement, \
     crew, write_to_crew
 from payments.views.yookassa import yookassa_webhook, rubles
-from rooms.views import redirect_to_room_chat, list_rooms, toggle_room_subscription, toggle_room_mute
-from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch, \
-    link_telegram
+from rooms.views import redirect_to_room_chat, list_rooms
+from rooms.api import toggle_room_subscription, toggle_room_mute
+from notifications.views import render_weekly_digest, email_unsubscribe, email_confirm, email_digest_switch
+from notifications.api import link_telegram
 from notifications.webhooks import webhook_event
 from payments.views.common import membership_expired
-from payments.api import api_gift_days
 from invites.api import api_gift_invite_link
 from payments.views.stripe import pay, done, stripe_webhook, stop_subscription
 from posts.api import md_show_post, api_show_post, json_feed
@@ -39,7 +38,7 @@ from posts.models.post import Post
 from posts.rss import NewPostsRss
 from posts.user_rss import UserPostsRss
 from posts.sitemaps import sitemaps
-from posts.views.api import toggle_post_bookmark, upvote_post, retract_post_vote, toggle_post_subscription, \
+from posts.api import toggle_post_bookmark, toggle_post_vote, toggle_post_subscription, \
     toggle_post_event_participation
 from posts.views.calendar import event_calendar
 from posts.views.feed import feed
@@ -50,13 +49,13 @@ from search.views import search
 from tickets.views import stripe_ticket_sale_webhook
 
 from users.api import api_profile, api_profile_by_telegram_id, api_profile_tags, api_profile_achievements, \
-    api_profile_badges, api_profile_badge
+    api_profile_badges, api_profile_badge, api_friend, toggle_tag
 from users.views.delete_account import request_delete_account, confirm_delete_account
-from users.views.friends import api_friend, friends
+from users.views.friends import friends
 from users.views.messages import on_review, rejected, banned
 from users.views.muted import toggle_mute, muted
 from users.views.notes import edit_note
-from users.views.profile import profile, toggle_tag, profile_comments, profile_posts, profile_badges
+from users.views.profile import profile, profile_comments, profile_posts, profile_badges
 from users.views.settings import profile_settings, edit_profile, edit_account, edit_notifications, edit_payments, \
     edit_bot, edit_data, request_data, edit_sessions, deactivate_session, deactivate_other_sessions
 from users.views.intro import intro
@@ -99,20 +98,19 @@ urlpatterns = [
     path("monies/stripe/webhook/", stripe_webhook, name="stripe_webhook"),
     path("monies/stripe/webhook_tickets/", stripe_ticket_sale_webhook, name="stripe_tickets_webhook"),
     path("monies/yookassa/webhook/", yookassa_webhook, name="yookassa_webhook"),
-    path("monies/gift/<int:days>/<slug:user_slug>.json", api_gift_days, name="api_gift_days"),
 
     path("user/<slug:user_slug>/", profile, name="profile"),
     path("user/<slug:user_slug>.json", api_profile, name="api_profile"),
-    path("user/<slug:user_slug>.badge.html", api_profile_badge, name="api_profile_badge"),
     path("user/by_telegram_id/<slug:telegram_id>.json", api_profile_by_telegram_id, name="api_profile_by_telegram_id"),
     path("user/<slug:user_slug>/tags.json", api_profile_tags, name="api_profile_tags"),
     path("user/<slug:user_slug>/achievements.json", api_profile_achievements, name="api_profile_achievements"),
     path("user/<slug:user_slug>/badges.json", api_profile_badges, name="api_profile_badges"),
+    path("user/<slug:user_slug>.badge.html", api_profile_badge, name="api_profile_badge"),
     path("user/<slug:user_slug>/comments/", profile_comments, name="profile_comments"),
     path("user/<slug:user_slug>/posts/", profile_posts, name="profile_posts"),
     path("user/<slug:user_slug>/badges/", profile_badges, name="profile_badges"),
-    path("user/<slug:user_slug>/friend/", api_friend, name="api_friend"),
     path("user/<slug:user_slug>/friends/", friends, name="friends"),
+    path("user/<slug:user_slug>/friends.json", api_friend, name="api_friend"),
     path("user/<slug:user_slug>/mute/", toggle_mute, name="toggle_mute"),
     path("user/<slug:user_slug>/muted/", muted, name="muted"),
     path("user/<slug:user_slug>/note/", edit_note, name="edit_note"),
@@ -144,12 +142,15 @@ urlpatterns = [
 
     path("intro/", intro, name="intro"),
     path("people/", people, name="people"),
+    path("map/messages.json", api_create_map_message, name="api_create_map_message"),
+    path("map/messages/<uuid:message_id>/votes.json", api_upvote_map_message, name="api_upvote_map_message"),
     path("calendar/", event_calendar, name="event_calendar"),
     path("achievements/", RedirectView.as_view(url="/stats", permanent=True), name="achievements"),
     path("achievements/<slug:achievement_code>/", show_achievement, name="show_achievement"),
     path("stats/", stats, name="stats"),
+    path("profile/tags/<str:tag_code>.json", toggle_tag, name="toggle_tag"),
+    path("profile/telegram.json", link_telegram, name="link_telegram"),
 
-    path("profile/tag/<str:tag_code>/toggle/", toggle_tag, name="toggle_tag"),
     path("profile/on_review/", on_review, name="on_review"),
     path("profile/rejected/", rejected, name="rejected"),
     path("profile/banned/", banned, name="banned"),
@@ -162,11 +163,10 @@ urlpatterns = [
     path("post/<slug:post_slug>/clear/", clear_post, name="clear_post"),
     path("post/<slug:post_slug>/delete/", delete_post, name="delete_post"),
     path("post/<slug:post_slug>/edit/", edit_post, name="edit_post"),
-    path("post/<slug:post_slug>/bookmark/", toggle_post_bookmark, name="toggle_post_bookmark"),
-    path("post/<slug:post_slug>/upvote/", upvote_post, name="upvote_post"),
-    path("post/<slug:post_slug>/retract_vote/", retract_post_vote, name="retract_post_vote"),
-    path("post/<slug:post_slug>/subscription/", toggle_post_subscription, name="toggle_post_subscription"),
-    path("post/<slug:post_slug>/participate/", toggle_post_event_participation, name="toggle_post_event_participation"),
+    path("post/<slug:post_slug>/votes.json", toggle_post_vote, name="toggle_post_vote"),
+    path("post/<slug:post_slug>/bookmarks.json", toggle_post_bookmark, name="toggle_post_bookmark"),
+    path("post/<slug:post_slug>/subscriptions.json", toggle_post_subscription, name="toggle_post_subscription"),
+    path("post/<slug:post_slug>/participants.json", toggle_post_event_participation, name="toggle_post_event_participation"),
     path("post/<slug:post_slug>/comment/create/", create_comment, name="create_comment"),
     path("post/<slug:post_slug>/comment/<uuid:comment_id>/", show_comment, name="show_comment"),
     path("post/<slug:post_slug>/badge/", create_badge_for_post, name="create_badge_for_post"),
@@ -175,34 +175,32 @@ urlpatterns = [
 
     path("search/", search, name="search"),
     path("search.json", api_search, name="api_search"),
+    path("search/posts.json", api_search, {"content_type": "post"}, name="api_search_posts"),
     path("search/users.json", api_search_users, name="api_search_users"),
     path("search/tags.json", api_search_tags, name="api_search_tags"),
 
     path("rooms/", list_rooms, name="list_rooms"),
     path("room/<slug:room_slug>/", feed, name="feed_room"),
     path("room/<slug:room_slug>/chat/", redirect_to_room_chat, name="redirect_to_room_chat"),
-    path("room/<slug:room_slug>/subscribe/", toggle_room_subscription, name="toggle_room_subscription"),
-    path("room/<slug:room_slug>/mute/", toggle_room_mute, name="toggle_room_mute"),
+    path("room/<slug:room_slug>/subscriptions.json", toggle_room_subscription, name="toggle_room_subscription"),
+    path("room/<slug:room_slug>/mutes.json", toggle_room_mute, name="toggle_room_mute"),
     re_path(r"room/(?P<room_slug>[^/]+)/{}/$".format(ORDERING_RE), feed, name="feed_room_ordering"),
     path("label/<slug:label_code>/", feed, name="feed_label"),
     re_path(r"^label/(?P<label_code>[^/]+)/{}/$".format(ORDERING_RE), feed, name="feed_label_ordering"),
 
     path("invites/", list_invites, name="invites"),
+    path("invites.json", api_gift_invite_link, name="api_gift_invite_link"),
     path("invites/generate_invite_code/", godmode_generate_invite_code, name="godmode_generate_invite_code"),
     path("invites/<slug:invite_code>/", show_invite, name="show_invite"),
     path("invites/<slug:invite_code>/activate/", activate_invite, name="activate_invite"),
-    path("invites.json", api_gift_invite_link, name="api_gift_invite_link"),
 
-    path("comment/<uuid:comment_id>/upvote/", upvote_comment, name="upvote_comment"),
-    path("comment/<uuid:comment_id>/retract_vote/", retract_comment_vote, name="retract_comment_vote"),
     path("comment/<uuid:comment_id>/edit/", edit_comment, name="edit_comment"),
-    path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete/", delete_comment, name="delete_comment"),
+    path("comment/<uuid:comment_id>/pin/", pin_comment, name="pin_comment"),
     path("comment/<uuid:comment_id>/delete_thread/", delete_comment_thread, name="delete_comment_thread"),
+    path("comment/<uuid:comment_id>/votes.json", toggle_comment_vote, name="toggle_comment_vote"),
     path("comment/<uuid:comment_id>/badge/", create_badge_for_comment,
          name="create_badge_for_comment"),
-
-    path("telegram/link/", link_telegram, name="link_telegram"),
 
     path("notifications/confirm/<uuid:user_id>/<str:secret>/", email_confirm, name="email_confirm"),
     path("notifications/unsubscribe/<uuid:user_id>/<str:secret>/", email_unsubscribe, name="email_unsubscribe"),
@@ -216,11 +214,7 @@ urlpatterns = [
          name="network_chat"),
     path("crew/", crew, name="crew"),
     path("crew/write/<slug:crew>/", write_to_crew, name="write_to_crew"),
-
     path("clickers/<str:clicker_id>.json", api_clicker, name="api_clicker"),
-
-    path("map/messages/create.json", api_create_map_message, name="api_create_map_message"),
-    path("map/messages/<uuid:message_id>/upvote.json", api_upvote_map_message, name="api_upvote_map_message"),
 
     # admin features
     path("godmode/", godmode, name="godmode_settings"),
@@ -268,4 +262,4 @@ if settings.DEBUG:
 # so we use separate special var instead of settings.DEBUG
 if settings.TESTS_RUN:
     from debug.api import api_me
-    urlpatterns.append(path("debug/me", api_me, name="debug_api_me"))
+    urlpatterns.insert(0, path("debug/me.json", api_me, name="debug_api_me"))

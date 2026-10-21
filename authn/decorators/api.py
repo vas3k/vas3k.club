@@ -1,14 +1,19 @@
 import functools
+import logging
 from typing import Optional
 
 from authlib.oauth2 import OAuth2Error
 from authlib.oauth2.rfc6749 import MissingAuthorizationError
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
+from django.http.response import HttpResponseBase
 
 from authn.models.openid import OAuth2App, OAuth2Token
 from authn.providers.openid import oauth2_token_validator
 from authn.helpers import get_access_denied_reason
 from club.exceptions import ApiAccessDenied, ApiException, ClubException, ApiAuthRequired
+
+
+log = logging.getLogger(__name__)
 
 
 def api(require_auth=True, scopes=None):
@@ -23,7 +28,7 @@ def api(require_auth=True, scopes=None):
             if service_token:
                 app = app_by_service_token(service_token)
                 if not app:
-                    raise ApiAuthRequired("App with this service token not found")
+                    raise ApiAuthRequired(title="App with this service token not found")
 
                 request.me = app.owner
 
@@ -61,7 +66,6 @@ def api(require_auth=True, scopes=None):
                     raise ApiAccessDenied(code=reason)
 
             # execute view and catch exceptions
-            status_code = 200
             try:
                 results = view(request, *args, **kwargs)
             except ApiException:
@@ -75,27 +79,16 @@ def api(require_auth=True, scopes=None):
                     data=ex.data,
                 )
             except Exception as ex:
-                raise ApiException(
-                    code=ex.__class__.__name__,
-                    title=str(ex),
-                )
+                log.exception("Unhandled exception in API view %s", view.__name__)
+                raise ApiException(code=ex.__class__.__name__) from ex
 
-            # return results in expected format
-            if is_ajax(request):  # legacy, change to Content-Type check
-                return JsonResponse(data=results, status=status_code, json_dumps_params=dict(ensure_ascii=False))
-            elif isinstance(results, dict):
-                return JsonResponse(data=results, status=status_code, json_dumps_params=dict(ensure_ascii=False))
-            elif isinstance(results, str):
-                return HttpResponse(results, content_type="text/plain; charset=utf-8")
-            else:
+            if isinstance(results, HttpResponseBase):
                 return results
+
+            return JsonResponse(results, json_dumps_params={"ensure_ascii": False})
 
         return wrapper
     return decorator
-
-
-def is_ajax(request):
-    return bool(request.GET.get("is_ajax"))
 
 
 def app_by_service_token(service_token) -> Optional[OAuth2App]:

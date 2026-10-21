@@ -41,7 +41,8 @@ export default {
     },
     methods: {
         toggle() {
-            return ClubApi.post(this.url, (data) => {
+            const method = this.isActive ? "delete" : "post";
+            return ClubApi[method](this.url, (data) => {
                 if (data.status === "created") {
                     this.isActive = true;
                 }

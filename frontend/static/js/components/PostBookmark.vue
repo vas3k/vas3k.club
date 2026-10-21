@@ -32,9 +32,10 @@ export default {
     methods: {
         toggle() {
             this.isLoading = true;
-            return ClubApi.post(this.bookmarkUrl, (data) => {
+            const method = this.isBookmarked ? "delete" : "post";
+            return ClubApi[method](this.bookmarkUrl, (data) => {
                 this.isLoading = false;
-                this.isBookmarked = !this.isBookmarked;
+                if (!data.error) this.isBookmarked = data.is_bookmarked;
             });
         },
     },

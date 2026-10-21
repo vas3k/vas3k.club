@@ -2,7 +2,7 @@ from django import forms
 from django.shortcuts import render
 
 from notifications.telegram.common import send_telegram_message, ADMIN_CHAT
-from payments.helpers import gift_membership_days
+from payments.helpers import extend_membership
 from users.models.user import User
 
 
@@ -29,11 +29,9 @@ def post_prolong_action(request, user: User, **context):
 
         # Add more days of membership
         if data["add_membership_days"] and int(data["add_membership_days"]) > 0:
-            gift_membership_days(
+            extend_membership(
                 days=data["add_membership_days"],
-                from_user=request.me,
-                to_user=user,
-                deduct_from_original_user=False,
+                user=user,
             )
 
             send_telegram_message(

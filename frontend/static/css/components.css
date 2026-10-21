@@ -196,6 +196,7 @@
     }
 
 .upvote {
+    cursor: pointer;
     position: relative;
     display: inline-block;
     text-decoration: none;

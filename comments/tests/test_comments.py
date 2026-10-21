@@ -103,6 +103,8 @@ class TestCommentHttpMethods(TestCase):
         response = client.post(url)
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], reverse("show_comment", args=[self.post.slug, self.comment.id]))
+        self.assertNotEqual(response.headers["Content-Type"], "application/json")
         self.comment.refresh_from_db()
         self.assertTrue(self.comment.is_deleted)
 
@@ -127,8 +129,23 @@ class TestCommentHttpMethods(TestCase):
         response = client.post(url)
 
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.headers["Location"], reverse("show_comment", args=[self.post.slug, self.comment.id]))
+        self.assertNotEqual(response.headers["Content-Type"], "application/json")
         self.comment.refresh_from_db()
         self.assertTrue(self.comment.is_pinned)
+
+    def test_comment_page_actions_reject_delete_without_mutation(self):
+        client = HelperClient(self.comment_author)
+        client.authorise()
+
+        for endpoint in ["delete_comment", "pin_comment"]:
+            with self.subTest(endpoint=endpoint):
+                response = client.delete(reverse(endpoint, args=[self.comment.id]))
+
+                self.assertEqual(response.status_code, 405)
+                self.comment.refresh_from_db()
+                self.assertFalse(self.comment.is_deleted)
+                self.assertFalse(self.comment.is_pinned)
 
 
 class TestDeleteComment(TestCase):
@@ -375,12 +392,12 @@ class TestCommentCreateAndEditEdgeCases(TestCase):
         client = HelperClient(self.other_user)
         client.authorise()
 
-        upvote_response = client.post(reverse("upvote_comment", args=[comment.id]))
-        retract_response = client.post(reverse("retract_comment_vote", args=[comment.id]))
+        upvote_response = client.post(reverse("toggle_comment_vote", args=[comment.id]))
+        retract_response = client.delete(reverse("toggle_comment_vote", args=[comment.id]))
 
         self.assertEqual(upvote_response.status_code, 200)
         self.assertGreater(upvote_response.json()["upvoted_timestamp"], 0)
         self.assertEqual(upvote_response.json()["comment"]["upvotes"], 1)
         self.assertEqual(retract_response.status_code, 200)
-        self.assertTrue(retract_response.json()["success"])
+        self.assertFalse(retract_response.json()["is_voted"])
         self.assertEqual(retract_response.json()["comment"]["upvotes"], 0)

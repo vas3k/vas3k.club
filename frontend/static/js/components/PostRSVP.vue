@@ -7,7 +7,7 @@
             <span v-if="isActive" class="event-rsvp-button-text">Я в деле!</span>
             <span v-else class="event-rsvp-button-text">Я приду</span>
 
-            <input type="checkbox" v-model="isActive" @change.prevent="toggle" style="display: none;" />
+            <input type="checkbox" :checked="isActive" @change.prevent="toggle" style="display: none;" />
         </label>
     </span>
 </template>
@@ -38,7 +38,8 @@ export default {
     methods: {
         toggle() {
             this.isLoading = true;
-            return ClubApi.post(this.url, (data) => {
+            const method = this.isActive ? "delete" : "post";
+            return ClubApi[method](this.url, (data) => {
                 this.isLoading = false;
 
                 if (data.status === "created") {

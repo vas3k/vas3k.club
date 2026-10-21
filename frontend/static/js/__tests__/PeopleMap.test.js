@@ -388,7 +388,7 @@ describe("PeopleMap.vue", () => {
                         author_url: m.authorUrl || "/user/alice/",
                         author_avatar: m.authorAvatar || "https://example.com/alice.jpg",
                         upvotes: m.upvotes || 0,
-                        upvote_url: m.upvoteUrl || `/map/messages/message-${i}/upvote.json`,
+                        upvote_url: m.upvoteUrl || `/map/messages/message-${i}/votes.json`,
                         is_voted: m.isVoted || false,
                         is_mine: m.isMine || false,
                     },
@@ -405,7 +405,7 @@ describe("PeopleMap.vue", () => {
                     text: "hi",
                     author_url: "/user/alice/",
                     upvotes: 0,
-                    upvote_url: "/map/messages/m1/upvote.json",
+                    upvote_url: "/map/messages/m1/votes.json",
                 }, properties),
             }]);
             mountMapWithMessages(makeMessages([{ id: "m1", text: "hi" }]));
@@ -418,7 +418,7 @@ describe("PeopleMap.vue", () => {
                 propsData: {
                     geojson: makeGeojson([]),
                     messages: messages,
-                    createMessageUrl: "/map/messages/create.json",
+                    createMessageUrl: "/map/messages.json",
                     editProfileUrl: "/user/me/edit/profile/#map-location",
                     maxMessageLength: 128,
                 },
@@ -545,7 +545,7 @@ describe("PeopleMap.vue", () => {
             button.click();
 
             expect(ClubApi.postForm).toHaveBeenCalledWith(
-                "/map/messages/m1/upvote.json", {}, expect.any(Function)
+                "/map/messages/m1/votes.json", {}, expect.any(Function)
             );
             expect(counter.innerText).toBe(4);
             expect(button.disabled).toBe(true);
@@ -631,7 +631,7 @@ describe("PeopleMap.vue", () => {
             wrapper = shallowMount(PeopleMap, {
                 propsData: {
                     geojson: makeGeojson([]),
-                    createMessageUrl: "/map/messages/create.json",
+                    createMessageUrl: "/map/messages.json",
                     canPostMessage: false,
                 },
                 stubs: { default: true },
@@ -735,7 +735,7 @@ describe("PeopleMap.vue", () => {
             wrapper.vm.saveDraft();
 
             expect(ClubApi.postForm).toHaveBeenCalledWith(
-                "/map/messages/create.json",
+                "/map/messages.json",
                 { text: "hello map", latitude: 52.5, longitude: 13.4 },
                 expect.any(Function)
             );

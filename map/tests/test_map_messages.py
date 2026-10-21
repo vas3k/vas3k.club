@@ -34,7 +34,7 @@ class TestCreateMapMessage(TestCase):
     def setUp(self):
         self.user = _create_user("author")
         _login(self.client, self.user)
-        self.url = "/map/messages/create.json"
+        self.url = "/map/messages.json"
 
     def _post(self, **kwargs):
         data = dict(text="Привет с карты", latitude=52.52, longitude=13.4)
@@ -185,7 +185,7 @@ class TestUpvoteMapMessage(TestCase):
         self.message = MapMessages.objects.create(
             author=self.author, text="Хорошее сообщение", latitude=1.0, longitude=2.0
         )
-        self.url = f"/map/messages/{self.message.id}/upvote.json"
+        self.url = f"/map/messages/{self.message.id}/votes.json"
         _login(self.client, self.voter)
 
     def test_counts_the_vote_and_stores_it(self):
@@ -248,7 +248,7 @@ class TestUpvoteMapMessage(TestCase):
 
     def test_fails_on_unknown_messages(self):
         # the api decorator turns every exception, 404 included, into its own error response
-        response = self.client.post("/map/messages/8ab5a3cf-3f5e-4f8a-9e6f-3e1b4a3d2c1b/upvote.json")
+        response = self.client.post("/map/messages/8ab5a3cf-3f5e-4f8a-9e6f-3e1b4a3d2c1b/votes.json")
 
         self.assertEqual(response.status_code, 400)
         self.assertFalse(MapMessageVote.objects.exists())
@@ -291,7 +291,7 @@ class TestMapMessagesGeoJson(TestCase):
         self.assertFalse(properties[str(untouched.id)]["is_mine"])
         self.assertEqual(properties[str(untouched.id)]["upvotes"], 0)
         self.assertEqual(
-            properties[str(untouched.id)]["upvote_url"], f"/map/messages/{untouched.id}/upvote.json"
+            properties[str(untouched.id)]["upvote_url"], f"/map/messages/{untouched.id}/votes.json"
         )
 
 
@@ -314,7 +314,7 @@ class TestPeoplePageRendersMessages(TestCase):
         self.assertNotIn("<script>alert(1)</script>", content)
         self.assertIn("&lt;script&gt;", content)
         self.assertIn("&#x27;", content)
-        self.assertIn("create-message-url=\"/map/messages/create.json\"", content)
+        self.assertIn("create-message-url=\"/map/messages.json\"", content)
 
     def test_messages_only_filter_hides_users_from_the_map(self):
         self.user.geo = {"latitude": 52.5, "longitude": 13.4, "precise": True}

@@ -14,21 +14,27 @@ class UserRoleForm(forms.Form):
 
     role = forms.ChoiceField(
         label="Выбрать роль",
-        choices=[(None, "---")] + User.ROLES,
+        choices=[],
         required=True,
     )
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["role"].choices = [(None, "---")] + [
+            (role, label) for role, label in User.ROLES if is_role_manageable_by_user(role, user)
+        ]
 
 
 def get_role_action(request, user: User, **context):
     return render(request, "godmode/action.html", {
         **context,
         "item": user,
-        "form": UserRoleForm(),
+        "form": UserRoleForm(user=request.me),
     })
 
 
 def post_role_action(request, user: User, **context):
-    form = UserRoleForm(request.POST, request.FILES)
+    form = UserRoleForm(request.POST, request.FILES, user=request.me)
     if form.is_valid():
         data = form.cleaned_data
 
