@@ -11,6 +11,7 @@ These instructions apply throughout the repository. Preserve the Django site, Re
 - Extract utility helpers only with **3+ real call sites and 5+ meaningful lines**; inline everything else, including single-use helpers under 10 meaningful lines. Do not pad code or invent callers to qualify. Keep helpers used within one file there; put shared Python helpers in the owning app's `helpers.py` or existing shared module. Framework entry points such as views, form cleaners, and command handlers are not utility extractions.
 - Never introduce leading-underscore names for functions, methods, variables, or attributes. All names must explain their purpose; do not disguise helpers as magic methods.
 - Do not commit, push, or send real messages without authorization. **Never connect to or operate on production.**
+- Do not add every change you made to README.md or AGENTS.md. Only change them if facts were changed or if directly requested.
 
 ## Code map
 

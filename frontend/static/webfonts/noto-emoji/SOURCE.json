@@ -1,0 +1,8 @@
+{
+  "commit": "f3ae03f5e9b3b8516fa151f7168159ca1a3e7515",
+  "source_url": "https://raw.githubusercontent.com/googlefonts/noto-emoji/f3ae03f5e9b3b8516fa151f7168159ca1a3e7515/fonts/Noto-COLRv1.ttf",
+  "source_sha256": "0ae57fe58645638523ba35f388d93739d292539a9acb84df5700c81b1e1a28d2",
+  "font_version": "Version 2.051;GOOG;noto-emoji:20250818:e92753bfa55fd449e427d4d325f9c8c40408c74e",
+  "woff2_sha256": "3b8a3ea317516e6a6c56a1587473a65effd6f1d2d19148578c9d67760627eb70",
+  "conversion": "FontTools 4.62.1 with Brotli: TTFont(source); font.flavor = \"woff2\"; font.save(destination). Full font, no subsetting."
+}

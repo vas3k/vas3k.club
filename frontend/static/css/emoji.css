@@ -1,4 +1,10 @@
-@import "@fontsource/noto-color-emoji/400.css";
+@font-face {
+    font-family: "Noto Color Emoji";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../webfonts/noto-emoji/Noto-COLRv1.woff2") format("woff2") tech(color-COLRv1);
+}
 
 :root {
     --sans-font: "Ubuntu", "Noto Color Emoji", Helvetica, Verdana, sans-serif;
