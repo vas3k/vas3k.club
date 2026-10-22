@@ -211,8 +211,14 @@
     scroll-margin-top: 20px;
 }
 
-    .comment:not(.comment-scroll-selected):target,
-    .reply:not(.comment-scroll-selected):target {
+    .comment-layout-normal > .comment-content {
+        margin: -20px;
+        padding: 20px;
+    }
+
+    .comment-layout-normal:not(.comment-scroll-selected):target > .comment-content,
+    .reply:not(.comment-scroll-selected):target > .comment-content,
+    .comment:not(.comment-layout-normal):not(.comment-scroll-selected):target {
         background-color: rgba(125, 232, 125, 0.3);
     }
 
@@ -282,6 +288,7 @@
 
     .comment-side {
         position: relative;
+        z-index: 1;
         padding-top: 3px;
         cursor: pointer;
     }
@@ -389,12 +396,15 @@
             opacity: 1;
         }
 
-        .thread-collapsed > .thread-collapse-toggle {
+        .thread-collapsed > .thread-collapse-toggle,
+        .thread-collapsed > .comment-content > .thread-collapse-toggle {
             display: none !important;
         }
 
         .thread-collapsed > .comment-collapse-stub,
-        .thread-collapsed > .reply-collapse-stub {
+        .thread-collapsed > .reply-collapse-stub,
+        .thread-collapsed > .comment-content > .comment-collapse-stub,
+        .thread-collapsed > .comment-content > .reply-collapse-stub {
             display: block !important;
         }
 
@@ -429,6 +439,11 @@
 
     @media only screen and (max-width : 570px) {
         .comment {
+            padding: 10px;
+        }
+
+        .comment-layout-normal > .comment-content {
+            margin: -10px;
             padding: 10px;
         }
 
@@ -538,14 +553,25 @@
     scroll-margin-top: 20px;
 }
 
+    .reply > .comment-content {
+        margin: -10px 0 -10px -10px;
+        padding: 10px 0 10px 10px;
+    }
+
     @media only screen and (max-width : 570px) {
         .reply {
+            padding-left: 0;
+        }
+
+        .reply > .comment-content {
+            margin-left: 0;
             padding-left: 0;
         }
     }
 
     .reply-side {
         position: relative;
+        z-index: 1;
         width: 25px;
         cursor: pointer;
     }
@@ -648,6 +674,17 @@
 .comment-is-badged {
     border: solid 3px var(--badge-color);
 }
+
+    /* Reserve the original border space without enclosing the replies in it. */
+    .comment-layout-normal:has(> .comment-is-badged),
+    .reply:has(> .comment-is-badged) {
+        border: solid 3px transparent;
+    }
+
+    .comment-content.comment-is-badged {
+        border: none;
+        outline: solid 3px var(--badge-color);
+    }
 
 .comment-scroll-arrow {
     position: fixed;
