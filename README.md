@@ -54,11 +54,11 @@ uv run python manage.py migrate
 uv run python manage.py update_tags
 ```
 
-Start Django and Vite in separate terminals:
+Start Django and Vite in separate terminals. Django automatically uses Vite when `DEBUG` is enabled (the local default); production and tests use compiled assets:
 
 ```sh
 # Terminal 1
-VITE_DEV_MODE=true uv run python manage.py runserver
+uv run python manage.py runserver
 
 # Terminal 2
 npm run dev --prefix frontend

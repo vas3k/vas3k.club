@@ -16,6 +16,8 @@ export function createMarkdownEditor(element, options) {
         ...options,
     });
 
+    editor.codemirror.setOption("singleCursorHeightPerLine", false);
+
     // overriding default CodeMirror shortcuts
     editor.codemirror.addKeyMap({
         Home: "goLineLeft", // move the cursor to the left side of the visual line it is on

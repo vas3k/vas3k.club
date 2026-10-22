@@ -14,7 +14,6 @@ services:
     environment:
       - MODE=dev
       - DEBUG=true
-      - VITE_DEV_MODE=true
       - PYTHONUNBUFFERED=1
       - POSTGRES_DB=vas3k_club
       - POSTGRES_USER=postgres

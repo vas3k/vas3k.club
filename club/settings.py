@@ -462,7 +462,7 @@ if DEBUG:
 
 DJANGO_VITE = {
     "default": {
-        "dev_mode": os.getenv("VITE_DEV_MODE", "false").lower() == "true" and not TESTS_RUN,
+        "dev_mode": DEBUG and not TESTS_RUN,
         "static_url_prefix": "dist",
         "dev_server_port": int(os.getenv("VITE_DEV_SERVER_PORT", "5173")),
         "manifest_path": os.path.join(BASE_DIR, "frontend/static/dist/.vite/manifest.json"),

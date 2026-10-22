@@ -30,7 +30,7 @@ jobs:
       - name: Build and check production image
         run: |
           docker build --build-arg MODE=production -t club-production-check .
-          docker run --rm --network none -e DEBUG=false -e VITE_DEV_MODE=false club-production-check python manage.py check
+          docker run --rm --network none -e DEBUG=false club-production-check python manage.py check
 
       - name: Show startup logs on failure
         if: failure()

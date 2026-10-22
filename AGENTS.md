@@ -46,7 +46,7 @@ For the first native run, install dependencies, build the frontend, apply local 
 | Queue workers | `uv run python manage.py qcluster` |
 | Club bot | `uv run python bot/main.py` |
 | Helpdesk bot | `uv run python helpdeskbot/main.py` |
-| Vite development | `npm run dev --prefix frontend` with `VITE_DEV_MODE=true` on Django |
+| Vite development | `npm run dev --prefix frontend`; Django uses Vite automatically when `DEBUG` is enabled outside tests |
 | Generate migrations after model changes | `uv run python manage.py makemigrations <app>` |
 
 Alternatively, use the complete development stack with `docker compose up --build --pull always`: it supplies the runtimes, PostgreSQL, Redis, queue, and Vite, and applies migrations at startup. The Dockerfile currently downloads an amd64 Supercronic binary; ARM hosts need `DOCKER_DEFAULT_PLATFORM=linux/amd64` for this image. Inside its prepared app container, run `docker compose exec club_app python3 manage.py <command>`. Compose does not publish PostgreSQL/Redis ports to the host; native uv commands need their own reachable services. Preserve both development paths.

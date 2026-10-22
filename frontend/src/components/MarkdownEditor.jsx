@@ -3,7 +3,6 @@ import ClubApi from "../lib/api.service";
 import { createMarkdownEditor, handleFormSubmissionShortcuts, imageUploadOptions } from "../lib/markdown-editor";
 import { isMobile } from "../lib/utils";
 import { initSettings, isFileAllowed, uploadFile } from "../vendor/inline-attachment";
-import "../../static/css/components/markdown-editor.css";
 
 export default function MarkdownEditor({ value = "", focused = false, onChange, className = "" }) {
     const textarea = useRef(null);
