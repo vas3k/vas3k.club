@@ -20,3 +20,47 @@
         max-width: 500px;
         float: right;
     }
+
+    .bookmarks-list .feed-post,
+    .bookmarks-list .feed-post-footer {
+        overflow: visible;
+    }
+
+    .bookmarks-list .feed-post[hidden] {
+        display: none;
+    }
+
+    .bookmark-remove {
+        position: absolute;
+        top: -12px;
+        right: -8px;
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        margin: 0;
+        border: none;
+        border-radius: 50%;
+        background: #000;
+        color: #fff;
+        font-family: var(--sans-font);
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+        .bookmark-remove:hover {
+            background: #d33;
+        }
+
+        .bookmark-remove:focus-visible {
+            outline: 2px solid var(--text-color);
+            outline-offset: 3px;
+        }
+
+        .bookmark-remove:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
