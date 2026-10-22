@@ -14,6 +14,7 @@ const App = {
         this.initializeImageZoom();
         this.blockCommunicationFormsResubmit();
         this.restoreCommentThreadsState();
+        this.stabilizeAnchor();
         this.initializePostActions();
 
         const registeredEditors = await this.initializeMarkdownEditor();
@@ -183,6 +184,17 @@ const App = {
                 collapseCommentThread(comment);
             }
         }
+    },
+    async stabilizeAnchor() {
+        const target = document.querySelector(":target");
+        if (!target) return;
+
+        if (document.readyState !== "complete") {
+            await new Promise((resolve) => window.addEventListener("load", resolve, { once: true }));
+        }
+        await document.fonts.ready;
+
+        target.scrollIntoView({ block: "start", behavior: "instant" });
     },
     initializePostActions() {
         document.querySelectorAll(".js-post-action").forEach((link) => {
