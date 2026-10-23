@@ -76,7 +76,7 @@ def show_post(request, post_type, post_slug):
 @never_cache
 def show_post_og(request, post_type, post_slug):
     post = get_object_or_404(
-        Post.objects.select_related("author").exclude(visibility=Post.VISIBILITY_DRAFT),
+        Post.objects.select_related("author", "room").exclude(visibility=Post.VISIBILITY_DRAFT),
         slug=post_slug,
         deleted_at__isnull=True,
     )

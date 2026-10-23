@@ -37,9 +37,29 @@
             width: 100%;
             height: 100%;
             padding: 5.333333vw;
-            background: white;
+            background: #030406;
             overflow: hidden;
         }
+
+            .card-empty {
+                background:
+                    radial-gradient(ellipse at 75% 0%, rgba(180, 200, 225, 0.16), transparent 75%),
+                    linear-gradient(125deg,
+                        transparent 0%,
+                        rgba(205, 220, 240, 0.26) 14%,
+                        transparent 30%,
+                        rgba(205, 220, 240, 0.14) 40%,
+                        rgba(225, 235, 250, 0.45) 51%,
+                        rgba(205, 220, 240, 0.20) 63%,
+                        transparent 76%,
+                        rgba(205, 220, 240, 0.24) 89%,
+                        transparent 100%),
+                    #030406;
+            }
+
+                .card-empty .overlay {
+                    display: none;
+                }
 
             .background, .overlay {
                 position: absolute;
@@ -70,6 +90,7 @@
             }
 
                 .avatar {
+                    flex-shrink: 0;
                     width: 4vw;
                     height: 4vw;
                     border: 0.166667vw solid white;
@@ -94,6 +115,90 @@
                     flex-shrink: 0;
                 }
 
+            .content {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 2vw;
+                min-height: 0;
+            }
+
+                .metadata {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 1.333333vw;
+                    font-size: 2vw;
+                }
+
+                    .room, .label {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.666667vw;
+                        max-width: 100%;
+                        padding: 0.666667vw 1.333333vw;
+                        border-radius: 4vw;
+                        color: white;
+                        text-decoration: none;
+                        line-height: 1.3;
+                    }
+
+                    .room {
+                        max-width: 55%;
+                    }
+
+                        .room-gradient {
+                            display: none;
+                        }
+
+                        .room-icon-wrapper, .room-icon {
+                            display: flex;
+                            flex-shrink: 0;
+                        }
+
+                        .room-icon img {
+                            width: 2.666667vw;
+                            height: 2.666667vw;
+                            border: 0.166667vw solid white;
+                            border-radius: 50%;
+                            object-fit: cover;
+                        }
+
+                        .room-name-wrapper {
+                            min-width: 0;
+                        }
+
+                        .room-name, .label-title {
+                            display: block;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+
+                .rewards {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 1.333333vw 2.666667vw;
+                    font-size: 2.333333vw;
+                }
+
+                    .badge {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.416667vw;
+                    }
+
+                        .badge-image {
+                            width: 5.333333vw;
+                            height: 5.333333vw;
+                            object-fit: contain;
+                        }
+
+                        .badge-count {
+                            white-space: nowrap;
+                        }
+
             .title {
                 position: relative;
                 display: -webkit-box;
@@ -106,10 +211,14 @@
                 font-weight: 500;
                 line-height: 1.12;
             }
+
+                .title-long {
+                    font-size: 4.5vw;
+                }
     </style>
 </head>
 <body>
-    <main class="card">
+    <main class="card{% if not background_url %} card-empty{% endif %}">
         {% if background_url %}
             <img class="background" src="{{ background_url }}" alt="">
         {% endif %}
@@ -119,7 +228,24 @@
             <span class="author">{{ post.author.full_name }}</span>
             <img class="logo" src="{% static 'images/logo/logo-white-text.png' %}" alt="Вастрик.Клуб">
         </header>
-        <h1 class="title">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</h1>
+        <section class="content">
+            {% if post.room or post.label %}
+                <div class="metadata">
+                    {% if post.room %}
+                        {% include "rooms/widgets/room.html" with room=post.room type="post" %}
+                    {% endif %}
+                    {% if post.label %}
+                        {% include "posts/widgets/label.html" with label=post.label %}
+                    {% endif %}
+                </div>
+            {% endif %}
+            <h1 class="title {% if post.title|length > 120 %}title-long{% endif %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</h1>
+            {% if post.metadata.badges %}
+                <div class="rewards">
+                    {% include "badges/widgets/badges.html" with badges=post.metadata.badges badge_size="big" %}
+                </div>
+            {% endif %}
+        </section>
     </main>
 </body>
 </html>
