@@ -29,6 +29,11 @@
             color: white;
         }
 
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
         .card {
             position: relative;
             display: flex;
@@ -89,6 +94,13 @@
                 font-size: 2.333333vw;
             }
 
+                .avatar-link {
+                    display: flex;
+                    width: 4vw;
+                    height: 4vw;
+                    flex-shrink: 0;
+                }
+
                 .avatar {
                     flex-shrink: 0;
                     width: 4vw;
@@ -110,10 +122,16 @@
                     width: 30%;
                     height: 3vw;
                     margin-left: auto;
-                    object-fit: contain;
-                    object-position: right center;
                     flex-shrink: 0;
                 }
+
+                    .logo img {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        object-position: right center;
+                    }
 
             .content {
                 position: relative;
@@ -141,6 +159,7 @@
                         color: white;
                         text-decoration: none;
                         line-height: 1.3;
+                        box-shadow: 0 0.166667vw 0.666667vw rgba(0, 0, 0, 0.8);
                     }
 
                     .room {
@@ -187,6 +206,7 @@
                         display: flex;
                         align-items: center;
                         gap: 0.416667vw;
+                        filter: drop-shadow(0 0.166667vw 0.666667vw rgba(0, 0, 0, 0.8));
                     }
 
                         .badge-image {
@@ -210,6 +230,10 @@
                 font-size: 5.775vw;
                 font-weight: 500;
                 line-height: 1.12;
+                text-shadow:
+                    0 0.166667vw 0.666667vw rgba(0, 0, 0, 0.8),
+                    0 0.333333vw 2vw rgba(0, 0, 0, 0.55),
+                    0 1vw 4vw rgba(0, 0, 0, 0.65);
             }
 
                 .title-long {
@@ -224,9 +248,13 @@
         {% endif %}
         <div class="overlay"></div>
         <header class="header">
-            <img class="avatar" src="{{ post.author.get_avatar }}" alt="">
-            <span class="author">{{ post.author.full_name }}</span>
-            <img class="logo" src="{% static 'images/logo/logo-white-text.png' %}" alt="Вастрик.Клуб">
+            <a class="avatar-link" href="{% url 'profile' post.author.slug %}" aria-label="{{ post.author.full_name|default:post.author.slug }}">
+                <img class="avatar" src="{{ post.author.get_avatar }}" alt="">
+            </a>
+            <a class="author" href="{% url 'profile' post.author.slug %}">{{ post.author.full_name }}</a>
+            <a class="logo" href="{% url 'index' %}">
+                <img src="{% static 'images/logo/logo-white-text.png' %}" alt="Вастрик.Клуб">
+            </a>
         </header>
         <section class="content">
             {% if post.room or post.label %}
@@ -239,7 +267,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-            <h1 class="title {% if post.title|length > 120 %}title-long{% endif %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</h1>
+            <h1 class="title {% if post.title|length > 120 %}title-long{% endif %}"><a href="{% url 'show_post' post.type post.slug %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a></h1>
             {% if post.metadata.badges %}
                 <div class="rewards">
                     {% include "badges/widgets/badges.html" with badges=post.metadata.badges badge_size="big" %}
