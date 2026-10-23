@@ -42,7 +42,7 @@ from posts.api import toggle_post_bookmark, toggle_post_vote, toggle_post_subscr
     toggle_post_event_participation
 from posts.views.calendar import event_calendar
 from posts.views.feed import feed
-from posts.views.posts import show_post, edit_post, compose, compose_type, \
+from posts.views.posts import show_post, show_post_og, edit_post, compose, compose_type, \
     delete_post, unpublish_post, clear_post
 from bookmarks.views import bookmarks
 from search.views import search
@@ -247,6 +247,7 @@ urlpatterns = [
     # keep these guys at the bottom
     re_path(r"^{}/$".format(POST_TYPE_RE), feed, name="feed_type"),
     re_path(r"^{}/{}/$".format(POST_TYPE_RE, ORDERING_RE), feed, name="feed_ordering"),
+    path("<slug:post_type>/<slug:post_slug>/og/", show_post_og, name="show_post_og"),
     path("<slug:post_type>/<slug:post_slug>/", show_post, name="show_post"),
     path("<slug:post_type>/<slug:post_slug>.md", md_show_post, name="md_show_post"),
     path("<slug:post_type>/<slug:post_slug>.json", api_show_post, name="api_show_post"),

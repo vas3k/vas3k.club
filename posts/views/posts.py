@@ -1,7 +1,12 @@
+from urllib.parse import urlsplit
+
 from django.conf import settings
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_safe
 from django_q.tasks import async_task
 
 from authn.helpers import check_user_permissions
@@ -11,6 +16,7 @@ from notifications.telegram.posts import send_published_post_to_moderators, noti
     announce_in_online_channel, send_intro_changes_to_moderators, notify_post_label_changed, \
     notify_post_coauthors_changed
 from posts.forms.compose import POST_TYPE_MAP, PostTextForm
+from posts.helpers import MARKDOWN_IMAGES_RE
 from posts.models.linked import LinkedPost
 from posts.models.post import Post
 from posts.models.subscriptions import PostSubscription
@@ -64,6 +70,38 @@ def show_post(request, post_type, post_slug):
         "post_last_view_at": last_view_at,
         "linked_posts": linked_posts,
     })
+
+
+@require_safe
+@never_cache
+def show_post_og(request, post_type, post_slug):
+    post = get_object_or_404(
+        Post.objects.select_related("author").exclude(visibility=Post.VISIBILITY_DRAFT),
+        slug=post_slug,
+        deleted_at__isnull=True,
+    )
+
+    if post.type != post_type:
+        return redirect("show_post_og", post.type, post.slug)
+
+    images = MARKDOWN_IMAGES_RE.findall(post.text)
+
+    if post.image and post.type != Post.TYPE_LINK:
+        images.insert(0, post.image)
+
+    image = next((
+        url for url in images
+        if urlsplit(url).path.rsplit(".", 1)[-1].lower() in {"jpg", "jpeg", "png", "webp"}
+    ), None)
+    html = render_to_string("posts/og.html", {
+        "post": post,
+        "background_url": request.build_absolute_uri(image) if image else None,
+        "avatar_url": request.build_absolute_uri(post.author.get_avatar()),
+        "overlay_opacity": settings.OG_IMAGE_GENERATOR_DEFAULTS["op"],
+    })
+    response = HttpResponse(html)
+    response["X-Robots-Tag"] = "noindex, nofollow"
+    return response
 
 
 @require_auth
