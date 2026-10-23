@@ -93,11 +93,18 @@ def show_post_og(request, post_type, post_slug):
         url for url in images
         if urlsplit(url).path.rsplit(".", 1)[-1].lower() in {"jpg", "jpeg", "png", "webp"}
     ), None)
+    author = post.author.slug
+    avatar = post.author.get_avatar()
+
+    if post.type == Post.TYPE_WEEKLY_DIGEST:
+        author = "THE MACHINE"
+        avatar = settings.OG_MACHINE_AUTHOR_LOGO
+
     html = render_to_string("posts/og.html", {
         "post": post,
+        "author": author,
         "background_url": request.build_absolute_uri(image) if image else None,
-        "avatar_url": request.build_absolute_uri(post.author.get_avatar()),
-        "overlay_opacity": settings.OG_IMAGE_GENERATOR_DEFAULTS["op"],
+        "avatar_url": request.build_absolute_uri(avatar),
     })
     response = HttpResponse(html)
     response["X-Robots-Tag"] = "noindex, nofollow"

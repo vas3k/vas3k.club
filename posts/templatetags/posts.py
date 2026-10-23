@@ -1,4 +1,4 @@
-from urllib.parse import urlencode
+from base64 import urlsafe_b64encode
 
 from django import template
 from django.conf import settings
@@ -152,15 +152,11 @@ def og_image(post):
     if not settings.OG_IMAGE_GENERATOR_URL:
         return any_image(post)
 
-    params = urlencode({
-        **settings.OG_IMAGE_GENERATOR_DEFAULTS,
-        "title": f"{post.prefix} {post.title}" if post.prefix else post.title,
-        "author": post.author.slug,
-        "ava": post.author.get_avatar(),
-        "bg": extract_any_image(post) or "#FFFFFF"
-    })
+    path = reverse("show_post_og", args=[post.type, post.slug])
+    url = f"{settings.APP_HOST.rstrip('/')}{path}"
+    encoded_url = urlsafe_b64encode(url.encode()).decode("ascii").rstrip("=")
+    return f"{settings.OG_IMAGE_GENERATOR_URL.rstrip('/')}/{encoded_url}"
 
-    return f"{settings.OG_IMAGE_GENERATOR_URL}?{params}"
 
 @register.filter
 def human_readable_timezone(timezone):

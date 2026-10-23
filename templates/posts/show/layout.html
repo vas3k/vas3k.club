@@ -10,17 +10,18 @@
 {% endblock %}
 
 {% block og_tags %}
+    {% og_image post as post_og_image %}
     <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
     <meta property="og:type" content="article" />
     <meta property="og:description" content="{% if post.is_public %}{{ post.description | truncatechars:150 }}{% else %}🔒 Это закрытый пост, доступный только членам Клуба{% endif %}">
-    <meta property="og:image" content="{% og_image post %}">
+    <meta property="og:image" content="{{ post_og_image }}">
 
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="{% if post.is_public %}{{ post.description | truncatechars:150 }}{% else %}🔒 Это закрытый пост, доступный только членам Клуба{% endif %}">
-    <meta name="twitter:image" content="{% og_image post %}">
+    <meta name="twitter:image" content="{{ post_og_image }}">
 {% endblock %}
 
 {% block content %}

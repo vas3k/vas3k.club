@@ -10,18 +10,19 @@
 
 {% block og_tags %}
     {% if post %}
+        {% og_image post as post_og_image %}
         {% if not post.is_public %}<meta name="robots" content="noindex, nofollow">{% endif %}
         <meta property="og:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
         <meta property="og:site_name" content="{{ settings.APP_NAME }}">
         <meta property="og:url" content="{{ settings.APP_HOST }}{% url "show_post" post.type post.slug %}">
         <meta property="og:type" content="article" />
         <meta property="og:description" content="{% if post.metadata.og_description %}{{ post.metadata.og_description }} {% else %}{{ post.description | truncatechars:100 }}{% endif %}">
-        <meta property="og:image" content="{% og_image post %}">
+        <meta property="og:image" content="{{ post_og_image }}">
 
-        <meta name="twitter:card" content="summary">
+        <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }} — {{ settings.APP_NAME }}">
         <meta name="twitter:description" content="{% if post.metadata.og_description %}{{ post.metadata.og_description }} {% else %}{{ post.description | truncatechars:100 }}{% endif %}">
-        <meta name="twitter:image" content="{% og_image post %}">
+        <meta name="twitter:image" content="{{ post_og_image }}">
     {% endif %}
 {% endblock %}
 

@@ -1,11 +1,12 @@
 import random
+from base64 import urlsafe_b64encode
 from datetime import datetime, timedelta
-from urllib.parse import urlencode
 
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Count, Q
 from django.template.loader import render_to_string
+from django.urls import reverse
 
 from badges.models import UserBadge
 from club.exceptions import NotFound
@@ -258,12 +259,10 @@ def generate_weekly_digest(no_footer=False):
     # Pro tips
     pro_tip = ProTip.weekly_tip(issue_number)
 
-    og_params = urlencode({
-        **settings.OG_IMAGE_GENERATOR_DEFAULTS,
-        "title": f"Клубный журнал. Итоги недели. Выпуск #{issue_number}.",
-        "author": "THE MACHINE",
-        "ava": settings.OG_MACHINE_AUTHOR_LOGO
-    })
+    year, week, _ = (end_date - timedelta(days=7)).isocalendar()
+    og_path = reverse("show_post_og", args=[Post.TYPE_WEEKLY_DIGEST, f"{year}_{week}"])
+    og_url = f"{settings.APP_HOST.rstrip('/')}{og_path}"
+    encoded_url = urlsafe_b64encode(og_url.encode()).decode("ascii").rstrip("=")
 
     og_description = render_to_string("notifications/emails/weekly_og_description.html", {
         "newbie_count": newbie_count,
@@ -287,6 +286,6 @@ def generate_weekly_digest(no_footer=False):
         "issue_number": issue_number,
         "pro_tip": pro_tip,
         "is_footer_excluded": no_footer,
-        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL}?{og_params}",
+        "og_image_url": f"{settings.OG_IMAGE_GENERATOR_URL.rstrip('/')}/{encoded_url}",
         "og_description": og_description,
     }), og_description

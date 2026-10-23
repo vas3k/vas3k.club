@@ -8,17 +8,18 @@
 {% endblock %}
 
 {% block og_tags %}
+    {% og_image post as post_og_image %}
     <meta property="og:title" content="{{ post.prefix}}: {{ post.author.full_name | rutypography }} — {{ settings.APP_NAME }}">
     <meta property="og:site_name" content="{{ settings.APP_NAME }}">
     <meta property="og:url" content="{{ settings.APP_HOST }}">
     <meta property="og:type" content="website" />
     <meta property="og:description" content="">
-    <meta property="og:image" content="{{ user.get_avatar }}">
+    <meta property="og:image" content="{{ post_og_image }}">
 
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ post.prefix}}: {{ post.author.full_name | rutypography }} — {{ settings.APP_NAME }}">
     <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="{{ user.get_avatar }}">
+    <meta name="twitter:image" content="{{ post_og_image }}">
 
     <!-- Exclude intros from search engines -->
     <meta name="robots" content="noindex">

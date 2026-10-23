@@ -1,4 +1,4 @@
-{% load static l10n %}<!doctype html>
+{% load static %}<!doctype html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
@@ -56,7 +56,7 @@
 
             .overlay {
                 background: linear-gradient(rgba(0, 0, 0, 0.75), #000);
-                opacity: {{ overlay_opacity|unlocalize }};
+                opacity: 0.6;
             }
 
             .header {
@@ -116,7 +116,7 @@
         <div class="overlay"></div>
         <header class="header">
             <img class="avatar" src="{{ avatar_url }}" alt="">
-            <span class="author">{{ post.author.slug }}</span>
+            <span class="author">{{ author }}</span>
             <img class="logo" src="{% static 'images/logo/logo-white-text.png' %}" alt="Вастрик.Клуб">
         </header>
         <h1 class="title">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</h1>
