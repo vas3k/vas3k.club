@@ -81,11 +81,7 @@ def show_post_og(request, post_type, post_slug):
         deleted_at__isnull=True,
     )
 
-    if post.type != post_type:
-        return redirect("show_post_og", post.type, post.slug)
-
     images = MARKDOWN_IMAGES_RE.findall(post.text)
-
     if post.image and post.type != Post.TYPE_LINK:
         images.insert(0, post.image)
 
@@ -93,22 +89,11 @@ def show_post_og(request, post_type, post_slug):
         url for url in images
         if urlsplit(url).path.rsplit(".", 1)[-1].lower() in {"jpg", "jpeg", "png", "webp"}
     ), None)
-    author = post.author.slug
-    avatar = post.author.get_avatar()
 
-    if post.type == Post.TYPE_WEEKLY_DIGEST:
-        author = "THE MACHINE"
-        avatar = settings.OG_MACHINE_AUTHOR_LOGO
-
-    html = render_to_string("posts/og.html", {
+    return render(request, "posts/og.html", {
         "post": post,
-        "author": author,
         "background_url": request.build_absolute_uri(image) if image else None,
-        "avatar_url": request.build_absolute_uri(avatar),
     })
-    response = HttpResponse(html)
-    response["X-Robots-Tag"] = "noindex, nofollow"
-    return response
 
 
 @require_auth

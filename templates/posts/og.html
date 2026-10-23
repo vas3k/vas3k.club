@@ -115,8 +115,8 @@
         {% endif %}
         <div class="overlay"></div>
         <header class="header">
-            <img class="avatar" src="{{ avatar_url }}" alt="">
-            <span class="author">{{ author }}</span>
+            <img class="avatar" src="{{ post.author.get_avatar }}" alt="">
+            <span class="author">{{ post.author.full_name }}</span>
             <img class="logo" src="{% static 'images/logo/logo-white-text.png' %}" alt="Вастрик.Клуб">
         </header>
         <h1 class="title">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</h1>
