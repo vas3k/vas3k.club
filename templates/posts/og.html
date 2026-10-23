@@ -221,11 +221,10 @@
 
             .title {
                 position: relative;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 5;
-                overflow: hidden;
+                display: block;
+                overflow: visible;
                 overflow-wrap: anywhere;
+                word-break: break-word;
                 margin: 0;
                 font-size: 5.775vw;
                 font-weight: 500;
@@ -237,7 +236,7 @@
             }
 
                 .title-long {
-                    font-size: 4.5vw;
+                    font-size: 4vw;
                 }
     </style>
 </head>
@@ -267,7 +266,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-            <h1 class="title {% if post.title|length > 120 %}title-long{% endif %}"><a href="{% url 'show_post' post.type post.slug %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title }}</a></h1>
+            <h1 class="title {% if post.title|length > 120 %}title-long{% endif %}"><a href="{% url 'show_post' post.type post.slug %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title|truncatechars:180 }}</a></h1>
             {% if post.metadata.badges %}
                 <div class="rewards">
                     {% include "badges/widgets/badges.html" with badges=post.metadata.badges badge_size="big" %}
