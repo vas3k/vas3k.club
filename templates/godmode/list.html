@@ -74,7 +74,7 @@
                     </thead>
                     <tbody>
                         {% for item in items %}
-                            <tr class="godmode-table-row-clickable" {% if primary_key_field %}onclick="window.location.href='{% url 'godmode_edit_model' model_name=admin_model.name item_id=item|get_attr:primary_key_field %}'"{% endif %}>
+                            <tr class="godmode-table-row-clickable{% if admin_model.name == 'posts' %} godmode-table-post godmode-table-post-{{ item.moderation_status }}{% if item.visibility == 'draft' and item.moderation_status != 'rejected' and item.moderation_status != 'forgiven' and item.moderation_status != 'approved' %} godmode-table-post-draft{% endif %}{% endif %}" {% if primary_key_field %}onclick="window.location.href='{% url 'godmode_edit_model' model_name=admin_model.name item_id=item|get_attr:primary_key_field %}'"{% endif %}>
                                 {% for column in columns %}
                                     <td>
                                         {{ item|render_list_field:column }}

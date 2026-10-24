@@ -348,7 +348,7 @@ ADMIN = ClubAdmin(
                             access_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
                         ),
                         "moderate": ClubAdminAction(
-                            title="❌ Модерировать",
+                            title="👩‍⚖️ Модерировать",
                             get=get_moderate_action,
                             post=post_moderate_action,
                         ),

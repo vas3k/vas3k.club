@@ -1,0 +1,95 @@
+{% extends "godmode/action.html" %}
+
+{% block godmode_action_form %}
+    <div class="godmode-moderate">
+        <section class="block godmode-moderate-current godmode-moderate-{{ item.moderation_status }}" aria-label="Текущее решение">
+            <div class="godmode-moderate-caption">Сейчас у поста</div>
+            <h2>{{ item.get_moderation_status_display }}</h2>
+            {% if item.moderation_status == "rejected" %}
+                {% for value, label in form.fields.reason.choices %}
+                    {% if value == item.moderation_data.reason %}
+                        <strong>{{ label }}</strong>
+                    {% endif %}
+                {% endfor %}
+                {% if item.moderation_data.custom_reason %}
+                    <div class="godmode-moderate-text">{{ item.moderation_data.custom_reason|linebreaksbr }}</div>
+                {% elif item.moderation_data.text %}
+                    <div class="godmode-moderate-text">{{ item.moderation_data.text|safe }}</div>
+                {% endif %}
+            {% endif %}
+            {% if item.moderation_data.moderator %}
+                <div class="godmode-moderate-caption">
+                    Решение: {{ item.moderation_data.moderator.full_name }}
+                    {% if item.moderation_data.moderated_at %} · <time>{{ item.moderation_data.moderated_at }}</time>{% endif %}
+                </div>
+            {% endif %}
+        </section>
+
+        <form action="." method="post" id="post-moderate-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <fieldset class="godmode-moderate-fieldset">
+                <legend>Как поступим?</legend>
+                <div class="godmode-moderate-decisions">
+                    {% for choice in form.decision %}
+                        <label class="godmode-moderate-option godmode-moderate-{{ choice.data.value }}" for="{{ choice.id_for_label }}">
+                            {{ choice.tag }}
+                            <span>{{ choice.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="form-row-errors" role="alert">{{ form.decision.errors }}</div>
+            </fieldset>
+
+            <fieldset class="godmode-moderate-fieldset godmode-moderate-reasons" id="post-moderate-reasons"{% if form.decision.value != "rejected" %} hidden disabled{% endif %}>
+                <legend>{{ form.reason.label }}</legend>
+                {% for choice in form.reason %}
+                    <label class="godmode-moderate-option" for="{{ choice.id_for_label }}">
+                        {{ choice.tag }}
+                        <span>{{ choice.choice_label }}</span>
+                    </label>
+                {% endfor %}
+                <div class="form-row-errors" role="alert">{{ form.reason.errors }}</div>
+                <div class="form-row" id="post-moderate-custom"{% if form.reason.value != "custom" %} hidden{% endif %}>
+                    {{ form.custom_reason.label_tag }}
+                    {{ form.custom_reason }}
+                    <div class="form-row-errors" role="alert">{{ form.custom_reason.errors }}</div>
+                </div>
+            </fieldset>
+
+            <div class="godmode-moderate-submit" id="post-moderate-submit"{% if not form.decision.value %} hidden{% endif %}>
+                <button type="submit" class="button"{% if not form.decision.value %} disabled{% endif %}>Сохранить решение →</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        (() => {
+            const form = document.getElementById("post-moderate-form");
+            const reasons = document.getElementById("post-moderate-reasons");
+            const custom = document.getElementById("post-moderate-custom");
+            const submit = document.getElementById("post-moderate-submit");
+            const textarea = form.elements.custom_reason;
+
+            function updateModerationForm() {
+                const decision = form.querySelector('input[name="decision"]:checked')?.value;
+                const rejected = decision === "rejected";
+                const customReason = rejected && form.querySelector('input[name="reason"]:checked')?.value === "custom";
+                reasons.hidden = !rejected;
+                reasons.disabled = !rejected;
+                custom.hidden = !customReason;
+                textarea.disabled = !customReason;
+                textarea.required = customReason;
+                submit.hidden = !decision;
+                submit.querySelector("button").disabled = !decision;
+
+                for (const radio of form.querySelectorAll('input[name="reason"]')) {
+                    radio.required = rejected;
+                }
+            }
+
+            form.addEventListener("change", updateModerationForm);
+            updateModerationForm();
+        })();
+    </script>
+{% endblock %}

@@ -14,6 +14,8 @@
 
     --moderation-bg-color: #F6E4C4;
     --moderation-rejected-bg-color: #F9DDDD;
+    --moderation-approved-bg-color: #DDF0DF;
+    --moderation-draft-bg-color: #E8E8E8;
     --moderation-text-color: #6B3E12;
 
     --badge-color: rgba(255, 196, 85, 0.91);

@@ -156,6 +156,40 @@
         color: var(--opposite-text-color);
     }
 
+    .godmode-table .godmode-table-post {
+        background: var(--moderation-row-bg, var(--block-bg-color));
+        color: var(--moderation-row-color, var(--text-color));
+    }
+
+        .godmode-table-post-rejected {
+            --moderation-row-bg: var(--moderation-rejected-bg-color);
+            --moderation-row-color: var(--moderation-text-color);
+        }
+
+        .godmode-table-post-forgiven {
+            --moderation-row-bg: var(--moderation-bg-color);
+            --moderation-row-color: var(--moderation-text-color);
+        }
+
+        .godmode-table-post-approved {
+            --moderation-row-bg: var(--moderation-approved-bg-color);
+            --moderation-row-color: var(--moderation-text-color);
+        }
+
+        .godmode-table-post-draft {
+            --moderation-row-bg: var(--moderation-draft-bg-color);
+            --moderation-row-color: var(--moderation-text-color);
+        }
+
+        .godmode-table .godmode-table-post:hover {
+            box-shadow: inset 0 0 0 2px currentColor;
+        }
+
+        .godmode-table .godmode-table-post a,
+        .godmode-table .godmode-table-post:hover a {
+            color: inherit;
+        }
+
 .godmode-empty {
     font-size: 200%;
     padding: 100px 0;
@@ -300,6 +334,135 @@
 .godmode-mobile-menu-close {
     display: none;
 }
+
+.godmode-moderate {
+    max-width: 800px;
+}
+
+    .godmode-moderate [hidden] {
+        display: none;
+    }
+
+    .godmode-moderate-rejected {
+        --moderation-decision-bg: var(--moderation-rejected-bg-color);
+        color: var(--moderation-text-color);
+    }
+
+    .godmode-moderate-forgiven {
+        --moderation-decision-bg: var(--moderation-bg-color);
+        color: var(--moderation-text-color);
+    }
+
+    .godmode-moderate-approved {
+        --moderation-decision-bg: var(--moderation-approved-bg-color);
+        color: var(--moderation-text-color);
+    }
+
+    .godmode-moderate-current {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        background: var(--moderation-decision-bg, var(--bg-color));
+        box-shadow: none;
+    }
+
+        .godmode-moderate-current h2 {
+            margin: 0;
+            font-size: 170%;
+        }
+
+        .godmode-moderate-caption {
+            font-size: 95%;
+            opacity: 0.8;
+        }
+
+        .godmode-moderate-text {
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+            white-space: pre-line;
+        }
+
+        .godmode-moderate-text a {
+            color: inherit;
+        }
+
+    .godmode-moderate-fieldset {
+        border: 0;
+        padding: 0;
+        margin: 0 0 25px;
+        min-width: 0;
+    }
+
+        .godmode-moderate-fieldset legend {
+            font-size: 130%;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+    .godmode-moderate-decisions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .godmode-moderate-option {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 15px;
+        border: 2px solid transparent;
+        border-radius: var(--button-border-radius);
+        background: var(--moderation-decision-bg, var(--bg-color));
+        font-size: 115%;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+        .godmode-moderate-option input {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: currentColor;
+        }
+
+        .godmode-moderate-option:hover,
+        .godmode-moderate-option:has(input:checked) {
+            border-color: currentColor;
+        }
+
+        .godmode-moderate-option:has(input:focus-visible) {
+            outline: 3px solid currentColor;
+            outline-offset: 3px;
+        }
+
+    .godmode-moderate-reasons .godmode-moderate-option {
+        margin-bottom: 10px;
+    }
+
+        .godmode-moderate-reasons .godmode-moderate-option:has(input:checked) {
+            background: var(--moderation-rejected-bg-color);
+            color: var(--moderation-text-color);
+        }
+
+    .godmode-moderate-submit .button {
+        width: 100%;
+        padding: 20px;
+        font-size: 130%;
+    }
+
+    @media only screen and (max-width: 570px) {
+        .godmode-moderate-decisions {
+            gap: 6px;
+        }
+
+        .godmode-moderate-decisions .godmode-moderate-option {
+            flex-direction: column;
+            padding: 15px 5px;
+            font-size: 100%;
+            text-align: center;
+        }
+    }
 
 /* Badge generator */
 .badge-generator {

@@ -434,6 +434,7 @@ class Post(models.Model, ModelDiffMixin):
         if extra is not None:
             data.pop("reason", None)
             data.pop("text", None)
+            data.pop("custom_reason", None)
             data.update(extra)
 
         data["moderator"] = {
