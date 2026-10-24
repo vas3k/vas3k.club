@@ -174,7 +174,11 @@ def notify_post_rejected(post, reason=None):
     if post.author.telegram_id:
         send_telegram_message(
             chat=Chat(id=post.author.telegram_id),
-            text=text,
+            text=loader.get_template("posts/widgets/moderation_text.html").render({
+                "post": post,
+                "text": text,
+                "settings": settings,
+            }).strip(),
             parse_mode=ParseMode.HTML,
         )
 

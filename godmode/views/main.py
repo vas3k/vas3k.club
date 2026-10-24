@@ -6,7 +6,6 @@ from authn.decorators.auth import require_auth
 from club.exceptions import AccessDenied
 from godmode.config import ADMIN, ITEMS_PER_PAGE
 from godmode.filters import apply_filters, get_filterable_fields, FILTER_OPERATORS
-from posts.models.post import Post
 
 
 @require_auth
@@ -109,7 +108,6 @@ def godmode_edit_model(request, model_name, item_id):
     # Get the model instance
     primary_key_field = admin_model.model._meta.pk.name
     item = get_object_or_404(admin_model.model, **{primary_key_field: item_id})
-    previous_moderation_status = item.moderation_status if isinstance(item, Post) else None
 
     # Create a dynamic form for the model
     EditFormClass = admin_model.get_form_class()
@@ -118,22 +116,7 @@ def godmode_edit_model(request, model_name, item_id):
     if request.method == "POST":
         form = EditFormClass(request.POST, instance=item)
         if form.is_valid():
-            updated = form.save(commit=False)
-
-            if (
-                isinstance(updated, Post)
-                and updated.moderation_status != previous_moderation_status
-                and updated.moderation_status in {
-                    Post.MODERATION_APPROVED,
-                    Post.MODERATION_FORGIVEN,
-                    Post.MODERATION_REJECTED,
-                }
-            ):
-                extra = None if updated.moderation_status == Post.MODERATION_REJECTED else {}
-                updated.record_moderator_decision(request.me, extra=extra)
-
-            updated.save()
-            form.save_m2m()
+            admin_model.save_model(request, form)
             return redirect("godmode_list_model", model_name=model_name)
     else:
         form = EditFormClass(instance=item)

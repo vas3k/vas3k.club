@@ -337,6 +337,8 @@
 
 .godmode-moderate {
     max-width: 800px;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
     .godmode-moderate [hidden] {
@@ -393,20 +395,29 @@
         min-width: 0;
     }
 
-        .godmode-moderate-fieldset legend {
+        .godmode-moderate-fieldset legend,
+        .godmode-moderate-title {
             font-size: 130%;
             font-weight: 500;
             margin-bottom: 15px;
         }
 
+        .godmode-moderate-title {
+            width: 100%;
+            text-align: center;
+        }
+
     .godmode-moderate-decisions {
         display: flex;
+        flex-wrap: wrap;
         gap: 12px;
     }
 
     .godmode-moderate-option {
         display: flex;
-        flex: 1;
+        flex: 1 1 150px;
+        min-width: 0;
+        box-sizing: border-box;
         align-items: center;
         gap: 12px;
         padding: 20px 15px;
@@ -417,6 +428,15 @@
         font-weight: 500;
         cursor: pointer;
     }
+
+        .godmode-moderate-link {
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .godmode-moderate-option span {
+            min-width: 0;
+        }
 
         .godmode-moderate-option input {
             flex-shrink: 0;
@@ -431,6 +451,7 @@
             border-color: currentColor;
         }
 
+        .godmode-moderate-option:focus-visible,
         .godmode-moderate-option:has(input:focus-visible) {
             outline: 3px solid currentColor;
             outline-offset: 3px;
@@ -445,6 +466,17 @@
             color: var(--moderation-text-color);
         }
 
+    .godmode-moderate textarea {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .godmode-moderate-text pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
     .godmode-moderate-submit .button {
         width: 100%;
         padding: 20px;
@@ -457,10 +489,15 @@
         }
 
         .godmode-moderate-decisions .godmode-moderate-option {
-            flex-direction: column;
-            padding: 15px 5px;
+            flex-basis: 100%;
+            justify-content: center;
+            padding: 15px;
             font-size: 100%;
             text-align: center;
+        }
+
+        .godmode-moderate textarea {
+            font-size: 16px;
         }
     }
 

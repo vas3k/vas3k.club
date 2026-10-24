@@ -2,6 +2,8 @@ import json
 from datetime import datetime
 from unittest.mock import call, patch
 
+from bs4 import BeautifulSoup
+
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
@@ -29,7 +31,7 @@ class TestPostModerationText(TestCase):
 
     def test_custom_rejection_is_stored_escaped_and_sent_unchanged(self):
         custom_reason = '<script>alert("reason")</script> & details'
-        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "custom", "custom_reason": custom_reason})
+        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "custom", "text": custom_reason})
         request.me = self.moderator
 
         with (
@@ -41,9 +43,9 @@ class TestPostModerationText(TestCase):
 
         self.post.refresh_from_db()
         data = self.post.moderation_data
-        self.assertEqual(set(data), {"reason", "text", "custom_reason", "moderator", "moderated_at"})
+        self.assertEqual(set(data), {"reason", "text", "moderator", "moderated_at"})
         self.assertEqual(data["reason"], "custom")
-        self.assertEqual(data["custom_reason"], custom_reason)
+        self.assertEqual(BeautifulSoup(data["text"], "html.parser").get_text(), custom_reason)
         self.assertEqual(data["moderator"]["slug"], self.moderator.slug)
         self.assertRegex(data["moderated_at"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
         self.assertNotIn("<script>", data["text"])
@@ -56,12 +58,13 @@ class TestPostModerationText(TestCase):
         with patch("notifications.telegram.posts.send_telegram_message") as send:
             notify_post_rejected(self.post)
 
-        self.assertEqual(send.call_args.kwargs["text"], data["text"])
+        self.assertIn(data["text"], send.call_args.kwargs["text"])
+        self.assertNotIn("<script>", send.call_args.kwargs["text"])
 
-    def test_predefined_rejection_stores_rendered_snapshot(self):
+    def test_predefined_rejection_stores_reviewed_text(self):
         self.post.moderation_data = {"message_id": 42}
         self.post.save(update_fields=["moderation_data"])
-        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "title"})
+        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "title", "text": "Reviewed rejection"})
         request.me = self.moderator
 
         with (
@@ -78,12 +81,12 @@ class TestPostModerationText(TestCase):
             {"reason", "text", "moderator", "moderated_at", "message_id"},
         )
         self.assertEqual(self.post.moderation_data["reason"], "title")
-        self.assertEqual(self.post.moderation_data["text"], "Rendered rejection")
+        self.assertEqual(self.post.moderation_data["text"], "Reviewed rejection")
         self.assertEqual(self.post.moderation_data["moderator"]["slug"], self.moderator.slug)
         self.assertEqual(self.post.moderation_data["message_id"], 42)
 
     def test_blank_custom_reason_does_not_reject(self):
-        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "custom", "custom_reason": "  "})
+        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "custom", "text": "  "})
         request.me = self.moderator
 
         with (
@@ -97,18 +100,26 @@ class TestPostModerationText(TestCase):
         self.assertIsNone(self.post.moderation_data)
         enqueue.assert_not_called()
 
-    def test_repeated_rejection_records_new_decision_and_sends_notifications(self):
+    def test_repeated_rejection_overwrites_reason_and_notifies_only_admins(self):
         recorded = {
             "moderator": {"slug": "original-moderator"},
             "moderated_at": "2020-01-01T12:00:00Z",
             "reason": "title",
-            "text": "Original rejection",
+            "text": "<strong>Original</strong> <em>rejection</em>",
             "message_id": 42,
         }
         self.post.moderation_status = Post.MODERATION_REJECTED
         self.post.moderation_data = recorded
+        self.post.visibility = Post.VISIBILITY_DRAFT
         self.post.save()
-        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "custom", "custom_reason": "Another reason"})
+        editor = PostModerateForm(post=self.post)
+        self.assertEqual(editor.initial["text"], "**Original** *rejection*")
+        resaved = PostModerateForm({
+            "decision": Post.MODERATION_REJECTED, "reason": "custom", "text": editor.initial["text"],
+        }, post=self.post)
+        self.assertTrue(resaved.is_valid(), resaved.errors)
+        self.assertEqual(resaved.cleaned_data["text"], "<b>Original</b> <i>rejection</i>")
+        request = RequestFactory().post("/", {"decision": Post.MODERATION_REJECTED, "reason": "custom", "text": "Another reason"})
         request.me = self.moderator
 
         with (
@@ -125,10 +136,12 @@ class TestPostModerationText(TestCase):
         self.assertNotEqual(data["moderated_at"], recorded["moderated_at"])
         self.assertRegex(data["moderated_at"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
         self.assertEqual(data["reason"], "custom")
+        self.assertEqual(data["text"], "Another reason")
+        self.assertEqual(set(data), {"moderator", "moderated_at", "message_id", "reason", "text"})
         self.assertEqual(data["message_id"], 42)
         self.assertEqual(self.post.moderation_status, Post.MODERATION_REJECTED)
         self.assertEqual(self.post.visibility, Post.VISIBILITY_DRAFT)
-        enqueue.assert_called_once_with(notify_post_rejected, self.post)
+        enqueue.assert_not_called()
         update_index.assert_called_once_with(self.post)
         send.assert_called_once()
 
@@ -240,7 +253,9 @@ class TestGodmodeModerationDecisions(TestCase):
         self.post.room = Room.objects.create(slug="decision-room", title="Room")
         self.post.is_room_only = True
         self.post.save()
-        response = self.moderate({"decision": Post.MODERATION_APPROVED, "reason": "invalid"})
+        response = self.moderate({
+            "decision": Post.MODERATION_APPROVED, "reason": "invalid", "text": "unused" * 1000,
+        })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.post.moderation_status, Post.MODERATION_APPROVED)
         self.assertEqual(self.post.visibility, Post.VISIBILITY_EVERYWHERE)
@@ -275,8 +290,17 @@ class TestGodmodeModerationDecisions(TestCase):
         self.update_index.assert_called_once_with(self.post)
         self.send.assert_called_once()
 
-    def test_repeated_approval_records_new_moderator_and_notifies_again(self):
+        published_at = self.post.published_at
+        self.send.reset_mock()
+        self.moderate({"decision": Post.MODERATION_FORGIVEN})
+        self.assertEqual(self.post.published_at, published_at)
+        self.enqueue.assert_not_called()
+        self.send.assert_called_once()
+
+    def test_repeated_approval_records_new_moderator_and_notifies_only_admins(self):
         self.moderate({"decision": Post.MODERATION_APPROVED})
+        published_at = self.post.published_at
+        last_activity_at = self.post.last_activity_at
         replacement = create_approved_user("replacement_moderator", roles=[User.ROLE_MODERATOR])
         self.moderator = replacement
         self.enqueue.reset_mock()
@@ -289,7 +313,9 @@ class TestGodmodeModerationDecisions(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.post.moderation_data["moderator"]["slug"], replacement.slug)
         self.assertEqual(self.post.moderation_data["moderated_at"], "2026-01-01T00:00:00Z")
-        self.assertEqual(self.enqueue.call_count, 3)
+        self.enqueue.assert_not_called()
+        self.assertEqual(self.post.published_at, published_at)
+        self.assertEqual(self.post.last_activity_at, last_activity_at)
         self.send.assert_called_once()
 
     def test_invalid_decision_or_rejection_does_not_change_post(self):
@@ -298,7 +324,7 @@ class TestGodmodeModerationDecisions(TestCase):
             {"decision": "pending"},
             {"decision": Post.MODERATION_REJECTED},
             {"decision": Post.MODERATION_REJECTED, "reason": "invalid"},
-            {"decision": Post.MODERATION_REJECTED, "reason": "custom", "custom_reason": "  "},
+            {"decision": Post.MODERATION_REJECTED, "reason": "custom", "text": "  "},
         ):
             with self.subTest(data=data):
                 form = PostModerateForm(data, post=self.post)
@@ -312,7 +338,7 @@ class TestGodmodeModerationDecisions(TestCase):
                 self.update_index.assert_not_called()
 
     def test_predefined_rejection_replaces_previous_custom_reason(self):
-        response = self.moderate({"decision": Post.MODERATION_REJECTED, "reason": "title"})
+        response = self.moderate({"decision": Post.MODERATION_REJECTED, "reason": "title", "text": "Reviewed rejection"})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(self.post.moderation_status, Post.MODERATION_REJECTED)
         self.assertEqual(self.post.visibility, Post.VISIBILITY_DRAFT)
@@ -320,6 +346,6 @@ class TestGodmodeModerationDecisions(TestCase):
         self.assertEqual(self.post.moderation_data["reason"], "title")
         self.assertNotIn("custom_reason", self.post.moderation_data)
         self.assertEqual(self.post.moderation_data["moderator"]["slug"], self.moderator.slug)
-        self.enqueue.assert_called_once_with(notify_post_rejected, self.post)
+        self.enqueue.assert_not_called()
         self.update_index.assert_called_once_with(self.post)
         self.send.assert_called_once()

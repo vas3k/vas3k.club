@@ -1260,6 +1260,7 @@
     .block-moderation-message {
         flex: 1 1 auto;
         min-width: 0;
+        overflow-wrap: anywhere;
         font-family: var(--sans-font);
         font-size: 120%;
         line-height: 1.45;
@@ -1290,3 +1291,18 @@
             opacity: 0.7;
             margin-top: 40px;
         }
+
+        .block-moderation-reason pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+    @media only screen and (max-width: 570px) {
+        .block-moderation {
+            flex-direction: column;
+        }
+
+        .block-moderation-message {
+            width: 100%;
+        }
+    }

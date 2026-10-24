@@ -21,6 +21,7 @@ from godmode.actions.user_prolong import get_prolong_action, post_prolong_action
 from godmode.actions.user_role import get_role_action, post_role_action
 from godmode.actions.user_unmoderate import get_unmoderate_action, post_unmoderate_action
 from godmode.models import ClubSettings
+from godmode.post_admin import PostAdminModel
 from godmode.admin import ClubAdmin, ClubAdminGroup, ClubAdminModel, ClubAdminPage, ClubAdminField, ClubAdminAction
 from godmode.pages.badge_generator import badge_generator
 from godmode.pages.digest import compose_weekly_digest
@@ -281,7 +282,7 @@ ADMIN = ClubAdmin(
             title="Посты и комменты",
             icon="✏️",
             models=[
-                ClubAdminModel(
+                PostAdminModel(
                     model=Post,
                     title="Посты",
                     icon="📝",
@@ -308,6 +309,11 @@ ADMIN = ClubAdmin(
                     ],
                     hide_fields=["html", "deleted_at", "moderation_data"],
                     actions={
+                        "moderate": ClubAdminAction(
+                            title="⚠️️ Модерировать",
+                            get=get_moderate_action,
+                            post=post_moderate_action,
+                        ),
                         "post": ClubAdminAction(
                             title="📝 Посмотреть пост",
                             get=view_post_action
@@ -346,11 +352,6 @@ ADMIN = ClubAdmin(
                             get=get_owner_action,
                             post=post_owner_action,
                             access_roles={User.ROLE_MODERATOR, User.ROLE_GOD, User.ROLE_CURATOR},
-                        ),
-                        "moderate": ClubAdminAction(
-                            title="👩‍⚖️ Модерировать",
-                            get=get_moderate_action,
-                            post=post_moderate_action,
                         ),
                     }
                 ),

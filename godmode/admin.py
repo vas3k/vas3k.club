@@ -116,6 +116,9 @@ class ClubAdminModel:
             ]
         return fields
 
+    def save_model(self, request, form):
+        return form.save()
+
     def get_form_class(self):
         admin_model = self
 

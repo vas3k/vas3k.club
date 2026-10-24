@@ -1,9 +1,9 @@
 {% load posts %}
-{% if post.moderation_status == "rejected" and post.moderation_data.text and me|can_view_post_moderation:post %}
+{% if post.moderation_status == "rejected" and me|can_view_post_moderation:post %}
     <div class="block block-moderation">
         <div class="block-moderation-icon">🙏</div>
         <div class="block-moderation-message">
-            <div class="block-moderation-reason">{{ post.moderation_data.text|safe }}</div>
+            <div class="block-moderation-reason">{% if post.moderation_data.text %}{% include "posts/widgets/moderation_text.html" with text=post.moderation_data.text %}{% else %}{% include "posts/widgets/moderation_header.html" %}{% endif %}</div>
             {% if post.moderation_data.moderator %}
                 <div class="block-moderation-user">
                     {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.moderator %}
@@ -16,4 +16,29 @@
             </p>
         </div>
     </div>
+{% elif post.moderation_status == "forgiven" %}
+    {% if me.is_moderator %}
+        <div class="block block-moderation">
+            <div class="block-moderation-icon">😕</div>
+            <div class="block-moderation-message">
+                <p><strong>Модераторы не одобрили этот пост, но оставили его на сайте.</strong></p>
+                <p>Он виден на главной, все его видят, но теперь сообщество решает насколько он полезен Клубу...</p>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+{% if me.is_moderator %}
+    {% if post.is_waiting_for_moderation or post.moderation_status == "rejected" or post.moderation_status == "forgiven" %}
+        <div class="block block-moderation">
+            <div class="block-moderation-message godmode-moderate">
+                <div class="godmode-moderate-title">{% if post.moderation_status == "rejected" or post.moderation_status == "forgiven" %}Изменить решение{% else %}Давай отмодерируем этот пост{% endif %}</div>
+                {% url "godmode_action" "posts" post.id "moderate" as moderate_url %}
+                <div class="godmode-moderate-decisions">
+                    <a class="godmode-moderate-option godmode-moderate-link godmode-moderate-rejected" href="{{ moderate_url }}?decision=rejected">❌ Отклонить</a>
+                    <a class="godmode-moderate-option godmode-moderate-link godmode-moderate-forgiven" href="{{ moderate_url }}?decision=forgiven">😕 Оставить</a>
+                    <a class="godmode-moderate-option godmode-moderate-link godmode-moderate-approved" href="{{ moderate_url }}?decision=approved">👍 Одобрить</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endif %}
