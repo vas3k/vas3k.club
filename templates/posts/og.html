@@ -23,7 +23,7 @@
             overflow: hidden;
         }
 
-        body {
+        body, .card {
             font-family: Ubuntu, "Noto Color Emoji", "Apple Color Emoji", sans-serif;
             font-weight: 500;
             color: white;
@@ -44,6 +44,7 @@
             padding: 5.333333vw;
             background: #030406;
             overflow: hidden;
+            gap: 2vw;
         }
 
             .card-empty {
@@ -92,6 +93,7 @@
                 min-width: 0;
                 color: #e2e8f0;
                 font-size: 2.333333vw;
+                flex-shrink: 0;
             }
 
                 .avatar-link {
@@ -139,6 +141,9 @@
                 flex-direction: column;
                 gap: 2vw;
                 min-height: 0;
+                flex-shrink: 0;
+                font-size: calc(5.775vw * var(--og-title-scale, 1));
+                padding-bottom: 0.168em;
             }
 
                 .metadata {
@@ -226,7 +231,7 @@
                 overflow-wrap: anywhere;
                 word-break: break-word;
                 margin: 0;
-                font-size: 5.775vw;
+                font-size: inherit;
                 font-weight: 500;
                 line-height: 1.12;
                 text-shadow:
@@ -235,13 +240,21 @@
                     0 1vw 4vw rgba(0, 0, 0, 0.65);
             }
 
-                .title-long {
-                    font-size: 4vw;
-                }
+
+        .og-measure { height: auto; }
+        .og-hide-rewards .rewards { display: none; }
+        .og-hide-metadata .metadata { display: none; }
+        .og-fit-90 { --og-title-scale: 0.9; }
+        .og-fit-80 { --og-title-scale: 0.8; }
+        .og-fit-70 { --og-title-scale: 0.7; }
+        .og-fit-60 { --og-title-scale: 0.6; }
+        .og-fit-50 { --og-title-scale: 0.5; }
+        .og-fit-40 { --og-title-scale: 0.4; }
+        .og-fit-30 { --og-title-scale: 0.3; }
     </style>
 </head>
 <body>
-    <main class="card{% if not background_url %} card-empty{% endif %}">
+    <main id="og-card" class="card{% if not background_url %} card-empty{% endif %}">
         {% if background_url %}
             <img class="background" src="{{ background_url }}" alt="">
         {% endif %}
@@ -266,7 +279,7 @@
                     {% endif %}
                 </div>
             {% endif %}
-            <h1 class="title {% if post.title|length > 120 %}title-long{% endif %}"><a href="{% url 'show_post' post.type post.slug %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title|truncatechars:180 }}</a></h1>
+            <h1 class="title"><a href="{% url 'show_post' post.type post.slug %}">{% if post.prefix %}{{ post.prefix }} {% endif %}{{ post.title|truncatechars:180 }}</a></h1>
             {% if post.metadata.badges %}
                 <div class="rewards">
                     {% include "badges/widgets/badges.html" with badges=post.metadata.badges badge_size="big" %}
