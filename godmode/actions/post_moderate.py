@@ -61,6 +61,7 @@ def get_moderate_action(request, post: Post, **context):
 
 def post_moderate_action(request, post: Post, **context):
     form = PostModerateForm(request.POST, post=post)
+
     if form.is_valid():
         data = form.cleaned_data
         moderator = request.me
@@ -76,23 +77,14 @@ def post_moderate_action(request, post: Post, **context):
             custom_reason = None
 
         post.moderation_status = Post.MODERATION_REJECTED
-        post.moderation_data = {
+        post.record_moderator_decision(moderator, extra={
             "reason": reason_value,
             "text": render_to_string(template, {
                 "post": post,
                 "settings": settings,
                 "custom_reason": mark_safe(markdown_tg(custom_reason)) if custom_reason else None,
             }),
-            "user": {
-                "slug": moderator.slug,
-                "avatar": moderator.get_avatar(),
-                "full_name": moderator.full_name,
-            },
-        }
-
-        if message_id:
-            post.moderation_data["message_id"] = message_id
-
+        })
         post.unpublish()
 
         SearchIndex.update_post_index(post)

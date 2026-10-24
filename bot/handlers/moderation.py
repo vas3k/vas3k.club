@@ -36,10 +36,12 @@ async def approve_post(update: Update, context: CallbackContext) -> None:
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
+    moderator = User.objects.get(telegram_id=update.effective_user.id)
     post.moderation_status = Post.MODERATION_APPROVED
     post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
+    post.record_moderator_decision(moderator, extra={})
     post.save()
 
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
@@ -88,11 +90,13 @@ async def forgive_post(update: Update, context: CallbackContext) -> None:
         await update.callback_query.edit_message_reply_markup(reply_markup=None)
         return None
 
+    moderator = User.objects.get(telegram_id=update.effective_user.id)
     post.moderation_status = Post.MODERATION_FORGIVEN
     post.visibility = Post.VISIBILITY_EVERYWHERE
     post.last_activity_at = datetime.utcnow()
     post.published_at = datetime.utcnow()
     post.collectible_tag_code = None
+    post.record_moderator_decision(moderator, extra={})
     post.save()
 
     post_url = settings.APP_HOST + reverse("show_post", kwargs={
@@ -143,17 +147,12 @@ async def reject_post(update: Update, context: CallbackContext) -> None:
 
     moderator = User.objects.get(telegram_id=update.effective_user.id)
     post.moderation_status = Post.MODERATION_REJECTED
-    post.moderation_data = {
+    post.record_moderator_decision(moderator, extra={
         "reason": reason.value,
         "text": render_to_string(
             f"notifications/post_rejected/{reason.value}.html", {"post": post, "settings": settings},
         ),
-        "user": {
-            "slug": moderator.slug,
-            "avatar": moderator.get_avatar(),
-            "full_name": moderator.full_name,
-        },
-    }
+    })
     post.unpublish()
 
     SearchIndex.update_post_index(post)
@@ -191,12 +190,14 @@ async def approve_user_profile(update: Update, context: CallbackContext) -> None
         user.created_at = datetime.utcnow()
     user.save()
 
+    moderator = User.objects.get(telegram_id=update.effective_user.id)
     intro = Post.objects.filter(author=user, type=Post.TYPE_INTRO).first()
     intro.moderation_status = Post.MODERATION_APPROVED
     intro.visibility = Post.VISIBILITY_EVERYWHERE
     intro.last_activity_at = datetime.utcnow()
     if not intro.published_at:
         intro.published_at = datetime.utcnow()
+    intro.record_moderator_decision(moderator, extra={})
     intro.save()
 
     PostSubscription.subscribe(user, intro, type=PostSubscription.TYPE_ALL_COMMENTS)

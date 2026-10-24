@@ -306,7 +306,7 @@ ADMIN = ClubAdmin(
                         "moderation_data",
                         "visibility",
                     ],
-                    hide_fields=["html", "deleted_at"],
+                    hide_fields=["html", "deleted_at", "moderation_data"],
                     actions={
                         "post": ClubAdminAction(
                             title="📝 Посмотреть пост",

@@ -427,6 +427,23 @@ class Post(models.Model, ModelDiffMixin):
         self.author = User.objects.filter(slug=settings.DELETED_USERNAME).first()
         self.save()
 
+    def record_moderator_decision(self, moderator, extra=None):
+        data = dict(self.moderation_data or {})
+        data.pop("user", None)
+
+        if extra is not None:
+            data.pop("reason", None)
+            data.pop("text", None)
+            data.update(extra)
+
+        data["moderator"] = {
+            "slug": moderator.slug,
+            "avatar": moderator.get_avatar(),
+            "full_name": moderator.full_name,
+        }
+        data["moderated_at"] = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+        self.moderation_data = data
+
     def publish(self):
         self.moderation_status = Post.MODERATION_PENDING
         self.moderation_data = None

@@ -1,12 +1,12 @@
 {% load posts %}
-{% if post.moderation_data.text and me|can_view_post_moderation:post %}
+{% if post.moderation_status == "rejected" and post.moderation_data.text and me|can_view_post_moderation:post %}
     <div class="block block-moderation">
         <div class="block-moderation-icon">🙏</div>
         <div class="block-moderation-message">
             <div class="block-moderation-reason">{{ post.moderation_data.text|safe }}</div>
-            {% if post.moderation_data.user %}
+            {% if post.moderation_data.moderator %}
                 <div class="block-moderation-user">
-                    {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.user %}
+                    {% include "posts/widgets/moderator.html" with moderator=post.moderation_data.moderator %}
                 </div>
             {% endif %}
 
