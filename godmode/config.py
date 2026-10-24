@@ -15,6 +15,7 @@ from godmode.actions.user_achievement import get_achievement_action, post_achiev
 from godmode.actions.user_ban import get_ban_action, post_ban_action
 from godmode.actions.user_delete import get_delete_action, post_delete_action
 from godmode.actions.user_hat import get_hat_action, post_hat_action
+from godmode.actions.user_kick import get_kick_action, post_kick_action
 from godmode.actions.user_ping import get_ping_action, post_ping_action
 from godmode.actions.user_profile import view_profile_action
 from godmode.actions.user_prolong import get_prolong_action, post_prolong_action
@@ -138,20 +139,26 @@ ADMIN = ClubAdmin(
                             title="🪪 Посмотреть профиль",
                             get=view_profile_action
                         ),
+                        "unmoderate": ClubAdminAction(
+                            title="💩 Размодерировать",
+                            get=get_unmoderate_action,
+                            post=post_unmoderate_action,
+                        ),
                         "ban": ClubAdminAction(
                             title="💣 Забанить",
                             get=get_ban_action,
                             post=post_ban_action,
                         ),
+                        "kick": ClubAdminAction(
+                            title="🥾 Кикнуть из чатов",
+                            get=get_kick_action,
+                            post=post_kick_action,
+                            access_roles={User.ROLE_GOD},
+                        ),
                         "achievements": ClubAdminAction(
                             title="🌟 Дать ачивку",
                             get=get_achievement_action,
                             post=post_achievement_action,
-                        ),
-                        "unmoderate": ClubAdminAction(
-                            title="💩 Размодерировать",
-                            get=get_unmoderate_action,
-                            post=post_unmoderate_action,
                         ),
                         "hat": ClubAdminAction(
                             title="🎓 Дать шапку",

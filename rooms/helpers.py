@@ -33,12 +33,53 @@ def ban_user_in_all_chats(user: User, is_permanent=True):
         log.warning(f"User {user.slug} has no telegram_id, can't ban")
         return
 
-    until_date = None if is_permanent else datetime.utcnow() + timedelta(minutes=5)
-
     for room in Room.objects.filter(chat_id__isnull=False):
         try:
             chat_member = bot.get_chat_member(room.chat_id, user.telegram_id)
             if chat_member:
+                if not is_permanent:
+                    if chat_member.status not in ACTIVE_CHAT_MEMBER_STATUSES:
+                        continue
+
+                    if chat_member.status == "restricted" and not chat_member.is_member:
+                        continue
+
+                    # Telegram ignores temporary ban expiry outside supergroups and channels.
+                    chat = bot.get_chat(room.chat_id)
+
+                    if chat.type not in {"supergroup", "channel"}:
+                        log.warning(f"Skipping temporary ban in chat {room.slug}: unsupported type {chat.type}")
+                        continue
+
+                if chat_member.status == "administrator":
+                    demoted = bot.promote_chat_member(
+                        room.chat_id,
+                        user.telegram_id,
+                        can_change_info=False,
+                        can_post_messages=False,
+                        can_edit_messages=False,
+                        can_delete_messages=False,
+                        can_invite_users=False,
+                        can_restrict_members=False,
+                        can_pin_messages=False,
+                        can_promote_members=False,
+                        is_anonymous=False,
+                        can_manage_chat=False,
+                        can_manage_video_chats=False,
+                        can_manage_topics=False,
+                        can_post_stories=False,
+                        can_edit_stories=False,
+                        can_delete_stories=False,
+                        can_manage_direct_messages=False,
+                        can_manage_tags=False,
+                        api_kwargs={"can_send_welcome_messages": False},
+                    )
+
+                    if not demoted:
+                        log.warning(f"Failed to demote user {user.slug} in chat {room.slug}")
+                        continue
+
+                until_date = None if is_permanent else datetime.utcnow() + timedelta(minutes=5)
                 is_ok = bot.ban_chat_member(
                     room.chat_id,
                     user.telegram_id,
