@@ -49,6 +49,9 @@
             min-height: 150px !important;
             font-size: 110%;
             font-family: var(--serif-font);
+        }
+
+        .comment-form .CodeMirror {
             border-radius: 5px;
         }
 
@@ -106,6 +109,9 @@
             font-size: 100%;
             min-height: 50px !important;
             font-family: var(--serif-font);
+        }
+
+        .reply-form .CodeMirror {
             border-radius: var(--block-border-radius);
         }
 

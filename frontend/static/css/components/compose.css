@@ -197,7 +197,9 @@
         padding: 0;
     }
 
-    :is(.compose-form-text, .comment-markdown-editor) .CodeMirror pre.CodeMirror-line {
+    /* Selection geometry is measured using CodeMirror-line-like, so its padding must match. */
+    :is(.compose-form-text, .comment-markdown-editor) .CodeMirror pre.CodeMirror-line,
+    :is(.compose-form-text, .comment-markdown-editor) .CodeMirror pre.CodeMirror-line-like {
         padding-left: 0;
         padding-right: 0;
     }

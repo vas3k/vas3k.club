@@ -621,9 +621,15 @@ input[type=range]:focus::-ms-fill-upper {
     }
 }
 
-.CodeMirror-line {
+.CodeMirror-line,
+.CodeMirror-line-like {
     word-break: break-word !important;
 }
+/* Rounded corners belong on the editor shell, not its text and selection viewport. */
+.CodeMirror .CodeMirror-scroll {
+    border-radius: 0;
+}
+
 .CodeMirror-cursor {
     border-color: var(--input-color);
 }
