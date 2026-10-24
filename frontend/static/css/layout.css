@@ -262,6 +262,24 @@
         justify-content: space-between;
     }
 
+    .post-layout-block > .post-moderation {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        min-width: 0;
+    }
+
+    .post-layout-block > .post-moderation:has(> .block-moderation) {
+        margin-top: 40px;
+    }
+
+    .post-layout-block > .post-moderation ~ .text-body {
+        grid-row: 3;
+    }
+
+    .post-layout-block > .post-moderation ~ .post-footer {
+        grid-row: 4;
+    }
+
 .battle-title {
     margin: 0 auto;
     max-width: var(--max-content-width);
