@@ -206,6 +206,7 @@
     margin-left: 30px;
     min-height: 130px;
     cursor: pointer;
+    transition: var(--feed-post-hover-transition);
 }
 
     .feed-post-author,
@@ -270,8 +271,7 @@
     }
 
     .feed-post:hover {
-        transition: 0.2s ease-out;
-        box-shadow: 0 0 40px rgba(94, 104, 125, 0.3);
+        box-shadow: var(--feed-post-hover-shadow);
     }
 
         .feed-post-type-intro:hover,

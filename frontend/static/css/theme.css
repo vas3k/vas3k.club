@@ -32,6 +32,8 @@ html, html[theme="light"] {
     --block-bg-color: #FFF;
     --opposite-block-bg-color: #282c35;
     --block-shadow: 10px 15px 40px rgba(83, 91, 110, 0.11);
+    --feed-post-hover-shadow: 0 0 40px rgba(94, 104, 125, 0.3);
+    --feed-post-hover-transition: box-shadow 0.2s ease-out;
     --block-border: none;
 
     --link-color: #333;
@@ -71,6 +73,8 @@ html[theme="dark"] {
     --block-bg-color: #1B1B1C;
     --opposite-block-bg-color: #FFF;
     --block-shadow: 0px 0px 0px #000;
+    --feed-post-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --feed-post-hover-transition: none;
     --block-border: solid 1px #FCFDFF;
 
     --link-color: #DDD;
@@ -111,6 +115,8 @@ html[theme="dark"] {
         --block-bg-color: #1B1B1C;
         --opposite-block-bg-color: #FFF;
         --block-shadow: 0px 0px 0px #000;
+        --feed-post-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        --feed-post-hover-transition: none;
         --block-border: solid 1px #FCFDFF;
 
         --link-color: #DDD;
