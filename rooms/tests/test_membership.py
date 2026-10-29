@@ -7,6 +7,10 @@ from django.core.management import call_command, CommandError
 from django.db import IntegrityError, transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from telethon.tl.types import (
+    ChannelParticipant, ChannelParticipantAdmin, ChannelParticipantBanned, ChannelParticipantCreator,
+    ChannelParticipantLeft, ChannelParticipantsRecent, ChatAdminRights, ChatBannedRights, PeerUser,
+)
 
 from debug.utils_for_tests import create_approved_user, login
 from rooms.models import Room, RoomSubscription
@@ -86,7 +90,8 @@ class TestRecalculateChatMembers(TestCase):
         RoomSubscription.objects.update(created_at=datetime.utcnow() - timedelta(days=1))
         participants = MagicMock()
         participants.__iter__.return_value = iter([
-            SimpleNamespace(id=123, bot=False), SimpleNamespace(id=456, bot=False),
+            SimpleNamespace(id=123, bot=False, participant=ChannelParticipant(user_id=123, date=None)),
+            SimpleNamespace(id=456, bot=False, participant=ChannelParticipant(user_id=456, date=None)),
             SimpleNamespace(id=789, bot=True),
         ])
         participants.__len__.return_value = 3
@@ -104,6 +109,47 @@ class TestRecalculateChatMembers(TestCase):
         self.assertTrue(RoomSubscription.is_subscribed(subscribed, self.room))
         self.assertFalse(RoomSubscription.get(subscribed, self.room).is_chat_member)
 
+    def test_sync_counts_only_active_participants(self):
+        memberships = [
+            (ChannelParticipant(user_id=123, date=None), True),
+            (ChannelParticipantAdmin(user_id=123, promoted_by=1, date=None, admin_rights=ChatAdminRights()), True),
+            (ChannelParticipantCreator(user_id=123, admin_rights=ChatAdminRights()), True),
+            (ChannelParticipantLeft(peer=PeerUser(123)), False),
+            (ChannelParticipantBanned(
+                peer=PeerUser(123), kicked_by=1, date=None,
+                banned_rights=ChatBannedRights(until_date=None, send_messages=True),
+            ), True),
+            (ChannelParticipantBanned(
+                peer=PeerUser(123), kicked_by=1, date=None, left=True,
+                banned_rights=ChatBannedRights(until_date=None, send_messages=True),
+            ), False),
+            (ChannelParticipantBanned(
+                peer=PeerUser(123), kicked_by=1, date=None,
+                banned_rights=ChatBannedRights(until_date=None, view_messages=True),
+            ), False),
+        ]
+
+        for membership, expected in memberships:
+            with self.subTest(membership=membership):
+                RoomSubscription.objects.update_or_create(
+                    user=self.user, room=self.room, defaults={"is_chat_member": True, "is_notified": True},
+                )
+                participants = MagicMock()
+                participants.__iter__.return_value = iter([SimpleNamespace(id=123, bot=False, participant=membership)])
+                participants.__len__.return_value = 1
+                participants.total = 1
+
+                with patch("rooms.management.commands.recalculate_chat_members.TelegramClient") as client:
+                    client.return_value.get_participants.return_value = participants
+                    call_command("recalculate_chat_members", stdout=StringIO())
+
+                client.return_value.get_participants.assert_called_once_with(
+                    int(self.room.chat_id), limit=None, filter=ChannelParticipantsRecent,
+                )
+                subscription = RoomSubscription.get(self.user, self.room)
+                self.assertEqual(subscription.is_chat_member, expected)
+                self.assertTrue(subscription.is_notified)
+
     def test_sync_preserves_notification_preferences_on_join_leave_and_rejoin(self):
         for is_notified in [True, False]:
             subscription, created = RoomSubscription.objects.update_or_create(
@@ -114,7 +160,7 @@ class TestRecalculateChatMembers(TestCase):
             for is_chat_member in [True, False, True]:
                 participants = MagicMock()
                 participants.__iter__.return_value = iter(
-                    [SimpleNamespace(id=123, bot=False)] if is_chat_member else [],
+                    [SimpleNamespace(id=123, bot=False, participant=ChannelParticipant(user_id=123, date=None))] if is_chat_member else [],
                 )
                 participants.__len__.return_value = int(is_chat_member)
                 participants.total = int(is_chat_member)
@@ -138,7 +184,7 @@ class TestRecalculateChatMembers(TestCase):
                     )
                     participants = MagicMock()
                     participants.__iter__.return_value = iter(
-                        [] if is_chat_member else [SimpleNamespace(id=123, bot=False)],
+                        [] if is_chat_member else [SimpleNamespace(id=123, bot=False, participant=ChannelParticipant(user_id=123, date=None))],
                     )
                     participants.__len__.return_value = int(not is_chat_member)
                     participants.total = int(not is_chat_member)
@@ -156,7 +202,7 @@ class TestRecalculateChatMembers(TestCase):
 
     def test_sync_does_not_recreate_membership_after_leave_during_fetch(self):
         participants = MagicMock()
-        participants.__iter__.return_value = iter([SimpleNamespace(id=123, bot=False)])
+        participants.__iter__.return_value = iter([SimpleNamespace(id=123, bot=False, participant=ChannelParticipant(user_id=123, date=None))])
         participants.__len__.return_value = 1
         participants.total = 1
 
@@ -192,7 +238,7 @@ class TestRecalculateChatMembers(TestCase):
     def test_retry_recovers_without_rescanning_successful_rooms(self):
         other_room = Room.objects.create(slug="retry-room", title="Retry", color="#333", chat_id="-100456")
         participants = MagicMock()
-        participants.__iter__.side_effect = lambda: iter([SimpleNamespace(id=123, bot=False)])
+        participants.__iter__.side_effect = lambda: iter([SimpleNamespace(id=123, bot=False, participant=ChannelParticipant(user_id=123, date=None))])
         participants.__len__.return_value = 1
         participants.total = 1
 

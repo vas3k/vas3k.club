@@ -9,6 +9,7 @@ from django.db.models import Q
 from telethon.errors import FloodWaitError, RPCError
 from telethon.sessions import StringSession
 from telethon.sync import TelegramClient
+from telethon.tl.types import ChannelParticipantBanned, ChannelParticipantLeft, ChannelParticipantsRecent
 
 from rooms.models import Room, RoomSubscription
 from users.models.user import User
@@ -54,7 +55,9 @@ class Command(BaseCommand):
                     started_at = datetime.utcnow()
 
                     try:
-                        participants = client.get_participants(int(room.chat_id), limit=None)
+                        participants = client.get_participants(
+                            int(room.chat_id), limit=None, filter=ChannelParticipantsRecent,
+                        )
                     except (RPCError, ValueError, OSError) as ex:
                         log.warning("Failed to fetch members for %s: %s", room.slug, ex)
 
@@ -71,7 +74,23 @@ class Command(BaseCommand):
                         failed_rooms.append(room.slug)
                         continue
 
-                    telegram_ids = [str(participant.id) for participant in participants if not participant.bot]
+                    telegram_ids = []
+
+                    for participant in participants:
+                        if participant.bot:
+                            continue
+
+                        membership = participant.participant
+
+                        if isinstance(membership, ChannelParticipantLeft):
+                            continue
+
+                        if isinstance(membership, ChannelParticipantBanned):
+                            if membership.left or membership.banned_rights.view_messages:
+                                continue
+
+                        telegram_ids.append(str(participant.id))
+
                     users = list(User.objects.filter(telegram_id__in=telegram_ids))
                     user_ids = [user.id for user in users]
 
