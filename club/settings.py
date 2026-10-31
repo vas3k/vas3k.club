@@ -131,8 +131,8 @@ elif os.getenv("POSTGRES_USE_POOLING", "0").strip().lower() in {"1", "true", "ye
     DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
     DATABASES["default"]["OPTIONS"] = {
         "pool": {
-            "min_size": 1,
-            "max_size": 4,  # keep small: one pool per gunicorn worker process
+            "min_size": 0,
+            "max_size": 2,  # keep small: one pool per gunicorn worker process
             "timeout": 10,  # fail in 10 sec under load
             "max_idle": 300,  # close idle after 5 min
         }
@@ -164,13 +164,13 @@ REDIS_HOST = os.getenv("REDIS_HOST") or "localhost"
 REDIS_PORT = os.getenv("REDIS_PORT") or 6379
 Q_CLUSTER = {
     "name": "vas3k_club",
-    "workers": 4,
-    "recycle": 500,
+    "workers": 2,
+    "recycle": 100,
     "timeout": 300,
     "retry": 360,
     "compress": True,
     "save_limit": 250,
-    "queue_limit": 5000,
+    "queue_limit": 200,
     "redis": {
         "host": REDIS_HOST,
         "port": REDIS_PORT,

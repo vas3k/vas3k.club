@@ -60,10 +60,10 @@ docker-run-production:  ## Production gunicorn (WSGI)
 	python3 manage.py update_achievements
 	cp -r /app/frontend/static /tmp/
 	gunicorn club.wsgi:application \
-		-w 5 -k gthread --threads 2 \
+		-w 2 -k gthread --threads 2 \
 		--bind=0.0.0.0:8814 \
 		--timeout 60 \
-		--max-requests 1500 --max-requests-jitter 300 \
+		--max-requests 300 --max-requests-jitter 50 \
 		--capture-output --log-level info \
 		--access-logfile - --error-logfile -
 
