@@ -48,8 +48,8 @@ class ClubRenderer(mistune.HTMLRenderer):
                 f'href="{self.safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
 
     def image(self, text, url, title=None):
-        # try to detect embed
-        embed = self.embed(url, text, title)
+        # mistune passes alt text already rendered (and escaped) by text(); embeds escape it again
+        embed = self.embed(url, html.unescape(text), title)
         if embed:
             return embed
 
