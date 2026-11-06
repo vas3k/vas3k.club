@@ -1,11 +1,58 @@
 from datetime import datetime, timedelta
+from unittest.mock import patch
 
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 
+from debug.utils_for_tests import create_approved_user
 from misc.models import ProTip
-from notifications.digests import generate_weekly_digest
+from notifications.digests import generate_daily_digest, generate_weekly_digest
 from posts.models.post import Post
 from users.models.user import User
+
+
+@override_settings(DEBUG=False, CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}})
+class HistoricalDigestSelectionTest(TestCase):
+    def test_historical_pick_excludes_toxic_and_hidden_posts(self):
+        user = create_approved_user("historical-digest")
+        ProTip.objects.create(title="Tip", text="Be nice", is_visible=True)
+        Post.objects.create(
+            author=user, slug="recent", type=Post.TYPE_POST,
+            visibility=Post.VISIBILITY_EVERYWHERE, moderation_status=Post.MODERATION_APPROVED,
+        )
+        eligible = Post.objects.create(
+            author=user, slug="eligible", type=Post.TYPE_POST, upvotes=50,
+            visibility=Post.VISIBILITY_EVERYWHERE, moderation_status=Post.MODERATION_APPROVED,
+            published_at=datetime.utcnow() - timedelta(days=366),
+        )
+
+        for generator in [generate_daily_digest, generate_weekly_digest]:
+            for index, hidden_fields in enumerate([
+                {"label_code": "toxic"},
+                {"is_room_only": True},
+                {"visibility": Post.VISIBILITY_DRAFT},
+                {"visibility": Post.VISIBILITY_LINK_ONLY},
+            ]):
+                with self.subTest(generator=generator.__name__, hidden_fields=hidden_fields):
+                    cache.clear()
+                    hidden = Post.objects.create(
+                        author=user, slug=f"hidden-{generator.__name__}-{index}", type=Post.TYPE_POST, upvotes=100,
+                        moderation_status=Post.MODERATION_APPROVED,
+                        published_at=eligible.published_at,
+                        **{"visibility": Post.VISIBILITY_EVERYWHERE, **hidden_fields},
+                    )
+
+                    if generator == generate_daily_digest:
+                        cache.set(f"daily_digest:top_old_post:{datetime.utcnow().date()}:False", [hidden])
+
+                    with patch("notifications.digests.render_to_string", return_value="") as render:
+                        if generator == generate_daily_digest:
+                            generator(user)
+                        else:
+                            generator()
+
+                    hidden.delete()
+                    self.assertEqual(render.call_args.args[1]["top_old_post"], eligible)
 
 
 @override_settings(APP_HOST="https://test.club")

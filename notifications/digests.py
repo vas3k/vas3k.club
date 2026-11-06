@@ -108,12 +108,14 @@ def generate_daily_digest(user):
         cache.set("daily_digest:intros", list(intros), DAILY_DIGEST_CACHE_TIMEOUT_SECONDS)
 
     # The historical pick is shared by every recipient, including empty results.
-    old_post_cache_key = f"daily_digest:top_old_post:{end_date.date()}:{settings.DEBUG}"
+    old_post_cache_key = f"daily_digest:top_old_post:v2:{end_date.date()}:{settings.DEBUG}"
     old_posts = cache.get(old_post_cache_key)
     if old_posts is None:
         old_posts = list(
             Post.visible_objects()
             .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])
+            .exclude(label_code="toxic")
+            .exclude(is_room_only=True)
             .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))
             .filter(
                 published_at__gte=start_date - timedelta(days=365),
@@ -227,6 +229,8 @@ def generate_weekly_digest(no_footer=False):
     # Best post 1 year ago
     top_old_post = Post.visible_objects()\
         .exclude(type__in=[Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST])\
+        .exclude(label_code="toxic")\
+        .exclude(is_room_only=True)\
         .filter(Q(moderation_status=Post.MODERATION_APPROVED) | Q(upvotes__gte=settings.COMMUNITY_APPROVE_UPVOTES))\
         .filter(
             published_at__gte=start_date - timedelta(days=365),
