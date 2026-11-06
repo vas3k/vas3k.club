@@ -1,5 +1,6 @@
 import html
 import mistune
+from mistune.util import striptags
 from urllib.parse import unquote
 
 from slugify import slugify
@@ -48,8 +49,8 @@ class ClubRenderer(mistune.HTMLRenderer):
                 f'href="{self.safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
 
     def image(self, text, url, title=None):
-        # mistune passes alt text already rendered (and escaped) by text(); embeds escape it again
-        embed = self.embed(url, html.unescape(text), title)
+        # mistune passes alt text already rendered to HTML by text() and inline markup; embeds expect plain text
+        embed = self.embed(url, html.unescape(striptags(text)), title)
         if embed:
             return embed
 
