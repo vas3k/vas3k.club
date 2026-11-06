@@ -34,6 +34,20 @@ export default class PeopleMap extends Component {
         this.roomsGeojson = this.parseFeatureCollection(this.props.rooms);
         this.composeElement = document.createElement("div");
         this.composeElement.className = "people-map-message people-map-message-compose";
+        let camera = {};
+
+        try {
+            const saved = JSON.parse(sessionStorage.getItem("people-map-camera"));
+
+            if (
+                Array.isArray(saved?.center) && saved.center.length === 2 &&
+                saved.center.every(Number.isFinite) && Math.abs(saved.center[1]) <= 90 &&
+                Number.isFinite(saved.zoom) && saved.zoom >= 0 && saved.zoom <= 16
+            ) {
+                camera = { center: saved.center, zoom: saved.zoom };
+            }
+        } catch {}
+
         try {
             this.map = new mapboxgl.Map({
                 container: this.mapContainer.current,
@@ -44,6 +58,7 @@ export default class PeopleMap extends Component {
                 scrollZoom: true,
                 dragPan: true,
                 touchZoomRotate: true,
+                ...camera,
             });
             this.map.addControl(new mapboxgl.NavigationControl(), "top-right");
             this.map.addControl(new mapboxgl.GeolocateControl(), "top-right");
@@ -242,6 +257,14 @@ export default class PeopleMap extends Component {
         map.on("moveend", () => {
             updateMarkers();
             this.updateMessageMarkers();
+
+            try {
+                const center = map.getCenter();
+                sessionStorage.setItem("people-map-camera", JSON.stringify({
+                    center: [center.lng, center.lat],
+                    zoom: map.getZoom(),
+                }));
+            } catch {}
         });
 
         map.on("data", (e) => {
