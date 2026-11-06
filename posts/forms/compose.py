@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.forms import SimpleArrayField
 from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 from gunicorn.config import PostRequest
 from slugify import slugify_filename
 
@@ -467,7 +468,6 @@ class PostProjectForm(AbstractPostForm):
     text = forms.CharField(
         label="Описание",
         required=True,
-        min_length=1500,
         initial="🤗 Расскажите нам все инсайды о вашем проекте.\n\n "
                 "Ниже мы накидали список популярных вопросов, на которые обычно всем интересно услышать ответы. "
                 "Он здесь для того, чтобы помочь вам с проблемой чистого листа и задать базовую структуру. "
@@ -489,7 +489,6 @@ class PostProjectForm(AbstractPostForm):
         widget=forms.Textarea(
             attrs={
                 "maxlength": 500000,
-                "minlength": 1500,
                 "class": "markdown-editor-full",
                 "data-listen": "keyup",
                 "placeholder": "Расскажите подробности о вашем проекте!"
@@ -508,6 +507,14 @@ class PostProjectForm(AbstractPostForm):
         label="Соавторы поста",
         required=False,
     )
+
+    def clean_text(self):
+        text = self.cleaned_data["text"]
+
+        if self.data.get("action") == "publish" or not self.instance.is_draft:
+            MinLengthValidator(1500)(text)
+
+        return text
 
     class Meta:
         model = Post
