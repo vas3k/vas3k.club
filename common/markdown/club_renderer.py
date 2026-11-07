@@ -1,5 +1,6 @@
 import html
 import mistune
+from mistune.util import striptags
 from urllib.parse import unquote
 
 from slugify import slugify
@@ -48,7 +49,7 @@ class ClubRenderer(mistune.HTMLRenderer):
                 f'href="{self.safe_url(link)}">{html.escape(unquote(html.unescape(text or link)))}</a>')
 
     def image(self, text, url, title=None):
-        # try to detect embed
+        # text is the alt rendered to safe HTML by mistune: embeds show it as caption and strip it for plain alt
         embed = self.embed(url, text, title)
         if embed:
             return embed
@@ -73,9 +74,10 @@ class ClubRenderer(mistune.HTMLRenderer):
         return None
 
     def simple_image(self, url, text="", title=None):
-        title, css_classes = split_title_and_css_classes(title or text)
-        image_tag = f'<img src="{html.escape(url)}" alt="{html.escape(title)}">'
-        caption = f"<figcaption>{html.escape(title)}</figcaption>" if title else ""
+        caption, css_classes = split_title_and_css_classes(html.escape(title) if title else text)
+        alt = html.escape(html.unescape(striptags(caption)))
+        image_tag = f'<img src="{html.escape(url)}" alt="{alt}">'
+        caption = f"<figcaption>{caption}</figcaption>" if caption else ""
         return f'<figure class="{' '.join(css_classes)}">{image_tag}{caption}</figure>'
 
     def youtube(self, url, text="", title=None):
@@ -98,11 +100,12 @@ class ClubRenderer(mistune.HTMLRenderer):
         return f"<figure>{video_tag}{caption}</figure>"
 
     def video(self, url, text="", title=None):
-        title, css_classes = split_title_and_css_classes(title or text)
+        caption, css_classes = split_title_and_css_classes(html.escape(title) if title else text)
+        fallback = html.escape(html.unescape(striptags(text)))
         video_tag = (
-            f'<video src="{html.escape(url)}" controls playsinline>{html.escape(text)}</video>'
+            f'<video src="{html.escape(url)}" controls playsinline>{fallback}</video>'
         )
-        caption = f"<figcaption>{html.escape(title)}</figcaption>" if title else ""
+        caption = f"<figcaption>{caption}</figcaption>" if caption else ""
         return f'<figure class="{' '.join(css_classes)}">{video_tag}{caption}</figure>'
 
     def tweet(self, url, text="", title=None):
