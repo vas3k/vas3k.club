@@ -24,10 +24,10 @@ def send_custom_mass_email(emails_or_slugs: list[str], title: str, text: str, is
 
     # send emails to existing users
     for user in users:
-        log.info(f"Sending email to {user.email}...")
+        log.info("Sending custom email for user_slug=%s", user.slug)
 
         if is_promo and user.is_email_unsubscribed:
-            log.info(f"User {user.email} is unsubscribed from promo emails. Skipping.")
+            log.info("Skipping custom promo email for unsubscribed user_slug=%s", user.slug)
             continue
 
         secret_code = generate_notification_token(user)
@@ -44,7 +44,7 @@ def send_custom_mass_email(emails_or_slugs: list[str], title: str, text: str, is
         )
 
         if user.telegram_id:
-            log.info(f"Sending telegram message to {user.telegram_id}...")
+            log.info("Sending custom Telegram message for user_slug=%s", user.slug)
             send_telegram_message(
                 chat=Chat(id=user.telegram_id),
                 text=f"<b>{title}</b>\n\n{markdown_tg(text)}" if title else markdown_tg(text),
