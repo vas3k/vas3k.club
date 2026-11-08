@@ -334,9 +334,11 @@ class TestSyncBotAfterFork(TestCase):
                 send_telegram_message(Chat(id=12345), "Log test")
 
         self.assertTrue(
-            any("sending message to chat_id 12345" in msg for msg in cm.output),
+            any("Telegram: sending message" in msg for msg in cm.output),
             f"Expected log line not found in: {cm.output}",
         )
+        self.assertNotIn("12345", "\n".join(cm.output))
+        self.assertNotIn("Log test", "\n".join(cm.output))
 
 
 class TestSyncBotInSyncContext(BaseTelegramTest, TestCase):
