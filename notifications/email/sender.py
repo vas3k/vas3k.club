@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 
 def send_transactional_email(recipient, subject, html, unsubscribe_link=None, **kwargs):
-    log.info(f"Sending transactional email to {recipient}")
+    log.info("Sending transactional email")
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
     headers = {"List-Unsubscribe": unsubscribe_link} if unsubscribe_link else {}
     email = EmailMultiAlternatives(
@@ -23,7 +23,7 @@ def send_transactional_email(recipient, subject, html, unsubscribe_link=None, **
 
 
 def send_mass_email(recipient, subject, html, unsubscribe_link):
-    log.info(f"Sending mass email to {recipient}")
+    log.info("Sending mass email")
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
     email = EmailMultiAlternatives(
         subject=subject,

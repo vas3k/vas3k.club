@@ -104,7 +104,7 @@ def yookassa_webhook(request):
     except BadRequest as ex:
         return HttpResponse(ex.message, status=ex.code)
 
-    log.info(f"YOOKASSA WEBHOOK: {webhook.json()}")
+    log.info("YooKassa webhook: event=%s payment_id=%s", webhook.event, webhook.object.id)
 
     if webhook.event == "payment.succeeded":
         try:

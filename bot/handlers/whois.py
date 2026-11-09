@@ -15,15 +15,17 @@ from users.models.user import User
 async def command_whois(update: Update, context: CallbackContext) -> None:
     if not update.message:
         return None
-          
-    message = update.message
-    is_private_forward = message is not None \
-        and message.forward_origin is not None \
-        and message.chat.type == TGChat.PRIVATE
 
-    # If there is no reply/forward – try `/whois <telegram_username>` using the raw message text
-    if not message or (not message.reply_to_message and not is_private_forward):
-        text = (message.text or "").strip() if message else ""
+    message = update.message
+    is_private_forward = message.forward_origin is not None and message.chat.type == TGChat.PRIVATE
+    reply = message.reply_to_message
+    is_topic_root = reply is not None and message.message_thread_id is not None \
+        and reply.id == message.message_thread_id
+    is_user_reply = reply is not None and not is_topic_root
+
+    # Topic messages can refer to the topic root without being replies to a person.
+    if not is_user_reply and not is_private_forward:
+        text = (message.text or "").strip()
         parts = text.split(maxsplit=1)
 
         if len(parts) < 2:
@@ -76,8 +78,8 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
         return None
 
     original_message = message  # look at the author of this message (works only in private chats)
-    if message.reply_to_message:
-        original_message = message.reply_to_message  # look at the author of replied message
+    if is_user_reply:
+        original_message = reply  # look at the author of replied message
 
     from_user = original_message.from_user
     origin = original_message.forward_origin

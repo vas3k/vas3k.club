@@ -41,7 +41,7 @@ def send_telegram_message(
         log.warning("No chat id. Skipping")
         return
 
-    log.info(f"Telegram: sending message to chat_id {chat.id}, starting with {text[:10]}...")
+    log.info("Telegram: sending message")
 
     link_preview_options = LinkPreviewOptions(is_disabled=disable_preview)
     reply_parameters = ReplyParameters(message_id=reply_to_message_id) if reply_to_message_id else None
@@ -81,7 +81,7 @@ def send_telegram_image(
         log.warning("No telegram token. Skipping")
         return
 
-    log.info(f"Telegram: sending the image: {image_url} {text[:20]}")
+    log.info("Telegram: sending image")
 
     try:
         return bot.send_photo(
