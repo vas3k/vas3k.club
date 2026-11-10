@@ -4,13 +4,14 @@ import SearchSelect from "./SearchSelect";
 
 export default function CoauthorsSelect({ id, searchUrl, initialUsers = [], initialSlugs = "", excludeSlug = "" }) {
     const [selected, setSelected] = useState(() =>
-        initialSlugs
+        (initialSlugs
             ? initialSlugs
                   .split(",")
-                  .map((slug) => slug.trim())
+                  .map((slug) => slug.trim().replace(/^@/, ""))
                   .filter(Boolean)
                   .map((slug) => ({ slug, full_name: slug }))
-            : initialUsers,
+            : initialUsers
+        ).filter((user) => user.slug !== excludeSlug),
     );
     const [query, setQuery] = useState("");
     const [options, setOptions] = useState([]);

@@ -7,6 +7,7 @@ from django.test import TestCase
 from debug.helpers import HelperClient
 from users.models.user import User
 from posts.models.post import Post
+from posts.forms.compose import PostTextForm
 
 class ModelCreator:
     _exist_posts = 0
@@ -72,6 +73,34 @@ class TestPostViews(TestCase):
             assert (
                 post.title not in str(response.content)
             )
+
+    def test_moderator_edit_keeps_actual_author_out_of_initial_coauthors(self):
+        post = self.creator.create_post(coauthors=[])
+        post.coauthors = [post.author.slug]
+        post.save(update_fields=["coauthors"])
+        self.user.roles = [User.ROLE_MODERATOR]
+        self.user.save(update_fields=["roles"])
+        client = self._authorized_client(self.user)
+        response = client.get(reverse("edit_post", args=[post.slug]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["form"].instance.author_id, post.author_id)
+        self.assertFalse(response.context["form"]["coauthors"].value())
+
+    def test_compose_form_removes_author_but_keeps_other_coauthors(self):
+        post = self.creator.create_post()
+        form = PostTextForm(data={
+            "title": "Edited title",
+            "text": "Edited text",
+            "coauthors": f"@{post.author.slug},{self.user.slug}",
+            "is_public": "False",
+        }, instance=post)
+
+        self.assertTrue(form.is_valid(), form.errors)
+        saved_post = form.save()
+        saved_post.refresh_from_db()
+        self.assertEqual(saved_post.author_id, post.author_id)
+        self.assertEqual(saved_post.coauthors, [self.user.slug])
 
     @staticmethod
     def _post_url(post) -> str:

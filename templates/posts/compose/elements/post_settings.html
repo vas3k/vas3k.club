@@ -30,7 +30,7 @@
 </details>
 
 {% if post_type == "post" or post_type == "guide" or post_type == "project" or post_type == "event" %}
-    <details class="block compose-form-advanced" {% if form.instance.coauthors %}open{% endif %}>
+    <details class="block compose-form-advanced" {% if form.coauthors.value %}open{% endif %}>
         <summary class="compose-form-advanced-summary">👨‍👨‍👧‍👧 Добавить соавторов к посту</summary>
 
         <div class="clearfix50"></div>
@@ -44,9 +44,9 @@
         <div class="form-row compose-form-coauthors">
             <div>
                 {% if form.is_bound %}
-                    {% react "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=me.slug initial_slugs=form.coauthors.data|default:"" %}
+                    {% react "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=form.instance.author.slug|default:me.slug initial_slugs=form.coauthors.data|default:"" %}
                 {% else %}
-                    {% react "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=me.slug initial_users=form.instance.coauthors_with_details|coauthors_options %}
+                    {% react "CoauthorsSelect" id=form.coauthors.html_name search_url="/search/users.json?q=" exclude_slug=form.instance.author.slug|default:me.slug initial_users=form.instance.coauthors_with_details|coauthors_options %}
                 {% endif %}
             </div>
 

@@ -87,11 +87,22 @@ class AbstractPostForm(forms.ModelForm):
     class Meta:
         abstract = True
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if "coauthors" in self.fields and self.instance.author_id:
+            self.initial["coauthors"] = [
+                slug for slug in self.initial.get("coauthors", []) if slug != self.instance.author.slug
+            ]
+
     def clean_coauthors(self):
         coauthors = self.cleaned_data.get("coauthors")
         if not coauthors:
             return []
         coauthors = [coauthor.replace("@", "", 1) for coauthor in coauthors]
+
+        if self.instance.author_id:
+            coauthors = [coauthor for coauthor in coauthors if coauthor != self.instance.author.slug]
 
         seen = set()
         duplicated_coauthors = [coauthor for coauthor in coauthors if coauthor in seen or seen.add(coauthor)]
