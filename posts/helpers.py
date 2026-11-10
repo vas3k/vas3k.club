@@ -16,7 +16,7 @@ ORDERING_TOP_WEEK = "top_week"
 ORDERING_TOP_MONTH = "top_month"
 ORDERING_TOP_YEAR = "top_year"
 
-MARKDOWN_IMAGES_RE = re.compile(r"!\[*\]\((.+)\)")
+MARKDOWN_IMAGES_RE = re.compile(r'!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)')
 
 
 def extract_any_image(post):
