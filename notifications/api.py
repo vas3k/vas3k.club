@@ -55,4 +55,4 @@ def is_valid_telegram_data(data, bot_token):
         hashlib.sha256,
     ).hexdigest()
 
-    return hmac.compare_digest(hmac_hash, check_hash)
+    return hmac.compare_digest(hmac_hash.encode(), check_hash.encode())
