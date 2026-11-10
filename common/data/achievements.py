@@ -383,6 +383,12 @@ ACHIEVEMENTS = [
         "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2025.png",
         "style": "background-color: #4c98d5; font-size: 120%;",
     }),
+    ("vas3k_flot_2025", {
+        "name": "Вастрик ⛵ Флот 2026",
+        "description": "Участнику третьего Вастрик Флота",
+        "image": "https://vas3k.club/static/images/achievements/vas3k_flot_2026.webp",
+        "style": "background-color: #002D62; font-size: 120%;",
+    }),
     ("vas3k_skipper", {
         "name": "Вастрик ⛵ Шкипер",
         "description": "Прошедшему обучение на шкипера в Клубе",
