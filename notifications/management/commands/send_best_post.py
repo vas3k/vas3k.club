@@ -21,6 +21,30 @@ from posts.models.post import Post
 TELEGRAM_CHANNEL_ID = -1004312914852
 
 
+def vas3k_rank(post, now):
+    score = 3 * post.upvotes + post.comment_count
+    age_seconds = (now - post.published_at).total_seconds()
+    # Reddit's hot rank, relative to now: ten times the engagement offsets 12.5 hours of age.
+    rank = log10(max(score, 1)) - age_seconds / 45000
+    bonus = {
+        Post.TYPE_POST: 0.30,
+        Post.TYPE_GUIDE: 0.30,
+        Post.TYPE_EVENT: 0.30,
+        Post.TYPE_QUESTION: 0.10,
+        Post.TYPE_THREAD: 0.10,
+        Post.TYPE_LINK: 0.10,
+    }.get(post.type, 0)
+
+    if len(post.text) > 5000:
+        bonus += 0.10
+
+    if MARKDOWN_IMAGES_RE.search(post.text):
+        bonus += 0.10
+
+    # Negative ranks must also improve when a bonus is applied.
+    return rank + abs(rank) * bonus
+
+
 class Command(BaseCommand):
     help = "Send the hottest approved post to the test Telegram channel"
 
@@ -37,7 +61,9 @@ class Command(BaseCommand):
             deleted_at__isnull=True,
             published_at__gte=now - timedelta(days=3),
             published_at__lte=now,
-        ).select_related("room").order_by("-published_at", "id")
+        ).exclude(type__in=[
+            Post.TYPE_REQUEST, Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST, Post.TYPE_DOCS,
+        ]).select_related("room").order_by("-published_at", "id")
 
         ranked_posts = []
 
@@ -45,11 +71,7 @@ class Command(BaseCommand):
             if channel_key in (post.metadata or {}).get("is_announced_in_club_channel", {}):
                 continue
 
-            score = 3 * post.upvotes + post.comment_count
-            age_seconds = (now - post.published_at).total_seconds()
-            # Reddit's hot rank, relative to now: ten times the engagement offsets 12.5 hours of age.
-            rank = log10(max(score, 1)) - age_seconds / 45000
-            ranked_posts.append((rank, post))
+            ranked_posts.append((vas3k_rank(post, now), post))
 
         ranked_posts.sort(key=lambda item: item[0], reverse=True)
 

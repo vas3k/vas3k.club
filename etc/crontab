@@ -16,4 +16,4 @@
 0 2 * * 7 cd /app && python3 manage.py recalculate_chat_members
 # Best posts go to the test Telegram channel. Times are UTC.
 CRON_TZ=UTC
-0 10,15 * * * cd /app && python3 manage.py send_best_post
+0 */4 * * * cd /app && python3 manage.py send_best_post
