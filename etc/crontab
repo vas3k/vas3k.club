@@ -14,6 +14,4 @@
 13 * * * * cd /app && python3 manage.py update_hotness
 0 7 * * 3,6 cd /app && python3 manage.py promote_one_old_post_on_main
 0 2 * * 7 cd /app && python3 manage.py recalculate_chat_members
-# Best posts go to the test Telegram channel. Times are UTC.
-CRON_TZ=UTC
-0 */4 * * * cd /app && python3 manage.py send_best_post
+0 */8 * * * cd /app && python3 manage.py send_best_post
