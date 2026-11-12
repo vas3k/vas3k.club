@@ -130,13 +130,16 @@ jobs:
           SSH_HOST: ${{ secrets.PRODUCTION_SSH_HOST }}
           SSH_USER: ${{ secrets.PRODUCTION_SSH_USERNAME }}
           SSH_PRIVATE_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.PRODUCTION_SSH_KNOWN_HOSTS }}
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_TOKEN: ${{ secrets.TOKEN }}
           RELEASE_IMAGE: ghcr.io/${{ github.repository_owner }}/club
         run: |
           umask 077
           printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/deploy.key"
-          ssh_options=(-i "$RUNNER_TEMP/deploy.key" -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=15)
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$RUNNER_TEMP/deploy.known_hosts"
+          test -s "$RUNNER_TEMP/deploy.known_hosts"
+          ssh_options=(-i "$RUNNER_TEMP/deploy.key" -o BatchMode=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$RUNNER_TEMP/deploy.known_hosts" -o ConnectTimeout=15)
           target="$SSH_USER@$SSH_HOST"
           printf '%s' "$REGISTRY_TOKEN" | ssh "${ssh_options[@]}" "$target" "docker login ghcr.io --username '$REGISTRY_USER' --password-stdin"
           ssh "${ssh_options[@]}" "$target" "docker pull '$RELEASE_IMAGE:sha-${GITHUB_SHA:0:7}'"
@@ -149,10 +152,10 @@ jobs:
           mkdir -p gdpr/downloads
           chown 1000:1000 gdpr/downloads
           docker compose -f docker-compose.production.yml --env-file=.env config --quiet
-          docker compose -f docker-compose.production.yml --env-file=.env up -d
+          docker compose -f docker-compose.production.yml --env-file=.env up -d --wait --wait-timeout 180
           docker image prune --filter 'until=72h' --force
           REMOTE
 
       - name: Remove temporary credentials
         if: always()
-        run: rm -f "$RUNNER_TEMP/deploy.env" "$RUNNER_TEMP/deploy.key"
+        run: rm -f "$RUNNER_TEMP/deploy.env" "$RUNNER_TEMP/deploy.key" "$RUNNER_TEMP/deploy.known_hosts"

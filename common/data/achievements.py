@@ -391,7 +391,7 @@ ACHIEVEMENTS = [
     }),
     ("vas3k_skipper", {
         "name": "Вастрик ⛵ Шкипер",
-        "description": "Прошедшему обучение на шкипера в Клубе",
+        "description": "Почетному клубному капитану",
         "image": "https://vas3k.club/static/images/achievements/vas3k_skipper1.png",
         "style": "background-color: #1976D2; font-size: 120%;",
     }),

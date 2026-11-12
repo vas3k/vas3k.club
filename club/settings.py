@@ -117,6 +117,9 @@ DATABASES = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD") or "",
         "HOST": os.getenv("POSTGRES_HOST") or "localhost",
         "PORT": os.getenv("POSTGRES_PORT") or 5432,
+        "DISABLE_SERVER_SIDE_CURSORS": os.getenv(
+            "POSTGRES_DISABLE_SERVER_SIDE_CURSORS", "0"
+        ).strip().lower() in {"1", "true", "yes", "on"},
     }
 }
 

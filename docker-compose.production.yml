@@ -17,6 +17,8 @@ services:
             - POSTGRES_DB=vas3k_club
             - POSTGRES_USER=vas3k
             - POSTGRES_HOST=host.docker.internal
+            - POSTGRES_PORT=6432
+            - POSTGRES_DISABLE_SERVER_SIDE_CURSORS=1
             - POSTGRES_USE_POOLING=0
             - POSTGRES_PASSWORD
             - EMAIL_HOST
@@ -30,6 +32,12 @@ services:
         volumes:
             - ./frontend/static:/tmp/static
             - ./gdpr/downloads:/app/gdpr/downloads
+        healthcheck:
+            test: ["CMD", "python", "-c", 'import socket; socket.create_connection(("127.0.0.1", 8814), 3).close()']
+            interval: 30s
+            timeout: 5s
+            start_period: 60s
+            retries: 3
         depends_on:
             redis:
                 condition: service_healthy
@@ -55,12 +63,15 @@ services:
             - POSTGRES_DB=vas3k_club
             - POSTGRES_USER=vas3k
             - POSTGRES_HOST=host.docker.internal
+            - POSTGRES_PORT=6432
+            - POSTGRES_DISABLE_SERVER_SIDE_CURSORS=1
             - POSTGRES_USE_POOLING=0
             - POSTGRES_PASSWORD
             - EMAIL_HOST
             - EMAIL_PORT
             - DEFAULT_FROM_EMAIL
         command: make docker-run-queue
+        healthcheck: {disable: true}
         container_name: club_queue
         networks:
             - club_network
@@ -70,25 +81,38 @@ services:
         <<: *app
         user: "1000:1000"
         command: make docker-run-bot
+        healthcheck:
+            test: ["CMD", "python", "-c", 'import socket; socket.create_connection(("127.0.0.1", 8816), 3).close()']
+            interval: 30s
+            timeout: 5s
+            start_period: 60s
+            retries: 3
         container_name: club_bot
         networks:
             - club_network
         ports:
-            - "8816:8816"
+            - "127.0.0.1:8816:8816"
 
     helpdeskbot:
         <<: *app
         user: "1000:1000"
         command: make docker-run-helpdeskbot
+        healthcheck:
+            test: ["CMD", "python", "-c", 'import socket; socket.create_connection(("127.0.0.1", 8817), 3).close()']
+            interval: 30s
+            timeout: 5s
+            start_period: 60s
+            retries: 3
         container_name: club_help_desk_bot
         networks:
             - club_network
         ports:
-            - "8817:8817"
+            - "127.0.0.1:8817:8817"
 
     cron:
         <<: *app
         command: make docker-run-cron
+        healthcheck: {disable: true}
         container_name: club_cron
         networks:
             - club_network
@@ -103,7 +127,7 @@ services:
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             interval: 30s
-            timeout: 10s
+            timeout: 5s
             retries: 3
         environment:
             - ALLOW_EMPTY_PASSWORD=yes
