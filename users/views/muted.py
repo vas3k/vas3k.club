@@ -12,7 +12,9 @@ from users.models.user import User
 @require_auth
 def toggle_mute(request, user_slug):
     user_to = get_object_or_404(User, slug=user_slug)
-    if user_to.is_moderator or user_to == request.me:
+    is_already_muted = UserMuted.is_muted(user_from=request.me, user_to=user_to)
+
+    if not is_already_muted and (user_to.is_moderator or user_to == request.me):
         raise AccessDenied(
             title="Нельзя",
             message="Мьютить можно всех, кроме модераторов и себя"
@@ -22,11 +24,7 @@ def toggle_mute(request, user_slug):
 
     # show form on GET
     if request.method != "POST":
-        is_muted = UserMuted.is_muted(
-            user_from=request.me,
-            user_to=user_to,
-        )
-        if is_muted:
+        if is_already_muted:
             return render(request, "users/mute/unmute.html", {
                 "user": user_to,
             })
@@ -37,12 +35,6 @@ def toggle_mute(request, user_slug):
             })
 
     # else — process POST
-    # Check if user is already muted to determine if this is a mute or unmute operation
-    is_already_muted = UserMuted.is_muted(
-        user_from=request.me,
-        user_to=user_to,
-    )
-
     # Only check mute limit when trying to create a new mute
     if not is_already_muted and total_user_muted_count >= settings.MAX_MUTE_COUNT:
         raise AccessDenied(
