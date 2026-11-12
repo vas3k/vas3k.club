@@ -17,6 +17,9 @@ export function createMarkdownEditor(element, options) {
     });
 
     editor.codemirror.setOption("singleCursorHeightPerLine", false);
+    editor.codemirror.on("change", () => {
+        element.dispatchEvent(new Event("input", { bubbles: true }));
+    });
 
     // overriding default CodeMirror shortcuts
     editor.codemirror.addKeyMap({
