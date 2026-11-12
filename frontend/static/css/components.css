@@ -155,8 +155,7 @@
     }
 
 
-.label,
-.label:hover {
+.label {
     color: #FFFFFF;
     display: inline-block;
     vertical-align: middle;

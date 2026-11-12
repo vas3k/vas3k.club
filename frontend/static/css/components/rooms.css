@@ -124,8 +124,10 @@
             color: var(--button-color);
         }
 
-        .feed-room-header a.button:hover {
-            color: var(--button-hover-color);
+        @media (hover: hover) and (pointer: fine) {
+            .feed-room-header a.button:hover {
+                color: var(--button-hover-color);
+            }
         }
 
         .feed-room-header-title {

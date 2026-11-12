@@ -168,9 +168,9 @@
     --editor-h2-size: 1.9em;
     --editor-h3-size: 1.5em;
     --editor-h4-size: 1.2em;
-    --editor-h1-spacing: 140px 50px;
-    --editor-h2-spacing: 120px 35px;
-    --editor-h3-spacing: 80px 20px;
+    --editor-h1-spacing: 1.5em 0.5em;
+    --editor-h2-spacing: 1.5em 0.5em;
+    --editor-h3-spacing: 1.5em 0.5em;
     --editor-h4-spacing: 60px 10px;
     --editor-quote-border: 4px;
     --editor-quote-opacity: 1;

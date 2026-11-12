@@ -196,19 +196,7 @@
         border-radius: 50%;
     }
 
-    .button:hover {
-        color: var(--button-hover-color);
-        background-color: var(--button-hover-bg-color);
-        border: var(--button-hover-border);
-    }
-
     .button:disabled {
-        background-color: var(--button-disabled-bg-color);
-        border-color: var(--button-disabled-bg-color);
-    }
-
-    .button:disabled:hover {
-        color: var(--button-color);
         background-color: var(--button-disabled-bg-color);
         border-color: var(--button-disabled-bg-color);
     }
@@ -218,11 +206,25 @@
         color: var(--button-bg-color);
     }
 
+    @media (hover: hover) and (pointer: fine) {
+        .button:hover {
+            color: var(--button-hover-color);
+            background-color: var(--button-hover-bg-color);
+            border: var(--button-hover-border);
+        }
+
+        .button:disabled:hover {
+            color: var(--button-color);
+            background-color: var(--button-disabled-bg-color);
+            border-color: var(--button-disabled-bg-color);
+        }
+
         .button-inverted:hover {
             background-color: var(--button-bg-color);
             color: var(--button-color);
             border: solid 2px var(--button-color);
         }
+    }
 
     .button-big {
         padding: 15px 30px;

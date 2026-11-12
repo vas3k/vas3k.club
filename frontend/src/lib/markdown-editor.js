@@ -1,5 +1,5 @@
 import EasyMDE from "easymde";
-import { findParentForm, isCommunicationForm } from "./utils";
+import { findParentForm, isCommunicationForm, isMobile } from "./utils";
 
 const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
@@ -10,11 +10,20 @@ const defaultMarkdownEditorOptions = {
     tabSize: 4,
 };
 export function createMarkdownEditor(element, options) {
+    const mobile = isMobile();
     const editor = new EasyMDE({
         element,
         ...defaultMarkdownEditorOptions,
+        inputStyle: mobile ? "contenteditable" : "textarea",
+        nativeSpellcheck: true,
+        styleSelectedText: !mobile,
         ...options,
     });
+
+    if (mobile) {
+        editor.codemirror.setOption("autocorrect", true);
+        editor.codemirror.setOption("autocapitalize", "sentences");
+    }
 
     editor.codemirror.setOption("singleCursorHeightPerLine", false);
     editor.codemirror.on("change", () => {
