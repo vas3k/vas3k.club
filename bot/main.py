@@ -20,6 +20,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, CallbackCo
 from bot.cache import cached_telegram_users
 from bot.config import WELCOME_MESSAGE, BOT_MENTION_RE, ANONYMOUS_MESSAGE
 from bot.decorators import ensure_fresh_db_connection
+from bot.filters import ReplyToBot
 from bot.handlers import moderation, comments, upvotes, auth, whois, fun, top, posts, llm, membership
 
 log = logging.getLogger(__name__)
@@ -66,6 +67,7 @@ def build_application(base_url: str | None = None) -> Application:
     application.add_handler(CommandHandler("random", fun.command_random))
     application.add_handler(CommandHandler("top", top.command_top))
     application.add_handler(CommandHandler("whois", whois.command_whois))
+    application.add_handler(MessageHandler(filters.FORWARDED & filters.ChatType.PRIVATE, whois.command_whois))
     application.add_handler(CallbackQueryHandler(posts.subscribe, pattern=r"^subscribe:.+"))
     application.add_handler(CallbackQueryHandler(posts.unsubscribe, pattern=r"^unsubscribe:.+"))
     application.add_handler(CallbackQueryHandler(upvotes.upvote_post, pattern=r"^upvote_post:.+"))
@@ -79,12 +81,14 @@ def build_application(base_url: str | None = None) -> Application:
     )
 
     application.add_handler(
-        MessageHandler(filters.REPLY & ~filters.Chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)), comments.comment)
+        MessageHandler(
+            filters.UpdateType.MESSAGE & ReplyToBot() & ~filters.Chat(int(settings.TELEGRAM_ADMIN_CHAT_ID)),
+            comments.comment,
+        )
     )
 
     application.add_handler(CommandHandler("start", auth.command_auth, filters.ChatType.PRIVATE))
     application.add_handler(CommandHandler("auth", auth.command_auth, filters.ChatType.PRIVATE))
-    application.add_handler(MessageHandler(filters.FORWARDED & filters.ChatType.PRIVATE, whois.command_whois))
     application.add_handler(MessageHandler(filters.ChatType.PRIVATE, private_message))
 
     return application

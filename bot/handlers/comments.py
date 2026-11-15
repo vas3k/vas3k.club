@@ -25,14 +25,6 @@ log = logging.getLogger(__name__)
 async def comment(update: Update, context: CallbackContext) -> None:
     log.info("Comment handler triggered")
 
-    if not update.message or not update.message.reply_to_message:
-        log.info("Not a reply. Skipping.")
-        return None
-
-    if update.message.reply_to_message.from_user.id != context.bot.id:
-        log.info("Reply to another user. Skipping.")
-        return
-
     reply_text_start = (
         update.message.reply_to_message.text or
         update.message.reply_to_message.caption or

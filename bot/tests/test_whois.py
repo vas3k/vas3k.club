@@ -3,7 +3,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from django.test import SimpleTestCase
-from telegram import MessageOriginHiddenUser, MessageOriginUser
+from telegram import Bot, Message, MessageOriginHiddenUser, MessageOriginUser, Update
 from datetime import datetime
 
 from bot.handlers.whois import command_whois
@@ -22,6 +22,7 @@ def _message(**overrides):
         from_user=SimpleNamespace(id=1, is_bot=False),
         reply_text=AsyncMock(),
         message_thread_id=None,
+        is_topic_message=False,
     )
     message.update(overrides)
     return SimpleNamespace(**message)
@@ -72,6 +73,7 @@ class TestWhois(SimpleTestCase):
             text="/whois @Bob",
             reply_to_message=replied,
             message_thread_id=555,
+            is_topic_message=True,
         ))
 
         user_filter = self._run(update, found_user=_club_user())
@@ -85,6 +87,7 @@ class TestWhois(SimpleTestCase):
         update = _update(_message(
             reply_to_message=_replied_author(99, message_id=556),
             message_thread_id=555,
+            is_topic_message=True,
         ))
 
         user_filter = self._run(update, found_user=_club_user())
@@ -96,6 +99,7 @@ class TestWhois(SimpleTestCase):
             with self.subTest(text=text):
                 update = _update(_message(
                     text=text, reply_to_message=_replied_author(77, message_id=555), message_thread_id=555,
+                    is_topic_message=True,
                 ))
 
                 user_filter = self._run(update, found_user=_club_user(slug="vas3k"))
@@ -106,6 +110,7 @@ class TestWhois(SimpleTestCase):
     def test_numeric_target_in_topic_never_looks_up_topic_creator(self):
         update = _update(_message(
             text="/whois 99", reply_to_message=_replied_author(77, message_id=555), message_thread_id=555,
+            is_topic_message=True,
         ))
 
         user_filter = self._run(update, found_user=_club_user())
@@ -115,6 +120,7 @@ class TestWhois(SimpleTestCase):
     def test_unknown_target_in_topic_never_falls_back_to_topic_creator(self):
         update = _update(_message(
             text="/whois @missing", reply_to_message=_replied_author(77, message_id=555), message_thread_id=555,
+            is_topic_message=True,
         ))
 
         user_filter = self._run(update)
@@ -182,3 +188,84 @@ class TestWhois(SimpleTestCase):
         user_filter.assert_not_called()
         text = update.message.reply_text.await_args.args[0]
         self.assertIn("Привяжи", text)
+
+    def test_reply_chain_root_is_a_person_not_a_forum_topic(self):
+        update = _update(_message(
+            reply_to_message=_replied_author(99, message_id=555), message_thread_id=555,
+        ))
+
+        user_filter = self._run(update, found_user=_club_user())
+
+        user_filter.assert_called_once_with(telegram_id=99)
+
+    def test_reply_to_forwarded_message_looks_up_chat_participant(self):
+        replied = _replied_author(99)
+        replied.forward_origin = MessageOriginUser(
+            date=datetime(2026, 1, 1), sender_user=SimpleNamespace(id=77, is_bot=False),
+        )
+        update = _update(_message(reply_to_message=replied))
+
+        user_filter = self._run(update, found_user=_club_user())
+
+        user_filter.assert_called_once_with(telegram_id=99)
+
+    def test_private_channel_forward_never_looks_up_forwarder(self):
+        for origin_type in ("channel", "chat"):
+            with self.subTest(origin_type=origin_type):
+                update = _update(_message(
+                    chat=SimpleNamespace(type="private"),
+                    forward_origin=SimpleNamespace(type=origin_type),
+                ))
+
+                user_filter = self._run(update)
+
+                user_filter.assert_not_called()
+
+    def test_reply_without_person_never_queries_empty_id(self):
+        for sender in (None, SimpleNamespace(id=77, is_bot=False), SimpleNamespace(id=77, is_bot=True)):
+            with self.subTest(sender=sender):
+                replied = _replied_author(99)
+                replied.from_user = sender
+                replied.sender_chat = SimpleNamespace(id=-100123)
+                update = _update(_message(reply_to_message=replied))
+
+                user_filter = self._run(update)
+
+                user_filter.assert_not_called()
+
+    def test_numeric_target_in_private_chat(self):
+        update = _update(_message(text="/whois 99", chat=SimpleNamespace(type="private")))
+
+        user_filter = self._run(update, found_user=_club_user())
+
+        user_filter.assert_called_once_with(telegram_id="99")
+
+    def test_reply_is_sent_to_original_chat_and_topic(self):
+        for is_topic in (False, True):
+            with self.subTest(is_topic=is_topic):
+                bot = Bot("123456:TEST")
+                message = Message.de_json({
+                    "message_id": 600,
+                    "date": 1,
+                    "chat": {"id": -100123, "type": "supergroup"},
+                    "from": {"id": 1, "is_bot": False, "first_name": "Caller"},
+                    "text": "/whois",
+                    "is_topic_message": is_topic,
+                    "message_thread_id": 555,
+                    "reply_to_message": {
+                        "message_id": 556 if is_topic else 555,
+                        "date": 1,
+                        "chat": {"id": -100123, "type": "supergroup"},
+                        "from": {"id": 99, "is_bot": False, "first_name": "Target"},
+                    },
+                }, bot)
+                update = Update(update_id=1, message=message)
+
+                with patch.object(Bot, "send_message", new_callable=AsyncMock) as send:
+                    user_filter = self._run(update, found_user=_club_user())
+
+                user_filter.assert_called_once_with(telegram_id=99)
+                send.assert_awaited_once()
+                self.assertEqual(send.await_args.kwargs["chat_id"], -100123)
+                self.assertEqual(send.await_args.kwargs["reply_parameters"].message_id, 600)
+                self.assertEqual(send.await_args.kwargs["message_thread_id"], 555 if is_topic else None)
