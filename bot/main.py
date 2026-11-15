@@ -55,6 +55,7 @@ def build_application(base_url: str | None = None) -> Application:
     application = builder.build()
 
     application.add_handler(ChatMemberHandler(membership.chat_membership, ChatMemberHandler.CHAT_MEMBER))
+    application.add_handler(ChatMemberHandler(membership.welcome_member, ChatMemberHandler.CHAT_MEMBER), group=1)
 
     application.add_handler(CallbackQueryHandler(moderation.approve_post, pattern=r"^approve_post:.+"))
     application.add_handler(CallbackQueryHandler(moderation.forgive_post, pattern=r"^forgive_post:.+"))
