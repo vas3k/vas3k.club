@@ -52,6 +52,12 @@
             {% endif %}
         {% endblock %}
 
+        {% block mobile_sidebar %}
+            {% if me %}
+                {% include "sidebar.html" with mobile_only=True %}
+            {% endif %}
+        {% endblock %}
+
         {% block content %}
         {% endblock %}
     </main>

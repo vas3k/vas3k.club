@@ -74,7 +74,6 @@ export default function CommentScrollArrow() {
     return (
         <button
             type="button"
-            aria-label={up ? "Наверх" : "Перейти к комментариям"}
             className={`comment-scroll-arrow ${up ? "arrow-up" : ""}`}
             onClick={(event) =>
                 navigate(event.shiftKey ? (up ? "down" : "up") : up ? "up" : "down", up && !event.shiftKey)

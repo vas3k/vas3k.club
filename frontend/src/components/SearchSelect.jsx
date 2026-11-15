@@ -48,7 +48,6 @@ export default function SearchSelect({
                                         <span title={item.label}>{item.label}</span>
                                         <button
                                             type="button"
-                                            aria-label={`Убрать ${item.label}`}
                                             onClick={() => {
                                                 onChange(values.filter((value) => value.value !== item.value));
                                                 input.current?.focus();
@@ -60,13 +59,13 @@ export default function SearchSelect({
                                 ))}
                             </div>
                         )}
-                        <ComboboxButton ref={trigger} hidden aria-hidden="true" />
+                        <ComboboxButton ref={trigger} hidden />
                         <div className="search-select-control">
                             <div
                                 className={`search-select-entry${!multiple && selected?.image && !open ? " search-select-image-selected" : ""}`}
                             >
                                 {!multiple && selected?.image && !open && (
-                                    <span className="search-select-selected" aria-hidden="true">
+                                    <span className="search-select-selected">
                                         <img className="search-select-avatar" src={selected.image} alt="" />
                                         <span>{selected.label}</span>
                                     </span>
@@ -75,8 +74,6 @@ export default function SearchSelect({
                                     ref={input}
                                     id={id}
                                     type="text"
-                                    aria-label={label}
-                                    aria-describedby={hint || error ? `${id}-hint` : undefined}
                                     autoComplete="off"
                                     autoCapitalize="none"
                                     spellCheck={false}
@@ -95,7 +92,6 @@ export default function SearchSelect({
                                     <button
                                         type="button"
                                         className="search-select-clear"
-                                        aria-label={`Очистить: ${label}`}
                                         onClick={() => {
                                             onChange(null);
                                             onQueryChange("");
@@ -105,13 +101,12 @@ export default function SearchSelect({
                                         ×
                                     </button>
                                 )}
-                                {loading && <span className="search-select-loading" role="status" aria-label="Ищем…" />}
+                                {loading && <span className="search-select-loading" role="status" />}
                             </div>
                         </div>
                         <ComboboxOptions
                             className={`search-select-options${!items.length && (hint || loading || error) ? " search-select-options-empty" : ""}`}
                             modal={false}
-                            aria-busy={loading}
                         >
                             {items.map((item) => (
                                 <ComboboxOption
@@ -121,7 +116,7 @@ export default function SearchSelect({
                                     className="search-select-option"
                                 >
                                     {item.emoji && (
-                                        <span className="search-select-icon" aria-hidden="true">
+                                        <span className="search-select-icon">
                                             {item.emoji}
                                         </span>
                                     )}
@@ -132,7 +127,7 @@ export default function SearchSelect({
                                         {item.create ? `Создать «${item.label}»` : item.label}
                                         {item.detail && <small>{item.detail}</small>}
                                     </span>
-                                    <span className="search-select-check" aria-hidden="true">
+                                    <span className="search-select-check">
                                         ✓
                                     </span>
                                 </ComboboxOption>

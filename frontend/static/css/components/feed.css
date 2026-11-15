@@ -26,24 +26,19 @@
         font-size: 110%;
     }
 
+        .feed-sidebar-mobile-only {
+            display: none;
+        }
+
         @media only screen and (max-width : 570px) {
             .feed-sidebar {
-                transform: translate(-100%);
-                position: absolute;
-                top: 90px;
-                left: 0;
-                right: 0;
+                display: none;
                 background: var(--bg-color);
-                z-index: 2;
-                min-height: calc(100% - 120px);
-                padding: 30px 14px;
+                padding: 0 14px 30px;
             }
 
-            .mobile-menu-opened .feed-sidebar {
-                transform: translate(0);
-                padding-top: 0;
-                position: relative;
-                top: 0;
+            #app.mobile-menu-opened .feed-sidebar {
+                display: block;
             }
         }
 
@@ -119,12 +114,6 @@
         }
 
     .feed-main {
-    }
-
-    @media only screen and (max-width : 570px) {
-        .mobile-menu-opened .feed-main {
-            display: none;
-        }
     }
 
     .feed-ordering {

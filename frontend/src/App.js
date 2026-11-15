@@ -7,6 +7,7 @@ const INITIAL_SYNC_DELAY = 50;
 
 const App = {
     onCreate() {
+        this.initializeNavigation();
         this.initializeFavicon();
         this.stylizeExternalLinks();
     },
@@ -195,6 +196,39 @@ const App = {
         await document.fonts.ready;
 
         target.scrollIntoView({ block: "start", behavior: "instant" });
+    },
+    initializeNavigation() {
+        const app = document.getElementById("app");
+        const header = app?.querySelector(".menu-full");
+        const navigation = document.getElementById("site-navigation");
+        const menuButton = document.getElementById("mobile-menu-toggle");
+        if (!header || !navigation || !menuButton) return;
+
+        const searchButton = document.getElementById("mobile-search-toggle");
+        const mobileMenu = window.matchMedia("(max-width: 570px)");
+        const mobileSearch = window.matchMedia("(max-width: 700px)");
+
+        menuButton.addEventListener("click", () => {
+            if (!mobileMenu.matches) return;
+            app.classList.remove("mobile-search-opened");
+            app.classList.toggle("mobile-menu-opened");
+        });
+        searchButton?.addEventListener("click", () => {
+            if (!mobileSearch.matches) return;
+            app.classList.remove("mobile-menu-opened");
+            if (app.classList.toggle("mobile-search-opened")) document.getElementById("menu-search-input").focus();
+        });
+        document.addEventListener("keydown", (event) => {
+            if (event.key !== "Escape" || event.defaultPrevented) return;
+            if (!header.contains(event.target) && !navigation.contains(event.target)) return;
+            const button = app.classList.contains("mobile-search-opened") ? searchButton
+                : app.classList.contains("mobile-menu-opened") ? menuButton : null;
+            app.classList.remove("mobile-menu-opened", "mobile-search-opened");
+            button?.focus();
+        });
+        mobileMenu.addEventListener("change", () => app.classList.remove("mobile-menu-opened"));
+        mobileSearch.addEventListener("change", () => app.classList.remove("mobile-search-opened"));
+        window.addEventListener("pageshow", () => app.classList.remove("mobile-menu-opened", "mobile-search-opened"));
     },
     initializePostActions() {
         document.querySelectorAll(".js-post-action").forEach((link) => {

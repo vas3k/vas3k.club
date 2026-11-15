@@ -69,7 +69,7 @@ export default function ReplyForm({ commentOrder, avatarUrl, username, createCom
                     />
                     <div className="reply-form-footer">
                         <label className="reply-form-attach-image">
-                            <input type="file" name="attach-image" aria-label="Добавить картинку" />
+                            <input type="file" name="attach-image" />
                             <i className="fa fa-image" />
                         </label>
                     </div>

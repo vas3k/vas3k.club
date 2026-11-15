@@ -28,11 +28,9 @@ export default function PostBookmark({ initialIsBookmarked = false, bookmarkUrl,
                 className={`bookmark-remove ${className}`}
                 onClick={toggle}
                 disabled={busy}
-                aria-label="Убрать из закладок"
-                aria-busy={busy}
                 title={error || "Убрать из закладок"}
             >
-                <i className="fas fa-times" aria-hidden="true" />
+                <i className="fas fa-times" />
             </button>
         );
     }

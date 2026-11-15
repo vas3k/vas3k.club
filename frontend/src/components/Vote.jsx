@@ -44,7 +44,6 @@ export default function Vote({
         <a
             href={voteUrl}
             title={error || undefined}
-            aria-disabled={isDisabled}
             onClick={toggle}
             className={`upvote ${voted && !isDisabled ? "upvote-voted" : ""} ${isDisabled ? "upvote-disabled" : ""} ${
                 isInline ? "upvote-type-inline" : ""

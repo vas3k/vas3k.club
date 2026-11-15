@@ -20,6 +20,12 @@
     }
 
         .menu-burger {
+            appearance: none;
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font-family: inherit;
             font-size: 30px;
             line-height: 1em;
             cursor: pointer;
@@ -168,7 +174,7 @@
                 padding: 20px 0 0 20px;
             }
 
-                .mobile-menu-opened .menu-right {
+                #app.mobile-menu-opened > .menu .menu-right {
                     display: flex;
                 }
 
@@ -198,6 +204,11 @@
     }
 
     .menu-button-search {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font-family: inherit;
         font-size: 20px;
         padding: 5px 20px 2px 10px;
         opacity: 0.5;
@@ -223,8 +234,10 @@
         }
     }
 
-    .mobile-menu-opened .menu-button {
-        display: block;
+    @media only screen and (max-width : 570px) {
+        #app.mobile-menu-opened > .menu .menu-right .menu-button {
+            display: inline-flex;
+        }
     }
 
 .logo {
@@ -283,10 +296,9 @@
             left: 20px;
         }
 
-        .mobile-search-opened .menu-search {
+        #app.mobile-search-opened > .menu .menu-search {
             order: 3;
             display: block;
             width: 100%;
-            display: block;
         }
 }

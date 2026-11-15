@@ -24,9 +24,9 @@ export default function ThemeSwitcher() {
 
     return (
         <div className="theme-switcher" data-value={theme} data-real={realTheme}>
-            <button type="button" aria-label="Светлая тема" aria-pressed={theme === "light"} onClick={() => setTheme("light")}>☀️</button>
-            <button type="button" aria-label="Автоматически определять тему" aria-pressed={theme === "auto"} onClick={() => setTheme("auto")}>🌗</button>
-            <button type="button" aria-label="Тёмная тема" aria-pressed={theme === "dark"} onClick={() => setTheme("dark")}>🌙</button>
+            <button type="button" onClick={() => setTheme("light")}>☀️</button>
+            <button type="button" onClick={() => setTheme("auto")}>🌗</button>
+            <button type="button" onClick={() => setTheme("dark")}>🌙</button>
         </div>
     );
 }

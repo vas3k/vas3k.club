@@ -1,25 +1,25 @@
 {% load static %}
 <nav class="menu menu-full">
     <div class="menu-logo">
-        <div class="menu-burger show-on-iphone">
-            <span onclick="document.getElementById('app').classList.toggle('mobile-menu-opened')">
-                ≡
-            </span>
-        </div>
+        <button type="button" class="menu-burger show-on-iphone" id="mobile-menu-toggle"
+                title="Меню">
+            ≡
+        </button>
 
         <a href="{% url "index" %}" class="logo">
             Вастрик<img src="{% static "images/logo/logo-128.png" %}" alt=" x " width="26" height="26">Клуб
         </a>
 
         {% if me and me.is_member %}
-            <div class="menu-button menu-button-search" onclick="document.getElementById('app').classList.toggle('mobile-search-opened'); document.getElementById('menu-search-input').focus()">
-                <i class="fas fa-search"></i>
-            </div>
+            <button type="button" class="menu-button menu-button-search" id="mobile-search-toggle"
+                    title="Поиск">
+                <i class="fas fa-search" aria-hidden="true"></i>
+            </button>
         {% endif %}
     </div>
 
     {% if me and me.is_member %}
-        <form action="{% url "search" %}" class="menu-search">
+        <form action="{% url "search" %}" class="menu-search" id="menu-search">
             <input type="text" name="q" minlength="3" maxlength="200" class="menu-search-input" id="menu-search-input" value="{{ query|default:'' }}" placeholder="Поиск" enterkeyhint="search">
             {% if type %}<input type="hidden" name="type" value="{{ type }}">{% endif %}
             {% if ordering %}<input type="hidden" name="ordering" value="{{ ordering }}">{% endif %}
@@ -29,7 +29,7 @@
     {% endif %}
 
     {% if me %}
-        <div class="menu-right">
+        <div class="menu-right" id="menu-actions">
             {% if me.is_member %}
                 <a href="{% url "compose" %}" class="button menu-button menu-button-compose">
                     <i class="fas fa-pen"></i>

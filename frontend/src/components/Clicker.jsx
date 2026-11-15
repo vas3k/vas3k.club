@@ -47,8 +47,6 @@ export default function Clicker({ clickerId, text }) {
                 type="button"
                 className="clicker-checkbox"
                 disabled={busy}
-                aria-label={text}
-                aria-pressed={data.is_clicked}
             >
                 {busy ? "⌛" : ""}
             </button>

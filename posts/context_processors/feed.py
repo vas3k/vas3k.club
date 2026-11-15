@@ -11,8 +11,10 @@ ORDERING_LAST_MONTHS = 12
 
 
 def rooms(request):
+    visible_rooms = Room.visible_rooms().order_by("-last_activity_at")
     return {
-        "rooms": Room.visible_rooms().order_by("-last_activity_at"),
+        "rooms": visible_rooms,
+        "sidebar_rooms": visible_rooms,
     }
 
 
