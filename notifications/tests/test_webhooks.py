@@ -49,6 +49,11 @@ class WebhookAuthTest(WebhookTestMixin, TestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_non_ascii_secret_is_forbidden(self):
+        response = self._post_webhook(secret="wrong-secr\u00e9t")
+
+        self.assertEqual(response.status_code, 403)
+
     def test_get_method_not_allowed(self):
         response = self.client.get(self._webhook_url(secret=VALID_SECRET))
 
