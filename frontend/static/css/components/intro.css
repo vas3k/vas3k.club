@@ -89,3 +89,17 @@
     .intro .network-block {
         max-width: 600px;
     }
+
+    .intro-bot-button {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+        .intro-bot-button-image {
+            display: block;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
