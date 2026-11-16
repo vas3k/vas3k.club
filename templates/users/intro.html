@@ -235,16 +235,16 @@
                         <span class="network-channel-description">Лучшие посты, отобранные руками</span>
                     </a>
 
-                    <a href="{{ settings.TELEGRAM_BOT_URL }}" rel="noreferrer" target="_blank" class="network-channel">
-                        <span class="avatar network-channel-image" style="background-image: url('https://i.vas3k.club/09159d03d577dc178a70fdefcc33584e04e0bbf37aada4c1c812fe1bd75f240f.jpg');"></span>
-                        <span class="network-channel-name text-120">Бот Клуба</span>
-                        <span class="network-channel-description">Основной способ получать уведомления</span>
-                    </a>
-
                     <a href="https://vas3k.club/room/bar/chat/" rel="noreferrer" target="_blank" class="network-channel">
                         <span class="avatar network-channel-image" style="background-image: url('https://i.vas3k.club/b8c8cc57c58470a1ea7633b53e5f8014a7d9ad638169c440a3cfc6ff6a89da59.jpg');"></span>
                         <span class="network-channel-name text-120">Вастрик Бар</span>
                         <span class="network-channel-description">Главная флудилка Клуба, заходите когда весело</span>
+                    </a>
+
+                    <a href="{% url 'redirect_to_room_chat' 'best_comments' %}" rel="noreferrer" target="_blank" class="network-channel">
+                        <span class="avatar network-channel-image"><img src="https://i.vas3k.club/13bae2e314ac2f359c403b65f0f377756422b30727b1b83c9a1656415e04a824.jpg" alt="Лучшие комментарии"></span>
+                        <span class="network-channel-name text-120">Лучшие комментарии</span>
+                        <span class="network-channel-description">Самая мякотка из обсуждений в Клубе</span>
                     </a>
                 </div>
 
