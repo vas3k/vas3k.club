@@ -1,5 +1,0 @@
-<a href="{{ settings.APP_HOST }}{% url 'profile' inviter.slug %}">{{ inviter.full_name }}</a>{% if telegram_inviter.username %} @{{ telegram_inviter.username }}{% endif %} пригласил {% if telegram_user.full_name %}<a href="tg://user?id={{ telegram_user.id|stringformat:'d' }}">{{ telegram_user.full_name }}</a>{% endif %}{% if telegram_user.username %} @{{ telegram_user.username }}{% endif %}.
-
-Опа! Ты пригласил друга не из Клуба. Это ок, но ты за него теперь отвечаешь, у нас все записано!
-
-Привет {% if telegram_user.full_name %}<a href="tg://user?id={{ telegram_user.id|stringformat:'d' }}">{{ telegram_user.full_name }}</a>{% endif %}{% if telegram_user.username %} @{{ telegram_user.username }}{% endif %}, давай знакомиться! Напиши хоть пару строчек #intro о себе: ты кто и зачем тут?

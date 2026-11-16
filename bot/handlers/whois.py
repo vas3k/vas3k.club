@@ -1,4 +1,5 @@
-from django.template.loader import render_to_string
+import html
+
 from django.urls import reverse
 from telegram import Chat as TGChat, MessageOrigin, Update
 from telegram.constants import ParseMode
@@ -34,19 +35,13 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
             return
 
         if origin.type != MessageOrigin.USER:
-            await message.reply_text(
-                "Сообщение отправлено от имени чата/канала",
-                do_quote=True,
-            )
+            await message.reply_text("Сообщение отправлено от имени чата/канала", do_quote=True)
             return
 
         from_user = origin.sender_user
     elif reply:
         if reply.sender_chat or reply.from_user is None:
-            await message.reply_text(
-                "Сообщение отправлено от имени чата/канала",
-                do_quote=True,
-            )
+            await message.reply_text("Сообщение отправлено от имени чата/канала", do_quote=True)
             return
 
         from_user = reply.from_user
@@ -55,10 +50,7 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
 
     if from_user is not None:
         if from_user.is_bot:
-            await message.reply_text(
-                "Это бот, глупышка",
-                do_quote=True,
-            )
+            await message.reply_text("Это бот, глупышка", do_quote=True)
             return
 
         user = User.objects.filter(telegram_id=from_user.id).first()
@@ -90,10 +82,7 @@ async def command_whois(update: Update, context: CallbackContext) -> None:
 
     profile_url = settings.APP_HOST + reverse("profile", kwargs={"user_slug": user.slug})
     await message.reply_text(
-        render_to_string("notifications/telegram/membership/profile.html", {
-            "user": user,
-            "profile_url": profile_url,
-        }).strip(),
+        f'Кажется, это <a href="{html.escape(profile_url, quote=True)}">{html.escape(user.full_name)}</a>',
         parse_mode=ParseMode.HTML,
         do_quote=True,
     )
