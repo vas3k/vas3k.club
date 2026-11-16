@@ -1,4 +1,7 @@
 from django.contrib.syndication.views import Feed
+from django.utils.html import escape
+
+from common.markdown.markdown import markdown_plain
 
 from posts.models.post import Post
 
@@ -25,6 +28,9 @@ class NewPostsRss(Feed):
         return title
 
     def item_description(self, item):
+        if item.is_public:
+            return escape(markdown_plain(item.text)[:5000])
+
         return item.description
 
     def item_pubdate(self, item):
