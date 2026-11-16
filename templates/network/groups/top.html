@@ -6,8 +6,16 @@
     {% if group.rooms %}
         <div class="network-channels">
             {% for room in group.rooms.all %}
+                {% if group.code == "main" %}
+                    {% if forloop.counter == 5 or room.slug == "instagram" %}
+                        </div>
+                        <div class="clearfix20"></div>
+                        <div class="network-channels">
+                    {% endif %}
+                {% endif %}
+
                 {% if room.is_visible and room.get_private_url %}
-                    <a href="{{ room.get_private_url }}" target="_blank" class="network-channel {% if forloop.counter > 4 %}network-channel-small{% endif %}">
+                    <a href="{{ room.get_private_url }}" target="_blank" class="network-channel {% if group.code == "main" %}{% if forloop.counter > 7 %}network-channel-small{% endif %}{% elif forloop.counter > 4 %}network-channel-small{% endif %}">
                         {% if room.image %}
                             <span class="avatar network-channel-image"><img src="{{ room.image }}" alt="{{ room.title }}"></span>
                         {% endif %}
@@ -16,6 +24,7 @@
                             <span class="network-channel-name">{{ room.title }}</span>
                         {% endif %}
                     </a>
+
                 {% endif %}
             {% endfor %}
         </div>
