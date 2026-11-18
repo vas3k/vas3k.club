@@ -47,11 +47,19 @@ def get_announce_action(request, post: Post, **context):
 def post_announce_action(request, post: Post, **context):
     form = PostAnnounceForm(request.POST, request.FILES)
     if form.is_valid():
-        announce_in_club_channel(
+        sent_message = announce_in_club_channel(
             post=post,
             announce_text=form.cleaned_data["text"],
             image=form.cleaned_data["image"] if form.cleaned_data["with_image"] else None
         )
+
+        if sent_message is None:
+            form.add_error(None, "Не удалось отправить анонс в Telegram. Попробуйте ещё раз.")
+            return render(request, "godmode/action.html", {
+                **context,
+                "item": post,
+                "form": form,
+            })
 
         return render(request, "godmode/message.html", {
             **context,

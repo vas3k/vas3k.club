@@ -7,7 +7,8 @@ openai.api_key = settings.OPENAI_API_KEY
 
 
 def create_response(**kwargs):
-    return openai.responses.create(
+    request = openai.responses.parse if "text_format" in kwargs else openai.responses.create
+    return request(
         model=OPENAI_CHAT_MODEL,
         reasoning={"effort": REASONING_EFFORT},
         truncation="auto",

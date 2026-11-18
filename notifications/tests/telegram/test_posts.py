@@ -162,6 +162,7 @@ class TestAnnounceInClubChats(TestCase):
         mock_send.assert_called_once()
 
 
+@patch("notifications.telegram.posts.CLUB_CHANNEL", Chat(id=-100123))
 class TestAnnounceInClubChannel(TestCase):
     def setUp(self):
         self.author = _create_user("channel_author")
@@ -170,23 +171,43 @@ class TestAnnounceInClubChannel(TestCase):
     @patch("notifications.telegram.posts.send_telegram_message")
     @patch("notifications.telegram.posts.render_html_message", return_value="<b>announce</b>")
     def test_sends_text_announcement(self, mock_render, mock_send):
+        mock_send.return_value.message_id = 42
+        self.post.metadata = {"other": "preserved"}
+        self.post.save()
         announce_in_club_channel(self.post)
 
         mock_send.assert_called_once()
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.metadata["other"], "preserved")
+        announcement = self.post.metadata["is_announced_in_club_channel"]["-100123"]
+        self.assertEqual(announcement["message_id"], 42)
+        datetime.fromisoformat(announcement["sent_at"])
 
     @patch("notifications.telegram.posts.send_telegram_image")
     @patch("notifications.telegram.posts.render_html_message", return_value="<b>announce</b>")
     def test_sends_image_when_provided(self, mock_render, mock_send_image):
+        mock_send_image.return_value.message_id = 43
         announce_in_club_channel(self.post, image="https://example.com/img.jpg")
 
         mock_send_image.assert_called_once()
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.metadata["is_announced_in_club_channel"]["-100123"]["message_id"], 43)
 
     @patch("notifications.telegram.posts.send_telegram_message")
     def test_uses_custom_announce_text(self, mock_send):
+        mock_send.return_value.message_id = 44
         announce_in_club_channel(self.post, announce_text="Custom text")
 
         call_kwargs = mock_send.call_args.kwargs
         self.assertEqual(call_kwargs["text"], "Custom text")
+
+    @patch("notifications.telegram.posts.send_telegram_message", return_value=None)
+    def test_failed_delivery_leaves_post_unmarked(self, mock_send):
+        result = announce_in_club_channel(self.post, announce_text="Custom text")
+
+        self.post.refresh_from_db()
+        self.assertIsNone(result)
+        self.assertNotIn("is_announced_in_club_channel", self.post.metadata or {})
 
 
 class TestSendIntroChangesToModerators(TestCase):

@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from django.conf import settings
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
@@ -103,18 +104,31 @@ def announce_in_club_channel(post, announce_text=None, image=None):
         announce_text = render_html_message("channel_post_announce.html", post=post)
 
     if image:
-        send_telegram_image(
+        sent_message = send_telegram_image(
             chat=CLUB_CHANNEL,
             image_url=image,
             text=announce_text,
         )
     else:
-        send_telegram_message(
+        sent_message = send_telegram_message(
             chat=CLUB_CHANNEL,
             text=announce_text,
             disable_preview=False,
             parse_mode=ParseMode.HTML,
         )
+
+    if sent_message is None:
+        return None
+
+    metadata = Post.objects.values_list("metadata", flat=True).get(id=post.id) or {}
+    announcements = metadata.setdefault("is_announced_in_club_channel", {})
+    announcements[str(CLUB_CHANNEL.id)] = {
+        "message_id": sent_message.message_id,
+        "sent_at": datetime.utcnow().isoformat(),
+    }
+    Post.objects.filter(id=post.id).update(metadata=metadata)
+    post.metadata = metadata
+    return sent_message
 
 
 def announce_in_club_chats(post):
