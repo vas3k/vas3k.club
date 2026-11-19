@@ -43,6 +43,9 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
 
     def setUp(self):
         super().setUp()
+        rate_limit = patch("bot.handlers.llm.is_rate_limited", return_value=False)
+        rate_limit.start()
+        self.addCleanup(rate_limit.stop)
         # Create test user with active membership
         now = datetime.now(timezone.utc)
         self.test_user = User.objects.create(

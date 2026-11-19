@@ -5,7 +5,8 @@ from difflib import SequenceMatcher
 from unidecode import unidecode
 
 from django.conf import settings
-from django.db.models import Q
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Q, Value, FloatField
 from django.urls import reverse
 
 from ai.helpers import post_ai_context, comment_ai_context, user_ai_context
@@ -53,10 +54,17 @@ def parse_tool_arguments(raw_arguments, schema):
     for name, value in arguments.items():
         field = schema["properties"][name]
         allowed_types = field["type"] if isinstance(field["type"], list) else [field["type"]]
-        value_type = {str: "string", int: "integer", type(None): "null"}.get(type(value))
+        value_type = {str: "string", int: "integer", type(None): "null", list: "array"}.get(type(value))
 
         if value_type not in allowed_types:
             raise ValueError("Invalid argument type")
+
+        if isinstance(value, list):
+            if not 1 <= len(value) <= field["maxItems"] or any(
+                not isinstance(item, str) or not item.strip() or len(item) > field["items"]["maxLength"]
+                for item in value
+            ):
+                raise ValueError("Invalid search variants")
 
         if "enum" in field and value not in field["enum"]:
             raise ValueError("Invalid argument value")
@@ -87,8 +95,8 @@ def ai_search_results(query):
 
 
 def generic_search(query, limit=5):
-    search_results = ai_search_results(query) \
-        .select_related("post__room", "post__author", "user",
+    search_results = ai_search_results(query).exclude(type=SearchIndex.TYPE_USER) \
+        .select_related("post__room", "post__author",
                         "comment__post__room", "comment__post__author", "comment__author", "comment__reply_to") \
         .order_by("-rank")[:max(1, min(limit, 30))]
 
@@ -98,11 +106,39 @@ def generic_search(query, limit=5):
             results.append(post_ai_context(result.post, text_limit=TRIM_LONG_CONTENT_TO_LEN))
         elif result.type == SearchIndex.TYPE_COMMENT and result.comment:
             results.append(comment_ai_context(result.comment))
-        elif result.type == SearchIndex.TYPE_USER and result.user:
-            if result.user.profile_publicity_level != User.PUBLICITY_LEVEL_PRIVATE:
-                results.append(user_ai_context(result.user))
+
+    remaining = max(1, min(limit, 30)) - len(results)
+
+    if remaining:
+        results.extend(search_users(query, limit=remaining))
 
     return results
+
+
+def search_variants(queries, content_type="all"):
+    """Fuse reciprocal ranks so differently worded queries need no comparable text scores."""
+    queries = list(dict.fromkeys(query.strip() for query in queries if query.strip()))[:4]
+    search = {
+        "all": generic_search, "post": search_posts, "comment": search_comments, "user": search_users,
+    }.get(content_type)
+
+    if not search:
+        return {"error": "Неизвестный тип поиска"}
+
+    matches = {}
+
+    for query in queries:
+        for rank, item in enumerate(search(query, limit=10), start=1):
+            key = item.get("comment_url") or item.get("post_url") or item["profile_url"]
+
+            if key not in matches:
+                matches[key] = {"result": item, "score": 0, "matched_queries": []}
+
+            matches[key]["score"] += 1 / (60 + rank)
+            matches[key]["matched_queries"].append(query)
+
+    ranked = sorted(matches.values(), key=lambda item: -item["score"])
+    return [{**item["result"], "matched_queries": item["matched_queries"]} for item in ranked[:10]]
 
 
 def search_posts(query, post_type=None, order_by="-rank", limit=5):
@@ -132,12 +168,42 @@ def search_comments(query, order_by="-rank", limit=7):
 
 
 def search_users(query, order_by="-rank", limit=7):
-    search_results = ai_search_results(query) \
-        .filter(type=SearchIndex.TYPE_USER) \
-        .select_related("user") \
-        .order_by(order_by if order_by in ALLOWED_ORDERING else "-rank")[:max(1, min(limit, 30))]
+    users = User.objects.filter(
+        id__in=SearchIndex.objects.filter(type=SearchIndex.TYPE_USER).values("user_id"),
+        deleted_at__isnull=True, moderation_status=User.MODERATION_STATUS_APPROVED,
+    ).exclude(profile_publicity_level=User.PUBLICITY_LEVEL_PRIVATE)
+    query = query.strip().lstrip("@")
 
-    return [user_ai_context(r.user) for r in search_results if r.user_id]
+    if query:
+        vector = SearchVector("slug", "full_name", weight="A", config="simple")
+        vector += SearchVector("bio", "company", "position", "city", "country", config="russian")
+        search_query = SearchQuery(query, config="simple", search_type="websearch")
+        search_query |= SearchQuery(query, config="russian", search_type="websearch")
+        users = users.annotate(profile_index=vector, rank=SearchRank(vector, search_query)).filter(
+            Q(profile_index=search_query) | Q(slug__iexact=query) | Q(full_name__icontains=query)
+        )
+    else:
+        users = users.annotate(rank=Value(0.0, output_field=FloatField()))
+
+    ordering = order_by if order_by in ALLOWED_ORDERING else "-rank"
+    return [user_ai_context(user, include_profile=True)
+            for user in users.order_by(ordering, "slug")[:max(1, min(limit, 30))]]
+
+
+def read_user(slug):
+    user = User.objects.filter(
+        slug__iexact=slug.lstrip("@"), deleted_at__isnull=True,
+        moderation_status=User.MODERATION_STATUS_APPROVED,
+    ).exclude(profile_publicity_level=User.PUBLICITY_LEVEL_PRIVATE).first()
+
+    if not user:
+        return {"error": "Участник не найден или профиль недоступен"}
+
+    profile = user_ai_context(user, include_profile=True)
+    profile["intros"] = list(ai_search_results("").filter(
+        type=SearchIndex.TYPE_POST, post__author=user, post__type=Post.TYPE_INTRO,
+    ).order_by("-created_at").values_list("post__slug", flat=True)[:5])
+    return profile
 
 
 def search_chats(query, limit=30):
@@ -278,6 +344,27 @@ def read_comment(comment_id, offset=0):
     context["text_truncated"] = offset + 8000 < len(result.comment.text)
     context["offset"] = offset
     context["next_offset"] = offset + 8000 if context["text_truncated"] else None
+    ancestors = []
+    parent = result.comment.reply_to
+    visited = {result.comment.id}
+
+    while parent and len(ancestors) < 10:
+        if parent.post_id != result.comment.post_id:
+            break
+
+        if parent.id in visited or parent.is_deleted or not parent.is_visible:
+            break
+
+        visited.add(parent.id)
+        ancestors.append({
+            "id": str(parent.id), "author": user_ai_context(parent.author),
+            "text_markdown": parent.text[:1000], "text_truncated": len(parent.text) > 1000,
+            "comment_url": settings.APP_HOST + parent.get_absolute_url(),
+        })
+        parent = parent.reply_to
+
+    context["ancestors"] = list(reversed(ancestors))
+    context["ancestors_incomplete"] = parent is not None
     return context
 
 
@@ -297,6 +384,8 @@ def search_room_posts(room_slug, query):
 
 
 TOOLS_MAP = {
+    "search_variants": search_variants,
+    "read_user": read_user,
     "read_club_guide": read_club_guide,
     "read_comment": read_comment,
     "search_post_comments": search_post_comments,
@@ -312,6 +401,33 @@ TOOLS_MAP = {
 }
 
 TOOLS_DESCRIPTION = [
+    {
+        "type": "function", "strict": True, "name": "search_variants",
+        "description": "Поиск темы разными формулировками с объединением результатов по рангу. "
+                       "Составь 1–4 коротких запроса: исходные ключевые слова, синонимы, перевод или "
+                       "профессиональные термины. Сохраняй ограничения author:, since:, until: во всех вариантах "
+                       "для постов и комментариев. Это расширение полнотекстового поиска, не векторный поиск. "
+                       "Затем прочитай подходящие источники. Для точного запроса используй обычный поиск.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "queries": {"type": "array", "minItems": 1, "maxItems": 4,
+                            "items": {"type": "string", "maxLength": 300}},
+                "content_type": {"type": "string", "enum": ["all", "post", "comment", "user"]},
+            },
+            "required": ["queries", "content_type"], "additionalProperties": False,
+        },
+    },
+    {
+        "type": "function", "strict": True, "name": "read_user",
+        "description": "Прочитать открытые поля профиля по slug: биография, работа, город, страна, "
+                       "ссылки на интро (slug для read_post). Без контактов, платежей и приватных полей. "
+                       "Для публикаций участника используй search_posts или search_comments с author:slug.",
+        "parameters": {
+            "type": "object", "properties": {"slug": {"type": "string"}},
+            "required": ["slug"], "additionalProperties": False,
+        },
+    },
     {
         "type": "function", "strict": True, "name": "read_club_guide",
         "description": "Начни здесь для вопросов «можно ли», о духе и ценностях Клуба, публикациях с ИИ, "
@@ -336,7 +452,8 @@ TOOLS_DESCRIPTION = [
     {
         "type": "function", "strict": True, "name": "read_comment",
         "description": "Прочитать комментарий по UUID из поиска или ссылки, порциями по 8000 символов. "
-                       "Для продолжения используй next_offset. Включает цитату родителя и ссылку на пост.",
+                       "Для продолжения используй next_offset. Включает до 10 предков от старшего к ближайшему. "
+                       "ancestors_incomplete означает неполную цепочку; предков можно читать по id.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -451,8 +568,8 @@ TOOLS_DESCRIPTION = [
         "type": "function",
         "strict": True,
         "name": "search_users",
-        "description": "Поиск публичных профилей участников. Возвращает только имя, slug и ссылку; "
-                       "без контактных данных",
+        "description": "Поиск участников по имени, slug, биографии, работе и местоположению. "
+                       "Возвращает открытые поля профиля без контактов. Не поддерживает author: и фильтры дат.",
         "parameters": {
             "type": "object",
             "properties": {

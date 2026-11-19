@@ -79,7 +79,7 @@ def post_ai_context(post, *, text_limit=None, include_moderation=False):
     return context
 
 
-def user_ai_context(user):
+def user_ai_context(user, *, include_profile=False):
     if not user or user.deleted_at or user.profile_publicity_level == user.PUBLICITY_LEVEL_PRIVATE:
         return None
 
@@ -87,6 +87,10 @@ def user_ai_context(user):
         "slug": user.slug,
         "full_name": user.full_name,
         "profile_url": f"{settings.APP_HOST}{user.get_absolute_url()}",
+        **({
+            field: (getattr(user, field) or "")[:2000]
+            for field in ("bio", "company", "position", "city", "country")
+        } if include_profile else {}),
     }
 
 

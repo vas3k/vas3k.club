@@ -8,7 +8,7 @@ from openai.types.responses import ResponseFunctionToolCall
 
 from ai.assistant import ask_assistant
 from ai.tools import (
-    read_post, read_discussion, search_users, generic_search, search_chats,
+    read_post, read_discussion, search_users, generic_search, search_chats, read_user, search_variants,
     read_comment, search_post_comments, search_room_posts, read_club_guide, club_rules_and_info,
     TOOLS_MAP, TOOLS_DESCRIPTION, parse_tool_arguments,
 )
@@ -164,6 +164,13 @@ class AssistantToolTests(SimpleTestCase):
         self.assertTrue(data["reply_to_truncated"])
         self.assertTrue(data["reply_is_bot"])
 
+    def test_variant_arguments_are_bounded(self):
+        schema = next(tool["parameters"] for tool in TOOLS_DESCRIPTION if tool["name"] == "search_variants")
+
+        for queries in ([], ["x"] * 5, [12], [" "], ["x" * 301]):
+            with self.subTest(queries=queries), self.assertRaises(ValueError):
+                parse_tool_arguments(json.dumps({"queries": queries, "content_type": "all"}), schema)
+
     def test_tool_registry_and_strict_schemas_agree(self):
         import inspect
 
@@ -234,11 +241,61 @@ class AssistantRetrievalTests(TestCase):
         self.assertEqual({item["id"] for item in replies}, {str(parent.id), str(reply.id)})
         self.assertIn("error", read_discussion(self.post.slug, reply_to_id=str(hidden.id)))
 
-    def test_profile_returns_only_public_identity(self):
+    def test_profile_returns_only_allowed_profile_fields(self):
         result = search_users("")[0]
-        self.assertEqual(set(result), {"slug", "full_name", "profile_url"})
+        self.assertEqual(
+            set(result), {"slug", "full_name", "profile_url", "bio", "company", "position", "city", "country"},
+        )
         User.objects.filter(id=self.user.id).update(profile_publicity_level=User.PUBLICITY_LEVEL_PRIVATE)
         self.assertEqual(search_users(""), [])
+
+    def test_profile_search_does_not_match_secret_fields(self):
+        User.objects.filter(id=self.user.id).update(
+            email="hiddenemail@example.com", contact="secretcontact", position="Robotics engineer",
+        )
+        self.user.refresh_from_db()
+        SearchIndex.update_user_index(self.user)
+
+        for query in ("hiddenemail", "secretcontact"):
+            self.assertEqual(search_users(query), [])
+            self.assertEqual(generic_search(query), [])
+
+        self.assertEqual(search_users("Robotics")[0]["slug"], self.user.slug)
+        profile = read_user(self.user.slug)
+        self.assertEqual(profile["position"], "Robotics engineer")
+        self.assertNotIn("email", profile)
+        self.assertNotIn("contact", profile)
+        User.objects.filter(id=self.user.id).update(profile_publicity_level=User.PUBLICITY_LEVEL_PRIVATE)
+        self.assertIn("error", read_user(self.user.slug))
+
+    def test_variants_merge_results_without_duplicates_or_hidden_posts(self):
+        Post.objects.filter(id=self.post.id).update(text="bicycle cycling")
+        self.post.refresh_from_db()
+        SearchIndex.update_post_index(self.post)
+        other = Post.objects.create(
+            author=self.user, slug="cycling", title="Cycling", text="cycling",
+            visibility=Post.VISIBILITY_EVERYWHERE,
+        )
+        SearchIndex.update_post_index(other)
+        results = search_variants(["bicycle", "cycling", "bicycle"], "post")
+        self.assertEqual(results[0]["slug"], self.post.slug)
+        self.assertEqual(results[0]["matched_queries"], ["bicycle", "cycling"])
+        self.assertEqual(len(results), 2)
+        Post.objects.filter(id=self.post.id).update(visibility=Post.VISIBILITY_DRAFT)
+        self.assertEqual([item["slug"] for item in search_variants(["bicycle", "cycling"], "post")], [other.slug])
+
+    def test_comment_ancestors_stop_at_hidden_parent(self):
+        root = Comment.objects.create(post=self.post, author=self.user, text="root")
+        parent = Comment.objects.create(post=self.post, text="parent", reply_to=root)
+        child = Comment.objects.create(post=self.post, text="child", reply_to=parent)
+        SearchIndex.update_comment_index(child)
+        result = read_comment(str(child.id))
+        self.assertEqual([item["text_markdown"] for item in result["ancestors"]], ["root", "parent"])
+        self.assertFalse(result["ancestors_incomplete"])
+        Comment.objects.filter(id=root.id).update(is_visible=False)
+        result = read_comment(str(child.id))
+        self.assertEqual([item["text_markdown"] for item in result["ancestors"]], ["parent"])
+        self.assertTrue(result["ancestors_incomplete"])
 
     def test_read_comment_pages_and_visibility(self):
         comment = Comment.objects.create(post=self.post, text="a" * 8000 + "last")
