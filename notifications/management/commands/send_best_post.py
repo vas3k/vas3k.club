@@ -24,9 +24,6 @@ from posts.models.post import Post
 from posts.templatetags.posts import og_image
 
 
-TELEGRAM_CHANNEL_ID = -1004312914852
-
-
 def select_by_vas3k_rank(posts, now):
     best_post = None
     best_rank = float("-inf")
@@ -72,13 +69,13 @@ def select_by_ai_rank(posts, now):
 
 Выбирай в порядке приоритета:
 1. Хорошо организованные предстоящие события, встречи, предложения с ясной целью и подробным описанием что, где и когда.
-2. Полезный личный опыт, открытый обмен знаниями, содержательные истории с иллюстрациями.
-3. Актуальные, интересные вопросы с высоким интересом читателей или потенциалом полезного обсуждения.
+2. Полезный личный опыт, открытый обмен знаниями, содержательные истории с иллюстрациями, путеводители по разным местам или полезные ссылки.
+3. Актуальные, интересные вопросы или батлы с высоким интересом читателей или потенциалом полезного обсуждения.
 4. Важные технологические и профессиональные новости за сегодня или вчера.
 5. Учитывай лайки, комментарии и hotness относительно возраста поста. Оценивай все комнаты наравне.
 
 Исключай:
-- Новости двухдневной давности и старше, прошедшие события, сугубо локальные и плохо описанные встречи, посты и запросы.
+- Новости двухдневной давности и старше, прошедшие события, сугубо локальные и плохо описанные встречи, небрежно написанные посты и запросы.
 - Провокации, политические темы, поляризующие вопросы, всё что может вызвать срач.
 
 Сверяй даты с текущим временем и часовым поясом события. Не выдумывай факты.
@@ -121,6 +118,7 @@ def select_by_ai_rank(posts, now):
             input=json.dumps({"now_utc": now.isoformat(), "posts": data}, ensure_ascii=False),
             text_format=PostSelection,
             max_output_tokens=1000,
+            timeout=60,
         )
     except (OpenAIError, ValueError) as error:
         raise CommandError("AI post selection failed; nothing sent or marked.") from error
@@ -155,22 +153,22 @@ def select_best_old_post(posts, now):
         ).order_by("-upvotes", "id")[:100])
 
     post = random.choice(candidates) if candidates else None
-    return (post, "notifications/telegram/channel_post_announce.html") if post else None
+    return (post, "notifications/telegram/channel_old_post_announce.html") if post else None
 
 
 WEEKLY_SCHEDULE = {
-    0: {9: None, 15: select_by_ai_rank},
+    0: {10: select_by_ai_rank, 16: select_by_ai_rank},
     1: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
     2: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
     3: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
     4: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
-    5: {11: select_by_vas3k_rank, 17: select_by_ai_rank},
+    5: {11: None, 17: select_by_ai_rank},
     6: {9: None, 15: select_best_old_post},
 }
 
 
 class Command(BaseCommand):
-    help = "Send a scheduled post to the test Telegram channel"
+    help = "Send a scheduled post to the Club Telegram channel"
 
     def add_arguments(self, parser):
         parser.add_argument("--dry-run", action="store_true", help="Preview without sending or marking the post")
@@ -183,14 +181,18 @@ class Command(BaseCommand):
             self.stdout.write("No announcement scheduled for this day and hour.")
             return
 
-        channel_key = str(TELEGRAM_CHANNEL_ID)
-        announced = Q(metadata__is_announced_in_club_channel__has_any_keys=[
-            channel_key, str(settings.TELEGRAM_CLUB_CHANNEL_ID),
-        ])
+        channel_id = settings.TELEGRAM_CLUB_CHANNEL_ID
+
+        if not channel_id:
+            raise CommandError("TELEGRAM_CLUB_CHANNEL_ID is not configured; nothing sent.")
+
+        channel_key = str(channel_id)
+        announced = Q(metadata__is_announced_in_club_channel__has_key=channel_key)
         posts = Post.objects.filter(
             moderation_status=Post.MODERATION_APPROVED,
             visibility=Post.VISIBILITY_EVERYWHERE,
             deleted_at__isnull=True,
+            published_at__lte=now,
         ).exclude(type__in=[
             Post.TYPE_REQUEST, Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST, Post.TYPE_DOCS,
         ]).filter(
@@ -244,12 +246,12 @@ class Command(BaseCommand):
             self.stderr.write("Preview only: nothing sent to Telegram; post left unmarked.")
             return
 
-        sent_message = send_telegram_image(chat=Chat(id=TELEGRAM_CHANNEL_ID), image_url=image, text=message)
+        sent_message = send_telegram_image(chat=Chat(id=channel_id), image_url=image, text=message)
 
         if sent_message is None:
             raise CommandError(f"Telegram delivery failed for post {post.slug}; left unmarked.")
 
-        metadata = post.metadata or {}
+        metadata = Post.objects.values_list("metadata", flat=True).get(id=post.id) or {}
         announcements = metadata.setdefault("is_announced_in_club_channel", {})
         announcements[channel_key] = {
             "message_id": sent_message.message_id,
@@ -257,5 +259,5 @@ class Command(BaseCommand):
         }
         Post.objects.filter(id=post.id).update(metadata=metadata)
         self.stdout.write(
-            f"Sent post {post.slug} to channel {TELEGRAM_CHANNEL_ID} (message {sent_message.message_id})."
+            f"Sent post {post.slug} to channel {channel_id} (message {sent_message.message_id})."
         )
