@@ -170,6 +170,17 @@ class ViewEmailLoginTests(TestCase):
         # it"s not yet authorised, only code was sent
         self.assertFalse(self.client.is_authorised())
 
+    def test_malformed_existing_email_does_not_queue_login(self):
+        malformed = "a@b.com'"
+        User.objects.filter(id=self.new_user.id).update(email=malformed)
+
+        with patch("authn.views.email.async_task") as task:
+            response = self.client.post(reverse("email_login"), data={"email_or_login": malformed})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Code.objects.filter(recipient=malformed).exists())
+        task.assert_not_called()
+
     def test_login_user_not_exist(self):
         response = self.client.post(reverse("email_login"),
                                     data={"email_or_login": "not-existed@user.com", })

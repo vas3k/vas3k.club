@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db.models import Q
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django_q.tasks import async_task
@@ -17,11 +18,20 @@ def email_login(request):
         return redirect("login")
 
     goto = request.POST.get("goto")
-    email = request.POST.get("email_or_login")
-    if not email or "." not in email or "@" not in email:
+    email = (request.POST.get("email_or_login") or "").strip().lower()
+
+    if not email:
         return redirect("login")
 
-    user = User.objects.filter(email=email.strip().lower()).first()
+    try:
+        validate_email(email)
+    except ValidationError:
+        return render(request, "error.html", {
+            "title": "Плохой e-mail адрес 😣",
+            "message": "Проверьте адрес почты: кажется, в нём опечатка.",
+        }, status=400)
+
+    user = User.objects.filter(email=email).first()
     if not user:
         return render(request, "error.html", {
             "title": "Такого юзера нет 🤔",

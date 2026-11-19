@@ -3,6 +3,8 @@ import uuid
 from datetime import datetime
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import HttpResponse
 from django.shortcuts import render
 from yookassa import Configuration, Payment as YookassaPayment
@@ -28,7 +30,10 @@ def rubles(request):
         email = request.GET.get("email") or ""
         if email:
             email = email.lower().strip()
-        if not email or "@" not in email:
+
+        try:
+            validate_email(email)
+        except ValidationError:
             return render(request, "payments/rubles.html", {})
 
         user, _ = User.objects.get_or_create(

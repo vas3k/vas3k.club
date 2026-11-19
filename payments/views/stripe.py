@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.http import HttpResponse
 from django.shortcuts import render
 from stripe.error import InvalidRequestError
@@ -57,7 +59,9 @@ def pay(request):
 
     # who's paying?
     if not request.me:  # scenario 1: new user
-        if not email or "@" not in email:
+        try:
+            validate_email(email)
+        except ValidationError:
             return render(request, "error.html", {
                 "title": "Плохой e-mail адрес 😣",
                 "message": "Нам ведь нужно будет как-то привязать аккаунт к платежу"

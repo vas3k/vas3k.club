@@ -1,6 +1,8 @@
 import logging
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.core.mail import EmailMultiAlternatives
 from premailer import Premailer
 
@@ -8,6 +10,12 @@ log = logging.getLogger(__name__)
 
 
 def send_transactional_email(recipient, subject, html, unsubscribe_link=None, **kwargs):
+    try:
+        validate_email(recipient)
+    except ValidationError:
+        log.warning("Skipping email: invalid recipient address")
+        return 0
+
     log.info("Sending transactional email")
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
     headers = {"List-Unsubscribe": unsubscribe_link} if unsubscribe_link else {}
@@ -23,6 +31,12 @@ def send_transactional_email(recipient, subject, html, unsubscribe_link=None, **
 
 
 def send_mass_email(recipient, subject, html, unsubscribe_link):
+    try:
+        validate_email(recipient)
+    except ValidationError:
+        log.warning("Skipping email: invalid recipient address")
+        return 0
+
     log.info("Sending mass email")
     prepared_html = prepare_letter(html, base_url=settings.APP_HOST)
     email = EmailMultiAlternatives(

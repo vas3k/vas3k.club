@@ -452,3 +452,20 @@ class TestStripeWebhookView(TestCase):
                                         **header)
 
             self.assertEqual(response.status_code, 400)
+
+
+class TestCheckoutEmailValidation(TestCase):
+    def test_malformed_email_cannot_create_user_or_payment(self):
+        malformed = "a@b.com'"
+
+        with patch("payments.views.stripe.stripe") as stripe, patch(
+            "payments.views.yookassa.YookassaPayment.create",
+        ) as yookassa:
+            for route in ("pay", "rubles"):
+                with self.subTest(route=route):
+                    response = self.client.get(reverse(route), {"email": malformed, "product_code": "club1"})
+                    self.assertEqual(response.status_code, 200)
+                    self.assertFalse(User.objects.filter(email=malformed).exists())
+
+        stripe.checkout.Session.create.assert_not_called()
+        yookassa.assert_not_called()
