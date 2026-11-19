@@ -12,12 +12,12 @@ from bot.handlers.common import get_club_user
 from common.markdown.markdown import markdown_tg
 
 
-def _ask_assistant_with_db_connection(user_input: str) -> str:
+def _ask_assistant_with_db_connection(user_input: str, **context) -> str:
     # asyncio.to_thread() owns a separate Django connection. The async handler
     # cannot clean it up from the event-loop thread.
     close_old_connections()
     try:
-        return ask_assistant(user_input)
+        return ask_assistant(user_input, **context)
     finally:
         # Release it after every job, including when the assistant catches a DB error.
         # With pooling enabled, this returns the connection to the pool.
@@ -38,12 +38,16 @@ async def llm_response(update: Update, context: CallbackContext) -> None:
         return None
 
     reply_to_text = ""
+    reply_is_bot = False
     if update.message.reply_to_message:
         reply_to_text = (
            update.message.reply_to_message.text or
            update.message.reply_to_message.caption or
            ""
         )
+
+        reply_author = update.message.reply_to_message.from_user
+        reply_is_bot = bool(reply_author and reply_author.id == context.bot.id)
 
     user = await get_club_user(update)
     if not user:
@@ -62,15 +66,14 @@ async def llm_response(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text("Чот я устал отвечать на вопросы... давай потом")
         return None
 
-    user_input = [
-        f"Я — {user.full_name} {user.slug}",
-        message_text
-    ]
-    if reply_to_text:
-        user_input = [f"Предыдущее сообщение: {reply_to_text}"] + user_input
-
     try:
-        answer = await asyncio.to_thread(_ask_assistant_with_db_connection, "\n".join(user_input))
+        answer = await asyncio.to_thread(
+            _ask_assistant_with_db_connection,
+            message_text,
+            reply_to_text=reply_to_text,
+            reply_is_bot=reply_is_bot,
+            user_name=f"{user.full_name} ({user.slug})",
+        )
     except Exception:
         await update.message.reply_text("Что-то сломалось, попробуй ещё раз позже 🤷")
         return None

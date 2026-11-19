@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from openai import OpenAIError
 from pydantic import BaseModel, Field
 
+from ai.helpers import post_ai_context
 from ai.openai import create_response
 from common.markdown.markdown import markdown_tg
 from notifications.telegram.common import (
@@ -85,32 +86,7 @@ def select_by_ai_rank(posts, now):
     class PostSelection(BaseModel):
         slug: str | None = Field(json_schema_extra={"enum": [post.slug for post in candidates] + [None]})
 
-    data = []
-
-    for post in candidates:
-        event = (post.metadata or {}).get("event") or {}
-        moderation = post.moderation_data or {}
-        data.append({
-            "slug": post.slug,
-            "type": post.type,
-            "title": post.title,
-            "text_markdown": post.text,
-            "published_at_utc": post.published_at.isoformat(),
-            "updated_at_utc": post.updated_at.isoformat(),
-            "last_activity_at_utc": post.last_activity_at.isoformat(),
-            "upvotes": post.upvotes,
-            "comment_count": post.comment_count,
-            "view_count": post.view_count,
-            "hotness": post.hotness,
-            "room": post.room.title if post.room else None,
-            "is_room_only": post.is_room_only,
-            "image": post.image,
-            "markdown_images": MARKDOWN_IMAGES_RE.findall(post.text),
-            "url": post.url,
-            "event": {key: event[key] for key in ("day", "month", "year", "time", "timezone") if key in event},
-            "moderation_status": post.moderation_status,
-            "moderation": {key: moderation[key] for key in ("reason", "text", "moderated_at") if key in moderation},
-        })
+    data = [post_ai_context(post, include_moderation=True) for post in candidates]
 
     try:
         response = create_response(
@@ -197,7 +173,7 @@ class Command(BaseCommand):
             Post.TYPE_REQUEST, Post.TYPE_INTRO, Post.TYPE_WEEKLY_DIGEST, Post.TYPE_DOCS,
         ]).filter(
             Q(metadata__is_announced_in_club_channel__isnull=True) | ~announced
-        ).select_related("room").order_by("-published_at", "id")
+        ).select_related("room", "author").order_by("-published_at", "id")
         selection = selector(posts, now)
 
         if selection is None:

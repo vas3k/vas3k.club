@@ -132,7 +132,7 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
 
         mock_ask_assistant.assert_called_once()
         call_args = mock_ask_assistant.call_args[0][0]
-        self.assertIn("Test User", call_args)
+        self.assertIn("Test User", mock_ask_assistant.call_args.kwargs["user_name"])
         self.assertIn("Hello bot", call_args)
 
     @patch("bot.handlers.llm.ask_assistant")
@@ -178,7 +178,8 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
         asyncio.run(llm_response(update, context))
 
         call_args = mock_ask_assistant.call_args[0][0]
-        self.assertIn("Previous message", call_args)
+        self.assertEqual("What about this?", call_args)
+        self.assertEqual("Previous message", mock_ask_assistant.call_args.kwargs["reply_to_text"])
 
     @patch("bot.handlers.llm.ask_assistant")
     def test_inactive_user(self, mock_ask_assistant):

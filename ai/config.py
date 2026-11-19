@@ -5,7 +5,8 @@ RATE_LIMIT_REQUESTS = 60
 RATE_LIMIT_SLIDING_WINDOW_SECONDS = 3600  # 1 hour
 
 TRIM_LONG_CONTENT_TO_LEN = 2000
-USER_INPUT_MAX_LEN = 1000
+USER_INPUT_MAX_LEN = 4096
+REPLY_INPUT_MAX_LEN = 8192
 
 CLUB_INFO_POST_LABEL = "essential"
 CLUB_INFO_POST_SLUGS = [
@@ -24,3 +25,14 @@ CLUB_EXTRA_INFO_POST_SLUGS = [
     "23360",  # why club is helpful
     "14856",  # towers
 ]
+
+CLUB_GUIDE_TOPICS = {
+    "values": ["values", "about"],
+    "posting": ["10447", "values"],
+    "ai": ["ai_policy", "10447", "values"],
+    "moderation": ["10857", "10447"],
+    "membership": ["about", "contact"],
+    "privacy": ["privacy_policy"],
+    "memes": ["4916"],
+    "bot": ["7979"],
+}
