@@ -4,7 +4,8 @@ import os
 import time
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
+from types import SimpleNamespace
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "club.settings")
 os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
@@ -12,7 +13,7 @@ os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 import django
 django.setup()
 
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, SimpleTestCase, override_settings
 from telegram import Update, Message, User as TgUser, Chat as TgChat
 
 from bot.handlers.llm import llm_response
@@ -46,6 +47,11 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
         rate_limit = patch("bot.handlers.llm.is_rate_limited", return_value=False)
         rate_limit.start()
         self.addCleanup(rate_limit.stop)
+
+        notices = patch("bot.handlers.llm.can_notify_ai_limit", return_value=True)
+        notices.start()
+        self.addCleanup(notices.stop)
+
         # Create test user with active membership
         now = datetime.now(timezone.utc)
         self.test_user = User.objects.create(
@@ -58,6 +64,17 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
             membership_expires_at=now + timedelta(days=30),
             moderation_status=User.MODERATION_STATUS_APPROVED,
         )
+
+    @patch("bot.handlers.llm.ask_assistant")
+    def test_unknown_group_cannot_query_club(self, assistant):
+        message = Message(
+            message_id=1, date=datetime.now(timezone.utc), chat=TgChat(id=-999999, type="supergroup"),
+            from_user=TgUser(id=999, is_bot=False, first_name="Test"), text="Read Club posts",
+        )
+        message.set_bot(self.sync_bot.bot)
+        update = Update(update_id=1, message=message)
+        asyncio.run(llm_response(update, MagicMock()))
+        assistant.assert_not_called()
 
     def tearDown(self):
         super().tearDown()
@@ -231,17 +248,6 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
 
         self.server.expect_requests(
             [
-                ExpectedRequest(
-                    Request(
-                        "POST",
-                        self.SEND_CHAT_ACTION_PATH,
-                        {
-                            "chat_id": "12345",
-                            "action": "typing",
-                        },
-                    ),
-                    self.CHAT_ACTION_RESPONSE,
-                ),
                 ExpectedRequest(
                     Request(
                         "POST",
@@ -419,3 +425,27 @@ class LLMResponseTest(BaseTelegramTest, TransactionTestCase):
         asyncio.run(llm_response(update, context))
 
         self.assertTrue(self.server.wait_for_completion(timeout=5))
+
+
+class AIMembershipTests(SimpleTestCase):
+    @override_settings(TELEGRAM_CLUB_CHAT_ID="-123")
+    def test_membership_required_in_dms_and_club_groups(self):
+        for chat_type in ("private", "supergroup"):
+            for member in (None, SimpleNamespace(is_active_member=False)):
+                with self.subTest(chat_type=chat_type, member=member):
+                    message = SimpleNamespace(
+                        text="hello", caption=None, sender_chat=None,
+                        reply_to_message=None, reply_text=AsyncMock(),
+                    )
+                    update = SimpleNamespace(
+                        message=message, effective_user=SimpleNamespace(is_bot=False),
+                        effective_chat=SimpleNamespace(id=-123, type=chat_type),
+                    )
+
+                    with patch("bot.handlers.llm.get_club_user", new=AsyncMock(return_value=member)), patch(
+                        "bot.handlers.llm.ask_assistant",
+                    ) as assistant, patch("bot.handlers.llm.is_rate_limited") as limiter:
+                        asyncio.run(llm_response(update, MagicMock()))
+
+                    assistant.assert_not_called()
+                    limiter.assert_not_called()

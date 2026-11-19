@@ -1,4 +1,5 @@
 import json
+import redis
 from datetime import datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -20,6 +21,22 @@ from users.models.user import User
 
 
 class AssistantToolTests(SimpleTestCase):
+    def test_tool_result_size_is_bounded(self):
+        call = ResponseFunctionToolCall(
+            type="function_call", name="read_post", call_id="read",
+            arguments='{"slug":"post","offset":null}',
+        )
+
+        with patch("ai.assistant.create_response", side_effect=[
+            SimpleNamespace(status="completed", output=[call], output_text=""),
+            SimpleNamespace(status="completed", output=[], output_text="answer"),
+        ]) as api, patch.dict("ai.assistant.TOOLS_MAP", {"read_post": Mock(return_value={"text": '"' * 100000})}):
+            self.assertEqual(ask_assistant("question"), "answer")
+
+        output = api.call_args.kwargs["input"][-1]["output"]
+        self.assertLessEqual(len(output.encode("utf-8")), 12000)
+        self.assertTrue(json.loads(output)["truncated"])
+
     def test_search_can_be_followed_by_reading(self):
         search = ResponseFunctionToolCall(
             type="function_call", name="search_posts", call_id="search",
@@ -395,3 +412,23 @@ class ChatSearchTests(TestCase):
         self.assertNotIn("admins", result)
         self.assertNotIn("chat_id", result)
         self.assertIn("room_url", result)
+
+
+class AssistantRateLimitTests(SimpleTestCase):
+    def test_redis_failure_blocks_spending(self):
+        from ai.rate_limiter import is_rate_limited
+
+        with patch("ai.rate_limiter.redis_client.eval", side_effect=redis.ConnectionError):
+            self.assertTrue(is_rate_limited("member"))
+
+    def test_rate_limits_use_server_identity_and_distinct_windows(self):
+        from ai.rate_limiter import is_rate_limited
+
+        with patch("ai.rate_limiter.redis_client.eval", return_value=0) as evaluate:
+            self.assertFalse(is_rate_limited("member"))
+
+        arguments = evaluate.call_args.args
+        keys = arguments[2:2 + arguments[1]]
+        self.assertEqual(set(keys), {
+            "ai:quota:user:member:day", "ai:quota:ai_bot:hour", "ai:quota:ai_bot:day",
+        })
