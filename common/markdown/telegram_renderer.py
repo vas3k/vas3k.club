@@ -39,7 +39,7 @@ class TelegramRenderer(mistune.HTMLRenderer):
         return text
 
     def list_item(self, text):
-        return f"- {text}\n"
+        return f"- {text.rstrip()}\n\n"
 
     def thematic_break(self):
         return '---\n'
