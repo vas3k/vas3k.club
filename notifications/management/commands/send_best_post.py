@@ -133,13 +133,13 @@ def select_best_old_post(posts, now):
 
 
 WEEKLY_SCHEDULE = {
-    0: {10: select_by_ai_rank, 16: select_by_ai_rank},
-    1: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
-    2: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
-    3: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
-    4: {9: select_by_vas3k_rank, 15: select_by_ai_rank},
-    5: {11: None, 17: select_by_ai_rank},
-    6: {9: None, 15: select_best_old_post},
+    0: {8: select_by_ai_rank, 15: select_by_ai_rank},
+    1: {7: select_by_vas3k_rank, 14: select_by_ai_rank},
+    2: {7: select_by_vas3k_rank, 14: select_by_ai_rank},
+    3: {7: select_by_vas3k_rank, 14: select_by_ai_rank},
+    4: {7: select_by_vas3k_rank, 14: select_by_ai_rank},
+    5: {11: None, 15: select_by_ai_rank},
+    6: {9: None, 14: select_best_old_post},
 }
 
 
