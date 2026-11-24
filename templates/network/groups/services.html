@@ -5,7 +5,7 @@
 
     {% if group.rooms %}
         <div class="network-channels">
-            {% for room in group.rooms.all %}
+            {% for room in group.rooms.all|dictsort:"index" %}
                 {% if room.is_visible and room.get_private_url %}
                     <a href="{{ room.get_private_url }}" target="_blank" class="block network-channel network-channel-square">
                         {% if room.image %}
