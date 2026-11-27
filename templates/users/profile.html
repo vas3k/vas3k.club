@@ -56,6 +56,10 @@
                 <a href="{% url "friends" user.slug %}" class="button">
                     🤝&nbsp;Мои чуваки
                 </a>
+
+                <a href="{% url "muted" user.slug %}" class="button">
+                    ⛔️&nbsp;Замьюченные юзеры
+                </a>
             </div>
         {% endif %}
 

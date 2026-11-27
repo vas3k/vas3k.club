@@ -31,6 +31,7 @@
             <div class="">
                 {% for user in muted %}
                     {% include "users/widgets/card.html" with user=user.user_to %}
+                    <a href="{% url "toggle_mute" user.user_to.slug %}" class="button">Снять мьют с @{{ user.user_to.slug }}</a>
                 {% endfor %}
             </div>
         {% else %}
