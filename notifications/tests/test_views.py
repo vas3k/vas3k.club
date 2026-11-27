@@ -140,6 +140,22 @@ class TestNotificationViews(TestCase):
 
         self.assertEqual(response.status_code, 400)
 
+    def test_link_telegram_non_ascii_signature_is_forbidden(self):
+        login(self.client, self.user)
+        payload = {
+            "id": "123456",
+            "username": "teleuser",
+            "hash": "invalid\u00e9",
+        }
+
+        response = self.client.post(
+            reverse("link_telegram"),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+
     def test_link_telegram_malformed_json_returns_400(self):
         login(self.client, self.user)
 

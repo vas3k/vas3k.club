@@ -103,3 +103,20 @@ class TestOpenIDDiscoveryUserinfo(TestCase):
         self.assertEqual(payload["id"], str(user.id))
         self.assertNotIn("email", payload)
         self.assertNotIn("telegram", payload)
+
+
+class TestOAuth2AppClientSecret(SimpleTestCase):
+    def test_wrong_client_secret_is_refused(self):
+        app = OAuth2App(client_secret="secret")
+
+        self.assertFalse(app.check_client_secret("wrong"))
+
+    def test_non_ascii_client_secret_is_refused(self):
+        app = OAuth2App(client_secret="secret")
+
+        self.assertFalse(app.check_client_secret("secr\u00e9t"))
+
+    def test_right_client_secret_is_accepted(self):
+        app = OAuth2App(client_secret="secret")
+
+        self.assertTrue(app.check_client_secret("secret"))

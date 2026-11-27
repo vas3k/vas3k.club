@@ -65,7 +65,7 @@ class OAuth2App(models.Model, ClientMixin):
         return redirect_uri in self.redirect_uris
 
     def check_client_secret(self, client_secret):
-        return hmac.compare_digest(self.client_secret, client_secret)
+        return hmac.compare_digest(self.client_secret.encode(), client_secret.encode())
 
     def check_endpoint_auth_method(self, method, endpoint):
         if endpoint == "token":

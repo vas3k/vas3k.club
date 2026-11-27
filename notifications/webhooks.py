@@ -12,7 +12,7 @@ from notifications.models import WebhookEvent
 def webhook_event(request, event_type):
     secret = request.GET.get("secret", "")
     if not secret or not any(
-        hmac.compare_digest(secret, expected)
+        hmac.compare_digest(secret.encode(), expected.encode())
         for expected in settings.WEBHOOK_SECRETS
     ):
         return HttpResponseForbidden("Forbidden")
